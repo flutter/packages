@@ -33,21 +33,22 @@
 typedef void (^FLTImagePickerRemoveCallback)(void);
 
 /**
- * Add the view to the PickerViewController's view, observing its window to observe the window of PickerViewController.
- * This is to prevent PickerViewController from being removed from the screen without receiving callback information under other circumstances,
- * such as being interactively dismissed before PickerViewController has fully popped up.
+ * Add the view to the PickerViewController's view, observing its window to observe the window of
+ * PickerViewController. This is to prevent PickerViewController from being removed from the screen
+ * without receiving callback information under other circumstances, such as being interactively
+ * dismissed before PickerViewController has fully popped up.
  */
 @interface FLTImagePickerRemoveObserverView : UIView
 
 @property(nonatomic, copy, nonnull) FLTImagePickerRemoveCallback removeCallback;
 
--(instancetype)initWithRemoveCallback:(FLTImagePickerRemoveCallback)callback;
+- (instancetype)initWithRemoveCallback:(FLTImagePickerRemoveCallback)callback;
 
 @end
 
 @implementation FLTImagePickerRemoveObserverView
 
-- (instancetype)initWithRemoveCallback:(FLTImagePickerRemoveCallback)callback{
+- (instancetype)initWithRemoveCallback:(FLTImagePickerRemoveCallback)callback {
   if (self = [super init]) {
     self.removeCallback = callback;
   }
@@ -56,7 +57,7 @@ typedef void (^FLTImagePickerRemoveCallback)(void);
 - (void)didMoveToWindow {
   if (!self.window) {
     [self removeFromSuperview];
-    [[NSOperationQueue mainQueue]addOperationWithBlock:self.removeCallback];
+    [[NSOperationQueue mainQueue] addOperationWithBlock:self.removeCallback];
   }
 }
 @end
@@ -192,16 +193,17 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                    context:(nonnull FLTImagePickerMethodCallContext *)context {
   __weak typeof(self) weakSelf = self;
   FLTImagePickerRemoveObserverView *removeObserverView =
-      [[FLTImagePickerRemoveObserverView alloc]initWithRemoveCallback:^{
+      [[FLTImagePickerRemoveObserverView alloc] initWithRemoveCallback:^{
         __strong typeof(weakSelf) strongSelf = weakSelf;
-        // Add a small delay to ensure delegate methods have a chance to run first
-        // This prevents the observer from firing during normal selection flow
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-          if(strongSelf && strongSelf.callContext == context && !strongSelf.isProcessingSelection) {
-            // Only send result if context is still active and we're not processing a selection
-            [strongSelf sendCallResultWithSavedPathList:nil];
-          }
-        });
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)),
+                       dispatch_get_main_queue(), ^{
+                         if (strongSelf && strongSelf.callContext == context &&
+                             !strongSelf.isProcessingSelection) {
+                           // Only send result if context is still active and we're not processing a
+                           // selection
+                           [strongSelf sendCallResultWithSavedPathList:nil];
+                         }
+                       });
       }];
   [controller.view addSubview:removeObserverView];
 }
