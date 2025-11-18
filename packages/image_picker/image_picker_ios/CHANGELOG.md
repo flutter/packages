@@ -1,3 +1,7 @@
+## 0.8.14
+
+* Fixes picking methods infinitely awaiting when the native picker was closed quickly.
+
 ## 0.8.13+4
 
 * Improves compatibility with `UIScene`.
