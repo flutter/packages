@@ -46,8 +46,8 @@ void defineTests() {
 void _defineGroupFromFile(String filename, String text) {
   final Map<String, Object?> jsondata =
       (json.decode(text) as Map<dynamic, dynamic>).cast<String, Object?>();
-  final List<Map<String, Object?>> tests =
-      (jsondata['tests']! as List<dynamic>).cast<Map<String, Object?>>();
+  final List<Map<String, Object?>> tests = (jsondata['tests']! as List<dynamic>)
+      .cast<Map<String, Object?>>();
   filename = filename.substring(filename.lastIndexOf('/') + 1);
   group('Specs of $filename', () {
     for (final Map<String, Object?> t in tests) {

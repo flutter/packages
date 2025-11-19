@@ -941,7 +941,8 @@ void main() {
     // is used on each iteration.
     for (final String key in images.keys) {
       final String image = images[key]!;
-      final String svgStr = '''
+      final String svgStr =
+          '''
 <svg
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100">
@@ -990,16 +991,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.string(
             '<!-- invalid svg -->',
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );
@@ -1016,16 +1014,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.memory(
             Uint8List.fromList(utf8.encode('<!-- invalid svg -->')),
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );
@@ -1042,16 +1037,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.asset(
             '/wrong path',
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );
@@ -1066,16 +1058,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.file(
             File('nosuchfile'),
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );

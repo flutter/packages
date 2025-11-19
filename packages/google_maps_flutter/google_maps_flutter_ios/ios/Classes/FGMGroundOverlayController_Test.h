@@ -15,4 +15,15 @@
                               registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                             screenScale:(CGFloat)screenScale;
 
+/// Updates the underlying GMSGroundOverlay with the properties from the given
+/// FGMPlatformGroundOverlay.
+///
+/// Setting the ground overlay to visible will set its map to the given mapView.
++ (void)updateGroundOverlay:(GMSGroundOverlay *)groundOverlay
+    fromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)groundOverlay
+                  withMapView:(GMSMapView *)mapView
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                  screenScale:(CGFloat)screenScale
+                  usingBounds:(BOOL)useBounds;
+
 @end

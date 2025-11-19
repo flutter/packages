@@ -91,8 +91,8 @@ Future<bool> launch(
   bool previousAutomaticSystemUiAdjustment = true;
   final RenderView? renderViewToAdjust =
       statusBarBrightness != null && defaultTargetPlatform == TargetPlatform.iOS
-          ? _findImplicitRenderView()
-          : null;
+      ? _findImplicitRenderView()
+      : null;
   if (renderViewToAdjust != null) {
     previousAutomaticSystemUiAdjustment =
         renderViewToAdjust.automaticSystemUiAdjustment;

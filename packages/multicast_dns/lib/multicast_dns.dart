@@ -135,13 +135,13 @@ class MDnsClient {
       _ipv6InterfaceSockets.add(incoming);
     }
 
-    _mDnsAddress ??=
-        incoming.address.type == InternetAddressType.IPv4
-            ? mDnsAddressIPv4
-            : mDnsAddressIPv6;
+    _mDnsAddress ??= incoming.address.type == InternetAddressType.IPv4
+        ? mDnsAddressIPv4
+        : mDnsAddressIPv6;
 
-    final List<NetworkInterface> interfaces =
-        (await interfacesFactory(listenAddress.type)).toList();
+    final List<NetworkInterface> interfaces = (await interfacesFactory(
+      listenAddress.type,
+    )).toList();
 
     for (final NetworkInterface interface in interfaces) {
       final InternetAddress targetAddress = interface.addresses[0];

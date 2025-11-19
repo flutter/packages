@@ -22,8 +22,8 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder:
-            (BuildContext context) => TextDisplay(directoryPaths.join('\n')),
+        builder: (BuildContext context) =>
+            TextDisplay(directoryPaths.join('\n')),
       );
     }
   }

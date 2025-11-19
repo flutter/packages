@@ -33,10 +33,9 @@ Future<void> loadJsSdk(
 
   final String scriptUrl = '$_URL?client=ca-pub-$adClient';
 
-  final web.HTMLScriptElement script =
-      web.HTMLScriptElement()
-        ..async = true
-        ..crossOrigin = 'anonymous';
+  final web.HTMLScriptElement script = web.HTMLScriptElement()
+    ..async = true
+    ..crossOrigin = 'anonymous';
 
   if (web.window.nullableTrustedTypes != null) {
     final String trustedTypePolicyName = 'adsense-dart-$adClient';
