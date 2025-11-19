@@ -185,10 +185,10 @@ final List<XFile> medias = await picker.pickMultipleMedia();
 
 ### Video Duration Limitations
 
-When using `pickVideo()` with the `maxDuration` parameter, it's important to understand its behavior:
+When using `pickVideo()` or `pickMultiVideo()` with the `maxDuration` parameter, it's important to understand its behavior:
 
-- **Camera recording** (`ImageSource.camera`): The recording will automatically stop when the specified `maxDuration` is reached.
-- **Gallery selection** (`ImageSource.gallery`): The `maxDuration` parameter does **not** filter available videos. Users can select videos of any length, regardless of the `maxDuration` value.
+- **Camera recording** (`ImageSource.camera` for `pickVideo()`): The recording will automatically stop when the specified `maxDuration` is reached.
+- **Gallery selection** (`ImageSource.gallery` for `pickVideo()`, or `pickMultiVideo()` which only picks from gallery): The `maxDuration` parameter does **not** filter available videos. Users can select videos of any length, regardless of the `maxDuration` value.
 
 If your application needs to enforce duration limits on gallery-selected videos, you must validate the video duration programmatically after selection.
 
@@ -214,6 +214,11 @@ if (galleryVideo != null) {
   // Use a video player package to check duration
   // and handle videos that exceed your requirements
 }
+
+// pickMultiVideo() also ignores maxDuration - it only picks from gallery
+final List<XFile> multipleVideos = await picker.pickMultiVideo(
+  maxDuration: const Duration(seconds: 30), // This does NOT filter gallery videos!
+);
 ```
 
 ## Migrating to 1.0
