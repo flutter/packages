@@ -1,0 +1,43 @@
+name: "Creates Batch Release for A Package"
+
+on:
+  repository_dispatch:
+    types: [batch_release_pr]
+
+jobs:
+  create_release_pr:
+    runs-on: ubuntu-latest
+    env:
+      BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      - name: Set up tools
+        run: dart pub get
+        working-directory: ${{ github.workspace }}/script/tool
+      # This step is to create a branch for batch release
+      # A branch may not be created if there is nothing to release.
+      # In that case, the workflow will exit and complete successfully.
+      - name: create batch release PR
+        run: |
+          git config --global user.name ${{ secrets.USER_NAME }}
+          git config --global user.email ${{ secrets.USER_EMAIL }}
+          dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }} --remote=origin
+      - name: Check if branch was created
+        id: check-branch-exists
+        uses: GuillaumeFalourd/branch-exists@v1.1
+        with:
+          branch: ${{ env.BRANCH_NAME }}
+
+      - name: Create Pull Request
+        if: steps.check-branch-exists.outputs.exists == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "[${{ github.event.client_payload.package }}] Batch release"
+          title: "[${{ github.event.client_payload.package }}] Batch release"
+          body: "This PR was created automatically to batch release the `${{ github.event.client_payload.package }}`."
+          branch: ${{ env.BRANCH_NAME }}
+          base: release
+
+
