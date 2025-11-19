@@ -30,8 +30,9 @@ Size calculateSizeOfDownScaledImage(
   double? maxHeight,
 ) {
   final double widthFactor = maxWidth != null ? imageSize.width / maxWidth : 1;
-  final double heightFactor =
-      maxHeight != null ? imageSize.height / maxHeight : 1;
+  final double heightFactor = maxHeight != null
+      ? imageSize.height / maxHeight
+      : 1;
   final double resizeFactor = max(widthFactor, heightFactor);
   return resizeFactor > 1 ? imageSize ~/ resizeFactor : imageSize;
 }

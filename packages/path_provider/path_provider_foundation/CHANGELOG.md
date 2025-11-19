@@ -3,6 +3,10 @@
 * Replaces Flutter-plugin-based implementation with direct FFI calls to
   Foundation.
 
+## 2.4.4
+
+* Updates to Pigeon 26.
+
 ## 2.4.3
 
 * Updates minimum supported version to iOS 13 and macOS 10.15.

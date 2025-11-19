@@ -1,3 +1,7 @@
+## 0.3.0+5
+
+* Updates to Pigeon 26.
+
 ## 0.3.0+4
 
 * Sets a maximum version on the `GoogleInteractiveMediaAds` dependency to avoid

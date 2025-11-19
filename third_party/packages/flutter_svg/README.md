@@ -98,11 +98,10 @@ final Widget svg = SvgPicture.asset(assetName);
 final Widget networkSvg = SvgPicture.network(
   'https://site-that-takes-a-while.com/image.svg',
   semanticsLabel: 'A shark?!',
-  placeholderBuilder:
-      (BuildContext context) => Container(
-        padding: const EdgeInsets.all(30.0),
-        child: const CircularProgressIndicator(),
-      ),
+  placeholderBuilder: (BuildContext context) => Container(
+    padding: const EdgeInsets.all(30.0),
+    child: const CircularProgressIndicator(),
+  ),
 );
 ```
 

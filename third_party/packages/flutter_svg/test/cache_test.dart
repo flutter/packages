@@ -32,12 +32,12 @@ void main() {
   test('LRU', () async {
     final Cache cache = Cache();
     cache.maximumSize = 2;
-    final Completer<ByteData> completerA =
-        Completer<ByteData>()..complete(ByteData(1));
-    final Completer<ByteData> completerB =
-        Completer<ByteData>()..complete(ByteData(2));
-    final Completer<ByteData> completerC =
-        Completer<ByteData>()..complete(ByteData(3));
+    final Completer<ByteData> completerA = Completer<ByteData>()
+      ..complete(ByteData(1));
+    final Completer<ByteData> completerB = Completer<ByteData>()
+      ..complete(ByteData(2));
+    final Completer<ByteData> completerC = Completer<ByteData>()
+      ..complete(ByteData(3));
 
     expect(cache.count, 0);
 

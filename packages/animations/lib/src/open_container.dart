@@ -190,7 +190,8 @@ class OpenContainer<T extends Object?> extends StatefulWidget {
   ///  * [Material.shape], which is used to implement this property.
   final ShapeBorder openShape;
 
-  /// Called when the container was popped and has returned to the closed state.
+  /// Called when the container is popped. This is called at the start of the
+  /// closing transition.
   ///
   /// The return value from the popped screen is passed to this function as an
   /// argument.
@@ -288,28 +289,29 @@ class OpenContainerState<T> extends State<OpenContainer<T?>> {
   Future<void> openContainer() async {
     final Color middleColor =
         widget.middleColor ?? Theme.of(context).canvasColor;
-    final T? data = await Navigator.of(
-      context,
-      rootNavigator: widget.useRootNavigator,
-    ).push(
-      _OpenContainerRoute<T>(
-        closedColor: widget.closedColor,
-        openColor: widget.openColor,
-        middleColor: middleColor,
-        closedElevation: widget.closedElevation,
-        openElevation: widget.openElevation,
-        closedShape: widget.closedShape,
-        openShape: widget.openShape,
-        closedBuilder: widget.closedBuilder,
-        openBuilder: widget.openBuilder,
-        hideableKey: _hideableKey,
-        closedBuilderKey: _closedBuilderKey,
-        transitionDuration: widget.transitionDuration,
-        transitionType: widget.transitionType,
-        useRootNavigator: widget.useRootNavigator,
-        routeSettings: widget.routeSettings,
-      ),
-    );
+    final T? data =
+        await Navigator.of(
+          context,
+          rootNavigator: widget.useRootNavigator,
+        ).push(
+          _OpenContainerRoute<T>(
+            closedColor: widget.closedColor,
+            openColor: widget.openColor,
+            middleColor: middleColor,
+            closedElevation: widget.closedElevation,
+            openElevation: widget.openElevation,
+            closedShape: widget.closedShape,
+            openShape: widget.openShape,
+            closedBuilder: widget.closedBuilder,
+            openBuilder: widget.openBuilder,
+            hideableKey: _hideableKey,
+            closedBuilderKey: _closedBuilderKey,
+            transitionDuration: widget.transitionDuration,
+            transitionType: widget.transitionType,
+            useRootNavigator: widget.useRootNavigator,
+            routeSettings: widget.routeSettings,
+          ),
+        );
     if (widget.onClosed != null) {
       widget.onClosed!(data);
     }
@@ -747,8 +749,9 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
           final Animation<double> curvedAnimation = CurvedAnimation(
             parent: animation,
             curve: Curves.fastOutSlowIn,
-            reverseCurve:
-                _transitionWasInterrupted ? null : Curves.fastOutSlowIn.flipped,
+            reverseCurve: _transitionWasInterrupted
+                ? null
+                : Curves.fastOutSlowIn.flipped,
           );
           TweenSequence<Color?>? colorTween;
           TweenSequence<double>? closedOpacityTween, openOpacityTween;
@@ -809,23 +812,20 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
                               height: _rectTween.begin!.height,
                               child:
                                   (hideableKey.currentState?.isInTree ?? false)
-                                      ? null
-                                      : FadeTransition(
-                                        opacity: closedOpacityTween!.animate(
-                                          animation,
-                                        ),
-                                        child: Builder(
-                                          key: closedBuilderKey,
-                                          builder: (BuildContext context) {
-                                            // Use dummy "open container" callback
-                                            // since we are in the process of opening.
-                                            return closedBuilder(
-                                              context,
-                                              () {},
-                                            );
-                                          },
-                                        ),
+                                  ? null
+                                  : FadeTransition(
+                                      opacity: closedOpacityTween!.animate(
+                                        animation,
                                       ),
+                                      child: Builder(
+                                        key: closedBuilderKey,
+                                        builder: (BuildContext context) {
+                                          // Use dummy "open container" callback
+                                          // since we are in the process of opening.
+                                          return closedBuilder(context, () {});
+                                        },
+                                      ),
+                                    ),
                             ),
                           ),
 

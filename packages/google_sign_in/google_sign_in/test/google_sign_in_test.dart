@@ -296,8 +296,8 @@ void main() {
         ),
       );
 
-      final Future<GoogleSignInAccount?>? signInFuture =
-          googleSignIn.attemptLightweightAuthentication();
+      final Future<GoogleSignInAccount?>? signInFuture = googleSignIn
+          .attemptLightweightAuthentication();
       expect(signInFuture, isNotNull);
       final GoogleSignInAccount? signIn = await signInFuture;
       expect(signIn?.displayName, defaultUser.displayName);
@@ -414,8 +414,8 @@ void main() {
 
       when(mockPlatform.attemptLightweightAuthentication(any)).thenReturn(null);
 
-      final Future<GoogleSignInAccount?>? signInFuture =
-          googleSignIn.attemptLightweightAuthentication();
+      final Future<GoogleSignInAccount?>? signInFuture = googleSignIn
+          .attemptLightweightAuthentication();
       expect(signInFuture, isNull);
     });
 
@@ -426,8 +426,8 @@ void main() {
         mockPlatform.attemptLightweightAuthentication(any),
       ).thenAnswer((_) async => null);
 
-      final Future<GoogleSignInAccount?>? signInFuture =
-          googleSignIn.attemptLightweightAuthentication();
+      final Future<GoogleSignInAccount?>? signInFuture = googleSignIn
+          .attemptLightweightAuthentication();
       expect(signInFuture, isNotNull);
       final GoogleSignInAccount? signIn = await signInFuture;
       expect(signIn, isNull);
@@ -513,8 +513,8 @@ void main() {
       ).thenAnswer((_) async => null);
 
       await googleSignIn.initialize();
-      final GoogleSignInAccount authentication =
-          await googleSignIn.authenticate();
+      final GoogleSignInAccount authentication = await googleSignIn
+          .authenticate();
       const List<String> scopes = <String>['scope1', 'scope2'];
       await authentication.authorizationClient.authorizationForScopes(scopes);
 
@@ -599,8 +599,8 @@ void main() {
       );
 
       await googleSignIn.initialize();
-      final GoogleSignInAccount authentication =
-          await googleSignIn.authenticate();
+      final GoogleSignInAccount authentication = await googleSignIn
+          .authenticate();
       const List<String> scopes = <String>['scope1', 'scope2'];
       await authentication.authorizationClient.authorizeScopes(scopes);
 
@@ -691,8 +691,8 @@ void main() {
       ).thenAnswer((_) async => null);
 
       await googleSignIn.initialize();
-      final GoogleSignInAccount authentication =
-          await googleSignIn.authenticate();
+      final GoogleSignInAccount authentication = await googleSignIn
+          .authenticate();
       const List<String> scopes = <String>['scope1', 'scope2'];
       await authentication.authorizationClient.authorizeServer(scopes);
 
