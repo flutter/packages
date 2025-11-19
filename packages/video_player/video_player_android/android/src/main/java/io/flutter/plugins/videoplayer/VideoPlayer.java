@@ -185,64 +185,53 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
       return;
     }
 
-    try {
+    // Get current tracks
+    Tracks tracks = exoPlayer.getCurrentTracks();
 
-      // Get current tracks
-      Tracks tracks = exoPlayer.getCurrentTracks();
-
-      if (groupIndex >= tracks.getGroups().size()) {
-        Log.w(
-            "VideoPlayer",
-            "Cannot select audio track: groupIndex "
-                + groupIndex
-                + " is out of bounds (available groups: "
-                + tracks.getGroups().size()
-                + ")");
-        return;
-      }
-
-      Tracks.Group group = tracks.getGroups().get((int) groupIndex);
-
-      // Verify it's an audio track and the track index is valid
-      if (group.getType() != C.TRACK_TYPE_AUDIO || (int) trackIndex >= group.length) {
-        if (group.getType() != C.TRACK_TYPE_AUDIO) {
-          Log.w(
-              "VideoPlayer",
-              "Cannot select audio track: group at index "
-                  + groupIndex
-                  + " is not an audio track (type: "
-                  + group.getType()
-                  + ")");
-        } else {
-          Log.w(
-              "VideoPlayer",
-              "Cannot select audio track: trackIndex "
-                  + trackIndex
-                  + " is out of bounds (available tracks in group: "
-                  + group.length
-                  + ")");
-        }
-        return;
-      }
-
-      // Get the track group and create a selection override
-      TrackGroup trackGroup = group.getMediaTrackGroup();
-      TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, (int) trackIndex);
-
-      // Apply the track selection override
-      trackSelector.setParameters(
-          trackSelector.buildUponParameters().setOverrideForType(override).build());
-
-    } catch (ArrayIndexOutOfBoundsException e) {
+    if (groupIndex < 0 || groupIndex >= tracks.getGroups().size()) {
       Log.w(
           "VideoPlayer",
-          "Cannot select audio track: invalid indices (groupIndex: "
+          "Cannot select audio track: groupIndex "
               + groupIndex
-              + ", trackIndex: "
-              + trackIndex
-              + "). "
-              + e.getMessage());
+              + " is out of bounds (available groups: "
+              + tracks.getGroups().size()
+              + ")");
+      return;
     }
+
+    Tracks.Group group = tracks.getGroups().get((int) groupIndex);
+
+    // Verify it's an audio track
+    if (group.getType() != C.TRACK_TYPE_AUDIO) {
+      Log.w(
+          "VideoPlayer",
+          "Cannot select audio track: group at index "
+              + groupIndex
+              + " is not an audio track (type: "
+              + group.getType()
+              + ")");
+      return;
+    }
+
+    // Verify the track index is valid
+    if (trackIndex < 0 || (int) trackIndex >= group.length) {
+      Log.w(
+          "VideoPlayer",
+          "Cannot select audio track: trackIndex "
+              + trackIndex
+              + " is out of bounds (available tracks in group: "
+              + group.length
+              + ")");
+      return;
+    }
+
+    // Get the track group and create a selection override
+    TrackGroup trackGroup = group.getMediaTrackGroup();
+    TrackSelectionOverride override = new TrackSelectionOverride(trackGroup, (int) trackIndex);
+
+    // Apply the track selection override
+    trackSelector.setParameters(
+        trackSelector.buildUponParameters().setOverrideForType(override).build());
   }
 
   public void dispose() {
