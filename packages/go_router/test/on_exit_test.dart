@@ -18,15 +18,13 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
@@ -59,15 +57,13 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
       ),
       GoRoute(
         path: '/1',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: page1),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: page1),
         onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
@@ -98,15 +94,13 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) async {
               return allow.future;
             },
@@ -147,15 +141,13 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
       ),
       GoRoute(
         path: '/1',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: page1),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: page1),
         onExit: (BuildContext context, GoRouterState state) async {
           return allow.future;
         },
@@ -195,9 +187,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
@@ -222,9 +213,8 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         onExit: (BuildContext context, GoRouterState state) async {
           return allow;
         },
@@ -252,9 +242,8 @@ void main() {
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: home),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: home),
             onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
@@ -286,15 +275,13 @@ void main() {
     final List<GoRoute> routes = <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) =>
-                DummyScreen(key: home),
+        builder: (BuildContext context, GoRouterState state) =>
+            DummyScreen(key: home),
         routes: <GoRoute>[
           GoRoute(
             path: '1',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    DummyScreen(key: page1),
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: page1),
             onExit: (BuildContext context, GoRouterState state) {
               onExitState1 = state;
               return true;
@@ -302,9 +289,8 @@ void main() {
             routes: <GoRoute>[
               GoRoute(
                 path: '2',
-                builder:
-                    (BuildContext context, GoRouterState state) =>
-                        DummyScreen(key: page2),
+                builder: (BuildContext context, GoRouterState state) =>
+                    DummyScreen(key: page2),
                 onExit: (BuildContext context, GoRouterState state) {
                   onExitState2 = state;
                   return true;
@@ -312,9 +298,8 @@ void main() {
                 routes: <GoRoute>[
                   GoRoute(
                     path: '3',
-                    builder:
-                        (BuildContext context, GoRouterState state) =>
-                            DummyScreen(key: page3),
+                    builder: (BuildContext context, GoRouterState state) =>
+                        DummyScreen(key: page3),
                     onExit: (BuildContext context, GoRouterState state) {
                       onExitState3 = state;
                       return true;
@@ -365,15 +350,13 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/route-0/:id0',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page0),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page0),
         ),
         GoRoute(
           path: '/route-1/:id1',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page1),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page1),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState1 = state;
             return true;
@@ -381,9 +364,8 @@ void main() {
         ),
         GoRoute(
           path: '/route-2/:id2',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page2),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page2),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState2 = state;
             return true;
@@ -449,9 +431,8 @@ void main() {
       final List<GoRoute> routes = <GoRoute>[
         GoRoute(
           path: '/route-0/:id0',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page0),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page0),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState0 = state;
             return true;
@@ -459,9 +440,8 @@ void main() {
         ),
         GoRoute(
           path: '/route-1/:id1',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page1),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page1),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState1 = state;
             return true;
@@ -469,9 +449,8 @@ void main() {
         ),
         GoRoute(
           path: '/route-2/:id2',
-          builder:
-              (BuildContext context, GoRouterState state) =>
-                  DummyScreen(key: page2),
+          builder: (BuildContext context, GoRouterState state) =>
+              DummyScreen(key: page2),
           onExit: (BuildContext context, GoRouterState state) {
             onExitState2 = state;
             return true;

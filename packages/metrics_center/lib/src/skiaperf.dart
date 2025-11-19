@@ -99,21 +99,21 @@ class SkiaPerfPoint extends MetricPoint {
 
     final String subResult = p.tags[kSubResultKey] ?? kSkiaPerfValueKey;
 
-    final Map<String, String> options =
-        <String, String>{}..addEntries(
-          p.tags.entries.where(
-            (MapEntry<String, dynamic> entry) =>
-                entry.key != kGithubRepoKey &&
-                entry.key != kGitRevisionKey &&
-                entry.key != kNameKey &&
-                entry.key != kSubResultKey &&
-                // https://github.com/google/benchmark automatically generates a
-                // 'date' field. If it's included in options, the Skia perf won't
-                // be able to connect different points in a single trace because
-                // the date is always different.
-                entry.key != 'date',
-          ),
-        );
+    final Map<String, String> options = <String, String>{}
+      ..addEntries(
+        p.tags.entries.where(
+          (MapEntry<String, dynamic> entry) =>
+              entry.key != kGithubRepoKey &&
+              entry.key != kGitRevisionKey &&
+              entry.key != kNameKey &&
+              entry.key != kSubResultKey &&
+              // https://github.com/google/benchmark automatically generates a
+              // 'date' field. If it's included in options, the Skia perf won't
+              // be able to connect different points in a single trace because
+              // the date is always different.
+              entry.key != 'date',
+        ),
+      );
 
     return SkiaPerfPoint._(
       githubRepo,

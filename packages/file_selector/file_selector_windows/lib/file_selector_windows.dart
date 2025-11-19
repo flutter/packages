@@ -3,12 +3,17 @@
 // found in the LICENSE file.
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'src/messages.g.dart';
 
 /// An implementation of [FileSelectorPlatform] for Windows.
 class FileSelectorWindows extends FileSelectorPlatform {
-  final FileSelectorApi _hostApi = FileSelectorApi();
+  /// Creates a new plugin implementation instance.
+  FileSelectorWindows({@visibleForTesting FileSelectorApi? api})
+    : _hostApi = api ?? FileSelectorApi();
+
+  final FileSelectorApi _hostApi;
 
   /// Registers the Windows implementation.
   static void registerWith() {
@@ -83,10 +88,11 @@ class FileSelectorWindows extends FileSelectorPlatform {
     return result.paths.isEmpty
         ? null
         : FileSaveLocation(
-          result.paths.first,
-          activeFilter:
-              groupIndex == null ? null : acceptedTypeGroups?[groupIndex],
-        );
+            result.paths.first,
+            activeFilter: groupIndex == null
+                ? null
+                : acceptedTypeGroups?[groupIndex],
+          );
   }
 
   @override

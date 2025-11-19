@@ -40,8 +40,7 @@ class BookstoreAuthScope extends InheritedNotifier<BookstoreAuth> {
   });
 
   /// Gets the [BookstoreAuth] above the context.
-  static BookstoreAuth of(BuildContext context) =>
-      context
-          .dependOnInheritedWidgetOfExactType<BookstoreAuthScope>()!
-          .notifier!;
+  static BookstoreAuth of(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<BookstoreAuthScope>()!
+      .notifier!;
 }

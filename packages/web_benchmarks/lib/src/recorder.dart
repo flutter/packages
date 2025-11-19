@@ -405,8 +405,10 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   @override
   Future<Profile> run() async {
     _runCompleter = Completer<void>();
-    final Profile localProfile =
-        profile = Profile(name: name, useCustomWarmUp: useCustomWarmUp);
+    final Profile localProfile = profile = Profile(
+      name: name,
+      useCustomWarmUp: useCustomWarmUp,
+    );
     final _RecordingWidgetsBinding binding =
         _RecordingWidgetsBinding.ensureInitialized();
     final Widget widget = createWidget();

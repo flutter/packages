@@ -112,8 +112,9 @@ class _MyAppState extends State<MyApp> {
           .onCameraClosing(cameraId)
           .listen(_onCameraClosing);
 
-      final Future<CameraInitializedEvent> initialized =
-          CameraPlatform.instance.onCameraInitialized(cameraId).first;
+      final Future<CameraInitializedEvent> initialized = CameraPlatform.instance
+          .onCameraInitialized(cameraId)
+          .first;
 
       await CameraPlatform.instance.initializeCamera(cameraId);
 
@@ -347,10 +348,9 @@ class _MyAppState extends State<MyApp> {
                   ),
                   const SizedBox(width: 20),
                   ElevatedButton(
-                    onPressed:
-                        _initialized
-                            ? _disposeCurrentCamera
-                            : _initializeCamera,
+                    onPressed: _initialized
+                        ? _disposeCurrentCamera
+                        : _initializeCamera,
                     child: Text(
                       _initialized ? 'Dispose camera' : 'Create camera',
                     ),
