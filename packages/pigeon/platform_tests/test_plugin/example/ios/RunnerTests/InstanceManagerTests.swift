@@ -156,6 +156,7 @@ final class InstanceManagerTests: XCTestCase {
       to: object!, identifier: 0, delegate: finalizerDelegate)
 
     XCTAssertNoThrow(object = nil)
+    XCTAssertTrue(finalizerDelegate.deinitCalled)
   }
 }
 
@@ -172,7 +173,10 @@ class TestFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
 }
 
 class ThrowingFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
+  var deinitCalled = false
+
   func onDeinit(identifier: Int64) throws {
+    deinitCalled = true
     fatalError()
   }
 }
