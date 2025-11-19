@@ -148,14 +148,13 @@ final class InstanceManagerTests: XCTestCase {
       objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey))
   }
 
-  func testSomething() {
+  func testExceptionInDeinitDoesNotCauseCrash() {
     let finalizerDelegate = ThrowingFinalizerDelegate()
 
     var object: NSObject? = NSObject()
     ProxyApiTestsPigeonInternalFinalizer.attach(
       to: object!, identifier: 0, delegate: finalizerDelegate)
 
-    //object = nil
     XCTAssertNoThrow(object = nil)
   }
 }
