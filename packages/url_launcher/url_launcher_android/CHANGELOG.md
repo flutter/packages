@@ -1,3 +1,7 @@
+## 6.3.26
+
+* Bumps androidx.core:core from 1.13.1 to 1.17.0.
+
 ## 6.3.25
 
 * Updates to Pigeon 26.
