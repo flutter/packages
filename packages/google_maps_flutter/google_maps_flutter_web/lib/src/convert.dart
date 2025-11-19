@@ -132,7 +132,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.mapId = configuration.mapId;
 
   // Convert the color scheme, if any, and set it
-  final gmaps.ColorScheme? jsColorScheme = _toJsColorScheme(
+  final gmaps.ColorScheme? jsColorScheme = _gmapTypeColorSchemeForPluginColor(
     configuration.colorScheme,
   );
   if (jsColorScheme != null) {
@@ -143,7 +143,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 }
 
 /// Converts a [MapColorScheme] into a [gmaps.ColorScheme]
-gmaps.ColorScheme? _toJsColorScheme(MapColorScheme? scheme) {
+gmaps.ColorScheme? _gmapTypeColorSchemeForPluginColor(MapColorScheme? scheme) {
   // Guard clause for null
   if (scheme == null) {
     return null;
