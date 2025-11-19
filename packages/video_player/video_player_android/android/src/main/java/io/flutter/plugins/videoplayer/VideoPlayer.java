@@ -204,7 +204,6 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
       Tracks.Group group = tracks.getGroups().get((int) groupIndex);
 
       // Verify it's an audio track and the track index is valid
-      if (group.getType() != C.TRACK_TYPE_AUDIO || (int) trackIndex >= group.length) {
         if (group.getType() != C.TRACK_TYPE_AUDIO) {
           Log.w(
               "VideoPlayer",
@@ -213,7 +212,9 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
                   + " is not an audio track (type: "
                   + group.getType()
                   + ")");
-        } else {
+           return;
+        }
+        if ((int) trackIndex >= group.length) {
           Log.w(
               "VideoPlayer",
               "Cannot select audio track: trackIndex "
@@ -221,8 +222,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
                   + " is out of bounds (available tracks in group: "
                   + group.length
                   + ")");
-        }
-        return;
+          return;
       }
 
       // Get the track group and create a selection override
