@@ -137,22 +137,22 @@ final class PercentileMetricComputation extends BenchmarkMetricComputation {
       ];
 
   /// The percentile values as doubles computed for each benchmark metric.
-  static List<double> percentilesAsDoubles =
-      PercentileMetricComputation.values
-          .map((PercentileMetricComputation value) => value.percentile)
-          .toList();
+  static List<double> percentilesAsDoubles = PercentileMetricComputation.values
+      .map((PercentileMetricComputation value) => value.percentile)
+      .toList();
 }
 
 /// The list of expected benchmark metrics for the current compilation mode, as
 /// determined by the value of [useWasm].
-List<BenchmarkMetric> expectedBenchmarkMetrics({required bool useWasm}) {
+List<BenchmarkMetric> expectedBenchmarkMetrics({
+  @Deprecated(
+    'This parameter is unused and will be removed in a future release.',
+  )
+  bool? useWasm,
+}) {
   return <BenchmarkMetric>[
-    // The skwasm renderer doesn't have preroll or apply frame steps in its
-    // rendering.
-    if (!useWasm) ...<BenchmarkMetric>[
-      BenchmarkMetric.prerollFrame,
-      BenchmarkMetric.applyFrame,
-    ],
+    BenchmarkMetric.prerollFrame,
+    BenchmarkMetric.applyFrame,
     BenchmarkMetric.drawFrame,
     BenchmarkMetric.flutterFrameTotalTime,
     BenchmarkMetric.flutterFrameBuildTime,

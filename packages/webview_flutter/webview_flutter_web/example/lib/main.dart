@@ -57,13 +57,12 @@ class _SampleMenu extends StatelessWidget {
             _onDoPostRequest(controller);
         }
       },
-      itemBuilder:
-          (BuildContext context) => <PopupMenuItem<_MenuOptions>>[
-            const PopupMenuItem<_MenuOptions>(
-              value: _MenuOptions.doPostRequest,
-              child: Text('Post Request'),
-            ),
-          ],
+      itemBuilder: (BuildContext context) => <PopupMenuItem<_MenuOptions>>[
+        const PopupMenuItem<_MenuOptions>(
+          value: _MenuOptions.doPostRequest,
+          child: Text('Post Request'),
+        ),
+      ],
     );
   }
 

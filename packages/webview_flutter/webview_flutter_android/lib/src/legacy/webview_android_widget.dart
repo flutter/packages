@@ -572,7 +572,7 @@ class WebViewAndroidJavaScriptChannel
   WebViewAndroidJavaScriptChannel({
     required super.channelName,
     required this.javascriptChannelRegistry,
-  }) : super(
+  }) : super.pigeon_new(
          postMessage: withWeakReferenceTo(javascriptChannelRegistry, (
            WeakReference<JavascriptChannelRegistry> weakReference,
          ) {

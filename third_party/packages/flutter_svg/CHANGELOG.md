@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 2.2.2
 
 * Fixes typo of `allowDrawingOutsideViewBox` in doc comments.

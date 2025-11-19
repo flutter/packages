@@ -114,11 +114,10 @@ Future<void> _validateGeneratedFiles(
     repositoryRoot: repositoryRoot,
     relativePigeonPath: relativePigeonPath,
   );
-  final Set<String> extensions =
-      languagesToValidate
-          .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
-          .flattened
-          .toSet();
+  final Set<String> extensions = languagesToValidate
+      .map((GeneratorLanguage lang) => _extensionsForLanguage(lang))
+      .flattened
+      .toSet();
   final Iterable<String> filteredFiles = modifiedFiles.where(
     (String path) =>
         extensions.contains(p.extension(path).replaceFirst('.', '')),

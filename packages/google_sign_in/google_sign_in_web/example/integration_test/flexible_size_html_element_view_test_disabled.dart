@@ -161,8 +161,9 @@ Future<Element> pumpResizableWidget(
   await tester.pump();
 
   // Return the element we just pumped
-  final Iterable<Element> elements =
-      find.byKey(Key('resizable_from_js_$widgetFactoryNumber')).evaluate();
+  final Iterable<Element> elements = find
+      .byKey(Key('resizable_from_js_$widgetFactoryNumber'))
+      .evaluate();
   expect(elements, hasLength(1));
   return elements.first;
 }

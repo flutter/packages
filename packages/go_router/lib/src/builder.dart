@@ -286,36 +286,37 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       navigatorKey: navigatorKey,
       match: match,
       routeMatchList: widget.matchList,
-      navigatorBuilder: (
-        GlobalKey<NavigatorState> navigatorKey,
-        ShellRouteMatch match,
-        RouteMatchList matchList,
-        List<NavigatorObserver>? observers,
-        String? restorationScopeId,
-      ) {
-        return PopScope(
-          // Prevent ShellRoute from being popped, for example
-          // by an iOS back gesture, when the route has active sub-routes.
-          // TODO(LukasMirbt): Remove when minimum flutter version includes
-          // https://github.com/flutter/flutter/pull/152330.
-          canPop: match.matches.length == 1,
-          child: _CustomNavigator(
-            // The state needs to persist across rebuild.
-            key: GlobalObjectKey(navigatorKey.hashCode),
-            navigatorRestorationId: restorationScopeId,
-            navigatorKey: navigatorKey,
-            matches: match.matches,
-            matchList: matchList,
-            configuration: widget.configuration,
-            observers: observers ?? const <NavigatorObserver>[],
-            onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-            // This is used to recursively build pages under this shell route.
-            errorBuilder: widget.errorBuilder,
-            errorPageBuilder: widget.errorPageBuilder,
-            requestFocus: widget.requestFocus,
-          ),
-        );
-      },
+      navigatorBuilder:
+          (
+            GlobalKey<NavigatorState> navigatorKey,
+            ShellRouteMatch match,
+            RouteMatchList matchList,
+            List<NavigatorObserver>? observers,
+            String? restorationScopeId,
+          ) {
+            return PopScope(
+              // Prevent ShellRoute from being popped, for example
+              // by an iOS back gesture, when the route has active sub-routes.
+              // TODO(LukasMirbt): Remove when minimum flutter version includes
+              // https://github.com/flutter/flutter/pull/152330.
+              canPop: match.matches.length == 1,
+              child: _CustomNavigator(
+                // The state needs to persist across rebuild.
+                key: GlobalObjectKey(navigatorKey.hashCode),
+                navigatorRestorationId: restorationScopeId,
+                navigatorKey: navigatorKey,
+                matches: match.matches,
+                matchList: matchList,
+                configuration: widget.configuration,
+                observers: observers ?? const <NavigatorObserver>[],
+                onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+                // This is used to recursively build pages under this shell route.
+                errorBuilder: widget.errorBuilder,
+                errorPageBuilder: widget.errorPageBuilder,
+                requestFocus: widget.requestFocus,
+              ),
+            );
+          },
     );
     final Page<Object?>? page = match.route.buildPage(
       context,
@@ -353,13 +354,13 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       if (elem != null && isMaterialApp(elem)) {
         log('Using MaterialApp configuration');
         _pageBuilderForAppType = pageBuilderForMaterialApp;
-        _errorBuilderForAppType =
-            (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            MaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
         log('Using CupertinoApp configuration');
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
-        _errorBuilderForAppType =
-            (BuildContext c, GoRouterState s) => CupertinoErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            CupertinoErrorScreen(s.error);
       } else {
         log('Using WidgetsApp configuration');
         _pageBuilderForAppType =
@@ -376,8 +377,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
               restorationId: restorationId,
               child: child,
             );
-        _errorBuilderForAppType =
-            (BuildContext c, GoRouterState s) => ErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            ErrorScreen(s.error);
       }
     }
 
@@ -433,12 +434,12 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     return widget.errorPageBuilder != null
         ? widget.errorPageBuilder!(context, state)
         : _buildPlatformAdapterPage(
-          context,
-          state,
-          errorBuilder != null
-              ? errorBuilder(context, state)
-              : _errorBuilderForAppType!(context, state),
-        );
+            context,
+            state,
+            errorBuilder != null
+                ? errorBuilder(context, state)
+                : _errorBuilderForAppType!(context, state),
+          );
   }
 
   bool _handlePopPage(Route<Object?> route, Object? result) {
