@@ -225,10 +225,16 @@ struct NIAllTypes: Hashable {
   var doubleList: [Double]
   var boolList: [Bool]
   var enumList: [NIAnEnum]
+  var objectList: [Any]
+  var listList: [[Any?]]
+  var mapList: [[AnyHashable?: Any?]]
   var map: [AnyHashable?: Any?]
   var stringMap: [String: String]
   var intMap: [Int64: Int64]
   var enumMap: [NIAnEnum: NIAnEnum]
+  var objectMap: [AnyHashable: Any]
+  var listMap: [Int64: [Any?]]
+  var mapMap: [Int64: [AnyHashable?: Any?]]
 
   static func fromList(_ pigeonVar_list: [Any?]) -> NIAllTypes? {
     let aBool = pigeonVar_list[0] as! Bool
@@ -245,10 +251,16 @@ struct NIAllTypes: Hashable {
     let doubleList = pigeonVar_list[11] as! [Double]
     let boolList = pigeonVar_list[12] as! [Bool]
     let enumList = pigeonVar_list[13] as! [NIAnEnum]
-    let map = pigeonVar_list[14] as! [AnyHashable?: Any?]
-    let stringMap = pigeonVar_list[15] as! [String: String]
-    let intMap = pigeonVar_list[16] as! [Int64: Int64]
-    let enumMap = pigeonVar_list[17] as? [NIAnEnum: NIAnEnum]
+    let objectList = pigeonVar_list[14] as! [Any]
+    let listList = pigeonVar_list[15] as! [[Any?]]
+    let mapList = pigeonVar_list[16] as! [[AnyHashable?: Any?]]
+    let map = pigeonVar_list[17] as! [AnyHashable?: Any?]
+    let stringMap = pigeonVar_list[18] as! [String: String]
+    let intMap = pigeonVar_list[19] as! [Int64: Int64]
+    let enumMap = pigeonVar_list[20] as? [NIAnEnum: NIAnEnum]
+    let objectMap = pigeonVar_list[21] as! [AnyHashable: Any]
+    let listMap = pigeonVar_list[22] as! [Int64: [Any?]]
+    let mapMap = pigeonVar_list[23] as! [Int64: [AnyHashable?: Any?]]
 
     return NIAllTypes(
       aBool: aBool,
@@ -265,10 +277,16 @@ struct NIAllTypes: Hashable {
       doubleList: doubleList,
       boolList: boolList,
       enumList: enumList,
+      objectList: objectList,
+      listList: listList,
+      mapList: mapList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
-      enumMap: enumMap!
+      enumMap: enumMap!,
+      objectMap: objectMap,
+      listMap: listMap,
+      mapMap: mapMap
     )
   }
   func toList() -> [Any?] {
@@ -287,10 +305,16 @@ struct NIAllTypes: Hashable {
       doubleList,
       boolList,
       enumList,
+      objectList,
+      listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
+      objectMap,
+      listMap,
+      mapMap,
     ]
   }
   static func == (lhs: NIAllTypes, rhs: NIAllTypes) -> Bool {
@@ -321,10 +345,16 @@ struct NIAllTypes: Hashable {
     doubleList: [NSObject],
     boolList: [NSObject],
     enumList: [NSObject],
+    objectList: [NSObject],
+    listList: [NSObject],
+    mapList: [NSObject],
     map: [NSObject: NSObject],
     stringMap: [NSObject: NSObject],
     intMap: [NSObject: NSObject],
-    enumMap: [NSObject: NSObject]
+    enumMap: [NSObject: NSObject],
+    objectMap: [NSObject: NSObject],
+    listMap: [NSObject: NSObject],
+    mapMap: [NSObject: NSObject]
   ) {
     self.aBool = aBool
     self.anInt = anInt
@@ -340,10 +370,16 @@ struct NIAllTypes: Hashable {
     self.doubleList = doubleList
     self.boolList = boolList
     self.enumList = enumList
+    self.objectList = objectList
+    self.listList = listList
+    self.mapList = mapList
     self.map = map
     self.stringMap = stringMap
     self.intMap = intMap
     self.enumMap = enumMap
+    self.objectMap = objectMap
+    self.listMap = listMap
+    self.mapMap = mapMap
   }
   @objc var aBool: Bool
   @objc var anInt: Int64
@@ -359,10 +395,16 @@ struct NIAllTypes: Hashable {
   @objc var doubleList: [NSObject]
   @objc var boolList: [NSObject]
   @objc var enumList: [NSObject]
+  @objc var objectList: [NSObject]
+  @objc var listList: [NSObject]
+  @objc var mapList: [NSObject]
   @objc var map: [NSObject: NSObject]
   @objc var stringMap: [NSObject: NSObject]
   @objc var intMap: [NSObject: NSObject]
   @objc var enumMap: [NSObject: NSObject]
+  @objc var objectMap: [NSObject: NSObject]
+  @objc var listMap: [NSObject: NSObject]
+  @objc var mapMap: [NSObject: NSObject]
 
   static func fromSwift(_ pigeonVar_Class: NIAllTypes?) -> NIAllTypesBridge? {
     if isNullish(pigeonVar_Class) {
@@ -383,11 +425,18 @@ struct NIAllTypes: Hashable {
       doubleList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.doubleList) as! [NSObject],
       boolList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.boolList) as! [NSObject],
       enumList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumList) as! [NSObject],
+      objectList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.objectList) as! [NSObject],
+      listList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.listList) as! [NSObject],
+      mapList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.mapList) as! [NSObject],
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map) as! [NSObject: NSObject],
       stringMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringMap)
         as! [NSObject: NSObject],
       intMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intMap) as! [NSObject: NSObject],
       enumMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumMap) as! [NSObject: NSObject],
+      objectMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.objectMap)
+        as! [NSObject: NSObject],
+      listMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.listMap) as! [NSObject: NSObject],
+      mapMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.mapMap) as! [NSObject: NSObject],
     )
   }
   func toSwift() -> NIAllTypes {
@@ -406,10 +455,17 @@ struct NIAllTypes: Hashable {
       doubleList: _PigeonFfiCodec.readValue(value: doubleList as NSObject) as! [Double],
       boolList: _PigeonFfiCodec.readValue(value: boolList as NSObject) as! [Bool],
       enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject) as! [NIAnEnum],
+      objectList: _PigeonFfiCodec.readValue(value: objectList as NSObject) as! [Any],
+      listList: _PigeonFfiCodec.readValue(value: listList as NSObject) as! [[Any?]],
+      mapList: _PigeonFfiCodec.readValue(value: mapList as NSObject) as! [[AnyHashable?: Any?]],
       map: _PigeonFfiCodec.readValue(value: map as NSObject) as! [AnyHashable?: Any?],
       stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject) as! [String: String],
       intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject) as! [Int64: Int64],
       enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject) as! [NIAnEnum: NIAnEnum],
+      objectMap: _PigeonFfiCodec.readValue(value: objectMap as NSObject) as! [AnyHashable: Any],
+      listMap: _PigeonFfiCodec.readValue(value: listMap as NSObject) as! [Int64: [Any?]],
+      mapMap: _PigeonFfiCodec.readValue(value: mapMap as NSObject)
+        as! [Int64: [AnyHashable?: Any?]],
     )
   }
 }
@@ -435,10 +491,16 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   var doubleList: [Double?]? = nil
   var boolList: [Bool?]? = nil
   var enumList: [NIAnEnum?]? = nil
+  var objectList: [Any?]? = nil
+  var listList: [[Any?]?]? = nil
+  var mapList: [[AnyHashable?: Any?]?]? = nil
   var map: [AnyHashable?: Any?]? = nil
   var stringMap: [String?: String?]? = nil
   var intMap: [Int64?: Int64?]? = nil
   var enumMap: [NIAnEnum?: NIAnEnum?]? = nil
+  var objectMap: [AnyHashable?: Any?]? = nil
+  var listMap: [Int64?: [Any?]?]? = nil
+  var mapMap: [Int64?: [AnyHashable?: Any?]?]? = nil
 
   static func fromList(_ pigeonVar_list: [Any?]) -> NIAllNullableTypesWithoutRecursion? {
     let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
@@ -455,10 +517,16 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     let doubleList: [Double?]? = nilOrValue(pigeonVar_list[11])
     let boolList: [Bool?]? = nilOrValue(pigeonVar_list[12])
     let enumList: [NIAnEnum?]? = nilOrValue(pigeonVar_list[13])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[14])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[15])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[16])
-    let enumMap: [NIAnEnum?: NIAnEnum?]? = pigeonVar_list[17] as? [NIAnEnum?: NIAnEnum?]
+    let objectList: [Any?]? = nilOrValue(pigeonVar_list[14])
+    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[15])
+    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[16])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[17])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[18])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[19])
+    let enumMap: [NIAnEnum?: NIAnEnum?]? = pigeonVar_list[20] as? [NIAnEnum?: NIAnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[21])
+    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[22])
+    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[23])
 
     return NIAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
@@ -475,10 +543,16 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       doubleList: doubleList,
       boolList: boolList,
       enumList: enumList,
+      objectList: objectList,
+      listList: listList,
+      mapList: mapList,
       map: map,
       stringMap: stringMap,
       intMap: intMap,
-      enumMap: enumMap
+      enumMap: enumMap,
+      objectMap: objectMap,
+      listMap: listMap,
+      mapMap: mapMap
     )
   }
   func toList() -> [Any?] {
@@ -497,10 +571,16 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       doubleList,
       boolList,
       enumList,
+      objectList,
+      listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
+      objectMap,
+      listMap,
+      mapMap,
     ]
   }
   static func == (lhs: NIAllNullableTypesWithoutRecursion, rhs: NIAllNullableTypesWithoutRecursion)
@@ -536,10 +616,16 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     doubleList: [NSObject]? = nil,
     boolList: [NSObject]? = nil,
     enumList: [NSObject]? = nil,
+    objectList: [NSObject]? = nil,
+    listList: [NSObject]? = nil,
+    mapList: [NSObject]? = nil,
     map: [NSObject: NSObject]? = nil,
     stringMap: [NSObject: NSObject]? = nil,
     intMap: [NSObject: NSObject]? = nil,
-    enumMap: [NSObject: NSObject]? = nil
+    enumMap: [NSObject: NSObject]? = nil,
+    objectMap: [NSObject: NSObject]? = nil,
+    listMap: [NSObject: NSObject]? = nil,
+    mapMap: [NSObject: NSObject]? = nil
   ) {
     self.aNullableBool = aNullableBool
     self.aNullableInt = aNullableInt
@@ -555,10 +641,16 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     self.doubleList = doubleList
     self.boolList = boolList
     self.enumList = enumList
+    self.objectList = objectList
+    self.listList = listList
+    self.mapList = mapList
     self.map = map
     self.stringMap = stringMap
     self.intMap = intMap
     self.enumMap = enumMap
+    self.objectMap = objectMap
+    self.listMap = listMap
+    self.mapMap = mapMap
   }
   @objc var aNullableBool: NSNumber? = nil
   @objc var aNullableInt: NSNumber? = nil
@@ -574,10 +666,16 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   @objc var doubleList: [NSObject]? = nil
   @objc var boolList: [NSObject]? = nil
   @objc var enumList: [NSObject]? = nil
+  @objc var objectList: [NSObject]? = nil
+  @objc var listList: [NSObject]? = nil
+  @objc var mapList: [NSObject]? = nil
   @objc var map: [NSObject: NSObject]? = nil
   @objc var stringMap: [NSObject: NSObject]? = nil
   @objc var intMap: [NSObject: NSObject]? = nil
   @objc var enumMap: [NSObject: NSObject]? = nil
+  @objc var objectMap: [NSObject: NSObject]? = nil
+  @objc var listMap: [NSObject: NSObject]? = nil
+  @objc var mapMap: [NSObject: NSObject]? = nil
 
   static func fromSwift(_ pigeonVar_Class: NIAllNullableTypesWithoutRecursion?)
     -> NIAllNullableTypesWithoutRecursionBridge?
@@ -606,11 +704,18 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       doubleList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.doubleList) as? [NSObject],
       boolList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.boolList) as? [NSObject],
       enumList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumList) as? [NSObject],
+      objectList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.objectList) as? [NSObject],
+      listList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.listList) as? [NSObject],
+      mapList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.mapList) as? [NSObject],
       map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map) as? [NSObject: NSObject],
       stringMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringMap)
         as? [NSObject: NSObject],
       intMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intMap) as? [NSObject: NSObject],
       enumMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumMap) as? [NSObject: NSObject],
+      objectMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.objectMap)
+        as? [NSObject: NSObject],
+      listMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.listMap) as? [NSObject: NSObject],
+      mapMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.mapMap) as? [NSObject: NSObject],
     )
   }
   func toSwift() -> NIAllNullableTypesWithoutRecursion {
@@ -631,10 +736,17 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       doubleList: _PigeonFfiCodec.readValue(value: doubleList as NSObject?) as? [Double?],
       boolList: _PigeonFfiCodec.readValue(value: boolList as NSObject?) as? [Bool?],
       enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject?) as? [NIAnEnum?],
+      objectList: _PigeonFfiCodec.readValue(value: objectList as NSObject?) as? [Any?],
+      listList: _PigeonFfiCodec.readValue(value: listList as NSObject?) as? [[Any?]?],
+      mapList: _PigeonFfiCodec.readValue(value: mapList as NSObject?) as? [[AnyHashable?: Any?]?],
       map: _PigeonFfiCodec.readValue(value: map as NSObject?) as? [AnyHashable?: Any?],
       stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject?) as? [String?: String?],
       intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject?) as? [Int64?: Int64?],
       enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject?) as? [NIAnEnum?: NIAnEnum?],
+      objectMap: _PigeonFfiCodec.readValue(value: objectMap as NSObject?) as? [AnyHashable?: Any?],
+      listMap: _PigeonFfiCodec.readValue(value: listMap as NSObject?) as? [Int64?: [Any?]?],
+      mapMap: _PigeonFfiCodec.readValue(value: mapMap as NSObject?)
+        as? [Int64?: [AnyHashable?: Any?]?],
     )
   }
 }

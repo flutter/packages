@@ -51,18 +51,18 @@ class NIAllTypes {
     required this.doubleList,
     required this.boolList,
     required this.enumList,
-    // required this.objectList,
-    // required this.listList,
-    // required this.mapList,
+    required this.objectList,
+    required this.listList,
+    required this.mapList,
 
     // Maps
     required this.map,
     required this.stringMap,
     required this.intMap,
     required this.enumMap,
-    // required this.objectMap,
-    // required this.listMap,
-    // required this.mapMap,
+    required this.objectMap,
+    required this.listMap,
+    required this.mapMap,
   });
 
   bool aBool;
@@ -85,18 +85,18 @@ class NIAllTypes {
   List<double> doubleList;
   List<bool> boolList;
   List<NIAnEnum> enumList;
-  // List<Object> objectList;
-  // List<List<Object?>> listList;
-  // List<Map<Object?, Object?>> mapList;
+  List<Object> objectList;
+  List<List<Object?>> listList;
+  List<Map<Object?, Object?>> mapList;
 
   // Maps
   Map map;
   Map<String, String> stringMap;
   Map<int, int> intMap;
   Map<NIAnEnum, NIAnEnum> enumMap;
-  // Map<Object, Object> objectMap;
-  // Map<int, List<Object?>> listMap;
-  // Map<int, Map<Object?, Object?>> mapMap;
+  Map<Object, Object> objectMap;
+  Map<int, List<Object?>> listMap;
+  Map<int, Map<Object?, Object?>> mapMap;
 }
 
 /// A class containing all supported nullable types.
@@ -206,18 +206,18 @@ class NIAllNullableTypesWithoutRecursion {
     this.doubleList,
     this.boolList,
     this.enumList,
-    //     this.objectList,
-    //     this.listList,
-    //     this.mapList,
+    this.objectList,
+    this.listList,
+    this.mapList,
 
     //     // Maps
     this.map,
     this.stringMap,
     this.intMap,
     this.enumMap,
-    //     this.objectMap,
-    //     this.listMap,
-    //     this.mapMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
   );
 
   bool? aNullableBool;
@@ -240,18 +240,18 @@ class NIAllNullableTypesWithoutRecursion {
   List<double?>? doubleList;
   List<bool?>? boolList;
   List<NIAnEnum?>? enumList;
-  //   List<Object?>? objectList;
-  //   List<List<Object?>?>? listList;
-  //   List<Map<Object?, Object?>?>? mapList;
+  List<Object?>? objectList;
+  List<List<Object?>?>? listList;
+  List<Map<Object?, Object?>?>? mapList;
 
   //   // Maps
   Map? map;
   Map<String?, String?>? stringMap;
   Map<int?, int?>? intMap;
   Map<NIAnEnum?, NIAnEnum?>? enumMap;
-  //   Map<Object?, Object?>? objectMap;
-  //   Map<int?, List<Object?>?>? listMap;
-  //   Map<int?, Map<Object?, Object?>?>? mapMap;
+  Map<Object?, Object?>? objectMap;
+  Map<int?, List<Object?>?>? listMap;
+  Map<int?, Map<Object?, Object?>?>? mapMap;
 }
 
 /// A class for testing nested class handling.
@@ -679,7 +679,7 @@ abstract class NIHostIntegrationCoreApi {
   // /// Returns passed in int asynchronously.
   // @async
   // @ObjCSelector('echoAsyncInt:')
-  // @SwiftFunction('echoAsync(_:)')
+  // // @SwiftFunction('echoAsync(_:)')
   // int echoAsyncInt(int anInt);
 
   // /// Returns passed in double asynchronously.

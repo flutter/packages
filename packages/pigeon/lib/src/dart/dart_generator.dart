@@ -2771,15 +2771,18 @@ case const (${enumDefinition.name}):
       //     list[i] = value.as(NSDoubleArray.type)[i];
       //   }
       //   return list;
-    } else if (value is NSArray) {
+    } else if (value is NSArray || NSArray.isInstance(value)) {
+      final NSArray array = NSArray.castFrom(value);
       final List<Object?> res = <Object?>[];
-      for (int i = 0; i < value.length; i++) {
-        res.add(readValue(value[i]));
+      for (int i = 0; i < array.length; i++) {
+        res.add(readValue(array[i]));
       }
       return res;
-    } else if (value is NSDictionary) {
+    } else if (value is NSDictionary || NSDictionary.isInstance(value)) {
+      final NSDictionary dictionary = NSDictionary.castFrom(value);
       final Map<Object?, Object?> res = <Object?, Object?>{};
-      for (final MapEntry<NSCopying?, ObjCObjectBase?> entry in value.entries) {
+      for (final MapEntry<NSCopying?, ObjCObjectBase?> entry
+          in dictionary.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;

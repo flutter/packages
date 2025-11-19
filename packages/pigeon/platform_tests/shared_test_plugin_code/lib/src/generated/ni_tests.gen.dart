@@ -270,6 +270,44 @@ class _PigeonJniCodec {
         res.add(writeValue(entry));
       }
       return res as T;
+    } else if (value is List<List<Object?>> &&
+        isTypeOrNullableType<JList<JList<JObject?>>>(T)) {
+      final JList<JList<JObject?>> res = JList<JList<JObject?>>.array(
+        JList.type(JObject.nullableType),
+      );
+      for (final List<Object?> entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<List<Object?>?> &&
+        isTypeOrNullableType<JList<JList<JObject?>?>>(T)) {
+      final JList<JList<JObject?>?> res = JList<JList<JObject?>?>.array(
+        JList.nullableType(JObject.nullableType),
+      );
+      for (final List<Object?>? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<Map<Object?, Object?>> &&
+        isTypeOrNullableType<JList<JMap<JObject?, JObject?>>>(T)) {
+      final JList<JMap<JObject?, JObject?>> res =
+          JList<JMap<JObject?, JObject?>>.array(
+            JMap.type(JObject.nullableType, JObject.nullableType),
+          );
+      for (final Map<Object?, Object?> entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
+    } else if (value is List<Map<Object?, Object?>?> &&
+        isTypeOrNullableType<JList<JMap<JObject?, JObject?>?>>(T)) {
+      final JList<JMap<JObject?, JObject?>?> res =
+          JList<JMap<JObject?, JObject?>?>.array(
+            JMap.nullableType(JObject.nullableType, JObject.nullableType),
+          );
+      for (final Map<Object?, Object?>? entry in value) {
+        res.add(writeValue(entry));
+      }
+      return res as T;
     } else if (value is List<Object>) {
       final JList<JObject> res = JList<JObject>.array(JObject.type);
       for (int i = 0; i < value.length; i++) {
@@ -387,6 +425,51 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
+    } else if (value is Map<int, List<Object?>> &&
+        isTypeOrNullableType<JMap<JLong, JList<JObject?>>>(T)) {
+      final JMap<JLong, JList<JObject?>> res =
+          JMap<JLong, JList<JObject?>>.hash(
+            JLong.type,
+            JList.type(JObject.nullableType),
+          );
+      for (final MapEntry<int, List<Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, List<Object?>?> &&
+        isTypeOrNullableType<JMap<JLong?, JList<JObject?>?>>(T)) {
+      final JMap<JLong?, JList<JObject?>?> res =
+          JMap<JLong?, JList<JObject?>?>.hash(
+            JLong.nullableType,
+            JList.nullableType(JObject.nullableType),
+          );
+      for (final MapEntry<int?, List<Object?>?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int, Map<Object?, Object?>> &&
+        isTypeOrNullableType<JMap<JLong, JMap<JObject?, JObject?>>>(T)) {
+      final JMap<JLong, JMap<JObject?, JObject?>> res =
+          JMap<JLong, JMap<JObject?, JObject?>>.hash(
+            JLong.type,
+            JMap.type(JObject.nullableType, JObject.nullableType),
+          );
+      for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, Map<Object?, Object?>?> &&
+        isTypeOrNullableType<JMap<JLong?, JMap<JObject?, JObject?>?>>(T)) {
+      final JMap<JLong?, JMap<JObject?, JObject?>?> res =
+          JMap<JLong?, JMap<JObject?, JObject?>?>.hash(
+            JLong.nullableType,
+            JMap.nullableType(JObject.nullableType, JObject.nullableType),
+          );
+      for (final MapEntry<int?, Map<Object?, Object?>?> entry
+          in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
     } else if (value is Map<Object, Object>) {
       final JMap<JObject, JObject> res = JMap<JObject, JObject>.hash(
         JObject.type,
@@ -474,15 +557,18 @@ class _PigeonFfiCodec {
       //     list[i] = value.as(NSDoubleArray.type)[i];
       //   }
       //   return list;
-    } else if (value is NSArray) {
+    } else if (value is NSArray || NSArray.isInstance(value)) {
+      final NSArray array = NSArray.castFrom(value);
       final List<Object?> res = <Object?>[];
-      for (int i = 0; i < value.length; i++) {
-        res.add(readValue(value[i]));
+      for (int i = 0; i < array.length; i++) {
+        res.add(readValue(array[i]));
       }
       return res;
-    } else if (value is NSDictionary) {
+    } else if (value is NSDictionary || NSDictionary.isInstance(value)) {
+      final NSDictionary dictionary = NSDictionary.castFrom(value);
       final Map<Object?, Object?> res = <Object?, Object?>{};
-      for (final MapEntry<NSCopying?, ObjCObjectBase?> entry in value.entries) {
+      for (final MapEntry<NSCopying?, ObjCObjectBase?> entry
+          in dictionary.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
@@ -690,6 +776,42 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
+    } else if (value is List<List<Object?>> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final List<Object?> entry in value) {
+        res.add(writeValue<NSArray>(entry));
+      }
+      return res as T;
+    } else if (value is List<List<Object?>?> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final List<Object?>? entry in value) {
+        res.add(
+          entry == null
+              ? ffi_bridge.PigeonInternalNull()
+              : writeValue<NSArray>(entry),
+        );
+      }
+      return res as T;
+    } else if (value is List<Map<Object?, Object?>> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final Map<Object?, Object?> entry in value) {
+        res.add(writeValue<NSDictionary>(entry));
+      }
+      return res as T;
+    } else if (value is List<Map<Object?, Object?>?> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final Map<Object?, Object?>? entry in value) {
+        res.add(
+          entry == null
+              ? ffi_bridge.PigeonInternalNull()
+              : writeValue<NSDictionary>(entry),
+        );
+      }
+      return res as T;
     } else if (value is List) {
       final NSMutableArray res = NSMutableArray();
       for (int i = 0; i < value.length; i++) {
@@ -762,6 +884,35 @@ class _PigeonFfiCodec {
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String?, String?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int, List<Object?>> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int, List<Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, List<Object?>?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, List<Object?>?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int, Map<Object?, Object?>> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
+    } else if (value is Map<int?, Map<Object?, Object?>?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, Map<Object?, Object?>?> entry
+          in value.entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
@@ -915,10 +1066,16 @@ class NIAllTypes {
     required this.doubleList,
     required this.boolList,
     required this.enumList,
+    required this.objectList,
+    required this.listList,
+    required this.mapList,
     required this.map,
     required this.stringMap,
     required this.intMap,
     required this.enumMap,
+    required this.objectMap,
+    required this.listMap,
+    required this.mapMap,
   });
 
   bool aBool;
@@ -949,6 +1106,12 @@ class NIAllTypes {
 
   List<NIAnEnum> enumList;
 
+  List<Object> objectList;
+
+  List<List<Object?>> listList;
+
+  List<Map<Object?, Object?>> mapList;
+
   Map<Object?, Object?> map;
 
   Map<String, String> stringMap;
@@ -956,6 +1119,12 @@ class NIAllTypes {
   Map<int, int> intMap;
 
   Map<NIAnEnum, NIAnEnum> enumMap;
+
+  Map<Object, Object> objectMap;
+
+  Map<int, List<Object?>> listMap;
+
+  Map<int, Map<Object?, Object?>> mapMap;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -973,10 +1142,16 @@ class NIAllTypes {
       doubleList,
       boolList,
       enumList,
+      objectList,
+      listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
+      objectMap,
+      listMap,
+      mapMap,
     ];
   }
 
@@ -996,10 +1171,16 @@ class NIAllTypes {
       doubleList: _PigeonFfiCodec.writeValue<NSMutableArray>(doubleList),
       boolList: _PigeonFfiCodec.writeValue<NSMutableArray>(boolList),
       enumList: _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+      objectList: _PigeonFfiCodec.writeValue<NSMutableArray>(objectList),
+      listList: _PigeonFfiCodec.writeValue<NSMutableArray>(listList),
+      mapList: _PigeonFfiCodec.writeValue<NSMutableArray>(mapList),
       map: _PigeonFfiCodec.writeValue<NSDictionary>(map),
       stringMap: _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
       intMap: _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
       enumMap: _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+      objectMap: _PigeonFfiCodec.writeValue<NSDictionary>(objectMap),
+      listMap: _PigeonFfiCodec.writeValue<NSDictionary>(listMap),
+      mapMap: _PigeonFfiCodec.writeValue<NSDictionary>(mapMap),
     );
   }
 
@@ -1038,6 +1219,16 @@ class NIAllTypes {
             enumList:
                 (_PigeonFfiCodec.readValue(ffiClass.enumList)! as List<Object?>)
                     .cast<NIAnEnum>(),
+            objectList:
+                (_PigeonFfiCodec.readValue(ffiClass.objectList)!
+                        as List<Object?>)
+                    .cast<Object>(),
+            listList:
+                (_PigeonFfiCodec.readValue(ffiClass.listList)! as List<Object?>)
+                    .cast<List<Object?>>(),
+            mapList:
+                (_PigeonFfiCodec.readValue(ffiClass.mapList)! as List<Object?>)
+                    .cast<Map<Object?, Object?>>(),
             map:
                 (_PigeonFfiCodec.readValue(ffiClass.map)!
                         as Map<Object?, Object?>)
@@ -1054,6 +1245,18 @@ class NIAllTypes {
                 (_PigeonFfiCodec.readValue(ffiClass.enumMap)!
                         as Map<Object?, Object?>)
                     .cast<NIAnEnum, NIAnEnum>(),
+            objectMap:
+                (_PigeonFfiCodec.readValue(ffiClass.objectMap)!
+                        as Map<Object?, Object?>)
+                    .cast<Object, Object>(),
+            listMap:
+                (_PigeonFfiCodec.readValue(ffiClass.listMap)!
+                        as Map<Object?, Object?>)
+                    .cast<int, List<Object?>>(),
+            mapMap:
+                (_PigeonFfiCodec.readValue(ffiClass.mapMap)!
+                        as Map<Object?, Object?>)
+                    .cast<int, Map<Object?, Object?>>(),
           );
   }
 
@@ -1074,11 +1277,19 @@ class NIAllTypes {
       doubleList: (result[11] as List<Object?>?)!.cast<double>(),
       boolList: (result[12] as List<Object?>?)!.cast<bool>(),
       enumList: (result[13] as List<Object?>?)!.cast<NIAnEnum>(),
-      map: result[14]! as Map<Object?, Object?>,
-      stringMap: (result[15] as Map<Object?, Object?>?)!.cast<String, String>(),
-      intMap: (result[16] as Map<Object?, Object?>?)!.cast<int, int>(),
-      enumMap: (result[17] as Map<Object?, Object?>?)!
+      objectList: (result[14] as List<Object?>?)!.cast<Object>(),
+      listList: (result[15] as List<Object?>?)!.cast<List<Object?>>(),
+      mapList: (result[16] as List<Object?>?)!.cast<Map<Object?, Object?>>(),
+      map: result[17]! as Map<Object?, Object?>,
+      stringMap: (result[18] as Map<Object?, Object?>?)!.cast<String, String>(),
+      intMap: (result[19] as Map<Object?, Object?>?)!.cast<int, int>(),
+      enumMap: (result[20] as Map<Object?, Object?>?)!
           .cast<NIAnEnum, NIAnEnum>(),
+      objectMap: (result[21] as Map<Object?, Object?>?)!.cast<Object, Object>(),
+      listMap: (result[22] as Map<Object?, Object?>?)!
+          .cast<int, List<Object?>>(),
+      mapMap: (result[23] as Map<Object?, Object?>?)!
+          .cast<int, Map<Object?, Object?>>(),
     );
   }
 
@@ -1105,10 +1316,16 @@ class NIAllTypes {
         _deepEquals(doubleList, other.doubleList) &&
         _deepEquals(boolList, other.boolList) &&
         _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
         _deepEquals(map, other.map) &&
         _deepEquals(stringMap, other.stringMap) &&
         _deepEquals(intMap, other.intMap) &&
-        _deepEquals(enumMap, other.enumMap);
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
   }
 
   @override
@@ -1136,10 +1353,16 @@ class NIAllNullableTypesWithoutRecursion {
     this.doubleList,
     this.boolList,
     this.enumList,
+    this.objectList,
+    this.listList,
+    this.mapList,
     this.map,
     this.stringMap,
     this.intMap,
     this.enumMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
   });
 
   bool? aNullableBool;
@@ -1170,6 +1393,12 @@ class NIAllNullableTypesWithoutRecursion {
 
   List<NIAnEnum?>? enumList;
 
+  List<Object?>? objectList;
+
+  List<List<Object?>?>? listList;
+
+  List<Map<Object?, Object?>?>? mapList;
+
   Map<Object?, Object?>? map;
 
   Map<String?, String?>? stringMap;
@@ -1177,6 +1406,12 @@ class NIAllNullableTypesWithoutRecursion {
   Map<int?, int?>? intMap;
 
   Map<NIAnEnum?, NIAnEnum?>? enumMap;
+
+  Map<Object?, Object?>? objectMap;
+
+  Map<int?, List<Object?>?>? listMap;
+
+  Map<int?, Map<Object?, Object?>?>? mapMap;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -1194,10 +1429,16 @@ class NIAllNullableTypesWithoutRecursion {
       doubleList,
       boolList,
       enumList,
+      objectList,
+      listList,
+      mapList,
       map,
       stringMap,
       intMap,
       enumMap,
+      objectMap,
+      listMap,
+      mapMap,
     ];
   }
 
@@ -1228,10 +1469,16 @@ class NIAllNullableTypesWithoutRecursion {
           doubleList: _PigeonFfiCodec.writeValue<NSMutableArray?>(doubleList),
           boolList: _PigeonFfiCodec.writeValue<NSMutableArray?>(boolList),
           enumList: _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+          objectList: _PigeonFfiCodec.writeValue<NSMutableArray?>(objectList),
+          listList: _PigeonFfiCodec.writeValue<NSMutableArray?>(listList),
+          mapList: _PigeonFfiCodec.writeValue<NSMutableArray?>(mapList),
           map: _PigeonFfiCodec.writeValue<NSDictionary?>(map),
           stringMap: _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
           intMap: _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
           enumMap: _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+          objectMap: _PigeonFfiCodec.writeValue<NSDictionary?>(objectMap),
+          listMap: _PigeonFfiCodec.writeValue<NSDictionary?>(listMap),
+          mapMap: _PigeonFfiCodec.writeValue<NSDictionary?>(mapMap),
         );
   }
 
@@ -1278,6 +1525,16 @@ class NIAllNullableTypesWithoutRecursion {
             enumList:
                 (_PigeonFfiCodec.readValue(ffiClass.enumList) as List<Object?>?)
                     ?.cast<NIAnEnum?>(),
+            objectList:
+                (_PigeonFfiCodec.readValue(ffiClass.objectList)
+                        as List<Object?>?)
+                    ?.cast<Object?>(),
+            listList:
+                (_PigeonFfiCodec.readValue(ffiClass.listList) as List<Object?>?)
+                    ?.cast<List<Object?>?>(),
+            mapList:
+                (_PigeonFfiCodec.readValue(ffiClass.mapList) as List<Object?>?)
+                    ?.cast<Map<Object?, Object?>?>(),
             map:
                 (_PigeonFfiCodec.readValue(ffiClass.map)
                         as Map<Object?, Object?>?)
@@ -1294,6 +1551,18 @@ class NIAllNullableTypesWithoutRecursion {
                 (_PigeonFfiCodec.readValue(ffiClass.enumMap)
                         as Map<Object?, Object?>?)
                     ?.cast<NIAnEnum?, NIAnEnum?>(),
+            objectMap:
+                (_PigeonFfiCodec.readValue(ffiClass.objectMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<Object?, Object?>(),
+            listMap:
+                (_PigeonFfiCodec.readValue(ffiClass.listMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, List<Object?>?>(),
+            mapMap:
+                (_PigeonFfiCodec.readValue(ffiClass.mapMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, Map<Object?, Object?>?>(),
           );
   }
 
@@ -1314,12 +1583,21 @@ class NIAllNullableTypesWithoutRecursion {
       doubleList: (result[11] as List<Object?>?)?.cast<double?>(),
       boolList: (result[12] as List<Object?>?)?.cast<bool?>(),
       enumList: (result[13] as List<Object?>?)?.cast<NIAnEnum?>(),
-      map: result[14] as Map<Object?, Object?>?,
-      stringMap: (result[15] as Map<Object?, Object?>?)
+      objectList: (result[14] as List<Object?>?)?.cast<Object?>(),
+      listList: (result[15] as List<Object?>?)?.cast<List<Object?>?>(),
+      mapList: (result[16] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      map: result[17] as Map<Object?, Object?>?,
+      stringMap: (result[18] as Map<Object?, Object?>?)
           ?.cast<String?, String?>(),
-      intMap: (result[16] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[17] as Map<Object?, Object?>?)
+      intMap: (result[19] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[20] as Map<Object?, Object?>?)
           ?.cast<NIAnEnum?, NIAnEnum?>(),
+      objectMap: (result[21] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>(),
+      listMap: (result[22] as Map<Object?, Object?>?)
+          ?.cast<int?, List<Object?>?>(),
+      mapMap: (result[23] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
     );
   }
 
@@ -1347,10 +1625,16 @@ class NIAllNullableTypesWithoutRecursion {
         _deepEquals(doubleList, other.doubleList) &&
         _deepEquals(boolList, other.boolList) &&
         _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
         _deepEquals(map, other.map) &&
         _deepEquals(stringMap, other.stringMap) &&
         _deepEquals(intMap, other.intMap) &&
-        _deepEquals(enumMap, other.enumMap);
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap);
   }
 
   @override
