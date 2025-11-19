@@ -147,6 +147,17 @@ final class InstanceManagerTests: XCTestCase {
     XCTAssertNil(
       objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey))
   }
+  
+  func testSomething() {
+    let finalizerDelegate = ThrowingFinalizerDelegate()
+
+    var object: NSObject? = NSObject()
+    ProxyApiTestsPigeonInternalFinalizer.attach(
+      to: object!, identifier: 0, delegate: finalizerDelegate)
+
+    //object = nil
+    XCTAssertNoThrow(object = nil)
+  }
 }
 
 class EmptyFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
@@ -158,5 +169,11 @@ class TestFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
 
   func onDeinit(identifier: Int64) {
     lastHandledIdentifier = identifier
+  }
+}
+
+class ThrowingFinalizerDelegate: ProxyApiTestsPigeonInternalFinalizerDelegate {
+  func onDeinit(identifier: Int64) throws {
+    fatalError()
   }
 }

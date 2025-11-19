@@ -28,7 +28,7 @@ String instanceManagerFinalizerDelegateTemplate(InternalSwiftOptions options) =>
 /// Handles the callback when an object is deallocated.
 protocol ${instanceManagerFinalizerDelegateName(options)}: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
-  func onDeinit(identifier: Int64)
+  func onDeinit(identifier: Int64) throws
 }
 
 ''';
@@ -66,7 +66,13 @@ internal final class ${_instanceManagerFinalizerName(options)} {
   }
 
   deinit {
-    delegate?.onDeinit(identifier: identifier)
+    do {
+      try delegate?.onDeinit(identifier: identifier)
+    } catch {
+      NSLog(
+        "Failed to call `onDeinit` on object with identifier: \\(identifier)\\n\\(error)\\nStacktrace: \\(Thread.callStackSymbols)"
+      )
+    }
   }
 }
 

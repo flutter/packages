@@ -77,7 +77,7 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
 /// Handles the callback when an object is deallocated.
 protocol ProxyApiTestsPigeonInternalFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
-  func onDeinit(identifier: Int64)
+  func onDeinit(identifier: Int64) throws
 }
 
 // Attaches to an object to receive a callback when the object is deallocated.
@@ -113,7 +113,13 @@ internal final class ProxyApiTestsPigeonInternalFinalizer {
   }
 
   deinit {
-    delegate?.onDeinit(identifier: identifier)
+    do {
+      try delegate?.onDeinit(identifier: identifier)
+    } catch {
+      NSLog(
+        "Failed to call `onDeinit` on object with identifier: \(identifier)\n\(error)\nStacktrace: \(Thread.callStackSymbols)"
+      )
+    }
   }
 }
 
@@ -428,7 +434,7 @@ open class ProxyApiTestsPigeonProxyApiRegistrar {
       self.api = api
     }
 
-    public func onDeinit(identifier: Int64) {
+    public func onDeinit(identifier: Int64) throws {
       api.removeStrongReference(identifier: identifier) {
         _ in
       }

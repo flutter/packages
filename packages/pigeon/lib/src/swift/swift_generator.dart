@@ -1997,7 +1997,7 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
             self.api = api
           }
 
-          public func onDeinit(identifier: Int64) {
+          public func onDeinit(identifier: Int64) throws {
             api.removeStrongReference(identifier: identifier) {
               _ in
             }

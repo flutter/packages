@@ -1,3 +1,7 @@
+## 26.1.2
+
+* [swift] Adds a do/catch when a deallocated object calls back to Dart to prevent a crash.
+
 ## 26.1.1
 
 * Updates supported `analyzer` versions to 8.x or 9.x.
