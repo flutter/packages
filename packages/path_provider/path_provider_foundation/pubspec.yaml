@@ -21,7 +21,7 @@ dependencies:
   ffi: ^2.1.4
   flutter:
     sdk: flutter
-  objective_c: ^9.0.0
+  objective_c: ^9.1.0
   path_provider_platform_interface: ^2.1.0
 
 dev_dependencies:
