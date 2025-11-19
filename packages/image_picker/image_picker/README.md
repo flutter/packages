@@ -7,7 +7,7 @@ A Flutter plugin for picking images from the image library, and taking new pictu
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 24+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
+| **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Setup
 
