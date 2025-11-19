@@ -311,9 +311,13 @@ class ImagePicker {
   ///
   /// The videos come from the gallery.
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured
-  /// videos. If no [maxDuration] is specified, the maximum duration will be
-  /// infinite. This value may be ignored by platforms that cannot support it.
+  /// The [maxDuration] argument specifies the maximum duration of the videos.
+  /// If no [maxDuration] is specified, the maximum duration will be infinite.
+  ///
+  /// **Important:** This method only picks videos from the gallery. The [maxDuration]
+  /// parameter is ignored and users can select videos of any duration. If you need
+  /// to enforce duration limits, you must validate the video durations programmatically
+  /// after selection.
   ///
   /// The `limit` parameter modifies the maximum number of videos that can be
   /// selected. This value may be ignored by platforms that cannot support it.
