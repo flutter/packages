@@ -131,7 +131,33 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   options.mapId = configuration.mapId;
 
+  // Convert the color scheme, if any, and set it
+  final gmaps.ColorScheme? jsColorScheme = _toJsColorScheme(
+    configuration.colorScheme,
+  );
+  if (jsColorScheme != null) {
+    options.colorScheme = jsColorScheme;
+  }
+
   return options;
+}
+
+/// Converts a [MapColorScheme] into a [gmaps.ColorScheme]
+gmaps.ColorScheme? _toJsColorScheme(MapColorScheme? scheme) {
+  // Guard clause for null
+  if (scheme == null) {
+    return null;
+  }
+
+  // Map to gmaps.ColorScheme
+  switch (scheme) {
+    case MapColorScheme.dark:
+      return gmaps.ColorScheme.DARK;
+    case MapColorScheme.light:
+      return gmaps.ColorScheme.LIGHT;
+    case MapColorScheme.followSystem:
+      return gmaps.ColorScheme.FOLLOW_SYSTEM;
+  }
 }
 
 gmaps.MapTypeId _gmapTypeIDForPluginType(MapType type) {

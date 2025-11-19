@@ -29,6 +29,7 @@ export 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
         Cluster,
         ClusterManager,
         ClusterManagerId,
+        ColorScheme,
         GroundOverlay,
         GroundOverlayId,
         Heatmap,
