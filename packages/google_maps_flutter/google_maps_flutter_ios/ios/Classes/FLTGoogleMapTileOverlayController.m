@@ -5,7 +5,7 @@
 #import "FLTGoogleMapTileOverlayController.h"
 #import "FLTGoogleMapTileOverlayController_Test.h"
 
-#import "FLTGoogleMapJSONConversions.h"
+#import "FGMConversionUtils.h"
 
 @interface FLTGoogleMapTileOverlayController ()
 

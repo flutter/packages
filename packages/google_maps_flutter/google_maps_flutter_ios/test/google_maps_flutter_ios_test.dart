@@ -411,8 +411,8 @@ void main() {
       expect(toChange.length, 1);
       final PlatformCircle firstChanged = toChange.first;
       expect(firstChanged.consumeTapEvents, object2new.consumeTapEvents);
-      expect(firstChanged.fillColor, object2new.fillColor.value);
-      expect(firstChanged.strokeColor, object2new.strokeColor.value);
+      _expectColorsEqual(firstChanged.fillColor, object2new.fillColor);
+      _expectColorsEqual(firstChanged.strokeColor, object2new.strokeColor);
       expect(firstChanged.visible, object2new.visible);
       expect(firstChanged.strokeWidth, object2new.strokeWidth);
       expect(firstChanged.zIndex, object2new.zIndex.toDouble());
@@ -426,8 +426,8 @@ void main() {
       expect(toAdd.length, 1);
       final PlatformCircle firstAdded = toAdd.first;
       expect(firstAdded.consumeTapEvents, object3.consumeTapEvents);
-      expect(firstAdded.fillColor, object3.fillColor.value);
-      expect(firstAdded.strokeColor, object3.strokeColor.value);
+      _expectColorsEqual(firstAdded.fillColor, object3.fillColor);
+      _expectColorsEqual(firstAdded.strokeColor, object3.strokeColor);
       expect(firstAdded.visible, object3.visible);
       expect(firstAdded.strokeWidth, object3.strokeWidth);
       expect(firstAdded.zIndex, object3.zIndex.toDouble());
@@ -593,7 +593,7 @@ void main() {
     void expectPolygon(PlatformPolygon actual, Polygon expected) {
       expect(actual.polygonId, expected.polygonId.value);
       expect(actual.consumesTapEvents, expected.consumeTapEvents);
-      expect(actual.fillColor, expected.fillColor.value);
+      _expectColorsEqual(actual.fillColor, expected.fillColor);
       expect(actual.geodesic, expected.geodesic);
       expect(actual.points.length, expected.points.length);
       for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
@@ -609,7 +609,7 @@ void main() {
         }
       }
       expect(actual.visible, expected.visible);
-      expect(actual.strokeColor, expected.strokeColor.value);
+      _expectColorsEqual(actual.strokeColor, expected.strokeColor);
       expect(actual.strokeWidth, expected.strokeWidth);
       expect(actual.zIndex, expected.zIndex);
     }
@@ -663,7 +663,7 @@ void main() {
     void expectPolyline(PlatformPolyline actual, Polyline expected) {
       expect(actual.polylineId, expected.polylineId.value);
       expect(actual.consumesTapEvents, expected.consumeTapEvents);
-      expect(actual.color, expected.color.value);
+      _expectColorsEqual(actual.color, expected.color);
       expect(actual.geodesic, expected.geodesic);
       expect(
         actual.jointType,
@@ -1346,7 +1346,7 @@ void main() {
     expect(typedBitmap.height, 200.0);
   });
 
-  testWidgets('cloudMapId is passed', (WidgetTester tester) async {
+  testWidgets('mapId is passed', (WidgetTester tester) async {
     const String cloudMapId = '000000000000000'; // Dummy map ID.
     final Completer<String> passedCloudMapIdCompleter = Completer<String>();
 
@@ -1366,7 +1366,7 @@ void main() {
                       as PlatformMapViewCreationParams?;
               if (creationParams != null) {
                 final String? passedMapId =
-                    creationParams.mapConfiguration.cloudMapId;
+                    creationParams.mapConfiguration.mapId;
                 if (passedMapId != null) {
                   passedCloudMapIdCompleter.complete(passedMapId);
                 }
@@ -1391,7 +1391,7 @@ void main() {
             ),
             textDirection: TextDirection.ltr,
           ),
-          mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId),
+          mapConfiguration: const MapConfiguration(mapId: cloudMapId),
         ),
       ),
     );
@@ -1399,7 +1399,14 @@ void main() {
     expect(
       await passedCloudMapIdCompleter.future,
       cloudMapId,
-      reason: 'Should pass cloudMapId on PlatformView creation message',
+      reason: 'Should pass mapId on PlatformView creation message',
     );
   });
+}
+
+void _expectColorsEqual(PlatformColor actual, Color expected) {
+  expect(actual.red, expected.r);
+  expect(actual.green, expected.g);
+  expect(actual.blue, expected.b);
+  expect(actual.alpha, expected.a);
 }

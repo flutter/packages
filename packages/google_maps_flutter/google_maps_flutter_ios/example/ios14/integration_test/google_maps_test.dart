@@ -1397,7 +1397,7 @@ void main() {
         child: ExampleGoogleMap(
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
-          cloudMapId: _kCloudMapId,
+          mapId: _kCloudMapId,
         ),
       ),
     );
