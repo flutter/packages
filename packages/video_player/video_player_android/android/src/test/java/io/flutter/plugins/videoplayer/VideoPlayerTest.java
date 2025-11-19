@@ -26,10 +26,10 @@ import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import com.google.common.collect.ImmutableList;
-import java.lang.reflect.Field;
-import java.util.List;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
+import java.lang.reflect.Field;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -495,7 +495,7 @@ public final class VideoPlayerTest {
 
     ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
-    
+
     // Set up track selector BEFORE creating VideoPlayer
     when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
