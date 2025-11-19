@@ -183,6 +183,39 @@ final XFile? media = await picker.pickMedia();
 final List<XFile> medias = await picker.pickMultipleMedia();
 ```
 
+### Video Duration Limitations
+
+When using `pickVideo()` with the `maxDuration` parameter, it's important to understand its behavior:
+
+- **Camera recording** (`ImageSource.camera`): The recording will automatically stop when the specified `maxDuration` is reached.
+- **Gallery selection** (`ImageSource.gallery`): The `maxDuration` parameter does **not** filter available videos. Users can select videos of any length, regardless of the `maxDuration` value.
+
+If your application needs to enforce duration limits on gallery-selected videos, you must validate the video duration programmatically after selection.
+
+**Example:**
+
+```dart
+final ImagePicker picker = ImagePicker();
+
+// Recording from camera - stops automatically at 30 seconds
+final XFile? recordedVideo = await picker.pickVideo(
+  source: ImageSource.camera,
+  maxDuration: const Duration(seconds: 30),
+);
+
+// Selecting from gallery - maxDuration is ignored, user can select any video
+final XFile? galleryVideo = await picker.pickVideo(
+  source: ImageSource.gallery,
+  maxDuration: const Duration(seconds: 30), // This does NOT filter gallery videos!
+);
+
+// You must validate gallery video duration yourself if needed
+if (galleryVideo != null) {
+  // Use a video player package to check duration
+  // and handle videos that exceed your requirements
+}
+```
+
 ## Migrating to 1.0
 
 Starting with version 0.8.2 of the image_picker plugin, new methods were
