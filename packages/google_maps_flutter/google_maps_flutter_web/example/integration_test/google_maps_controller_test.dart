@@ -491,7 +491,7 @@ void main() {
             mapConfiguration: const MapConfiguration(
               mapType: MapType.satellite,
               zoomControlsEnabled: true,
-              cloudMapId: _kCloudMapId,
+              mapId: _kCloudMapId,
               fortyFiveDegreeImageryEnabled: false,
             ),
           );
