@@ -147,7 +147,7 @@ final class InstanceManagerTests: XCTestCase {
     XCTAssertNil(
       objc_getAssociatedObject(object!, ProxyApiTestsPigeonInternalFinalizer.associatedObjectKey))
   }
-  
+
   func testSomething() {
     let finalizerDelegate = ThrowingFinalizerDelegate()
 
