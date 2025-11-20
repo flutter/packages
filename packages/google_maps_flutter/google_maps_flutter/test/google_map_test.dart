@@ -659,4 +659,49 @@ void main() {
 
     expect(map.tileOverlaySets.length, 1);
   });
+
+  testWidgets('Is default color scheme follow system', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.colorScheme, MapColorScheme.followSystem);
+  });
+
+  testWidgets('Can update default color scheme', (WidgetTester tester) async {
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          colorScheme: MapColorScheme.light,
+        ),
+      ),
+    );
+
+    final PlatformMapStateRecorder map = platform.lastCreatedMap;
+
+    expect(map.mapConfiguration.colorScheme, MapColorScheme.light);
+
+    await tester.pumpWidget(
+      const Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
+          colorScheme: MapColorScheme.dark,
+        ),
+      ),
+    );
+
+    expect(map.mapConfiguration.colorScheme, MapColorScheme.dark);
+  });
 }
