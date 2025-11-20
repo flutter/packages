@@ -161,7 +161,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         });
       },
       onCanNotEnter: () {
-        // If blocked, "stay" on last successful match if available.
+        // If blocked, stay on the current route by restoring the last known good configuration.
         if (router.routerDelegate.currentConfiguration.isNotEmpty) {
           return SynchronousFuture<RouteMatchList>(
             router.routerDelegate.currentConfiguration,
