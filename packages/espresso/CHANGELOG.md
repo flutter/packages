@@ -1,9 +1,6 @@
 ## NEXT
 
-* Updates README to reflect currently supported OS versions for the latest
-  versions of the endorsed platform implementations.
-  * Applications built with older versions of Flutter will continue to
-    use compatible versions of the platform implementations.
+* Updates README to reflect currently supported OS version.
 
 ## 0.4.0+19
 
