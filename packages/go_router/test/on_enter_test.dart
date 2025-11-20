@@ -1539,18 +1539,8 @@ void main() {
 
         router = GoRouter(
           initialLocation: '/home',
-          onEnter:
-              (
-                BuildContext context,
-                GoRouterState current,
-                GoRouterState next,
-                GoRouter router,
-              ) {
-                if (next.uri.path == '/blocked') {
-                  return const Block.stop();
-                }
-                return const Allow();
-              },
+          onEnter: (_, __, next, ___) =>
+              next.uri.path == '/blocked' ? const Block.stop() : const Allow(),
           routes: <RouteBase>[
             GoRoute(
               path: '/home',
