@@ -1,4 +1,4 @@
-## 0.4.0+20
+## NEXT
 
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
