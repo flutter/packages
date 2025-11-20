@@ -1,3 +1,7 @@
+## 0.2.6+4
+
+* Removes usage of the deprecated and ignored `maxVideoDuration` in the example.
+
 ## 0.2.6+3
 
 * Updates to Pigeon 26.

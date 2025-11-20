@@ -648,7 +648,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setBackgroundColor(Color color) =>
-      _webView.setBackgroundColor(color.value);
+      _webView.setBackgroundColor(color.toARGB32());
 
   @override
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) => _webView

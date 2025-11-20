@@ -9,6 +9,7 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 
 import 'analyze_command.dart';
+import 'branch_for_batch_release_command.dart';
 import 'build_examples_command.dart';
 import 'common/core.dart';
 import 'create_all_packages_app_command.dart';
@@ -86,7 +87,8 @@ void main(List<String> args) {
     ..addCommand(UpdateExcerptsCommand(packagesDir))
     ..addCommand(UpdateMinSdkCommand(packagesDir))
     ..addCommand(UpdateReleaseInfoCommand(packagesDir))
-    ..addCommand(VersionCheckCommand(packagesDir));
+    ..addCommand(VersionCheckCommand(packagesDir))
+    ..addCommand(BranchForBatchReleaseCommand(packagesDir));
 
   commandRunner.run(args).catchError((Object e) {
     final ToolExit toolExit = e as ToolExit;

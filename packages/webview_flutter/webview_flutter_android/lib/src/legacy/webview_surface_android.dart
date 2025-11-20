@@ -67,7 +67,7 @@ class SurfaceAndroidWebView extends AndroidWebView {
                 // AndroidViewSurface. This switches the WebView to Hybrid
                 // Composition when the background color is not 100% opaque.
                 hybridComposition:
-                    backgroundColor != null && backgroundColor.opacity < 1.0,
+                    backgroundColor != null && backgroundColor.a < 1.0,
                 id: params.id,
                 viewType: 'plugins.flutter.io/webview',
                 // WebView content is not affected by the Android view's layout direction,

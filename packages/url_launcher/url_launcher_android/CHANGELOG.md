@@ -1,3 +1,7 @@
+## 6.3.27
+
+* Bumps androidx.browser:browser from 1.8.0 to 1.9.0.
+
 ## 6.3.26
 
 * Bumps androidx.core:core from 1.13.1 to 1.17.0.

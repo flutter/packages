@@ -1868,7 +1868,7 @@ void main() {
 
       await controller.setBackgroundColor(Colors.blue);
 
-      verify(mockWebView.setBackgroundColor(Colors.blue.value)).called(1);
+      verify(mockWebView.setBackgroundColor(Colors.blue.toARGB32())).called(1);
     });
 
     test('setJavaScriptMode', () async {

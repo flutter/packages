@@ -171,7 +171,7 @@ class Polyline implements MapsObject<Polyline> {
 
     addIfPresent('polylineId', polylineId.value);
     addIfPresent('consumeTapEvents', consumeTapEvents);
-    addIfPresent('color', color.value);
+    addIfPresent('color', color.toARGB32());
     addIfPresent('endCap', endCap.toJson());
     addIfPresent('geodesic', geodesic);
     addIfPresent('jointType', jointType.value);
