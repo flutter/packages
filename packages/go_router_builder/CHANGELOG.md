@@ -1,6 +1,8 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates dependencies to use the latest `analyzer`, `build`, and `source_gen`.
+* Updates dev dependencies to use the latest `build_test`.
 
 ## 4.1.1
 

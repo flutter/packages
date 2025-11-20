@@ -5,7 +5,7 @@
 import 'dart:io';
 import 'dart:isolate';
 
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:build/build.dart';
 import 'package:build_test/build_test.dart';
 import 'package:dart_style/dart_style.dart' as dart_style;
@@ -42,7 +42,7 @@ Future<void> main() async {
       // Normalize path separators for cross-platform compatibility
       final String path = file.path.replaceAll(r'\', '/');
       final String targetLibraryAssetId = '__test__|$path';
-      final LibraryElement2 element = await resolveSources<LibraryElement2>(
+      final LibraryElement element = await resolveSources<LibraryElement>(
         <String, String>{targetLibraryAssetId: file.readAsStringSync()},
         (Resolver resolver) async {
           final AssetId assetId = AssetId.parse(targetLibraryAssetId);
