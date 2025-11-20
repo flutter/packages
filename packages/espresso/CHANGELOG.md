@@ -1,9 +1,14 @@
-## NEXT
+## 0.4.0+20
 
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+
+## 0.4.0+19
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Bumps `com.squareup.okhttp3:okhttp` from 5.3.0 to 5.3.1.
 
 ## 0.4.0+18
 
