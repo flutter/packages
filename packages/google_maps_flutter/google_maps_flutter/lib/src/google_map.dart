@@ -375,6 +375,8 @@ class GoogleMap extends StatefulWidget {
   final String? cloudMapId;
 
   /// Color scheme for the cloud-style map. Web only.
+  /// The colorScheme option can only be set when the map is initialized;
+  /// setting this option after the map is created will have no effect.
   ///
   /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme
   /// for more details.

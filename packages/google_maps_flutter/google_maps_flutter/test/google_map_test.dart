@@ -677,7 +677,7 @@ void main() {
     expect(map.mapConfiguration.colorScheme, MapColorScheme.followSystem);
   });
 
-  testWidgets('Can update default color scheme', (WidgetTester tester) async {
+  testWidgets('Can set color scheme to non-default', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
@@ -691,17 +691,5 @@ void main() {
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
     expect(map.mapConfiguration.colorScheme, MapColorScheme.light);
-
-    await tester.pumpWidget(
-      const Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          initialCameraPosition: CameraPosition(target: LatLng(10.0, 15.0)),
-          colorScheme: MapColorScheme.dark,
-        ),
-      ),
-    );
-
-    expect(map.mapConfiguration.colorScheme, MapColorScheme.dark);
   });
 }
