@@ -32,4 +32,5 @@ flutter:
 # See https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md#changing-federated-plugins
 dependency_overrides:
   google_maps_flutter: {path: ../../../../packages/google_maps_flutter/google_maps_flutter}
+  google_maps_flutter_platform_interface: {path: ../../../../packages/google_maps_flutter/google_maps_flutter_platform_interface}
   google_maps_flutter_web: {path: ../}
