@@ -130,10 +130,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
         hide: true);
   }
 
-  static final RegExp _blankLineInListRegex = RegExp(
-      r'(^[ \t]*[*+-]\s.*$\n)((^[ \t]*$\n)+)(^[ \t]*[*+-]\s.*$)',
-      multiLine: true);
-
   static const String _againstPubFlag = 'against-pub';
   static const String _prLabelsArg = 'pr-labels';
   static const String _checkForMissingChanges = 'check-for-missing-changes';
@@ -381,8 +377,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
 
     // get first version from CHANGELOG
     final File changelog = package.changelogFile;
-    final String changelogContent = changelog.readAsStringSync();
-    final List<String> lines = changelogContent.split('\n');
+    final List<String> lines = changelog.readAsLinesSync();
     String? firstLineWithText;
     final Iterator<String> iterator = lines.iterator;
     while (iterator.moveNext()) {
@@ -461,34 +456,39 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     }
 
     // Check for blank lines between list items in the version section.
-    final Match? blankLineMatch = _findBlankLineInList(changelogContent);
-    if (blankLineMatch != null) {
-      final String offendingLines = blankLineMatch
-          .group(0)!
-          .split('\n')
-          .map((String line) => '$indentation  $line') // Add extra indentation
-          .join('\n');
+    // Check for blank lines between list items in the version section.
+    // We reuse the existing iterator, which is currently positioned at the
+    // version header line.
+    bool inList = false;
+    bool seenBlankLineInList = false;
+    final RegExp listItemRegex = RegExp(r'^[ \t]*[*+-]\s');
 
-      printError(
-          '${indentation}Blank lines found between list items in CHANGELOG.\n'
-          '${indentation}This creates multiple separate lists on pub.dev.\n'
-          '${indentation}Remove blank lines to keep all items in a single list.\n'
-          '${indentation}The problematic section found is:\n'
-          '$offendingLines');
-      return false;
+    while (iterator.moveNext()) {
+      final String line = iterator.current;
+      final bool isListItem = listItemRegex.hasMatch(line);
+      final bool isBlank = line.trim().isEmpty;
+
+      if (isListItem) {
+        if (seenBlankLineInList) {
+          printError(
+              '${indentation}Blank lines found between list items in CHANGELOG.\n'
+              '${indentation}This creates multiple separate lists on pub.dev.\n'
+              '${indentation}Remove blank lines to keep all items in a single list.');
+          return false;
+        }
+        inList = true;
+      } else if (isBlank) {
+        if (inList) {
+          seenBlankLineInList = true;
+        }
+      } else {
+        // Any other non-blank, non-list line resets the state (e.g. new headers, text).
+        inList = false;
+        seenBlankLineInList = false;
+      }
     }
 
     return true;
-  }
-
-  /// Validates that there are no blank lines between list items within
-  /// the changelog using a regex.
-  ///
-  /// Returns the first invalid match found, or null if validation passes.
-  Match? _findBlankLineInList(String changelogContent) {
-    // If the regex finds a match, it means there is an error (a blank line
-    // between list items).
-    return _blankLineInListRegex.firstMatch(changelogContent);
   }
 
   Pubspec? _tryParsePubspec(RepositoryPackage package) {
