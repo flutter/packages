@@ -141,9 +141,9 @@ class Polygon implements MapsObject<Polygon> {
 
     addIfPresent('polygonId', polygonId.value);
     addIfPresent('consumeTapEvents', consumeTapEvents);
-    addIfPresent('fillColor', fillColor.toARGB32());
+    addIfPresent('fillColor', fillColor.value);
     addIfPresent('geodesic', geodesic);
-    addIfPresent('strokeColor', strokeColor.toARGB32());
+    addIfPresent('strokeColor', strokeColor.value);
     addIfPresent('strokeWidth', strokeWidth);
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);

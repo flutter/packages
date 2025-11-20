@@ -784,8 +784,8 @@ void main() {
       expect(pinConfig.toJson(), <Object>[
         PinConfig.type,
         <String, Object>{
-          'backgroundColor': Colors.green.toARGB32(),
-          'borderColor': Colors.blue.toARGB32(),
+          'backgroundColor': Colors.green.value,
+          'borderColor': Colors.blue.value,
         },
       ]);
     });
@@ -802,14 +802,11 @@ void main() {
       expect(pinConfig.toJson(), <Object>[
         PinConfig.type,
         <String, Object>{
-          'backgroundColor': Colors.green.toARGB32(),
-          'borderColor': Colors.blue.toARGB32(),
+          'backgroundColor': Colors.green.value,
+          'borderColor': Colors.blue.value,
           'glyph': <Object>[
             'textGlyph',
-            <Object, Object>{
-              'text': 'Hello',
-              'textColor': Colors.red.toARGB32(),
-            },
+            <Object, Object>{'text': 'Hello', 'textColor': Colors.red.value},
           ],
         },
       ]);
@@ -834,8 +831,8 @@ void main() {
               'bitmap': <Object>['fromAsset', 'red_square.png'],
             },
           ],
-          'backgroundColor': Colors.black.toARGB32(),
-          'borderColor': Colors.red.toARGB32(),
+          'backgroundColor': Colors.black.value,
+          'borderColor': Colors.red.value,
         },
       ]);
     });

@@ -293,7 +293,7 @@ class HeatmapGradient {
 
     addIfPresent(
       'colors',
-      colors.map((HeatmapGradientColor e) => e.color.toARGB32()).toList(),
+      colors.map((HeatmapGradientColor e) => e.color.value).toList(),
     );
     addIfPresent(
       'startPoints',

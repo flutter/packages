@@ -121,10 +121,10 @@ class Circle implements MapsObject<Circle> {
 
     addIfPresent('circleId', circleId.value);
     addIfPresent('consumeTapEvents', consumeTapEvents);
-    addIfPresent('fillColor', fillColor.toARGB32());
+    addIfPresent('fillColor', fillColor.value);
     addIfPresent('center', center.toJson());
     addIfPresent('radius', radius);
-    addIfPresent('strokeColor', strokeColor.toARGB32());
+    addIfPresent('strokeColor', strokeColor.value);
     addIfPresent('strokeWidth', strokeWidth);
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);

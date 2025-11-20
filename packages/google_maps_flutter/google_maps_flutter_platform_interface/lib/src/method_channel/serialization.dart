@@ -130,9 +130,7 @@ Object serializeHeatmapGradient(HeatmapGradient gradient) {
   _addIfNonNull(
     json,
     _heatmapGradientColorsKey,
-    gradient.colors
-        .map((HeatmapGradientColor e) => e.color.toARGB32())
-        .toList(),
+    gradient.colors.map((HeatmapGradientColor e) => e.color.value).toList(),
   );
   _addIfNonNull(
     json,

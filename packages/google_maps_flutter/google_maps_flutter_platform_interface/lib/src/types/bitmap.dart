@@ -1107,9 +1107,8 @@ class PinConfig extends BitmapDescriptor {
   Object toJson() => <Object>[
     type,
     <String, Object?>{
-      if (backgroundColor != null)
-        'backgroundColor': backgroundColor?.toARGB32(),
-      if (borderColor != null) 'borderColor': borderColor?.toARGB32(),
+      if (backgroundColor != null) 'backgroundColor': backgroundColor?.value,
+      if (borderColor != null) 'borderColor': borderColor?.value,
       if (glyph != null) 'glyph': glyph?.toJson(),
     },
   ];
@@ -1132,7 +1131,7 @@ class CircleGlyph extends AdvancedMarkerGlyph {
   @override
   Object toJson() => <Object>[
     'circleGlyph',
-    <String, Object>{'color': color.toARGB32()},
+    <String, Object>{'color': color.value},
   ];
 }
 
@@ -1176,7 +1175,7 @@ class TextGlyph extends AdvancedMarkerGlyph {
       'textGlyph',
       <String, Object>{
         'text': text,
-        if (textColor != null) 'textColor': textColor!.toARGB32(),
+        if (textColor != null) 'textColor': textColor!.value,
       },
     ];
   }
