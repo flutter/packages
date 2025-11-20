@@ -1,3 +1,11 @@
+## 2.8.22
+
+* Bumps kotlin_version to 2.2.21.
+
+## 2.8.21
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
 ## 2.8.20
 
 * Bumps `exoplayer_version` from 1.5.1 to 1.8.0.

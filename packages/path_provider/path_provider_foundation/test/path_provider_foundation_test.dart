@@ -28,9 +28,7 @@ void main() {
     });
 
     test('getTemporaryPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       final String temporaryPath = p.join(testRoot.path, 'temporary', 'path');
       api.directoryResult = temporaryPath;
 
@@ -41,9 +39,7 @@ void main() {
     });
 
     test('getApplicationSupportPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       final String applicationSupportPath = p.join(
         testRoot.path,
         'application',
@@ -61,9 +57,7 @@ void main() {
     test(
       'getApplicationSupportPath creates the directory if necessary',
       () async {
-        final PathProviderFoundation pathProvider = PathProviderFoundation(
-          pathProviderApi: api,
-        );
+        final pathProvider = PathProviderFoundation(pathProviderApi: api);
         final String applicationSupportPath = p.join(
           testRoot.path,
           'application',
@@ -79,9 +73,7 @@ void main() {
     );
 
     test('getLibraryPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       final String libraryPath = p.join(testRoot.path, 'library', 'path');
       api.directoryResult = libraryPath;
 
@@ -92,9 +84,7 @@ void main() {
     });
 
     test('getApplicationDocumentsPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       final String applicationDocumentsPath = p.join(
         testRoot.path,
         'application',
@@ -110,9 +100,7 @@ void main() {
     });
 
     test('getApplicationCachePath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       final String applicationCachePath = p.join(
         testRoot.path,
         'application',
@@ -130,9 +118,7 @@ void main() {
     test(
       'getApplicationCachePath creates the directory if necessary',
       () async {
-        final PathProviderFoundation pathProvider = PathProviderFoundation(
-          pathProviderApi: api,
-        );
+        final pathProvider = PathProviderFoundation(pathProviderApi: api);
         final String applicationCachePath = p.join(
           testRoot.path,
           'application',
@@ -148,9 +134,7 @@ void main() {
     );
 
     test('getDownloadsPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       final String downloadsPath = p.join(testRoot.path, 'downloads', 'path');
       api.directoryResult = downloadsPath;
 
@@ -161,16 +145,12 @@ void main() {
     });
 
     test('getExternalCachePaths throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       expect(pathProvider.getExternalCachePaths(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePath throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       expect(
         pathProvider.getExternalStoragePath(),
         throwsA(isUnsupportedError),
@@ -178,9 +158,7 @@ void main() {
     });
 
     test('getExternalStoragePaths throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
+      final pathProvider = PathProviderFoundation(pathProviderApi: api);
       expect(
         pathProvider.getExternalStoragePaths(),
         throwsA(isUnsupportedError),
@@ -188,11 +166,11 @@ void main() {
     });
 
     test('getContainerPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final pathProvider = PathProviderFoundation(
         pathProviderApi: api,
         platform: FakePlatformProvider(isIOS: true),
       );
-      const String appGroupIdentifier = 'group.example.test';
+      const appGroupIdentifier = 'group.example.test';
 
       final String containerPath = p.join(testRoot.path, 'container', 'path');
       api.containerResult = containerPath;
@@ -206,7 +184,7 @@ void main() {
     });
 
     test('getContainerPath throws on macOS', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final pathProvider = PathProviderFoundation(
         pathProviderApi: api,
         platform: FakePlatformProvider(isIOS: false),
       );

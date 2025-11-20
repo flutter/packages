@@ -9,6 +9,7 @@ import 'package:file/file.dart';
 import 'package:file/local.dart';
 
 import 'analyze_command.dart';
+import 'branch_for_batch_release_command.dart';
 import 'build_examples_command.dart';
 import 'common/core.dart';
 import 'create_all_packages_app_command.dart';
@@ -41,12 +42,14 @@ import 'version_check_command.dart';
 
 void main(List<String> args) {
   const FileSystem fileSystem = LocalFileSystem();
-  final Directory scriptDir =
-      fileSystem.file(io.Platform.script.toFilePath()).parent;
+  final Directory scriptDir = fileSystem
+      .file(io.Platform.script.toFilePath())
+      .parent;
   // Support running either via directly invoking main.dart, or the wrapper in
   // bin/.
-  final Directory toolsDir =
-      scriptDir.basename == 'bin' ? scriptDir.parent : scriptDir.parent.parent;
+  final Directory toolsDir = scriptDir.basename == 'bin'
+      ? scriptDir.parent
+      : scriptDir.parent.parent;
   final Directory root = toolsDir.parent.parent;
   final Directory packagesDir = root.childDirectory('packages');
 
@@ -55,41 +58,44 @@ void main(List<String> args) {
     io.exit(1);
   }
 
-  final CommandRunner<void> commandRunner = CommandRunner<void>(
-      'dart pub global run flutter_plugin_tools',
-      'Productivity utils for hosting multiple plugins within one repository.')
-    ..addCommand(AnalyzeCommand(packagesDir))
-    ..addCommand(BuildExamplesCommand(packagesDir))
-    ..addCommand(CreateAllPackagesAppCommand(packagesDir))
-    ..addCommand(CustomTestCommand(packagesDir))
-    ..addCommand(DependabotCheckCommand(packagesDir))
-    ..addCommand(DriveExamplesCommand(packagesDir))
-    ..addCommand(FederationSafetyCheckCommand(packagesDir))
-    ..addCommand(FetchDepsCommand(packagesDir))
-    ..addCommand(FirebaseTestLabCommand(packagesDir))
-    ..addCommand(FixCommand(packagesDir))
-    ..addCommand(FormatCommand(packagesDir))
-    ..addCommand(GradleCheckCommand(packagesDir))
-    ..addCommand(LicenseCheckCommand(packagesDir))
-    ..addCommand(PodspecCheckCommand(packagesDir))
-    ..addCommand(ListCommand(packagesDir))
-    ..addCommand(NativeTestCommand(packagesDir))
-    ..addCommand(MakeDepsPathBasedCommand(packagesDir))
-    ..addCommand(PublishCheckCommand(packagesDir))
-    ..addCommand(PublishCommand(packagesDir))
-    ..addCommand(PubspecCheckCommand(packagesDir))
-    ..addCommand(ReadmeCheckCommand(packagesDir))
-    ..addCommand(RemoveDevDependenciesCommand(packagesDir))
-    ..addCommand(RepoPackageInfoCheckCommand(packagesDir))
-    ..addCommand(DartTestCommand(packagesDir))
-    ..addCommand(UpdateDependencyCommand(packagesDir))
-    ..addCommand(UpdateExcerptsCommand(packagesDir))
-    ..addCommand(UpdateMinSdkCommand(packagesDir))
-    ..addCommand(UpdateReleaseInfoCommand(packagesDir))
-    ..addCommand(VersionCheckCommand(packagesDir));
+  final commandRunner =
+      CommandRunner<void>(
+          'dart pub global run flutter_plugin_tools',
+          'Productivity utils for hosting multiple plugins within one repository.',
+        )
+        ..addCommand(AnalyzeCommand(packagesDir))
+        ..addCommand(BuildExamplesCommand(packagesDir))
+        ..addCommand(CreateAllPackagesAppCommand(packagesDir))
+        ..addCommand(CustomTestCommand(packagesDir))
+        ..addCommand(DependabotCheckCommand(packagesDir))
+        ..addCommand(DriveExamplesCommand(packagesDir))
+        ..addCommand(FederationSafetyCheckCommand(packagesDir))
+        ..addCommand(FetchDepsCommand(packagesDir))
+        ..addCommand(FirebaseTestLabCommand(packagesDir))
+        ..addCommand(FixCommand(packagesDir))
+        ..addCommand(FormatCommand(packagesDir))
+        ..addCommand(GradleCheckCommand(packagesDir))
+        ..addCommand(LicenseCheckCommand(packagesDir))
+        ..addCommand(PodspecCheckCommand(packagesDir))
+        ..addCommand(ListCommand(packagesDir))
+        ..addCommand(NativeTestCommand(packagesDir))
+        ..addCommand(MakeDepsPathBasedCommand(packagesDir))
+        ..addCommand(PublishCheckCommand(packagesDir))
+        ..addCommand(PublishCommand(packagesDir))
+        ..addCommand(PubspecCheckCommand(packagesDir))
+        ..addCommand(ReadmeCheckCommand(packagesDir))
+        ..addCommand(RemoveDevDependenciesCommand(packagesDir))
+        ..addCommand(RepoPackageInfoCheckCommand(packagesDir))
+        ..addCommand(DartTestCommand(packagesDir))
+        ..addCommand(UpdateDependencyCommand(packagesDir))
+        ..addCommand(UpdateExcerptsCommand(packagesDir))
+        ..addCommand(UpdateMinSdkCommand(packagesDir))
+        ..addCommand(UpdateReleaseInfoCommand(packagesDir))
+        ..addCommand(VersionCheckCommand(packagesDir))
+        ..addCommand(BranchForBatchReleaseCommand(packagesDir));
 
   commandRunner.run(args).catchError((Object e) {
-    final ToolExit toolExit = e as ToolExit;
+    final toolExit = e as ToolExit;
     int exitCode = toolExit.exitCode;
     // This should never happen; this check is here to guarantee that a ToolExit
     // never accidentally has code 0 thus causing CI to pass.

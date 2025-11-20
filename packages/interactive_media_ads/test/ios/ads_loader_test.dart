@@ -55,12 +55,12 @@ void main() {
 
       ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
-      final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final mockLoader = MockIMAAdsLoader();
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
       );
 
-      final IOSAdsLoader loader = IOSAdsLoader(
+      final loader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
           settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
@@ -81,13 +81,12 @@ void main() {
 
       ima.PigeonOverrides.iMASettings_new = () => MockIMASettings();
 
-      const String adTag = 'myAdTag';
+      const adTag = 'myAdTag';
 
-      final MockIMAAdsLoader mockLoader = MockIMAAdsLoader();
-      final ima.IMAContentPlayhead contentPlayheadInstance =
-          ima.IMAContentPlayhead();
-      final MockIMAAdsRequest mockRequest = MockIMAAdsRequest();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final mockLoader = MockIMAAdsLoader();
+      final contentPlayheadInstance = ima.IMAContentPlayhead();
+      final mockRequest = MockIMAAdsRequest();
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
         newIMAContentPlayhead: () => contentPlayheadInstance,
       );
@@ -104,7 +103,7 @@ void main() {
             return mockRequest;
           };
 
-      final IOSAdsLoader loader = IOSAdsLoader(
+      final loader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
           settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
@@ -114,7 +113,7 @@ void main() {
         ),
       );
 
-      final IOSContentProgressProvider provider = IOSContentProgressProvider(
+      final provider = IOSContentProgressProvider(
         IOSContentProgressProviderCreationParams(proxy: imaProxy),
       );
 
@@ -159,7 +158,7 @@ void main() {
       )
       adLoaderLoadedWithCallback;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => MockIMAAdsLoader(),
         newIMAAdsLoaderDelegate:
             ({
@@ -176,7 +175,7 @@ void main() {
             },
       );
 
-      final IOSAdsLoader adsLoader = IOSAdsLoader(
+      final adsLoader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
           settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
@@ -214,7 +213,7 @@ void main() {
       )
       adsLoaderFailedWithErrorDataCallback;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => MockIMAAdsLoader(),
         newIMAAdsLoaderDelegate:
             ({
@@ -232,7 +231,7 @@ void main() {
             },
       );
 
-      final IOSAdsLoader adsLoader = IOSAdsLoader(
+      final adsLoader = IOSAdsLoader(
         IOSAdsLoaderCreationParams(
           container: container,
           settings: IOSImaSettings(const PlatformImaSettingsCreationParams()),
@@ -247,8 +246,9 @@ void main() {
       // Trigger lazy initialization of native IMAAdsLoader
       await adsLoader.contentComplete();
 
-      final ima.PigeonInstanceManager instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       adsLoaderFailedWithErrorDataCallback(
         MockIMAAdsLoaderDelegate(),
@@ -269,17 +269,18 @@ void main() {
 Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
   WidgetTester tester,
 ) async {
-  final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+  final imaProxy = InteractiveMediaAdsProxy(
     newUIViewController:
         ({void Function(ima.UIViewController, bool)? viewDidAppear}) {
-          final ima.PigeonInstanceManager instanceManager =
-              ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-          final ima.UIView view = ima.UIView.pigeon_detached(
+          final instanceManager = ima.PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          );
+          final view = ima.UIView.pigeon_detached(
             pigeon_instanceManager: instanceManager,
           );
           instanceManager.addDartCreatedInstance(view);
 
-          final MockUIViewController mockController = MockUIViewController();
+          final mockController = MockUIViewController();
           viewDidAppear!.call(mockController, true);
           when(mockController.view).thenReturn(view);
           return mockController;
@@ -292,7 +293,7 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
         }) => MockIMAAdDisplayContainer(),
   );
 
-  final IOSAdDisplayContainer container = IOSAdDisplayContainer(
+  final container = IOSAdDisplayContainer(
     IOSAdDisplayContainerCreationParams(
       onContainerAdded: expectAsync1((_) {}),
       imaProxy: imaProxy,
@@ -303,8 +304,7 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
     Builder(builder: (BuildContext context) => container.build(context)),
   );
 
-  final UiKitView view =
-      find.byType(UiKitView).evaluate().single.widget as UiKitView;
+  final view = find.byType(UiKitView).evaluate().single.widget as UiKitView;
   view.onPlatformViewCreated!.call(0);
 
   await tester.pumpAndSettle(const Duration(seconds: 1));

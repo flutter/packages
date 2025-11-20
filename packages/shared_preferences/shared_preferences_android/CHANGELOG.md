@@ -1,3 +1,11 @@
+## 2.4.18
+
+* Bumps kotlin_version to 2.2.21.
+
+## 2.4.17
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
 ## 2.4.16
 
 * Updates to Pigeon 26.

@@ -63,14 +63,14 @@ abstract class BitmapDescriptor {
   @Deprecated('No longer supported')
   static BitmapDescriptor fromJson(Object json) {
     assert(json is List<dynamic>);
-    final List<dynamic> jsonList = json as List<dynamic>;
+    final jsonList = json as List<dynamic>;
     assert(_validTypes.contains(jsonList[0]));
     switch (jsonList[0]) {
       case _defaultMarker:
         assert(jsonList.length <= 2);
         if (jsonList.length == 2) {
           assert(jsonList[1] is num);
-          final num secondElement = jsonList[1] as num;
+          final secondElement = jsonList[1] as num;
           assert(0 <= secondElement && secondElement < 360);
           return DefaultMarker(hue: secondElement);
         }
@@ -101,7 +101,7 @@ abstract class BitmapDescriptor {
         if (jsonList.length == 4) {
           assert(jsonList[3] != null && jsonList[3] is List<dynamic>);
           assert((jsonList[3] as List<dynamic>).length == 2);
-          final List<dynamic> sizeList = jsonList[3] as List<dynamic>;
+          final sizeList = jsonList[3] as List<dynamic>;
           return AssetImageBitmap(
             name: jsonList[1] as String,
             scale: jsonList[2] as double,
@@ -118,8 +118,7 @@ abstract class BitmapDescriptor {
       case AssetMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
-        final Map<String, dynamic> jsonMap =
-            jsonList[1] as Map<String, dynamic>;
+        final jsonMap = jsonList[1] as Map<String, dynamic>;
         assert(jsonMap.containsKey('assetName'));
         assert(jsonMap.containsKey('bitmapScaling'));
         assert(jsonMap.containsKey('imagePixelRatio'));
@@ -146,8 +145,7 @@ abstract class BitmapDescriptor {
       case BytesMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
-        final Map<String, dynamic> jsonMap =
-            jsonList[1] as Map<String, dynamic>;
+        final jsonMap = jsonList[1] as Map<String, dynamic>;
         assert(jsonMap.containsKey('byteData'));
         assert(jsonMap.containsKey('bitmapScaling'));
         assert(jsonMap.containsKey('imagePixelRatio'));
@@ -256,11 +254,7 @@ abstract class BitmapDescriptor {
     if (!mipmaps && devicePixelRatio != null) {
       return AssetImageBitmap(name: assetName, scale: devicePixelRatio);
     }
-    final AssetImage assetImage = AssetImage(
-      assetName,
-      package: package,
-      bundle: bundle,
-    );
+    final assetImage = AssetImage(assetName, package: package, bundle: bundle);
     final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
       configuration,
     );
@@ -811,11 +805,7 @@ class AssetMapBitmap extends MapBitmap {
     MapBitmapScaling bitmapScaling = MapBitmapScaling.auto,
   }) async {
     assert(assetName.isNotEmpty, 'The asset name must not be empty.');
-    final AssetImage assetImage = AssetImage(
-      assetName,
-      package: package,
-      bundle: bundle,
-    );
+    final assetImage = AssetImage(assetName, package: package, bundle: bundle);
     final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
       configuration,
     );
@@ -1107,8 +1097,9 @@ class PinConfig extends BitmapDescriptor {
   Object toJson() => <Object>[
     type,
     <String, Object?>{
-      if (backgroundColor != null) 'backgroundColor': backgroundColor?.value,
-      if (borderColor != null) 'borderColor': borderColor?.value,
+      if (backgroundColor != null)
+        'backgroundColor': backgroundColor?.toARGB32(),
+      if (borderColor != null) 'borderColor': borderColor?.toARGB32(),
       if (glyph != null) 'glyph': glyph?.toJson(),
     },
   ];
@@ -1131,7 +1122,7 @@ class CircleGlyph extends AdvancedMarkerGlyph {
   @override
   Object toJson() => <Object>[
     'circleGlyph',
-    <String, Object>{'color': color.value},
+    <String, Object>{'color': color.toARGB32()},
   ];
 }
 
@@ -1175,7 +1166,7 @@ class TextGlyph extends AdvancedMarkerGlyph {
       'textGlyph',
       <String, Object>{
         'text': text,
-        if (textColor != null) 'textColor': textColor!.value,
+        if (textColor != null) 'textColor': textColor!.toARGB32(),
       },
     ];
   }
