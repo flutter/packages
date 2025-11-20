@@ -125,14 +125,9 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _lintPodspec(File podspec) async {
-    // Do not run the static analyzer on plugins with known analyzer issues.
-    final String podspecPath = podspec.path;
+    print('Linting ${podspec.basename}');
 
-    final String podspecBasename = podspec.basename;
-    print('Linting $podspecBasename');
-
-    // Lint plugin as framework (use_frameworks!).
-    final ProcessResult lintResult = await _runPodLint(podspecPath);
+    final ProcessResult lintResult = await _runPodLint(podspec.path);
     print(lintResult.stdout);
     print(lintResult.stderr);
 
