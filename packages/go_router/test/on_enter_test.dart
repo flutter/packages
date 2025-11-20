@@ -1527,5 +1527,72 @@ void main() {
         containsAllInOrder(<String>['onEnter', 'legacy', 'route-level']),
       );
     });
+    testWidgets(
+      'onEnter blocking prevents stale state restoration (pop case)',
+      (WidgetTester tester) async {
+        // This test reproduces https://github.com/flutter/flutter/issues/178853
+        // 1. Push A -> B
+        // 2. Pop B -> A (simulating system back)
+        // 3. Go A -> Blocked
+        // 4. onEnter blocks
+        // 5. Ensure we stay on A and don't "restore" B (stale state)
+
+        router = GoRouter(
+          initialLocation: '/home',
+          onEnter:
+              (
+                BuildContext context,
+                GoRouterState current,
+                GoRouterState next,
+                GoRouter router,
+              ) {
+                if (next.uri.path == '/blocked') {
+                  return const Block.stop();
+                }
+                return const Allow();
+              },
+          routes: <RouteBase>[
+            GoRoute(
+              path: '/home',
+              builder: (_, __) => const Scaffold(body: Text('Home')),
+            ),
+            GoRoute(
+              path: '/allowed',
+              builder: (_, __) => const Scaffold(body: Text('Allowed')),
+            ),
+            GoRoute(
+              path: '/blocked',
+              builder: (_, __) => const Scaffold(body: Text('Blocked')),
+            ),
+          ],
+        );
+
+        await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+        await tester.pumpAndSettle();
+        expect(find.text('Home'), findsOneWidget);
+
+        // 1. Push allowed
+        router.push('/allowed');
+        await tester.pumpAndSettle();
+        expect(find.text('Allowed'), findsOneWidget);
+
+        // 2. Pop (simulating system back / imperative pop)
+        final NavigatorState navigator = tester.state(find.byType(Navigator).last);
+        navigator.pop();
+        await tester.pumpAndSettle();
+        expect(find.text('Home'), findsOneWidget);
+
+        // 3. Attempt blocked navigation
+        router.go('/blocked');
+        await tester.pumpAndSettle();
+
+        // 4. Verify blocking worked
+        expect(find.text('Blocked'), findsNothing);
+
+        // 5. Verify we didn't restore the popped route (Allowed)
+        expect(find.text('Allowed'), findsNothing);
+        expect(find.text('Home'), findsOneWidget);
+      },
+    );
   });
 }

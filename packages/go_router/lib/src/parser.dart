@@ -44,7 +44,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a [GoRouteInformationParser].
   GoRouteInformationParser({
     required this.configuration,
-    required GoRouter router,
+    required this.router,
     required this.onParserException,
   }) : _routeMatchListCodec = RouteMatchListCodec(configuration),
        _onEnterHandler = _OnEnterHandler(
@@ -55,6 +55,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   /// The route configuration used for parsing [RouteInformation]s.
   final RouteConfiguration configuration;
+
+  /// The router instance.
+  final GoRouter router;
 
   /// Exception handler for parser errors.
   final ParserExceptionHandler? onParserException;
@@ -159,6 +162,12 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       },
       onCanNotEnter: () {
         // If blocked, "stay" on last successful match if available.
+        if (router.routerDelegate.currentConfiguration.isNotEmpty) {
+          return SynchronousFuture<RouteMatchList>(
+            router.routerDelegate.currentConfiguration,
+          );
+        }
+
         if (_lastMatchList != null) {
           return SynchronousFuture<RouteMatchList>(_lastMatchList!);
         }
