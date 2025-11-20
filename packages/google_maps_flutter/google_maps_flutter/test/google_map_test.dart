@@ -677,7 +677,9 @@ void main() {
     expect(map.mapConfiguration.colorScheme, MapColorScheme.followSystem);
   });
 
-  testWidgets('Can set color scheme to non-default', (WidgetTester tester) async {
+  testWidgets('Can set color scheme to non-default', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
