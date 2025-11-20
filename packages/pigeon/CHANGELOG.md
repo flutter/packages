@@ -1,5 +1,9 @@
 ## 26.1.1
 
+* [kotlin] Fixes compilation error with unbounded type parameter for InstanceManager.
+
+## 26.1.1
+
 * Updates supported `analyzer` versions to 8.x or 9.x.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
