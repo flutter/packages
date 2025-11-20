@@ -1,4 +1,4 @@
-## 26.1.1
+## 26.1.2
 
 * [kotlin] Fixes compilation error with unbounded type parameter for InstanceManager.
 
