@@ -1,3 +1,7 @@
+## 2.15.8
+
+* Adds `colorScheme` support for web cloud-based maps styling brightness.
+
 ## 2.15.7
 
 * Updates to Pigeon 26.
