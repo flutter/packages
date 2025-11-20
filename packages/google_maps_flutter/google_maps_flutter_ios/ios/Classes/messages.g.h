@@ -96,7 +96,6 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformMapConfiguration;
 @class FGMPlatformPoint;
 @class FGMPlatformSize;
-@class FGMPlatformColor;
 @class FGMPlatformTileLayer;
 @class FGMPlatformZoomRange;
 @class FGMPlatformBitmap;
@@ -206,8 +205,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithConsumeTapEvents:(BOOL)consumeTapEvents
-                               fillColor:(FGMPlatformColor *)fillColor
-                             strokeColor:(FGMPlatformColor *)strokeColor
+                               fillColor:(NSInteger)fillColor
+                             strokeColor:(NSInteger)strokeColor
                                  visible:(BOOL)visible
                              strokeWidth:(NSInteger)strokeWidth
                                   zIndex:(double)zIndex
@@ -215,8 +214,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                                   radius:(double)radius
                                 circleId:(NSString *)circleId;
 @property(nonatomic, assign) BOOL consumeTapEvents;
-@property(nonatomic, strong) FGMPlatformColor *fillColor;
-@property(nonatomic, strong) FGMPlatformColor *strokeColor;
+@property(nonatomic, assign) NSInteger fillColor;
+@property(nonatomic, assign) NSInteger strokeColor;
 @property(nonatomic, assign) BOOL visible;
 @property(nonatomic, assign) NSInteger strokeWidth;
 @property(nonatomic, assign) double zIndex;
@@ -308,22 +307,22 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithPolygonId:(NSString *)polygonId
                 consumesTapEvents:(BOOL)consumesTapEvents
-                        fillColor:(FGMPlatformColor *)fillColor
+                        fillColor:(NSInteger)fillColor
                          geodesic:(BOOL)geodesic
                            points:(NSArray<FGMPlatformLatLng *> *)points
                             holes:(NSArray<NSArray<FGMPlatformLatLng *> *> *)holes
                           visible:(BOOL)visible
-                      strokeColor:(FGMPlatformColor *)strokeColor
+                      strokeColor:(NSInteger)strokeColor
                       strokeWidth:(NSInteger)strokeWidth
                            zIndex:(NSInteger)zIndex;
 @property(nonatomic, copy) NSString *polygonId;
 @property(nonatomic, assign) BOOL consumesTapEvents;
-@property(nonatomic, strong) FGMPlatformColor *fillColor;
+@property(nonatomic, assign) NSInteger fillColor;
 @property(nonatomic, assign) BOOL geodesic;
 @property(nonatomic, copy) NSArray<FGMPlatformLatLng *> *points;
 @property(nonatomic, copy) NSArray<NSArray<FGMPlatformLatLng *> *> *holes;
 @property(nonatomic, assign) BOOL visible;
-@property(nonatomic, strong) FGMPlatformColor *strokeColor;
+@property(nonatomic, assign) NSInteger strokeColor;
 @property(nonatomic, assign) NSInteger strokeWidth;
 @property(nonatomic, assign) NSInteger zIndex;
 @end
@@ -334,7 +333,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithPolylineId:(NSString *)polylineId
                  consumesTapEvents:(BOOL)consumesTapEvents
-                             color:(FGMPlatformColor *)color
+                             color:(NSInteger)color
                           geodesic:(BOOL)geodesic
                          jointType:(FGMPlatformJointType)jointType
                           patterns:(NSArray<FGMPlatformPatternItem *> *)patterns
@@ -344,7 +343,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                             zIndex:(NSInteger)zIndex;
 @property(nonatomic, copy) NSString *polylineId;
 @property(nonatomic, assign) BOOL consumesTapEvents;
-@property(nonatomic, strong) FGMPlatformColor *color;
+@property(nonatomic, assign) NSInteger color;
 @property(nonatomic, assign) BOOL geodesic;
 /// The joint type.
 @property(nonatomic, assign) FGMPlatformJointType jointType;
@@ -506,7 +505,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                      indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
                         trafficEnabled:(nullable NSNumber *)trafficEnabled
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
-                                 mapId:(nullable NSString *)mapId
+                            cloudMapId:(nullable NSString *)cloudMapId
                                  style:(nullable NSString *)style;
 @property(nonatomic, strong, nullable) NSNumber *compassEnabled;
 @property(nonatomic, strong, nullable) FGMPlatformCameraTargetBounds *cameraTargetBounds;
@@ -523,7 +522,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, strong, nullable) NSNumber *indoorViewEnabled;
 @property(nonatomic, strong, nullable) NSNumber *trafficEnabled;
 @property(nonatomic, strong, nullable) NSNumber *buildingsEnabled;
-@property(nonatomic, copy, nullable) NSString *mapId;
+@property(nonatomic, copy, nullable) NSString *cloudMapId;
 @property(nonatomic, copy, nullable) NSString *style;
 @end
 
@@ -543,17 +542,6 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 + (instancetype)makeWithWidth:(double)width height:(double)height;
 @property(nonatomic, assign) double width;
 @property(nonatomic, assign) double height;
-@end
-
-/// Pigeon representation of a color.
-@interface FGMPlatformColor : NSObject
-/// `init` unavailable to enforce nonnull fields, see the `make` class method.
-- (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithRed:(double)red green:(double)green blue:(double)blue alpha:(double)alpha;
-@property(nonatomic, assign) double red;
-@property(nonatomic, assign) double green;
-@property(nonatomic, assign) double blue;
-@property(nonatomic, assign) double alpha;
 @end
 
 /// Pigeon equivalent of GMSTileLayer properties.

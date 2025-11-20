@@ -5,7 +5,7 @@
 #import "GoogleMapPolylineController.h"
 #import "GoogleMapPolylineController_Test.h"
 
-#import "FGMConversionUtils.h"
+#import "FLTGoogleMapJSONConversions.h"
 
 @interface FLTGoogleMapPolylineController ()
 
@@ -46,7 +46,7 @@
   GMSMutablePath *path =
       FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolyline.points));
   polyline.path = path;
-  UIColor *strokeColor = FGMGetColorForPigeonColor(platformPolyline.color);
+  UIColor *strokeColor = FGMGetColorForRGBA(platformPolyline.color);
   polyline.strokeColor = strokeColor;
   polyline.strokeWidth = platformPolyline.width;
   polyline.geodesic = platformPolyline.geodesic;

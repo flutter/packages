@@ -1074,26 +1074,26 @@ public class Messages {
       this.consumeTapEvents = setterArg;
     }
 
-    private @NonNull PlatformColor fillColor;
+    private @NonNull Long fillColor;
 
-    public @NonNull PlatformColor getFillColor() {
+    public @NonNull Long getFillColor() {
       return fillColor;
     }
 
-    public void setFillColor(@NonNull PlatformColor setterArg) {
+    public void setFillColor(@NonNull Long setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"fillColor\" is null.");
       }
       this.fillColor = setterArg;
     }
 
-    private @NonNull PlatformColor strokeColor;
+    private @NonNull Long strokeColor;
 
-    public @NonNull PlatformColor getStrokeColor() {
+    public @NonNull Long getStrokeColor() {
       return strokeColor;
     }
 
-    public void setStrokeColor(@NonNull PlatformColor setterArg) {
+    public void setStrokeColor(@NonNull Long setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"strokeColor\" is null.");
       }
@@ -1225,18 +1225,18 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformColor fillColor;
+      private @Nullable Long fillColor;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setFillColor(@NonNull PlatformColor setterArg) {
+      public @NonNull Builder setFillColor(@NonNull Long setterArg) {
         this.fillColor = setterArg;
         return this;
       }
 
-      private @Nullable PlatformColor strokeColor;
+      private @Nullable Long strokeColor;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setStrokeColor(@NonNull PlatformColor setterArg) {
+      public @NonNull Builder setStrokeColor(@NonNull Long setterArg) {
         this.strokeColor = setterArg;
         return this;
       }
@@ -1324,9 +1324,9 @@ public class Messages {
       Object consumeTapEvents = pigeonVar_list.get(0);
       pigeonResult.setConsumeTapEvents((Boolean) consumeTapEvents);
       Object fillColor = pigeonVar_list.get(1);
-      pigeonResult.setFillColor((PlatformColor) fillColor);
+      pigeonResult.setFillColor((Long) fillColor);
       Object strokeColor = pigeonVar_list.get(2);
-      pigeonResult.setStrokeColor((PlatformColor) strokeColor);
+      pigeonResult.setStrokeColor((Long) strokeColor);
       Object visible = pigeonVar_list.get(3);
       pigeonResult.setVisible((Boolean) visible);
       Object strokeWidth = pigeonVar_list.get(4);
@@ -1581,79 +1581,6 @@ public class Messages {
       pigeonResult.setX((Double) x);
       Object y = pigeonVar_list.get(1);
       pigeonResult.setY((Double) y);
-      return pigeonResult;
-    }
-  }
-
-  /**
-   * Pigeon equivalent of the Color class.
-   *
-   * <p>See https://developer.android.com/reference/android/graphics/Color.html.
-   *
-   * <p>Generated class from Pigeon that represents data sent in messages.
-   */
-  public static final class PlatformColor {
-    private @NonNull Long argbValue;
-
-    public @NonNull Long getArgbValue() {
-      return argbValue;
-    }
-
-    public void setArgbValue(@NonNull Long setterArg) {
-      if (setterArg == null) {
-        throw new IllegalStateException("Nonnull field \"argbValue\" is null.");
-      }
-      this.argbValue = setterArg;
-    }
-
-    /** Constructor is non-public to enforce null safety; use Builder. */
-    PlatformColor() {}
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-      PlatformColor that = (PlatformColor) o;
-      return argbValue.equals(that.argbValue);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(argbValue);
-    }
-
-    public static final class Builder {
-
-      private @Nullable Long argbValue;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setArgbValue(@NonNull Long setterArg) {
-        this.argbValue = setterArg;
-        return this;
-      }
-
-      public @NonNull PlatformColor build() {
-        PlatformColor pigeonReturn = new PlatformColor();
-        pigeonReturn.setArgbValue(argbValue);
-        return pigeonReturn;
-      }
-    }
-
-    @NonNull
-    ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(1);
-      toListResult.add(argbValue);
-      return toListResult;
-    }
-
-    static @NonNull PlatformColor fromList(@NonNull ArrayList<Object> pigeonVar_list) {
-      PlatformColor pigeonResult = new PlatformColor();
-      Object argbValue = pigeonVar_list.get(0);
-      pigeonResult.setArgbValue((Long) argbValue);
       return pigeonResult;
     }
   }
@@ -2200,13 +2127,13 @@ public class Messages {
       this.consumesTapEvents = setterArg;
     }
 
-    private @NonNull PlatformColor fillColor;
+    private @NonNull Long fillColor;
 
-    public @NonNull PlatformColor getFillColor() {
+    public @NonNull Long getFillColor() {
       return fillColor;
     }
 
-    public void setFillColor(@NonNull PlatformColor setterArg) {
+    public void setFillColor(@NonNull Long setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"fillColor\" is null.");
       }
@@ -2265,13 +2192,13 @@ public class Messages {
       this.visible = setterArg;
     }
 
-    private @NonNull PlatformColor strokeColor;
+    private @NonNull Long strokeColor;
 
-    public @NonNull PlatformColor getStrokeColor() {
+    public @NonNull Long getStrokeColor() {
       return strokeColor;
     }
 
-    public void setStrokeColor(@NonNull PlatformColor setterArg) {
+    public void setStrokeColor(@NonNull Long setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"strokeColor\" is null.");
       }
@@ -2361,10 +2288,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformColor fillColor;
+      private @Nullable Long fillColor;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setFillColor(@NonNull PlatformColor setterArg) {
+      public @NonNull Builder setFillColor(@NonNull Long setterArg) {
         this.fillColor = setterArg;
         return this;
       }
@@ -2401,10 +2328,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformColor strokeColor;
+      private @Nullable Long strokeColor;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setStrokeColor(@NonNull PlatformColor setterArg) {
+      public @NonNull Builder setStrokeColor(@NonNull Long setterArg) {
         this.strokeColor = setterArg;
         return this;
       }
@@ -2464,7 +2391,7 @@ public class Messages {
       Object consumesTapEvents = pigeonVar_list.get(1);
       pigeonResult.setConsumesTapEvents((Boolean) consumesTapEvents);
       Object fillColor = pigeonVar_list.get(2);
-      pigeonResult.setFillColor((PlatformColor) fillColor);
+      pigeonResult.setFillColor((Long) fillColor);
       Object geodesic = pigeonVar_list.get(3);
       pigeonResult.setGeodesic((Boolean) geodesic);
       Object points = pigeonVar_list.get(4);
@@ -2474,7 +2401,7 @@ public class Messages {
       Object visible = pigeonVar_list.get(6);
       pigeonResult.setVisible((Boolean) visible);
       Object strokeColor = pigeonVar_list.get(7);
-      pigeonResult.setStrokeColor((PlatformColor) strokeColor);
+      pigeonResult.setStrokeColor((Long) strokeColor);
       Object strokeWidth = pigeonVar_list.get(8);
       pigeonResult.setStrokeWidth((Long) strokeWidth);
       Object zIndex = pigeonVar_list.get(9);
@@ -2515,13 +2442,13 @@ public class Messages {
       this.consumesTapEvents = setterArg;
     }
 
-    private @NonNull PlatformColor color;
+    private @NonNull Long color;
 
-    public @NonNull PlatformColor getColor() {
+    public @NonNull Long getColor() {
       return color;
     }
 
-    public void setColor(@NonNull PlatformColor setterArg) {
+    public void setColor(@NonNull Long setterArg) {
       if (setterArg == null) {
         throw new IllegalStateException("Nonnull field \"color\" is null.");
       }
@@ -2712,10 +2639,10 @@ public class Messages {
         return this;
       }
 
-      private @Nullable PlatformColor color;
+      private @Nullable Long color;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setColor(@NonNull PlatformColor setterArg) {
+      public @NonNull Builder setColor(@NonNull Long setterArg) {
         this.color = setterArg;
         return this;
       }
@@ -2835,7 +2762,7 @@ public class Messages {
       Object consumesTapEvents = pigeonVar_list.get(1);
       pigeonResult.setConsumesTapEvents((Boolean) consumesTapEvents);
       Object color = pigeonVar_list.get(2);
-      pigeonResult.setColor((PlatformColor) color);
+      pigeonResult.setColor((Long) color);
       Object geodesic = pigeonVar_list.get(3);
       pigeonResult.setGeodesic((Boolean) geodesic);
       Object jointType = pigeonVar_list.get(4);
@@ -4808,14 +4735,14 @@ public class Messages {
       this.liteModeEnabled = setterArg;
     }
 
-    private @Nullable String mapId;
+    private @Nullable String cloudMapId;
 
-    public @Nullable String getMapId() {
-      return mapId;
+    public @Nullable String getCloudMapId() {
+      return cloudMapId;
     }
 
-    public void setMapId(@Nullable String setterArg) {
-      this.mapId = setterArg;
+    public void setCloudMapId(@Nullable String setterArg) {
+      this.cloudMapId = setterArg;
     }
 
     private @Nullable String style;
@@ -4855,7 +4782,7 @@ public class Messages {
           && Objects.equals(trafficEnabled, that.trafficEnabled)
           && Objects.equals(buildingsEnabled, that.buildingsEnabled)
           && Objects.equals(liteModeEnabled, that.liteModeEnabled)
-          && Objects.equals(mapId, that.mapId)
+          && Objects.equals(cloudMapId, that.cloudMapId)
           && Objects.equals(style, that.style);
     }
 
@@ -4880,7 +4807,7 @@ public class Messages {
           trafficEnabled,
           buildingsEnabled,
           liteModeEnabled,
-          mapId,
+          cloudMapId,
           style);
     }
 
@@ -5031,11 +4958,11 @@ public class Messages {
         return this;
       }
 
-      private @Nullable String mapId;
+      private @Nullable String cloudMapId;
 
       @CanIgnoreReturnValue
-      public @NonNull Builder setMapId(@Nullable String setterArg) {
-        this.mapId = setterArg;
+      public @NonNull Builder setCloudMapId(@Nullable String setterArg) {
+        this.cloudMapId = setterArg;
         return this;
       }
 
@@ -5067,7 +4994,7 @@ public class Messages {
         pigeonReturn.setTrafficEnabled(trafficEnabled);
         pigeonReturn.setBuildingsEnabled(buildingsEnabled);
         pigeonReturn.setLiteModeEnabled(liteModeEnabled);
-        pigeonReturn.setMapId(mapId);
+        pigeonReturn.setCloudMapId(cloudMapId);
         pigeonReturn.setStyle(style);
         return pigeonReturn;
       }
@@ -5094,7 +5021,7 @@ public class Messages {
       toListResult.add(trafficEnabled);
       toListResult.add(buildingsEnabled);
       toListResult.add(liteModeEnabled);
-      toListResult.add(mapId);
+      toListResult.add(cloudMapId);
       toListResult.add(style);
       return toListResult;
     }
@@ -5137,8 +5064,8 @@ public class Messages {
       pigeonResult.setBuildingsEnabled((Boolean) buildingsEnabled);
       Object liteModeEnabled = pigeonVar_list.get(17);
       pigeonResult.setLiteModeEnabled((Boolean) liteModeEnabled);
-      Object mapId = pigeonVar_list.get(18);
-      pigeonResult.setMapId((String) mapId);
+      Object cloudMapId = pigeonVar_list.get(18);
+      pigeonResult.setCloudMapId((String) cloudMapId);
       Object style = pigeonVar_list.get(19);
       pigeonResult.setStyle((String) style);
       return pigeonResult;
@@ -6348,58 +6275,56 @@ public class Messages {
         case (byte) 148:
           return PlatformDoublePair.fromList((ArrayList<Object>) readValue(buffer));
         case (byte) 149:
-          return PlatformColor.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 150:
           return PlatformInfoWindow.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 151:
+        case (byte) 150:
           return PlatformMarker.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 152:
+        case (byte) 151:
           return PlatformPolygon.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 153:
+        case (byte) 152:
           return PlatformPolyline.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 154:
+        case (byte) 153:
           return PlatformCap.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 155:
+        case (byte) 154:
           return PlatformPatternItem.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 156:
+        case (byte) 155:
           return PlatformTile.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 157:
+        case (byte) 156:
           return PlatformTileOverlay.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 158:
+        case (byte) 157:
           return PlatformEdgeInsets.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 159:
+        case (byte) 158:
           return PlatformLatLng.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 160:
+        case (byte) 159:
           return PlatformLatLngBounds.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 161:
+        case (byte) 160:
           return PlatformCluster.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 162:
+        case (byte) 161:
           return PlatformGroundOverlay.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 163:
+        case (byte) 162:
           return PlatformCameraTargetBounds.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 164:
+        case (byte) 163:
           return PlatformMapViewCreationParams.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 165:
+        case (byte) 164:
           return PlatformMapConfiguration.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 166:
+        case (byte) 165:
           return PlatformPoint.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 167:
+        case (byte) 166:
           return PlatformTileLayer.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 168:
+        case (byte) 167:
           return PlatformZoomRange.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 169:
+        case (byte) 168:
           return PlatformBitmap.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 170:
+        case (byte) 169:
           return PlatformBitmapDefaultMarker.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 171:
+        case (byte) 170:
           return PlatformBitmapBytes.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 172:
+        case (byte) 171:
           return PlatformBitmapAsset.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 173:
+        case (byte) 172:
           return PlatformBitmapAssetImage.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 174:
+        case (byte) 173:
           return PlatformBitmapAssetMap.fromList((ArrayList<Object>) readValue(buffer));
-        case (byte) 175:
+        case (byte) 174:
           return PlatformBitmapBytesMap.fromList((ArrayList<Object>) readValue(buffer));
         default:
           return super.readValueOfType(type, buffer);
@@ -6468,86 +6393,83 @@ public class Messages {
       } else if (value instanceof PlatformDoublePair) {
         stream.write(148);
         writeValue(stream, ((PlatformDoublePair) value).toList());
-      } else if (value instanceof PlatformColor) {
-        stream.write(149);
-        writeValue(stream, ((PlatformColor) value).toList());
       } else if (value instanceof PlatformInfoWindow) {
-        stream.write(150);
+        stream.write(149);
         writeValue(stream, ((PlatformInfoWindow) value).toList());
       } else if (value instanceof PlatformMarker) {
-        stream.write(151);
+        stream.write(150);
         writeValue(stream, ((PlatformMarker) value).toList());
       } else if (value instanceof PlatformPolygon) {
-        stream.write(152);
+        stream.write(151);
         writeValue(stream, ((PlatformPolygon) value).toList());
       } else if (value instanceof PlatformPolyline) {
-        stream.write(153);
+        stream.write(152);
         writeValue(stream, ((PlatformPolyline) value).toList());
       } else if (value instanceof PlatformCap) {
-        stream.write(154);
+        stream.write(153);
         writeValue(stream, ((PlatformCap) value).toList());
       } else if (value instanceof PlatformPatternItem) {
-        stream.write(155);
+        stream.write(154);
         writeValue(stream, ((PlatformPatternItem) value).toList());
       } else if (value instanceof PlatformTile) {
-        stream.write(156);
+        stream.write(155);
         writeValue(stream, ((PlatformTile) value).toList());
       } else if (value instanceof PlatformTileOverlay) {
-        stream.write(157);
+        stream.write(156);
         writeValue(stream, ((PlatformTileOverlay) value).toList());
       } else if (value instanceof PlatformEdgeInsets) {
-        stream.write(158);
+        stream.write(157);
         writeValue(stream, ((PlatformEdgeInsets) value).toList());
       } else if (value instanceof PlatformLatLng) {
-        stream.write(159);
+        stream.write(158);
         writeValue(stream, ((PlatformLatLng) value).toList());
       } else if (value instanceof PlatformLatLngBounds) {
-        stream.write(160);
+        stream.write(159);
         writeValue(stream, ((PlatformLatLngBounds) value).toList());
       } else if (value instanceof PlatformCluster) {
-        stream.write(161);
+        stream.write(160);
         writeValue(stream, ((PlatformCluster) value).toList());
       } else if (value instanceof PlatformGroundOverlay) {
-        stream.write(162);
+        stream.write(161);
         writeValue(stream, ((PlatformGroundOverlay) value).toList());
       } else if (value instanceof PlatformCameraTargetBounds) {
-        stream.write(163);
+        stream.write(162);
         writeValue(stream, ((PlatformCameraTargetBounds) value).toList());
       } else if (value instanceof PlatformMapViewCreationParams) {
-        stream.write(164);
+        stream.write(163);
         writeValue(stream, ((PlatformMapViewCreationParams) value).toList());
       } else if (value instanceof PlatformMapConfiguration) {
-        stream.write(165);
+        stream.write(164);
         writeValue(stream, ((PlatformMapConfiguration) value).toList());
       } else if (value instanceof PlatformPoint) {
-        stream.write(166);
+        stream.write(165);
         writeValue(stream, ((PlatformPoint) value).toList());
       } else if (value instanceof PlatformTileLayer) {
-        stream.write(167);
+        stream.write(166);
         writeValue(stream, ((PlatformTileLayer) value).toList());
       } else if (value instanceof PlatformZoomRange) {
-        stream.write(168);
+        stream.write(167);
         writeValue(stream, ((PlatformZoomRange) value).toList());
       } else if (value instanceof PlatformBitmap) {
-        stream.write(169);
+        stream.write(168);
         writeValue(stream, ((PlatformBitmap) value).toList());
       } else if (value instanceof PlatformBitmapDefaultMarker) {
-        stream.write(170);
+        stream.write(169);
         writeValue(stream, ((PlatformBitmapDefaultMarker) value).toList());
       } else if (value instanceof PlatformBitmapBytes) {
-        stream.write(171);
+        stream.write(170);
         writeValue(stream, ((PlatformBitmapBytes) value).toList());
       } else if (value instanceof PlatformBitmapAsset) {
-        stream.write(172);
+        stream.write(171);
         writeValue(stream, ((PlatformBitmapAsset) value).toList());
       } else if (value instanceof PlatformBitmapAssetImage) {
-        stream.write(173);
+        stream.write(172);
         writeValue(stream, ((PlatformBitmapAssetImage) value).toList());
       } else if (value instanceof PlatformBitmapAssetMap) {
-        stream.write(174);
+        stream.write(173);
         writeValue(stream, ((PlatformBitmapAssetMap) value).toList());
       } else if (value instanceof PlatformBitmapBytesMap) {
-        stream.write(175);
+        stream.write(174);
         writeValue(stream, ((PlatformBitmapBytesMap) value).toList());
       } else {
         super.writeValue(stream, value);

@@ -15,6 +15,9 @@ import 'google_map_inspector_ios.dart';
 import 'messages.g.dart';
 import 'serialization.dart';
 
+// TODO(stuartmorgan): Remove the dependency on platform interface toJson
+// methods. Channel serialization details should all be package-internal.
+
 /// The non-test implementation of `_apiProvider`.
 MapsApi _productionApiProvider(int mapId) {
   return MapsApi(messageChannelSuffix: mapId.toString());
@@ -655,18 +658,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(
       consumeTapEvents: circle.consumeTapEvents,
-      fillColor: PlatformColor(
-        red: circle.fillColor.r,
-        green: circle.fillColor.g,
-        blue: circle.fillColor.b,
-        alpha: circle.fillColor.a,
-      ),
-      strokeColor: PlatformColor(
-        red: circle.strokeColor.r,
-        green: circle.strokeColor.g,
-        blue: circle.strokeColor.b,
-        alpha: circle.strokeColor.a,
-      ),
+      fillColor: circle.fillColor.value,
+      strokeColor: circle.strokeColor.value,
       visible: circle.visible,
       strokeWidth: circle.strokeWidth,
       zIndex: circle.zIndex.toDouble(),
@@ -741,22 +734,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
-      fillColor: PlatformColor(
-        red: polygon.fillColor.r,
-        green: polygon.fillColor.g,
-        blue: polygon.fillColor.b,
-        alpha: polygon.fillColor.a,
-      ),
+      fillColor: polygon.fillColor.value,
       geodesic: polygon.geodesic,
       consumesTapEvents: polygon.consumeTapEvents,
       points: points,
       holes: holes,
-      strokeColor: PlatformColor(
-        red: polygon.strokeColor.r,
-        green: polygon.strokeColor.g,
-        blue: polygon.strokeColor.b,
-        alpha: polygon.strokeColor.a,
-      ),
+      strokeColor: polygon.strokeColor.value,
       strokeWidth: polygon.strokeWidth,
       zIndex: polygon.zIndex,
       visible: polygon.visible,
@@ -773,12 +756,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
-      color: PlatformColor(
-        red: polyline.color.r,
-        green: polyline.color.g,
-        blue: polyline.color.b,
-        alpha: polyline.color.a,
-      ),
+      color: polyline.color.value,
       geodesic: polyline.geodesic,
       visible: polyline.visible,
       width: polyline.width,
@@ -1242,7 +1220,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     indoorViewEnabled: config.indoorViewEnabled,
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
-    mapId: config.mapId,
+    cloudMapId: config.cloudMapId,
     style: config.style,
   );
 }
@@ -1284,7 +1262,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     indoorViewEnabled: options['indoorEnabled'] as bool?,
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
-    mapId: options['cloudMapId'] as String?,
+    cloudMapId: options['cloudMapId'] as String?,
     style: options['style'] as String?,
   );
 }

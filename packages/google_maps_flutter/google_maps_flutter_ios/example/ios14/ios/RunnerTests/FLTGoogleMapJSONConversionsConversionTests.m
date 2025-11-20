@@ -10,10 +10,10 @@
 #import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
 
-@interface FGMConversionUtilsTests : XCTestCase
+@interface FLTGoogleMapJSONConversionsTests : XCTestCase
 @end
 
-@implementation FGMConversionUtilsTests
+@implementation FLTGoogleMapJSONConversionsTests
 
 - (void)testGetValueOrNilWithValue {
   NSString *key = @"key";
@@ -39,28 +39,28 @@
 
 - (void)testLocationFromLatLong {
   NSArray<NSNumber *> *latlong = @[ @1, @2 ];
-  CLLocationCoordinate2D location = [FGMHeatmapConversions locationFromLatLong:latlong];
+  CLLocationCoordinate2D location = [FLTGoogleMapJSONConversions locationFromLatLong:latlong];
   XCTAssertEqual(location.latitude, 1);
   XCTAssertEqual(location.longitude, 2);
 }
 
 - (void)testPointFromArray {
   NSArray<NSNumber *> *array = @[ @1, @2 ];
-  CGPoint point = [FGMHeatmapConversions pointFromArray:array];
+  CGPoint point = [FLTGoogleMapJSONConversions pointFromArray:array];
   XCTAssertEqual(point.x, 1);
   XCTAssertEqual(point.y, 2);
 }
 
 - (void)testArrayFromLocation {
   CLLocationCoordinate2D location = CLLocationCoordinate2DMake(1, 2);
-  NSArray<NSNumber *> *array = [FGMHeatmapConversions arrayFromLocation:location];
+  NSArray<NSNumber *> *array = [FLTGoogleMapJSONConversions arrayFromLocation:location];
   XCTAssertEqual([array[0] integerValue], 1);
   XCTAssertEqual([array[1] integerValue], 2);
 }
 
 - (void)testColorFromRGBA {
   NSNumber *rgba = @(0x01020304);
-  UIColor *color = [FGMHeatmapConversions colorFromRGBA:rgba];
+  UIColor *color = [FLTGoogleMapJSONConversions colorFromRGBA:rgba];
   CGFloat red, green, blue, alpha;
   BOOL success = [color getRed:&red green:&green blue:&blue alpha:&alpha];
   XCTAssertTrue(success);
@@ -390,7 +390,7 @@
   NSArray *weightedLatLng = @[ @[ @1, @2 ], @3 ];
 
   GMUWeightedLatLng *weightedLocation =
-      [FGMHeatmapConversions weightedLatLngFromArray:weightedLatLng];
+      [FLTGoogleMapJSONConversions weightedLatLngFromArray:weightedLatLng];
 
   // The location gets projected to different values
   XCTAssertEqual([weightedLocation intensity], 3);
@@ -399,7 +399,7 @@
 - (void)testWeightedLatLngFromArrayThrowsForInvalidInput {
   NSArray *weightedLatLng = @[];
 
-  XCTAssertThrows([FGMHeatmapConversions weightedLatLngFromArray:weightedLatLng]);
+  XCTAssertThrows([FLTGoogleMapJSONConversions weightedLatLngFromArray:weightedLatLng]);
 }
 
 - (void)testWeightedDataFromArray {
@@ -407,7 +407,8 @@
   NSNumber *intensity2 = @6;
   NSArray *data = @[ @[ @[ @1, @2 ], intensity1 ], @[ @[ @4, @5 ], intensity2 ] ];
 
-  NSArray<GMUWeightedLatLng *> *weightedData = [FGMHeatmapConversions weightedDataFromArray:data];
+  NSArray<GMUWeightedLatLng *> *weightedData =
+      [FLTGoogleMapJSONConversions weightedDataFromArray:data];
   XCTAssertEqual([weightedData[0] intensity], [intensity1 floatValue]);
   XCTAssertEqual([weightedData[1] intensity], [intensity2 floatValue]);
 }
@@ -424,7 +425,7 @@
     @"colorMapSize" : colorMapSize,
   };
 
-  GMUGradient *gradient = [FGMHeatmapConversions gradientFromDictionary:gradientData];
+  GMUGradient *gradient = [FLTGoogleMapJSONConversions gradientFromDictionary:gradientData];
   CGFloat red, green, blue, alpha;
   [[gradient colors][0] getRed:&red green:&green blue:&blue alpha:&alpha];
   XCTAssertEqual(red, 0);

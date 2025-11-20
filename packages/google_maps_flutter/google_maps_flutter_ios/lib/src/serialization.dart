@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-// These constants must match the corresponding constants in FGMConversionUtils.m
+// These constants must match the corresponding constants in FLTGoogleMapJSONConversions.m
 const String _heatmapIdKey = 'heatmapId';
 const String _heatmapDataKey = 'data';
 const String _heatmapGradientKey = 'gradient';
@@ -96,9 +96,7 @@ Object serializeHeatmapGradient(HeatmapGradient gradient) {
   _addIfNonNull(
     json,
     _heatmapGradientColorsKey,
-    gradient.colors
-        .map((HeatmapGradientColor e) => e.color.toARGB32())
-        .toList(),
+    gradient.colors.map((HeatmapGradientColor e) => e.color.value).toList(),
   );
   _addIfNonNull(
     json,

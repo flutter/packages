@@ -69,7 +69,7 @@ extern GMSCameraUpdate *_Nullable FGMGetCameraUpdateForPigeonCameraUpdate(
     FGMPlatformCameraUpdate *update);
 
 /// Creates a UIColor from its RGBA components, expressed as an integer.
-extern UIColor *FGMGetColorForPigeonColor(FGMPlatformColor *color);
+extern UIColor *FGMGetColorForRGBA(NSInteger rgba);
 
 /// Creates an array of GMSStrokeStyles using the given patterns and stroke color.
 extern NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
@@ -79,10 +79,7 @@ extern NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
 extern NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(
     NSArray<FGMPlatformPatternItem *> *patterns);
 
-/// Legacy conversion utils for heatmaps, which are still using a JSON
-/// representation instead of structured Pigeon data.
-// TODO(stuartmorgan): Remove this once heatmaps are migrated to Pigeon.
-@interface FGMHeatmapConversions : NSObject
+@interface FLTGoogleMapJSONConversions : NSObject
 
 extern NSString *const kHeatmapsToAddKey;
 extern NSString *const kHeatmapIdKey;

@@ -27,17 +27,17 @@
 ///
 ///  @return An object of FLTGoogleMapPolylineController
 - (FLTGoogleMapPolylineController *)polylineControllerWithMockedMap {
-  FGMPlatformPolyline *polyline = [FGMPlatformPolyline
-      makeWithPolylineId:@"polyline_id_0"
-       consumesTapEvents:NO
-                   color:[FGMPlatformColor makeWithRed:0 green:0 blue:0 alpha:0]
-                geodesic:NO
-               jointType:FGMPlatformJointTypeRound
-                patterns:@[]
-                  points:[GoogleMapsPolylineControllerTests polylinePoints]
-                 visible:NO
-                   width:1
-                  zIndex:0];
+  FGMPlatformPolyline *polyline =
+      [FGMPlatformPolyline makeWithPolylineId:@"polyline_id_0"
+                            consumesTapEvents:NO
+                                        color:0
+                                     geodesic:NO
+                                    jointType:FGMPlatformJointTypeRound
+                                     patterns:@[]
+                                       points:[GoogleMapsPolylineControllerTests polylinePoints]
+                                      visible:NO
+                                        width:1
+                                       zIndex:0];
 
   CGRect frame = CGRectMake(0, 0, 100, 100);
   GMSCameraPosition *camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
@@ -67,10 +67,7 @@
       updateFromPlatformPolyline:[FGMPlatformPolyline
                                      makeWithPolylineId:@"polyline_id_0"
                                       consumesTapEvents:NO
-                                                  color:[FGMPlatformColor makeWithRed:0
-                                                                                green:0
-                                                                                 blue:0
-                                                                                alpha:0]
+                                                  color:0
                                                geodesic:NO
                                               jointType:FGMPlatformJointTypeRound
                                                patterns:@[
@@ -98,10 +95,7 @@
       fromPlatformPolyline:[FGMPlatformPolyline
                                makeWithPolylineId:@"polyline"
                                 consumesTapEvents:NO
-                                            color:[FGMPlatformColor makeWithRed:0
-                                                                          green:0
-                                                                           blue:0
-                                                                          alpha:0]
+                                            color:0
                                          geodesic:NO
                                         jointType:FGMPlatformJointTypeRound
                                          patterns:@[]

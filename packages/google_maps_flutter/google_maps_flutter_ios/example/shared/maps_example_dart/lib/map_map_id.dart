@@ -54,7 +54,7 @@ class MapIdBodyState extends State<MapIdBody> {
         zoom: 7.0,
       ),
       key: _key,
-      mapId: _mapId,
+      cloudMapId: _mapId,
     );
 
     final List<Widget> columnChildren = <Widget>[

@@ -54,7 +54,6 @@ class MapIdBodyState extends State<MapIdBody> {
     switch (_initializedRenderer) {
       case AndroidMapRenderer.latest:
         return 'latest';
-      // ignore: deprecated_member_use
       case AndroidMapRenderer.legacy:
         return 'legacy';
       case AndroidMapRenderer.platformDefault:

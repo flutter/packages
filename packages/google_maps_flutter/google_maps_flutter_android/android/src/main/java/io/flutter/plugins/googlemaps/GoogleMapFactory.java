@@ -48,7 +48,7 @@ public class GoogleMapFactory extends PlatformViewFactory {
     builder.setInitialTileOverlays(params.getInitialTileOverlays());
     builder.setInitialGroundOverlays(params.getInitialGroundOverlays());
 
-    final String cloudMapId = mapConfig.getMapId();
+    final String cloudMapId = mapConfig.getCloudMapId();
     if (cloudMapId != null) {
       builder.setMapId(cloudMapId);
     }

@@ -22,23 +22,16 @@
   PropertyOrderValidatingPolygon *polygon = [[PropertyOrderValidatingPolygon alloc] init];
   [FLTGoogleMapPolygonController
             updatePolygon:polygon
-      fromPlatformPolygon:[FGMPlatformPolygon
-                              makeWithConsumeTapEvents:NO
-                                             fillColor:[FGMPlatformColor makeWithRed:0
-                                                                               green:0
-                                                                                blue:0
-                                                                               alpha:0]
-                                              geodesic:NO
-                                                 holes:@[]
-                                           strokeColor:[FGMPlatformColor makeWithRed:0
-                                                                               green:0
-                                                                                blue:0
-                                                                               alpha:0]
-                                           strokeWidth:0
-                                               visible:YES
-                                                zIndex:0
-                                                points:@[]
-                                             polygonId:@"polygon"]
+      fromPlatformPolygon:[FGMPlatformPolygon makeWithConsumeTapEvents:NO
+                                                             fillColor:0
+                                                              geodesic:NO
+                                                                 holes:@[]
+                                                           strokeColor:0
+                                                           strokeWidth:0
+                                                               visible:YES
+                                                                zIndex:0
+                                                                points:@[]
+                                                             polygonId:@"polygon"]
               withMapView:[GoogleMapsPolygonControllerTests mapView]];
   XCTAssertTrue(polygon.hasSetMap);
 }

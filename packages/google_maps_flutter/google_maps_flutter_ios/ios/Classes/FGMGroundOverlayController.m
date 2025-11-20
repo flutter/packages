@@ -5,8 +5,8 @@
 #import "FGMGroundOverlayController.h"
 #import "FGMGroundOverlayController_Test.h"
 
-#import "FGMConversionUtils.h"
 #import "FGMImageUtils.h"
+#import "FLTGoogleMapJSONConversions.h"
 
 @interface FGMGroundOverlayController ()
 

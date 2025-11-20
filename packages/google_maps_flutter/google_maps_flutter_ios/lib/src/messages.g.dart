@@ -479,8 +479,8 @@ class PlatformCameraUpdateZoomTo {
 class PlatformCircle {
   PlatformCircle({
     this.consumeTapEvents = false,
-    required this.fillColor,
-    required this.strokeColor,
+    this.fillColor = 0x00000000,
+    this.strokeColor = 0xFF000000,
     this.visible = true,
     this.strokeWidth = 10,
     this.zIndex = 0.0,
@@ -491,9 +491,9 @@ class PlatformCircle {
 
   bool consumeTapEvents;
 
-  PlatformColor fillColor;
+  int fillColor;
 
-  PlatformColor strokeColor;
+  int strokeColor;
 
   bool visible;
 
@@ -529,8 +529,8 @@ class PlatformCircle {
     result as List<Object?>;
     return PlatformCircle(
       consumeTapEvents: result[0]! as bool,
-      fillColor: result[1]! as PlatformColor,
-      strokeColor: result[2]! as PlatformColor,
+      fillColor: result[1]! as int,
+      strokeColor: result[2]! as int,
       visible: result[3]! as bool,
       strokeWidth: result[4]! as int,
       zIndex: result[5]! as double,
@@ -849,7 +849,7 @@ class PlatformPolygon {
 
   bool consumesTapEvents;
 
-  PlatformColor fillColor;
+  int fillColor;
 
   bool geodesic;
 
@@ -859,7 +859,7 @@ class PlatformPolygon {
 
   bool visible;
 
-  PlatformColor strokeColor;
+  int strokeColor;
 
   int strokeWidth;
 
@@ -889,12 +889,12 @@ class PlatformPolygon {
     return PlatformPolygon(
       polygonId: result[0]! as String,
       consumesTapEvents: result[1]! as bool,
-      fillColor: result[2]! as PlatformColor,
+      fillColor: result[2]! as int,
       geodesic: result[3]! as bool,
       points: (result[4] as List<Object?>?)!.cast<PlatformLatLng>(),
       holes: (result[5] as List<Object?>?)!.cast<List<PlatformLatLng>>(),
       visible: result[6]! as bool,
-      strokeColor: result[7]! as PlatformColor,
+      strokeColor: result[7]! as int,
       strokeWidth: result[8]! as int,
       zIndex: result[9]! as int,
     );
@@ -936,7 +936,7 @@ class PlatformPolyline {
 
   bool consumesTapEvents;
 
-  PlatformColor color;
+  int color;
 
   bool geodesic;
 
@@ -978,7 +978,7 @@ class PlatformPolyline {
     return PlatformPolyline(
       polylineId: result[0]! as String,
       consumesTapEvents: result[1]! as bool,
-      color: result[2]! as PlatformColor,
+      color: result[2]! as int,
       geodesic: result[3]! as bool,
       jointType: result[4]! as PlatformJointType,
       patterns: (result[5] as List<Object?>?)!.cast<PlatformPatternItem>(),
@@ -1535,7 +1535,7 @@ class PlatformMapConfiguration {
     this.indoorViewEnabled,
     this.trafficEnabled,
     this.buildingsEnabled,
-    this.mapId,
+    this.cloudMapId,
     this.style,
   });
 
@@ -1569,7 +1569,7 @@ class PlatformMapConfiguration {
 
   bool? buildingsEnabled;
 
-  String? mapId;
+  String? cloudMapId;
 
   String? style;
 
@@ -1590,7 +1590,7 @@ class PlatformMapConfiguration {
       indoorViewEnabled,
       trafficEnabled,
       buildingsEnabled,
-      mapId,
+      cloudMapId,
       style,
     ];
   }
@@ -1617,7 +1617,7 @@ class PlatformMapConfiguration {
       indoorViewEnabled: result[12] as bool?,
       trafficEnabled: result[13] as bool?,
       buildingsEnabled: result[14] as bool?,
-      mapId: result[15] as String?,
+      cloudMapId: result[15] as String?,
       style: result[16] as String?,
     );
   }
@@ -1706,58 +1706,6 @@ class PlatformSize {
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
     if (other is! PlatformSize || other.runtimeType != runtimeType) {
-      return false;
-    }
-    if (identical(this, other)) {
-      return true;
-    }
-    return _deepEquals(encode(), other.encode());
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList());
-}
-
-/// Pigeon representation of a color.
-class PlatformColor {
-  PlatformColor({
-    required this.red,
-    required this.green,
-    required this.blue,
-    required this.alpha,
-  });
-
-  double red;
-
-  double green;
-
-  double blue;
-
-  double alpha;
-
-  List<Object?> _toList() {
-    return <Object?>[red, green, blue, alpha];
-  }
-
-  Object encode() {
-    return _toList();
-  }
-
-  static PlatformColor decode(Object result) {
-    result as List<Object?>;
-    return PlatformColor(
-      red: result[0]! as double,
-      green: result[1]! as double,
-      blue: result[2]! as double,
-      alpha: result[3]! as double,
-    );
-  }
-
-  @override
-  // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  bool operator ==(Object other) {
-    if (other is! PlatformColor || other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2298,35 +2246,32 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformSize) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformColor) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformTileLayer) {
+    } else if (value is PlatformZoomRange) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformZoomRange) {
+    } else if (value is PlatformBitmap) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmap) {
+    } else if (value is PlatformBitmapDefaultMarker) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapDefaultMarker) {
+    } else if (value is PlatformBitmapBytes) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapBytes) {
+    } else if (value is PlatformBitmapAsset) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAsset) {
+    } else if (value is PlatformBitmapAssetImage) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetImage) {
+    } else if (value is PlatformBitmapAssetMap) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    } else if (value is PlatformBitmapAssetMap) {
-      buffer.putUint8(171);
-      writeValue(buffer, value.encode());
     } else if (value is PlatformBitmapBytesMap) {
-      buffer.putUint8(172);
+      buffer.putUint8(171);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -2409,24 +2354,22 @@ class _PigeonCodec extends StandardMessageCodec {
       case 162:
         return PlatformSize.decode(readValue(buffer)!);
       case 163:
-        return PlatformColor.decode(readValue(buffer)!);
-      case 164:
         return PlatformTileLayer.decode(readValue(buffer)!);
-      case 165:
+      case 164:
         return PlatformZoomRange.decode(readValue(buffer)!);
-      case 166:
+      case 165:
         return PlatformBitmap.decode(readValue(buffer)!);
-      case 167:
+      case 166:
         return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
-      case 168:
+      case 167:
         return PlatformBitmapBytes.decode(readValue(buffer)!);
-      case 169:
+      case 168:
         return PlatformBitmapAsset.decode(readValue(buffer)!);
-      case 170:
+      case 169:
         return PlatformBitmapAssetImage.decode(readValue(buffer)!);
-      case 171:
+      case 170:
         return PlatformBitmapAssetMap.decode(readValue(buffer)!);
-      case 172:
+      case 171:
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

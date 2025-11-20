@@ -263,12 +263,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
-@interface FGMPlatformColor ()
-+ (FGMPlatformColor *)fromList:(NSArray<id> *)list;
-+ (nullable FGMPlatformColor *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
 @interface FGMPlatformTileLayer ()
 + (FGMPlatformTileLayer *)fromList:(NSArray<id> *)list;
 + (nullable FGMPlatformTileLayer *)nullableFromList:(NSArray<id> *)list;
@@ -565,8 +559,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 
 @implementation FGMPlatformCircle
 + (instancetype)makeWithConsumeTapEvents:(BOOL)consumeTapEvents
-                               fillColor:(FGMPlatformColor *)fillColor
-                             strokeColor:(FGMPlatformColor *)strokeColor
+                               fillColor:(NSInteger)fillColor
+                             strokeColor:(NSInteger)strokeColor
                                  visible:(BOOL)visible
                              strokeWidth:(NSInteger)strokeWidth
                                   zIndex:(double)zIndex
@@ -588,8 +582,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 + (FGMPlatformCircle *)fromList:(NSArray<id> *)list {
   FGMPlatformCircle *pigeonResult = [[FGMPlatformCircle alloc] init];
   pigeonResult.consumeTapEvents = [GetNullableObjectAtIndex(list, 0) boolValue];
-  pigeonResult.fillColor = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.strokeColor = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.fillColor = [GetNullableObjectAtIndex(list, 1) integerValue];
+  pigeonResult.strokeColor = [GetNullableObjectAtIndex(list, 2) integerValue];
   pigeonResult.visible = [GetNullableObjectAtIndex(list, 3) boolValue];
   pigeonResult.strokeWidth = [GetNullableObjectAtIndex(list, 4) integerValue];
   pigeonResult.zIndex = [GetNullableObjectAtIndex(list, 5) doubleValue];
@@ -604,8 +598,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList {
   return @[
     @(self.consumeTapEvents),
-    self.fillColor ?: [NSNull null],
-    self.strokeColor ?: [NSNull null],
+    @(self.fillColor),
+    @(self.strokeColor),
     @(self.visible),
     @(self.strokeWidth),
     @(self.zIndex),
@@ -792,12 +786,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @implementation FGMPlatformPolygon
 + (instancetype)makeWithPolygonId:(NSString *)polygonId
                 consumesTapEvents:(BOOL)consumesTapEvents
-                        fillColor:(FGMPlatformColor *)fillColor
+                        fillColor:(NSInteger)fillColor
                          geodesic:(BOOL)geodesic
                            points:(NSArray<FGMPlatformLatLng *> *)points
                             holes:(NSArray<NSArray<FGMPlatformLatLng *> *> *)holes
                           visible:(BOOL)visible
-                      strokeColor:(FGMPlatformColor *)strokeColor
+                      strokeColor:(NSInteger)strokeColor
                       strokeWidth:(NSInteger)strokeWidth
                            zIndex:(NSInteger)zIndex {
   FGMPlatformPolygon *pigeonResult = [[FGMPlatformPolygon alloc] init];
@@ -817,12 +811,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   FGMPlatformPolygon *pigeonResult = [[FGMPlatformPolygon alloc] init];
   pigeonResult.polygonId = GetNullableObjectAtIndex(list, 0);
   pigeonResult.consumesTapEvents = [GetNullableObjectAtIndex(list, 1) boolValue];
-  pigeonResult.fillColor = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.fillColor = [GetNullableObjectAtIndex(list, 2) integerValue];
   pigeonResult.geodesic = [GetNullableObjectAtIndex(list, 3) boolValue];
   pigeonResult.points = GetNullableObjectAtIndex(list, 4);
   pigeonResult.holes = GetNullableObjectAtIndex(list, 5);
   pigeonResult.visible = [GetNullableObjectAtIndex(list, 6) boolValue];
-  pigeonResult.strokeColor = GetNullableObjectAtIndex(list, 7);
+  pigeonResult.strokeColor = [GetNullableObjectAtIndex(list, 7) integerValue];
   pigeonResult.strokeWidth = [GetNullableObjectAtIndex(list, 8) integerValue];
   pigeonResult.zIndex = [GetNullableObjectAtIndex(list, 9) integerValue];
   return pigeonResult;
@@ -834,12 +828,12 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.polygonId ?: [NSNull null],
     @(self.consumesTapEvents),
-    self.fillColor ?: [NSNull null],
+    @(self.fillColor),
     @(self.geodesic),
     self.points ?: [NSNull null],
     self.holes ?: [NSNull null],
     @(self.visible),
-    self.strokeColor ?: [NSNull null],
+    @(self.strokeColor),
     @(self.strokeWidth),
     @(self.zIndex),
   ];
@@ -849,7 +843,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 @implementation FGMPlatformPolyline
 + (instancetype)makeWithPolylineId:(NSString *)polylineId
                  consumesTapEvents:(BOOL)consumesTapEvents
-                             color:(FGMPlatformColor *)color
+                             color:(NSInteger)color
                           geodesic:(BOOL)geodesic
                          jointType:(FGMPlatformJointType)jointType
                           patterns:(NSArray<FGMPlatformPatternItem *> *)patterns
@@ -874,7 +868,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   FGMPlatformPolyline *pigeonResult = [[FGMPlatformPolyline alloc] init];
   pigeonResult.polylineId = GetNullableObjectAtIndex(list, 0);
   pigeonResult.consumesTapEvents = [GetNullableObjectAtIndex(list, 1) boolValue];
-  pigeonResult.color = GetNullableObjectAtIndex(list, 2);
+  pigeonResult.color = [GetNullableObjectAtIndex(list, 2) integerValue];
   pigeonResult.geodesic = [GetNullableObjectAtIndex(list, 3) boolValue];
   FGMPlatformJointTypeBox *boxedFGMPlatformJointType = GetNullableObjectAtIndex(list, 4);
   pigeonResult.jointType = boxedFGMPlatformJointType.value;
@@ -892,7 +886,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     self.polylineId ?: [NSNull null],
     @(self.consumesTapEvents),
-    self.color ?: [NSNull null],
+    @(self.color),
     @(self.geodesic),
     [[FGMPlatformJointTypeBox alloc] initWithValue:self.jointType],
     self.patterns ?: [NSNull null],
@@ -1238,7 +1232,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
                      indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
                         trafficEnabled:(nullable NSNumber *)trafficEnabled
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
-                                 mapId:(nullable NSString *)mapId
+                            cloudMapId:(nullable NSString *)cloudMapId
                                  style:(nullable NSString *)style {
   FGMPlatformMapConfiguration *pigeonResult = [[FGMPlatformMapConfiguration alloc] init];
   pigeonResult.compassEnabled = compassEnabled;
@@ -1256,7 +1250,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.indoorViewEnabled = indoorViewEnabled;
   pigeonResult.trafficEnabled = trafficEnabled;
   pigeonResult.buildingsEnabled = buildingsEnabled;
-  pigeonResult.mapId = mapId;
+  pigeonResult.cloudMapId = cloudMapId;
   pigeonResult.style = style;
   return pigeonResult;
 }
@@ -1277,7 +1271,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   pigeonResult.indoorViewEnabled = GetNullableObjectAtIndex(list, 12);
   pigeonResult.trafficEnabled = GetNullableObjectAtIndex(list, 13);
   pigeonResult.buildingsEnabled = GetNullableObjectAtIndex(list, 14);
-  pigeonResult.mapId = GetNullableObjectAtIndex(list, 15);
+  pigeonResult.cloudMapId = GetNullableObjectAtIndex(list, 15);
   pigeonResult.style = GetNullableObjectAtIndex(list, 16);
   return pigeonResult;
 }
@@ -1301,7 +1295,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     self.indoorViewEnabled ?: [NSNull null],
     self.trafficEnabled ?: [NSNull null],
     self.buildingsEnabled ?: [NSNull null],
-    self.mapId ?: [NSNull null],
+    self.cloudMapId ?: [NSNull null],
     self.style ?: [NSNull null],
   ];
 }
@@ -1351,36 +1345,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   return @[
     @(self.width),
     @(self.height),
-  ];
-}
-@end
-
-@implementation FGMPlatformColor
-+ (instancetype)makeWithRed:(double)red green:(double)green blue:(double)blue alpha:(double)alpha {
-  FGMPlatformColor *pigeonResult = [[FGMPlatformColor alloc] init];
-  pigeonResult.red = red;
-  pigeonResult.green = green;
-  pigeonResult.blue = blue;
-  pigeonResult.alpha = alpha;
-  return pigeonResult;
-}
-+ (FGMPlatformColor *)fromList:(NSArray<id> *)list {
-  FGMPlatformColor *pigeonResult = [[FGMPlatformColor alloc] init];
-  pigeonResult.red = [GetNullableObjectAtIndex(list, 0) doubleValue];
-  pigeonResult.green = [GetNullableObjectAtIndex(list, 1) doubleValue];
-  pigeonResult.blue = [GetNullableObjectAtIndex(list, 2) doubleValue];
-  pigeonResult.alpha = [GetNullableObjectAtIndex(list, 3) doubleValue];
-  return pigeonResult;
-}
-+ (nullable FGMPlatformColor *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FGMPlatformColor fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    @(self.red),
-    @(self.green),
-    @(self.blue),
-    @(self.alpha),
   ];
 }
 @end
@@ -1730,24 +1694,22 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 162:
       return [FGMPlatformSize fromList:[self readValue]];
     case 163:
-      return [FGMPlatformColor fromList:[self readValue]];
-    case 164:
       return [FGMPlatformTileLayer fromList:[self readValue]];
-    case 165:
+    case 164:
       return [FGMPlatformZoomRange fromList:[self readValue]];
-    case 166:
+    case 165:
       return [FGMPlatformBitmap fromList:[self readValue]];
-    case 167:
+    case 166:
       return [FGMPlatformBitmapDefaultMarker fromList:[self readValue]];
-    case 168:
+    case 167:
       return [FGMPlatformBitmapBytes fromList:[self readValue]];
-    case 169:
+    case 168:
       return [FGMPlatformBitmapAsset fromList:[self readValue]];
-    case 170:
+    case 169:
       return [FGMPlatformBitmapAssetImage fromList:[self readValue]];
-    case 171:
+    case 170:
       return [FGMPlatformBitmapAssetMap fromList:[self readValue]];
-    case 172:
+    case 171:
       return [FGMPlatformBitmapBytesMap fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
@@ -1865,35 +1827,32 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FGMPlatformSize class]]) {
     [self writeByte:162];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformColor class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
     [self writeByte:163];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformTileLayer class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
     [self writeByte:164];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformZoomRange class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmap class]]) {
     [self writeByte:165];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmap class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
     [self writeByte:166];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapDefaultMarker class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapBytes class]]) {
     [self writeByte:167];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapBytes class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAsset class]]) {
     [self writeByte:168];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAsset class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
     [self writeByte:169];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
+  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
     [self writeByte:170];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
-    [self writeByte:171];
-    [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FGMPlatformBitmapBytesMap class]]) {
-    [self writeByte:172];
+    [self writeByte:171];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];

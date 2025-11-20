@@ -7,7 +7,7 @@
 
 @import GoogleMapsUtils;
 
-#import "FGMConversionUtils.h"
+#import "FLTGoogleMapJSONConversions.h"
 
 @interface FLTGoogleMapHeatmapController ()
 
@@ -56,12 +56,13 @@
   // https://github.com/flutter/flutter/issues/117907
   id weightedData = options[kHeatmapDataKey];
   if ([weightedData isKindOfClass:[NSArray class]]) {
-    heatmapTileLayer.weightedData = [FGMHeatmapConversions weightedDataFromArray:weightedData];
+    heatmapTileLayer.weightedData =
+        [FLTGoogleMapJSONConversions weightedDataFromArray:weightedData];
   }
 
   id gradient = options[kHeatmapGradientKey];
   if ([gradient isKindOfClass:[NSDictionary class]]) {
-    heatmapTileLayer.gradient = [FGMHeatmapConversions gradientFromDictionary:gradient];
+    heatmapTileLayer.gradient = [FLTGoogleMapJSONConversions gradientFromDictionary:gradient];
   }
 
   id opacity = options[kHeatmapOpacityKey];
@@ -152,9 +153,9 @@
   FLTGoogleMapHeatmapController *heatmapController = self.heatmapIdToController[identifier];
   if (heatmapController) {
     return @{
-      kHeatmapDataKey : [FGMHeatmapConversions
+      kHeatmapDataKey : [FLTGoogleMapJSONConversions
           arrayFromWeightedData:heatmapController.heatmapTileLayer.weightedData],
-      kHeatmapGradientKey : [FGMHeatmapConversions
+      kHeatmapGradientKey : [FLTGoogleMapJSONConversions
           dictionaryFromGradient:heatmapController.heatmapTileLayer.gradient],
       kHeatmapOpacityKey : @(heatmapController.heatmapTileLayer.opacity),
       kHeatmapRadiusKey : @(heatmapController.heatmapTileLayer.radius),

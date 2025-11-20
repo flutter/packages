@@ -316,7 +316,7 @@ class ExampleGoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
-    this.mapId,
+    this.cloudMapId,
     this.style,
   });
 
@@ -430,7 +430,7 @@ class ExampleGoogleMap extends StatefulWidget {
   ///
   /// See https://developers.google.com/maps/documentation/get-map-id
   /// for more details.
-  final String? mapId;
+  final String? cloudMapId;
 
   /// The locally configured style for the map.
   final String? style;
@@ -680,7 +680,7 @@ MapConfiguration _configurationFromMapWidget(ExampleGoogleMap map) {
     indoorViewEnabled: map.indoorViewEnabled,
     trafficEnabled: map.trafficEnabled,
     buildingsEnabled: map.buildingsEnabled,
-    mapId: map.mapId,
+    cloudMapId: map.cloudMapId,
     style: map.style,
   );
 }

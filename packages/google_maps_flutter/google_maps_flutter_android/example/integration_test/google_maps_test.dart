@@ -65,7 +65,6 @@ void main() {
     // value.
     expect(
       initializedRenderer == AndroidMapRenderer.latest ||
-          // ignore: deprecated_member_use
           initializedRenderer == AndroidMapRenderer.legacy,
       true,
     );
@@ -1469,7 +1468,7 @@ void main() {
     }
   });
 
-  testWidgets('testMapId', (WidgetTester tester) async {
+  testWidgets('testCloudMapId', (WidgetTester tester) async {
     final Completer<int> mapIdCompleter = Completer<int>();
     final Key key = GlobalKey();
 
@@ -1482,7 +1481,7 @@ void main() {
           onMapCreated: (ExampleGoogleMapController controller) {
             mapIdCompleter.complete(controller.mapId);
           },
-          mapId: _kCloudMapId,
+          cloudMapId: _kCloudMapId,
         ),
       ),
     );

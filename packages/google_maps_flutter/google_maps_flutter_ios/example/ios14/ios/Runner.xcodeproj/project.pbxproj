@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,7 +19,7 @@
 		478116522BEF8F47002F593E /* GoogleMapsPolylineControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 478116512BEF8F47002F593E /* GoogleMapsPolylineControllerTests.m */; };
 		528F16832C62941000148160 /* FGMClusterManagersControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 528F16822C62941000148160 /* FGMClusterManagersControllerTests.m */; };
 		528F16872C62952700148160 /* ExtractIconFromDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 528F16862C62952700148160 /* ExtractIconFromDataTests.m */; };
-		6851F3562835BC180032B7C8 /* FGMConversionsUtilsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6851F3552835BC180032B7C8 /* FGMConversionsUtilsTests.m */; };
+		6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		978B8F6F1D3862AE00F588F7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */; };
 		97C146F31CF9000F007C117D /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97C146F21CF9000F007C117D /* main.m */; };
@@ -79,7 +79,7 @@
 		528F16822C62941000148160 /* FGMClusterManagersControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FGMClusterManagersControllerTests.m; sourceTree = "<group>"; };
 		528F16862C62952700148160 /* ExtractIconFromDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExtractIconFromDataTests.m; sourceTree = "<group>"; };
 		61A9A8623F5CA9BBC813DC6B /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6851F3552835BC180032B7C8 /* FGMConversionsUtilsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FGMConversionsUtilsTests.m; sourceTree = "<group>"; };
+		6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FLTGoogleMapJSONConversionsConversionTests.m; sourceTree = "<group>"; };
 		733AFAB37683A9DA7512F09C /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
 		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -221,7 +221,7 @@
 				528F16862C62952700148160 /* ExtractIconFromDataTests.m */,
 				528F16822C62941000148160 /* FGMClusterManagersControllerTests.m */,
 				339355BE2EB5359B00EBF864 /* FLTGoogleMapHeatmapControllerTests.m */,
-				6851F3552835BC180032B7C8 /* FGMConversionsUtilsTests.m */,
+				6851F3552835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m */,
 				0DD7B6C22B744EEF00E857FD /* FLTTileProviderControllerTests.m */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
 				339355B92EB3E4F900EBF864 /* GoogleMapsCircleControllerTests.m */,
@@ -520,7 +520,7 @@
 				339355BF2EB535A600EBF864 /* FLTGoogleMapHeatmapControllerTests.m in Sources */,
 				339355BD2EB3E56300EBF864 /* GoogleMapsTileOverlayControllerTests.m in Sources */,
 				F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */,
-				6851F3562835BC180032B7C8 /* FGMConversionsUtilsTests.m in Sources */,
+				6851F3562835BC180032B7C8 /* FLTGoogleMapJSONConversionsConversionTests.m in Sources */,
 				982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */,
 				330909FF2D99B7A60077A751 /* GoogleMapsMarkerControllerTests.m in Sources */,
 				478116522BEF8F47002F593E /* GoogleMapsPolylineControllerTests.m in Sources */,

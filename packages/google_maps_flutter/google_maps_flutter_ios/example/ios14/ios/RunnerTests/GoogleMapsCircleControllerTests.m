@@ -26,14 +26,8 @@
             updateCircle:circle
       fromPlatformCircle:[FGMPlatformCircle
                              makeWithConsumeTapEvents:NO
-                                            fillColor:[FGMPlatformColor makeWithRed:0
-                                                                              green:0
-                                                                               blue:0
-                                                                              alpha:0]
-                                          strokeColor:[FGMPlatformColor makeWithRed:0
-                                                                              green:0
-                                                                               blue:0
-                                                                              alpha:0]
+                                            fillColor:0
+                                          strokeColor:0
                                               visible:YES
                                           strokeWidth:0
                                                zIndex:0

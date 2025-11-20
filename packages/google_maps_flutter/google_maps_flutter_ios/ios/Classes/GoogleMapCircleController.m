@@ -5,7 +5,7 @@
 #import "GoogleMapCircleController.h"
 #import "GoogleMapCircleController_Test.h"
 
-#import "FGMConversionUtils.h"
+#import "FLTGoogleMapJSONConversions.h"
 
 @interface FLTGoogleMapCircleController ()
 
@@ -48,9 +48,9 @@
   circle.zIndex = platformCircle.zIndex;
   circle.position = FGMGetCoordinateForPigeonLatLng(platformCircle.center);
   circle.radius = platformCircle.radius;
-  circle.strokeColor = FGMGetColorForPigeonColor(platformCircle.strokeColor);
+  circle.strokeColor = FGMGetColorForRGBA(platformCircle.strokeColor);
   circle.strokeWidth = platformCircle.strokeWidth;
-  circle.fillColor = FGMGetColorForPigeonColor(platformCircle.fillColor);
+  circle.fillColor = FGMGetColorForRGBA(platformCircle.fillColor);
 
   // This must be done last, to avoid visual flickers of default property values.
   circle.map = platformCircle.visible ? mapView : nil;
