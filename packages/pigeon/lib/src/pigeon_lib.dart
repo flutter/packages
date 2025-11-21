@@ -14,7 +14,7 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
 import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
 import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
-import 'package:analyzer/error/error.dart' show AnalysisError;
+import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:path/path.dart' as path;
@@ -467,18 +467,18 @@ class Pigeon {
         final AnalysisSession session = context.currentSession;
         final ParsedUnitResult result =
             session.getParsedUnit(path) as ParsedUnitResult;
-        if (result.errors.isEmpty) {
+        if (result.diagnostics.isEmpty) {
           final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);
         } else {
-          for (final AnalysisError error in result.errors) {
+          for (final Diagnostic diagnostic in result.diagnostics) {
             compilationErrors.add(
               Error(
-                message: error.message,
-                filename: error.source.fullName,
+                message: diagnostic.message,
+                filename: diagnostic.source.fullName,
                 lineNumber: calculateLineNumber(
-                  error.source.contents.data,
-                  error.offset,
+                  diagnostic.source.contents.data,
+                  diagnostic.offset,
                 ),
               ),
             );
