@@ -238,4 +238,187 @@ void main() {
       expect(package.requiresFlutter(), false);
     });
   });
+  group('ciConfig', () {
+    test('file', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir);
+
+      final File ciConfigFile = plugin.ciConfigFile;
+
+      expect(
+          ciConfigFile.path, plugin.directory.childFile('ci_config.yaml').path);
+    });
+
+    test('parsing', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir);
+      plugin.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+
+      final CiConfig? config = plugin.parseCiConfig();
+
+      expect(config, isNotNull);
+      expect(config!.isBatchRelease, isTrue);
+    });
+
+    test('parsing missing file returns null', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir);
+
+      final CiConfig? config = plugin.parseCiConfig();
+
+      expect(config, isNull);
+    });
+
+    test('parsing invalid file throws', () async {
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir);
+      plugin.ciConfigFile.writeAsStringSync('not a map');
+
+      expect(() => plugin.parseCiConfig(), throwsFormatException);
+    });
+
+    test('reports unknown keys', () {
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir);
+      plugin.ciConfigFile.writeAsStringSync('''
+foo: bar
+''');
+
+      final CiConfig? config = plugin.parseCiConfig();
+
+      expect(config, isNotNull);
+      expect(config!.errors, hasLength(1));
+      expect(config.errors[0], contains('Unknown key `foo`'));
+    });
+
+    test('reports invalid values', () {
+      final RepositoryPackage plugin =
+          createFakePlugin('a_plugin', packagesDir);
+      plugin.ciConfigFile.writeAsStringSync('''
+release:
+  batch: not-a-bool
+''');
+
+      final CiConfig? config = plugin.parseCiConfig();
+
+      expect(config, isNotNull);
+      expect(config!.errors, hasLength(1));
+      expect(config.errors[0], contains('Invalid value `not-a-bool`'));
+    });
+  });
+
+  group('getPendingChangelogs', () {
+    test('returns an error if the directory is missing', () {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      final PendingChangelogs changelogs = package.getPendingChangelogs();
+
+      expect(changelogs.entries, isEmpty);
+      expect(changelogs.errors, hasLength(1));
+      expect(changelogs.errors[0], contains('No pending_changelogs folder'));
+    });
+
+    test('returns empty lists if the directory is empty', () {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      package.pendingChangelogsDirectory.createSync();
+
+      final PendingChangelogs changelogs = package.getPendingChangelogs();
+
+      expect(changelogs.entries, isEmpty);
+      expect(changelogs.errors, isEmpty);
+    });
+
+    test('returns entries for valid files', () {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      package.pendingChangelogsDirectory.createSync();
+      package.pendingChangelogsDirectory
+          .childFile('a.yaml')
+          .writeAsStringSync('''
+changelog: A
+version: patch
+''');
+      package.pendingChangelogsDirectory
+          .childFile('b.yaml')
+          .writeAsStringSync('''
+changelog: B
+version: minor
+''');
+
+      final PendingChangelogs changelogs = package.getPendingChangelogs();
+
+      expect(changelogs.errors, isEmpty);
+      expect(changelogs.entries, hasLength(2));
+      expect(changelogs.entries[0].changelog, 'A');
+      expect(changelogs.entries[0].version, VersionChange.patch);
+      expect(changelogs.entries[1].changelog, 'B');
+      expect(changelogs.entries[1].version, VersionChange.minor);
+    });
+
+    test('returns an error for a malformed file', () {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      package.pendingChangelogsDirectory.createSync();
+      final File changelogFile =
+          package.pendingChangelogsDirectory.childFile('a.yaml');
+      changelogFile.writeAsStringSync('not yaml');
+
+      final PendingChangelogs changelogs = package.getPendingChangelogs();
+
+      expect(changelogs.entries, isEmpty);
+      expect(changelogs.errors, hasLength(1));
+      expect(
+          changelogs.errors[0], contains('Malformed pending changelog file'));
+    });
+
+    test('ignores template.yaml', () {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      package.pendingChangelogsDirectory.createSync();
+      package.pendingChangelogsDirectory
+          .childFile('a.yaml')
+          .writeAsStringSync('''
+changelog: A
+version: patch
+''');
+      package.pendingChangelogsDirectory
+          .childFile('template.yaml')
+          .writeAsStringSync('''
+changelog: TEMPLATE
+version: skip
+''');
+
+      final PendingChangelogs changelogs = package.getPendingChangelogs();
+
+      expect(changelogs.errors, isEmpty);
+      expect(changelogs.entries, hasLength(1));
+      expect(changelogs.entries[0].changelog, 'A');
+    });
+
+    test('returns an error for a non-yaml file', () {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+      package.pendingChangelogsDirectory.createSync();
+      package.pendingChangelogsDirectory
+          .childFile('a.yaml')
+          .writeAsStringSync('''
+changelog: A
+version: patch
+''');
+      package.pendingChangelogsDirectory
+          .childFile('a.txt')
+          .writeAsStringSync('text');
+
+      final PendingChangelogs changelogs = package.getPendingChangelogs();
+
+      expect(changelogs.entries, hasLength(1));
+      expect(changelogs.errors, hasLength(1));
+      expect(changelogs.errors[0], contains('Found non-YAML file'));
+    });
+  });
 }

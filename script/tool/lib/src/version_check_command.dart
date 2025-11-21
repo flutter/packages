@@ -200,37 +200,58 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
     final List<String> errors = <String>[];
 
-    bool versionChanged;
+    final CiConfig? ciConfig = package.parseCiConfig();
+    final List<String> changedFiles = await _gitVersionFinder.getChangedFiles();
     final _CurrentVersionState versionState =
         await _getVersionState(package, pubspec: pubspec);
-    switch (versionState) {
-      case _CurrentVersionState.unchanged:
-        versionChanged = false;
-      case _CurrentVersionState.validIncrease:
-      case _CurrentVersionState.validRevert:
-      case _CurrentVersionState.newPackage:
-        versionChanged = true;
-      case _CurrentVersionState.invalidChange:
-        versionChanged = true;
-        errors.add('Disallowed version change.');
-      case _CurrentVersionState.unknown:
-        versionChanged = false;
-        errors.add('Unable to determine previous version.');
-    }
+    final bool usesBatchRelease = ciConfig?.isBatchRelease ?? false;
+    // Package with post release label is going to sync changelog.md and pubspec.yaml
+    // change back to main branch. We can proceed with ragular version check.
+    final bool hasPostReleaseLabel =
+        _prLabels.contains('post-release-${pubspec.name}');
+    if (usesBatchRelease && !hasPostReleaseLabel) {
+      // For batch release, we only check pending changelog files.
+      errors.addAll(await _validatePendingChangelogs(package, changedFiles));
+      // The changelog and version should not be updated directly.
+      if (changedFiles.contains(package.changelogFile.path)) {
+        errors.add('CHANGELOG.md changed');
+      }
+      if (changedFiles.contains(package.pubspecFile.path)) {
+        if (versionState != _CurrentVersionState.unchanged) {
+          errors.add('pubspec.yaml version changed');
+        }
+      }
+    } else {
+      bool versionChanged;
+      switch (versionState) {
+        case _CurrentVersionState.unchanged:
+          versionChanged = false;
+        case _CurrentVersionState.validIncrease:
+        case _CurrentVersionState.validRevert:
+        case _CurrentVersionState.newPackage:
+          versionChanged = true;
+        case _CurrentVersionState.invalidChange:
+          versionChanged = true;
+          errors.add('Disallowed version change.');
+        case _CurrentVersionState.unknown:
+          versionChanged = false;
+          errors.add('Unable to determine previous version.');
+      }
 
-    if (!(await _validateChangelogVersion(package,
-        pubspec: pubspec, pubspecVersionState: versionState))) {
-      errors.add('CHANGELOG.md failed validation.');
-    }
+      if (!(await _validateChangelogVersion(package,
+          pubspec: pubspec, pubspecVersionState: versionState))) {
+        errors.add('CHANGELOG.md failed validation.');
+      }
 
-    // If there are no other issues, make sure that there isn't a missing
-    // change to the version and/or CHANGELOG.
-    if (getBoolArg(_checkForMissingChanges) &&
-        !versionChanged &&
-        errors.isEmpty) {
-      final String? error = await _checkForMissingChangeError(package);
-      if (error != null) {
-        errors.add(error);
+      // If there are no other issues, make sure that there isn't a missing
+      // change to the version and/or CHANGELOG.
+      if (getBoolArg(_checkForMissingChanges) &&
+          !versionChanged &&
+          errors.isEmpty) {
+        final String? error = await _checkForMissingChangeError(package);
+        if (error != null) {
+          errors.add(error);
+        }
       }
     }
 
@@ -598,5 +619,54 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     }
 
     return null;
+  }
+
+  Future<List<String>> _validatePendingChangelogs(
+      RepositoryPackage package, List<String> changedPaths) async {
+    final List<String> errors = <String>[];
+    final PendingChangelogs allChangelogs = package.getPendingChangelogs();
+
+    final List<PendingChangelogEntry> newEntries = allChangelogs.entries
+        .where((PendingChangelogEntry entry) =>
+            changedPaths.contains(entry.file.path))
+        .toList();
+
+    if (newEntries.isEmpty) {
+      if (_prLabels.contains(_missingChangelogChangeOverrideLabel)) {
+        logWarning('Ignoring lack of changelog update due to the '
+            '"$_missingChangelogChangeOverrideLabel" label.');
+      } else {
+        errors.add('Missing CHANGELOG file');
+        printError(
+            'No new changelog files found in the pending_changelogs folder.\n'
+            'If this PR needs an exemption from the standard policy of listing '
+            'all changes in the CHANGELOG,\n'
+            'comment in the PR to explain why the PR is exempt, and add (or '
+            'ask your reviewer to add) the\n'
+            '"$_missingChangelogChangeOverrideLabel" label.\n'
+            'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
+            'the contributing guide.\n');
+      }
+    } else {
+      final bool needsOverride = newEntries.every(
+          (PendingChangelogEntry entry) => entry.version == VersionChange.skip);
+      if (needsOverride) {
+        if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
+          logWarning('Ignoring lack of version change due to the '
+              '"$_missingVersionChangeOverrideLabel" label.');
+        } else {
+          printError(
+              'No version change found, but the change to this package could '
+              'not be verified to be exempt\n'
+              'from version changes according to repository policy.\n'
+              'If this is a false positive, please comment in '
+              'the PR to explain why the PR\n'
+              'is exempt, and add (or ask your reviewer to add) the '
+              '"$_missingVersionChangeOverrideLabel" label.\n');
+        }
+        errors.add('Missing version change');
+      }
+    }
+    return errors;
   }
 }

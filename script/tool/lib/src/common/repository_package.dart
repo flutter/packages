@@ -5,11 +5,16 @@
 import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pubspec_parse/pubspec_parse.dart';
+import 'package:yaml/yaml.dart';
 
 import 'core.dart';
 
 export 'package:pubspec_parse/pubspec_parse.dart' show Pubspec;
 export 'core.dart' show FlutterPlatform;
+
+// The template file name used to draft a pending changelog file.
+// This file will not be picked up by the batch release process.
+const String _kTemplateFileName = 'template.yaml';
 
 /// A package in the repository.
 //
@@ -77,6 +82,10 @@ class RepositoryPackage {
   File get prePublishScript =>
       directory.childDirectory('tool').childFile('pre_publish.dart');
 
+  /// The directory containing pending changelog entries.
+  Directory get pendingChangelogsDirectory =>
+      directory.childDirectory('pending_changelogs');
+
   /// Returns the directory containing support for [platform].
   Directory platformDirectory(FlutterPlatform platform) {
     late final String directoryName;
@@ -114,6 +123,15 @@ class RepositoryPackage {
   ///
   /// Caches for future use.
   Pubspec parsePubspec() => _parsedPubspec;
+
+  late final CiConfig? _parsedCiConfig = ciConfigFile.existsSync()
+      ? CiConfig.parse(ciConfigFile.readAsStringSync())
+      : null;
+
+  /// Returns the parsed [ciConfigFile], or null if it does not exist.
+  ///
+  /// Caches for future use.
+  CiConfig? parseCiConfig() => _parsedCiConfig;
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
@@ -214,4 +232,194 @@ class RepositoryPackage {
   bool isPublishable() {
     return parsePubspec().publishTo != 'none';
   }
+
+  /// Returns the parsed changelog entries for the package.
+  ///
+  /// This method reads through the files in the pending_changelogs folder
+  /// and parses each file as a changelog entry.
+  ///
+  /// Returns the parsed changelog entries for the package, and any errors
+  /// that occurred trying to read them.
+  PendingChangelogs getPendingChangelogs() {
+    final List<PendingChangelogEntry> entries = <PendingChangelogEntry>[];
+    final List<String> errors = <String>[];
+
+    final Directory pendingChangelogsDir = pendingChangelogsDirectory;
+    if (!pendingChangelogsDir.existsSync()) {
+      errors.add('No pending_changelogs folder found for $displayName.');
+      return PendingChangelogs(entries, errors);
+    }
+
+    final List<File> allFiles =
+        pendingChangelogsDir.listSync().whereType<File>().toList();
+
+    final List<File> pendingChangelogFiles = <File>[];
+    for (final File file in allFiles) {
+      final String basename = p.basename(file.path);
+      if (basename.endsWith('.yaml')) {
+        if (basename != _kTemplateFileName) {
+          pendingChangelogFiles.add(file);
+        }
+      } else {
+        errors.add('Found non-YAML file in pending_changelogs: ${file.path}');
+      }
+    }
+
+    for (final File file in pendingChangelogFiles) {
+      try {
+        entries.add(PendingChangelogEntry.parse(file.readAsStringSync(), file));
+      } on FormatException catch (e) {
+        errors.add('Malformed pending changelog file: ${file.path}\n$e');
+      }
+    }
+    return PendingChangelogs(entries, errors);
+  }
+}
+
+/// A class representing the parsed content of a `ci_config.yaml` file.
+class CiConfig {
+  /// Creates a [CiConfig] from a parsed YAML map.
+  CiConfig._(this._yaml, this.errors);
+
+  /// Parses a [CiConfig] from a YAML string.
+  factory CiConfig.parse(String yaml) {
+    final Object? loaded = loadYaml(yaml);
+    if (loaded is! YamlMap) {
+      throw const FormatException('Root of ci_config.yaml must be a map.');
+    }
+
+    final List<String> errors =
+        _checkCiConfigEntries(loaded, syntax: _validCiConfigSyntax);
+
+    return CiConfig._(loaded, errors);
+  }
+
+  static const Map<String, Object?> _validCiConfigSyntax = <String, Object?>{
+    'release': <String, Object?>{
+      'batch': <bool>{true, false}
+    },
+  };
+
+  final YamlMap _yaml;
+
+  /// A list of validation errors found in the config file.
+  final List<String> errors;
+
+  /// Returns true if the package is configured for batch release.
+  bool get isBatchRelease {
+    final Object? release = _yaml['release'];
+    if (release is! Map) {
+      return false;
+    }
+    return release['batch'] == true;
+  }
+
+  static List<String> _checkCiConfigEntries(YamlMap config,
+      {required Map<String, Object?> syntax, String configPrefix = ''}) {
+    final List<String> errors = <String>[];
+    for (final MapEntry<Object?, Object?> entry in config.entries) {
+      if (!syntax.containsKey(entry.key)) {
+        errors.add(
+            'Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}, the possible keys are ${syntax.keys.toList()}');
+      } else {
+        final Object syntaxValue = syntax[entry.key]!;
+        final String newConfigPrefix = configPrefix.isEmpty
+            ? entry.key! as String
+            : '$configPrefix.${entry.key}';
+        if (syntaxValue is Set) {
+          if (!syntaxValue.contains(entry.value)) {
+            errors.add(
+                'Invalid value `${entry.value}` for key${_formatConfigPrefix(newConfigPrefix)}, the possible values are ${syntaxValue.toList()}');
+          }
+        } else if (entry.value is! YamlMap) {
+          errors.add(
+              'Invalid value `${entry.value}` for key${_formatConfigPrefix(newConfigPrefix)}, the value must be a map');
+        } else {
+          errors.addAll(_checkCiConfigEntries(entry.value! as YamlMap,
+              syntax: syntaxValue as Map<String, Object?>,
+              configPrefix: newConfigPrefix));
+        }
+      }
+    }
+    return errors;
+  }
+
+  static String _formatConfigPrefix(String configPrefix) =>
+      configPrefix.isEmpty ? '' : ' `$configPrefix`';
+}
+
+/// The type of version change described by a changelog entry.
+///
+/// The order of the enum values is important as it is used to determine which version
+/// take priority when multiple version changes are specified. The top most value
+/// (the samller the index) has the highest priority.
+enum VersionChange {
+  /// A major version change (e.g., 1.2.3 -> 2.0.0).
+  major,
+
+  /// A minor version change (e.g., 1.2.3 -> 1.3.0).
+  minor,
+
+  /// A patch version change (e.g., 1.2.3 -> 1.2.4).
+  patch,
+
+  /// No version change.
+  skip,
+}
+
+/// Represents a single entry in the pending changelog.
+class PendingChangelogEntry {
+  /// Creates a new pending changelog entry.
+  PendingChangelogEntry(
+      {required this.changelog, required this.version, required this.file});
+
+  /// Creates a PendingChangelogEntry from a YAML string.
+  factory PendingChangelogEntry.parse(String yamlContent, File file) {
+    final dynamic yaml = loadYaml(yamlContent);
+    if (yaml is! YamlMap) {
+      throw FormatException(
+          'Expected a YAML map, but found ${yaml.runtimeType}.');
+    }
+
+    final dynamic changelogYaml = yaml['changelog'];
+    if (changelogYaml is! String) {
+      throw FormatException(
+          'Expected "changelog" to be a string, but found ${changelogYaml.runtimeType}.');
+    }
+    final String changelog = changelogYaml.trim();
+
+    final String? versionString = yaml['version'] as String?;
+    if (versionString == null) {
+      throw const FormatException('Missing "version" key.');
+    }
+    final VersionChange version = VersionChange.values.firstWhere(
+      (VersionChange e) => e.name == versionString,
+      orElse: () =>
+          throw FormatException('Invalid version type: $versionString'),
+    );
+
+    return PendingChangelogEntry(
+        changelog: changelog, version: version, file: file);
+  }
+
+  /// The changelog messages for this entry.
+  final String changelog;
+
+  /// The type of version change for this entry.
+  final VersionChange version;
+
+  /// The file that this entry was parsed from.
+  final File file;
+}
+
+/// A data class for pending changelogs and any errors found while parsing them.
+class PendingChangelogs {
+  /// Creates a new instance.
+  PendingChangelogs(this.entries, this.errors);
+
+  /// The parsed pending changelog entries.
+  final List<PendingChangelogEntry> entries;
+
+  /// A list of errors found while parsing changelogs.
+  final List<String> errors;
 }

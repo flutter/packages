@@ -322,6 +322,57 @@ void main() {
           ]));
     });
 
+    test('skips version check with post-release label', () async {
+      final RepositoryPackage package =
+          createFakePackage('package', packagesDir, version: '1.0.0');
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: false
+''');
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'version-check',
+        '--base-sha=main',
+        '--pr-labels=post-release-package',
+      ]);
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for package'),
+          contains('No issues found!'),
+        ]),
+      );
+    });
+
+    test('fails for batch release package with no new changelog', () async {
+      final RepositoryPackage package =
+          createFakePackage('package', packagesDir, version: '1.0.0');
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '')),
+      ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'version-check',
+        '--base-sha=main',
+      ], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Missing CHANGELOG file'),
+          ]));
+    });
+
     test('allows breaking changes to platform interfaces with bypass flag',
         () async {
       createFakePlugin('plugin_platform_interface', packagesDir,
@@ -1241,6 +1292,8 @@ packages/plugin/lib/plugin.dart
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
 ''')),
+          FakeProcessInfo(
+              MockProcess(stdout: ''), <String>['--name-only', 'main', 'HEAD']),
           // Dart file diff.
           FakeProcessInfo(MockProcess(stdout: '''
 +   /// Important new information for API clients!
