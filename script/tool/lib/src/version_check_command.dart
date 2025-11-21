@@ -167,6 +167,13 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
   late final Set<String> _prLabels = _getPRLabels();
 
+  Future<String> _getRelativePackagePath(RepositoryPackage package) async {
+    final Directory gitRoot = packagesDir.fileSystem.directory(
+      (await gitDir).path,
+    );
+    return getRelativePosixPath(package.directory, from: gitRoot);
+  }
+
   @override
   final String name = 'version-check';
 
@@ -212,32 +219,85 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
     final errors = <String>[];
 
-    bool versionChanged;
+    final CiConfig? ciConfig = package.parseCiConfig();
     final _CurrentVersionState versionState = await _getVersionState(
       package,
       pubspec: pubspec,
     );
-    switch (versionState) {
-      case _CurrentVersionState.unchanged:
-        versionChanged = false;
-      case _CurrentVersionState.validIncrease:
-      case _CurrentVersionState.validRevert:
-      case _CurrentVersionState.newPackage:
-        versionChanged = true;
-      case _CurrentVersionState.invalidChange:
-        versionChanged = true;
-        errors.add('Disallowed version change.');
-      case _CurrentVersionState.unknown:
-        versionChanged = false;
-        errors.add('Unable to determine previous version.');
-    }
+    final bool usesBatchRelease = ciConfig?.isBatchRelease ?? false;
+    // PR with post release label is going to sync changelog.md and pubspec.yaml
+    // change back to main branch. We can proceed with ragular version check.
+    final bool hasPostReleaseLabel = _prLabels.contains(
+      'post-release-${pubspec.name}',
+    );
+    bool versionChanged = false;
 
-    if (!(await _validateChangelogVersion(
-      package,
-      pubspec: pubspec,
-      pubspecVersionState: versionState,
-    ))) {
-      errors.add('CHANGELOG.md failed validation.');
+    if (usesBatchRelease && !hasPostReleaseLabel) {
+      final String relativePackagePath = await _getRelativePackagePath(package);
+      final List<String> changedFilesInPackage = changedFiles
+          .where((String path) => path.startsWith(relativePackagePath))
+          .toList();
+
+      // For batch release, we only check pending changelog files.
+      final List<PendingChangelogEntry> allChangelogs;
+      try {
+        allChangelogs = package.getPendingChangelogs();
+      } on FormatException catch (e) {
+        errors.add(e.message);
+        return PackageResult.fail(errors);
+      }
+
+      final List<PendingChangelogEntry> newEntries = allChangelogs
+          .where(
+            (PendingChangelogEntry entry) => changedFilesInPackage.any(
+              (String path) => path.endsWith(entry.file.path.split('/').last),
+            ),
+          )
+          .toList();
+      versionChanged = newEntries.any(
+        (PendingChangelogEntry entry) => entry.version != VersionChange.skip,
+      );
+
+      // The changelog.md and pubspec.yaml's version should not be updated directly.
+      if (changedFilesInPackage.contains('$relativePackagePath/CHANGELOG.md')) {
+        printError(
+          'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
+          'Instead, create a pending changelog file in pending_changelogs folder.',
+        );
+        errors.add('CHANGELOG.md changed');
+      }
+      if (changedFilesInPackage.contains('$relativePackagePath/pubspec.yaml')) {
+        if (versionState != _CurrentVersionState.unchanged) {
+          printError(
+            'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
+            'Instead, create a pending changelog file in pending_changelogs folder.',
+          );
+          errors.add('pubspec.yaml version changed');
+        }
+      }
+    } else {
+      switch (versionState) {
+        case _CurrentVersionState.unchanged:
+          versionChanged = false;
+        case _CurrentVersionState.validIncrease:
+        case _CurrentVersionState.validRevert:
+        case _CurrentVersionState.newPackage:
+          versionChanged = true;
+        case _CurrentVersionState.invalidChange:
+          versionChanged = true;
+          errors.add('Disallowed version change.');
+        case _CurrentVersionState.unknown:
+          versionChanged = false;
+          errors.add('Unable to determine previous version.');
+      }
+
+      if (!(await _validateChangelogVersion(
+        package,
+        pubspec: pubspec,
+        pubspecVersionState: versionState,
+      ))) {
+        errors.add('CHANGELOG.md failed validation.');
+      }
     }
 
     // If there are no other issues, make sure that there isn't a missing
@@ -575,13 +635,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     // Find the relative path to the current package, as it would appear at the
     // beginning of a path reported by changedFiles (which always uses
     // Posix paths).
-    final Directory gitRoot = packagesDir.fileSystem.directory(
-      (await gitDir).path,
-    );
-    final String relativePackagePath = getRelativePosixPath(
-      package.directory,
-      from: gitRoot,
-    );
+    final String relativePackagePath = await _getRelativePackagePath(package);
 
     final PackageChangeState state = await checkPackageChangeState(
       package,
@@ -624,16 +678,31 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         );
       } else {
         missingChangelogChange = true;
-        printError(
-          'No CHANGELOG change found.\n'
-          'If this PR needs an exemption from the standard policy of listing '
-          'all changes in the CHANGELOG,\n'
-          'comment in the PR to explain why the PR is exempt, and add (or '
-          'ask your reviewer to add) the\n'
-          '"$_missingChangelogChangeOverrideLabel" label.\n'
-          'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
-          'the contributing guide.\n',
-        );
+        final bool isBatchRelease =
+            package.parseCiConfig()?.isBatchRelease ?? false;
+        if (isBatchRelease) {
+          printError(
+            'No new changelog files found in the pending_changelogs folder.\n'
+            'If this PR needs an exemption from the standard policy of listing '
+            'all changes in the CHANGELOG,\n'
+            'comment in the PR to explain why the PR is exempt, and add (or '
+            'ask your reviewer to add) the\n'
+            '"$_missingChangelogChangeOverrideLabel" label.\n'
+            'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
+            'the contributing guide.\n',
+          );
+        } else {
+          printError(
+            'No CHANGELOG change found.\n'
+            'If this PR needs an exemption from the standard policy of listing '
+            'all changes in the CHANGELOG,\n'
+            'comment in the PR to explain why the PR is exempt, and add (or '
+            'ask your reviewer to add) the\n'
+            '"$_missingChangelogChangeOverrideLabel" label.\n'
+            'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
+            'the contributing guide.\n',
+          );
+        }
       }
     }
 

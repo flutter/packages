@@ -80,6 +80,13 @@ Future<PackageChangeState> checkPackageChangeState(
       continue;
     }
 
+    if (package.parseCiConfig()?.isBatchRelease ?? false) {
+      if (components.first == 'pending_changelogs') {
+        hasChangelogChange = true;
+        continue;
+      }
+    }
+
     if (!needsVersionChange) {
       // Developer-only changes don't need version changes or changelog changes.
       if (await _isDevChange(components, git: git, repoPath: path)) {
