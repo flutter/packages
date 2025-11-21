@@ -125,12 +125,12 @@ class RepositoryPackage {
   Pubspec parsePubspec() => _parsedPubspec;
 
   late final CiConfig? _parsedCiConfig = ciConfigFile.existsSync()
-      ? CiConfig.parse(ciConfigFile.readAsStringSync())
+      ? CiConfig._parse(ciConfigFile.readAsStringSync())
       : null;
 
   /// Returns the parsed [ciConfigFile], or null if it does not exist.
-  ///
-  /// Caches for future use.
+  /// 
+  /// Throws if the file exists but is not a valid ci_config.yaml.
   CiConfig? parseCiConfig() => _parsedCiConfig;
 
   /// Returns true if the package depends on Flutter.
@@ -238,8 +238,8 @@ class RepositoryPackage {
   /// This method reads through the files in the pending_changelogs folder
   /// and parses each file as a changelog entry.
   ///
-  /// Returns the parsed changelog entries for the package, and any errors
-  /// that occurred trying to read them.
+  /// Throws if the folder does not exist, or if any of the files are not
+  /// valid changelog entries.
   List<PendingChangelogEntry> getPendingChangelogs() {
     final List<PendingChangelogEntry> entries = <PendingChangelogEntry>[];
 
@@ -267,7 +267,8 @@ class RepositoryPackage {
 
     for (final File file in pendingChangelogFiles) {
       try {
-        entries.add(PendingChangelogEntry.parse(file.readAsStringSync(), file));
+        entries
+            .add(PendingChangelogEntry._parse(file.readAsStringSync(), file));
       } on FormatException catch (e) {
         throw FormatException(
             'Malformed pending changelog file: ${file.path}\n$e');
@@ -283,7 +284,9 @@ class CiConfig {
   CiConfig._(this.isBatchRelease);
 
   /// Parses a [CiConfig] from a YAML string.
-  factory CiConfig.parse(String yaml) {
+  /// 
+  /// Throws if the YAML is not a valid ci_config.yaml.
+  factory CiConfig._parse(String yaml) {
     final Object? loaded = loadYaml(yaml);
     if (loaded is! YamlMap) {
       throw const FormatException('Root of ci_config.yaml must be a map.');
@@ -369,7 +372,9 @@ class PendingChangelogEntry {
       {required this.changelog, required this.version, required this.file});
 
   /// Creates a PendingChangelogEntry from a YAML string.
-  factory PendingChangelogEntry.parse(String yamlContent, File file) {
+  /// 
+  /// Throws if the YAML is not a valid pending changelog entry.
+  factory PendingChangelogEntry._parse(String yamlContent, File file) {
     final dynamic yaml = loadYaml(yamlContent);
     if (yaml is! YamlMap) {
       throw FormatException(
@@ -406,5 +411,3 @@ class PendingChangelogEntry {
   /// The file that this entry was parsed from.
   final File file;
 }
-
-

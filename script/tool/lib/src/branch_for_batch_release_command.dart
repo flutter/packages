@@ -65,9 +65,10 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final GitDir repository = await gitDir;
 
     print('Parsing package "${package.displayName}"...');
-    List<PendingChangelogEntry> pendingChangelogs = <PendingChangelogEntry>[];
+    final List<PendingChangelogEntry> pendingChangelogs =
+        <PendingChangelogEntry>[];
     try {
-      pendingChangelogs = package.getPendingChangelogs();
+      pendingChangelogs.addAll(package.getPendingChangelogs());
     } on FormatException catch (e) {
       printError('Failed to parse pending changelogs: ${e.message}');
       throw ToolExit(_kExitPackageMalformed);
