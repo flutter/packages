@@ -1,3 +1,7 @@
+## 4.10.7
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
 ## 4.10.6
 
 * Updates to Pigeon 26.
