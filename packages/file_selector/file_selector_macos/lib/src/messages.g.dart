@@ -94,6 +94,7 @@ class SavePanelOptions {
     this.directoryPath,
     this.nameFieldStringValue,
     this.prompt,
+    this.canCreateDirectories,
   });
 
   AllowedTypes? allowedFileTypes;
@@ -104,12 +105,15 @@ class SavePanelOptions {
 
   String? prompt;
 
+  bool? canCreateDirectories;
+
   List<Object?> _toList() {
     return <Object?>[
       allowedFileTypes,
       directoryPath,
       nameFieldStringValue,
       prompt,
+      canCreateDirectories,
     ];
   }
 
@@ -124,6 +128,7 @@ class SavePanelOptions {
       directoryPath: result[1] as String?,
       nameFieldStringValue: result[2] as String?,
       prompt: result[3] as String?,
+      canCreateDirectories: result[4] as bool?,
     );
   }
 
