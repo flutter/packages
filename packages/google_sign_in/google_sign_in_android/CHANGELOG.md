@@ -1,3 +1,7 @@
+## 7.2.5
+
+* Updates to Pigeon 26.
+
 ## 7.2.4
 
 * Improves README and fixes minor typos.

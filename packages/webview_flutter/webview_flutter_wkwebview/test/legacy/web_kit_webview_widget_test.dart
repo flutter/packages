@@ -240,8 +240,8 @@ void main() {
         );
 
         verify(mocks.webView.setOpaque(false));
-        verify(mocks.webView.setBackgroundColor(Colors.transparent.value));
-        verify(mocks.scrollView.setBackgroundColor(Colors.red.value));
+        verify(mocks.webView.setBackgroundColor(Colors.transparent.toARGB32()));
+        verify(mocks.scrollView.setBackgroundColor(Colors.red.toARGB32()));
 
         debugDefaultTargetPlatformOverride = null;
       });
