@@ -157,6 +157,12 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
   late final Set<String> _prLabels = _getPRLabels();
 
+  Future<String> _getRelativePackagePath(RepositoryPackage package) async {
+    final Directory gitRoot =
+        packagesDir.fileSystem.directory((await gitDir).path);
+    return getRelativePosixPath(package.directory, from: gitRoot);
+  }
+
   @override
   final String name = 'version-check';
 
@@ -211,13 +217,15 @@ class VersionCheckCommand extends PackageLoopingCommand {
     bool versionChanged;
 
     if (usesBatchRelease && !hasPostReleaseLabel) {
-      final List<String> changedFiles =
-          await _gitVersionFinder.getChangedFiles();
+      final String relativePackagePath = await _getRelativePackagePath(package);
+      final List<String> changedFilesInPackage = changedFiles
+          .where((String path) => path.startsWith(relativePackagePath))
+          .toList();
+
       // For batch release, we only check pending changelog files.
-      final List<PendingChangelogEntry> allChangelogs =
-          <PendingChangelogEntry>[];
+      final List<PendingChangelogEntry> allChangelogs;
       try {
-        allChangelogs.addAll(package.getPendingChangelogs());
+        allChangelogs = package.getPendingChangelogs();
       } on FormatException catch (e) {
         errors.add(e.message);
         return PackageResult.fail(errors);
@@ -225,19 +233,19 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
       final List<PendingChangelogEntry> newEntries = allChangelogs
           .where((PendingChangelogEntry entry) =>
-              changedFiles.contains(entry.file.path))
+              changedFilesInPackage.contains(entry.file.path))
           .toList();
       versionChanged = newEntries.any(
           (PendingChangelogEntry entry) => entry.version != VersionChange.skip);
 
       // The changelog.md and pubspec.yaml's version should not be updated directly.
-      if (changedFiles.contains(package.changelogFile.path)) {
+      if (changedFilesInPackage.contains('$relativePackagePath/CHANGELOG.md')) {
         printError(
             'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
             'Instead, create a pending changelog file in pending_changelogs folder.');
         errors.add('CHANGELOG.md changed');
       }
-      if (changedFiles.contains(package.pubspecFile.path)) {
+      if (changedFilesInPackage.contains('$relativePackagePath/pubspec.yaml')) {
         if (versionState != _CurrentVersionState.unchanged) {
           printError(
               'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
@@ -577,10 +585,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     // Find the relative path to the current package, as it would appear at the
     // beginning of a path reported by changedFiles (which always uses
     // Posix paths).
-    final Directory gitRoot =
-        packagesDir.fileSystem.directory((await gitDir).path);
-    final String relativePackagePath =
-        getRelativePosixPath(package.directory, from: gitRoot);
+    final String relativePackagePath = await _getRelativePackagePath(package);
 
     final PackageChangeState state = await checkPackageChangeState(package,
         changedPaths: changedFiles,
@@ -594,7 +599,13 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     bool missingVersionChange = false;
     bool missingChangelogChange = false;
     if (state.needsVersionChange) {
-      if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
+      final bool isBatchRelease =
+          package.parseCiConfig()?.isBatchRelease ?? false;
+      if (isBatchRelease && state.hasChangelogChange) {
+        // Batch release packages are not supposed to have version changes, so
+        // if there is a changelog change (which for batch release means a
+        // pending changelog entry), that is sufficient.
+      } else if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
         logWarning('Ignoring lack of version change due to the '
             '"$_missingVersionChangeOverrideLabel" label.');
       } else {
