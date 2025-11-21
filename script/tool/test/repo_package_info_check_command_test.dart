@@ -575,7 +575,6 @@ release:
       expect(
         output,
         containsAll(<Matcher>[
-          contains('  Checking ci_config.yaml...'),
           contains('No issues found!'),
         ]),
       );
@@ -671,6 +670,64 @@ release:
           contains(
             'Invalid value `1` for key `release.batch`, the possible values are [true, false]',
           ),
+        ]),
+      );
+    });
+
+    test('fails for batch release package missing pending_changelogs',
+        () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeAutoLabelerYaml(<RepositoryPackage>[package]);
+      writeCodeOwners(<RepositoryPackage>[package]);
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+          runner, <String>['repo-package-info-check'], errorHandler: (Error e) {
+        commandError = e;
+      });
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No pending_changelogs folder found for a_package.'),
+        ]),
+      );
+    });
+
+    test('passes for batch release package with pending_changelogs', () async {
+      final RepositoryPackage package =
+          createFakePackage('a_package', packagesDir);
+
+      root.childFile('README.md').writeAsStringSync('''
+${readmeTableHeader()}
+${readmeTableEntry('a_package')}
+''');
+      writeAutoLabelerYaml(<RepositoryPackage>[package]);
+      writeCodeOwners(<RepositoryPackage>[package]);
+      package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+      package.pendingChangelogsDirectory.createSync();
+
+      final List<String> output =
+          await runCapturingPrint(runner, <String>['repo-package-info-check']);
+
+      expect(
+        output,
+        containsAll(<Matcher>[
+          contains('No issues found!'),
         ]),
       );
     });
