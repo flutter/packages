@@ -214,7 +214,7 @@ class ProxyApiTestsPigeonInstanceManager(
   }
 
   /** Retrieves the instance associated with identifier, if present, otherwise `null`. */
-  fun <T> getInstance(identifier: Long): T? {
+  fun <T : Any> getInstance(identifier: Long): T? {
     logWarningIfFinalizationListenerHasStopped()
     val instance = weakInstances[identifier] as IdentityWeakReference<T>?
     return instance?.get()
