@@ -1292,8 +1292,6 @@ packages/plugin/lib/plugin.dart
           FakeProcessInfo(MockProcess(stdout: '''
 packages/plugin/lib/plugin.dart
 ''')),
-          FakeProcessInfo(
-              MockProcess(stdout: ''), <String>['--name-only', 'main', 'HEAD']),
           // Dart file diff.
           FakeProcessInfo(MockProcess(stdout: '''
 +   /// Important new information for API clients!

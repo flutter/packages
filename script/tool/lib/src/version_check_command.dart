@@ -201,7 +201,6 @@ class VersionCheckCommand extends PackageLoopingCommand {
     final List<String> errors = <String>[];
 
     final CiConfig? ciConfig = package.parseCiConfig();
-    final List<String> changedFiles = await _gitVersionFinder.getChangedFiles();
     final _CurrentVersionState versionState =
         await _getVersionState(package, pubspec: pubspec);
     final bool usesBatchRelease = ciConfig?.isBatchRelease ?? false;
@@ -210,6 +209,8 @@ class VersionCheckCommand extends PackageLoopingCommand {
     final bool hasPostReleaseLabel =
         _prLabels.contains('post-release-${pubspec.name}');
     if (usesBatchRelease && !hasPostReleaseLabel) {
+      final List<String> changedFiles =
+          await _gitVersionFinder.getChangedFiles();
       // For batch release, we only check pending changelog files.
       errors.addAll(await _validatePendingChangelogs(package, changedFiles));
       // The changelog and version should not be updated directly.
