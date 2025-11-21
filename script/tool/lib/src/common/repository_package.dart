@@ -129,7 +129,7 @@ class RepositoryPackage {
       : null;
 
   /// Returns the parsed [ciConfigFile], or null if it does not exist.
-  /// 
+  ///
   /// Throws if the file exists but is not a valid ci_config.yaml.
   CiConfig? parseCiConfig() => _parsedCiConfig;
 
@@ -284,7 +284,7 @@ class CiConfig {
   CiConfig._(this.isBatchRelease);
 
   /// Parses a [CiConfig] from a YAML string.
-  /// 
+  ///
   /// Throws if the YAML is not a valid ci_config.yaml.
   factory CiConfig._parse(String yaml) {
     final Object? loaded = loadYaml(yaml);
@@ -311,8 +311,6 @@ class CiConfig {
 
   /// Returns true if the package is configured for batch release.
   final bool isBatchRelease;
-
-
 
   static void _checkCiConfigEntries(YamlMap config,
       {required Map<String, Object?> syntax, String configPrefix = ''}) {
@@ -372,7 +370,7 @@ class PendingChangelogEntry {
       {required this.changelog, required this.version, required this.file});
 
   /// Creates a PendingChangelogEntry from a YAML string.
-  /// 
+  ///
   /// Throws if the YAML is not a valid pending changelog entry.
   factory PendingChangelogEntry._parse(String yamlContent, File file) {
     final dynamic yaml = loadYaml(yamlContent);

@@ -12,7 +12,6 @@ import 'common/repository_package.dart';
 const int _exitBadTableEntry = 3;
 const int _exitUnknownPackageEntry = 4;
 
-
 /// A command to verify repository-level metadata about packages, such as
 /// repo README and CODEOWNERS entries.
 class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
@@ -247,8 +246,6 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
     return errors;
   }
-
-  
 
   String _prTagForPackage(String packageName) => 'p: $packageName';
 

@@ -603,8 +603,7 @@ release:
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains(
-              'No pending_changelogs folder found for a_package.'),
+          contains('No pending_changelogs folder found for a_package.'),
         ]),
       );
     });

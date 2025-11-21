@@ -18,7 +18,6 @@ import 'common/repository_package.dart';
 const int _kExitPackageMalformed = 3;
 const int _kGitFailedToPush = 4;
 
-
 /// A command to create a remote branch with release changes for a single package.
 class BranchForBatchReleaseCommand extends PackageCommand {
   /// Creates a new `branch-for-batch-release` command.
@@ -65,10 +64,9 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final GitDir repository = await gitDir;
 
     print('Parsing package "${package.displayName}"...');
-    final List<PendingChangelogEntry> pendingChangelogs =
-        <PendingChangelogEntry>[];
+    final List<PendingChangelogEntry> pendingChangelogs;
     try {
-      pendingChangelogs.addAll(package.getPendingChangelogs());
+      pendingChangelogs = package.getPendingChangelogs();
     } on FormatException catch (e) {
       printError('Failed to parse pending changelogs: ${e.message}');
       throw ToolExit(_kExitPackageMalformed);
@@ -112,8 +110,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   /// This method read through the parsed changelog entries decide the new version
   /// by following the version change rules. See [_VersionChange] for more details.
   _ReleaseInfo _getReleaseInfo(
-      List<PendingChangelogEntry> pendingChangelogEntries,
-      Version oldVersion) {
+      List<PendingChangelogEntry> pendingChangelogEntries, Version oldVersion) {
     final List<String> changelogs = <String>[];
     int versionIndex = VersionChange.skip.index;
     for (final PendingChangelogEntry entry in pendingChangelogEntries) {
@@ -126,8 +123,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final Version? newVersion = switch (effectiveVersionChange) {
       VersionChange.skip => null,
       VersionChange.major => Version(oldVersion.major + 1, 0, 0),
-      VersionChange.minor =>
-        Version(oldVersion.major, oldVersion.minor + 1, 0),
+      VersionChange.minor => Version(oldVersion.major, oldVersion.minor + 1, 0),
       VersionChange.patch =>
         Version(oldVersion.major, oldVersion.minor, oldVersion.patch + 1),
     };
@@ -237,8 +233,6 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     }
   }
 }
-
-
 
 /// A data class for processed release information.
 class _ReleaseInfo {
