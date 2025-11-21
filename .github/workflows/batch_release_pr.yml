@@ -38,6 +38,6 @@ jobs:
           title: "[${{ github.event.client_payload.package }}] Batch release"
           body: "This PR was created automatically to batch release the `${{ github.event.client_payload.package }}`."
           branch: ${{ env.BRANCH_NAME }}
-          base: release
+          base: release-${{ github.event.client_payload.package }}
 
 
