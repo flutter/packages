@@ -1,3 +1,7 @@
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
+
 ## 2.8.20
 
 * Bumps `exoplayer_version` from 1.5.1 to 1.8.0.

@@ -22,6 +22,17 @@ import 'android_video_player_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  // Provide dummy values for audio track types
+  provideDummy<NativeAudioTrackData>(
+    NativeAudioTrackData(exoPlayerTracks: <ExoPlayerAudioTrackData>[]),
+  );
+  provideDummy<Future<NativeAudioTrackData>>(
+    Future<NativeAudioTrackData>.value(
+      NativeAudioTrackData(exoPlayerTracks: <ExoPlayerAudioTrackData>[]),
+    ),
+  );
+  provideDummy<Future<void>>(Future<void>.value());
+
   (AndroidVideoPlayer, MockAndroidVideoPlayerApi, MockVideoPlayerInstanceApi)
   setUpMockPlayer({required int playerId, int? textureId}) {
     final MockAndroidVideoPlayerApi pluginApi = MockAndroidVideoPlayerApi();
@@ -812,6 +823,18 @@ void main() {
             ),
           ]),
         );
+      });
+    });
+
+    group('audio tracks', () {
+      // Note: Comprehensive audio track functionality tests are in the Java layer
+      // (VideoPlayerTest.java) where the actual implementation resides.
+      // These Dart tests verify the platform interface integration.
+
+      test('isAudioTrackSupportAvailable returns true', () {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        expect(player.isAudioTrackSupportAvailable(), true);
       });
     });
   });
