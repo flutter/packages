@@ -240,14 +240,13 @@ class RepositoryPackage {
   ///
   /// Returns the parsed changelog entries for the package, and any errors
   /// that occurred trying to read them.
-  PendingChangelogs getPendingChangelogs() {
+  List<PendingChangelogEntry> getPendingChangelogs() {
     final List<PendingChangelogEntry> entries = <PendingChangelogEntry>[];
-    final List<String> errors = <String>[];
 
     final Directory pendingChangelogsDir = pendingChangelogsDirectory;
     if (!pendingChangelogsDir.existsSync()) {
-      errors.add('No pending_changelogs folder found for $displayName.');
-      return PendingChangelogs(entries, errors);
+      throw FormatException(
+          'No pending_changelogs folder found for $displayName.');
     }
 
     final List<File> allFiles =
@@ -261,7 +260,8 @@ class RepositoryPackage {
           pendingChangelogFiles.add(file);
         }
       } else {
-        errors.add('Found non-YAML file in pending_changelogs: ${file.path}');
+        throw FormatException(
+            'Found non-YAML file in pending_changelogs: ${file.path}');
       }
     }
 
@@ -269,17 +269,18 @@ class RepositoryPackage {
       try {
         entries.add(PendingChangelogEntry.parse(file.readAsStringSync(), file));
       } on FormatException catch (e) {
-        errors.add('Malformed pending changelog file: ${file.path}\n$e');
+        throw FormatException(
+            'Malformed pending changelog file: ${file.path}\n$e');
       }
     }
-    return PendingChangelogs(entries, errors);
+    return entries;
   }
 }
 
 /// A class representing the parsed content of a `ci_config.yaml` file.
 class CiConfig {
   /// Creates a [CiConfig] from a parsed YAML map.
-  CiConfig._(this._yaml, this.errors);
+  CiConfig._(this.isBatchRelease);
 
   /// Parses a [CiConfig] from a YAML string.
   factory CiConfig.parse(String yaml) {
@@ -288,10 +289,15 @@ class CiConfig {
       throw const FormatException('Root of ci_config.yaml must be a map.');
     }
 
-    final List<String> errors =
-        _checkCiConfigEntries(loaded, syntax: _validCiConfigSyntax);
+    _checkCiConfigEntries(loaded, syntax: _validCiConfigSyntax);
 
-    return CiConfig._(loaded, errors);
+    bool isBatchRelease = false;
+    final Object? release = loaded['release'];
+    if (release is Map) {
+      isBatchRelease = release['batch'] == true;
+    }
+
+    return CiConfig._(isBatchRelease);
   }
 
   static const Map<String, Object?> _validCiConfigSyntax = <String, Object?>{
@@ -300,26 +306,16 @@ class CiConfig {
     },
   };
 
-  final YamlMap _yaml;
-
-  /// A list of validation errors found in the config file.
-  final List<String> errors;
-
   /// Returns true if the package is configured for batch release.
-  bool get isBatchRelease {
-    final Object? release = _yaml['release'];
-    if (release is! Map) {
-      return false;
-    }
-    return release['batch'] == true;
-  }
+  final bool isBatchRelease;
 
-  static List<String> _checkCiConfigEntries(YamlMap config,
+
+
+  static void _checkCiConfigEntries(YamlMap config,
       {required Map<String, Object?> syntax, String configPrefix = ''}) {
-    final List<String> errors = <String>[];
     for (final MapEntry<Object?, Object?> entry in config.entries) {
       if (!syntax.containsKey(entry.key)) {
-        errors.add(
+        throw FormatException(
             'Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}, the possible keys are ${syntax.keys.toList()}');
       } else {
         final Object syntaxValue = syntax[entry.key]!;
@@ -328,20 +324,19 @@ class CiConfig {
             : '$configPrefix.${entry.key}';
         if (syntaxValue is Set) {
           if (!syntaxValue.contains(entry.value)) {
-            errors.add(
+            throw FormatException(
                 'Invalid value `${entry.value}` for key${_formatConfigPrefix(newConfigPrefix)}, the possible values are ${syntaxValue.toList()}');
           }
         } else if (entry.value is! YamlMap) {
-          errors.add(
+          throw FormatException(
               'Invalid value `${entry.value}` for key${_formatConfigPrefix(newConfigPrefix)}, the value must be a map');
         } else {
-          errors.addAll(_checkCiConfigEntries(entry.value! as YamlMap,
+          _checkCiConfigEntries(entry.value! as YamlMap,
               syntax: syntaxValue as Map<String, Object?>,
-              configPrefix: newConfigPrefix));
+              configPrefix: newConfigPrefix);
         }
       }
     }
-    return errors;
   }
 
   static String _formatConfigPrefix(String configPrefix) =>
@@ -412,14 +407,4 @@ class PendingChangelogEntry {
   final File file;
 }
 
-/// A data class for pending changelogs and any errors found while parsing them.
-class PendingChangelogs {
-  /// Creates a new instance.
-  PendingChangelogs(this.entries, this.errors);
 
-  /// The parsed pending changelog entries.
-  final List<PendingChangelogEntry> entries;
-
-  /// A list of errors found while parsing changelogs.
-  final List<String> errors;
-}

@@ -287,11 +287,7 @@ release:
 foo: bar
 ''');
 
-      final CiConfig? config = plugin.parseCiConfig();
-
-      expect(config, isNotNull);
-      expect(config!.errors, hasLength(1));
-      expect(config.errors[0], contains('Unknown key `foo`'));
+      expect(() => plugin.parseCiConfig(), throwsFormatException);
     });
 
     test('reports invalid values', () {
@@ -302,11 +298,7 @@ release:
   batch: not-a-bool
 ''');
 
-      final CiConfig? config = plugin.parseCiConfig();
-
-      expect(config, isNotNull);
-      expect(config!.errors, hasLength(1));
-      expect(config.errors[0], contains('Invalid value `not-a-bool`'));
+      expect(() => plugin.parseCiConfig(), throwsFormatException);
     });
   });
 
@@ -315,11 +307,7 @@ release:
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
 
-      final PendingChangelogs changelogs = package.getPendingChangelogs();
-
-      expect(changelogs.entries, isEmpty);
-      expect(changelogs.errors, hasLength(1));
-      expect(changelogs.errors[0], contains('No pending_changelogs folder'));
+      expect(() => package.getPendingChangelogs(), throwsFormatException);
     });
 
     test('returns empty lists if the directory is empty', () {
@@ -327,10 +315,10 @@ release:
           createFakePackage('a_package', packagesDir);
       package.pendingChangelogsDirectory.createSync();
 
-      final PendingChangelogs changelogs = package.getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs =
+          package.getPendingChangelogs();
 
-      expect(changelogs.entries, isEmpty);
-      expect(changelogs.errors, isEmpty);
+      expect(changelogs, isEmpty);
     });
 
     test('returns entries for valid files', () {
@@ -350,14 +338,14 @@ changelog: B
 version: minor
 ''');
 
-      final PendingChangelogs changelogs = package.getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs =
+          package.getPendingChangelogs();
 
-      expect(changelogs.errors, isEmpty);
-      expect(changelogs.entries, hasLength(2));
-      expect(changelogs.entries[0].changelog, 'A');
-      expect(changelogs.entries[0].version, VersionChange.patch);
-      expect(changelogs.entries[1].changelog, 'B');
-      expect(changelogs.entries[1].version, VersionChange.minor);
+      expect(changelogs, hasLength(2));
+      expect(changelogs[0].changelog, 'A');
+      expect(changelogs[0].version, VersionChange.patch);
+      expect(changelogs[1].changelog, 'B');
+      expect(changelogs[1].version, VersionChange.minor);
     });
 
     test('returns an error for a malformed file', () {
@@ -368,12 +356,7 @@ version: minor
           package.pendingChangelogsDirectory.childFile('a.yaml');
       changelogFile.writeAsStringSync('not yaml');
 
-      final PendingChangelogs changelogs = package.getPendingChangelogs();
-
-      expect(changelogs.entries, isEmpty);
-      expect(changelogs.errors, hasLength(1));
-      expect(
-          changelogs.errors[0], contains('Malformed pending changelog file'));
+      expect(() => package.getPendingChangelogs(), throwsFormatException);
     });
 
     test('ignores template.yaml', () {
@@ -393,11 +376,11 @@ changelog: TEMPLATE
 version: skip
 ''');
 
-      final PendingChangelogs changelogs = package.getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs =
+          package.getPendingChangelogs();
 
-      expect(changelogs.errors, isEmpty);
-      expect(changelogs.entries, hasLength(1));
-      expect(changelogs.entries[0].changelog, 'A');
+      expect(changelogs, hasLength(1));
+      expect(changelogs[0].changelog, 'A');
     });
 
     test('returns an error for a non-yaml file', () {
@@ -414,11 +397,7 @@ version: patch
           .childFile('a.txt')
           .writeAsStringSync('text');
 
-      final PendingChangelogs changelogs = package.getPendingChangelogs();
-
-      expect(changelogs.entries, hasLength(1));
-      expect(changelogs.errors, hasLength(1));
-      expect(changelogs.errors[0], contains('Found non-YAML file'));
+      expect(() => package.getPendingChangelogs(), throwsFormatException);
     });
   });
 }

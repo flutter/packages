@@ -369,7 +369,7 @@ release:
       expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Missing CHANGELOG file'),
+            contains('No pending_changelogs folder found for package'),
           ]));
     });
 

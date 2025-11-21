@@ -65,14 +65,15 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final GitDir repository = await gitDir;
 
     print('Parsing package "${package.displayName}"...');
-    final PendingChangelogs pendingChangelogs = package.getPendingChangelogs();
-    if (pendingChangelogs.errors.isNotEmpty) {
-      printError(
-          'Failed to read pending changelogs for ${package.displayName}:');
-      pendingChangelogs.errors.forEach(printError);
+    List<PendingChangelogEntry> pendingChangelogs = <PendingChangelogEntry>[];
+    try {
+      pendingChangelogs = package.getPendingChangelogs();
+    } on FormatException catch (e) {
+      printError('Failed to parse pending changelogs: ${e.message}');
       throw ToolExit(_kExitPackageMalformed);
     }
-    if (pendingChangelogs.entries.isEmpty) {
+
+    if (pendingChangelogs.isEmpty) {
       print('No pending changelogs found for ${package.displayName}.');
       return;
     }
@@ -85,7 +86,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       throw ToolExit(_kExitPackageMalformed);
     }
     final _ReleaseInfo releaseInfo =
-        _getReleaseInfo(pendingChangelogs.entries, pubspec.version!);
+        _getReleaseInfo(pendingChangelogs, pubspec.version!);
 
     if (releaseInfo.newVersion == null) {
       print('No version change specified in pending changelogs for '
@@ -97,7 +98,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       git: repository,
       package: package,
       branchName: branchName,
-      pendingChangelogFiles: pendingChangelogs.entries
+      pendingChangelogFiles: pendingChangelogs
           .map<File>((PendingChangelogEntry e) => e.file)
           .toList(),
       releaseInfo: releaseInfo,

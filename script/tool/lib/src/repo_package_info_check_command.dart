@@ -138,17 +138,22 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
 
     // The content of ci_config.yaml must be valid if there is one.
-    final CiConfig? ciConfig = package.parseCiConfig();
-    if (ciConfig != null) {
-      for (final String error in ciConfig.errors) {
-        printError('$indentation$error');
-      }
-      errors.addAll(ciConfig.errors);
+    CiConfig? ciConfig;
+    try {
+      ciConfig = package.parseCiConfig();
+    } on FormatException catch (e) {
+      printError('$indentation${e.message}');
+      errors.add(e.message);
     }
 
     // All packages with batch release enabled should have valid pending changelogs.
     if (ciConfig?.isBatchRelease ?? false) {
-      errors.addAll(package.getPendingChangelogs().errors);
+      try {
+        package.getPendingChangelogs();
+      } on FormatException catch (e) {
+        printError('$indentation${e.message}');
+        errors.add(e.message);
+      }
     }
 
     // All published packages should have a README.md entry.

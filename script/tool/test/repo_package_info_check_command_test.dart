@@ -604,7 +604,7 @@ release:
         output,
         containsAllInOrder(<Matcher>[
           contains(
-              'Packages with batch releases enabled must have a "pending_changelogs" directory.'),
+              'No pending_changelogs folder found for a_package.'),
         ]),
       );
     });

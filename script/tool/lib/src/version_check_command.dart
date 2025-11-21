@@ -625,9 +625,15 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
   Future<List<String>> _validatePendingChangelogs(
       RepositoryPackage package, List<String> changedPaths) async {
     final List<String> errors = <String>[];
-    final PendingChangelogs allChangelogs = package.getPendingChangelogs();
+    List<PendingChangelogEntry> allChangelogs = <PendingChangelogEntry>[];
+    try {
+      allChangelogs = package.getPendingChangelogs();
+    } on FormatException catch (e) {
+      errors.add(e.message);
+      return errors;
+    }
 
-    final List<PendingChangelogEntry> newEntries = allChangelogs.entries
+    final List<PendingChangelogEntry> newEntries = allChangelogs
         .where((PendingChangelogEntry entry) =>
             changedPaths.contains(entry.file.path))
         .toList();
