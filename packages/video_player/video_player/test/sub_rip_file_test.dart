@@ -72,6 +72,30 @@ void main() {
     expect(firstCaption.end, const Duration(seconds: 17, milliseconds: 74));
     expect(firstCaption.text, 'This one is valid');
   });
+
+  test('Parses SubRip file with empty lines at start', () {
+    final SubRipCaptionFile parsedFile = SubRipCaptionFile(_subRipWithLeadingEmptyLines);
+
+    expect(parsedFile.captions.length, 2);
+
+    final Caption firstCaption = parsedFile.captions.first;
+    expect(firstCaption.number, 1);
+    expect(firstCaption.start, const Duration(seconds: 6));
+    expect(firstCaption.end, const Duration(seconds: 12, milliseconds: 74));
+    expect(firstCaption.text, 'First caption after empty lines');
+
+    final Caption secondCaption = parsedFile.captions[1];
+    expect(secondCaption.number, 2);
+    expect(
+      secondCaption.start,
+      const Duration(minutes: 1, seconds: 54, milliseconds: 724),
+    );
+    expect(
+      secondCaption.end,
+      const Duration(minutes: 1, seconds: 56, milliseconds: 760),
+    );
+    expect(secondCaption.text, 'Second caption');
+  });
 }
 
 const String _validSubRip = '''
@@ -110,4 +134,17 @@ This one is valid
 00:01:54,724 --> 00:01:6,760
 This one should be ignored because the
 ned time is missing a digit.
+''';
+
+const String _subRipWithLeadingEmptyLines = '''
+
+
+1
+00:00:06,000 --> 00:00:12,074
+First caption after empty lines
+
+2
+00:01:54,724 --> 00:01:56,760
+Second caption
+
 ''';
