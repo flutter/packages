@@ -4,6 +4,8 @@
 
 package io.flutter.plugins.videoplayer.texture;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.media3.common.Format;
@@ -60,3 +62,71 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
     return videoFormat.rotationDegrees;
   }
 }
+
+
+//// Copyright 2013 The Flutter Authors
+//// Use of this source code is governed by a BSD-style license that can be
+//// found in the LICENSE file.
+//
+//package io.flutter.plugins.videoplayer.texture;
+//
+//import android.util.Log;
+//
+//import androidx.annotation.NonNull;
+//import androidx.annotation.OptIn;
+//import androidx.media3.common.Format;
+//import androidx.media3.common.VideoSize;
+//import androidx.media3.exoplayer.ExoPlayer;
+//import io.flutter.plugins.videoplayer.ExoPlayerEventListener;
+//import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
+//import java.util.Objects;
+//
+//public final class TextureExoPlayerEventListener extends ExoPlayerEventListener {
+//    private final boolean surfaceProducerHandlesCropAndRotation;
+//
+//    public TextureExoPlayerEventListener(
+//            @NonNull ExoPlayer exoPlayer,
+//            @NonNull VideoPlayerCallbacks events,
+//            boolean surfaceProducerHandlesCropAndRotation) {
+//        super(exoPlayer, events);
+//        this.surfaceProducerHandlesCropAndRotation = surfaceProducerHandlesCropAndRotation;
+//    }
+//
+//    @Override
+//    protected void sendInitialized() {
+//        long duration = exoPlayer.getDuration();
+//
+//        if (duration == androidx.media3.common.C.TIME_UNSET) {
+//            // Duration not yet available — wait a bit and try again
+//            new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(this::sendInitialized, 100);
+//            return;
+//        }
+//
+//        VideoSize videoSize = exoPlayer.getVideoSize();
+//        RotationDegrees rotationCorrection = RotationDegrees.ROTATE_0;
+//        int width = videoSize.width;
+//        int height = videoSize.height;
+//
+//        if (width != 0 && height != 0 && !surfaceProducerHandlesCropAndRotation) {
+//            try {
+//                int rawVideoFormatRotation = getRotationCorrectionFromFormat(exoPlayer);
+//                rotationCorrection = RotationDegrees.fromDegrees(rawVideoFormatRotation);
+//            } catch (IllegalArgumentException e) {
+//                rotationCorrection = RotationDegrees.ROTATE_0;
+//            }
+//        }
+//
+//        Log.v("VideoPlayer", "sendInitialized(): duration=" + duration + " width=" + width + " height=" + height);
+//        events.onInitialized(width, height, duration, rotationCorrection.getDegrees());
+//    }
+//
+//
+//    @OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)
+//    // A video's Format and its rotation degrees are unstable because they are not guaranteed
+//    // the same implementation across API versions. It is possible that this logic may need
+//    // revisiting should the implementation change across versions of the Exoplayer API.
+//    private int getRotationCorrectionFromFormat(ExoPlayer exoPlayer) {
+//        Format videoFormat = Objects.requireNonNull(exoPlayer.getVideoFormat());
+//        return videoFormat.rotationDegrees;
+//    }
+//}
