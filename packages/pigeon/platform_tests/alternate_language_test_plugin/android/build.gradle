@@ -31,7 +31,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
     }
 
     testOptions {
