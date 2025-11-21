@@ -1,3 +1,7 @@
+## 4.10.8
+
+* Fixes a compatibility issue with Kotlin 1.8.
+
 ## 4.10.7
 
 * Replaces use of deprecated Color.value.
