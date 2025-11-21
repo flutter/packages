@@ -274,7 +274,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
         errors.add('CHANGELOG.md failed validation.');
       }
     }
-    print('versionChanged $versionChanged');
+
     // If there are no other issues, make sure that there isn't a missing
     // change to the version and/or CHANGELOG.
     if (getBoolArg(_checkForMissingChanges) &&
