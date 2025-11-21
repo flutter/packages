@@ -8,7 +8,6 @@ import 'dart:math' as math;
 import 'package:file/file.dart';
 import 'package:git/git.dart';
 import 'package:pub_semver/pub_semver.dart';
-import 'package:yaml/yaml.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/core.dart';
@@ -18,10 +17,6 @@ import 'common/repository_package.dart';
 
 const int _kExitPackageMalformed = 3;
 const int _kGitFailedToPush = 4;
-
-// The template file name used to draft a pending changelog file.
-// This file will not be picked up by the batch release process.
-const String _kTemplateFileName = 'template.yaml';
 
 /// A command to create a remote branch with release changes for a single package.
 class BranchForBatchReleaseCommand extends PackageCommand {
@@ -69,10 +64,15 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     final GitDir repository = await gitDir;
 
     print('Parsing package "${package.displayName}"...');
-    final _PendingChangelogs pendingChangelogs = await _getPendingChangelogs(
-      package,
-    );
-    if (pendingChangelogs.entries.isEmpty) {
+    final List<PendingChangelogEntry> pendingChangelogs;
+    try {
+      pendingChangelogs = package.getPendingChangelogs();
+    } on FormatException catch (e) {
+      printError('Failed to parse pending changelogs: ${e.message}');
+      throw ToolExit(_kExitPackageMalformed);
+    }
+
+    if (pendingChangelogs.isEmpty) {
       print('No pending changelogs found for ${package.displayName}.');
       return;
     }
@@ -85,7 +85,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       throw ToolExit(_kExitPackageMalformed);
     }
     final _ReleaseInfo releaseInfo = _getReleaseInfo(
-      pendingChangelogs.entries,
+      pendingChangelogs,
       pubspec.version!,
     );
 
@@ -101,49 +101,12 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       git: repository,
       package: package,
       branchName: branchName,
-      pendingChangelogFiles: pendingChangelogs.files,
+      pendingChangelogFiles: pendingChangelogs
+          .map<File>((PendingChangelogEntry e) => e.file)
+          .toList(),
       releaseInfo: releaseInfo,
       remoteName: remoteName,
     );
-  }
-
-  /// Returns the parsed changelog entries for the given package.
-  ///
-  /// This method read through the files in the pending_changelogs folder
-  /// and parsed each file as a changelog entry.
-  ///
-  /// Throws a [ToolExit] if the package does not have a pending_changelogs folder.
-  Future<_PendingChangelogs> _getPendingChangelogs(
-    RepositoryPackage package,
-  ) async {
-    final Directory pendingChangelogsDir = package.directory.childDirectory(
-      'pending_changelogs',
-    );
-    if (!pendingChangelogsDir.existsSync()) {
-      printError(
-        'No pending_changelogs folder found for ${package.displayName}.',
-      );
-      throw ToolExit(_kExitPackageMalformed);
-    }
-    final List<File> pendingChangelogFiles = pendingChangelogsDir
-        .listSync()
-        .whereType<File>()
-        .where(
-          (File f) =>
-              f.basename.endsWith('.yaml') && f.basename != _kTemplateFileName,
-        )
-        .toList();
-    try {
-      final List<_PendingChangelogEntry> entries = pendingChangelogFiles
-          .map<_PendingChangelogEntry>(
-            (File f) => _PendingChangelogEntry.parse(f.readAsStringSync()),
-          )
-          .toList();
-      return _PendingChangelogs(entries, pendingChangelogFiles);
-    } on FormatException catch (e) {
-      printError('Malformed pending changelog file: $e');
-      throw ToolExit(_kExitPackageMalformed);
-    }
   }
 
   /// Returns the release info for the given package.
@@ -151,27 +114,23 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   /// This method read through the parsed changelog entries decide the new version
   /// by following the version change rules. See [_VersionChange] for more details.
   _ReleaseInfo _getReleaseInfo(
-    List<_PendingChangelogEntry> pendingChangelogEntries,
+    List<PendingChangelogEntry> pendingChangelogEntries,
     Version oldVersion,
   ) {
-    final changelogs = <String>[];
-    int versionIndex = _VersionChange.skip.index;
-    for (final entry in pendingChangelogEntries) {
+    final List<String> changelogs = <String>[];
+    int versionIndex = VersionChange.skip.index;
+    for (final PendingChangelogEntry entry in pendingChangelogEntries) {
       changelogs.add(entry.changelog);
       versionIndex = math.min(versionIndex, entry.version.index);
     }
-    final _VersionChange effectiveVersionChange =
-        _VersionChange.values[versionIndex];
+    final VersionChange effectiveVersionChange =
+        VersionChange.values[versionIndex];
 
     final Version? newVersion = switch (effectiveVersionChange) {
-      _VersionChange.skip => null,
-      _VersionChange.major => Version(oldVersion.major + 1, 0, 0),
-      _VersionChange.minor => Version(
-        oldVersion.major,
-        oldVersion.minor + 1,
-        0,
-      ),
-      _VersionChange.patch => Version(
+      VersionChange.skip => null,
+      VersionChange.major => Version(oldVersion.major + 1, 0, 0),
+      VersionChange.minor => Version(oldVersion.major, oldVersion.minor + 1, 0),
+      VersionChange.patch => Version(
         oldVersion.major,
         oldVersion.minor,
         oldVersion.patch + 1,
@@ -305,18 +264,6 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }
 }
 
-/// A data class for pending changelogs.
-class _PendingChangelogs {
-  /// Creates a new instance.
-  _PendingChangelogs(this.entries, this.files);
-
-  /// The parsed pending changelog entries.
-  final List<_PendingChangelogEntry> entries;
-
-  /// The files that the pending changelog entries were parsed from.
-  final List<File> files;
-}
-
 /// A data class for processed release information.
 class _ReleaseInfo {
   /// Creates a new instance.
@@ -327,65 +274,4 @@ class _ReleaseInfo {
 
   /// The combined changelog entries.
   final List<String> changelogs;
-}
-
-/// The type of version change for a release.
-///
-/// The order of the enum values is important as it is used to determine which version
-/// take priority when multiple version changes are specified. The top most value
-/// (the samller the index) has the highest priority.
-enum _VersionChange {
-  /// A major version change (e.g., 1.2.3 -> 2.0.0).
-  major,
-
-  /// A minor version change (e.g., 1.2.3 -> 1.3.0).
-  minor,
-
-  /// A patch version change (e.g., 1.2.3 -> 1.2.4).
-  patch,
-
-  /// No version change.
-  skip,
-}
-
-/// Represents a single entry in the pending changelog.
-class _PendingChangelogEntry {
-  /// Creates a new pending changelog entry.
-  _PendingChangelogEntry({required this.changelog, required this.version});
-
-  /// Creates a PendingChangelogEntry from a YAML string.
-  factory _PendingChangelogEntry.parse(String yamlContent) {
-    final dynamic yaml = loadYaml(yamlContent);
-    if (yaml is! YamlMap) {
-      throw FormatException(
-        'Expected a YAML map, but found ${yaml.runtimeType}.',
-      );
-    }
-
-    final dynamic changelogYaml = yaml['changelog'];
-    if (changelogYaml is! String) {
-      throw FormatException(
-        'Expected "changelog" to be a string, but found ${changelogYaml.runtimeType}.',
-      );
-    }
-    final String changelog = changelogYaml.trim();
-
-    final versionString = yaml['version'] as String?;
-    if (versionString == null) {
-      throw const FormatException('Missing "version" key.');
-    }
-    final _VersionChange version = _VersionChange.values.firstWhere(
-      (_VersionChange e) => e.name == versionString,
-      orElse: () =>
-          throw FormatException('Invalid version type: $versionString'),
-    );
-
-    return _PendingChangelogEntry(changelog: changelog, version: version);
-  }
-
-  /// The changelog messages for this entry.
-  final String changelog;
-
-  /// The type of version change for this entry.
-  final _VersionChange version;
 }
