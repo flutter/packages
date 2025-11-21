@@ -322,13 +322,27 @@ void main() {
           ]));
     });
 
-    test('skips version check with post-release label', () async {
+    test(
+        'ignore changelog and pubspec yaml version modifications check with post-release label',
+        () async {
       final RepositoryPackage package =
           createFakePackage('package', packagesDir, version: '1.0.0');
       package.ciConfigFile.writeAsStringSync('''
 release:
-  batch: false
+  batch: true
 ''');
+
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: '''
+packages/package/CHANGELOG.md
+packages/package/pubspec.yaml
+''')),
+      ];
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+      ];
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'version-check',
@@ -346,7 +360,7 @@ release:
     });
 
     test(
-        'fails for batch release package with no new changelog and post-release label',
+        'fails for batch release package with no new changelog',
         () async {
       final RepositoryPackage package =
           createFakePackage('package', packagesDir, version: '1.0.0');
@@ -375,7 +389,6 @@ release:
         'version-check',
         '--base-sha=main',
         '--check-for-missing-changes',
-        '--pr-labels=post-release-package',
       ], errorHandler: (Error e) {
         commandError = e;
       });

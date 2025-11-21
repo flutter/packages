@@ -232,10 +232,16 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
       // The changelog.md and pubspec.yaml's version should not be updated directly.
       if (changedFiles.contains(package.changelogFile.path)) {
+        printError(
+            'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
+            'Instead, create a pending changelog file in pending_changelogs folder.');
         errors.add('CHANGELOG.md changed');
       }
       if (changedFiles.contains(package.pubspecFile.path)) {
         if (versionState != _CurrentVersionState.unchanged) {
+          printError(
+              'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
+              'Instead, create a pending changelog file in pending_changelogs folder.');
           errors.add('pubspec.yaml version changed');
         }
       }

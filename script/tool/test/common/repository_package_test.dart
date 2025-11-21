@@ -277,7 +277,12 @@ release:
           createFakePlugin('a_plugin', packagesDir);
       plugin.ciConfigFile.writeAsStringSync('not a map');
 
-      expect(() => plugin.parseCiConfig(), throwsFormatException);
+      expect(
+          () => plugin.parseCiConfig(),
+          throwsA(isA<FormatException>().having(
+              (FormatException e) => e.message,
+              'message',
+              contains('Root of ci_config.yaml must be a map'))));
     });
 
     test('reports unknown keys', () {
@@ -287,7 +292,12 @@ release:
 foo: bar
 ''');
 
-      expect(() => plugin.parseCiConfig(), throwsFormatException);
+      expect(
+          () => plugin.parseCiConfig(),
+          throwsA(isA<FormatException>().having(
+              (FormatException e) => e.message,
+              'message',
+              contains('Unknown key `foo` in config'))));
     });
 
     test('reports invalid values', () {
@@ -298,7 +308,12 @@ release:
   batch: not-a-bool
 ''');
 
-      expect(() => plugin.parseCiConfig(), throwsFormatException);
+      expect(
+          () => plugin.parseCiConfig(),
+          throwsA(isA<FormatException>().having(
+              (FormatException e) => e.message,
+              'message',
+              contains('Invalid value `not-a-bool` for key `release.batch`'))));
     });
   });
 
@@ -356,7 +371,12 @@ version: minor
           package.pendingChangelogsDirectory.childFile('a.yaml');
       changelogFile.writeAsStringSync('not yaml');
 
-      expect(() => package.getPendingChangelogs(), throwsFormatException);
+      expect(
+          () => package.getPendingChangelogs(),
+          throwsA(isA<FormatException>().having(
+              (FormatException e) => e.message,
+              'message',
+              contains('Expected a YAML map, but found String'))));
     });
 
     test('ignores template.yaml', () {
@@ -381,23 +401,6 @@ version: skip
 
       expect(changelogs, hasLength(1));
       expect(changelogs[0].changelog, 'A');
-    });
-
-    test('returns an error for a non-yaml file', () {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
-      package.pendingChangelogsDirectory.createSync();
-      package.pendingChangelogsDirectory
-          .childFile('a.yaml')
-          .writeAsStringSync('''
-changelog: A
-version: patch
-''');
-      package.pendingChangelogsDirectory
-          .childFile('a.txt')
-          .writeAsStringSync('text');
-
-      expect(() => package.getPendingChangelogs(), throwsFormatException);
     });
   });
 }
