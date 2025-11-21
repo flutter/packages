@@ -113,7 +113,7 @@ class PlatformFileChooserOptions {
   /// Nullable because it does not apply to the "save" action.
   bool? selectMultiple;
 
-  /// Whether to allow new folders creation.
+  /// Whether to allow new folder creation.
   ///
   /// Nullable because it does not apply to the "open" action.
   bool? createFolders;

@@ -169,7 +169,7 @@ gboolean* ffs_platform_file_chooser_options_get_select_multiple(
  * ffs_platform_file_chooser_options_get_create_folders
  * @object: a #FfsPlatformFileChooserOptions.
  *
- * Whether to allow new folders creation.
+ * Whether to allow new folder creation.
  *
  * Nullable because it does not apply to the "open" action.
  *
