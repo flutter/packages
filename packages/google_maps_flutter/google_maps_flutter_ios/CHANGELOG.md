@@ -1,3 +1,7 @@
+## 2.15.8
+
+* Replaces internal use of deprecated methods.
+
 ## 2.15.7
 
 * Updates to Pigeon 26.

@@ -4,8 +4,8 @@
 
 #import "FGMClusterManagersController.h"
 
+#import "FGMConversionUtils.h"
 #import "FGMMarkerUserData.h"
-#import "FLTGoogleMapJSONConversions.h"
 
 @interface FGMClusterManagersController ()
 

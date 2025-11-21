@@ -5,7 +5,7 @@
 #import "GoogleMapPolygonController.h"
 #import "GoogleMapPolygonController_Test.h"
 
-#import "FLTGoogleMapJSONConversions.h"
+#import "FGMConversionUtils.h"
 
 /// Converts a list of holes represented as CLLocation lists to GMSMutablePath lists.
 static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
@@ -57,8 +57,8 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
   polygon.path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolygon.points));
   polygon.holes =
       FMGPathHolesFromLocationHoles(FGMGetHolesForPigeonLatLngArrays(platformPolygon.holes));
-  polygon.fillColor = FGMGetColorForRGBA(platformPolygon.fillColor);
-  polygon.strokeColor = FGMGetColorForRGBA(platformPolygon.strokeColor);
+  polygon.fillColor = FGMGetColorForPigeonColor(platformPolygon.fillColor);
+  polygon.strokeColor = FGMGetColorForPigeonColor(platformPolygon.strokeColor);
   polygon.strokeWidth = platformPolygon.strokeWidth;
 
   // This must be done last, to avoid visual flickers of default property values.
