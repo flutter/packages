@@ -1,5 +1,6 @@
-## NEXT
+## 0.5.14+4
 
+* Adds `colorScheme` support for web cloud-based maps styling brightness.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 0.5.14+3

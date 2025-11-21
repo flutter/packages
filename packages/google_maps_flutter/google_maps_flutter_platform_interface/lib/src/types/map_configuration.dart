@@ -42,6 +42,7 @@ class MapConfiguration {
     String? cloudMapId,
     this.style,
     this.markerType,
+    this.colorScheme,
   }) : mapId = mapId ?? cloudMapId;
 
   /// This setting controls how the API handles gestures on the map. Web only.
@@ -152,6 +153,9 @@ class MapConfiguration {
   @Deprecated('cloudMapId is deprecated. Use mapId instead.')
   String? get cloudMapId => mapId;
 
+  /// Preferred color scheme for the map in web platform
+  final MapColorScheme? colorScheme;
+
   /// Returns a new options object containing only the values of this instance
   /// that are different from [other].
   MapConfiguration diffFrom(MapConfiguration other) {
@@ -225,6 +229,7 @@ class MapConfiguration {
           ? buildingsEnabled
           : null,
       mapId: mapId != other.mapId ? mapId : null,
+      colorScheme: colorScheme != other.colorScheme ? colorScheme : null,
       style: style != other.style ? style : null,
       markerType: markerType != other.markerType ? markerType : null,
     );
@@ -264,6 +269,7 @@ class MapConfiguration {
       buildingsEnabled: diff.buildingsEnabled ?? buildingsEnabled,
       mapId: diff.mapId ?? mapId,
       style: diff.style ?? style,
+      colorScheme: diff.colorScheme ?? colorScheme,
       markerType: diff.markerType ?? markerType,
     );
   }
@@ -293,6 +299,7 @@ class MapConfiguration {
       trafficEnabled == null &&
       buildingsEnabled == null &&
       mapId == null &&
+      colorScheme == null &&
       style == null &&
       markerType == null;
 
@@ -329,6 +336,7 @@ class MapConfiguration {
         buildingsEnabled == other.buildingsEnabled &&
         mapId == other.mapId &&
         style == other.style &&
+        colorScheme == other.colorScheme &&
         markerType == other.markerType;
   }
 
@@ -358,6 +366,7 @@ class MapConfiguration {
     buildingsEnabled,
     mapId,
     style,
+    colorScheme,
     markerType,
   ]);
 }
