@@ -210,11 +210,11 @@ class VersionCheckCommand extends PackageLoopingCommand {
     final _CurrentVersionState versionState =
         await _getVersionState(package, pubspec: pubspec);
     final bool usesBatchRelease = ciConfig?.isBatchRelease ?? false;
-    // Package with post release label is going to sync changelog.md and pubspec.yaml
+    // PR with post release label is going to sync changelog.md and pubspec.yaml
     // change back to main branch. We can proceed with ragular version check.
     final bool hasPostReleaseLabel =
         _prLabels.contains('post-release-${pubspec.name}');
-    bool versionChanged;
+    bool versionChanged = false;
 
     if (usesBatchRelease && !hasPostReleaseLabel) {
       final String relativePackagePath = await _getRelativePackagePath(package);
@@ -232,8 +232,8 @@ class VersionCheckCommand extends PackageLoopingCommand {
       }
 
       final List<PendingChangelogEntry> newEntries = allChangelogs
-          .where((PendingChangelogEntry entry) =>
-              changedFilesInPackage.contains(entry.file.path))
+          .where((PendingChangelogEntry entry) => changedFilesInPackage.any(
+              (String path) => path.endsWith(entry.file.path.split('/').last)))
           .toList();
       versionChanged = newEntries.any(
           (PendingChangelogEntry entry) => entry.version != VersionChange.skip);
@@ -274,7 +274,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
         errors.add('CHANGELOG.md failed validation.');
       }
     }
-
+    print('versionChanged $versionChanged');
     // If there are no other issues, make sure that there isn't a missing
     // change to the version and/or CHANGELOG.
     if (getBoolArg(_checkForMissingChanges) &&
@@ -599,13 +599,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     bool missingVersionChange = false;
     bool missingChangelogChange = false;
     if (state.needsVersionChange) {
-      final bool isBatchRelease =
-          package.parseCiConfig()?.isBatchRelease ?? false;
-      if (isBatchRelease && state.hasChangelogChange) {
-        // Batch release packages are not supposed to have version changes, so
-        // if there is a changelog change (which for batch release means a
-        // pending changelog entry), that is sufficient.
-      } else if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
+      if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
         logWarning('Ignoring lack of version change due to the '
             '"$_missingVersionChangeOverrideLabel" label.');
       } else {
