@@ -229,7 +229,7 @@ class _PlayerInstance {
   final VideoPlayerViewState viewState;
   final EventChannel _eventChannel;
   final StreamController<VideoEvent> _eventStreamController =
-      StreamController<VideoEvent>();
+      StreamController<VideoEvent>.broadcast();
   StreamSubscription<dynamic>? _eventSubscription;
 
   Future<void> play() => _api.play();
@@ -263,6 +263,7 @@ class _PlayerInstance {
 
   Future<void> dispose() async {
     await _eventSubscription?.cancel();
+    unawaited(_eventStreamController.close());
     await _api.dispose();
   }
 
