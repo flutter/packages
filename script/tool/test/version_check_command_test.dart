@@ -345,22 +345,37 @@ release:
       );
     });
 
-    test('fails for batch release package with no new changelog', () async {
+    test(
+        'fails for batch release package with no new changelog and post-release label',
+        () async {
       final RepositoryPackage package =
           createFakePackage('package', packagesDir, version: '1.0.0');
       package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
 ''');
+      // Simulate a code change
+      package.libDirectory
+          .childFile('foo.dart')
+          .writeAsStringSync('void foo() {}');
+      // Create the pending_changelogs directory so we don't fail on that check.
+      package.directory.childDirectory('pending_changelogs').createSync();
+
       gitProcessRunner.mockProcessesForExecutable['git-diff'] =
           <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '')),
+        FakeProcessInfo(MockProcess(stdout: 'packages/package/lib/foo.dart')),
+      ];
+      gitProcessRunner.mockProcessesForExecutable['git-show'] =
+          <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(runner, <String>[
         'version-check',
         '--base-sha=main',
+        '--check-for-missing-changes',
+        '--pr-labels=post-release-package',
       ], errorHandler: (Error e) {
         commandError = e;
       });
@@ -369,7 +384,8 @@ release:
       expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('No pending_changelogs folder found for package'),
+            contains(
+                'No new changelog files found in the pending_changelogs folder.'),
           ]));
     });
 
