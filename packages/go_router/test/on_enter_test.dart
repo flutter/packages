@@ -1539,7 +1539,7 @@ void main() {
 
         router = GoRouter(
           initialLocation: '/home',
-          onEnter: (_, __, next, ___) =>
+          onEnter: (_, __, GoRouterState next, ___) =>
               next.uri.path == '/blocked' ? const Block.stop() : const Allow(),
           routes: <RouteBase>[
             GoRoute(
@@ -1567,7 +1567,9 @@ void main() {
         expect(find.text('Allowed'), findsOneWidget);
 
         // 2. Pop (simulating system back / imperative pop)
-        final NavigatorState navigator = tester.state(find.byType(Navigator).last);
+        final NavigatorState navigator = tester.state(
+          find.byType(Navigator).last,
+        );
         navigator.pop();
         await tester.pumpAndSettle();
         expect(find.text('Home'), findsOneWidget);
