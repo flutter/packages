@@ -722,6 +722,224 @@ void main() {
       },
     );
 
+    test('Should set video stabilization mode to off', () async {
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.off,
+        ),
+      ).thenAnswer((_) async => true);
+
+      await camera.setVideoStabilizationMode(
+        cameraId,
+        VideoStabilizationMode.off,
+      );
+
+      verify(
+        mockApi.setVideoStabilizationMode(PlatformVideoStabilizationMode.off),
+      );
+    });
+
+    test('Should set video stabilization mode to level1', () async {
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.standard,
+        ),
+      ).thenAnswer((_) async => true);
+
+      await camera.setVideoStabilizationMode(
+        cameraId,
+        VideoStabilizationMode.level1,
+      );
+
+      verify(
+        mockApi.setVideoStabilizationMode(
+          PlatformVideoStabilizationMode.standard,
+        ),
+      );
+    });
+
+    test('Should set video stabilization mode to cinematic', () async {
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.cinematic,
+        ),
+      ).thenAnswer((_) async => true);
+
+      await camera.setVideoStabilizationMode(
+        cameraId,
+        VideoStabilizationMode.level2,
+      );
+
+      verify(
+        mockApi.setVideoStabilizationMode(
+          PlatformVideoStabilizationMode.cinematic,
+        ),
+      );
+    });
+
+    test('Should set video stabilization mode to cinematicExtended', () async {
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.cinematicExtended,
+        ),
+      ).thenAnswer((_) async => true);
+
+      await camera.setVideoStabilizationMode(
+        cameraId,
+        VideoStabilizationMode.level3,
+      );
+
+      verify(
+        mockApi.setVideoStabilizationMode(
+          PlatformVideoStabilizationMode.cinematicExtended,
+        ),
+      );
+    });
+
+    test('Should get no video stabilization mode', () async {
+      when(
+        mockApi.isVideoStabilizationModeSupported(any),
+      ).thenAnswer((_) async => false);
+
+      final Iterable<VideoStabilizationMode> modes = await camera
+          .getSupportedVideoStabilizationModes(cameraId);
+
+      expect(modes, isEmpty);
+    });
+
+    test('Should get off and standard video stabilization modes', () async {
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.off,
+        ),
+      ).thenAnswer((_) async => true);
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.standard,
+        ),
+      ).thenAnswer((_) async => true);
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.cinematic,
+        ),
+      ).thenAnswer((_) async => false);
+      when(
+        mockApi.isVideoStabilizationModeSupported(
+          PlatformVideoStabilizationMode.cinematicExtended,
+        ),
+      ).thenAnswer((_) async => false);
+
+      final List<VideoStabilizationMode> modes =
+          (await camera.getSupportedVideoStabilizationModes(cameraId)).toList();
+
+      expect(modes, <VideoStabilizationMode>[
+        VideoStabilizationMode.off,
+        VideoStabilizationMode.level1,
+      ]);
+    });
+
+    test('Should get all video stabilization modes', () async {
+      when(
+        mockApi.isVideoStabilizationModeSupported(any),
+      ).thenAnswer((_) async => true);
+
+      final List<VideoStabilizationMode> modes =
+          (await camera.getSupportedVideoStabilizationModes(cameraId)).toList();
+
+      expect(modes, <VideoStabilizationMode>[
+        VideoStabilizationMode.off,
+        VideoStabilizationMode.level1,
+        VideoStabilizationMode.level2,
+        VideoStabilizationMode.level3,
+      ]);
+    });
+
+    test(
+      'Should throw ArgumentError when unavailable video stabilization mode is set',
+      () async {
+        when(
+          mockApi.isVideoStabilizationModeSupported(any),
+        ).thenAnswer((_) async => false);
+
+        expect(
+          () => camera.setVideoStabilizationMode(
+            cameraId,
+            VideoStabilizationMode.off,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError e) => e.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+        expect(
+          () => camera.setVideoStabilizationMode(
+            cameraId,
+            VideoStabilizationMode.level1,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError e) => e.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+        expect(
+          () => camera.setVideoStabilizationMode(
+            cameraId,
+            VideoStabilizationMode.level2,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError e) => e.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+        expect(
+          () => camera.setVideoStabilizationMode(
+            cameraId,
+            VideoStabilizationMode.level3,
+          ),
+          throwsA(
+            isA<ArgumentError>().having(
+              (ArgumentError e) => e.name,
+              'name',
+              'mode',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'Should throw CameraException when illegal zoom level is supplied',
+      () async {
+        const String code = 'ZOOM_ERROR';
+        const String message = 'Illegal zoom error';
+        when(mockApi.setZoomLevel(any)).thenAnswer(
+          (_) async => throw PlatformException(code: code, message: message),
+        );
+
+        expect(
+          () => camera.setZoomLevel(cameraId, -1.0),
+          throwsA(
+            isA<CameraException>()
+                .having((CameraException e) => e.code, 'code', code)
+                .having(
+                  (CameraException e) => e.description,
+                  'description',
+                  message,
+                ),
+          ),
+        );
+      },
+    );
+
     test('Should lock the capture orientation', () async {
       await camera.lockCaptureOrientation(
         cameraId,
