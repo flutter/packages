@@ -116,7 +116,7 @@
   // Set up the event channel.
   FVPEventBridge *eventBridge = [[FVPEventBridge alloc]
       initWithMessenger:messenger
-            channelName:[NSString stringWithFormat:@"flutter.io/videoPlayer/videoEvents%@",
+            channelName:[NSString stringWithFormat:@"flutter.dev/videoPlayer/videoEvents%@",
                                                    channelSuffix]];
   player.eventListener = eventBridge;
 

@@ -1,3 +1,7 @@
+## 2.8.8
+
+* Refactors Dart internals for maintainability.
+
 ## 2.8.7
 
 * Updates to Pigeon 26.
