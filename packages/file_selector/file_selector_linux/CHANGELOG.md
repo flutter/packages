@@ -1,3 +1,7 @@
+## 0.9.4
+
+* Adds `getDirectoryPathWithOptions` and `getDirectoryPathsWithOptions` implementations.
+
 ## 0.9.3+3
 
 * Updates to Pigeon 26.
