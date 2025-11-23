@@ -40,13 +40,15 @@ class PreviewProxyApi extends PigeonApiPreview {
     return (ProxyApiRegistrar) super.getPigeonRegistrar();
   }
 
+  // Range<?> is defined as Range<Integer> in pigeon.
+  @SuppressWarnings("unchecked")
   @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull
   @Override
   public Preview pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
-      @Nullable Long targetFps) {
+      @Nullable Range<?> targetFpsRange) {
     final Preview.Builder builder = new Preview.Builder();
     if (targetRotation != null) {
       builder.setTargetRotation(targetRotation.intValue());
@@ -55,10 +57,10 @@ class PreviewProxyApi extends PigeonApiPreview {
       builder.setResolutionSelector(resolutionSelector);
     }
 
-    if (targetFps != null) {
-      Range<Integer> targetFpsRange = new Range<>(targetFps.intValue(), targetFps.intValue());
+    if (targetFpsRange != null) {
       Camera2Interop.Extender<Preview> extender = new Camera2Interop.Extender<>(builder);
-      extender.setCaptureRequestOption(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange);
+      extender.setCaptureRequestOption(
+          CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
     return builder.build();

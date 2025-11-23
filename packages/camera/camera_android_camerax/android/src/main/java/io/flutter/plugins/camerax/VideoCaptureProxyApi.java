@@ -24,17 +24,20 @@ class VideoCaptureProxyApi extends PigeonApiVideoCapture {
     super(pigeonRegistrar);
   }
 
+  // Range<?> is defined as Range<Integer> in pigeon.
+  @SuppressWarnings("unchecked")
   @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull
   @Override
-  public VideoCapture<?> withOutput(@NonNull VideoOutput videoOutput, @Nullable Long targetFps) {
+  public VideoCapture<?> withOutput(
+      @NonNull VideoOutput videoOutput, @Nullable Range<?> targetFpsRange) {
     VideoCapture.Builder<VideoOutput> builder = new VideoCapture.Builder<>(videoOutput);
 
-    if (targetFps != null) {
-      Range<Integer> targetFpsRange = new Range<>(targetFps.intValue(), targetFps.intValue());
+    if (targetFpsRange != null) {
       Camera2Interop.Extender<VideoCapture<VideoOutput>> extender =
           new Camera2Interop.Extender<>(builder);
-      extender.setCaptureRequestOption(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange);
+      extender.setCaptureRequestOption(
+          CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
     return builder.build();

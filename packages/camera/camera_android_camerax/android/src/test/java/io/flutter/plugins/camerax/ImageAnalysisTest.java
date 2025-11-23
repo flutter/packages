@@ -40,7 +40,7 @@ public class ImageAnalysisTest {
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
-    final long targetFps = 30;
+    final Range<Integer> targetFpsRange = new Range<>(30, 30);
     final long outputImageFormat = ImageAnalysis.OUTPUT_IMAGE_FORMAT_NV21;
 
     try (MockedConstruction<Camera2Interop.Extender> mockCamera2InteropExtender =
@@ -48,13 +48,12 @@ public class ImageAnalysisTest {
             Camera2Interop.Extender.class,
             (mock, context) -> {
               when(mock.setCaptureRequestOption(
-                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-                      new Range<>(targetFps, targetFps)))
+                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange))
                   .thenReturn(mock);
             })) {
       final ImageAnalysis imageAnalysis =
           api.pigeon_defaultConstructor(
-              mockResolutionSelector, targetResolution, targetFps, outputImageFormat);
+              mockResolutionSelector, targetResolution, targetFpsRange, outputImageFormat);
 
       assertEquals(mockResolutionSelector, imageAnalysis.getResolutionSelector());
       assertEquals(Surface.ROTATION_0, imageAnalysis.getTargetRotation());

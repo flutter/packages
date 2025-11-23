@@ -31,18 +31,17 @@ public class VideoCaptureTest {
     final PigeonApiVideoCapture api = new TestProxyApiRegistrar().getPigeonApiVideoCapture();
 
     final VideoOutput videoOutput = mock(VideoOutput.class);
-    final long targetFps = 30;
+    final Range<Integer> targetFpsRange = new Range<>(30, 30);
 
     try (MockedConstruction<Camera2Interop.Extender> mockCamera2InteropExtender =
         Mockito.mockConstruction(
             Camera2Interop.Extender.class,
             (mock, context) -> {
               when(mock.setCaptureRequestOption(
-                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-                      new Range<>(targetFps, targetFps)))
+                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange))
                   .thenReturn(mock);
             })) {
-      final VideoCapture videoCapture = api.withOutput(videoOutput, targetFps);
+      final VideoCapture videoCapture = api.withOutput(videoOutput, targetFpsRange);
 
       assertEquals(1, mockCamera2InteropExtender.constructed().size());
       assertEquals(videoOutput, videoCapture.getOutput());

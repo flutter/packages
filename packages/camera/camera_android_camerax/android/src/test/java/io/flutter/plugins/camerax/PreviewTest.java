@@ -45,19 +45,18 @@ public class PreviewTest {
 
     final ResolutionSelector mockResolutionSelector = new ResolutionSelector.Builder().build();
     final long targetResolution = Surface.ROTATION_0;
-    final long targetFps = 30;
+    final Range<Integer> targetFpsRange = new Range<>(30, 30);
 
     try (MockedConstruction<Camera2Interop.Extender> mockCamera2InteropExtender =
         Mockito.mockConstruction(
             Camera2Interop.Extender.class,
             (mock, context) -> {
               when(mock.setCaptureRequestOption(
-                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE,
-                      new Range<>(targetFps, targetFps)))
+                      CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange))
                   .thenReturn(mock);
             })) {
       final Preview instance =
-          api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, targetFps);
+          api.pigeon_defaultConstructor(mockResolutionSelector, targetResolution, targetFpsRange);
 
       assertEquals(mockResolutionSelector, instance.getResolutionSelector());
       assertEquals(Surface.ROTATION_0, instance.getTargetRotation());

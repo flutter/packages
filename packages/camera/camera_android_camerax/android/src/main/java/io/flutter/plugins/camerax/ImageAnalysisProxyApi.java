@@ -23,13 +23,15 @@ import androidx.core.content.ContextCompat;
 class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
   static final long CLEAR_FINALIZED_WEAK_REFERENCES_INTERVAL_FOR_IMAGE_ANALYSIS = 1000;
 
+  // Range<?> is defined as Range<Integer> in pigeon.
+  @SuppressWarnings("unchecked")
   @OptIn(markerClass = ExperimentalCamera2Interop.class)
   @NonNull
   @Override
   public ImageAnalysis pigeon_defaultConstructor(
       @Nullable ResolutionSelector resolutionSelector,
       @Nullable Long targetRotation,
-      @Nullable Long targetFps,
+      @Nullable Range<?> targetFpsRange,
       @Nullable Long outputImageFormat) {
     final ImageAnalysis.Builder builder = new ImageAnalysis.Builder();
     if (resolutionSelector != null) {
@@ -43,10 +45,10 @@ class ImageAnalysisProxyApi extends PigeonApiImageAnalysis {
       builder.setOutputImageFormat(outputImageFormat.intValue());
     }
 
-    if (targetFps != null) {
-      Range<Integer> targetFpsRange = new Range<>(targetFps.intValue(), targetFps.intValue());
+    if (targetFpsRange != null) {
       Camera2Interop.Extender<ImageAnalysis> extender = new Camera2Interop.Extender<>(builder);
-      extender.setCaptureRequestOption(CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, targetFpsRange);
+      extender.setCaptureRequestOption(
+          CaptureRequest.CONTROL_AE_TARGET_FPS_RANGE, (Range<Integer>) targetFpsRange);
     }
 
     return builder.build();
