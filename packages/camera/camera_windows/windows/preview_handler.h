@@ -46,14 +46,14 @@ class PreviewHandler {
   // Initializes preview sink and requests capture engine to start previewing.
   // Sets preview state to: starting.
   //
-  // capture_engine:  A pointer to capture engine instance. Used to start
-  //                  the actual recording.
-  // base_media_type: A pointer to base media type used as a base
-  //                  for the actual video capture media type.
-  // sample_callback: A pointer to capture engine listener.
-  //                  This is set as sample callback for preview sink.
+  // capture_engine:      A pointer to capture engine instance. Used to start
+  //                      the actual recording.
+  // base_media_type:     A pointer to base media type used as a base
+  //                      for the actual video capture media type.
   // source_stream_index: Integer index of the preview source stream in
-  // MediaFoundation.
+  //                      MediaFoundation.
+  // sample_callback:     A pointer to capture engine listener.
+  //                      This is set as sample callback for preview sink.
   HRESULT StartPreview(IMFCaptureEngine* capture_engine,
                        IMFMediaType* base_media_type, DWORD source_stream_index,
                        CaptureEngineListener* sample_callback);
