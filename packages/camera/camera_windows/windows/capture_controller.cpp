@@ -18,6 +18,8 @@
 #include "string_utils.h"
 #include "texture_handler.h"
 
+enum class PlatformStreamCategory { video, photo, audio };
+
 namespace camera_windows {
 
 using Microsoft::WRL::ComPtr;
@@ -399,8 +401,7 @@ uint32_t CaptureControllerImpl::GetMaxPreviewHeight() const {
   }
 }
 
-enum class PlatformStreamCategory { video, photo, audio };
-
+// Gets the stream index for a given source, given a target stream category
 HRESULT GetMediaSourceStreamIndex(
     IMFCaptureSource* source, DWORD* source_stream_index,
     PlatformStreamCategory target_stream_category) {
