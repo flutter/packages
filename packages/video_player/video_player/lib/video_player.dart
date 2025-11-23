@@ -735,10 +735,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return Caption.none;
     }
 
+    final List<Caption>? sortedCaptions = _sortedCaptions;
+    if (sortedCaptions == null) {
+      return Caption.none;
+    }
+
     final Duration delayedPosition = position + value.captionOffset;
 
     final int captionIndex = collection.binarySearch<Caption>(
-      _sortedCaptions!,
+      sortedCaptions,
       Caption(
         number: -1,
         start: delayedPosition,
@@ -762,13 +767,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return Caption.none;
     }
 
-    final Caption caption = _sortedCaptions![captionIndex];
-    // check if it really fits within that caption's [start, end].
-    if (caption.start <= delayedPosition && caption.end >= delayedPosition) {
-      return caption;
-    }
-
-    return Caption.none; // No matching caption found
+    return sortedCaptions[captionIndex];
   }
 
   /// Returns the file containing closed captions for the video, if any.
@@ -782,22 +781,36 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   Future<void> setClosedCaptionFile(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {
-    await _updateClosedCaptionWithFuture(closedCaptionFile);
     _closedCaptionFileFuture = closedCaptionFile;
+
+    if (closedCaptionFile != null) {
+      _closedCaptionFile = await closedCaptionFile;
+      // Always sort when explicitly setting a new caption file
+      _sortedCaptions = List<Caption>.from(_closedCaptionFile!.captions)
+        ..sort((Caption a, Caption b) {
+          return a.start.compareTo(b.start);
+        });
+      value = value.copyWith(caption: _getCaptionAt(value.position));
+    } else {
+      _closedCaptionFile = null;
+      _sortedCaptions = null;
+      value = value.copyWith(caption: Caption.none);
+    }
   }
 
   Future<void> _updateClosedCaptionWithFuture(
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {
     if (closedCaptionFile != null) {
-      await closedCaptionFile.whenComplete(() async {
-        _closedCaptionFile = await closedCaptionFile;
-        _sortedCaptions = _closedCaptionFile?.captions;
-        _sortedCaptions?.sort((Caption a, Caption b) {
-          return a.start.compareTo(b.start);
-        });
-        value = value.copyWith(caption: _getCaptionAt(value.position));
-      });
+      _closedCaptionFile = await closedCaptionFile;
+
+      // Only sort if we haven't sorted yet (first initialization)
+      _sortedCaptions ??= List<Caption>.from(_closedCaptionFile!.captions)
+          ..sort((Caption a, Caption b) {
+            return a.start.compareTo(b.start);
+          });
+
+      value = value.copyWith(caption: _getCaptionAt(value.position));
     } else {
       _closedCaptionFile = null;
       _sortedCaptions = null;

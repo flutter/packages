@@ -808,33 +808,33 @@ void main() {
         expect(recordedCaptions[300], 'two');
       });
 
-      test('works when seeking', () async {
-        test('makes sure the input captions are unsorted', () async {
-          final VideoPlayerController controller =
-              VideoPlayerController.networkUrl(
-            _localhostUri,
-            closedCaptionFile: _loadClosedCaption(),
-          );
+      test('makes sure the input captions are unsorted', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+          closedCaptionFile: _loadClosedCaption(),
+        );
 
-          await controller.initialize();
-          final List<Caption> captions =
-              (await controller.closedCaptionFile)!.captions.toList();
+        await controller.initialize();
+        final List<Caption> captions =
+            (await controller.closedCaptionFile)!.captions.toList();
 
-          // Check that captions are not in sorted order.
-          bool isSorted = true;
-          for (int i = 0; i < captions.length - 1; i++) {
-            if (captions[i].start.compareTo(captions[i + 1].start) > 0) {
-              isSorted = false;
-              break;
-            }
+        // Check that captions are not in sorted order.
+        bool isSorted = true;
+        for (int i = 0; i < captions.length - 1; i++) {
+          if (captions[i].start.compareTo(captions[i + 1].start) > 0) {
+            isSorted = false;
+            break;
           }
+        }
 
-          expect(isSorted, false, reason: 'Expected captions to be unsorted');
-          expect(captions.map((Caption c) => c.text).toList(),
-              <String>['one', 'two', 'three', 'five', 'four'],
-              reason: 'Captions should be in original unsorted order');
-        });
-        test('works when seeking, includes all captions', () async {
+        expect(isSorted, false, reason: 'Expected captions to be unsorted');
+        expect(captions.map((Caption c) => c.text).toList(),
+            <String>['one', 'two', 'three', 'five', 'four'],
+            reason: 'Captions should be in original unsorted order');
+      });
+
+      test('works when seeking, includes all captions', () async {
           final VideoPlayerController controller =
               VideoPlayerController.networkUrl(
             _localhostUri,
@@ -973,132 +973,131 @@ void main() {
 
           await controller.seekTo(const Duration(milliseconds: 700));
           expect(controller.value.caption.text, 'three');
-        });
-
-        test('setClosedCaptionFile loads caption file', () async {
-          final VideoPlayerController controller =
-              VideoPlayerController.networkUrl(
-            _localhostUri,
-          );
-          addTearDown(controller.dispose);
-
-          await controller.initialize();
-          expect(controller.closedCaptionFile, null);
-
-          await controller.setClosedCaptionFile(_loadClosedCaption());
-          expect(
-            (await controller.closedCaptionFile)!.captions,
-            (await _loadClosedCaption()).captions,
-          );
-        });
-
-        test('setClosedCaptionFile removes/changes caption file', () async {
-          final VideoPlayerController controller =
-              VideoPlayerController.networkUrl(
-            _localhostUri,
-            closedCaptionFile: _loadClosedCaption(),
-          );
-          addTearDown(controller.dispose);
-
-          await controller.initialize();
-          expect(
-            (await controller.closedCaptionFile)!.captions,
-            (await _loadClosedCaption()).captions,
-          );
-
-          await controller.setClosedCaptionFile(null);
-          expect(controller.closedCaptionFile, null);
-        });
       });
 
-      group('Platform callbacks', () {
-        testWidgets('playing completed', (WidgetTester tester) async {
-          final VideoPlayerController controller =
-              VideoPlayerController.networkUrl(
-            _localhostUri,
-          );
+      test('setClosedCaptionFile loads caption file', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+        );
+        addTearDown(controller.dispose);
 
-          await controller.initialize();
-          const Duration nonzeroDuration = Duration(milliseconds: 100);
-          controller.value =
-              controller.value.copyWith(duration: nonzeroDuration);
-          expect(controller.value.isPlaying, isFalse);
-          await controller.play();
-          expect(controller.value.isPlaying, isTrue);
-          final StreamController<VideoEvent> fakeVideoEventStream =
-              fakeVideoPlayerPlatform.streams[controller.textureId]!;
+        await controller.initialize();
+        expect(controller.closedCaptionFile, null);
 
-          fakeVideoEventStream
-              .add(VideoEvent(eventType: VideoEventType.completed));
-          await tester.pumpAndSettle();
+        await controller.setClosedCaptionFile(_loadClosedCaption());
+        expect(
+          (await controller.closedCaptionFile)!.captions,
+          (await _loadClosedCaption()).captions,
+        );
+      });
 
-          expect(controller.value.isPlaying, isFalse);
-          expect(controller.value.position, nonzeroDuration);
-          await tester.runAsync(controller.dispose);
-        });
+      test('setClosedCaptionFile removes/changes caption file', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+          closedCaptionFile: _loadClosedCaption(),
+        );
+        addTearDown(controller.dispose);
 
-        testWidgets('playback status', (WidgetTester tester) async {
-          final VideoPlayerController controller =
-              VideoPlayerController.network(
-            'https://.0.0.1',
-          );
-          await controller.initialize();
-          expect(controller.value.isPlaying, isFalse);
-          final StreamController<VideoEvent> fakeVideoEventStream =
-              fakeVideoPlayerPlatform.streams[controller.textureId]!;
+        await controller.initialize();
+        expect(
+          (await controller.closedCaptionFile)!.captions,
+          (await _loadClosedCaption()).captions,
+        );
 
-          fakeVideoEventStream.add(VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: true,
-          ));
-          await tester.pumpAndSettle();
-          expect(controller.value.isPlaying, isTrue);
+        await controller.setClosedCaptionFile(null);
+        expect(controller.closedCaptionFile, null);
+      });
+    });
 
-          fakeVideoEventStream.add(VideoEvent(
-            eventType: VideoEventType.isPlayingStateUpdate,
-            isPlaying: false,
-          ));
-          await tester.pumpAndSettle();
-          expect(controller.value.isPlaying, isFalse);
-          await tester.runAsync(controller.dispose);
-        });
+    group('Platform callbacks', () {
+      testWidgets('playing completed', (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+        );
 
-        testWidgets('buffering status', (WidgetTester tester) async {
-          final VideoPlayerController controller =
-              VideoPlayerController.networkUrl(
-            _localhostUri,
-          );
+        await controller.initialize();
+        const Duration nonzeroDuration = Duration(milliseconds: 100);
+        controller.value =
+            controller.value.copyWith(duration: nonzeroDuration);
+        expect(controller.value.isPlaying, isFalse);
+        await controller.play();
+        expect(controller.value.isPlaying, isTrue);
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.textureId]!;
 
-          await controller.initialize();
-          expect(controller.value.isBuffering, false);
-          expect(controller.value.buffered, isEmpty);
-          final StreamController<VideoEvent> fakeVideoEventStream =
-              fakeVideoPlayerPlatform.streams[controller.textureId]!;
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.completed));
+        await tester.pumpAndSettle();
 
-          fakeVideoEventStream
-              .add(VideoEvent(eventType: VideoEventType.bufferingStart));
-          await tester.pumpAndSettle();
-          expect(controller.value.isBuffering, isTrue);
+        expect(controller.value.isPlaying, isFalse);
+        expect(controller.value.position, nonzeroDuration);
+        await tester.runAsync(controller.dispose);
+      });
 
-          const Duration bufferStart = Duration.zero;
-          const Duration bufferEnd = Duration(milliseconds: 500);
-          fakeVideoEventStream.add(VideoEvent(
-              eventType: VideoEventType.bufferingUpdate,
-              buffered: <DurationRange>[
-                DurationRange(bufferStart, bufferEnd),
-              ]));
-          await tester.pumpAndSettle();
-          expect(controller.value.isBuffering, isTrue);
-          expect(controller.value.buffered.length, 1);
-          expect(controller.value.buffered[0].toString(),
-              DurationRange(bufferStart, bufferEnd).toString());
+      testWidgets('playback status', (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.network(
+          'https://.0.0.1',
+        );
+        await controller.initialize();
+        expect(controller.value.isPlaying, isFalse);
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.textureId]!;
 
-          fakeVideoEventStream
-              .add(VideoEvent(eventType: VideoEventType.bufferingEnd));
-          await tester.pumpAndSettle();
-          expect(controller.value.isBuffering, isFalse);
-          await tester.runAsync(controller.dispose);
-        });
+        fakeVideoEventStream.add(VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: true,
+        ));
+        await tester.pumpAndSettle();
+        expect(controller.value.isPlaying, isTrue);
+
+        fakeVideoEventStream.add(VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: false,
+        ));
+        await tester.pumpAndSettle();
+        expect(controller.value.isPlaying, isFalse);
+        await tester.runAsync(controller.dispose);
+      });
+
+      testWidgets('buffering status', (WidgetTester tester) async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+          _localhostUri,
+        );
+
+        await controller.initialize();
+        expect(controller.value.isBuffering, false);
+        expect(controller.value.buffered, isEmpty);
+        final StreamController<VideoEvent> fakeVideoEventStream =
+            fakeVideoPlayerPlatform.streams[controller.textureId]!;
+
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.bufferingStart));
+        await tester.pumpAndSettle();
+        expect(controller.value.isBuffering, isTrue);
+
+        const Duration bufferStart = Duration.zero;
+        const Duration bufferEnd = Duration(milliseconds: 500);
+        fakeVideoEventStream.add(VideoEvent(
+            eventType: VideoEventType.bufferingUpdate,
+            buffered: <DurationRange>[
+              DurationRange(bufferStart, bufferEnd),
+            ]));
+        await tester.pumpAndSettle();
+        expect(controller.value.isBuffering, isTrue);
+        expect(controller.value.buffered.length, 1);
+        expect(controller.value.buffered[0].toString(),
+            DurationRange(bufferStart, bufferEnd).toString());
+
+        fakeVideoEventStream
+            .add(VideoEvent(eventType: VideoEventType.bufferingEnd));
+        await tester.pumpAndSettle();
+        expect(controller.value.isBuffering, isFalse);
+        await tester.runAsync(controller.dispose);
       });
     });
 
