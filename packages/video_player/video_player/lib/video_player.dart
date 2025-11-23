@@ -838,9 +838,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
       // Only sort if we haven't sorted yet (first initialization)
       _sortedCaptions ??= List<Caption>.from(_closedCaptionFile!.captions)
-          ..sort((Caption a, Caption b) {
-            return a.start.compareTo(b.start);
-          });
+        ..sort((Caption a, Caption b) {
+          return a.start.compareTo(b.start);
+        });
 
       value = value.copyWith(caption: _getCaptionAt(value.position));
     } else {

@@ -131,6 +131,40 @@ class _FakeClosedCaptionFile extends ClosedCaptionFile {
   }
 }
 
+class _SingleCaptionFile extends ClosedCaptionFile {
+  @override
+  List<Caption> get captions {
+    return <Caption>[
+      const Caption(
+        text: 'only',
+        number: 0,
+        start: Duration(milliseconds: 100),
+        end: Duration(milliseconds: 200),
+      ),
+    ];
+  }
+}
+
+class _OverlappingCaptionFile extends ClosedCaptionFile {
+  @override
+  List<Caption> get captions {
+    return <Caption>[
+      const Caption(
+        text: 'first',
+        number: 0,
+        start: Duration(milliseconds: 100),
+        end: Duration(milliseconds: 300),
+      ),
+      const Caption(
+        text: 'second',
+        number: 1,
+        start: Duration(milliseconds: 200),
+        end: Duration(milliseconds: 400),
+      ),
+    ];
+  }
+}
+
 void main() {
   late FakeVideoPlayerPlatform fakeVideoPlayerPlatform;
 
@@ -916,13 +950,14 @@ void main() {
       test('makes sure the input captions are unsorted', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          closedCaptionFile: _loadClosedCaption(),
-        );
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
 
         await controller.initialize();
-        final List<Caption> captions =
-            (await controller.closedCaptionFile)!.captions.toList();
+        final List<Caption> captions = (await controller.closedCaptionFile)!
+            .captions
+            .toList();
 
         // Check that captions are not in sorted order.
         bool isSorted = true;
@@ -934,68 +969,70 @@ void main() {
         }
 
         expect(isSorted, false, reason: 'Expected captions to be unsorted');
-        expect(captions.map((Caption c) => c.text).toList(),
-            <String>['one', 'two', 'three', 'five', 'four'],
-            reason: 'Captions should be in original unsorted order');
+        expect(
+          captions.map((Caption c) => c.text).toList(),
+          <String>['one', 'two', 'three', 'five', 'four'],
+          reason: 'Captions should be in original unsorted order',
+        );
       });
 
       test('works when seeking, includes all captions', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+        expect(controller.value.position, Duration.zero);
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 100));
+        expect(controller.value.caption.text, 'one');
+
+        await controller.seekTo(const Duration(milliseconds: 250));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 301));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 400));
+        expect(controller.value.caption.text, 'two');
+
+        await controller.seekTo(const Duration(milliseconds: 401));
+        expect(controller.value.caption.text, '');
+
+        await controller.seekTo(const Duration(milliseconds: 500));
+        expect(controller.value.caption.text, 'three');
+
+        await controller.seekTo(const Duration(milliseconds: 601));
+        expect(controller.value.caption.text, 'four');
+
+        await controller.seekTo(const Duration(milliseconds: 701));
+        expect(controller.value.caption.text, 'five');
+
+        await controller.seekTo(const Duration(milliseconds: 800));
+        expect(controller.value.caption.text, 'five');
+        await controller.seekTo(const Duration(milliseconds: 801));
+        expect(controller.value.caption.text, '');
+
+        // Test going back
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(controller.value.caption.text, 'two');
+      });
+
+      test(
+        'works when seeking with captionOffset positive, includes all captions',
+        () async {
           final VideoPlayerController controller =
               VideoPlayerController.networkUrl(
                 _localhostUri,
                 closedCaptionFile: _loadClosedCaption(),
               );
-          addTearDown(controller.dispose);
-
-          await controller.initialize();
-          expect(controller.value.position, Duration.zero);
-          expect(controller.value.caption.text, '');
-
-          await controller.seekTo(const Duration(milliseconds: 100));
-          expect(controller.value.caption.text, 'one');
-
-          await controller.seekTo(const Duration(milliseconds: 250));
-          expect(controller.value.caption.text, '');
-
-          await controller.seekTo(const Duration(milliseconds: 300));
-          expect(controller.value.caption.text, 'two');
-
-          await controller.seekTo(const Duration(milliseconds: 301));
-          expect(controller.value.caption.text, 'two');
-
-          await controller.seekTo(const Duration(milliseconds: 400));
-          expect(controller.value.caption.text, 'two');
-
-          await controller.seekTo(const Duration(milliseconds: 401));
-          expect(controller.value.caption.text, '');
-
-          await controller.seekTo(const Duration(milliseconds: 500));
-          expect(controller.value.caption.text, 'three');
-
-          await controller.seekTo(const Duration(milliseconds: 601));
-          expect(controller.value.caption.text, 'four');
-
-          await controller.seekTo(const Duration(milliseconds: 701));
-          expect(controller.value.caption.text, 'five');
-
-          await controller.seekTo(const Duration(milliseconds: 800));
-          expect(controller.value.caption.text, 'five');
-          await controller.seekTo(const Duration(milliseconds: 801));
-          expect(controller.value.caption.text, '');
-
-          // Test going back
-          await controller.seekTo(const Duration(milliseconds: 300));
-          expect(controller.value.caption.text, 'two');
-        });
-
-        test(
-            'works when seeking with captionOffset positive, includes all captions',
-            () async {
-          final VideoPlayerController controller =
-              VideoPlayerController.networkUrl(
-            _localhostUri,
-            closedCaptionFile: _loadClosedCaption(),
-          );
           addTearDown(controller.dispose);
 
           await controller.initialize();
@@ -1035,16 +1072,17 @@ void main() {
 
           await controller.seekTo(const Duration(milliseconds: 800));
           expect(controller.value.caption.text, '');
-        });
+        },
+      );
 
-        test(
-            'works when seeking with captionOffset negative, includes all captions',
-            () async {
+      test(
+        'works when seeking with captionOffset negative, includes all captions',
+        () async {
           final VideoPlayerController controller =
               VideoPlayerController.networkUrl(
-            _localhostUri,
-            closedCaptionFile: _loadClosedCaption(),
-          );
+                _localhostUri,
+                closedCaptionFile: _loadClosedCaption(),
+              );
           addTearDown(controller.dispose);
 
           await controller.initialize();
@@ -1078,7 +1116,8 @@ void main() {
 
           await controller.seekTo(const Duration(milliseconds: 700));
           expect(controller.value.caption.text, 'three');
-      });
+        },
+      );
 
       test('setClosedCaptionFile loads caption file', () async {
         final VideoPlayerController controller =
@@ -1112,6 +1151,274 @@ void main() {
         await controller.setClosedCaptionFile(null);
         expect(controller.closedCaptionFile, null);
       });
+
+      test('binary search handles exact caption start time boundary', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        // Seek to exact start times - should find the caption
+        await controller.seekTo(const Duration(milliseconds: 100));
+        expect(
+          controller.value.caption.text,
+          'one',
+          reason: 'Should find caption at exact start time (100ms)',
+        );
+
+        await controller.seekTo(const Duration(milliseconds: 300));
+        expect(
+          controller.value.caption.text,
+          'two',
+          reason: 'Should find caption at exact start time (300ms)',
+        );
+
+        await controller.seekTo(const Duration(milliseconds: 500));
+        expect(
+          controller.value.caption.text,
+          'three',
+          reason: 'Should find caption at exact start time (500ms)',
+        );
+
+        // At 600ms, "three" ends and "four" starts - binary search may find either
+        await controller.seekTo(const Duration(milliseconds: 600));
+        expect(
+          <String>['three', 'four'].contains(controller.value.caption.text),
+          true,
+          reason:
+              'Should find a caption at boundary (600ms) where two captions meet (got "${controller.value.caption.text}")',
+        );
+
+        await controller.seekTo(const Duration(milliseconds: 700));
+        expect(
+          controller.value.caption.text,
+          'five',
+          reason: 'Should find caption at exact start time (700ms)',
+        );
+      });
+
+      test('binary search handles exact caption end time boundary', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        // Seek to exact end times - should still find the caption
+        await controller.seekTo(const Duration(milliseconds: 200));
+        expect(
+          controller.value.caption.text,
+          'one',
+          reason: 'Should find caption at exact end time (200ms)',
+        );
+
+        await controller.seekTo(const Duration(milliseconds: 400));
+        expect(
+          controller.value.caption.text,
+          'two',
+          reason: 'Should find caption at exact end time (400ms)',
+        );
+
+        // At 600ms boundary where "three" ends and "four" starts
+        await controller.seekTo(const Duration(milliseconds: 600));
+        expect(
+          <String>['three', 'four'].contains(controller.value.caption.text),
+          true,
+          reason:
+              'Should find a caption at boundary (600ms) (got "${controller.value.caption.text}")',
+        );
+
+        // At 700ms boundary where "four" ends and "five" starts
+        await controller.seekTo(const Duration(milliseconds: 700));
+        expect(
+          <String>['four', 'five'].contains(controller.value.caption.text),
+          true,
+          reason:
+              'Should find a caption at boundary (700ms) (got "${controller.value.caption.text}")',
+        );
+
+        await controller.seekTo(const Duration(milliseconds: 800));
+        expect(
+          controller.value.caption.text,
+          'five',
+          reason: 'Should find caption at exact end time (800ms)',
+        );
+
+        // One millisecond past the end should not find the caption
+        await controller.seekTo(const Duration(milliseconds: 201));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason:
+              'Should not find caption one millisecond past end time (201ms)',
+        );
+
+        await controller.seekTo(const Duration(milliseconds: 801));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason:
+              'Should not find caption one millisecond past end time (801ms)',
+        );
+      });
+
+      test('binary search handles gaps between captions', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+              _localhostUri,
+              closedCaptionFile: _loadClosedCaption(),
+            );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        // Test gaps between captions where no caption should be found
+        // Gap before first caption
+        await controller.seekTo(const Duration(milliseconds: 0));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty for position before first caption',
+        );
+
+        await controller.seekTo(const Duration(milliseconds: 99));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty for position before first caption',
+        );
+
+        // Gap between caption 1 (ends at 200) and caption 2 (starts at 300)
+        await controller.seekTo(const Duration(milliseconds: 250));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty for gap between captions 1 and 2',
+        );
+
+        // Gap between caption 2 (ends at 400) and caption 3 (starts at 500)
+        await controller.seekTo(const Duration(milliseconds: 450));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty for gap between captions 2 and 3',
+        );
+
+        // Gap after last caption
+        await controller.seekTo(const Duration(milliseconds: 900));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty for position after last caption',
+        );
+      });
+
+      test('binary search works with single caption', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+              _localhostUri,
+              closedCaptionFile: Future<ClosedCaptionFile>.value(
+                _SingleCaptionFile(),
+              ),
+            );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        // Before caption
+        await controller.seekTo(const Duration(milliseconds: 99));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty before single caption',
+        );
+
+        // At start
+        await controller.seekTo(const Duration(milliseconds: 100));
+        expect(
+          controller.value.caption.text,
+          'only',
+          reason: 'Should find single caption at start',
+        );
+
+        // In middle
+        await controller.seekTo(const Duration(milliseconds: 150));
+        expect(
+          controller.value.caption.text,
+          'only',
+          reason: 'Should find single caption in middle',
+        );
+
+        // At end
+        await controller.seekTo(const Duration(milliseconds: 200));
+        expect(
+          controller.value.caption.text,
+          'only',
+          reason: 'Should find single caption at end',
+        );
+
+        // After caption
+        await controller.seekTo(const Duration(milliseconds: 201));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty after single caption',
+        );
+      });
+
+      test('binary search handles overlapping captions', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+              _localhostUri,
+              closedCaptionFile: Future<ClosedCaptionFile>.value(
+                _OverlappingCaptionFile(),
+              ),
+            );
+        addTearDown(controller.dispose);
+
+        await controller.initialize();
+
+        // In first caption only
+        await controller.seekTo(const Duration(milliseconds: 100));
+        expect(
+          controller.value.caption.text,
+          'first',
+          reason: 'Should find first caption',
+        );
+
+        // In overlapping region - binary search should find one of them
+        // (the exact one depends on sort order, but it should find something)
+        await controller.seekTo(const Duration(milliseconds: 250));
+        expect(
+          <String>['first', 'second'].contains(controller.value.caption.text),
+          true,
+          reason:
+              'Should find a caption in overlapping region (got "${controller.value.caption.text}")',
+        );
+
+        // In second caption only
+        await controller.seekTo(const Duration(milliseconds: 350));
+        expect(
+          controller.value.caption.text,
+          'second',
+          reason: 'Should find second caption',
+        );
+
+        // After all captions
+        await controller.seekTo(const Duration(milliseconds: 401));
+        expect(
+          controller.value.caption.text,
+          '',
+          reason: 'Should return empty after all captions',
+        );
+      });
     });
 
     group('Platform callbacks', () {
@@ -1121,8 +1428,7 @@ void main() {
 
         await controller.initialize();
         const Duration nonzeroDuration = Duration(milliseconds: 100);
-        controller.value =
-            controller.value.copyWith(duration: nonzeroDuration);
+        controller.value = controller.value.copyWith(duration: nonzeroDuration);
         expect(controller.value.isPlaying, isFalse);
         await controller.play();
         expect(controller.value.isPlaying, isTrue);
@@ -1140,8 +1446,7 @@ void main() {
       });
 
       testWidgets('playback status', (WidgetTester tester) async {
-        final VideoPlayerController controller =
-            VideoPlayerController.network(
+        final VideoPlayerController controller = VideoPlayerController.network(
           'https://.0.0.1',
         );
         await controller.initialize();
@@ -1223,29 +1528,33 @@ void main() {
       final List<Duration> positions = <Duration>[];
       final Completer<void> intervalUpdateCompleter = Completer<void>();
 
-    // Listen for position updates
-    controller.addListener(() {
-      positions.add(controller.value.position);
-      if (positions.length >= 3 && !intervalUpdateCompleter.isCompleted) {
-        intervalUpdateCompleter.complete();
+      // Listen for position updates
+      controller.addListener(() {
+        positions.add(controller.value.position);
+        if (positions.length >= 3 && !intervalUpdateCompleter.isCompleted) {
+          intervalUpdateCompleter.complete();
+        }
+      });
+      await controller.play();
+      for (int i = 0; i < 3; i++) {
+        await Future<void>.delayed(updatesInterval);
+        fakeVideoPlayerPlatform._positions[controller.playerId] = Duration(
+          milliseconds: i * updatesInterval.inMilliseconds,
+        );
       }
-    });
-    await controller.play();
-    for (int i = 0; i < 3; i++) {
-      await Future<void>.delayed(updatesInterval);
-      fakeVideoPlayerPlatform._positions[controller.playerId] = Duration(
-        milliseconds: i * updatesInterval.inMilliseconds,
-      );
-    }
 
       // Wait for at least 3 position updates
       await intervalUpdateCompleter.future;
 
       // Verify that the intervals between updates are approximately correct
       expect(
-          positions[1] - positions[0], greaterThanOrEqualTo(updatesInterval));
+        positions[1] - positions[0],
+        greaterThanOrEqualTo(updatesInterval),
+      );
       expect(
-          positions[2] - positions[1], greaterThanOrEqualTo(updatesInterval));
+        positions[2] - positions[1],
+        greaterThanOrEqualTo(updatesInterval),
+      );
     });
 
     group('DurationRange', () {
@@ -1314,26 +1623,26 @@ void main() {
         expect(error.aspectRatio, 1.0);
       });
 
-    test('toString()', () {
-      const Duration duration = Duration(seconds: 5);
-      const Size size = Size(400, 300);
-      const Duration position = Duration(seconds: 1);
-      const Caption caption = Caption(
-        text: 'foo',
-        number: 0,
-        start: Duration.zero,
-        end: Duration.zero,
-      );
-      const Duration captionOffset = Duration(milliseconds: 250);
-      final List<DurationRange> buffered = <DurationRange>[
-        DurationRange(Duration.zero, const Duration(seconds: 4)),
-      ];
-      const bool isInitialized = true;
-      const bool isPlaying = true;
-      const bool isLooping = true;
-      const bool isBuffering = true;
-      const double volume = 0.5;
-      const double playbackSpeed = 1.5;
+      test('toString()', () {
+        const Duration duration = Duration(seconds: 5);
+        const Size size = Size(400, 300);
+        const Duration position = Duration(seconds: 1);
+        const Caption caption = Caption(
+          text: 'foo',
+          number: 0,
+          start: Duration.zero,
+          end: Duration.zero,
+        );
+        const Duration captionOffset = Duration(milliseconds: 250);
+        final List<DurationRange> buffered = <DurationRange>[
+          DurationRange(Duration.zero, const Duration(seconds: 4)),
+        ];
+        const bool isInitialized = true;
+        const bool isPlaying = true;
+        const bool isLooping = true;
+        const bool isBuffering = true;
+        const double volume = 0.5;
+        const double playbackSpeed = 1.5;
 
         final VideoPlayerValue value = VideoPlayerValue(
           duration: duration,
@@ -1350,24 +1659,24 @@ void main() {
           playbackSpeed: playbackSpeed,
         );
 
-      expect(
-        value.toString(),
-        'VideoPlayerValue(duration: 0:00:05.000000, '
-        'size: Size(400.0, 300.0), '
-        'position: 0:00:01.000000, '
-        'caption: Caption(number: 0, start: 0:00:00.000000, end: 0:00:00.000000, text: foo), '
-        'captionOffset: 0:00:00.250000, '
-        'buffered: [DurationRange(start: 0:00:00.000000, end: 0:00:04.000000)], '
-        'isInitialized: true, '
-        'isPlaying: true, '
-        'isLooping: true, '
-        'isBuffering: true, '
-        'volume: 0.5, '
-        'playbackSpeed: 1.5, '
-        'errorDescription: null, '
-        'isCompleted: false),',
-      );
-    });
+        expect(
+          value.toString(),
+          'VideoPlayerValue(duration: 0:00:05.000000, '
+          'size: Size(400.0, 300.0), '
+          'position: 0:00:01.000000, '
+          'caption: Caption(number: 0, start: 0:00:00.000000, end: 0:00:00.000000, text: foo), '
+          'captionOffset: 0:00:00.250000, '
+          'buffered: [DurationRange(start: 0:00:00.000000, end: 0:00:04.000000)], '
+          'isInitialized: true, '
+          'isPlaying: true, '
+          'isLooping: true, '
+          'isBuffering: true, '
+          'volume: 0.5, '
+          'playbackSpeed: 1.5, '
+          'errorDescription: null, '
+          'isCompleted: false),',
+        );
+      });
 
       group('copyWith()', () {
         test('exact copy', () {
@@ -1378,24 +1687,25 @@ void main() {
         });
         test('errorDescription is not persisted when copy with null', () {
           const VideoPlayerValue original = VideoPlayerValue.erroneous('error');
-          final VideoPlayerValue copy =
-              original.copyWith(errorDescription: null);
+          final VideoPlayerValue copy = original.copyWith(
+            errorDescription: null,
+          );
 
-        expect(copy.errorDescription, null);
-      });
-      test('errorDescription is changed when copy with another error', () {
-        const VideoPlayerValue original = VideoPlayerValue.erroneous('error');
-        final VideoPlayerValue copy = original.copyWith(
-          errorDescription: 'new error',
-        );
+          expect(copy.errorDescription, null);
+        });
+        test('errorDescription is changed when copy with another error', () {
+          const VideoPlayerValue original = VideoPlayerValue.erroneous('error');
+          final VideoPlayerValue copy = original.copyWith(
+            errorDescription: 'new error',
+          );
 
-        expect(copy.errorDescription, 'new error');
-      });
-      test('errorDescription is changed when copy with error', () {
-        const VideoPlayerValue original = VideoPlayerValue.uninitialized();
-        final VideoPlayerValue copy = original.copyWith(
-          errorDescription: 'new error',
-        );
+          expect(copy.errorDescription, 'new error');
+        });
+        test('errorDescription is changed when copy with error', () {
+          const VideoPlayerValue original = VideoPlayerValue.uninitialized();
+          final VideoPlayerValue copy = original.copyWith(
+            errorDescription: 'new error',
+          );
 
           expect(copy.errorDescription, 'new error');
         });
@@ -1452,21 +1762,24 @@ void main() {
       test('setMixWithOthers', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
-        );
+              _localhostUri,
+              videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
+            );
         addTearDown(controller.dispose);
 
         await controller.initialize();
         expect(controller.videoPlayerOptions!.mixWithOthers, true);
       });
 
-    test('true allowBackgroundPlayback continues playback', () async {
-      final VideoPlayerController controller = VideoPlayerController.networkUrl(
-        _localhostUri,
-        videoPlayerOptions: VideoPlayerOptions(allowBackgroundPlayback: true),
-      );
-      addTearDown(controller.dispose);
+      test('true allowBackgroundPlayback continues playback', () async {
+        final VideoPlayerController controller =
+            VideoPlayerController.networkUrl(
+              _localhostUri,
+              videoPlayerOptions: VideoPlayerOptions(
+                allowBackgroundPlayback: true,
+              ),
+            );
+        addTearDown(controller.dispose);
 
         await controller.initialize();
         await controller.play();
@@ -1479,9 +1792,9 @@ void main() {
       test('false allowBackgroundPlayback pauses playback', () async {
         final VideoPlayerController controller =
             VideoPlayerController.networkUrl(
-          _localhostUri,
-          videoPlayerOptions: VideoPlayerOptions(),
-        );
+              _localhostUri,
+              videoPlayerOptions: VideoPlayerOptions(),
+            );
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -1498,11 +1811,11 @@ void main() {
       const Color bufferedColor = Color.fromRGBO(0, 255, 0, 0.5);
       const Color backgroundColor = Color.fromRGBO(255, 255, 0, 0.25);
 
-    const VideoProgressColors colors = VideoProgressColors(
-      playedColor: playedColor,
-      bufferedColor: bufferedColor,
-      backgroundColor: backgroundColor,
-    );
+      const VideoProgressColors colors = VideoProgressColors(
+        playedColor: playedColor,
+        bufferedColor: bufferedColor,
+        backgroundColor: backgroundColor,
+      );
 
       expect(colors.playedColor, playedColor);
       expect(colors.bufferedColor, bufferedColor);
@@ -1518,8 +1831,8 @@ void main() {
 
       await controller.initialize();
 
-    final StreamController<VideoEvent> fakeVideoEventStream =
-        fakeVideoPlayerPlatform.streams[controller.playerId]!;
+      final StreamController<VideoEvent> fakeVideoEventStream =
+          fakeVideoPlayerPlatform.streams[controller.playerId]!;
 
       bool currentIsCompleted = controller.value.isCompleted;
 
@@ -1546,8 +1859,8 @@ void main() {
 
       await controller.initialize();
 
-    final StreamController<VideoEvent> fakeVideoEventStream =
-        fakeVideoPlayerPlatform.streams[controller.playerId]!;
+      final StreamController<VideoEvent> fakeVideoEventStream =
+          fakeVideoPlayerPlatform.streams[controller.playerId]!;
 
       bool currentIsCompleted = controller.value.isCompleted;
 
@@ -1555,25 +1868,25 @@ void main() {
       final void Function() isNoLongerCompletedTest = expectAsync0(() {});
       bool hasLooped = false;
 
-    controller.addListener(() async {
-      if (currentIsCompleted != controller.value.isCompleted) {
-        currentIsCompleted = controller.value.isCompleted;
-        if (controller.value.isCompleted) {
-          isCompletedTest();
-          if (!hasLooped) {
-            fakeVideoEventStream.add(
-              VideoEvent(
-                eventType: VideoEventType.isPlayingStateUpdate,
-                isPlaying: true,
-              ),
-            );
-            hasLooped = !hasLooped;
+      controller.addListener(() async {
+        if (currentIsCompleted != controller.value.isCompleted) {
+          currentIsCompleted = controller.value.isCompleted;
+          if (controller.value.isCompleted) {
+            isCompletedTest();
+            if (!hasLooped) {
+              fakeVideoEventStream.add(
+                VideoEvent(
+                  eventType: VideoEventType.isPlayingStateUpdate,
+                  isPlaying: true,
+                ),
+              );
+              hasLooped = !hasLooped;
+            }
+          } else {
+            isNoLongerCompletedTest();
           }
-        } else {
-          isNoLongerCompletedTest();
         }
-      }
-    });
+      });
 
       fakeVideoEventStream.add(VideoEvent(eventType: VideoEventType.completed));
     });
@@ -1591,9 +1904,9 @@ void main() {
 
       final void Function() isCompletedTest = expectAsync0(() {});
 
-    controller.value = controller.value.copyWith(
-      duration: const Duration(seconds: 10),
-    );
+      controller.value = controller.value.copyWith(
+        duration: const Duration(seconds: 10),
+      );
 
       controller.addListener(() async {
         if (currentIsCompleted != controller.value.isCompleted) {
