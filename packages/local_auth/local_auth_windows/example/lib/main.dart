@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,17 +33,19 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     LocalAuthPlatform.instance.isDeviceSupported().then(
-          (bool isSupported) => setState(() => _supportState = isSupported
-              ? _SupportState.supported
-              : _SupportState.unsupported),
-        );
+      (bool isSupported) => setState(
+        () => _supportState = isSupported
+            ? _SupportState.supported
+            : _SupportState.unsupported,
+      ),
+    );
   }
 
   Future<void> _checkBiometrics() async {
     late bool deviceSupportsBiometrics;
     try {
-      deviceSupportsBiometrics =
-          await LocalAuthPlatform.instance.deviceSupportsBiometrics();
+      deviceSupportsBiometrics = await LocalAuthPlatform.instance
+          .deviceSupportsBiometrics();
     } on PlatformException catch (e) {
       deviceSupportsBiometrics = false;
       print(e);
@@ -60,8 +62,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getEnrolledBiometrics() async {
     late List<BiometricType> availableBiometrics;
     try {
-      availableBiometrics =
-          await LocalAuthPlatform.instance.getEnrolledBiometrics();
+      availableBiometrics = await LocalAuthPlatform.instance
+          .getEnrolledBiometrics();
     } on PlatformException catch (e) {
       availableBiometrics = <BiometricType>[];
       print(e);
@@ -85,18 +87,23 @@ class _MyAppState extends State<MyApp> {
       authenticated = await LocalAuthPlatform.instance.authenticate(
         localizedReason: 'Let OS determine authentication method',
         authMessages: <AuthMessages>[const WindowsAuthMessages()],
-        options: const AuthenticationOptions(
-          stickyAuth: true,
-        ),
+        options: const AuthenticationOptions(stickyAuth: true),
       );
       setState(() {
         _isAuthenticating = false;
       });
+    } on LocalAuthException catch (e) {
+      print(e);
+      setState(() {
+        _isAuthenticating = false;
+        _authorized = 'Error - $e';
+      });
+      return;
     } on PlatformException catch (e) {
       print(e);
       setState(() {
         _isAuthenticating = false;
-        _authorized = 'Error - ${e.message}';
+        _authorized = 'Unexpected error - ${e.message}';
       });
       return;
     }
@@ -105,21 +112,15 @@ class _MyAppState extends State<MyApp> {
     }
 
     setState(
-        () => _authorized = authenticated ? 'Authorized' : 'Not Authorized');
-  }
-
-  Future<void> _cancelAuthentication() async {
-    await LocalAuthPlatform.instance.stopAuthentication();
-    setState(() => _isAuthenticating = false);
+      () => _authorized = authenticated ? 'Authorized' : 'Not Authorized',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
+        appBar: AppBar(title: const Text('Plugin example app')),
         body: ListView(
           padding: const EdgeInsets.only(top: 30),
           children: <Widget>[
@@ -134,7 +135,8 @@ class _MyAppState extends State<MyApp> {
                   const Text('This device is not supported'),
                 const Divider(height: 100),
                 Text(
-                    'Device supports biometrics: $_deviceSupportsBiometrics\n'),
+                  'Device supports biometrics: $_deviceSupportsBiometrics\n',
+                ),
                 ElevatedButton(
                   onPressed: _checkBiometrics,
                   child: const Text('Check biometrics'),
@@ -147,18 +149,7 @@ class _MyAppState extends State<MyApp> {
                 ),
                 const Divider(height: 100),
                 Text('Current State: $_authorized\n'),
-                if (_isAuthenticating)
-                  ElevatedButton(
-                    onPressed: _cancelAuthentication,
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        Text('Cancel Authentication'),
-                        Icon(Icons.cancel),
-                      ],
-                    ),
-                  )
-                else
+                if (!_isAuthenticating)
                   Column(
                     children: <Widget>[
                       ElevatedButton(
@@ -182,8 +173,4 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-enum _SupportState {
-  unknown,
-  supported,
-  unsupported,
-}
+enum _SupportState { unknown, supported, unsupported }

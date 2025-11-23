@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -160,8 +160,9 @@ class StandardMessageCodec implements MessageCodec<Object?> {
     if (message == null) {
       return null;
     }
-    final WriteBuffer buffer =
-        WriteBuffer(startCapacity: _writeBufferStartCapacity);
+    final WriteBuffer buffer = WriteBuffer(
+      startCapacity: _writeBufferStartCapacity,
+    );
     writeValue(buffer, message);
     return buffer.done();
   }

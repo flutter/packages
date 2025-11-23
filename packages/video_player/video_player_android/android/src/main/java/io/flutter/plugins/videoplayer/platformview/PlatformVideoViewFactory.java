@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,7 +10,8 @@ import androidx.annotation.Nullable;
 import androidx.media3.exoplayer.ExoPlayer;
 import io.flutter.plugin.platform.PlatformView;
 import io.flutter.plugin.platform.PlatformViewFactory;
-import io.flutter.plugins.videoplayer.Messages;
+import io.flutter.plugins.videoplayer.AndroidVideoPlayerApi;
+import io.flutter.plugins.videoplayer.PlatformVideoViewCreationParams;
 import io.flutter.plugins.videoplayer.VideoPlayer;
 import java.util.Objects;
 
@@ -41,7 +42,7 @@ public class PlatformVideoViewFactory extends PlatformViewFactory {
    *     view.
    */
   public PlatformVideoViewFactory(@NonNull VideoPlayerProvider videoPlayerProvider) {
-    super(Messages.AndroidVideoPlayerApi.getCodec());
+    super(AndroidVideoPlayerApi.Companion.getCodec());
     this.videoPlayerProvider = videoPlayerProvider;
   }
 
@@ -56,8 +57,8 @@ public class PlatformVideoViewFactory extends PlatformViewFactory {
   @NonNull
   @Override
   public PlatformView create(@NonNull Context context, int id, @Nullable Object args) {
-    final Messages.PlatformVideoViewCreationParams params =
-        Objects.requireNonNull((Messages.PlatformVideoViewCreationParams) args);
+    final PlatformVideoViewCreationParams params =
+        Objects.requireNonNull((PlatformVideoViewCreationParams) args);
     final Long playerId = params.getPlayerId();
 
     final VideoPlayer player = videoPlayerProvider.getVideoPlayer(playerId);

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,9 +7,9 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 private class MockImageStreamHandler: FLTImageStreamHandler {
@@ -32,60 +32,159 @@ private class MockImageStreamHandler: FLTImageStreamHandler {
 }
 
 final class StreamingTests: XCTestCase {
-  private func createCamera() -> (FLTCam, CMSampleBuffer) {
+  private func createCamera() -> (
+    DefaultCamera,
+    AVCaptureOutput,
+    CMSampleBuffer,
+    CMSampleBuffer,
+    AVCaptureConnection
+  ) {
     let captureSessionQueue = DispatchQueue(label: "testing")
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
 
     let camera = CameraTestUtils.createTestCamera(configuration)
+    let testAudioOutput = CameraTestUtils.createTestAudioOutput()
     let sampleBuffer = CameraTestUtils.createTestSampleBuffer()
+    let audioSampleBuffer = CameraTestUtils.createTestAudioSampleBuffer()
+    let testAudioConnection = CameraTestUtils.createTestConnection(testAudioOutput)
 
-    return (camera, sampleBuffer)
+    return (camera, testAudioOutput, sampleBuffer, audioSampleBuffer, testAudioConnection)
   }
 
   func testExceedMaxStreamingPendingFramesCount() {
-    let (camera, sampleBuffer) = createCamera()
+    let (camera, testAudioOutput, sampleBuffer, _, testAudioConnection) = createCamera()
+    let handlerMock = MockImageStreamHandler()
+
+    let finishStartStreamExpectation = expectation(
+      description: "Finish startStream")
+
+    let messenger = MockFlutterBinaryMessenger()
+    camera.startImageStream(
+      with: messenger, imageStreamHandler: handlerMock,
+      completion: {
+        _ in
+        finishStartStreamExpectation.fulfill()
+      })
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    // Setup mocked event sink after the stream starts
     let streamingExpectation = expectation(
       description: "Must not call handler over maxStreamingPendingFramesCount")
-    let handlerMock = MockImageStreamHandler()
+
     handlerMock.eventSinkStub = { event in
       streamingExpectation.fulfill()
     }
-    let messenger = MockFlutterBinaryMessenger()
-    camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
 
     waitForQueueRoundTrip(with: DispatchQueue.main)
     XCTAssertEqual(camera.isStreamingImages, true)
 
     streamingExpectation.expectedFulfillmentCount = 4
     for _ in 0..<10 {
-      camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+      camera.captureOutput(testAudioOutput, didOutput: sampleBuffer, from: testAudioConnection)
     }
 
     waitForExpectations(timeout: 30, handler: nil)
   }
 
   func testReceivedImageStreamData() {
-    let (camera, sampleBuffer) = createCamera()
+    let (camera, testAudioOutput, sampleBuffer, _, testAudioConnection) = createCamera()
+    let handlerMock = MockImageStreamHandler()
+
+    let finishStartStreamExpectation = expectation(
+      description: "Finish startStream")
+
+    let messenger = MockFlutterBinaryMessenger()
+    camera.startImageStream(
+      with: messenger, imageStreamHandler: handlerMock,
+      completion: {
+        _ in
+        finishStartStreamExpectation.fulfill()
+      })
+
+    waitForExpectations(timeout: 30, handler: nil)
+
+    // Setup mocked event sink after the stream starts
     let streamingExpectation = expectation(
       description: "Must be able to call the handler again when receivedImageStreamData is called")
-    let handlerMock = MockImageStreamHandler()
     handlerMock.eventSinkStub = { event in
       streamingExpectation.fulfill()
     }
-    let messenger = MockFlutterBinaryMessenger()
-    camera.startImageStream(with: messenger, imageStreamHandler: handlerMock)
 
     waitForQueueRoundTrip(with: DispatchQueue.main)
     XCTAssertEqual(camera.isStreamingImages, true)
 
     streamingExpectation.expectedFulfillmentCount = 5
     for _ in 0..<10 {
-      camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+      camera.captureOutput(testAudioOutput, didOutput: sampleBuffer, from: testAudioConnection)
     }
 
     camera.receivedImageStreamData()
-    camera.captureOutput(nil, didOutputSampleBuffer: sampleBuffer, from: nil)
+    camera.captureOutput(testAudioOutput, didOutput: sampleBuffer, from: testAudioConnection)
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
+
+  func testIgnoresNonImageBuffers() {
+    let (camera, testAudioOutput, _, audioSampleBuffer, testAudioConnection) = createCamera()
+    let handlerMock = MockImageStreamHandler()
+    handlerMock.eventSinkStub = { event in
+      XCTFail()
+    }
+
+    let finishStartStreamExpectation = expectation(
+      description: "Finish startStream")
+
+    let messenger = MockFlutterBinaryMessenger()
+    camera.startImageStream(
+      with: messenger, imageStreamHandler: handlerMock,
+      completion: {
+        _ in
+        finishStartStreamExpectation.fulfill()
+      })
+
+    waitForExpectations(timeout: 30, handler: nil)
+    XCTAssertEqual(camera.isStreamingImages, true)
+
+    camera.captureOutput(testAudioOutput, didOutput: audioSampleBuffer, from: testAudioConnection)
+
+    waitForQueueRoundTrip(with: DispatchQueue.main)
+  }
+
+  func testImageStreamEventFormat() {
+    let (camera, testAudioOutput, sampleBuffer, _, testAudioConnection) = createCamera()
+
+    let expectation = expectation(description: "Received a valid event")
+
+    let handlerMock = MockImageStreamHandler()
+    handlerMock.eventSinkStub = { event in
+      let imageBuffer = event as! [String: Any]
+
+      XCTAssertTrue(imageBuffer["width"] is NSNumber)
+      XCTAssertTrue(imageBuffer["height"] is NSNumber)
+      XCTAssertTrue(imageBuffer["format"] is NSNumber)
+      XCTAssertTrue(imageBuffer["lensAperture"] is NSNumber)
+      XCTAssertTrue(imageBuffer["sensorExposureTime"] is NSNumber)
+      XCTAssertTrue(imageBuffer["sensorSensitivity"] is NSNumber)
+
+      let planes = imageBuffer["planes"] as! [[String: Any]]
+      let planeBuffer = planes[0]
+
+      XCTAssertTrue(planeBuffer["bytesPerRow"] is NSNumber)
+      XCTAssertTrue(planeBuffer["width"] is NSNumber)
+      XCTAssertTrue(planeBuffer["height"] is NSNumber)
+      XCTAssertTrue(planeBuffer["bytes"] is FlutterStandardTypedData)
+
+      expectation.fulfill()
+    }
+    let messenger = MockFlutterBinaryMessenger()
+    camera.startImageStream(with: messenger, imageStreamHandler: handlerMock) { _ in }
+
+    waitForQueueRoundTrip(with: DispatchQueue.main)
+    XCTAssertEqual(camera.isStreamingImages, true)
+
+    camera.captureOutput(testAudioOutput, didOutput: sampleBuffer, from: testAudioConnection)
 
     waitForExpectations(timeout: 30, handler: nil)
   }

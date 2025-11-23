@@ -15,10 +15,7 @@ Basic usage (to create an SVG rendering widget from an asset):
 <?code-excerpt "example/lib/readme_excerpts.dart (SimpleAsset)"?>
 ```dart
 const String assetName = 'assets/dart.svg';
-final Widget svg = SvgPicture.asset(
-  assetName,
-  semanticsLabel: 'Dart Logo',
-);
+final Widget svg = SvgPicture.asset(assetName, semanticsLabel: 'Dart Logo');
 ```
 
 You can color/tint the image like so:
@@ -93,9 +90,7 @@ parsing/loading (normally only relevant for network access).
 ```dart
 // Will print error messages to the console.
 const String assetName = 'assets/image_that_does_not_exist.svg';
-final Widget svg = SvgPicture.asset(
-  assetName,
-);
+final Widget svg = SvgPicture.asset(assetName);
 ```
 
 <?code-excerpt "example/lib/readme_excerpts.dart (AssetWithPlaceholder)"?>
@@ -104,8 +99,9 @@ final Widget networkSvg = SvgPicture.network(
   'https://site-that-takes-a-while.com/image.svg',
   semanticsLabel: 'A shark?!',
   placeholderBuilder: (BuildContext context) => Container(
-      padding: const EdgeInsets.all(30.0),
-      child: const CircularProgressIndicator()),
+    padding: const EdgeInsets.all(30.0),
+    child: const CircularProgressIndicator(),
+  ),
 );
 ```
 
@@ -117,8 +113,10 @@ import 'dart:ui' as ui;
 
 // ···
   const String rawSvg = '''<svg ...>...</svg>''';
-  final PictureInfo pictureInfo =
-      await vg.loadPicture(const SvgStringLoader(rawSvg), null);
+  final PictureInfo pictureInfo = await vg.loadPicture(
+    const SvgStringLoader(rawSvg),
+    null,
+  );
 
   // You can draw the picture to a canvas:
   canvas.drawPicture(pictureInfo.picture);
@@ -130,10 +128,15 @@ import 'dart:ui' as ui;
 ```
 
 The `SvgPicture` helps to automate this logic, and it provides some convenience
-wrappers for getting assets from multiple sources. Unlike the `vector_graphics`
-package, this package _does not render the data to an `Image` at any point_.
-This carries a performance penalty for some common use cases, but also allows
-for more flexibility around scaling.
+wrappers for getting assets from multiple sources.
+
+This package now supports a render strategy setting, allowing certain
+applications to achieve better performance when needed. By default, the
+rendering uses the original `picture` mode, which retains full flexibility in
+scaling. Alternatively, when using the `raster` strategy, the SVG data is
+rendered into an `Image`, which is then drawn using drawImage. This approach may
+sacrifice some flexibility—especially around resolution scaling—but can
+significantly improve rendering performance in specific use cases.
 
 ## Precompiling and Optimizing SVGs
 

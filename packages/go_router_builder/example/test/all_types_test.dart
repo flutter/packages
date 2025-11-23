@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,8 +12,9 @@ void main() {
   testWidgets('Test typed route navigation', (WidgetTester tester) async {
     await tester.pumpWidget(AllTypesApp());
 
-    final ScaffoldState scaffoldState =
-        tester.firstState(find.byType(Scaffold));
+    final ScaffoldState scaffoldState = tester.firstState(
+      find.byType(Scaffold),
+    );
 
     BigIntRoute(
       requiredBigIntField: BigInt.from(4),
@@ -56,10 +57,7 @@ void main() {
     expect(find.text('Query param: -3.14'), findsOneWidget);
     expect(find.text('Query param with default value: 1.0'), findsOneWidget);
 
-    IntRoute(
-      requiredIntField: 65,
-      intField: -65,
-    ).go(scaffoldState.context);
+    IntRoute(requiredIntField: 65, intField: -65).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('IntRoute'), findsOneWidget);
     expect(find.text('Param: 65'), findsOneWidget);
@@ -82,13 +80,18 @@ void main() {
     ).go(scaffoldState.context);
     await tester.pumpAndSettle();
     expect(find.text('StringRoute'), findsOneWidget);
-    expect(find.text('Param: Tytire tu patulae recubans sub tegmine fagi.'),
-        findsOneWidget);
     expect(
-        find.text('Query param: Tytire tu patulae recubans sub tegmine fagi.'),
-        findsOneWidget);
-    expect(find.text('Query param with default value: defaultValue'),
-        findsOneWidget);
+      find.text('Param: Tytire tu patulae recubans sub tegmine fagi.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Query param: Tytire tu patulae recubans sub tegmine fagi.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Query param with default value: defaultValue'),
+      findsOneWidget,
+    );
 
     EnumRoute(
       requiredEnumField: PersonDetails.favoriteFood,
@@ -98,7 +101,9 @@ void main() {
     expect(find.text('EnumRoute'), findsOneWidget);
     expect(find.text('Param: PersonDetails.favoriteFood'), findsOneWidget);
     expect(
-        find.text('Query param: PersonDetails.favoriteSport'), findsOneWidget);
+      find.text('Query param: PersonDetails.favoriteSport'),
+      findsOneWidget,
+    );
     expect(
       find.text('Query param with default value: PersonDetails.favoriteFood'),
       findsOneWidget,
@@ -138,158 +143,190 @@ void main() {
     expect(find.text('IterableRoute'), findsOneWidget);
     expect(find.text('/iterable-route'), findsOneWidget);
     expect(
-        find.text(
-            '{enum-iterable-field: football, int-list-field: 3, enum-only-in-set-field: pizza}'),
-        findsOneWidget);
-  });
-
-  testWidgets(
-      'It should navigate to the iterable route with its default values',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(AllTypesApp());
-
-    final ScaffoldState scaffoldState =
-        tester.firstState(find.byType(Scaffold));
-
-    const IterableRouteWithDefaultValues().go(scaffoldState.context);
-    await tester.pumpAndSettle();
-    expect(find.text('IterableRouteWithDefaultValues'), findsOneWidget);
-    final IterablePage page =
-        tester.widget<IterablePage>(find.byType(IterablePage));
-    expect(
-      page,
-      isA<IterablePage>().having(
-        (IterablePage page) => page.intIterableField,
-        'intIterableField',
-        const <int>[0],
-      ).having(
-        (IterablePage page) => page.intListField,
-        'intListField',
-        const <int>[0],
-      ).having(
-        (IterablePage page) => page.intSetField,
-        'intSetField',
-        const <int>{0, 1},
-      ).having(
-        (IterablePage page) => page.doubleIterableField,
-        'doubleIterableField',
-        const <double>[0, 1, 2],
-      ).having(
-        (IterablePage page) => page.doubleListField,
-        'doubleListField',
-        const <double>[1, 2, 3],
-      ).having(
-        (IterablePage page) => page.doubleSetField,
-        'doubleSetField',
-        const <double>{},
-      ).having(
-        (IterablePage page) => page.stringIterableField,
-        'stringIterableField',
-        const <String>['defaultValue'],
-      ).having(
-        (IterablePage page) => page.stringListField,
-        'stringListField',
-        const <String>['defaultValue0', 'defaultValue1'],
-      ).having(
-        (IterablePage page) => page.stringSetField,
-        'stringSetField',
-        const <String>{'defaultValue'},
-      ).having(
-        (IterablePage page) => page.boolIterableField,
-        'boolIterableField',
-        const <bool>[false],
-      ).having(
-        (IterablePage page) => page.boolListField,
-        'boolListField',
-        const <bool>[true],
-      ).having(
-        (IterablePage page) => page.boolSetField,
-        'boolSetField',
-        const <bool>{true, false},
-      ).having(
-        (IterablePage page) => page.enumIterableField,
-        'enumIterableField',
-        const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
-      ).having(
-        (IterablePage page) => page.enumListField,
-        'enumListField',
-        const <SportDetails>[SportDetails.football],
-      ).having(
-        (IterablePage page) => page.enumSetField,
-        'enumSetField',
-        const <SportDetails>{SportDetails.hockey},
+      find.text(
+        '{enum-iterable-field: football, int-list-field: 3, enum-only-in-set-field: pizza}',
       ),
+      findsOneWidget,
     );
-    expect(find.text('/iterable-route-with-default-values'), findsOneWidget);
   });
 
   testWidgets(
-      'Test navigation with invalid query and path parameters using Uri.parse',
-      (WidgetTester tester) async {
-    await tester.pumpWidget(AllTypesApp());
+    'It should navigate to the iterable route with its default values',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(AllTypesApp());
 
-    final ScaffoldState scaffoldState =
-        tester.firstState(find.byType(Scaffold));
+      final ScaffoldState scaffoldState = tester.firstState(
+        find.byType(Scaffold),
+      );
 
-    // Test invalid BigInt parameter
-    scaffoldState.context
-        .go(Uri.parse('/big-int-route/4?bigIntField=invalid').toString());
-    await tester.pumpAndSettle();
-    expect(find.text('BigIntRoute'), findsOneWidget);
-    expect(find.text('Param: 4'), findsOneWidget);
-    expect(find.text('Query param: null'), findsOneWidget);
+      const IterableRouteWithDefaultValues().go(scaffoldState.context);
+      await tester.pumpAndSettle();
+      expect(find.text('IterableRouteWithDefaultValues'), findsOneWidget);
+      final IterablePage page = tester.widget<IterablePage>(
+        find.byType(IterablePage),
+      );
+      expect(
+        page,
+        isA<IterablePage>()
+            .having(
+              (IterablePage page) => page.intIterableField,
+              'intIterableField',
+              const <int>[0],
+            )
+            .having(
+              (IterablePage page) => page.intListField,
+              'intListField',
+              const <int>[0],
+            )
+            .having(
+              (IterablePage page) => page.intSetField,
+              'intSetField',
+              const <int>{0, 1},
+            )
+            .having(
+              (IterablePage page) => page.doubleIterableField,
+              'doubleIterableField',
+              const <double>[0, 1, 2],
+            )
+            .having(
+              (IterablePage page) => page.doubleListField,
+              'doubleListField',
+              const <double>[1, 2, 3],
+            )
+            .having(
+              (IterablePage page) => page.doubleSetField,
+              'doubleSetField',
+              const <double>{},
+            )
+            .having(
+              (IterablePage page) => page.stringIterableField,
+              'stringIterableField',
+              const <String>['defaultValue'],
+            )
+            .having(
+              (IterablePage page) => page.stringListField,
+              'stringListField',
+              const <String>['defaultValue0', 'defaultValue1'],
+            )
+            .having(
+              (IterablePage page) => page.stringSetField,
+              'stringSetField',
+              const <String>{'defaultValue'},
+            )
+            .having(
+              (IterablePage page) => page.boolIterableField,
+              'boolIterableField',
+              const <bool>[false],
+            )
+            .having(
+              (IterablePage page) => page.boolListField,
+              'boolListField',
+              const <bool>[true],
+            )
+            .having(
+              (IterablePage page) => page.boolSetField,
+              'boolSetField',
+              const <bool>{true, false},
+            )
+            .having(
+              (IterablePage page) => page.enumIterableField,
+              'enumIterableField',
+              const <SportDetails>[SportDetails.tennis, SportDetails.hockey],
+            )
+            .having(
+              (IterablePage page) => page.enumListField,
+              'enumListField',
+              const <SportDetails>[SportDetails.football],
+            )
+            .having(
+              (IterablePage page) => page.enumSetField,
+              'enumSetField',
+              const <SportDetails>{SportDetails.hockey},
+            ),
+      );
+      expect(find.text('/iterable-route-with-default-values'), findsOneWidget);
+    },
+  );
 
-    // Test invalid DateTime parameter
-    scaffoldState.context.go(Uri.parse(
-            '/date-time-route/2021-01-01T00:00:00.000?dateTimeField=invalid-date')
-        .toString());
-    await tester.pumpAndSettle();
-    expect(find.text('DateTimeRoute'), findsOneWidget);
-    expect(find.text('Param: 2021-01-01 00:00:00.000'), findsOneWidget);
-    expect(find.text('Query param: null'), findsOneWidget);
+  testWidgets(
+    'Test navigation with invalid query and path parameters using Uri.parse',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(AllTypesApp());
 
-    // Test invalid Double parameter
-    scaffoldState.context
-        .go(Uri.parse('/double-route/3.14?doubleField=invalid').toString());
-    await tester.pumpAndSettle();
-    expect(find.text('DoubleRoute'), findsOneWidget);
-    expect(find.text('Param: 3.14'), findsOneWidget);
-    expect(find.text('Query param: null'), findsOneWidget);
-    expect(find.text('Query param with default value: 1.0'), findsOneWidget);
+      final ScaffoldState scaffoldState = tester.firstState(
+        find.byType(Scaffold),
+      );
 
-    // Test invalid Int parameter
-    scaffoldState.context
-        .go(Uri.parse('/int-route/65?intField=invalid').toString());
-    await tester.pumpAndSettle();
-    expect(find.text('IntRoute'), findsOneWidget);
-    expect(find.text('Param: 65'), findsOneWidget);
-    expect(find.text('Query param: null'), findsOneWidget);
-    expect(find.text('Query param with default value: 1'), findsOneWidget);
+      // Test invalid BigInt parameter
+      scaffoldState.context.go(
+        Uri.parse('/big-int-route/4?bigIntField=invalid').toString(),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('BigIntRoute'), findsOneWidget);
+      expect(find.text('Param: 4'), findsOneWidget);
+      expect(find.text('Query param: null'), findsOneWidget);
 
-    // Test invalid Uri parameter
-    scaffoldState.context.go(
-        Uri.parse('/uri-route/https%3A%2F%2Fdart.dev?uriField=invalid-uri')
-            .toString());
-    await tester.pumpAndSettle();
-    expect(find.text('UriRoute'), findsOneWidget);
-    expect(find.text('Param: https://dart.dev'), findsOneWidget);
-    expect(find.text('Query param: null'), findsOneWidget);
+      // Test invalid DateTime parameter
+      scaffoldState.context.go(
+        Uri.parse(
+          '/date-time-route/2021-01-01T00:00:00.000?dateTimeField=invalid-date',
+        ).toString(),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('DateTimeRoute'), findsOneWidget);
+      expect(find.text('Param: 2021-01-01 00:00:00.000'), findsOneWidget);
+      expect(find.text('Query param: null'), findsOneWidget);
 
-    // Test invalid Enum parameter
-    scaffoldState.context.go(
-        Uri.parse('/enum-route/favorite-food?enum-field=invalid').toString());
-    await tester.pumpAndSettle();
-    expect(find.text('EnumRoute'), findsOneWidget);
-    expect(find.text('Query param: null'), findsOneWidget);
-    expect(
+      // Test invalid Double parameter
+      scaffoldState.context.go(
+        Uri.parse('/double-route/3.14?doubleField=invalid').toString(),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('DoubleRoute'), findsOneWidget);
+      expect(find.text('Param: 3.14'), findsOneWidget);
+      expect(find.text('Query param: null'), findsOneWidget);
+      expect(find.text('Query param with default value: 1.0'), findsOneWidget);
+
+      // Test invalid Int parameter
+      scaffoldState.context.go(
+        Uri.parse('/int-route/65?intField=invalid').toString(),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('IntRoute'), findsOneWidget);
+      expect(find.text('Param: 65'), findsOneWidget);
+      expect(find.text('Query param: null'), findsOneWidget);
+      expect(find.text('Query param with default value: 1'), findsOneWidget);
+
+      // Test invalid Uri parameter
+      scaffoldState.context.go(
+        Uri.parse(
+          '/uri-route/https%3A%2F%2Fdart.dev?uriField=invalid-uri',
+        ).toString(),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('UriRoute'), findsOneWidget);
+      expect(find.text('Param: https://dart.dev'), findsOneWidget);
+      expect(find.text('Query param: null'), findsOneWidget);
+
+      // Test invalid Enum parameter
+      scaffoldState.context.go(
+        Uri.parse('/enum-route/favorite-food?enum-field=invalid').toString(),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('EnumRoute'), findsOneWidget);
+      expect(find.text('Query param: null'), findsOneWidget);
+      expect(
         find.text('Query param with default value: PersonDetails.favoriteFood'),
-        findsOneWidget);
+        findsOneWidget,
+      );
 
-    // Test invalid Iterable parameter
-    scaffoldState.context
-        .go(Uri.parse('/iterable-route?intListField=invalid').toString());
-    await tester.pumpAndSettle();
-    expect(find.text('IterableRoute'), findsOneWidget);
-    expect(find.text('/iterable-route'), findsOneWidget);
-  });
+      // Test invalid Iterable parameter
+      scaffoldState.context.go(
+        Uri.parse('/iterable-route?intListField=invalid').toString(),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('IterableRoute'), findsOneWidget);
+      expect(find.text('/iterable-route'), findsOneWidget);
+    },
+  );
 }

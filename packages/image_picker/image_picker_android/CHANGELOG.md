@@ -1,3 +1,57 @@
+## 0.8.13+10
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.1
+
+## 0.8.13+9
+
+* Bumps androidx.activity:activity from 1.10.1 to 1.11.0.
+
+## 0.8.13+8
+
+* Updates to Pigeon 26.
+
+## 0.8.13+7
+
+* Removes reference to internal `isSystemPickerAvailable$activity_release()` method.
+
+## 0.8.13+6
+
+* Fixes typo in limit parameter validation error message.
+
+## 0.8.13+5
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.8.13+4
+
+* Resolves Gradle 9 deprecations.
+
+## 0.8.13+3
+
+* Bumps androidx.exifinterface:exifinterface from 1.3.7 to 1.4.1.
+
+## 0.8.13+2
+
+* Updates minimum supported SDK version to Flutter 3.35.
+* Removes obsolete code related to supporting SDK <24.
+
+## 0.8.13+1
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 0.8.13
+
+* Adds support for `getMultiVideoWithOptions`.
+
+## 0.8.12+25
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 0.8.12+24
+
+* Updates `androidx.activity:activity` to 1.10.1.
+
 ## 0.8.12+23
 
 * Removes obsolete code related to supporting SDK <21.

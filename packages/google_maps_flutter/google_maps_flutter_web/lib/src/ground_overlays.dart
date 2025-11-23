@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,12 +12,12 @@ class GroundOverlaysController extends GeometryController {
   /// emitting ground overlay tap events.
   GroundOverlaysController({
     required StreamController<MapEvent<Object?>> stream,
-  })  : _streamController = stream,
-        _groundOverlayIdToController =
-            <GroundOverlayId, GroundOverlayController>{};
+  }) : _streamController = stream,
+       _groundOverlayIdToController =
+           <GroundOverlayId, GroundOverlayController>{};
 
   final Map<GroundOverlayId, GroundOverlayController>
-      _groundOverlayIdToController;
+  _groundOverlayIdToController;
 
   // The stream over which ground overlays broadcast their events
   final StreamController<MapEvent<Object?>> _streamController;
@@ -30,11 +30,14 @@ class GroundOverlaysController extends GeometryController {
   }
 
   void _addGroundOverlay(GroundOverlay groundOverlay) {
-    assert(groundOverlay.bounds != null,
-        'On Web platform, bounds must be provided for GroundOverlay');
+    assert(
+      groundOverlay.bounds != null,
+      'On Web platform, bounds must be provided for GroundOverlay',
+    );
 
-    final gmaps.LatLngBounds bounds =
-        latLngBoundsToGmlatLngBounds(groundOverlay.bounds!);
+    final gmaps.LatLngBounds bounds = latLngBoundsToGmlatLngBounds(
+      groundOverlay.bounds!,
+    );
 
     final gmaps.GroundOverlayOptions groundOverlayOptions =
         gmaps.GroundOverlayOptions()
@@ -43,7 +46,10 @@ class GroundOverlaysController extends GeometryController {
           ..map = groundOverlay.visible ? googleMap : null;
 
     final gmaps.GroundOverlay overlay = gmaps.GroundOverlay(
-        urlFromMapBitmap(groundOverlay.image), bounds, groundOverlayOptions);
+      urlFromMapBitmap(groundOverlay.image),
+      bounds,
+      groundOverlayOptions,
+    );
 
     final GroundOverlayController controller = GroundOverlayController(
       groundOverlay: overlay,
@@ -68,8 +74,10 @@ class GroundOverlaysController extends GeometryController {
       return;
     }
 
-    assert(groundOverlay.bounds != null,
-        'On Web platform, bounds must be provided for GroundOverlay');
+    assert(
+      groundOverlay.bounds != null,
+      'On Web platform, bounds must be provided for GroundOverlay',
+    );
 
     controller.groundOverlay!.set('clickable', groundOverlay.clickable.toJS);
     controller.groundOverlay!.map = groundOverlay.visible ? googleMap : null;
@@ -82,8 +90,8 @@ class GroundOverlaysController extends GeometryController {
   }
 
   void _removeGroundOverlay(GroundOverlayId groundOverlayId) {
-    final GroundOverlayController? controller =
-        _groundOverlayIdToController.remove(groundOverlayId);
+    final GroundOverlayController? controller = _groundOverlayIdToController
+        .remove(groundOverlayId);
     if (controller != null) {
       controller.remove();
     }
@@ -96,8 +104,8 @@ class GroundOverlaysController extends GeometryController {
   /// Returns the [GroundOverlay] with the given [GroundOverlayId].
   /// Only used for testing.
   gmaps.GroundOverlay? getGroundOverlay(GroundOverlayId groundOverlayId) {
-    final GroundOverlayController? controller =
-        _groundOverlayIdToController.remove(groundOverlayId);
+    final GroundOverlayController? controller = _groundOverlayIdToController
+        .remove(groundOverlayId);
     return controller?.groundOverlay;
   }
 }

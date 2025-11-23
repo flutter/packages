@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,24 +15,28 @@ class CameraErrorCode {
   String toString() => _type;
 
   /// The camera is not supported.
-  static const CameraErrorCode notSupported =
-      CameraErrorCode._('cameraNotSupported');
+  static const CameraErrorCode notSupported = CameraErrorCode._(
+    'cameraNotSupported',
+  );
 
   /// The camera is not found.
   static const CameraErrorCode notFound = CameraErrorCode._('cameraNotFound');
 
   /// The camera is not readable.
-  static const CameraErrorCode notReadable =
-      CameraErrorCode._('cameraNotReadable');
+  static const CameraErrorCode notReadable = CameraErrorCode._(
+    'cameraNotReadable',
+  );
 
   /// The camera options are impossible to satisfy.
-  static const CameraErrorCode overconstrained =
-      CameraErrorCode._('cameraOverconstrained');
+  static const CameraErrorCode overconstrained = CameraErrorCode._(
+    'cameraOverconstrained',
+  );
 
   /// The camera cannot be used or the permission
   /// to access the camera is not granted.
-  static const CameraErrorCode permissionDenied =
-      CameraErrorCode._('CameraAccessDenied');
+  static const CameraErrorCode permissionDenied = CameraErrorCode._(
+    'CameraAccessDenied',
+  );
 
   /// The camera options are incorrect or attempted
   /// to access the media input from an insecure context.
@@ -45,32 +49,39 @@ class CameraErrorCode {
   static const CameraErrorCode security = CameraErrorCode._('cameraSecurity');
 
   /// The camera metadata is missing.
-  static const CameraErrorCode missingMetadata =
-      CameraErrorCode._('cameraMissingMetadata');
+  static const CameraErrorCode missingMetadata = CameraErrorCode._(
+    'cameraMissingMetadata',
+  );
 
   /// The camera orientation is not supported.
-  static const CameraErrorCode orientationNotSupported =
-      CameraErrorCode._('orientationNotSupported');
+  static const CameraErrorCode orientationNotSupported = CameraErrorCode._(
+    'orientationNotSupported',
+  );
 
   /// The camera torch mode is not supported.
-  static const CameraErrorCode torchModeNotSupported =
-      CameraErrorCode._('torchModeNotSupported');
+  static const CameraErrorCode torchModeNotSupported = CameraErrorCode._(
+    'torchModeNotSupported',
+  );
 
   /// The camera zoom level is not supported.
-  static const CameraErrorCode zoomLevelNotSupported =
-      CameraErrorCode._('zoomLevelNotSupported');
+  static const CameraErrorCode zoomLevelNotSupported = CameraErrorCode._(
+    'zoomLevelNotSupported',
+  );
 
   /// The camera zoom level is invalid.
-  static const CameraErrorCode zoomLevelInvalid =
-      CameraErrorCode._('zoomLevelInvalid');
+  static const CameraErrorCode zoomLevelInvalid = CameraErrorCode._(
+    'zoomLevelInvalid',
+  );
 
   /// The camera has not been initialized or started.
-  static const CameraErrorCode notStarted =
-      CameraErrorCode._('cameraNotStarted');
+  static const CameraErrorCode notStarted = CameraErrorCode._(
+    'cameraNotStarted',
+  );
 
   /// The video recording was not started.
-  static const CameraErrorCode videoRecordingNotStarted =
-      CameraErrorCode._('videoRecordingNotStarted');
+  static const CameraErrorCode videoRecordingNotStarted = CameraErrorCode._(
+    'videoRecordingNotStarted',
+  );
 
   /// An unknown camera error.
   static const CameraErrorCode unknown = CameraErrorCode._('cameraUnknown');

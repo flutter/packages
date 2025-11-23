@@ -1,3 +1,81 @@
+## 2.8.21
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.8.20
+
+* Bumps `exoplayer_version` from 1.5.1 to 1.8.0.
+
+## 2.8.19
+
+* Updates to Pigeon 26.
+
+## 2.8.18
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
+## 2.8.17
+
+* Moves video event processing logic to Dart, and fixes an issue where buffer
+  range would not be updated for a paused video.
+* Switches to Kotlin for Pigeon-generated code.
+* Adopts type-safe event channels for internal communication.
+
+## 2.8.16
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.8.15
+
+* Resolves Gradle 9 deprecations.
+
+## 2.8.14
+
+* Restructures internal logic for player creation and tracking.
+
+## 2.8.13
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
+## 2.8.12
+
+* Moves buffer position update event generation to Dart.
+
+## 2.8.11
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.8.10
+
+* Restructures internal logic to move more code to Dart.
+
+## 2.8.9
+
+* Restructures the communication between Dart and Java code.
+
+## 2.8.8
+
+* * Updates Media3-ExoPlayer to 1.5.1.
+
+## 2.8.7
+
+* Adds note about known issue regarding platform views to the README.
+
+## 2.8.6
+
+* Fixes a [bug](https://github.com/flutter/flutter/issues/165149) where the `isBuffering` flag
+  always returns true after seeking to any position.
+
+## 2.8.5
+
+* Replaces deprecated `onSurfaceDestroyed` with `onSurfaceCleanup`.
+* Restores background playback support.
+
+## 2.8.4
+
+* Fixes incorrect width/height swap ([bug](https://github.com/flutter/flutter/issues/166097)). The swap was originally required for the uncorrected width/height of `Format` but was mistakenly retained after [switching to `VideoSize`](https://github.com/flutter/packages/pull/6535), which already accounts for rotation.
+* Fixes example app layout issue caused by `Transform.rotate`  not affecting space calculation (following [#8685](https://github.com/flutter/packages/pull/8685)).
+
 ## 2.8.3
 
 * Changes plugin to use `TextureRegistry.SurfaceProducer.handlesCropAndRotation` to detect

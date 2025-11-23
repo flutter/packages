@@ -1,0 +1,524 @@
+RouteBase get $extensionTypeParam => GoRouteData.$route(
+      path: '/',
+      factory: $ExtensionTypeParam._fromState,
+      routes: [
+        GoRouteData.$route(
+          path: 'string/:s',
+          factory: $ExtensionTypeStringParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'string_default/:s',
+          factory: $ExtensionTypeStringDefaultParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'int/:x',
+          factory: $ExtensionTypeIntParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'int_default/:x',
+          factory: $ExtensionTypeIntDefaultParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'double/:d',
+          factory: $ExtensionTypeDoubleParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'num/:n',
+          factory: $ExtensionTypeNumParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'bool/:b',
+          factory: $ExtensionTypeBoolParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'enum/:value',
+          factory: $ExtensionTypeEnumType._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'bigint/:bi',
+          factory: $ExtensionTypeBigIntParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'datetime/:dt',
+          factory: $ExtensionTypeDateTimeParam._fromState,
+        ),
+        GoRouteData.$route(
+          path: 'uri/:uri',
+          factory: $ExtensionTypeUriType._fromState,
+        ),
+      ],
+    );
+
+mixin $ExtensionTypeParam on GoRouteData {
+  static ExtensionTypeParam _fromState(GoRouterState state) =>
+      ExtensionTypeParam();
+
+  @override
+  String get location => GoRouteData.$location(
+        '/',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeStringParam on GoRouteData {
+  static ExtensionTypeStringParam _fromState(GoRouterState state) =>
+      ExtensionTypeStringParam(
+        s: state.pathParameters['s']! as StringExtensionType,
+        requiredValue:
+            state.uri.queryParameters['required-value']! as StringExtensionType,
+        optionalNullableValue: state.uri
+            .queryParameters['optional-nullable-value'] as StringExtensionType?,
+        optionalDefaultValue:
+            state.uri.queryParameters['optional-default-value']
+                    as StringExtensionType? ??
+                const StringExtensionType('default'),
+      );
+
+  ExtensionTypeStringParam get _self => this as ExtensionTypeStringParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/string/${Uri.encodeComponent(_self.s as String)}',
+        queryParams: {
+          'required-value': _self.requiredValue as String,
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue! as String,
+          if (_self.optionalDefaultValue !=
+              const StringExtensionType('default'))
+            'optional-default-value': _self.optionalDefaultValue as String,
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeStringDefaultParam on GoRouteData {
+  static ExtensionTypeStringDefaultParam _fromState(GoRouterState state) =>
+      ExtensionTypeStringDefaultParam(
+        s: state.pathParameters['s'] as StringExtensionType? ??
+            const StringExtensionType('default'),
+      );
+
+  ExtensionTypeStringDefaultParam get _self =>
+      this as ExtensionTypeStringDefaultParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/string_default/${Uri.encodeComponent(_self.s as String)}',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeIntParam on GoRouteData {
+  static ExtensionTypeIntParam _fromState(GoRouterState state) =>
+      ExtensionTypeIntParam(
+        x: int.parse(state.pathParameters['x']!) as IntExtensionType,
+        requiredValue: int.parse(state.uri.queryParameters['required-value']!)
+            as IntExtensionType,
+        optionalNullableValue: int.tryParse(
+                state.uri.queryParameters['optional-nullable-value'] ?? '')
+            as IntExtensionType?,
+        optionalDefaultValue: int.tryParse(
+                    state.uri.queryParameters['optional-default-value'] ?? '')
+                as IntExtensionType? ??
+            const IntExtensionType(42),
+      );
+
+  ExtensionTypeIntParam get _self => this as ExtensionTypeIntParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/int/${Uri.encodeComponent(_self.x.toString())}',
+        queryParams: {
+          'required-value': _self.requiredValue.toString(),
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
+          if (_self.optionalDefaultValue != const IntExtensionType(42))
+            'optional-default-value': _self.optionalDefaultValue.toString(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeIntDefaultParam on GoRouteData {
+  static ExtensionTypeIntDefaultParam _fromState(GoRouterState state) =>
+      ExtensionTypeIntDefaultParam(
+        x: int.tryParse(state.pathParameters['x'] ?? '') as IntExtensionType? ??
+            const IntExtensionType(42),
+      );
+
+  ExtensionTypeIntDefaultParam get _self =>
+      this as ExtensionTypeIntDefaultParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/int_default/${Uri.encodeComponent(_self.x.toString())}',
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeDoubleParam on GoRouteData {
+  static ExtensionTypeDoubleParam _fromState(GoRouterState state) =>
+      ExtensionTypeDoubleParam(
+        d: double.parse(state.pathParameters['d']!) as DoubleExtensionType,
+        requiredValue:
+            double.parse(state.uri.queryParameters['required-value']!)
+                as DoubleExtensionType,
+        optionalNullableValue: double.tryParse(
+                state.uri.queryParameters['optional-nullable-value'] ?? '')
+            as DoubleExtensionType?,
+        optionalDefaultValue: double.tryParse(
+                    state.uri.queryParameters['optional-default-value'] ?? '')
+                as DoubleExtensionType? ??
+            const DoubleExtensionType(3.14),
+      );
+
+  ExtensionTypeDoubleParam get _self => this as ExtensionTypeDoubleParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/double/${Uri.encodeComponent(_self.d.toString())}',
+        queryParams: {
+          'required-value': _self.requiredValue.toString(),
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
+          if (_self.optionalDefaultValue != const DoubleExtensionType(3.14))
+            'optional-default-value': _self.optionalDefaultValue.toString(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeNumParam on GoRouteData {
+  static ExtensionTypeNumParam _fromState(GoRouterState state) =>
+      ExtensionTypeNumParam(
+        n: num.parse(state.pathParameters['n']!) as NumExtensionType,
+        requiredValue: num.parse(state.uri.queryParameters['required-value']!)
+            as NumExtensionType,
+        optionalNullableValue: num.tryParse(
+                state.uri.queryParameters['optional-nullable-value'] ?? '')
+            as NumExtensionType?,
+        optionalDefaultValue: num.tryParse(
+                    state.uri.queryParameters['optional-default-value'] ?? '')
+                as NumExtensionType? ??
+            const NumExtensionType(3.14),
+      );
+
+  ExtensionTypeNumParam get _self => this as ExtensionTypeNumParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/num/${Uri.encodeComponent(_self.n.toString())}',
+        queryParams: {
+          'required-value': _self.requiredValue.toString(),
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
+          if (_self.optionalDefaultValue != const NumExtensionType(3.14))
+            'optional-default-value': _self.optionalDefaultValue.toString(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeBoolParam on GoRouteData {
+  static ExtensionTypeBoolParam _fromState(GoRouterState state) =>
+      ExtensionTypeBoolParam(
+        b: bool.parse(state.pathParameters['b']!) as BoolExtensionType,
+        requiredValue: bool.parse(state.uri.queryParameters['required-value']!)
+            as BoolExtensionType,
+        optionalNullableValue: bool.tryParse(
+                state.uri.queryParameters['optional-nullable-value'] ?? '')
+            as BoolExtensionType?,
+        optionalDefaultValue: bool.tryParse(
+                    state.uri.queryParameters['optional-default-value'] ?? '')
+                as BoolExtensionType? ??
+            const BoolExtensionType(true),
+      );
+
+  ExtensionTypeBoolParam get _self => this as ExtensionTypeBoolParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/bool/${Uri.encodeComponent(_self.b.toString())}',
+        queryParams: {
+          'required-value': _self.requiredValue.toString(),
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
+          if (_self.optionalDefaultValue != const BoolExtensionType(true))
+            'optional-default-value': _self.optionalDefaultValue.toString(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeEnumType on GoRouteData {
+  static ExtensionTypeEnumType _fromState(GoRouterState state) =>
+      ExtensionTypeEnumType(
+        value: _$MyEnumEnumMap._$fromName(state.pathParameters['value']!)
+            as EnumExtensionType,
+        requiredValue: _$MyEnumEnumMap._$fromName(
+            state.uri.queryParameters['required-value']!) as EnumExtensionType,
+        optionalNullableValue: _$MyEnumEnumMap._$fromName(
+                state.uri.queryParameters['optional-nullable-value'])
+            as EnumExtensionType?,
+        optionalDefaultValue: _$MyEnumEnumMap._$fromName(
+                    state.uri.queryParameters['optional-default-value'])
+                as EnumExtensionType? ??
+            const EnumExtensionType(MyEnum.value1),
+      );
+
+  ExtensionTypeEnumType get _self => this as ExtensionTypeEnumType;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/enum/${Uri.encodeComponent(_$MyEnumEnumMap[_self.value as MyEnum]!)}',
+        queryParams: {
+          'required-value': _$MyEnumEnumMap[_self.requiredValue as MyEnum]!,
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value':
+                _$MyEnumEnumMap[_self.optionalNullableValue! as MyEnum]!,
+          if (_self.optionalDefaultValue !=
+              const EnumExtensionType(MyEnum.value1))
+            'optional-default-value':
+                _$MyEnumEnumMap[_self.optionalDefaultValue as MyEnum]!,
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+const _$MyEnumEnumMap = {
+  MyEnum.value1: 'value1',
+  MyEnum.value2: 'value2',
+  MyEnum.value3: 'value3',
+};
+
+mixin $ExtensionTypeBigIntParam on GoRouteData {
+  static ExtensionTypeBigIntParam _fromState(GoRouterState state) =>
+      ExtensionTypeBigIntParam(
+        bi: BigInt.parse(state.pathParameters['bi']!) as BigIntExtensionType,
+        requiredValue:
+            BigInt.parse(state.uri.queryParameters['required-value']!)
+                as BigIntExtensionType,
+        optionalValue:
+            BigInt.tryParse(state.uri.queryParameters['optional-value'] ?? '')
+                as BigIntExtensionType?,
+        optionalNullableValue: BigInt.tryParse(
+                state.uri.queryParameters['optional-nullable-value'] ?? '')
+            as BigIntExtensionType?,
+      );
+
+  ExtensionTypeBigIntParam get _self => this as ExtensionTypeBigIntParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/bigint/${Uri.encodeComponent(_self.bi.toString())}',
+        queryParams: {
+          'required-value': _self.requiredValue.toString(),
+          if (_self.optionalValue != null)
+            'optional-value': _self.optionalValue!.toString(),
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeDateTimeParam on GoRouteData {
+  static ExtensionTypeDateTimeParam _fromState(GoRouterState state) =>
+      ExtensionTypeDateTimeParam(
+        dt: DateTime.parse(state.pathParameters['dt']!)
+            as DateTimeExtensionType,
+        optionalValue:
+            DateTime.parse(state.uri.queryParameters['optional-value']!)
+                as DateTimeExtensionType,
+        optionalNullableValue: DateTime.tryParse(
+                state.uri.queryParameters['optional-nullable-value'] ?? '')
+            as DateTimeExtensionType?,
+      );
+
+  ExtensionTypeDateTimeParam get _self => this as ExtensionTypeDateTimeParam;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/datetime/${Uri.encodeComponent(_self.dt.toString())}',
+        queryParams: {
+          'optional-value': _self.optionalValue.toString(),
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+mixin $ExtensionTypeUriType on GoRouteData {
+  static ExtensionTypeUriType _fromState(GoRouterState state) =>
+      ExtensionTypeUriType(
+        uri: Uri.parse(state.pathParameters['uri']!) as UriExtensionType,
+        requiredValue: Uri.parse(state.uri.queryParameters['required-value']!)
+            as UriExtensionType,
+        optionalNullableValue: Uri.tryParse(
+                state.uri.queryParameters['optional-nullable-value'] ?? '')
+            as UriExtensionType?,
+      );
+
+  ExtensionTypeUriType get _self => this as ExtensionTypeUriType;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/uri/${Uri.encodeComponent(_self.uri.toString())}',
+        queryParams: {
+          'required-value': _self.requiredValue.toString(),
+          if (_self.optionalNullableValue != null)
+            'optional-nullable-value': _self.optionalNullableValue!.toString(),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+extension<T extends Enum> on Map<T, String> {
+  T? _$fromName(String? value) =>
+      entries.where((element) => element.value == value).firstOrNull?.key;
+}

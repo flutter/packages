@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,9 +8,9 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 private final class MockUIDevice: UIDevice {
@@ -24,14 +24,14 @@ private final class MockUIDevice: UIDevice {
 final class CameraOrientationTests: XCTestCase {
   private func createCameraPlugin() -> (
     cameraPlugin: CameraPlugin,
-    mockCamera: MockFLTCam,
+    mockCamera: MockCamera,
     mockEventAPI: MockGlobalEventApi,
     mockDevice: MockCaptureDevice,
     mockDeviceDiscoverer: MockCameraDeviceDiscoverer,
     captureSessionQueue: DispatchQueue
   ) {
     let mockDevice = MockCaptureDevice()
-    let mockCamera = MockFLTCam()
+    let mockCamera = MockCamera()
     let mockEventAPI = MockGlobalEventApi()
     let mockDeviceDiscoverer = MockCameraDeviceDiscoverer()
     let captureSessionQueue = DispatchQueue(label: "io.flutter.camera.captureSessionQueue")

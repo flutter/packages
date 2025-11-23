@@ -7,11 +7,19 @@ part of 'enum_converters.dart';
 // **************************************************************************
 
 _SerializedEnums _$SerializedEnumsFromJson(Map json) => _SerializedEnums()
-  ..response =
-      $enumDecode(_$SKPaymentTransactionStateWrapperEnumMap, json['response'])
+  ..response = $enumDecode(
+    _$SKPaymentTransactionStateWrapperEnumMap,
+    json['response'],
+  )
   ..unit = $enumDecode(_$SKSubscriptionPeriodUnitEnumMap, json['unit'])
   ..discountPaymentMode = $enumDecode(
-      _$SKProductDiscountPaymentModeEnumMap, json['discountPaymentMode']);
+    _$SKProductDiscountPaymentModeEnumMap,
+    json['discountPaymentMode'],
+  )
+  ..discountType = $enumDecode(
+    _$SKProductDiscountTypeEnumMap,
+    json['discountType'],
+  );
 
 const _$SKPaymentTransactionStateWrapperEnumMap = {
   SKPaymentTransactionStateWrapper.purchasing: 0,

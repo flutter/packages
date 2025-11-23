@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -51,8 +51,7 @@ class FocusMeteringActionBuilderProxyApi extends PigeonApiFocusMeteringActionBui
 
   @NonNull
   @Override
-  public androidx.camera.core.FocusMeteringAction build(
-      FocusMeteringAction.Builder pigeonInstance) {
+  public FocusMeteringAction build(FocusMeteringAction.Builder pigeonInstance) {
     return pigeonInstance.build();
   }
 

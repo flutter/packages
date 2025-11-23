@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,41 +9,45 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test(
-      'MediaSettings non-parametrized constructor should have correct initial values',
-      () {
-    const MediaSettings settingsWithNoParameters = MediaSettings();
+    'MediaSettings non-parametrized constructor should have correct initial values',
+    () {
+      const MediaSettings settingsWithNoParameters = MediaSettings();
 
-    expect(
-      settingsWithNoParameters.resolutionPreset,
-      isNull,
-      reason:
-          'MediaSettings constructor should have null default resolutionPreset',
-    );
+      expect(
+        settingsWithNoParameters.resolutionPreset,
+        isNull,
+        reason:
+            'MediaSettings constructor should have null default resolutionPreset',
+      );
 
-    expect(
-      settingsWithNoParameters.fps,
-      isNull,
-      reason: 'MediaSettings constructor should have null default fps',
-    );
+      expect(
+        settingsWithNoParameters.fps,
+        isNull,
+        reason: 'MediaSettings constructor should have null default fps',
+      );
 
-    expect(
-      settingsWithNoParameters.videoBitrate,
-      isNull,
-      reason: 'MediaSettings constructor should have null default videoBitrate',
-    );
+      expect(
+        settingsWithNoParameters.videoBitrate,
+        isNull,
+        reason:
+            'MediaSettings constructor should have null default videoBitrate',
+      );
 
-    expect(
-      settingsWithNoParameters.audioBitrate,
-      isNull,
-      reason: 'MediaSettings constructor should have null default audioBitrate',
-    );
+      expect(
+        settingsWithNoParameters.audioBitrate,
+        isNull,
+        reason:
+            'MediaSettings constructor should have null default audioBitrate',
+      );
 
-    expect(
-      settingsWithNoParameters.enableAudio,
-      isFalse,
-      reason: 'MediaSettings constructor should have false default enableAudio',
-    );
-  });
+      expect(
+        settingsWithNoParameters.enableAudio,
+        isFalse,
+        reason:
+            'MediaSettings constructor should have false default enableAudio',
+      );
+    },
+  );
 
   test('MediaSettings fps should hold parameters', () {
     const MediaSettings settings = MediaSettings(
@@ -194,10 +198,7 @@ void main() {
         enableAudio: enableAudio1,
       );
 
-      expect(
-        settings1 == sameSettings,
-        isTrue,
-      );
+      expect(settings1 == sameSettings, isTrue);
     });
 
     test('Identical objects should be equal', () {

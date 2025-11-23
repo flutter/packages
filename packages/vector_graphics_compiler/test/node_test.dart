@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,18 +32,12 @@ void main() {
   });
 
   test('TextNode returns null for Paint if stroke and fill are missing', () {
-    final TextNode node = TextNode(
-      'text',
-      SvgAttributes.empty,
-    );
+    final TextNode node = TextNode('text', SvgAttributes.empty);
     expect(node.computePaint(Rect.largest, AffineMatrix.identity), null);
   });
 
   test('PathNode returns null for Paint if stroke and fill are missing', () {
-    final PathNode node = PathNode(
-      Path(),
-      SvgAttributes.empty,
-    );
+    final PathNode node = PathNode(Path(), SvgAttributes.empty);
     expect(node.computePaint(Rect.largest, AffineMatrix.identity), null);
   });
 }

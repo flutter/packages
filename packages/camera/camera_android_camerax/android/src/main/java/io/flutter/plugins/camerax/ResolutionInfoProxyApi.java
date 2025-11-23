@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camerax;
 
+import android.util.Size;
 import androidx.annotation.NonNull;
 import androidx.camera.core.ResolutionInfo;
 
@@ -20,7 +21,7 @@ class ResolutionInfoProxyApi extends PigeonApiResolutionInfo {
 
   @NonNull
   @Override
-  public android.util.Size resolution(ResolutionInfo pigeonInstance) {
+  public Size resolution(ResolutionInfo pigeonInstance) {
     return pigeonInstance.getResolution();
   }
 }

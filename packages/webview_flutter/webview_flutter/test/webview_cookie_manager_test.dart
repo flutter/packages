@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,14 +16,12 @@ void main() {
     test('clearCookies', () async {
       final MockPlatformWebViewCookieManager mockPlatformWebViewCookieManager =
           MockPlatformWebViewCookieManager();
-      when(mockPlatformWebViewCookieManager.clearCookies()).thenAnswer(
-        (_) => Future<bool>.value(false),
-      );
+      when(
+        mockPlatformWebViewCookieManager.clearCookies(),
+      ).thenAnswer((_) => Future<bool>.value(false));
 
       final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(
-        mockPlatformWebViewCookieManager,
-      );
+          WebViewCookieManager.fromPlatform(mockPlatformWebViewCookieManager);
 
       await expectLater(cookieManager.clearCookies(), completion(false));
     });
@@ -33,9 +31,7 @@ void main() {
           MockPlatformWebViewCookieManager();
 
       final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(
-        mockPlatformWebViewCookieManager,
-      );
+          WebViewCookieManager.fromPlatform(mockPlatformWebViewCookieManager);
 
       const WebViewCookie cookie = WebViewCookie(
         name: 'name',
@@ -45,9 +41,11 @@ void main() {
 
       await cookieManager.setCookie(cookie);
 
-      final WebViewCookie capturedCookie = verify(
-        mockPlatformWebViewCookieManager.setCookie(captureAny),
-      ).captured.single as WebViewCookie;
+      final WebViewCookie capturedCookie =
+          verify(
+                mockPlatformWebViewCookieManager.setCookie(captureAny),
+              ).captured.single
+              as WebViewCookie;
       expect(capturedCookie, cookie);
     });
   });

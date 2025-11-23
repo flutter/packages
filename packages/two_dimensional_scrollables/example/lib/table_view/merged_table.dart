@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -101,8 +101,8 @@ class _MergedTableExampleState extends State<MergedTableExample> {
     final ({String name, Color color}) cell = _getColorForVicinity(vicinity);
     final Color textColor =
         ThemeData.estimateBrightnessForColor(cell.color) == Brightness.light
-            ? Colors.black
-            : Colors.white;
+        ? Colors.black
+        : Colors.white;
     final TextStyle style = TextStyle(
       color: textColor,
       fontSize: 18.0,
@@ -113,9 +113,7 @@ class _MergedTableExampleState extends State<MergedTableExample> {
       rowMergeSpan: vicinity.column == 0 ? 3 : null,
       child: ColoredBox(
         color: cell.color,
-        child: Center(
-          child: Text(cell.name, style: style),
-        ),
+        child: Center(child: Text(cell.name, style: style)),
       ),
     );
   }
@@ -126,10 +124,7 @@ class _MergedTableExampleState extends State<MergedTableExample> {
       foregroundDecoration: index == 0
           ? const TableSpanDecoration(
               border: TableSpanBorder(
-                trailing: BorderSide(
-                  width: 5,
-                  color: Colors.white,
-                ),
+                trailing: BorderSide(width: 5, color: Colors.white),
               ),
             )
           : null,

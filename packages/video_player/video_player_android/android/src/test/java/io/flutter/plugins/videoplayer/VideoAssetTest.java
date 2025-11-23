@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,9 +6,9 @@ package io.flutter.plugins.videoplayer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyMap;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -55,17 +55,21 @@ public final class VideoAssetTest {
 
   private static DefaultHttpDataSource.Factory mockHttpFactory() {
     DefaultHttpDataSource.Factory httpFactory = mock(DefaultHttpDataSource.Factory.class);
-    when(httpFactory.setUserAgent(anyString())).thenReturn(httpFactory);
+    when(httpFactory.setUserAgent(any())).thenReturn(httpFactory);
     when(httpFactory.setAllowCrossProtocolRedirects(anyBoolean())).thenReturn(httpFactory);
     when(httpFactory.setDefaultRequestProperties(anyMap())).thenReturn(httpFactory);
     return httpFactory;
   }
 
   @Test
-  public void remoteVideoByDefaultSetsUserAgentAndCrossProtocolRedirects() {
+  public void remoteVideoSetsUserAgentAndCrossProtocolRedirects() {
+    final String userAgent = "A User Agent";
     VideoAsset asset =
         VideoAsset.fromRemoteUrl(
-            "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.UNKNOWN, new HashMap<>());
+            "https://flutter.dev/video.mp4",
+            VideoAsset.StreamingFormat.UNKNOWN,
+            new HashMap<>(),
+            userAgent);
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
 
@@ -73,29 +77,9 @@ public final class VideoAssetTest {
     ((HttpVideoAsset) asset)
         .getMediaSourceFactory(ApplicationProvider.getApplicationContext(), mockFactory);
 
-    verify(mockFactory).setUserAgent("ExoPlayer");
+    verify(mockFactory).setUserAgent(userAgent);
     verify(mockFactory).setAllowCrossProtocolRedirects(true);
     verify(mockFactory, never()).setDefaultRequestProperties(anyMap());
-  }
-
-  @Test
-  public void remoteVideoOverridesUserAgentIfProvided() {
-    Map<String, String> headers = new HashMap<>();
-    headers.put("User-Agent", "FantasticalVideoBot");
-
-    VideoAsset asset =
-        VideoAsset.fromRemoteUrl(
-            "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.UNKNOWN, headers);
-
-    DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
-
-    // Cast to HttpVideoAsset to call a testing-only method to intercept calls.
-    ((HttpVideoAsset) asset)
-        .getMediaSourceFactory(ApplicationProvider.getApplicationContext(), mockFactory);
-
-    verify(mockFactory).setUserAgent("FantasticalVideoBot");
-    verify(mockFactory).setAllowCrossProtocolRedirects(true);
-    verify(mockFactory).setDefaultRequestProperties(headers);
   }
 
   // This tests that without using the overrides we get a working, non-mocked object.
@@ -105,7 +89,10 @@ public final class VideoAssetTest {
   public void remoteVideoGetMediaSourceFactoryInProductionReturnsRealMediaSource() {
     VideoAsset asset =
         VideoAsset.fromRemoteUrl(
-            "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.UNKNOWN, new HashMap<>());
+            "https://flutter.dev/video.mp4",
+            VideoAsset.StreamingFormat.UNKNOWN,
+            new HashMap<>(),
+            null);
 
     MediaSource source =
         asset
@@ -123,7 +110,7 @@ public final class VideoAssetTest {
 
     VideoAsset asset =
         VideoAsset.fromRemoteUrl(
-            "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.UNKNOWN, headers);
+            "https://flutter.dev/video.mp4", VideoAsset.StreamingFormat.UNKNOWN, headers, null);
 
     DefaultHttpDataSource.Factory mockFactory = mockHttpFactory();
 
@@ -131,7 +118,6 @@ public final class VideoAssetTest {
     ((HttpVideoAsset) asset)
         .getMediaSourceFactory(ApplicationProvider.getApplicationContext(), mockFactory);
 
-    verify(mockFactory).setUserAgent("ExoPlayer");
     verify(mockFactory).setAllowCrossProtocolRedirects(true);
     verify(mockFactory).setDefaultRequestProperties(headers);
   }

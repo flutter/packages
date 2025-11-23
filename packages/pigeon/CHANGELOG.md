@@ -1,3 +1,63 @@
+## 26.1.2
+
+* [kotlin] Fixes compilation error with unbounded type parameter for InstanceManager.
+
+## 26.1.1
+
+* Updates supported `analyzer` versions to 8.x or 9.x.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 26.1.0
+
+* Deprecates `dartHostTestHandler` and `dartTestOut`.
+  * If you have a use case where this cannot easily be replaced with a mock or
+    fake of the generated Dart API, please provide details in
+    https://github.com/flutter/flutter/issues/178322.
+
+## 26.0.5
+
+* [kotlin] Serialize custom enums as `Long` instead of `Int` to avoid `ClassCastException` on decoding.
+
+## 26.0.4
+
+* Adds compatibility with `analyzer` 8.x.
+
+## 26.0.3
+
+* [kotlin] Removes all `containsKey` and replaces with `contains`.
+
+## 26.0.2
+
+* [kotlin] Fixes support for classes that override equals and hashCode for ProxyApis.
+* [kotlin] Adds error message log when a new Dart proxy instance fails to be created.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 26.0.1
+
+* Improves documentation of `ProxyApi` annotation and internal Dart ProxyAPI helper functions.
+* Moves helper functions for generating Dart portion of ProxyAPIs.
+
+## 26.0.0
+
+* **Breaking Change** [dart] Changes name of constructors used to create subclasses of ProxyApis to
+  `pigeon_**original_name**`.
+* [dart] Adds ProxyApi overrides classes to be used in Flutter unit tests.
+
+## 25.5.0
+
+* [dart] Changes the default InstanceManager and its initialization to no longer make a message call
+  when used in a Flutter unit test.
+
+## 25.4.0
+
+* [gobject] Adds type id constants in header files so that they can be used by the user.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 25.3.2
+
+* [dart] Fixes null pointer crashes/exceptions caused by premature finalization of Dart instances
+  for ProxyApis.
+
 ## 25.3.1
 
 * [kotlin] Fixes Kotlin InstanceManager not properly removing callbacks from handler.

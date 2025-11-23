@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -80,54 +80,44 @@ class ResourceRecordQuery {
   ) : assert(ResourceRecordType.debugAssertValid(resourceRecordType));
 
   /// An A (IPv4) query.
-  ResourceRecordQuery.addressIPv4(
-    String name, {
-    bool isMulticast = true,
-  }) : this(
-          ResourceRecordType.addressIPv4,
-          name,
-          isMulticast ? QuestionType.multicast : QuestionType.unicast,
-        );
+  ResourceRecordQuery.addressIPv4(String name, {bool isMulticast = true})
+    : this(
+        ResourceRecordType.addressIPv4,
+        name,
+        isMulticast ? QuestionType.multicast : QuestionType.unicast,
+      );
 
   /// An AAAA (IPv6) query.
-  ResourceRecordQuery.addressIPv6(
-    String name, {
-    bool isMulticast = true,
-  }) : this(
-          ResourceRecordType.addressIPv6,
-          name,
-          isMulticast ? QuestionType.multicast : QuestionType.unicast,
-        );
+  ResourceRecordQuery.addressIPv6(String name, {bool isMulticast = true})
+    : this(
+        ResourceRecordType.addressIPv6,
+        name,
+        isMulticast ? QuestionType.multicast : QuestionType.unicast,
+      );
 
   /// A PTR (Server pointer) query.
-  ResourceRecordQuery.serverPointer(
-    String name, {
-    bool isMulticast = true,
-  }) : this(
-          ResourceRecordType.serverPointer,
-          name,
-          isMulticast ? QuestionType.multicast : QuestionType.unicast,
-        );
+  ResourceRecordQuery.serverPointer(String name, {bool isMulticast = true})
+    : this(
+        ResourceRecordType.serverPointer,
+        name,
+        isMulticast ? QuestionType.multicast : QuestionType.unicast,
+      );
 
   /// An SRV (Service) query.
-  ResourceRecordQuery.service(
-    String name, {
-    bool isMulticast = true,
-  }) : this(
-          ResourceRecordType.service,
-          name,
-          isMulticast ? QuestionType.multicast : QuestionType.unicast,
-        );
+  ResourceRecordQuery.service(String name, {bool isMulticast = true})
+    : this(
+        ResourceRecordType.service,
+        name,
+        isMulticast ? QuestionType.multicast : QuestionType.unicast,
+      );
 
   /// A TXT (Text record) query.
-  ResourceRecordQuery.text(
-    String name, {
-    bool isMulticast = true,
-  }) : this(
-          ResourceRecordType.text,
-          name,
-          isMulticast ? QuestionType.multicast : QuestionType.unicast,
-        );
+  ResourceRecordQuery.text(String name, {bool isMulticast = true})
+    : this(
+        ResourceRecordType.text,
+        name,
+        isMulticast ? QuestionType.multicast : QuestionType.unicast,
+      );
 
   /// Tye type of resource record - one of [ResourceRecordType]'s values.
   final int resourceRecordType;
@@ -244,16 +234,14 @@ class PtrResourceRecord extends ResourceRecord {
 /// An IP Address record for IPv4 (DNS "A") or IPv6 (DNS "AAAA") records.
 class IPAddressResourceRecord extends ResourceRecord {
   /// Creates a new IPAddressResourceRecord.
-  IPAddressResourceRecord(
-    String name,
-    int validUntil, {
-    required this.address,
-  }) : super(
-            address.type == InternetAddressType.IPv4
-                ? ResourceRecordType.addressIPv4
-                : ResourceRecordType.addressIPv6,
-            name,
-            validUntil);
+  IPAddressResourceRecord(String name, int validUntil, {required this.address})
+    : super(
+        address.type == InternetAddressType.IPv4
+            ? ResourceRecordType.addressIPv4
+            : ResourceRecordType.addressIPv6,
+        name,
+        validUntil,
+      );
 
   /// The [InternetAddress] for this record.
   final InternetAddress address;
@@ -335,11 +323,8 @@ class SrvResourceRecord extends ResourceRecord {
 /// A Text record, contianing additional textual data (DNS "TXT").
 class TxtResourceRecord extends ResourceRecord {
   /// Creates a new text record.
-  const TxtResourceRecord(
-    String name,
-    int validUntil, {
-    required this.text,
-  }) : super(ResourceRecordType.text, name, validUntil);
+  const TxtResourceRecord(String name, int validUntil, {required this.text})
+    : super(ResourceRecordType.text, name, validUntil);
 
   /// The raw text from this record.
   final String text;

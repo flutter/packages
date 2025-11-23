@@ -1,3 +1,42 @@
+## 3.23.4
+
+* Replaces use of deprecated Color.value.
+
+## 3.23.3
+
+* Updates to Pigeon 26.
+
+## 3.23.2
+
+* Removes specialization of 'map' to fix a Swift warning.
+
+## 3.23.1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
+## 3.23.0
+
+* Adds support for `PlatformWebViewController.loadFileWithParams`.
+* Introduces `WebKitLoadFileParams`, a platform-specific extension of `LoadFileParams` for iOS and macOS that adds support for `readAccessPath`.
+
+## 3.22.1
+
+* Changes the handling of a Flutter method failure from throwing an assertion error to logging the
+  error.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
+## 3.22.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `WebKitNavigationDelegate.setOnSSlAuthError`.
+
+## 3.21.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `WebKitWebViewController.setVerticalScrollBarEnabled`,
+  `WebKitWebViewController.setHorizontalScrollBarEnabled`,
+  `WebKitWebViewController.supportsSetScrollBarsEnabled`.
+
 ## 3.20.0
 
 * Adds support to disable a preview of the destination for a link. See

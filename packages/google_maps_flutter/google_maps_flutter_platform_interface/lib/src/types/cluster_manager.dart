@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,10 +19,7 @@ class ClusterManagerId extends MapsObjectId<ClusterManager> {
 @immutable
 class ClusterManager implements MapsObject<ClusterManager> {
   /// Creates an immutable object for managing clustering for set of markers.
-  const ClusterManager({
-    required this.clusterManagerId,
-    this.onClusterTap,
-  });
+  const ClusterManager({required this.clusterManagerId, this.onClusterTap});
 
   /// Uniquely identifies a [ClusterManager].
   final ClusterManagerId clusterManagerId;
@@ -35,9 +32,7 @@ class ClusterManager implements MapsObject<ClusterManager> {
 
   /// Creates a new [ClusterManager] object whose values are the same as this instance,
   /// unless overwritten by the specified parameters.
-  ClusterManager copyWith({
-    ArgumentCallback<Cluster>? onClusterTapParam,
-  }) {
+  ClusterManager copyWith({ArgumentCallback<Cluster>? onClusterTapParam}) {
     return ClusterManager(
       clusterManagerId: clusterManagerId,
       onClusterTap: onClusterTapParam ?? onClusterTap,

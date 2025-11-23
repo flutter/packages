@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,10 +30,16 @@ class ImageResizer {
     }
     try {
       final web.HTMLImageElement imageElement = await loadImage(file.path);
-      final web.HTMLCanvasElement canvas =
-          resizeImageElement(imageElement, maxWidth, maxHeight);
-      final XFile resizedImage =
-          await writeCanvasToFile(file, canvas, imageQuality);
+      final web.HTMLCanvasElement canvas = resizeImageElement(
+        imageElement,
+        maxWidth,
+        maxHeight,
+      );
+      final XFile resizedImage = await writeCanvasToFile(
+        file,
+        canvas,
+        imageQuality,
+      );
       web.URL.revokeObjectURL(file.path);
       return resizedImage;
     } catch (e) {
@@ -66,9 +72,10 @@ class ImageResizer {
     double? maxHeight,
   ) {
     final Size newImageSize = calculateSizeOfDownScaledImage(
-        Size(source.width.toDouble(), source.height.toDouble()),
-        maxWidth,
-        maxHeight);
+      Size(source.width.toDouble(), source.height.toDouble()),
+      maxWidth,
+      maxHeight,
+    );
     final web.HTMLCanvasElement canvas = web.HTMLCanvasElement()
       ..width = newImageSize.width.toInt()
       ..height = newImageSize.height.toInt();
@@ -76,8 +83,13 @@ class ImageResizer {
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);
     } else {
-      context.drawImageScaled(
-          source, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
+      context.drawImage(
+        source,
+        0,
+        0,
+        canvas.width.toDouble(),
+        canvas.height.toDouble(),
+      );
     }
     return canvas;
   }
@@ -94,14 +106,21 @@ class ImageResizer {
         (min(imageQuality ?? 100, 100)) / 100.0;
     final Completer<XFile> completer = Completer<XFile>();
     final web.BlobCallback blobCallback = (web.Blob blob) {
-      completer.complete(XFile(web.URL.createObjectURL(blob),
+      completer.complete(
+        XFile(
+          web.URL.createObjectURL(blob),
           mimeType: originalFile.mimeType,
           name: 'scaled_${originalFile.name}',
           lastModified: DateTime.now(),
-          length: blob.size));
+          length: blob.size,
+        ),
+      );
     }.toJS;
     canvas.toBlob(
-        blobCallback, originalFile.mimeType ?? '', calculatedImageQuality.toJS);
+      blobCallback,
+      originalFile.mimeType ?? '',
+      calculatedImageQuality.toJS,
+    );
     return completer.future;
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,8 +16,9 @@ void main() {
     InAppPurchaseAndroidPlatform.registerPlatform();
   });
 
-  testWidgets('Can create InAppPurchaseAndroid instance',
-      (WidgetTester tester) async {
+  testWidgets('Can create InAppPurchaseAndroid instance', (
+    WidgetTester tester,
+  ) async {
     final InAppPurchasePlatform androidPlatform =
         InAppPurchasePlatform.instance;
     expect(androidPlatform, isNotNull);
@@ -28,11 +29,14 @@ void main() {
 
     setUpAll(() {
       billingClient = BillingClient(
-          (PurchasesResultWrapper _) {}, (UserChoiceDetailsWrapper _) {});
+        (PurchasesResultWrapper _) {},
+        (UserChoiceDetailsWrapper _) {},
+      );
     });
 
-    testWidgets('BillingClient.acknowledgePurchase',
-        (WidgetTester tester) async {
+    testWidgets('BillingClient.acknowledgePurchase', (
+      WidgetTester tester,
+    ) async {
       try {
         await billingClient.acknowledgePurchase('purchaseToken');
       } on MissingPluginException {
@@ -56,11 +60,13 @@ void main() {
       }
     });
 
-    testWidgets('BillingClient.isFeatureSupported',
-        (WidgetTester tester) async {
+    testWidgets('BillingClient.isFeatureSupported', (
+      WidgetTester tester,
+    ) async {
       try {
-        await billingClient
-            .isFeatureSupported(BillingClientFeature.productDetails);
+        await billingClient.isFeatureSupported(
+          BillingClientFeature.productDetails,
+        );
       } on MissingPluginException {
         fail('Method channel is not setup correctly');
       }
@@ -87,11 +93,13 @@ void main() {
       }
     });
 
-    testWidgets('BillingClient.queryProductDetails',
-        (WidgetTester tester) async {
+    testWidgets('BillingClient.queryProductDetails', (
+      WidgetTester tester,
+    ) async {
       try {
-        await billingClient
-            .queryProductDetails(productList: <ProductWrapper>[]);
+        await billingClient.queryProductDetails(
+          productList: <ProductWrapper>[],
+        );
       } on MissingPluginException {
         fail('Method channel is not setup correctly');
       } on PlatformException catch (e) {
@@ -103,9 +111,12 @@ void main() {
       }
     });
 
-    testWidgets('BillingClient.queryPurchaseHistory',
-        (WidgetTester tester) async {
+    testWidgets('BillingClient.queryPurchaseHistory', (
+      WidgetTester tester,
+    ) async {
       try {
+        // Intentional use of a deprecated method to make sure it still works.
+        // ignore: deprecated_member_use
         await billingClient.queryPurchaseHistory(ProductType.inapp);
       } on MissingPluginException {
         fail('Method channel is not setup correctly');
@@ -123,7 +134,8 @@ void main() {
     testWidgets('BillingClient.startConnection', (WidgetTester tester) async {
       try {
         await billingClient.startConnection(
-            onBillingServiceDisconnected: () {});
+          onBillingServiceDisconnected: () {},
+        );
       } on MissingPluginException {
         fail('Method channel is not setup correctly');
       }

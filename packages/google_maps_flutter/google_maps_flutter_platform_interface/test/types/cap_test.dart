@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,23 +26,27 @@ void main() {
   test('customCap', () {
     final Cap cap = Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker);
     expect(
-        cap.toJson(),
-        equals(<Object>[
-          'customCap',
-          <Object>['defaultMarker'],
-          10.0
-        ]));
+      cap.toJson(),
+      equals(<Object>[
+        'customCap',
+        <Object>['defaultMarker'],
+        10.0,
+      ]),
+    );
   });
 
   test('customCapWithWidth', () {
-    final Cap cap =
-        Cap.customCapFromBitmap(BitmapDescriptor.defaultMarker, refWidth: 100);
+    final Cap cap = Cap.customCapFromBitmap(
+      BitmapDescriptor.defaultMarker,
+      refWidth: 100,
+    );
     expect(
-        cap.toJson(),
-        equals(<Object>[
-          'customCap',
-          <Object>['defaultMarker'],
-          100.0
-        ]));
+      cap.toJson(),
+      equals(<Object>[
+        'customCap',
+        <Object>['defaultMarker'],
+        100.0,
+      ]),
+    );
   });
 }

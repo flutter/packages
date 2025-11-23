@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camera;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.MeteringRectangle;
@@ -126,6 +127,7 @@ public final class CameraRegionUtils {
     return MeteringRectangleFactory.create(targetX, targetY, targetWidth, targetHeight, 1);
   }
 
+  @SuppressLint("UseRequiresApi")
   @TargetApi(Build.VERSION_CODES.P)
   private static boolean supportsDistortionCorrection(CameraProperties cameraProperties) {
     int[] availableDistortionCorrectionModes =

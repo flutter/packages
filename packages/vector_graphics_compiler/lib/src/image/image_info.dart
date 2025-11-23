@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,8 +32,8 @@ abstract class ImageSizeData {
     required this.format,
     required this.width,
     required this.height,
-  })  : assert(width >= 0),
-        assert(height >= 0);
+  }) : assert(width >= 0),
+       assert(height >= 0);
 
   /// Creates an appropriate [ImageSizeData] for the source `bytes`, if possible.
   ///
@@ -89,11 +89,11 @@ abstract class ImageSizeData {
 /// The [ImageSizeData] for a PNG image.
 class PngImageSizeData extends ImageSizeData {
   PngImageSizeData._(ByteData data)
-      : super(
-          format: ImageFormat.png,
-          width: data.getUint32(16),
-          height: data.getUint32(20),
-        );
+    : super(
+        format: ImageFormat.png,
+        width: data.getUint32(16),
+        height: data.getUint32(20),
+      );
 
   /// Returns true if `bytes` starts with the expected header for a PNG image.
   static bool matches(Uint8List bytes) {
@@ -112,11 +112,11 @@ class PngImageSizeData extends ImageSizeData {
 /// The [ImageSizeData] for a GIF image.
 class GifImageSizeData extends ImageSizeData {
   GifImageSizeData._(ByteData data)
-      : super(
-          format: ImageFormat.gif,
-          width: data.getUint16(6, Endian.little),
-          height: data.getUint16(8, Endian.little),
-        );
+    : super(
+        format: ImageFormat.gif,
+        width: data.getUint16(6, Endian.little),
+        height: data.getUint16(8, Endian.little),
+      );
 
   /// Returns true if `bytes` starts with the expected header for a GIF image.
   static bool matches(Uint8List bytes) {
@@ -136,9 +136,7 @@ class GifImageSizeData extends ImageSizeData {
 /// This library does not support JPEG2000 images.
 class JpegImageSizeData extends ImageSizeData {
   JpegImageSizeData._({required super.width, required super.height})
-      : super(
-          format: ImageFormat.jpeg,
-        );
+    : super(format: ImageFormat.jpeg);
 
   factory JpegImageSizeData._fromBytes(ByteData data) {
     int index = 4; // Skip the first header bytes (already validated).
@@ -173,29 +171,36 @@ class JpegImageSizeData extends ImageSizeData {
 /// The [ImageSizeData] for a WebP image.
 class WebPImageSizeData extends ImageSizeData {
   WebPImageSizeData._(ByteData data)
-      : super(
-          format: ImageFormat.webp,
-          width: data.getUint16(26, Endian.little),
-          height: data.getUint16(28, Endian.little),
-        );
+    : super(
+        format: ImageFormat.webp,
+        width: data.getUint16(26, Endian.little),
+        height: data.getUint16(28, Endian.little),
+      );
 
   /// Returns true if `bytes` starts with the expected header for a WebP image.
   static bool matches(Uint8List bytes) {
     return bytes.lengthInBytes > 28 &&
-        bytes[0] == 0x52 // R
-        &&
-        bytes[1] == 0x49 // I
-        &&
-        bytes[2] == 0x46 // F
-        &&
-        bytes[3] == 0x46 // F
-        &&
-        bytes[8] == 0x57 // W
-        &&
-        bytes[9] == 0x45 // E
-        &&
-        bytes[10] == 0x42 // B
-        &&
+        bytes[0] ==
+            0x52 // R
+            &&
+        bytes[1] ==
+            0x49 // I
+            &&
+        bytes[2] ==
+            0x46 // F
+            &&
+        bytes[3] ==
+            0x46 // F
+            &&
+        bytes[8] ==
+            0x57 // W
+            &&
+        bytes[9] ==
+            0x45 // E
+            &&
+        bytes[10] ==
+            0x42 // B
+            &&
         bytes[11] == 0x50; // P
   }
 }
@@ -203,10 +208,11 @@ class WebPImageSizeData extends ImageSizeData {
 /// The [ImageSizeData] for a BMP image.
 class BmpImageSizeData extends ImageSizeData {
   BmpImageSizeData._(ByteData data)
-      : super(
-            format: ImageFormat.bmp,
-            width: data.getInt32(18, Endian.little),
-            height: data.getInt32(22, Endian.little));
+    : super(
+        format: ImageFormat.bmp,
+        width: data.getInt32(18, Endian.little),
+        height: data.getInt32(22, Endian.little),
+      );
 
   /// Returns true if `bytes` starts with the expected header for a WebP image.
   static bool matches(Uint8List bytes) {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,8 +9,11 @@ import 'package:google_sign_in_web/web_only.dart';
 typedef OnWebConfigChangeFn = void Function(GSIButtonConfiguration newConfig);
 
 /// The type of the widget builder function for each Card in the ListView builder
-typedef CardBuilder = Widget Function(
-    GSIButtonConfiguration? currentConfig, OnWebConfigChangeFn? onChange);
+typedef CardBuilder =
+    Widget Function(
+      GSIButtonConfiguration? currentConfig,
+      OnWebConfigChangeFn? onChange,
+    );
 
 // (Incomplete) List of the locales that can be used to configure the button.
 const List<String> _availableLocales = <String>[
@@ -116,10 +119,12 @@ Widget _renderLocaleCard({
         padding: const EdgeInsets.symmetric(horizontal: 16),
         child: DropdownButton<String>(
           items: locales
-              .map((String locale) => DropdownMenuItem<String>(
-                    value: locale,
-                    child: Text(locale),
-                  ))
+              .map(
+                (String locale) => DropdownMenuItem<String>(
+                  value: locale,
+                  child: Text(locale),
+                ),
+              )
               .toList(),
           value: value,
           onChanged: onChanged,
@@ -150,7 +155,7 @@ Widget _renderMinimumWidthCard({
         secondaryTrackValue: actualMax,
         onChanged: onChanged,
         divisions: 10,
-      )
+      ),
     ],
   );
 }
@@ -163,17 +168,28 @@ Widget _renderRadioListTileCard<T extends Enum>({
   void Function(T?)? onChanged,
 }) {
   return _renderConfigCard(
-      title: title,
-      children: values
-          .map((T value) => RadioListTile<T>(
-                value: value,
-                groupValue: selected,
-                onChanged: onChanged,
-                selected: value == selected,
-                title: Text(value.name),
-                dense: true,
-              ))
-          .toList());
+    title: title,
+    children: <Widget>[
+      RadioGroup<T>(
+        groupValue: selected,
+        onChanged: onChanged ?? (_) {},
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: values
+              .map(
+                (T value) => RadioListTile<T>(
+                  value: value,
+                  selected: value == selected,
+                  title: Text(value.name),
+                  enabled: onChanged != null,
+                  dense: true,
+                ),
+              )
+              .toList(),
+        ),
+      ),
+    ],
+  );
 }
 
 /// Renders a Card where we render some `children` that change config.
@@ -205,8 +221,9 @@ GSIButtonConfiguration _copyConfigWith<T>(
 ) {
   return GSIButtonConfiguration(
     locale: value is String ? value : old?.locale,
-    minimumWidth:
-        value is double ? (value == 0 ? null : value) : old?.minimumWidth,
+    minimumWidth: value is double
+        ? (value == 0 ? null : value)
+        : old?.minimumWidth,
     type: value is GSIButtonType ? value : old?.type,
     theme: value is GSIButtonTheme ? value : old?.theme,
     size: value is GSIButtonSize ? value : old?.size,

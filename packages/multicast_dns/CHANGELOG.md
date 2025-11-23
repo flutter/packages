@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 0.3.3
 
 * Adds an optional error callback for `MDnsClient::start` to prevent uncaught exceptions.

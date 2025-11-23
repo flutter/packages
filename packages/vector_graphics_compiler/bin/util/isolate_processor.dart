@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,7 +16,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 class IsolateProcessor {
   /// Create a new [IsolateProcessor].
   IsolateProcessor(this._libpathops, this._libtessellator, int concurrency)
-      : _pool = Pool(concurrency);
+    : _pool = Pool(concurrency);
 
   final String? _libpathops;
   final String? _libtessellator;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,8 +15,10 @@ import 'package:web/web.dart' as html;
 
 const String expectedStringContents = 'Hello, world! I ❤ ñ! 空手';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
-final html.File textFile =
-    html.File(<JSUint8Array>[bytes.toJS].toJS, 'hello.txt');
+final html.File textFile = html.File(
+  <JSUint8Array>[bytes.toJS].toJS,
+  'hello.txt',
+);
 final String textFileUrl =
     // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
     // ignore: unnecessary_cast
@@ -61,6 +63,24 @@ void main() {
     test('Stream can be sliced', () async {
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
+
+    test('Prefers local bytes over path if both are provided', () async {
+      const String text = 'Hello World';
+      const String path = 'test/x_file_html_test.dart';
+
+      final XFile file = XFile.fromData(
+        utf8.encode(text),
+        path: path,
+        name: 'x_file_html_test.dart',
+        length: text.length,
+        mimeType: 'text/plain',
+        lastModified: DateTime.now(),
+      );
+
+      expect(file.path, isNot(equals(path)));
+      expect(file.path.startsWith('blob:'), isTrue);
+      expect(await file.readAsString(), equals(text));
+    });
   });
 
   group('Blob backend', () {
@@ -68,8 +88,9 @@ void main() {
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
-      final html.Response response =
-          await html.window.fetch(file.path.toJS).toDart;
+      final html.Response response = await html.window
+          .fetch(file.path.toJS)
+          .toDart;
 
       final JSAny arrayBuffer = await response.arrayBuffer().toDart;
       final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
@@ -94,8 +115,9 @@ void main() {
 
         await file.saveTo('');
 
-        final html.Element? container =
-            html.document.querySelector('#$crossFileDomElementId');
+        final html.Element? container = html.document.querySelector(
+          '#$crossFileDomElementId',
+        );
 
         expect(container, isNotNull);
       });
@@ -105,8 +127,9 @@ void main() {
 
         await file.saveTo('path');
 
-        final html.Element container =
-            html.document.querySelector('#$crossFileDomElementId')!;
+        final html.Element container = html.document.querySelector(
+          '#$crossFileDomElementId',
+        )!;
 
         late html.HTMLAnchorElement element;
         for (int i = 0; i < container.childNodes.length; i++) {
@@ -130,8 +153,11 @@ void main() {
           createAnchorElement: (_, __) => mockAnchor,
         );
 
-        final XFile file =
-            XFile.fromData(bytes, name: textFile.name, overrides: overrides);
+        final XFile file = XFile.fromData(
+          bytes,
+          name: textFile.name,
+          overrides: overrides,
+        );
 
         bool clicked = false;
         mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -101,6 +101,17 @@ final class AdsManagerTests: XCTestCase {
 
     XCTAssertTrue(instance.destroyCalled)
   }
+
+  func testAdCuePoints() {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
+
+    let instance = TestAdsManager.customInit()
+
+    let value = try? api.pigeonDelegate.adCuePoints(pigeonApi: api, pigeonInstance: instance)
+
+    XCTAssertEqual(value, [2.2, 3.3])
+  }
 }
 
 class TestAdsManager: IMAAdsManager {
@@ -145,5 +156,9 @@ class TestAdsManager: IMAAdsManager {
 
   override func destroy() {
     destroyCalled = true
+  }
+
+  override var adCuePoints: [Any] {
+    return [2.2, 3.3]
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,9 +39,7 @@ class PushWithShellRouteExampleApp extends StatelessWidget {
           GoRoute(
             path: '/shell1',
             pageBuilder: (_, __) => const NoTransitionPage<void>(
-              child: Center(
-                child: Text('shell1 body'),
-              ),
+              child: Center(child: Text('shell1 body')),
             ),
           ),
         ],
@@ -62,9 +60,7 @@ class PushWithShellRouteExampleApp extends StatelessWidget {
       GoRoute(
         path: '/regular-route',
         builder: (BuildContext context, GoRouterState state) {
-          return const Scaffold(
-            body: Center(child: Text('regular route')),
-          );
+          return const Scaffold(body: Center(child: Text('regular route')));
         },
       ),
     ],
@@ -74,9 +70,7 @@ class PushWithShellRouteExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp.router(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       routerConfig: _router,
     );
   }
@@ -85,10 +79,7 @@ class PushWithShellRouteExampleApp extends StatelessWidget {
 /// Builds the "shell" for /shell1
 class ScaffoldForShell1 extends StatelessWidget {
   /// Constructs an [ScaffoldForShell1].
-  const ScaffoldForShell1({
-    required this.child,
-    super.key,
-  });
+  const ScaffoldForShell1({required this.child, super.key});
 
   /// The widget to display in the body of the Scaffold.
   /// In this sample, it is a Navigator.
@@ -106,10 +97,7 @@ class ScaffoldForShell1 extends StatelessWidget {
 /// Builds the "shell" for /shell1
 class ScaffoldForShell2 extends StatelessWidget {
   /// Constructs an [ScaffoldForShell1].
-  const ScaffoldForShell2({
-    required this.child,
-    super.key,
-  });
+  const ScaffoldForShell2({required this.child, super.key});
 
   /// The widget to display in the body of the Scaffold.
   /// In this sample, it is a Navigator.

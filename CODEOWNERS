@@ -6,39 +6,38 @@
 
 packages/animations/**                                   @hannah-hyj
 packages/camera/**                                       @bparrishMines
-packages/cross_file/**                                   @ditman
-packages/extension_google_sign_in_as_googleapis_auth/**  @ditman
+packages/cross_file/**                                   @stuartmorgan-g
+packages/extension_google_sign_in_as_googleapis_auth/**  @stuartmorgan-g
 packages/file_selector/**                                @stuartmorgan-g
 packages/flutter_lints/**                                @chunhtai
-packages/flutter_migrate/**                              @stuartmorgan-g
 packages/flutter_template_images/**                      @stuartmorgan-g
 packages/go_router/**                                    @chunhtai
 packages/go_router_builder/**                            @chunhtai
 packages/google_adsense/**                               @sokoloff06 @ditman
-packages/google_identity_services_web/**                 @ditman
+packages/google_identity_services_web/**                 @mdebbar
+packages/google_fonts/**                                 @Piinks
 packages/google_maps_flutter/**                          @stuartmorgan-g
 packages/google_sign_in/**                               @stuartmorgan-g
 packages/image_picker/**                                 @tarrinneal
 packages/interactive_media_ads/**                        @bparrishMines
 packages/in_app_purchase/**                              @bparrishMines
 packages/local_auth/**                                   @stuartmorgan-g
-packages/metrics_center/**                               @christopherfujino
+packages/metrics_center/**                               @bkonyi
 packages/multicast_dns/**                                @vashworth
 packages/path_provider/**                                @stuartmorgan-g
 packages/pigeon/**                                       @tarrinneal
 packages/platform/**                                     @stuartmorgan-g
 packages/plugin_platform_interface/**                    @stuartmorgan-g
 packages/pointer_interceptor/**                          @ditman
-packages/process/**                                      @stuartmorgan-g
 packages/quick_actions/**                                @bparrishMines
 packages/rfw/**                                          @Hixie
 packages/shared_preferences/**                           @tarrinneal
-packages/standard_message_codec/**                       @jonahwilliams
+packages/standard_message_codec/**                       @stuartmorgan-g
 packages/two_dimensional_scrollables/**                  @Piinks
 packages/url_launcher/**                                 @stuartmorgan-g
-packages/vector_graphics/**                              @jonahwilliams
-packages/vector_graphics_codec/**                        @jonahwilliams
-packages/vector_graphics_compiler/**                     @jonahwilliams
+packages/vector_graphics/**                              @jtmcdole
+packages/vector_graphics_codec/**                        @jtmcdole
+packages/vector_graphics_compiler/**                     @jtmcdole
 packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
@@ -47,78 +46,78 @@ third_party/packages/cupertino_icons/**                  @MitchellGoodwin
 third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
 third_party/packages/flutter_svg/**                      @domesticmouse
 third_party/packages/flutter_svg_test/**                 @domesticmouse
+third_party/packages/mustache_template/**                @bkonyi @parlough
 third_party/packages/path_parsing/**                     @domesticmouse
 
 # Plugin platform implementation rules. These should stay last, since the last
 # matching entry takes precedence.
 
 # - Web
-packages/camera/camera_web/**                            @ditman
-packages/file_selector/file_selector_web/**              @ditman
-packages/google_maps_flutter/google_maps_flutter_web/**  @ditman
-packages/google_sign_in/google_sign_in_web/**            @ditman
-packages/image_picker/image_picker_for_web/**            @ditman
-packages/pointer_interceptor/pointer_interceptor_web/**  @ditman
-packages/shared_preferences/shared_preferences_web/**    @ditman
-packages/url_launcher/url_launcher_web/**                @ditman
-packages/video_player/video_player_web/**                @ditman
-packages/webview_flutter/webview_flutter_web/**          @ditman
+packages/camera/camera_web/**                                 @mdebbar
+packages/file_selector/file_selector_web/**                   @mdebbar
+packages/google_maps_flutter/google_maps_flutter_web/**       @mdebbar
+packages/google_sign_in/google_sign_in_web/**                 @mdebbar
+packages/image_picker/image_picker_for_web/**                 @mdebbar
+packages/pointer_interceptor/pointer_interceptor_web/**       @mdebbar
+packages/shared_preferences/shared_preferences_web/**         @mdebbar
+packages/url_launcher/url_launcher_web/**                     @mdebbar
+packages/video_player/video_player_web/**                     @mdebbar
+packages/webview_flutter/webview_flutter_web/**               @mdebbar
 
 # - Android
-packages/camera/camera_android/**                        @camsim99
-packages/camera/camera_android_camerax/**                @camsim99
-packages/espresso/**                                     @reidbaker
-packages/file_selector/file_selector_android/**          @gmackall
-packages/flutter_plugin_android_lifecycle/**             @reidbaker
-packages/google_maps_flutter/google_maps_flutter_android/**  @reidbaker
-packages/google_sign_in/google_sign_in_android/**        @camsim99
-packages/image_picker/image_picker_android/**            @gmackall
-packages/in_app_purchase/in_app_purchase_android/**      @gmackall
-packages/local_auth/local_auth_android/**                @camsim99
-packages/path_provider/path_provider_android/**          @camsim99
-packages/quick_actions/quick_actions_android/**          @camsim99
-packages/shared_preferences/shared_preferences_android/**  @reidbaker
-packages/url_launcher/url_launcher_android/**            @gmackall
-packages/video_player/video_player_android/**            @camsim99
+packages/camera/camera_android/**                             @camsim99
+packages/camera/camera_android_camerax/**                     @camsim99
+packages/espresso/**                                          @jesswrd
+packages/file_selector/file_selector_android/**               @mboetger
+packages/flutter_plugin_android_lifecycle/**                  @reidbaker
+packages/google_maps_flutter/google_maps_flutter_android/**   @reidbaker
+packages/google_sign_in/google_sign_in_android/**             @reidbaker
+packages/image_picker/image_picker_android/**                 @gmackall
+packages/in_app_purchase/in_app_purchase_android/**           @gmackall
+packages/local_auth/local_auth_android/**                     @mboetger
+packages/path_provider/path_provider_android/**               @camsim99
+packages/quick_actions/quick_actions_android/**               @reidbaker
+packages/shared_preferences/shared_preferences_android/**     @jesswrd
+packages/url_launcher/url_launcher_android/**                 @gmackall
+packages/video_player/video_player_android/**                 @reidbaker
 # Owned by ecosystem team for now during the wrapper evaluation.
-packages/webview_flutter/webview_flutter_android/**      @bparrishMines
+packages/webview_flutter/webview_flutter_android/**           @bparrishMines
 
 # - Darwin
-packages/camera/camera_avfoundation/**                   @hellohuanlin @vashworth
-packages/file_selector/file_selector_ios/**              @vashworth @cbracken
-packages/file_selector/file_selector_macos/**            @vashworth @cbracken
-packages/google_maps_flutter/google_maps_flutter_ios/**  @vashworth @cbracken
-packages/google_sign_in/google_sign_in_ios/**            @LongCatIsLooong @cbracken
-packages/image_picker/image_picker_ios/**                @vashworth @louisehsu
-packages/image_picker/image_picker_macos/**              @vashworth @louisehsu
-packages/in_app_purchase/in_app_purchase_storekit/**     @louisehsu @LongCatIsLooong
-packages/local_auth/local_auth_darwin/**                 @cbracken @vashworth
-packages/path_provider/path_provider_foundation/**       @cbracken @vashworth
-packages/pigeon/**/ios/**/*                              @louisehsu @hellohuanlin
-packages/pointer_interceptor/pointer_interceptor_ios/**  @louisehsu @hellohuanlin
-packages/quick_actions/quick_actions_ios/**              @LongCatIsLooong @hellohuanlin
+packages/camera/camera_avfoundation/**                        @hellohuanlin @vashworth
+packages/file_selector/file_selector_ios/**                   @vashworth
+packages/file_selector/file_selector_macos/**                 @vashworth
+packages/google_maps_flutter/google_maps_flutter_ios/**       @vashworth
+packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong
+packages/image_picker/image_picker_ios/**                     @vashworth @louisehsu
+packages/image_picker/image_picker_macos/**                   @vashworth @louisehsu
+packages/in_app_purchase/in_app_purchase_storekit/**          @louisehsu @LongCatIsLooong
+packages/local_auth/local_auth_darwin/**                      @vashworth @okorohelijah
+packages/path_provider/path_provider_foundation/**            @vashworth
+packages/pointer_interceptor/pointer_interceptor_ios/**       @louisehsu @hellohuanlin
+packages/quick_actions/quick_actions_ios/**                   @LongCatIsLooong @hellohuanlin
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
-packages/url_launcher/url_launcher_ios/**                @hellohuanlin @LongCatIsLooong
-packages/url_launcher/url_launcher_macos/**              @hellohuanlin @LongCatIsLooong
-packages/video_player/video_player_avfoundation/**       @LongCatIsLooong @hellohuanlin
-packages/webview_flutter/webview_flutter_wkwebview/**    @cbracken @louisehsu
+packages/url_launcher/url_launcher_ios/**                     @hellohuanlin @LongCatIsLooong
+packages/url_launcher/url_launcher_macos/**                   @hellohuanlin @LongCatIsLooong
+packages/video_player/video_player_avfoundation/**            @LongCatIsLooong @hellohuanlin
+packages/webview_flutter/webview_flutter_wkwebview/**         @louisehsu
 
 # - Linux
-packages/file_selector/file_selector_linux/**            @cbracken
-packages/image_picker/image_picker_linux/**              @cbracken
-packages/path_provider/path_provider_linux/**            @cbracken
-packages/shared_preferences/shared_preferences_linux/**  @cbracken
-packages/url_launcher/url_launcher_linux/**              @cbracken
+packages/file_selector/file_selector_linux/**                 @robert-ancell @stuartmorgan-g
+packages/image_picker/image_picker_linux/**                   @robert-ancell @stuartmorgan-g
+packages/path_provider/path_provider_linux/**                 @robert-ancell @stuartmorgan-g
+packages/shared_preferences/shared_preferences_linux/**       @robert-ancell @stuartmorgan-g
+packages/url_launcher/url_launcher_linux/**                   @robert-ancell @stuartmorgan-g
 
 # - Windows
-packages/camera/camera_windows/**                        @cbracken
-packages/file_selector/file_selector_windows/**          @cbracken
-packages/image_picker/image_picker_windows/**            @cbracken
-packages/local_auth/local_auth_windows/**                @cbracken
-packages/path_provider/path_provider_windows/**          @cbracken
-packages/shared_preferences/shared_preferences_windows/** @cbracken
-packages/url_launcher/url_launcher_windows/**            @cbracken
+packages/camera/camera_windows/**                             @stuartmorgan-g
+packages/file_selector/file_selector_windows/**               @stuartmorgan-g
+packages/image_picker/image_picker_windows/**                 @stuartmorgan-g
+packages/local_auth/local_auth_windows/**                     @stuartmorgan-g
+packages/path_provider/path_provider_windows/**               @stuartmorgan-g
+packages/shared_preferences/shared_preferences_windows/**     @stuartmorgan-g
+packages/url_launcher/url_launcher_windows/**                 @stuartmorgan-g
 
 # - DevTools extensions
 # @adsonpleal is the actual maintainer of shared_preferences_tool but is not yet a committer, so can't be listed as the owner.
-packages/shared_preferences/shared_preferences_tool/**  @tarrinneal
+packages/shared_preferences/shared_preferences_tool/**        @tarrinneal

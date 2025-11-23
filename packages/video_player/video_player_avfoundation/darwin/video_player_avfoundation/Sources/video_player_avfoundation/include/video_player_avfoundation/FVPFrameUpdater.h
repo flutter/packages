@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// The Flutter texture registry used to notify about new frames.
 @property(nonatomic, weak, readonly) NSObject<FlutterTextureRegistry> *registry;
 /// The display link that drives frameUpdater.
-@property(nonatomic) FVPDisplayLink *displayLink;
+@property(nonatomic) NSObject<FVPDisplayLink> *displayLink;
 /// The time interval between screen refresh updates. Display link duration is in an undefined state
 /// until displayLinkFired is called at least once so it should not be used directly.
 @property(atomic) CFTimeInterval frameDuration;

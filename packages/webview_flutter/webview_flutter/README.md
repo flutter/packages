@@ -11,7 +11,7 @@ On Android the WebView widget is backed by a [WebView](https://developer.android
 
 |             | Android | iOS   | macOS  |
 |-------------|---------|-------|--------|
-| **Support** | SDK 21+ | 12.0+ | 10.14+ |
+| **Support** | SDK 24+ | 12.0+ | 10.14+ |
 
 ## Usage
 
@@ -54,6 +54,7 @@ Widget build(BuildContext context) {
     body: WebViewWidget(controller: controller),
   );
 }
+
 ```
 
 See the Dartdocs for [WebViewController](https://pub.dev/documentation/webview_flutter/latest/webview_flutter/WebViewController-class.html)
@@ -158,10 +159,9 @@ for more details.
 
 ### PlatformView Implementation on Android
 
-The PlatformView implementation for Android uses Texture Layer Hybrid Composition on versions 23+
-and automatically fallbacks to Hybrid Composition for version 21-23. See section
+The PlatformView implementation for Android uses Texture Layer Hybrid Composition. See section
 `Platform-Specific Features` and [AndroidWebViewWidgetCreationParams.displayWithHybridComposition](https://pub.dev/documentation/webview_flutter_android/latest/webview_flutter_android/AndroidWebViewWidgetCreationParams/displayWithHybridComposition.html)
-to manually switch to Hybrid Composition on versions 23+.
+to manually switch to Hybrid Composition.
 
 ### API Changes
 

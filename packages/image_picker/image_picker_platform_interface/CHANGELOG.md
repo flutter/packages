@@ -1,3 +1,17 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.11.1
+
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Fixes typo in limit parameter validation error messages.
+
+## 2.11.0
+
+* Adds `getMultiVideoWithOptions` method.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 2.10.1
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

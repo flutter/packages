@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,28 +11,27 @@ import 'messages.g.dart';
 
 /// Converts a [PlatformCameraLensDirection] to [CameraLensDirection].
 CameraLensDirection cameraLensDirectionFromPlatform(
-        PlatformCameraLensDirection direction) =>
-    switch (direction) {
-      PlatformCameraLensDirection.front => CameraLensDirection.front,
-      PlatformCameraLensDirection.back => CameraLensDirection.back,
-      PlatformCameraLensDirection.external => CameraLensDirection.external,
-    };
+  PlatformCameraLensDirection direction,
+) => switch (direction) {
+  PlatformCameraLensDirection.front => CameraLensDirection.front,
+  PlatformCameraLensDirection.back => CameraLensDirection.back,
+  PlatformCameraLensDirection.external => CameraLensDirection.external,
+};
 
 /// Converts a [PlatformDeviceOrientation] to [DeviceOrientation].
 DeviceOrientation deviceOrientationFromPlatform(
-        PlatformDeviceOrientation orientation) =>
-    switch (orientation) {
-      PlatformDeviceOrientation.portraitUp => DeviceOrientation.portraitUp,
-      PlatformDeviceOrientation.portraitDown => DeviceOrientation.portraitDown,
-      PlatformDeviceOrientation.landscapeLeft =>
-        DeviceOrientation.landscapeLeft,
-      PlatformDeviceOrientation.landscapeRight =>
-        DeviceOrientation.landscapeRight,
-    };
+  PlatformDeviceOrientation orientation,
+) => switch (orientation) {
+  PlatformDeviceOrientation.portraitUp => DeviceOrientation.portraitUp,
+  PlatformDeviceOrientation.portraitDown => DeviceOrientation.portraitDown,
+  PlatformDeviceOrientation.landscapeLeft => DeviceOrientation.landscapeLeft,
+  PlatformDeviceOrientation.landscapeRight => DeviceOrientation.landscapeRight,
+};
 
 /// Converts a [DeviceOrientation] to [PlatformDeviceOrientation].
 PlatformDeviceOrientation deviceOrientationToPlatform(
-    DeviceOrientation orientation) {
+  DeviceOrientation orientation,
+) {
   switch (orientation) {
     case DeviceOrientation.portraitUp:
       return PlatformDeviceOrientation.portraitUp;
@@ -106,12 +105,12 @@ PlatformResolutionPreset resolutionPresetToPlatform(ResolutionPreset? preset) =>
 /// Converts a [MediaSettings] to [PlatformMediaSettings].
 PlatformMediaSettings mediaSettingsToPlatform(MediaSettings? settings) =>
     PlatformMediaSettings(
-        resolutionPreset:
-            resolutionPresetToPlatform(settings?.resolutionPreset),
-        enableAudio: settings?.enableAudio ?? false,
-        videoBitrate: settings?.videoBitrate,
-        audioBitrate: settings?.audioBitrate,
-        fps: settings?.fps);
+      resolutionPreset: resolutionPresetToPlatform(settings?.resolutionPreset),
+      enableAudio: settings?.enableAudio ?? false,
+      videoBitrate: settings?.videoBitrate,
+      audioBitrate: settings?.audioBitrate,
+      fps: settings?.fps,
+    );
 
 /// Converts an [ImageFormatGroup] to [PlatformImageFormatGroup].
 ///

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,10 +17,8 @@ class App extends StatelessWidget {
   static const String title = 'GoRouter Example: Navigator Observer';
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: title,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: title);
 
   final GoRouter _router = GoRouter(
     observers: <NavigatorObserver>[MyNavObserver()],
@@ -81,9 +79,10 @@ class MyNavObserver extends NavigatorObserver {
   void didStartUserGesture(
     Route<dynamic> route,
     Route<dynamic>? previousRoute,
-  ) =>
-      log.info('didStartUserGesture: ${route.str}, '
-          'previousRoute= ${previousRoute?.str}');
+  ) => log.info(
+    'didStartUserGesture: ${route.str}, '
+    'previousRoute= ${previousRoute?.str}',
+  );
 
   @override
   void didStopUserGesture() => log.info('didStopUserGesture');
@@ -100,23 +99,23 @@ class Page1Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => context.goNamed(
-                  'page2',
-                  pathParameters: <String, String>{'p1': 'pv1'},
-                  queryParameters: <String, String>{'q1': 'qv1'},
-                ),
-                child: const Text('Go to page 2'),
-              ),
-            ],
+    appBar: AppBar(title: const Text(App.title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => context.goNamed(
+              'page2',
+              pathParameters: <String, String>{'p1': 'pv1'},
+              queryParameters: <String, String>{'q1': 'qv1'},
+            ),
+            child: const Text('Go to page 2'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 /// The screen of the second page.
@@ -126,22 +125,22 @@ class Page2Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => context.goNamed(
-                  'page3',
-                  pathParameters: <String, String>{'p1': 'pv2'},
-                ),
-                child: const Text('Go to page 3'),
-              ),
-            ],
+    appBar: AppBar(title: const Text(App.title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => context.goNamed(
+              'page3',
+              pathParameters: <String, String>{'p1': 'pv2'},
+            ),
+            child: const Text('Go to page 3'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }
 
 /// The screen of the third page.
@@ -151,17 +150,17 @@ class Page3Screen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              ElevatedButton(
-                onPressed: () => context.go('/'),
-                child: const Text('Go to home page'),
-              ),
-            ],
+    appBar: AppBar(title: const Text(App.title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () => context.go('/'),
+            child: const Text('Go to home page'),
           ),
-        ),
-      );
+        ],
+      ),
+    ),
+  );
 }

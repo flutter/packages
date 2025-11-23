@@ -8,82 +8,80 @@ part of 'shell_route_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-      $myShellRouteData,
-      $loginRoute,
-    ];
+List<RouteBase> get $appRoutes => [$myShellRouteData, $loginRoute];
 
 RouteBase get $myShellRouteData => ShellRouteData.$route(
-      factory: $MyShellRouteDataExtension._fromState,
-      routes: [
-        GoRouteData.$route(
-          path: '/foo',
-          factory: $FooRouteDataExtension._fromState,
-        ),
-        GoRouteData.$route(
-          path: '/bar',
-          factory: $BarRouteDataExtension._fromState,
-        ),
-      ],
-    );
+  factory: $MyShellRouteDataExtension._fromState,
+  routes: [
+    GoRouteData.$route(path: '/foo', factory: $FooRouteData._fromState),
+    GoRouteData.$route(path: '/bar', factory: $BarRouteData._fromState),
+  ],
+);
 
 extension $MyShellRouteDataExtension on MyShellRouteData {
   static MyShellRouteData _fromState(GoRouterState state) =>
       const MyShellRouteData();
 }
 
-extension $FooRouteDataExtension on FooRouteData {
+mixin $FooRouteData on GoRouteData {
   static FooRouteData _fromState(GoRouterState state) => const FooRouteData();
 
-  String get location => GoRouteData.$location(
-        '/foo',
-      );
+  @override
+  String get location => GoRouteData.$location('/foo');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-extension $BarRouteDataExtension on BarRouteData {
+mixin $BarRouteData on GoRouteData {
   static BarRouteData _fromState(GoRouterState state) => const BarRouteData();
 
-  String get location => GoRouteData.$location(
-        '/bar',
-      );
+  @override
+  String get location => GoRouteData.$location('/bar');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }
 
-RouteBase get $loginRoute => GoRouteData.$route(
-      path: '/login',
-      factory: $LoginRouteExtension._fromState,
-    );
+RouteBase get $loginRoute =>
+    GoRouteData.$route(path: '/login', factory: $LoginRoute._fromState);
 
-extension $LoginRouteExtension on LoginRoute {
+mixin $LoginRoute on GoRouteData {
   static LoginRoute _fromState(GoRouterState state) => const LoginRoute();
 
-  String get location => GoRouteData.$location(
-        '/login',
-      );
+  @override
+  String get location => GoRouteData.$location('/login');
 
+  @override
   void go(BuildContext context) => context.go(location);
 
+  @override
   Future<T?> push<T>(BuildContext context) => context.push<T>(location);
 
+  @override
   void pushReplacement(BuildContext context) =>
       context.pushReplacement(location);
 
+  @override
   void replace(BuildContext context) => context.replace(location);
 }

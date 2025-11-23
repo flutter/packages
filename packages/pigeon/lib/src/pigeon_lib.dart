@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,7 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart'
 import 'package:analyzer/dart/analysis/results.dart' show ParsedUnitResult;
 import 'package:analyzer/dart/analysis/session.dart' show AnalysisSession;
 import 'package:analyzer/dart/ast/ast.dart' as dart_ast;
-import 'package:analyzer/error/error.dart' show AnalysisError;
+import 'package:analyzer/diagnostic/diagnostic.dart' show Diagnostic;
 import 'package:args/args.dart';
 import 'package:meta/meta.dart' show visibleForTesting;
 import 'package:path/path.dart' as path;
@@ -96,7 +96,10 @@ class ConfigurePigeon {
 /// generated host-platform interface.
 class HostApi {
   /// Parametric constructor for [HostApi].
-  const HostApi({this.dartHostTestHandler});
+  const HostApi({
+    @Deprecated('Mock/fake the generated Dart API instead.')
+    this.dartHostTestHandler,
+  });
 
   /// The name of an interface generated for tests. Implement this
   /// interface and invoke `[name of this handler].setup` to receive
@@ -111,6 +114,7 @@ class HostApi {
   /// testing.
   ///
   /// Defaults to `null` in which case no handler will be generated.
+  @Deprecated('Mock/fake the generated Dart API instead.')
   final String? dartHostTestHandler;
 }
 
@@ -125,21 +129,33 @@ class FlutterApi {
   const FlutterApi();
 }
 
-/// Metadata to annotate a Pigeon API that wraps a native class.
+/// Metadata to annotate a ProxyAPI.
+///
+/// A ProxyAPI is a generated API for interacting with a native type from Dart.
+/// This includes the generated Dart proxy class and the native type API.
 ///
 /// The abstract class with this annotation groups a collection of Dart↔host
-/// constructors, fields, methods and host↔Dart methods used to wrap a native
-/// class.
+/// constructors, fields, methods and host↔Dart methods used to interact with a
+/// native type.
 ///
-/// The generated Dart class acts as a proxy to a native type and maintains
-/// instances automatically with an `InstanceManager`. The generated host
-/// language class implements methods to interact with class instances or static
-/// methods.
+/// This generates:
+/// 1. A Dart proxy class that handles communication with a native type API.
+/// Instances of this proxy class represent instances of the native type.
+/// 2. A native type API which handles communication with the Dart proxy class
+/// and the native type. (e.g. When an instance method of a Dart proxy class is
+/// called, the implementation of the native type API handles calling that
+/// method on the native type.)
+/// 3. An InstanceManager that is a global collection that manages serializable
+/// references to the Dart proxy classes and the native type instances. This
+/// also provides automatic garbage collection of native type instances when its
+/// associated Dart proxy class instance is garbage collected.
 class ProxyApi {
   /// Parametric constructor for [ProxyApi].
   const ProxyApi({this.superClass, this.kotlinOptions, this.swiftOptions});
 
-  /// The proxy api that is a super class to this one.
+  /// The class that is a super class to this one.
+  ///
+  /// Must be a type that is also annotated with [ProxyApi].
   ///
   /// This provides an alternative to calling `extends` on a class since this
   /// requires calling the super class constructor.
@@ -149,11 +165,11 @@ class ProxyApi {
   final Type? superClass;
 
   /// Options that control how Swift code will be generated for a specific
-  /// ProxyApi.
+  /// native type API of a ProxyAPI.
   final SwiftProxyApiOptions? swiftOptions;
 
   /// Options that control how Kotlin code will be generated for a specific
-  /// ProxyApi.
+  /// native type API of a ProxyAPI.
   final KotlinProxyApiOptions? kotlinOptions;
 }
 
@@ -226,7 +242,7 @@ class PigeonOptions {
   const PigeonOptions({
     this.input,
     this.dartOut,
-    this.dartTestOut,
+    @Deprecated('Mock/fake the generated Dart API instead.') this.dartTestOut,
     this.objcHeaderOut,
     this.objcSourceOut,
     this.objcOptions,
@@ -257,6 +273,7 @@ class PigeonOptions {
   final String? dartOut;
 
   /// Path to the Dart file that will be generated for test support classes.
+  @Deprecated('Mock/fake the generated Dart API instead.')
   final String? dartTestOut;
 
   /// Path to the ".h" Objective-C file will be generated.
@@ -355,7 +372,8 @@ class PigeonOptions {
       gobjectSourceOut: map['gobjectSourceOut'] as String?,
       gobjectOptions: map.containsKey('gobjectOptions')
           ? GObjectOptions.fromMap(
-              map['gobjectOptions']! as Map<String, Object>)
+              map['gobjectOptions']! as Map<String, Object>,
+            )
           : null,
       dartOptions: map.containsKey('dartOptions')
           ? DartOptions.fromMap(map['dartOptions']! as Map<String, Object>)
@@ -433,7 +451,7 @@ class Pigeon {
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
     final List<String> includedPaths = <String>[
-      path.absolute(path.normalize(inputPath))
+      path.absolute(path.normalize(inputPath)),
     ];
     final AnalysisContextCollection collection = AnalysisContextCollection(
       includedPaths: includedPaths,
@@ -441,23 +459,29 @@ class Pigeon {
     );
 
     final List<Error> compilationErrors = <Error>[];
-    final RootBuilder rootBuilder =
-        RootBuilder(File(inputPath).readAsStringSync());
+    final RootBuilder rootBuilder = RootBuilder(
+      File(inputPath).readAsStringSync(),
+    );
     for (final AnalysisContext context in collection.contexts) {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
         final ParsedUnitResult result =
             session.getParsedUnit(path) as ParsedUnitResult;
-        if (result.errors.isEmpty) {
+        if (result.diagnostics.isEmpty) {
           final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);
         } else {
-          for (final AnalysisError error in result.errors) {
-            compilationErrors.add(Error(
-                message: error.message,
-                filename: error.source.fullName,
+          for (final Diagnostic diagnostic in result.diagnostics) {
+            compilationErrors.add(
+              Error(
+                message: diagnostic.message,
+                filename: diagnostic.source.fullName,
                 lineNumber: calculateLineNumber(
-                    error.source.contents.data, error.offset)));
+                  diagnostic.source.contents.data,
+                  diagnostic.offset,
+                ),
+              ),
+            );
           }
         }
       }
@@ -488,19 +512,31 @@ ${_argParser.usage}''';
 
   static final ArgParser _argParser = ArgParser()
     ..addOption('input', help: 'REQUIRED: Path to pigeon file.')
-    ..addOption('dart_out',
-        help: 'Path to generated Dart source file (.dart). '
-            'Required if one_language is not specified.')
-    ..addOption('dart_test_out',
-        help: 'Path to generated library for Dart tests, when using '
-            '@HostApi(dartHostTestHandler:).')
-    ..addOption('objc_source_out',
-        help: 'Path to generated Objective-C source file (.m).')
+    ..addOption(
+      'dart_out',
+      help:
+          'Path to generated Dart source file (.dart). '
+          'Required if one_language is not specified.',
+    )
+    ..addOption(
+      'dart_test_out',
+      help:
+          'Path to generated library for Dart tests, when using '
+          '@HostApi(dartHostTestHandler:).',
+    )
+    ..addOption(
+      'objc_source_out',
+      help: 'Path to generated Objective-C source file (.m).',
+    )
     ..addOption('java_out', help: 'Path to generated Java file (.java).')
-    ..addOption('java_package',
-        help: 'The package that generated Java code will be in.')
-    ..addFlag('java_use_generated_annotation',
-        help: 'Adds the java.annotation.Generated annotation to the output.')
+    ..addOption(
+      'java_package',
+      help: 'The package that generated Java code will be in.',
+    )
+    ..addFlag(
+      'java_use_generated_annotation',
+      help: 'Adds the java.annotation.Generated annotation to the output.',
+    )
     ..addOption(
       'swift_out',
       help: 'Path to generated Swift file (.swift).',
@@ -526,8 +562,10 @@ ${_argParser.usage}''';
       help: 'Path to generated C++ classes file (.cpp).',
       aliases: const <String>['experimental_cpp_source_out'],
     )
-    ..addOption('cpp_namespace',
-        help: 'The namespace that generated C++ code will be in.')
+    ..addOption(
+      'cpp_namespace',
+      help: 'The namespace that generated C++ code will be in.',
+    )
     ..addOption(
       'gobject_header_out',
       help: 'Path to generated GObject header file (.h).',
@@ -538,28 +576,47 @@ ${_argParser.usage}''';
       help: 'Path to generated GObject classes file (.cc).',
       aliases: const <String>['experimental_gobject_source_out'],
     )
-    ..addOption('gobject_module',
-        help: 'The module that generated GObject code will be in.')
-    ..addOption('objc_header_out',
-        help: 'Path to generated Objective-C header file (.h).')
-    ..addOption('objc_prefix',
-        help: 'Prefix for generated Objective-C classes and protocols.')
-    ..addOption('copyright_header',
-        help:
-            'Path to file with copyright header to be prepended to generated code.')
-    ..addFlag('one_language',
-        hide: true, help: 'Does nothing, only here to avoid breaking changes')
-    ..addOption('ast_out',
-        help:
-            'Path to generated AST debugging info. (Warning: format subject to change)')
-    ..addFlag('debug_generators',
-        help: 'Print the line number of the generator in comments at newlines.')
-    ..addOption('base_path',
-        help:
-            'A base path to be prefixed to all outputs and copyright header path. Generally used for testing',
-        hide: true)
-    ..addOption('package_name',
-        help: 'The package that generated code will be in.');
+    ..addOption(
+      'gobject_module',
+      help: 'The module that generated GObject code will be in.',
+    )
+    ..addOption(
+      'objc_header_out',
+      help: 'Path to generated Objective-C header file (.h).',
+    )
+    ..addOption(
+      'objc_prefix',
+      help: 'Prefix for generated Objective-C classes and protocols.',
+    )
+    ..addOption(
+      'copyright_header',
+      help:
+          'Path to file with copyright header to be prepended to generated code.',
+    )
+    ..addFlag(
+      'one_language',
+      hide: true,
+      help: 'Does nothing, only here to avoid breaking changes',
+    )
+    ..addOption(
+      'ast_out',
+      help:
+          'Path to generated AST debugging info. (Warning: format subject to change)',
+    )
+    ..addFlag(
+      'debug_generators',
+      help: 'Print the line number of the generator in comments at newlines.',
+    )
+    ..addOption(
+      'base_path',
+      help:
+          'A base path to be prefixed to all outputs and copyright header path. Generally used for testing',
+      hide: true,
+    )
+    ..addOption(
+      'package_name',
+      help: 'The package that generated code will be in.',
+    );
 
   /// Convert command-line arguments to [PigeonOptions].
   static PigeonOptions parseArgs(List<String> args) {
@@ -575,9 +632,7 @@ ${_argParser.usage}''';
       dartTestOut: results['dart_test_out'] as String?,
       objcHeaderOut: results['objc_header_out'] as String?,
       objcSourceOut: results['objc_source_out'] as String?,
-      objcOptions: ObjcOptions(
-        prefix: results['objc_prefix'] as String?,
-      ),
+      objcOptions: ObjcOptions(prefix: results['objc_prefix'] as String?),
       javaOut: results['java_out'] as String?,
       javaOptions: JavaOptions(
         package: results['java_package'] as String?,
@@ -591,9 +646,7 @@ ${_argParser.usage}''';
       ),
       cppHeaderOut: results['cpp_header_out'] as String?,
       cppSourceOut: results['cpp_source_out'] as String?,
-      cppOptions: CppOptions(
-        namespace: results['cpp_namespace'] as String?,
-      ),
+      cppOptions: CppOptions(namespace: results['cpp_namespace'] as String?),
       gobjectHeaderOut: results['gobject_header_out'] as String?,
       gobjectSourceOut: results['gobject_source_out'] as String?,
       gobjectOptions: GObjectOptions(
@@ -631,8 +684,11 @@ ${_argParser.usage}''';
   /// command-line arguments.  The optional parameter [adapters] allows you to
   /// customize the generators that pigeon will use. The optional parameter
   /// [sdkPath] allows you to specify the Dart SDK path.
-  static Future<int> run(List<String> args,
-      {List<GeneratorAdapter>? adapters, String? sdkPath}) {
+  static Future<int> run(
+    List<String> args, {
+    List<GeneratorAdapter>? adapters,
+    String? sdkPath,
+  }) {
     final PigeonOptions options = Pigeon.parseArgs(args);
     return runWithOptions(options, adapters: adapters, sdkPath: sdkPath);
   }
@@ -652,7 +708,8 @@ ${_argParser.usage}''';
     if (options.debugGenerators ?? false) {
       generator_tools.debugGenerators = true;
     }
-    final List<GeneratorAdapter> safeGeneratorAdapters = adapters ??
+    final List<GeneratorAdapter> safeGeneratorAdapters =
+        adapters ??
         <GeneratorAdapter>[
           DartGeneratorAdapter(),
           JavaGeneratorAdapter(),
@@ -686,30 +743,40 @@ ${_argParser.usage}''';
 
     if (parseResults.pigeonOptions != null && mergeDefinitionFileOptions) {
       options = PigeonOptions.fromMap(
-          mergeMaps(options.toMap(), parseResults.pigeonOptions!));
+        mergeMaps(options.toMap(), parseResults.pigeonOptions!),
+      );
     }
 
     final InternalPigeonOptions internalOptions =
         InternalPigeonOptions.fromPigeonOptions(options);
 
     for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
-      final IOSink? sink =
-          adapter.shouldGenerate(internalOptions, FileType.source);
+      final IOSink? sink = adapter.shouldGenerate(
+        internalOptions,
+        FileType.source,
+      );
       if (sink != null) {
-        final List<Error> adapterErrors =
-            adapter.validate(internalOptions, parseResults.root);
+        final List<Error> adapterErrors = adapter.validate(
+          internalOptions,
+          parseResults.root,
+        );
         errors.addAll(adapterErrors);
         await releaseSink(sink);
       }
     }
 
     if (errors.isNotEmpty) {
-      printErrors(errors
-          .map((Error err) => Error(
-              message: err.message,
-              filename: internalOptions.input,
-              lineNumber: err.lineNumber))
-          .toList());
+      printErrors(
+        errors
+            .map(
+              (Error err) => Error(
+                message: err.message,
+                filename: internalOptions.input,
+                lineNumber: err.lineNumber,
+              ),
+            )
+            .toList(),
+      );
       return 1;
     }
 
@@ -733,7 +800,8 @@ ${_argParser.usage}''';
       if (err.filename != null) {
         if (err.lineNumber != null) {
           stderr.writeln(
-              'Error: ${err.filename}:${err.lineNumber}: ${err.message}');
+            'Error: ${err.filename}:${err.lineNumber}: ${err.message}',
+          );
         } else {
           stderr.writeln('Error: ${err.filename}: ${err.message}');
         }
@@ -747,11 +815,7 @@ ${_argParser.usage}''';
 /// Represents an error as a result of parsing and generating code.
 class Error {
   /// Parametric constructor for Error.
-  Error({
-    required this.message,
-    this.filename,
-    this.lineNumber,
-  });
+  Error({required this.message, this.filename, this.lineNumber});
 
   /// A description of the error.
   String message;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,9 +28,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('README snippet app'),
-        ),
+        appBar: AppBar(title: const Text('README snippet app')),
         body: const Text('See example in main.dart'),
       ),
     );
@@ -39,8 +37,9 @@ class _MyAppState extends State<MyApp> {
   Future<void> saveFile() async {
     // #docregion Save
     const String fileName = 'suggested_name.txt';
-    final FileSaveLocation? result =
-        await getSaveLocation(suggestedName: fileName);
+    final FileSaveLocation? result = await getSaveLocation(
+      suggestedName: fileName,
+    );
     if (result == null) {
       // Operation was canceled by the user.
       return;
@@ -48,8 +47,11 @@ class _MyAppState extends State<MyApp> {
 
     final Uint8List fileData = Uint8List.fromList('Hello World!'.codeUnits);
     const String mimeType = 'text/plain';
-    final XFile textFile =
-        XFile.fromData(fileData, mimeType: mimeType, name: fileName);
+    final XFile textFile = XFile.fromData(
+      fileData,
+      mimeType: mimeType,
+      name: fileName,
+    );
     await textFile.saveTo(result.path);
     // #enddocregion Save
   }

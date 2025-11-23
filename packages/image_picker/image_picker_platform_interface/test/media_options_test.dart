@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,28 +27,39 @@ void main() {
       );
     });
 
-    test('createAndValidate throw error for to small limit', () {
+    test('createAndValidate throws error for too small limit', () {
+      final Matcher throwsLimitArgumentError = throwsA(
+        isA<ArgumentError>()
+            .having((ArgumentError error) => error.name, 'name', 'limit')
+            .having(
+              (ArgumentError error) => error.message,
+              'message',
+              'cannot be lower than 2',
+            ),
+      );
+
       expect(
         () => MediaOptions.createAndValidate(allowMultiple: true, limit: 1),
-        throwsArgumentError,
+        throwsLimitArgumentError,
       );
       expect(
         () => MediaOptions.createAndValidate(allowMultiple: true, limit: 0),
-        throwsArgumentError,
+        throwsLimitArgumentError,
       );
       expect(
         () => MediaOptions.createAndValidate(allowMultiple: true, limit: -1),
-        throwsArgumentError,
+        throwsLimitArgumentError,
       );
     });
 
     test(
-        'createAndValidate throw error when allowMultiple is false and has limit',
-        () {
-      expect(
-        () => MediaOptions.createAndValidate(allowMultiple: false, limit: 2),
-        throwsArgumentError,
-      );
-    });
+      'createAndValidate throw error when allowMultiple is false and has limit',
+      () {
+        expect(
+          () => MediaOptions.createAndValidate(allowMultiple: false, limit: 2),
+          throwsArgumentError,
+        );
+      },
+    );
   });
 }

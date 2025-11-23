@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.camera;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -21,6 +22,7 @@ interface CameraDeviceWrapper {
   @NonNull
   CaptureRequest.Builder createCaptureRequest(int templateType) throws CameraAccessException;
 
+  @SuppressLint("UseRequiresApi")
   @TargetApi(Build.VERSION_CODES.P)
   void createCaptureSession(SessionConfiguration config) throws CameraAccessException;
 

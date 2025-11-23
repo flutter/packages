@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,11 +34,13 @@ class AdUnitWidget extends StatefulWidget {
     required AdUnitConfiguration configuration,
     @visibleForTesting String? adClient,
     @visibleForTesting void Function()? onInjected,
-  })  : _adClient = adClient ?? adSense.adClient,
-        _onInjected = onInjected,
-        _adUnitConfiguration = configuration {
-    assert(_adClient != null,
-        'Attempted to render an AdUnitWidget before calling adSense.initialize');
+  }) : _adClient = adClient ?? adSense.adClient,
+       _onInjected = onInjected,
+       _adUnitConfiguration = configuration {
+    assert(
+      _adClient != null,
+      'Attempted to render an AdUnitWidget before calling adSense.initialize',
+    );
   }
 
   final String? _adClient;
@@ -61,19 +63,19 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   @override
   bool get wantKeepAlive => true;
 
-  web.ResizeObserver get _adSenseResizeObserver =>
-      web.ResizeObserver((JSArray<web.ResizeObserverEntry> entries,
-          web.ResizeObserver observer) {
-        for (final web.ResizeObserverEntry entry in entries.toDart) {
-          final web.Element target = entry.target;
-          if (target.isConnected) {
-            // First time resized since attached to DOM -> attachment callback from Flutter docs by David
-            _onElementAttached(target as web.HTMLElement);
-            widget._onInjected?.call();
-            observer.disconnect();
-          }
+  web.ResizeObserver get _adSenseResizeObserver => web.ResizeObserver(
+    (JSArray<web.ResizeObserverEntry> entries, web.ResizeObserver observer) {
+      for (final web.ResizeObserverEntry entry in entries.toDart) {
+        final web.Element target = entry.target;
+        if (target.isConnected) {
+          // First time resized since attached to DOM -> attachment callback from Flutter docs by David
+          _onElementAttached(target as web.HTMLElement);
+          widget._onInjected?.call();
+          observer.disconnect();
         }
-      }.toJS);
+      }
+    }.toJS,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -83,20 +85,22 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
       return const SizedBox.shrink();
     }
     return LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-      if (!widget._adUnitConfiguration.params
-          .containsKey(AdUnitParams.AD_FORMAT)) {
-        _adSize = Size(_adSize.width, constraints.maxHeight);
-      }
-      return SizedBox(
-        height: _adSize.height,
-        width: _adSize.width,
-        child: HtmlElementView.fromTagName(
-          tagName: 'div',
-          onElementCreated: _onElementCreated,
-        ),
-      );
-    });
+      builder: (BuildContext context, BoxConstraints constraints) {
+        if (!widget._adUnitConfiguration.params.containsKey(
+          AdUnitParams.AD_FORMAT,
+        )) {
+          _adSize = Size(_adSize.width, constraints.maxHeight);
+        }
+        return SizedBox(
+          height: _adSize.height,
+          width: _adSize.width,
+          child: HtmlElementView.fromTagName(
+            tagName: 'div',
+            onElementCreated: _onElementCreated,
+          ),
+        );
+      },
+    );
   }
 
   void _onElementCreated(Object element) {
@@ -126,52 +130,60 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
 
     // Using Mutation Observer to detect when adslot is being loaded based on https://support.google.com/adsense/answer/10762946?hl=en
     web.MutationObserver(
-            (JSArray<JSObject> entries, web.MutationObserver observer) {
-      for (final JSObject entry in entries.toDart) {
-        final web.HTMLElement target =
-            (entry as web.MutationRecord).target as web.HTMLElement;
-        if (_isLoaded(target)) {
-          if (_isFilled(target)) {
-            debugLog(
-                'Resizing widget based on target $target size of ${target.offsetWidth} x ${target.offsetHeight}');
-            _updateWidgetSize(Size(
-              target.offsetWidth.toDouble(),
-              // This is always the width of the platform view!
-              target.offsetHeight.toDouble(),
-            ));
-          } else {
-            // This removes the platform view.
-            _updateWidgetSize(Size.zero);
+      (JSArray<JSObject> entries, web.MutationObserver observer) {
+        for (final JSObject entry in entries.toDart) {
+          final web.HTMLElement target =
+              (entry as web.MutationRecord).target as web.HTMLElement;
+          if (_isLoaded(target)) {
+            if (_isFilled(target)) {
+              debugLog(
+                'Resizing widget based on target $target size of ${target.offsetWidth} x ${target.offsetHeight}',
+              );
+              _updateWidgetSize(
+                Size(
+                  target.offsetWidth.toDouble(),
+                  // This is always the width of the platform view!
+                  target.offsetHeight.toDouble(),
+                ),
+              );
+            } else {
+              // This removes the platform view.
+              _updateWidgetSize(Size.zero);
+            }
           }
         }
-      }
-    }.toJS)
-        .observe(
-            insElement,
-            web.MutationObserverInit(
-              attributes: true,
-              attributeFilter: <JSString>['data-ad-status'.toJS].toJS,
-            ));
+      }.toJS,
+    ).observe(
+      insElement,
+      web.MutationObserverInit(
+        attributes: true,
+        attributeFilter: <JSString>['data-ad-status'.toJS].toJS,
+      ),
+    );
   }
 
   static void _onElementAttached(web.HTMLElement element) {
     debugLog(
-        '$element attached with w=${element.offsetWidth} and h=${element.offsetHeight}');
+      '$element attached with w=${element.offsetWidth} and h=${element.offsetHeight}',
+    );
     debugLog(
-        '${element.firstChild} size is ${(element.firstChild! as web.HTMLElement).offsetWidth}x${(element.firstChild! as web.HTMLElement).offsetHeight} ');
+      '${element.firstChild} size is ${(element.firstChild! as web.HTMLElement).offsetWidth}x${(element.firstChild! as web.HTMLElement).offsetHeight} ',
+    );
     adsbygoogle.requestAd();
   }
 
   bool _isLoaded(web.HTMLElement target) {
-    final bool isLoaded =
-        target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
+    final bool isLoaded = target.dataset
+        .getProperty(_adStatusKey)
+        .isDefinedAndNotNull;
     debugLog('Ad isLoaded: $isLoaded');
     return isLoaded;
   }
 
   bool _isFilled(web.HTMLElement target) {
-    final String? adStatus =
-        target.dataset.getProperty<JSString?>(_adStatusKey)?.toDart;
+    final String? adStatus = target.dataset
+        .getProperty<JSString?>(_adStatusKey)
+        ?.toDart;
     debugLog('Ad isFilled? $adStatus');
     if (adStatus == AdStatus.FILLED) {
       return true;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,9 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Path Provider',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(title: 'Path Provider'),
     );
   }
@@ -54,7 +52,9 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildDirectory(
-      BuildContext context, AsyncSnapshot<Directory?> snapshot) {
+    BuildContext context,
+    AsyncSnapshot<Directory?> snapshot,
+  ) {
     Text text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
@@ -69,14 +69,17 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildDirectories(
-      BuildContext context, AsyncSnapshot<List<Directory>?> snapshot) {
+    BuildContext context,
+    AsyncSnapshot<List<Directory>?> snapshot,
+  ) {
     Text text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
         text = Text('Error: ${snapshot.error}');
       } else if (snapshot.hasData) {
-        final String combined =
-            snapshot.data!.map((Directory d) => d.path).join(', ');
+        final String combined = snapshot.data!
+            .map((Directory d) => d.path)
+            .join(', ');
         text = Text('paths: $combined');
       } else {
         text = const Text('path unavailable');
@@ -136,9 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: ListView(
           children: <Widget>[
@@ -148,9 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: _requestTempDirectory,
-                    child: const Text(
-                      'Get Temporary Directory',
-                    ),
+                    child: const Text('Get Temporary Directory'),
                   ),
                 ),
                 FutureBuilder<Directory?>(
@@ -165,9 +164,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: _requestAppDocumentsDirectory,
-                    child: const Text(
-                      'Get Application Documents Directory',
-                    ),
+                    child: const Text('Get Application Documents Directory'),
                   ),
                 ),
                 FutureBuilder<Directory?>(
@@ -182,9 +179,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: _requestAppSupportDirectory,
-                    child: const Text(
-                      'Get Application Support Directory',
-                    ),
+                    child: const Text('Get Application Support Directory'),
                   ),
                 ),
                 FutureBuilder<Directory?>(
@@ -198,8 +193,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed:
-                        Platform.isAndroid ? null : _requestAppLibraryDirectory,
+                    onPressed: Platform.isAndroid
+                        ? null
+                        : _requestAppLibraryDirectory,
                     child: Text(
                       Platform.isAndroid
                           ? 'Application Library Directory unavailable'
@@ -219,9 +215,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
                     onPressed: _requestAppCacheDirectory,
-                    child: const Text(
-                      'Get Application Cache Directory',
-                    ),
+                    child: const Text('Get Application Cache Directory'),
                   ),
                 ),
                 FutureBuilder<Directory?>(

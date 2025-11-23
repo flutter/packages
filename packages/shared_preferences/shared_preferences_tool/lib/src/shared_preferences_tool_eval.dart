@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,10 +12,7 @@ import 'shared_preferences_state.dart';
 
 /// A representation of the keys in the shared preferences of the target debug
 /// session.
-typedef KeysResult = ({
-  List<String> asyncKeys,
-  List<String> legacyKeys,
-});
+typedef KeysResult = ({List<String> asyncKeys, List<String> legacyKeys});
 
 /// A class that provides methods to interact with the shared preferences
 /// of the target debug session.
@@ -25,10 +22,7 @@ class SharedPreferencesToolEval {
   /// Default constructor for [SharedPreferencesToolEval].
   /// Do not call this constructor directly.
   /// Use [SharedPreferencesStateNotifierProvider] instead.
-  SharedPreferencesToolEval(
-    this._service,
-    this._eval,
-  );
+  SharedPreferencesToolEval(this._service, this._eval);
 
   final VmService _service;
   final EvalOnDartLibrary _eval;
@@ -105,24 +99,14 @@ class SharedPreferencesToolEval {
     // gets interpreted as an int. If this was not and issue
     // we'd only need to do a simple pattern matching on value.
     return switch (kind) {
-      'int' => SharedPreferencesData.int(
-          value: value as int,
-        ),
-      'bool' => SharedPreferencesData.bool(
-          value: value as bool,
-        ),
-      'double' => SharedPreferencesData.double(
-          value: value as double,
-        ),
-      'String' => SharedPreferencesData.string(
-          value: value as String,
-        ),
+      'int' => SharedPreferencesData.int(value: value as int),
+      'bool' => SharedPreferencesData.bool(value: value as bool),
+      'double' => SharedPreferencesData.double(value: value as double),
+      'String' => SharedPreferencesData.string(value: value as String),
       String() when kind.contains('List') => SharedPreferencesData.stringList(
-          value: (value as List<Object?>).cast(),
-        ),
-      _ => throw UnsupportedError(
-          'Unsupported value type: $kind',
-        ),
+        value: (value as List<Object?>).cast(),
+      ),
+      _ => throw UnsupportedError('Unsupported value type: $kind'),
     };
   }
 

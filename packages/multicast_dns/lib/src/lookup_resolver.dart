@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,7 +36,10 @@ class LookupResolver {
 
   /// Adds a request and returns a [Stream] of [ResourceRecord] responses.
   Stream<T> addPendingRequest<T extends ResourceRecord>(
-      int type, String name, Duration timeout) {
+    int type,
+    String name,
+    Duration timeout,
+  ) {
     final StreamController<T> controller = StreamController<T>();
     final PendingRequest request = PendingRequest(type, name, controller);
     final Timer timer = Timer(timeout, () {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -68,14 +68,18 @@ void main() {
       expect(read.getInt64(), equals(-9000000000000));
     }, testOn: 'vm' /* Int64 isn't supported on web */);
 
-    test('of 64-bit integer in big endian', () {
-      final WriteBuffer write = WriteBuffer();
-      write.putInt64(-9000000000000, endian: Endian.big);
-      final ByteData written = write.done();
-      expect(written.lengthInBytes, equals(8));
-      final ReadBuffer read = ReadBuffer(written);
-      expect(read.getInt64(endian: Endian.big), equals(-9000000000000));
-    }, testOn: 'vm' /* Int64 isn't supported on web */);
+    test(
+      'of 64-bit integer in big endian',
+      () {
+        final WriteBuffer write = WriteBuffer();
+        write.putInt64(-9000000000000, endian: Endian.big);
+        final ByteData written = write.done();
+        expect(written.lengthInBytes, equals(8));
+        final ReadBuffer read = ReadBuffer(written);
+        expect(read.getInt64(endian: Endian.big), equals(-9000000000000));
+      },
+      testOn: 'vm' /* Int64 isn't supported on web */,
+    );
 
     test('of double', () {
       final WriteBuffer write = WriteBuffer();
@@ -105,21 +109,27 @@ void main() {
       expect(read.getInt32List(3), equals(integers));
     });
 
-    test('of 64-bit int list when unaligned', () {
-      final Int64List integers = Int64List.fromList(<int>[-99, 2, 99]);
-      final WriteBuffer write = WriteBuffer();
-      write.putUint8(9);
-      write.putInt64List(integers);
-      final ByteData written = write.done();
-      expect(written.lengthInBytes, equals(32));
-      final ReadBuffer read = ReadBuffer(written);
-      read.getUint8();
-      expect(read.getInt64List(3), equals(integers));
-    }, testOn: 'vm' /* Int64 isn't supported on web */);
+    test(
+      'of 64-bit int list when unaligned',
+      () {
+        final Int64List integers = Int64List.fromList(<int>[-99, 2, 99]);
+        final WriteBuffer write = WriteBuffer();
+        write.putUint8(9);
+        write.putInt64List(integers);
+        final ByteData written = write.done();
+        expect(written.lengthInBytes, equals(32));
+        final ReadBuffer read = ReadBuffer(written);
+        read.getUint8();
+        expect(read.getInt64List(3), equals(integers));
+      },
+      testOn: 'vm' /* Int64 isn't supported on web */,
+    );
 
     test('of float list when unaligned', () {
-      final Float32List floats =
-          Float32List.fromList(<double>[3.14, double.nan]);
+      final Float32List floats = Float32List.fromList(<double>[
+        3.14,
+        double.nan,
+      ]);
       final WriteBuffer write = WriteBuffer();
       write.putUint8(9);
       write.putFloat32List(floats);
@@ -133,8 +143,10 @@ void main() {
     });
 
     test('of double list when unaligned', () {
-      final Float64List doubles =
-          Float64List.fromList(<double>[3.14, double.nan]);
+      final Float64List doubles = Float64List.fromList(<double>[
+        3.14,
+        double.nan,
+      ]);
       final WriteBuffer write = WriteBuffer();
       write.putUint8(9);
       write.putFloat64List(doubles);
@@ -155,7 +167,9 @@ void main() {
 
     test('empty WriteBuffer', () {
       expect(
-          () => WriteBuffer(startCapacity: 0), throwsA(isA<AssertionError>()));
+        () => WriteBuffer(startCapacity: 0),
+        throwsA(isA<AssertionError>()),
+      );
     });
 
     test('size 1', () {

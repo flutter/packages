@@ -1,17 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  javaOptions: JavaOptions(package: 'io.flutter.plugins.inapppurchase'),
-  javaOut:
-      'android/src/main/java/io/flutter/plugins/inapppurchase/Messages.java',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.inapppurchase'),
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/inapppurchase/Messages.java',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Pigeon version of Java QueryProductDetailsParams.Product.
 class PlatformQueryProduct {
   PlatformQueryProduct({required this.productId, required this.productType});
@@ -33,8 +34,10 @@ class PlatformAccountIdentifiers {
 
 /// Pigeon version of Java BillingResult.
 class PlatformBillingResult {
-  PlatformBillingResult(
-      {required this.responseCode, required this.debugMessage});
+  PlatformBillingResult({
+    required this.responseCode,
+    required this.debugMessage,
+  });
   final PlatformBillingResponse responseCode;
   final String debugMessage;
 }
@@ -106,8 +109,10 @@ class PlatformProductDetailsResponse {
 /// contains the components of the Java
 /// AlternativeBillingOnlyReportingDetailsListener callback.
 class PlatformAlternativeBillingOnlyReportingDetailsResponse {
-  PlatformAlternativeBillingOnlyReportingDetailsResponse(
-      {required this.billingResult, required this.externalTransactionToken});
+  PlatformAlternativeBillingOnlyReportingDetailsResponse({
+    required this.billingResult,
+    required this.externalTransactionToken,
+  });
 
   final PlatformBillingResult billingResult;
   final String externalTransactionToken;
@@ -116,8 +121,10 @@ class PlatformAlternativeBillingOnlyReportingDetailsResponse {
 /// Pigeon version of BillingConfigWrapper, which contains the components of the
 /// Java BillingConfigResponseListener callback.
 class PlatformBillingConfigResponse {
-  PlatformBillingConfigResponse(
-      {required this.billingResult, required this.countryCode});
+  PlatformBillingConfigResponse({
+    required this.billingResult,
+    required this.countryCode,
+  });
 
   final PlatformBillingResult billingResult;
   final String countryCode;
@@ -332,18 +339,13 @@ class PlatformInstallmentPlanDetails {
 
 /// Pigeon version of Java PendingPurchasesParams.
 class PlatformPendingPurchasesParams {
-  PlatformPendingPurchasesParams({
-    required this.enablePrepaidPlans,
-  });
+  PlatformPendingPurchasesParams({required this.enablePrepaidPlans});
 
   final bool enablePrepaidPlans;
 }
 
 /// Pigeon version of Java BillingClient.ProductType.
-enum PlatformProductType {
-  inapp,
-  subs,
-}
+enum PlatformProductType { inapp, subs }
 
 /// Pigeon version of billing_client_wrapper.dart's BillingChoiceMode.
 enum PlatformBillingChoiceMode {
@@ -372,18 +374,10 @@ enum PlatformBillingClientFeature {
 }
 
 /// Pigeon version of Java Purchase.PurchaseState.
-enum PlatformPurchaseState {
-  unspecified,
-  purchased,
-  pending,
-}
+enum PlatformPurchaseState { unspecified, purchased, pending }
 
 /// Pigeon version of Java ProductDetails.RecurrenceMode.
-enum PlatformRecurrenceMode {
-  finiteRecurring,
-  infiniteRecurring,
-  nonRecurring,
-}
+enum PlatformRecurrenceMode { finiteRecurring, infiniteRecurring, nonRecurring }
 
 @HostApi()
 abstract class InAppPurchaseApi {
@@ -393,9 +387,10 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#startConnection(BillingClientStateListener).
   @async
   PlatformBillingResult startConnection(
-      int callbackHandle,
-      PlatformBillingChoiceMode billingMode,
-      PlatformPendingPurchasesParams pendingPurchasesParams);
+    int callbackHandle,
+    PlatformBillingChoiceMode billingMode,
+    PlatformPendingPurchasesParams pendingPurchasesParams,
+  );
 
   /// Wraps BillingClient#endConnection(BillingClientStateListener).
   void endConnection();
@@ -418,17 +413,20 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#queryPurchasesAsync(QueryPurchaseParams, PurchaseResponseListener).
   @async
   PlatformPurchasesResponse queryPurchasesAsync(
-      PlatformProductType productType);
+    PlatformProductType productType,
+  );
 
   /// Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener).
   @async
   PlatformPurchaseHistoryResponse queryPurchaseHistoryAsync(
-      PlatformProductType productType);
+    PlatformProductType productType,
+  );
 
   /// Wraps BillingClient#queryProductDetailsAsync(QueryProductDetailsParams, ProductDetailsResponseListener).
   @async
   PlatformProductDetailsResponse queryProductDetailsAsync(
-      List<PlatformQueryProduct> products);
+    List<PlatformQueryProduct> products,
+  );
 
   /// Wraps BillingClient#isFeatureSupported(String).
   bool isFeatureSupported(PlatformBillingClientFeature feature);
@@ -444,7 +442,7 @@ abstract class InAppPurchaseApi {
   /// Wraps BillingClient#createAlternativeBillingOnlyReportingDetailsAsync(AlternativeBillingOnlyReportingDetailsListener).
   @async
   PlatformAlternativeBillingOnlyReportingDetailsResponse
-      createAlternativeBillingOnlyReportingDetailsAsync();
+  createAlternativeBillingOnlyReportingDetailsAsync();
 }
 
 @FlutterApi()

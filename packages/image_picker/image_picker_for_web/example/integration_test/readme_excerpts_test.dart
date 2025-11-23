@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,8 +15,9 @@ import 'package:integration_test/integration_test.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('getImageFromPath loads image from XFile path',
-      (WidgetTester tester) async {
+  testWidgets('getImageFromPath loads image from XFile path', (
+    WidgetTester tester,
+  ) async {
     final XFile file = createXFileWeb();
 
     // Use the excerpt code to get an Image from the XFile path.
@@ -28,8 +29,9 @@ void main() {
     expect(find.byType(Image), findsOneWidget);
   });
 
-  testWidgets('getImageFromBytes loads image from XFile bytes',
-      (WidgetTester tester) async {
+  testWidgets('getImageFromBytes loads image from XFile bytes', (
+    WidgetTester tester,
+  ) async {
     final XFile file = createXFileWeb();
 
     // Use the excerpt code to get an Image from the XFile byte data.
@@ -44,7 +46,8 @@ void main() {
 
 /// Creates an XFile with a 1x1 png file.
 XFile createXFileWeb() {
-  const String pixel = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR'
+  const String pixel =
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR'
       '42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
   final Uint8List data = base64Decode(pixel);
   return XFile.fromData(
@@ -57,9 +60,5 @@ XFile createXFileWeb() {
 
 /// Pumps an [image] widget into a [tester].
 Future<void> pumpImage(WidgetTester tester, Image image) async {
-  await tester.pumpWidget(MaterialApp(
-    home: Scaffold(
-      body: image,
-    ),
-  ));
+  await tester.pumpWidget(MaterialApp(home: Scaffold(body: image)));
 }

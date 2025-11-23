@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -61,72 +61,79 @@ void main() {
 
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMethodCallHandler(channel, (MethodCall methodCall) async {
-        log.add(methodCall);
-        if (methodCall.method == 'getAll') {
-          return testData.getAll();
-        }
-        if (methodCall.method == 'getAllWithParameters') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String prefix = arguments['prefix']! as String;
-          Set<String>? allowSet;
-          final List<dynamic>? allowList =
-              arguments['allowList'] as List<dynamic>?;
-          if (allowList != null) {
-            allowSet = <String>{};
-            for (final dynamic key in allowList) {
-              allowSet.add(key as String);
+            log.add(methodCall);
+            if (methodCall.method == 'getAll') {
+              return testData.getAll();
             }
-          }
-          return testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(
-                prefix: prefix,
-                allowList: allowSet,
-              ),
-            ),
-          );
-        }
-        if (methodCall.method == 'remove') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String key = arguments['key']! as String;
-          return testData.remove(key);
-        }
-        if (methodCall.method == 'clear') {
-          return testData.clear();
-        }
-        if (methodCall.method == 'clearWithParameters') {
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String prefix = arguments['prefix']! as String;
-          Set<String>? allowSet;
-          final List<dynamic>? allowList =
-              arguments['allowList'] as List<dynamic>?;
-          if (allowList != null) {
-            allowSet = <String>{};
-            for (final dynamic key in allowList) {
-              allowSet.add(key as String);
+            if (methodCall.method == 'getAllWithParameters') {
+              final Map<String, Object?> arguments = getArgumentDictionary(
+                methodCall,
+              );
+              final String prefix = arguments['prefix']! as String;
+              Set<String>? allowSet;
+              final List<dynamic>? allowList =
+                  arguments['allowList'] as List<dynamic>?;
+              if (allowList != null) {
+                allowSet = <String>{};
+                for (final dynamic key in allowList) {
+                  allowSet.add(key as String);
+                }
+              }
+              return testData.getAllWithParameters(
+                GetAllParameters(
+                  filter: PreferencesFilter(
+                    prefix: prefix,
+                    allowList: allowSet,
+                  ),
+                ),
+              );
             }
-          }
-          return testData.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(prefix: prefix, allowList: allowSet),
-            ),
-          );
-        }
-        final RegExp setterRegExp = RegExp(r'set(.*)');
-        final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
-        if (match?.groupCount == 1) {
-          final String valueType = match!.group(1)!;
-          final Map<String, Object?> arguments =
-              getArgumentDictionary(methodCall);
-          final String key = arguments['key']! as String;
-          final Object value = arguments['value']!;
-          return testData.setValue(valueType, key, value);
-        }
-        fail('Unexpected method call: ${methodCall.method}');
-      });
+            if (methodCall.method == 'remove') {
+              final Map<String, Object?> arguments = getArgumentDictionary(
+                methodCall,
+              );
+              final String key = arguments['key']! as String;
+              return testData.remove(key);
+            }
+            if (methodCall.method == 'clear') {
+              return testData.clear();
+            }
+            if (methodCall.method == 'clearWithParameters') {
+              final Map<String, Object?> arguments = getArgumentDictionary(
+                methodCall,
+              );
+              final String prefix = arguments['prefix']! as String;
+              Set<String>? allowSet;
+              final List<dynamic>? allowList =
+                  arguments['allowList'] as List<dynamic>?;
+              if (allowList != null) {
+                allowSet = <String>{};
+                for (final dynamic key in allowList) {
+                  allowSet.add(key as String);
+                }
+              }
+              return testData.clearWithParameters(
+                ClearParameters(
+                  filter: PreferencesFilter(
+                    prefix: prefix,
+                    allowList: allowSet,
+                  ),
+                ),
+              );
+            }
+            final RegExp setterRegExp = RegExp(r'set(.*)');
+            final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
+            if (match?.groupCount == 1) {
+              final String valueType = match!.group(1)!;
+              final Map<String, Object?> arguments = getArgumentDictionary(
+                methodCall,
+              );
+              final String key = arguments['key']! as String;
+              final Object value = arguments['value']!;
+              return testData.setValue(valueType, key, value);
+            }
+            fail('Unexpected method call: ${methodCall.method}');
+          });
       store = MethodChannelSharedPreferencesStore();
       log.clear();
     });
@@ -144,12 +151,11 @@ void main() {
     test('getAllWithParameters with Prefix', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
       expect(
-          await store.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          prefixTestValues);
+        await store.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
+        ),
+        prefixTestValues,
+      );
       expect(log.single.method, 'getAllWithParameters');
     });
 
@@ -212,91 +218,85 @@ void main() {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          isNotEmpty);
+        await testData.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
+        ),
+        isNotEmpty,
+      );
       expect(
-          await store.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          true);
+        await store.clearWithParameters(
+          ClearParameters(filter: PreferencesFilter(prefix: 'prefix.')),
+        ),
+        true,
+      );
       expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
-            ),
-          ),
-          isEmpty);
+        await testData.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
+        ),
+        isEmpty,
+      );
     });
 
     test('getAllWithParameters with no Prefix', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          hasLength(15));
+        await testData.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: '')),
+        ),
+        hasLength(15),
+      );
     });
 
     test('clearWithNoPrefix', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          isNotEmpty);
+        await testData.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: '')),
+        ),
+        isNotEmpty,
+      );
       expect(
-          await store.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          true);
+        await store.clearWithParameters(
+          ClearParameters(filter: PreferencesFilter(prefix: '')),
+        ),
+        true,
+      );
       expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: ''),
-            ),
-          ),
-          isEmpty);
+        await testData.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: '')),
+        ),
+        isEmpty,
+      );
     });
 
     test('clearWithParameters with allow list', () async {
       testData = InMemorySharedPreferencesStore.withData(allTestValues);
 
       expect(
-          await testData.getAllWithParameters(
-            GetAllParameters(
-              filter: PreferencesFilter(prefix: 'prefix.'),
+        await testData.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
+        ),
+        isNotEmpty,
+      );
+      expect(
+        await store.clearWithParameters(
+          ClearParameters(
+            filter: PreferencesFilter(
+              prefix: 'prefix.',
+              allowList: <String>{'prefix.String'},
             ),
           ),
-          isNotEmpty);
+        ),
+        true,
+      );
       expect(
-          await store.clearWithParameters(
-            ClearParameters(
-              filter: PreferencesFilter(
-                prefix: 'prefix.',
-                allowList: <String>{'prefix.String'},
-              ),
-            ),
-          ),
-          true);
-      expect(
-          (await testData.getAllWithParameters(GetAllParameters(
-                  filter: PreferencesFilter(prefix: 'prefix.'))))
-              .length,
-          4);
+        (await testData.getAllWithParameters(
+          GetAllParameters(filter: PreferencesFilter(prefix: 'prefix.')),
+        )).length,
+        4,
+      );
     });
   });
 }

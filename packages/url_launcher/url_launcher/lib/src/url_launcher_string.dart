@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,8 +29,11 @@ Future<bool> launchUrlString(
   if ((mode == LaunchMode.inAppWebView ||
           mode == LaunchMode.inAppBrowserView) &&
       !(urlString.startsWith('https:') || urlString.startsWith('http:'))) {
-    throw ArgumentError.value(urlString, 'urlString',
-        'To use an in-app web view, you must provide an http(s) URL.');
+    throw ArgumentError.value(
+      urlString,
+      'urlString',
+      'To use an in-app web view, you must provide an http(s) URL.',
+    );
   }
   return UrlLauncherPlatform.instance.launchUrl(
     urlString,

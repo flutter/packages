@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,13 +23,17 @@ For example:
 
   final MDnsClient client = MDnsClient();
   await client.start();
-  await for (final IPAddressResourceRecord record in client
-      .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(name))) {
+  await for (final IPAddressResourceRecord record
+      in client.lookup<IPAddressResourceRecord>(
+        ResourceRecordQuery.addressIPv4(name),
+      )) {
     print('Found address (${record.address}).');
   }
 
-  await for (final IPAddressResourceRecord record in client
-      .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv6(name))) {
+  await for (final IPAddressResourceRecord record
+      in client.lookup<IPAddressResourceRecord>(
+        ResourceRecordQuery.addressIPv6(name),
+      )) {
     print('Found address (${record.address}).');
   }
   client.stop();

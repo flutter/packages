@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,31 +26,41 @@ void main() {
     });
 
     test('serializeDeviceOrientation() should serialize correctly', () {
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          PlatformDeviceOrientation.portraitUp);
-      expect(serializeDeviceOrientation(DeviceOrientation.portraitDown),
-          PlatformDeviceOrientation.portraitDown);
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeRight),
-          PlatformDeviceOrientation.landscapeRight);
-      expect(serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          PlatformDeviceOrientation.landscapeLeft);
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.portraitUp),
+        PlatformDeviceOrientation.portraitUp,
+      );
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.portraitDown),
+        PlatformDeviceOrientation.portraitDown,
+      );
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.landscapeRight),
+        PlatformDeviceOrientation.landscapeRight,
+      );
+      expect(
+        serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
+        PlatformDeviceOrientation.landscapeLeft,
+      );
     });
 
     test('deviceOrientationFromPlatform() should convert correctly', () {
       expect(
-          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
-          DeviceOrientation.portraitUp);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitUp),
+        DeviceOrientation.portraitUp,
+      );
       expect(
-          deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
-          DeviceOrientation.portraitDown);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.portraitDown),
+        DeviceOrientation.portraitDown,
+      );
       expect(
-          deviceOrientationFromPlatform(
-              PlatformDeviceOrientation.landscapeRight),
-          DeviceOrientation.landscapeRight);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.landscapeRight),
+        DeviceOrientation.landscapeRight,
+      );
       expect(
-          deviceOrientationFromPlatform(
-              PlatformDeviceOrientation.landscapeLeft),
-          DeviceOrientation.landscapeLeft);
+        deviceOrientationFromPlatform(PlatformDeviceOrientation.landscapeLeft),
+        DeviceOrientation.landscapeLeft,
+      );
     });
   });
 }

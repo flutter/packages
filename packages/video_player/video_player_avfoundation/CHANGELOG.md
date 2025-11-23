@@ -1,3 +1,48 @@
+## 2.8.7
+
+* Updates to Pigeon 26.
+
+## 2.8.6
+
+* Fixes a bug where the video player fails to initialize when `AVFoundation` reports a duration of zero.
+* Fixes a bug in the example app that some widgets stop updating after GlobalKey reparenting.
+* Updates the `VideoProgressIndicator` widget in the example app to handle zero-duration videos.
+
+## 2.8.5
+
+* Updates minimum supported version to iOS 13 and macOS 10.15.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.8.4
+
+* Simplifies native code.
+
+## 2.8.3
+
+* Removes calls to self from init and dealloc, for maintainability.
+
+## 2.8.2
+
+* Restructure internals of Dart notification of video player events.
+
+## 2.8.1
+
+* Restructures internal logic to move more code to Dart.
+
+## 2.8.0
+
+* Adds platform view support for macOS.
+
+## 2.7.3
+
+* Restructures the communication between Dart and native code.
+
+## 2.7.2
+
+* Uses `CADisplayLink` on macOS 14.0+.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Refactors native code for improved testing.
+
 ## 2.7.1
 
 * Adds possibility to play videos at more than 30 FPS.

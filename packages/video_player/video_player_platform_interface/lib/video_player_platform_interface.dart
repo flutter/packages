@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -117,9 +117,41 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
   }
 
+  /// Sets whether the video should continue to play in the background.
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
+    throw UnimplementedError(
+      'setAllowBackgroundPlayback() has not been implemented.',
+    );
+  }
+
   /// Sets additional options on web.
   Future<void> setWebOptions(int playerId, VideoPlayerWebOptions options) {
     throw UnimplementedError('setWebOptions() has not been implemented.');
+  }
+
+  /// Gets the available audio tracks for the video.
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) {
+    throw UnimplementedError('getAudioTracks() has not been implemented.');
+  }
+
+  /// Selects which audio track is chosen for playback from its [trackId]
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    throw UnimplementedError('selectAudioTrack() has not been implemented.');
+  }
+
+  /// Returns whether audio track selection is supported on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports audio track selection functionality. This is useful
+  /// for platforms like web where audio track selection may not be available.
+  ///
+  /// Returns `true` if [getAudioTracks] and [selectAudioTrack] are supported,
+  /// `false` otherwise.
+  ///
+  /// The default implementation returns `false`. Platform implementations
+  /// should override this to return `true` if they support audio track selection.
+  bool isAudioTrackSupportAvailable() {
+    return false;
   }
 }
 
@@ -286,13 +318,13 @@ class VideoEvent {
 
   @override
   int get hashCode => Object.hash(
-        eventType,
-        duration,
-        size,
-        rotationCorrection,
-        buffered,
-        isPlaying,
-      );
+    eventType,
+    duration,
+    size,
+    rotationCorrection,
+    buffered,
+    isPlaying,
+  );
 }
 
 /// Type of the event.
@@ -429,6 +461,7 @@ class VideoPlayerWebOptions {
     this.controls = const VideoPlayerWebOptionsControls.disabled(),
     this.allowContextMenu = true,
     this.allowRemotePlayback = true,
+    this.poster,
   });
 
   /// Additional settings for how control options are displayed
@@ -439,6 +472,9 @@ class VideoPlayerWebOptions {
 
   /// Whether remote playback is allowed
   final bool allowRemotePlayback;
+
+  /// The URL of the poster image to be displayed before the video starts
+  final Uri? poster;
 }
 
 /// [VideoPlayerWebOptions] can be used to set how control options are displayed
@@ -454,11 +490,11 @@ class VideoPlayerWebOptionsControls {
 
   /// Disables control options. Default behavior.
   const VideoPlayerWebOptionsControls.disabled()
-      : enabled = false,
-        allowDownload = false,
-        allowFullscreen = false,
-        allowPlaybackRate = false,
-        allowPictureInPicture = false;
+    : enabled = false,
+      allowDownload = false,
+      allowFullscreen = false,
+      allowPlaybackRate = false,
+      allowPictureInPicture = false;
 
   /// Whether native controls are enabled
   final bool enabled;
@@ -504,9 +540,7 @@ class VideoPlayerWebOptionsControls {
 @immutable
 class VideoViewOptions {
   /// Constructs an instance of [VideoViewOptions].
-  const VideoViewOptions({
-    required this.playerId,
-  });
+  const VideoViewOptions({required this.playerId});
 
   /// The identifier of the video player.
   final int playerId;
@@ -526,4 +560,95 @@ class VideoCreationOptions {
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+}
+
+/// Represents an audio track in a video with its metadata.
+@immutable
+class VideoAudioTrack {
+  /// Constructs an instance of [VideoAudioTrack].
+  const VideoAudioTrack({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  /// Unique identifier for the audio track.
+  final String id;
+
+  /// Human-readable label for the track.
+  ///
+  /// May be null if not available from the platform.
+  final String? label;
+
+  /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  ///
+  /// May be null if not available from the platform.
+  final String? language;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Bitrate of the audio track in bits per second.
+  ///
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Sample rate of the audio track in Hz.
+  ///
+  /// May be null if not available from the platform.
+  final int? sampleRate;
+
+  /// Number of audio channels.
+  ///
+  /// May be null if not available from the platform.
+  final int? channelCount;
+
+  /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  ///
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoAudioTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            label == other.label &&
+            language == other.language &&
+            isSelected == other.isSelected &&
+            bitrate == other.bitrate &&
+            sampleRate == other.sampleRate &&
+            channelCount == other.channelCount &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    label,
+    language,
+    isSelected,
+    bitrate,
+    sampleRate,
+    channelCount,
+    codec,
+  );
+
+  @override
+  String toString() =>
+      'VideoAudioTrack('
+      'id: $id, '
+      'label: $label, '
+      'language: $language, '
+      'isSelected: $isSelected, '
+      'bitrate: $bitrate, '
+      'sampleRate: $sampleRate, '
+      'channelCount: $channelCount, '
+      'codec: $codec)';
 }

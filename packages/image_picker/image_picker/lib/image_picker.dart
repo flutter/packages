@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -79,12 +79,12 @@ class ImagePicker {
   }) {
     final ImagePickerOptions imagePickerOptions =
         ImagePickerOptions.createAndValidate(
-      maxWidth: maxWidth,
-      maxHeight: maxHeight,
-      imageQuality: imageQuality,
-      preferredCameraDevice: preferredCameraDevice,
-      requestFullMetadata: requestFullMetadata,
-    );
+          maxWidth: maxWidth,
+          maxHeight: maxHeight,
+          imageQuality: imageQuality,
+          preferredCameraDevice: preferredCameraDevice,
+          requestFullMetadata: requestFullMetadata,
+        );
 
     return platform.getImageFromSource(
       source: source,
@@ -295,6 +295,28 @@ class ImagePicker {
       source: source,
       preferredCameraDevice: preferredCameraDevice,
       maxDuration: maxDuration,
+    );
+  }
+
+  /// Returns a [List<XFile>] of the videos that were picked.
+  ///
+  /// The returned [List<XFile>] is intended to be used within a single app
+  /// session. Do not save the file path and use it across sessions.
+  ///
+  /// The videos come from the gallery.
+  ///
+  /// The [maxDuration] argument specifies the maximum duration of the captured
+  /// videos. If no [maxDuration] is specified, the maximum duration will be
+  /// infinite. This value may be ignored by platforms that cannot support it.
+  ///
+  /// The `limit` parameter modifies the maximum number of videos that can be
+  /// selected. This value may be ignored by platforms that cannot support it.
+  ///
+  /// The method can throw a [PlatformException] if the video selection process
+  /// fails.
+  Future<List<XFile>> pickMultiVideo({Duration? maxDuration, int? limit}) {
+    return platform.getMultiVideoWithOptions(
+      options: MultiVideoPickerOptions(maxDuration: maxDuration, limit: limit),
     );
   }
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -169,9 +169,10 @@ void main() {
     Marker m1 = const Marker(markerId: MarkerId('marker_1'));
     final Set<Marker> prev = <Marker>{m1};
     m1 = Marker(
-        markerId: const MarkerId('marker_1'),
-        onTap: () {},
-        onDragEnd: (LatLng latLng) {});
+      markerId: const MarkerId('marker_1'),
+      onTap: () {},
+      onDragEnd: (LatLng latLng) {},
+    );
     final Set<Marker> cur = <Marker>{m1};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
@@ -190,8 +191,10 @@ void main() {
     const Marker m1 = Marker(markerId: MarkerId('marker_1'));
     const Marker m2 = Marker(markerId: MarkerId('marker_2'));
     const Marker m3 = Marker(markerId: MarkerId('marker_3'));
-    const Marker m3updated =
-        Marker(markerId: MarkerId('marker_3'), draggable: true);
+    const Marker m3updated = Marker(
+      markerId: MarkerId('marker_3'),
+      draggable: true,
+    );
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1, m2}));

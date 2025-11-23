@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,19 +18,23 @@ Future<void> main() async {
   await client.start();
 
   // Get the PTR record for the service.
-  await for (final PtrResourceRecord ptr in client
-      .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(name))) {
+  await for (final PtrResourceRecord ptr in client.lookup<PtrResourceRecord>(
+    ResourceRecordQuery.serverPointer(name),
+  )) {
     // Use the domainName from the PTR record to get the SRV record,
     // which will have the port and local hostname.
     // Note that duplicate messages may come through, especially if any
     // other mDNS queries are running elsewhere on the machine.
     await for (final SrvResourceRecord srv in client.lookup<SrvResourceRecord>(
-        ResourceRecordQuery.service(ptr.domainName))) {
+      ResourceRecordQuery.service(ptr.domainName),
+    )) {
       // Domain name will be something like "io.flutter.example@some-iphone.local._dartobservatory._tcp.local"
       final String bundleId =
           ptr.domainName; //.substring(0, ptr.domainName.indexOf('@'));
-      print('Dart observatory instance found at '
-          '${srv.target}:${srv.port} for "$bundleId".');
+      print(
+        'Dart observatory instance found at '
+        '${srv.target}:${srv.port} for "$bundleId".',
+      );
     }
   }
   client.stop();

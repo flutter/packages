@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,8 +10,8 @@
 
 // Protocol for an AVPlayer instance factory. Used for injecting display links in tests.
 @protocol FVPDisplayLinkFactory
-- (FVPDisplayLink *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                    callback:(void (^)(void))callback;
+- (NSObject<FVPDisplayLink> *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
+                                              callback:(void (^)(void))callback;
 @end
 
 #pragma mark -
@@ -23,6 +23,7 @@
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
+                     viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 @end

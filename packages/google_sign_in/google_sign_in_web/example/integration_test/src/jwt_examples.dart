@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,27 +7,23 @@ import 'package:google_identity_services_web/id.dart';
 import 'jsify_as.dart';
 
 /// A CredentialResponse with null `credential`.
-final CredentialResponse nullCredential =
-    jsifyAs<CredentialResponse>(<String, Object?>{
-  'credential': null,
-});
+final CredentialResponse nullCredential = jsifyAs<CredentialResponse>(
+  <String, Object?>{'credential': null},
+);
 
 /// A CredentialResponse wrapping a known good JWT Token as its `credential`.
-final CredentialResponse goodCredential =
-    jsifyAs<CredentialResponse>(<String, Object?>{
-  'credential': goodJwtToken,
-});
+final CredentialResponse goodCredential = jsifyAs<CredentialResponse>(
+  <String, Object?>{'credential': goodJwtToken},
+);
 
 /// A CredentialResponse wrapping a known good JWT Token as its `credential`.
-final CredentialResponse minimalCredential =
-    jsifyAs<CredentialResponse>(<String, Object?>{
-  'credential': minimalJwtToken,
-});
+final CredentialResponse minimalCredential = jsifyAs<CredentialResponse>(
+  <String, Object?>{'credential': minimalJwtToken},
+);
 
-final CredentialResponse expiredCredential =
-    jsifyAs<CredentialResponse>(<String, Object?>{
-  'credential': expiredJwtToken,
-});
+final CredentialResponse expiredCredential = jsifyAs<CredentialResponse>(
+  <String, Object?>{'credential': expiredJwtToken},
+);
 
 /// A JWT token with predefined values.
 ///

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,15 +38,17 @@ void main() {
       // Act
       final int cameraId = await camera.createCamera(
         const CameraDescription(
-            name: cameraName,
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 0),
+          name: cameraName,
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 0,
+        ),
         ResolutionPreset.high,
       );
 
       // Assert
-      final VerificationResult verification =
-          verify(mockApi.create(captureAny, captureAny));
+      final VerificationResult verification = verify(
+        mockApi.create(captureAny, captureAny),
+      );
       expect(verification.captured[0], cameraName);
       final PlatformMediaSettings? settings =
           verification.captured[1] as PlatformMediaSettings?;
@@ -56,76 +58,88 @@ void main() {
     });
 
     test(
-        'Should send creation data and receive back a camera id using createCameraWithSettings',
-        () async {
-      // Arrange
-      final MockCameraApi mockApi = MockCameraApi();
-      when(mockApi.create(any, any)).thenAnswer((_) async => 1);
-      final AVFoundationCamera camera = AVFoundationCamera(api: mockApi);
-      const String cameraName = 'Test';
-      const int fps = 15;
-      const int videoBitrate = 200000;
-      const int audioBitrate = 32000;
+      'Should send creation data and receive back a camera id using createCameraWithSettings',
+      () async {
+        // Arrange
+        final MockCameraApi mockApi = MockCameraApi();
+        when(mockApi.create(any, any)).thenAnswer((_) async => 1);
+        final AVFoundationCamera camera = AVFoundationCamera(api: mockApi);
+        const String cameraName = 'Test';
+        const int fps = 15;
+        const int videoBitrate = 200000;
+        const int audioBitrate = 32000;
 
-      // Act
-      final int cameraId = await camera.createCameraWithSettings(
-        const CameraDescription(
-            name: cameraName,
-            lensDirection: CameraLensDirection.back,
-            sensorOrientation: 0),
-        const MediaSettings(
-          resolutionPreset: ResolutionPreset.low,
-          fps: fps,
-          videoBitrate: videoBitrate,
-          audioBitrate: audioBitrate,
-          enableAudio: true,
-        ),
-      );
-
-      // Assert
-      final VerificationResult verification =
-          verify(mockApi.create(captureAny, captureAny));
-      expect(verification.captured[0], cameraName);
-      final PlatformMediaSettings? settings =
-          verification.captured[1] as PlatformMediaSettings?;
-      expect(settings, isNotNull);
-      expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
-      expect(settings?.framesPerSecond, fps);
-      expect(settings?.videoBitrate, videoBitrate);
-      expect(settings?.audioBitrate, audioBitrate);
-      expect(settings?.enableAudio, true);
-      expect(cameraId, 1);
-    });
-
-    test('Should throw CameraException when create throws a PlatformException',
-        () {
-      // Arrange
-      const String exceptionCode = 'TESTING_ERROR_CODE';
-      const String exceptionMessage = 'Mock error message used during testing.';
-      final MockCameraApi mockApi = MockCameraApi();
-      when(mockApi.create(any, any)).thenAnswer((_) async {
-        throw PlatformException(code: exceptionCode, message: exceptionMessage);
-      });
-      final AVFoundationCamera camera = AVFoundationCamera(api: mockApi);
-
-      // Act
-      expect(
-        () => camera.createCamera(
+        // Act
+        final int cameraId = await camera.createCameraWithSettings(
           const CameraDescription(
-            name: 'Test',
+            name: cameraName,
             lensDirection: CameraLensDirection.back,
             sensorOrientation: 0,
           ),
-          ResolutionPreset.high,
-        ),
-        throwsA(
-          isA<CameraException>()
-              .having((CameraException e) => e.code, 'code', exceptionCode)
-              .having((CameraException e) => e.description, 'description',
-                  exceptionMessage),
-        ),
-      );
-    });
+          const MediaSettings(
+            resolutionPreset: ResolutionPreset.low,
+            fps: fps,
+            videoBitrate: videoBitrate,
+            audioBitrate: audioBitrate,
+            enableAudio: true,
+          ),
+        );
+
+        // Assert
+        final VerificationResult verification = verify(
+          mockApi.create(captureAny, captureAny),
+        );
+        expect(verification.captured[0], cameraName);
+        final PlatformMediaSettings? settings =
+            verification.captured[1] as PlatformMediaSettings?;
+        expect(settings, isNotNull);
+        expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
+        expect(settings?.framesPerSecond, fps);
+        expect(settings?.videoBitrate, videoBitrate);
+        expect(settings?.audioBitrate, audioBitrate);
+        expect(settings?.enableAudio, true);
+        expect(cameraId, 1);
+      },
+    );
+
+    test(
+      'Should throw CameraException when create throws a PlatformException',
+      () {
+        // Arrange
+        const String exceptionCode = 'TESTING_ERROR_CODE';
+        const String exceptionMessage =
+            'Mock error message used during testing.';
+        final MockCameraApi mockApi = MockCameraApi();
+        when(mockApi.create(any, any)).thenAnswer((_) async {
+          throw PlatformException(
+            code: exceptionCode,
+            message: exceptionMessage,
+          );
+        });
+        final AVFoundationCamera camera = AVFoundationCamera(api: mockApi);
+
+        // Act
+        expect(
+          () => camera.createCamera(
+            const CameraDescription(
+              name: 'Test',
+              lensDirection: CameraLensDirection.back,
+              sensorOrientation: 0,
+            ),
+            ResolutionPreset.high,
+          ),
+          throwsA(
+            isA<CameraException>()
+                .having((CameraException e) => e.code, 'code', exceptionCode)
+                .having(
+                  (CameraException e) => e.description,
+                  'description',
+                  exceptionMessage,
+                ),
+          ),
+        );
+      },
+    );
 
     test(
       'Should throw CameraException when initialize throws a PlatformException',
@@ -137,7 +151,9 @@ void main() {
         final MockCameraApi mockApi = MockCameraApi();
         when(mockApi.initialize(any, any)).thenAnswer((_) async {
           throw PlatformException(
-              code: exceptionCode, message: exceptionMessage);
+            code: exceptionCode,
+            message: exceptionMessage,
+          );
         });
         final AVFoundationCamera camera = AVFoundationCamera(api: mockApi);
 
@@ -147,7 +163,10 @@ void main() {
           throwsA(
             isA<CameraException>()
                 .having(
-                    (CameraException e) => e.code, 'code', 'TESTING_ERROR_CODE')
+                  (CameraException e) => e.code,
+                  'code',
+                  'TESTING_ERROR_CODE',
+                )
                 .having(
                   (CameraException e) => e.description,
                   'description',
@@ -173,20 +192,23 @@ void main() {
 
       // Act
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
-      camera.cameraEventStreamController.add(CameraInitializedEvent(
-        cameraId,
-        1920,
-        1080,
-        ExposureMode.auto,
-        true,
-        FocusMode.auto,
-        true,
-      ));
+      camera.cameraEventStreamController.add(
+        CameraInitializedEvent(
+          cameraId,
+          1920,
+          1080,
+          ExposureMode.auto,
+          true,
+          FocusMode.auto,
+          true,
+        ),
+      );
       await initializeFuture;
 
       // Assert
-      final VerificationResult verification =
-          verify(mockApi.initialize(captureAny, captureAny));
+      final VerificationResult verification = verify(
+        mockApi.initialize(captureAny, captureAny),
+      );
       expect(verification.captured[0], cameraId);
       // The default when unspecified should be bgra8888.
       expect(verification.captured[1], PlatformImageFormatGroup.bgra8888);
@@ -205,23 +227,26 @@ void main() {
         ResolutionPreset.high,
       );
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
-      camera.cameraEventStreamController.add(CameraInitializedEvent(
-        cameraId,
-        1920,
-        1080,
-        ExposureMode.auto,
-        true,
-        FocusMode.auto,
-        true,
-      ));
+      camera.cameraEventStreamController.add(
+        CameraInitializedEvent(
+          cameraId,
+          1920,
+          1080,
+          ExposureMode.auto,
+          true,
+          FocusMode.auto,
+          true,
+        ),
+      );
       await initializeFuture;
 
       // Act
       await camera.dispose(cameraId);
 
       // Assert
-      final VerificationResult verification =
-          verify(mockApi.dispose(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.dispose(captureAny),
+      );
       expect(verification.captured[0], cameraId);
     });
   });
@@ -242,22 +267,24 @@ void main() {
         ResolutionPreset.high,
       );
       final Future<void> initializeFuture = camera.initializeCamera(cameraId);
-      camera.cameraEventStreamController.add(CameraInitializedEvent(
-        cameraId,
-        1920,
-        1080,
-        ExposureMode.auto,
-        true,
-        FocusMode.auto,
-        true,
-      ));
+      camera.cameraEventStreamController.add(
+        CameraInitializedEvent(
+          cameraId,
+          1920,
+          1080,
+          ExposureMode.auto,
+          true,
+          FocusMode.auto,
+          true,
+        ),
+      );
       await initializeFuture;
     });
 
     test('Should receive initialized event', () async {
       // Act
-      final Stream<CameraInitializedEvent> eventStream =
-          camera.onCameraInitialized(cameraId);
+      final Stream<CameraInitializedEvent> eventStream = camera
+          .onCameraInitialized(cameraId);
       final StreamQueue<CameraInitializedEvent> streamQueue =
           StreamQueue<CameraInitializedEvent>(eventStream);
 
@@ -272,13 +299,15 @@ void main() {
         FocusMode.auto,
         true,
       );
-      camera.hostCameraHandlers[cameraId]!.initialized(PlatformCameraState(
-        previewSize: previewSize,
-        exposureMode: PlatformExposureMode.auto,
-        focusMode: PlatformFocusMode.auto,
-        exposurePointSupported: true,
-        focusPointSupported: true,
-      ));
+      camera.hostCameraHandlers[cameraId]!.initialized(
+        PlatformCameraState(
+          previewSize: previewSize,
+          exposureMode: PlatformExposureMode.auto,
+          focusMode: PlatformFocusMode.auto,
+          exposurePointSupported: true,
+          focusPointSupported: true,
+        ),
+      );
 
       // Assert
       expect(await streamQueue.next, event);
@@ -289,8 +318,9 @@ void main() {
 
     test('Should receive camera error events', () async {
       // Act
-      final Stream<CameraErrorEvent> errorStream =
-          camera.onCameraError(cameraId);
+      final Stream<CameraErrorEvent> errorStream = camera.onCameraError(
+        cameraId,
+      );
       final StreamQueue<CameraErrorEvent> streamQueue =
           StreamQueue<CameraErrorEvent>(errorStream);
 
@@ -312,17 +342,19 @@ void main() {
 
     test('Should receive device orientation change events', () async {
       // Act
-      final Stream<DeviceOrientationChangedEvent> eventStream =
-          camera.onDeviceOrientationChanged();
+      final Stream<DeviceOrientationChangedEvent> eventStream = camera
+          .onDeviceOrientationChanged();
       final StreamQueue<DeviceOrientationChangedEvent> streamQueue =
           StreamQueue<DeviceOrientationChangedEvent>(eventStream);
 
       // Emit test events
-      const DeviceOrientationChangedEvent event =
-          DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+        DeviceOrientation.portraitUp,
+      );
       for (int i = 0; i < 3; i++) {
-        camera.hostHandler
-            .deviceOrientationChanged(PlatformDeviceOrientation.portraitUp);
+        camera.hostHandler.deviceOrientationChanged(
+          PlatformDeviceOrientation.portraitUp,
+        );
       }
 
       // Assert
@@ -367,47 +399,66 @@ void main() {
       await initializeFuture;
     });
 
-    test('Should fetch CameraDescription instances for available cameras',
-        () async {
-      final List<PlatformCameraDescription> returnData =
-          <PlatformCameraDescription>[
-        PlatformCameraDescription(
-            name: 'Test 1', lensDirection: PlatformCameraLensDirection.front),
-        PlatformCameraDescription(
-            name: 'Test 2', lensDirection: PlatformCameraLensDirection.back),
-      ];
-      when(mockApi.getAvailableCameras()).thenAnswer((_) async => returnData);
+    test(
+      'Should fetch CameraDescription instances for available cameras',
+      () async {
+        final List<PlatformCameraDescription> returnData =
+            <PlatformCameraDescription>[
+              PlatformCameraDescription(
+                name: 'Test 1',
+                lensDirection: PlatformCameraLensDirection.front,
+                lensType: PlatformCameraLensType.ultraWide,
+              ),
+              PlatformCameraDescription(
+                name: 'Test 2',
+                lensDirection: PlatformCameraLensDirection.back,
+                lensType: PlatformCameraLensType.telephoto,
+              ),
+            ];
+        when(mockApi.getAvailableCameras()).thenAnswer((_) async => returnData);
 
-      final List<CameraDescription> cameras = await camera.availableCameras();
+        final List<CameraDescription> cameras = await camera.availableCameras();
 
-      expect(cameras.length, returnData.length);
-      for (int i = 0; i < returnData.length; i++) {
-        expect(cameras[i].name, returnData[i].name);
-        expect(cameras[i].lensDirection,
-            cameraLensDirectionFromPlatform(returnData[i].lensDirection));
-        // This value isn't provided by the platform, so is hard-coded to 90.
-        expect(cameras[i].sensorOrientation, 90);
-      }
-    });
+        expect(cameras.length, returnData.length);
+        for (int i = 0; i < returnData.length; i++) {
+          expect(cameras[i].name, returnData[i].name);
+          expect(
+            cameras[i].lensDirection,
+            cameraLensDirectionFromPlatform(returnData[i].lensDirection),
+          );
+          expect(
+            cameras[i].lensType,
+            cameraLensTypeFromPlatform(returnData[i].lensType),
+          );
+          // This value isn't provided by the platform, so is hard-coded to 90.
+          expect(cameras[i].sensorOrientation, 90);
+        }
+      },
+    );
 
     test(
-        'Should throw CameraException when availableCameras throws a PlatformException',
-        () {
-      const String code = 'TESTING_ERROR_CODE';
-      const String message = 'Mock error message used during testing.';
-      when(mockApi.getAvailableCameras()).thenAnswer(
-          (_) async => throw PlatformException(code: code, message: message));
+      'Should throw CameraException when availableCameras throws a PlatformException',
+      () {
+        const String code = 'TESTING_ERROR_CODE';
+        const String message = 'Mock error message used during testing.';
+        when(mockApi.getAvailableCameras()).thenAnswer(
+          (_) async => throw PlatformException(code: code, message: message),
+        );
 
-      expect(
-        camera.availableCameras,
-        throwsA(
-          isA<CameraException>()
-              .having((CameraException e) => e.code, 'code', code)
-              .having(
-                  (CameraException e) => e.description, 'description', message),
-        ),
-      );
-    });
+        expect(
+          camera.availableCameras,
+          throwsA(
+            isA<CameraException>()
+                .having((CameraException e) => e.code, 'code', code)
+                .having(
+                  (CameraException e) => e.description,
+                  'description',
+                  message,
+                ),
+          ),
+        );
+      },
+    );
 
     test('Should take a picture and return an XFile instance', () async {
       const String stubPath = '/test/path.jpg';
@@ -431,13 +482,18 @@ void main() {
     });
 
     test(
-        'Should pass enableStream if callback is passed when starting recording a video',
-        () async {
-      await camera.startVideoCapturing(VideoCaptureOptions(cameraId,
-          streamCallback: (CameraImageData imageData) {}));
+      'Should pass enableStream if callback is passed when starting recording a video',
+      () async {
+        await camera.startVideoCapturing(
+          VideoCaptureOptions(
+            cameraId,
+            streamCallback: (CameraImageData imageData) {},
+          ),
+        );
 
-      verify(mockApi.startVideoRecording(true));
-    });
+        verify(mockApi.startVideoRecording(true));
+      },
+    );
 
     test('Should stop a video recording and return the file', () async {
       const String stubPath = '/test/path.mp4';
@@ -462,9 +518,10 @@ void main() {
 
     test('Should set the description while recording', () async {
       const CameraDescription camera2Description = CameraDescription(
-          name: 'Test2',
-          lensDirection: CameraLensDirection.front,
-          sensorOrientation: 0);
+        name: 'Test2',
+        lensDirection: CameraLensDirection.front,
+        sensorOrientation: 0,
+      );
 
       await camera.setDescriptionWhileRecording(camera2Description);
 
@@ -511,8 +568,9 @@ void main() {
       const Point<double> point = Point<double>(0.4, 0.6);
       await camera.setExposurePoint(cameraId, point);
 
-      final VerificationResult verification =
-          verify(mockApi.setExposurePoint(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.setExposurePoint(captureAny),
+      );
       final PlatformPoint? passedPoint =
           verification.captured[0] as PlatformPoint?;
       expect(passedPoint?.x, point.x);
@@ -522,8 +580,9 @@ void main() {
     test('Should set the exposure point to null for reset', () async {
       await camera.setExposurePoint(cameraId, null);
 
-      final VerificationResult verification =
-          verify(mockApi.setExposurePoint(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.setExposurePoint(captureAny),
+      );
       final PlatformPoint? passedPoint =
           verification.captured[0] as PlatformPoint?;
       expect(passedPoint, null);
@@ -531,22 +590,26 @@ void main() {
 
     test('Should get the min exposure offset', () async {
       const double stubMinOffset = 2.0;
-      when(mockApi.getMinExposureOffset())
-          .thenAnswer((_) async => stubMinOffset);
+      when(
+        mockApi.getMinExposureOffset(),
+      ).thenAnswer((_) async => stubMinOffset);
 
-      final double minExposureOffset =
-          await camera.getMinExposureOffset(cameraId);
+      final double minExposureOffset = await camera.getMinExposureOffset(
+        cameraId,
+      );
 
       expect(minExposureOffset, stubMinOffset);
     });
 
     test('Should get the max exposure offset', () async {
       const double stubMaxOffset = 2.0;
-      when(mockApi.getMaxExposureOffset())
-          .thenAnswer((_) async => stubMaxOffset);
+      when(
+        mockApi.getMaxExposureOffset(),
+      ).thenAnswer((_) async => stubMaxOffset);
 
-      final double maxExposureOffset =
-          await camera.getMaxExposureOffset(cameraId);
+      final double maxExposureOffset = await camera.getMaxExposureOffset(
+        cameraId,
+      );
 
       expect(maxExposureOffset, stubMaxOffset);
     });
@@ -582,8 +645,9 @@ void main() {
       const Point<double> point = Point<double>(0.4, 0.6);
       await camera.setFocusPoint(cameraId, point);
 
-      final VerificationResult verification =
-          verify(mockApi.setFocusPoint(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.setFocusPoint(captureAny),
+      );
       final PlatformPoint? passedPoint =
           verification.captured[0] as PlatformPoint?;
       expect(passedPoint?.x, point.x);
@@ -593,8 +657,9 @@ void main() {
     test('Should set the focus point to null for reset', () async {
       await camera.setFocusPoint(cameraId, null);
 
-      final VerificationResult verification =
-          verify(mockApi.setFocusPoint(captureAny));
+      final VerificationResult verification = verify(
+        mockApi.setFocusPoint(captureAny),
+      );
       final PlatformPoint? passedPoint =
           verification.captured[0] as PlatformPoint?;
       expect(passedPoint, null);
@@ -633,27 +698,39 @@ void main() {
       verify(mockApi.setZoomLevel(zoom));
     });
 
-    test('Should throw CameraException when illegal zoom level is supplied',
-        () async {
-      const String code = 'ZOOM_ERROR';
-      const String message = 'Illegal zoom error';
-      when(mockApi.setZoomLevel(any)).thenAnswer(
-          (_) async => throw PlatformException(code: code, message: message));
+    test(
+      'Should throw CameraException when illegal zoom level is supplied',
+      () async {
+        const String code = 'ZOOM_ERROR';
+        const String message = 'Illegal zoom error';
+        when(mockApi.setZoomLevel(any)).thenAnswer(
+          (_) async => throw PlatformException(code: code, message: message),
+        );
 
-      expect(
+        expect(
           () => camera.setZoomLevel(cameraId, -1.0),
-          throwsA(isA<CameraException>()
-              .having((CameraException e) => e.code, 'code', code)
-              .having((CameraException e) => e.description, 'description',
-                  message)));
-    });
+          throwsA(
+            isA<CameraException>()
+                .having((CameraException e) => e.code, 'code', code)
+                .having(
+                  (CameraException e) => e.description,
+                  'description',
+                  message,
+                ),
+          ),
+        );
+      },
+    );
 
     test('Should lock the capture orientation', () async {
       await camera.lockCaptureOrientation(
-          cameraId, DeviceOrientation.portraitUp);
+        cameraId,
+        DeviceOrientation.portraitUp,
+      );
 
       verify(
-          mockApi.lockCaptureOrientation(PlatformDeviceOrientation.portraitUp));
+        mockApi.lockCaptureOrientation(PlatformDeviceOrientation.portraitUp),
+      );
     });
 
     test('Should unlock the capture orientation', () async {

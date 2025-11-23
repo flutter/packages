@@ -1,3 +1,44 @@
+## 2.18.6
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.18.5
+
+* Updates to Pigeon 26.
+
+## 2.18.4
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.18.3
+
+* Resolves Gradle 9 deprecations.
+
+## 2.18.2
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.18.1
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
+## 2.18.0
+
+* Adds support for warming up the Google Maps SDK 
+  via `GoogleMapsFlutterAndroid.warmup()`.
+
+## 2.17.0
+
+* Updates `com.google.android.gms:play-services-maps` to 19.2.0.
+* Marks `AndroidMapRenderer.legacy` as deprecated, since it's deprecated in the
+  current version of the Google Maps SDK.
+
+## 2.16.2
+
+* Removes documentation related to the map renderer selection API, as the
+  legacy renderer is no longer available, so requesting it is a no-op.
+
 ## 2.16.1
 
 * Removes obsolete code related to supporting SDK <21.

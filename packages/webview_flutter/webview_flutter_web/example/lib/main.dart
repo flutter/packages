@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,20 +25,14 @@ class _WebViewExample extends StatefulWidget {
 class _WebViewExampleState extends State<_WebViewExample> {
   final PlatformWebViewController _controller = PlatformWebViewController(
     const PlatformWebViewControllerCreationParams(),
-  )..loadRequest(
-      LoadRequestParams(
-        uri: Uri.parse('https://flutter.dev'),
-      ),
-    );
+  )..loadRequest(LoadRequestParams(uri: Uri.parse('https://flutter.dev')));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter WebView example'),
-        actions: <Widget>[
-          _SampleMenu(_controller),
-        ],
+        actions: <Widget>[_SampleMenu(_controller)],
       ),
       body: PlatformWebViewWidget(
         PlatformWebViewWidgetCreationParams(controller: _controller),
@@ -47,9 +41,7 @@ class _WebViewExampleState extends State<_WebViewExample> {
   }
 }
 
-enum _MenuOptions {
-  doPostRequest,
-}
+enum _MenuOptions { doPostRequest }
 
 class _SampleMenu extends StatelessWidget {
   const _SampleMenu(this.controller);
@@ -80,7 +72,7 @@ class _SampleMenu extends StatelessWidget {
       method: LoadRequestMethod.post,
       headers: const <String, String>{
         'foo': 'bar',
-        'Content-Type': 'text/plain'
+        'Content-Type': 'text/plain',
       },
       body: Uint8List.fromList('Test Body'.codeUnits),
     );

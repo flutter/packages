@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,7 +10,11 @@ void main() {
 
   test('toMap / fromMap', () {
     const CameraPosition cameraPosition = CameraPosition(
-        target: LatLng(10.0, 15.0), bearing: 0.5, tilt: 30.0, zoom: 1.5);
+      target: LatLng(10.0, 15.0),
+      bearing: 0.5,
+      tilt: 30.0,
+      zoom: 1.5,
+    );
     // Cast to <dynamic, dynamic> to ensure that recreating from JSON, where
     // type information will have likely been lost, still works.
     final Map<dynamic, dynamic> json =
@@ -23,9 +27,14 @@ void main() {
 
   test('CameraUpdate.newCameraPosition', () {
     const CameraPosition cameraPosition = CameraPosition(
-        target: LatLng(10.0, 15.0), bearing: 0.5, tilt: 30.0, zoom: 1.5);
-    final CameraUpdate cameraUpdate =
-        CameraUpdate.newCameraPosition(cameraPosition);
+      target: LatLng(10.0, 15.0),
+      bearing: 0.5,
+      tilt: 30.0,
+      zoom: 1.5,
+    );
+    final CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(
+      cameraPosition,
+    );
     expect(cameraUpdate.runtimeType, CameraUpdateNewCameraPosition);
     expect(cameraUpdate.updateType, CameraUpdateType.newCameraPosition);
     cameraUpdate as CameraUpdateNewCameraPosition;
@@ -47,10 +56,14 @@ void main() {
 
   test('CameraUpdate.newLatLngBounds', () {
     final LatLngBounds latLngBounds = LatLngBounds(
-        northeast: const LatLng(1.0, 2.0), southwest: const LatLng(-2.0, -3.0));
+      northeast: const LatLng(1.0, 2.0),
+      southwest: const LatLng(-2.0, -3.0),
+    );
     const double padding = 1.0;
-    final CameraUpdate cameraUpdate =
-        CameraUpdate.newLatLngBounds(latLngBounds, padding);
+    final CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(
+      latLngBounds,
+      padding,
+    );
     expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngBounds);
     expect(cameraUpdate.updateType, CameraUpdateType.newLatLngBounds);
     cameraUpdate as CameraUpdateNewLatLngBounds;

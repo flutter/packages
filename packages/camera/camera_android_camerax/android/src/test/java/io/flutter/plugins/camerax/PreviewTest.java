@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -103,7 +103,7 @@ public class PreviewTest {
         ArgumentCaptor.forClass(TextureRegistry.SurfaceProducer.Callback.class);
 
     when(mockSurfaceRequest.getResolution()).thenReturn(new Size(5, 6));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mock(Surface.class));
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mock(Surface.class));
 
     final Preview.SurfaceProvider previewSurfaceProvider =
         api.createSurfaceProvider(mockSurfaceProducer, mockSystemServicesManager);
@@ -113,8 +113,8 @@ public class PreviewTest {
 
     final TextureRegistry.SurfaceProducer.Callback callback = callbackCaptor.getValue();
 
-    // Verify callback's onSurfaceDestroyed invalidates SurfaceRequest.
-    simulateSurfaceDestruction(callback);
+    // Verify callback's onSurfaceCleanup invalidates SurfaceRequest.
+    simulateSurfaceCleanup(callback);
     verify(mockSurfaceRequest).invalidate();
 
     reset(mockSurfaceRequest);
@@ -155,7 +155,7 @@ public class PreviewTest {
 
     when(mockSurfaceRequest.getResolution())
         .thenReturn(new Size(resolutionWidth, resolutionHeight));
-    when(mockSurfaceProducer.getSurface()).thenReturn(mockSurface);
+    when(mockSurfaceProducer.getForcedNewSurface()).thenReturn(mockSurface);
 
     final ArgumentCaptor<Surface> surfaceCaptor = ArgumentCaptor.forClass(Surface.class);
     final ArgumentCaptor<Consumer<SurfaceRequest.Result>> consumerCaptor =
@@ -286,7 +286,7 @@ public class PreviewTest {
   // see https://github.com/flutter/flutter/issues/16125. This separate method only exists to scope
   // the suppression.
   @SuppressWarnings({"deprecation", "removal"})
-  void simulateSurfaceDestruction(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
-    producerLifecycle.onSurfaceDestroyed();
+  void simulateSurfaceCleanup(TextureRegistry.SurfaceProducer.Callback producerLifecycle) {
+    producerLifecycle.onSurfaceCleanup();
   }
 }

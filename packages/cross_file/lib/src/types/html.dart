@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,13 +36,13 @@ class XFile extends XFileBase {
     Uint8List? bytes,
     DateTime? lastModified,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  })  : _mimeType = mimeType,
-        _path = path,
-        _length = length,
-        _overrides = overrides,
-        _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
-        _name = name ?? '',
-        super(path) {
+  }) : _mimeType = mimeType,
+       _path = path,
+       _length = length,
+       _overrides = overrides,
+       _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
+       _name = name ?? '',
+       super(path) {
     // Cache `bytes` as Blob, if passed.
     if (bytes != null) {
       _browserBlob = _createBlobFromBytes(bytes, mimeType);
@@ -58,18 +58,14 @@ class XFile extends XFileBase {
     DateTime? lastModified,
     String? path,
     @visibleForTesting CrossFileTestOverrides? overrides,
-  })  : _mimeType = mimeType,
-        _length = length,
-        _overrides = overrides,
-        _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
-        _name = name ?? '',
-        super(path) {
-    if (path == null) {
-      _browserBlob = _createBlobFromBytes(bytes, mimeType);
-      _path = URL.createObjectURL(_browserBlob!);
-    } else {
-      _path = path;
-    }
+  }) : _mimeType = mimeType,
+       _length = length,
+       _overrides = overrides,
+       _lastModified = lastModified ?? DateTime.fromMillisecondsSinceEpoch(0),
+       _name = name ?? '',
+       super(path) {
+    _browserBlob = _createBlobFromBytes(bytes, mimeType);
+    _path = URL.createObjectURL(_browserBlob!);
   }
 
   // Initializes a Blob from a bunch of `bytes` and an optional `mimeType`.
@@ -77,7 +73,9 @@ class XFile extends XFileBase {
     return (mimeType == null)
         ? Blob(<JSUint8Array>[bytes.toJS].toJS)
         : Blob(
-            <JSUint8Array>[bytes.toJS].toJS, BlobPropertyBag(type: mimeType));
+            <JSUint8Array>[bytes.toJS].toJS,
+            BlobPropertyBag(type: mimeType),
+          );
   }
 
   // Overridable (meta) data that can be specified by the constructors.
@@ -140,14 +138,17 @@ class XFile extends XFileBase {
       ..open('get', path, true)
       ..responseType = 'blob'
       ..onLoad.listen((ProgressEvent e) {
-        assert(request.response != null,
-            'The Blob backing this XFile cannot be null!');
+        assert(
+          request.response != null,
+          'The Blob backing this XFile cannot be null!',
+        );
         blobCompleter.complete(request.response! as Blob);
       })
       ..onError.listen((ProgressEvent e) {
         if (e.type == 'error') {
-          blobCompleter.completeError(Exception(
-              'Could not load Blob from its URL. Has it been revoked?'));
+          blobCompleter.completeError(
+            Exception('Could not load Blob from its URL. Has it been revoked?'),
+          );
         }
       })
       ..send();
@@ -187,8 +188,8 @@ class XFile extends XFileBase {
 
     await reader.onLoadEnd.first;
 
-    final Uint8List? result =
-        (reader.result as JSArrayBuffer?)?.toDart.asUint8List();
+    final Uint8List? result = (reader.result as JSArrayBuffer?)?.toDart
+        .asUint8List();
 
     if (result == null) {
       throw Exception('Cannot read bytes from Blob. Is it still available?');

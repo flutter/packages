@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -310,6 +310,18 @@
   XCTAssertEqual(controller.videoMaximumDuration, 95);
 }
 
+- (void)testPickingMultiVideoWithDuration {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  [plugin
+      pickMultiVideoWithMaxDuration:@(95)
+                              limit:nil
+                         completion:^(NSArray<NSString *> *result, FlutterError *_Nullable error){
+                         }];
+
+  XCTAssertEqual(plugin.callContext.maxDuration, 95);
+}
+
 - (void)testViewController {
   UIWindow *window = [UIWindow new];
   MockViewController *vc1 = [MockViewController new];
@@ -603,7 +615,7 @@
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
-  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
 }
 
 - (void)testPickMediaWithLimitAllowsMultiple {
@@ -620,7 +632,7 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 2);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
 }
 
 - (void)testPickMediaWithLimitMultipleNotAllowed {
@@ -637,7 +649,7 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 1);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 1);
 }
 
 - (void)testPickMultiImageWithoutLimit {
@@ -649,7 +661,7 @@
                          completion:^(NSArray<NSString *> *_Nullable result,
                                       FlutterError *_Nullable error){
                          }];
-  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
 }
 
 - (void)testPickMediaWithoutLimitAllowsMultiple {
@@ -666,7 +678,27 @@
                                                FlutterError *_Nullable error){
                                   }];
 
-  XCTAssertEqual(plugin.callContext.maxImageCount, 0);
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
+}
+
+- (void)testPickMultiVideoWithLimit {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin pickMultiVideoWithMaxDuration:nil
+                                  limit:@(2)
+                             completion:^(NSArray<NSString *> *_Nullable result,
+                                          FlutterError *_Nullable error){
+                             }];
+  XCTAssertEqual(plugin.callContext.maxItemCount, 2);
+}
+
+- (void)testPickMultiVideoWithoutLimit {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  [plugin pickMultiVideoWithMaxDuration:nil
+                                  limit:nil
+                             completion:^(NSArray<NSString *> *_Nullable result,
+                                          FlutterError *_Nullable error){
+                             }];
+  XCTAssertEqual(plugin.callContext.maxItemCount, 0);
 }
 
 @end

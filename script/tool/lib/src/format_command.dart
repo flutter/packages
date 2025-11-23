@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,6 +8,7 @@ import 'dart:io' as io;
 import 'package:file/file.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 import 'common/core.dart';
 import 'common/output_utils.dart';
@@ -36,6 +37,7 @@ const int _exitDependencyMissing = 7;
 const int _exitSwiftFormatFailed = 8;
 const int _exitKotlinFormatFailed = 9;
 const int _exitSwiftLintFoundIssues = 10;
+const int _exitDartLanguageVersionIssue = 11;
 
 final Uri _javaFormatterUrl = Uri.https('github.com',
     '/google/google-java-format/releases/download/google-java-format-1.3/google-java-format-1.3-all-deps.jar');
@@ -58,14 +60,17 @@ class FormatCommand extends PackageLoopingCommand {
     argParser.addFlag(_kotlinArg,
         help: 'Format Kotlin files', defaultsTo: true);
     argParser.addFlag(_javaArg, help: 'Format Java files', defaultsTo: true);
+    // Currently swift-format is run via xcrun, so only works on macOS. If that
+    // ever becomes an issue, the ability to find it in the path and/or allow
+    // providing a path could be restored, to allow developers on Linux or
+    // Windows to build swift-format from source and use that. See
+    // https://github.com/flutter/packages/pull/9460.
     argParser.addFlag(_swiftArg,
-        help: 'Format and lint Swift files', defaultsTo: true);
+        help: 'Format and lint Swift files', defaultsTo: platform.isMacOS);
     argParser.addOption(_clangFormatPathArg,
         defaultsTo: 'clang-format', help: 'Path to "clang-format" executable.');
     argParser.addOption(_javaPathArg,
         defaultsTo: 'java', help: 'Path to "java" executable.');
-    argParser.addOption(_swiftFormatPathArg,
-        defaultsTo: 'swift-format', help: 'Path to "swift-format" executable.');
   }
 
   static const String _dartArg = 'dart';
@@ -76,7 +81,6 @@ class FormatCommand extends PackageLoopingCommand {
   static const String _swiftArg = 'swift';
   static const String _clangFormatPathArg = 'clang-format-path';
   static const String _javaPathArg = 'java-path';
-  static const String _swiftFormatPathArg = 'swift-format-path';
 
   @override
   final String name = 'format';
@@ -123,20 +127,13 @@ class FormatCommand extends PackageLoopingCommand {
       relativeTo: package.directory,
     );
     if (getBoolArg(_dartArg)) {
-      // Ensure that .dart_tool exists, since without it `dart` doesn't know
-      // the lanugage version, so the formatter may give different output.
-      if (!package.directory.childDirectory('.dart_tool').existsSync()) {
-        if (!await runPubGet(package, processRunner, super.platform)) {
-          printError('Unable to fetch dependencies.');
-          return PackageResult.fail(<String>['unable to fetch dependencies']);
-        }
+      if (!await _formatDart(package, files, workingDir: package.directory)) {
+        return PackageResult.fail(<String>['unable to fetch dependencies']);
       }
-
-      await _formatDart(files, workingDir: package.directory);
     }
     // Success or failure is determined overall in completeRun, since most code
     // isn't being validated per-package, so just always return success at the
-    // package level.
+    // package level if fetching dependencies worked.
     // TODO(stuartmorgan): Consider doing _didModifyAnything checks per-package
     //  instead, since the other languages are already formatted by the time
     //  this code is being run.
@@ -223,10 +220,10 @@ class FormatCommand extends PackageLoopingCommand {
     final Iterable<String> swiftFiles =
         _getPathsWithExtensions(files, <String>{'.swift'});
     if (swiftFiles.isNotEmpty) {
-      final String swiftFormat = await _findValidSwiftFormat();
       print('Formatting .swift files...');
-      final int formatExitCode =
-          await _runBatched(swiftFormat, <String>['-i'], files: swiftFiles);
+      final int formatExitCode = await _runBatched(
+          'xcrun', <String>['swift-format', '-i'],
+          files: swiftFiles);
       if (formatExitCode != 0) {
         printError('Failed to format Swift files: exit code $formatExitCode.');
         throw ToolExit(_exitSwiftFormatFailed);
@@ -234,8 +231,9 @@ class FormatCommand extends PackageLoopingCommand {
 
       print('Linting .swift files...');
       final int lintExitCode = await _runBatched(
-          swiftFormat,
+          'xcrun',
           <String>[
+            'swift-format',
             'lint',
             '--parallel',
             '--strict',
@@ -268,17 +266,6 @@ class FormatCommand extends PackageLoopingCommand {
     }
     printError('Unable to run "clang-format". Make sure that it is in your '
         'path, or provide a full path with --$_clangFormatPathArg.');
-    throw ToolExit(_exitDependencyMissing);
-  }
-
-  Future<String> _findValidSwiftFormat() async {
-    final String swiftFormat = getStringArg(_swiftFormatPathArg);
-    if (await _hasDependency(swiftFormat)) {
-      return swiftFormat;
-    }
-
-    printError('Unable to run "swift-format". Make sure that it is in your '
-        'path, or provide a full path with --$_swiftFormatPathArg.');
     throw ToolExit(_exitDependencyMissing);
   }
 
@@ -329,13 +316,35 @@ class FormatCommand extends PackageLoopingCommand {
     }
   }
 
-  Future<void> _formatDart(
+  /// Formats any Dart files in the given [files] in [package].
+  ///
+  /// Returns false if the package couldn't be formatted due to failure to
+  /// fetch dependencies.
+  Future<bool> _formatDart(
+    RepositoryPackage package,
     Iterable<String> files, {
     Directory? workingDir,
   }) async {
     final Iterable<String> dartFiles =
         _getPathsWithExtensions(files, <String>{'.dart'});
     if (dartFiles.isNotEmpty) {
+      final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
+        package,
+        ...package.getSubpackages(includeExamples: false)
+      ];
+      // Ensure that the package language version has been correctly resolved,
+      // since it can change the behavior of the Dart formatter. This must be
+      // done for every sub-package to avoid inconsistent results if
+      // sub-packages have different language versions than the main package.
+      for (final RepositoryPackage p in packagesToGet) {
+        if (!_resolvedLanguageVersionIsUpToDate(p)) {
+          if (!await runPubGet(p, processRunner, platform)) {
+            printError('Unable to fetch dependencies.');
+            return false;
+          }
+        }
+      }
+
       print('Formatting .dart files...');
       final int exitCode = await _runBatched('dart', <String>['format'],
           files: dartFiles, workingDir: workingDir);
@@ -344,6 +353,7 @@ class FormatCommand extends PackageLoopingCommand {
         throw ToolExit(_exitFlutterFormatFailed);
       }
     }
+    return true;
   }
 
   /// Given a stream of [files], returns the paths of any that are not in known
@@ -526,5 +536,54 @@ class FormatCommand extends PackageLoopingCommand {
       currentBatchTotalLength += length;
     }
     return batches;
+  }
+
+  bool _resolvedLanguageVersionIsUpToDate(RepositoryPackage package) {
+    final File configFile = package.directory
+        .childDirectory('.dart_tool')
+        .childFile('package_config.json');
+    // If the file isn't present, there is no resolved language version.
+    if (!configFile.existsSync()) {
+      return false;
+    }
+    // Otherwise, check that it's up to date, since 'dart format' uses the
+    // resolved version even if pubspec.yaml has been changed.
+    final Pubspec pubspec = package.parsePubspec();
+    final VersionConstraint? dartSdkConstraint = pubspec.environment['sdk'];
+    if (dartSdkConstraint == null) {
+      printError(
+          '${package.pubspecFile.absolute.path} is missing a Dart SDK constraint');
+      throw ToolExit(_exitDartLanguageVersionIssue);
+    }
+    final String minDartSdkVersion = switch (dartSdkConstraint) {
+      final VersionRange r => r.min.toString(),
+      // A Dart SDK constraint should always be a range.
+      _ => throw ToolExit(_exitDartLanguageVersionIssue),
+    };
+    final String packageName = pubspec.name;
+
+    final Map<Object, Object?> configJson =
+        jsonDecode(configFile.readAsStringSync()) as Map<Object, Object?>;
+    final Map<Object, Object?>? packageInfo =
+        (configJson['packages'] as List<Object?>?)
+            ?.cast<Map<Object, Object?>>()
+            .where((Map<Object, Object?> p) => p['name'] == packageName)
+            .firstOrNull;
+    final String? resolvedLanguageVersion =
+        packageInfo == null ? null : packageInfo['languageVersion'] as String?;
+    if (resolvedLanguageVersion == null) {
+      // This shouldn't ever happen, so log for potential investigation.
+      printWarning(
+          'No language version found for $packageName in ${configFile.absolute.path}');
+      return false;
+    }
+    // Check for startsWith rather than equality since the JSON languageVerison
+    // currently only uses major.minor, rather than the full three-part version.
+    if (!minDartSdkVersion.startsWith(resolvedLanguageVersion)) {
+      print('Resolved language version for $packageName is stale '
+          '($resolvedLanguageVersion vs $minDartSdkVersion)');
+      return false;
+    }
+    return true;
   }
 }

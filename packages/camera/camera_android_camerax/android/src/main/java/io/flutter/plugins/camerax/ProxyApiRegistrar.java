@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -60,7 +60,7 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   }
 
   // PreviewProxyApi maintains a state to track SurfaceProducers provided by the Flutter engine.
-  @NonNull private final PreviewProxyApi previewProxyApi = new PreviewProxyApi(this);
+  @Nullable private PreviewProxyApi previewProxyApi;
 
   public ProxyApiRegistrar(
       @NonNull BinaryMessenger binaryMessenger,
@@ -140,13 +140,19 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
     return 3000;
   }
 
-  @SuppressWarnings("deprecation")
+  @SuppressWarnings(
+      "deprecation") // getSystemService was the way of getting the default display prior to API 30
   @Nullable
   Display getDisplay() {
+    Activity activity = getActivity();
+    if (activity == null || activity.isDestroyed()) {
+      return null;
+    }
+
     if (sdkIsAtLeast(Build.VERSION_CODES.R)) {
-      return getContext().getDisplay();
+      return activity.getDisplay();
     } else {
-      return ((WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE))
+      return ((WindowManager) activity.getSystemService(Context.WINDOW_SERVICE))
           .getDefaultDisplay();
     }
   }
@@ -220,6 +226,9 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @NonNull
   @Override
   public PigeonApiPreview getPigeonApiPreview() {
+    if (previewProxyApi == null) {
+      previewProxyApi = new PreviewProxyApi(this);
+    }
     return previewProxyApi;
   }
 
@@ -420,5 +429,11 @@ public class ProxyApiRegistrar extends CameraXLibraryPigeonProxyApiRegistrar {
   @Override
   public CameraPermissionsErrorProxyApi getPigeonApiCameraPermissionsError() {
     return new CameraPermissionsErrorProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiImageProxyUtils getPigeonApiImageProxyUtils() {
+    return new ImageProxyUtilsProxyApi(this);
   }
 }

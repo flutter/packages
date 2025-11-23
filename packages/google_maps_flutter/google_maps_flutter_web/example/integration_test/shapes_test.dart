@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,6 +20,10 @@ import 'package:integration_test/integration_test.dart';
 // converting from a byte value to a double between 0 and 1.
 // (For Color opacity values, for example)
 const double _acceptableDelta = 0.01;
+
+extension GMapsProps on JSObject {
+  external bool get clickable;
+}
 
 /// Test Shapes (Circle, Polygon, Polyline)
 void main() {
@@ -111,11 +115,39 @@ void main() {
       final gmaps.Circle circle = controller.circles.values.first.circle!;
 
       expect((circle.get('fillColor')! as JSString).toDart, '#fabada');
-      expect((circle.get('fillOpacity')! as JSNumber).toDartDouble,
-          closeTo(0.5, _acceptableDelta));
+      expect(
+        (circle.get('fillOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
       expect((circle.get('strokeColor')! as JSString).toDart, '#c0ffee');
-      expect((circle.get('strokeOpacity')! as JSNumber).toDartDouble,
-          closeTo(1, _acceptableDelta));
+      expect(
+        (circle.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(1, _acceptableDelta),
+      );
+    });
+
+    testWidgets('addCircles sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
+      final Set<Circle> circles = <Circle>{
+        const Circle(circleId: CircleId('1'), consumeTapEvents: true),
+        const Circle(circleId: CircleId('2')),
+      };
+
+      controller.addCircles(circles);
+
+      final CircleController? circle1Controller =
+          controller.circles[const CircleId('1')];
+      final CircleController? circle2Controller =
+          controller.circles[const CircleId('2')];
+
+      final bool circle1Clickable =
+          (circle1Controller!.circle! as JSObject).clickable;
+      final bool circle2Clickable =
+          (circle2Controller!.circle! as JSObject).clickable;
+
+      expect(circle1Clickable, true);
+      expect(circle2Clickable, false);
     });
   });
 
@@ -150,7 +182,9 @@ void main() {
       controller.addPolygons(polygons);
 
       expect(
-          controller.polygons[const PolygonId('1')]?.polygon?.visible, isTrue);
+        controller.polygons[const PolygonId('1')]?.polygon?.visible,
+        isTrue,
+      );
 
       // Update the polygon
       final Set<Polygon> updatedPolygons = <Polygon>{
@@ -160,7 +194,9 @@ void main() {
 
       expect(controller.polygons.length, 1);
       expect(
-          controller.polygons[const PolygonId('1')]?.polygon?.visible, isFalse);
+        controller.polygons[const PolygonId('1')]?.polygon?.visible,
+        isFalse,
+      );
     });
 
     testWidgets('removePolygons', (WidgetTester tester) async {
@@ -202,11 +238,15 @@ void main() {
       final gmaps.Polygon polygon = controller.polygons.values.first.polygon!;
 
       expect((polygon.get('fillColor')! as JSString).toDart, '#fabada');
-      expect((polygon.get('fillOpacity')! as JSNumber).toDartDouble,
-          closeTo(0.5, _acceptableDelta));
+      expect(
+        (polygon.get('fillOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
       expect((polygon.get('strokeColor')! as JSString).toDart, '#c0ffee');
-      expect((polygon.get('strokeOpacity')! as JSNumber).toDartDouble,
-          closeTo(1, _acceptableDelta));
+      expect(
+        (polygon.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(1, _acceptableDelta),
+      );
     });
 
     testWidgets('Handle Polygons with holes', (WidgetTester tester) async {
@@ -262,8 +302,9 @@ void main() {
       expect(geometry.poly.containsLocation(pointInHole, polygon!), false);
     });
 
-    testWidgets('Hole Path gets reversed to display correctly',
-        (WidgetTester tester) async {
+    testWidgets('Hole Path gets reversed to display correctly', (
+      WidgetTester tester,
+    ) async {
       final Set<Polygon> polygons = <Polygon>{
         const Polygon(
           polygonId: PolygonId('BermudaTriangle'),
@@ -290,6 +331,30 @@ void main() {
       expect(paths.getAt(1)?.getAt(0)?.lat, 28.745);
       expect(paths.getAt(1)?.getAt(1)?.lat, 29.57);
       expect(paths.getAt(1)?.getAt(2)?.lat, 27.339);
+    });
+
+    testWidgets('addPolygons sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
+      final Set<Polygon> polygons = <Polygon>{
+        const Polygon(polygonId: PolygonId('1'), consumeTapEvents: true),
+        const Polygon(polygonId: PolygonId('2')),
+      };
+
+      controller.addPolygons(polygons);
+
+      final PolygonController? polygon1Controller =
+          controller.polygons[const PolygonId('1')];
+      final PolygonController? polygon2Controller =
+          controller.polygons[const PolygonId('2')];
+
+      final bool polygon1Clickable =
+          (polygon1Controller!.polygon! as JSObject).clickable;
+      final bool polygon2Clickable =
+          (polygon2Controller!.polygon! as JSObject).clickable;
+
+      expect(polygon1Clickable, true);
+      expect(polygon2Clickable, false);
     });
   });
 
@@ -361,10 +426,7 @@ void main() {
 
     testWidgets('Converts colors to CSS', (WidgetTester tester) async {
       final Set<Polyline> lines = <Polyline>{
-        const Polyline(
-          polylineId: PolylineId('1'),
-          color: Color(0x7FFABADA),
-        ),
+        const Polyline(polylineId: PolylineId('1'), color: Color(0x7FFABADA)),
       };
 
       controller.addPolylines(lines);
@@ -372,8 +434,34 @@ void main() {
       final gmaps.Polyline line = controller.lines.values.first.line!;
 
       expect((line.get('strokeColor')! as JSString).toDart, '#fabada');
-      expect((line.get('strokeOpacity')! as JSNumber).toDartDouble,
-          closeTo(0.5, _acceptableDelta));
+      expect(
+        (line.get('strokeOpacity')! as JSNumber).toDartDouble,
+        closeTo(0.5, _acceptableDelta),
+      );
+    });
+
+    testWidgets('addPolylines sets clickable according to consumeTapEvents', (
+      WidgetTester tester,
+    ) async {
+      final Set<Polyline> polylines = <Polyline>{
+        const Polyline(polylineId: PolylineId('1'), consumeTapEvents: true),
+        const Polyline(polylineId: PolylineId('2')),
+      };
+
+      controller.addPolylines(polylines);
+
+      final PolylineController? polyline1Controller =
+          controller.lines[const PolylineId('1')];
+      final PolylineController? polyline2Controller =
+          controller.lines[const PolylineId('2')];
+
+      final bool polyline1Clickable =
+          (polyline1Controller!.line! as JSObject).clickable;
+      final bool polyline2Clickable =
+          (polyline2Controller!.line! as JSObject).clickable;
+
+      expect(polyline1Clickable, true);
+      expect(polyline2Clickable, false);
     });
   });
 
@@ -394,7 +482,7 @@ void main() {
       WeightedLatLng(LatLng(37.785, -122.441)),
       WeightedLatLng(LatLng(37.785, -122.439)),
       WeightedLatLng(LatLng(37.785, -122.437)),
-      WeightedLatLng(LatLng(37.785, -122.435))
+      WeightedLatLng(LatLng(37.785, -122.435)),
     ];
 
     setUp(() {
@@ -497,9 +585,9 @@ void main() {
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,
-          gradient: HeatmapGradient(
-            <HeatmapGradientColor>[HeatmapGradientColor(Color(0xFFFABADA), 0)],
-          ),
+          gradient: HeatmapGradient(<HeatmapGradientColor>[
+            HeatmapGradientColor(Color(0xFFFABADA), 0),
+          ]),
           radius: HeatmapRadius.fromPixels(20),
         ),
       };
@@ -510,9 +598,9 @@ void main() {
           controller.heatmaps.values.first.heatmap!;
 
       expect(
-        (heatmap.get('gradient')! as JSArray<JSString>)
-            .toDart
-            .map((JSString? value) => value!.toDart),
+        (heatmap.get('gradient')! as JSArray<JSString>).toDart.map(
+          (JSString? value) => value!.toDart,
+        ),
         <String>['rgba(250, 186, 218, 0.00)', 'rgba(250, 186, 218, 1.00)'],
       );
     });

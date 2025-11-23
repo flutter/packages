@@ -1,6 +1,19 @@
 ## NEXT
 
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates README to reflect that only Android API 24+ is supported.
+
+## 4.13.0
+
+* Adds support to respond to recoverable SSL certificate errors. See `NavigationDelegate(onSSlAuthError)`.
+
+## 4.12.0
+
+* Adds support to set whether to draw the scrollbar. See
+  `WebViewController.setVerticalScrollBarEnabled`,
+  `WebViewController.setHorizontalScrollBarEnabled`,
+  `WebViewController.supportsSetScrollBarsEnabled`.
+* Updates README to indicate that Android SDK <21 is no longer supported.
 
 ## 4.11.0
 

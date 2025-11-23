@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -31,18 +31,16 @@ void main() {
       );
 
       when(
-        mockWKWebsiteDataStore.removeDataOfTypes(
-          <WebsiteDataType>[WebsiteDataType.cookies],
-          0.0,
-        ),
+        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
+          WebsiteDataType.cookies,
+        ], 0.0),
       ).thenAnswer((_) => Future<bool>.value(true));
       expect(manager.clearCookies(), completion(true));
 
       when(
-        mockWKWebsiteDataStore.removeDataOfTypes(
-          <WebsiteDataType>[WebsiteDataType.cookies],
-          0.0,
-        ),
+        mockWKWebsiteDataStore.removeDataOfTypes(<WebsiteDataType>[
+          WebsiteDataType.cookies,
+        ], 0.0),
       ).thenAnswer((_) => Future<bool>.value(false));
       expect(manager.clearCookies(), completion(false));
     });
@@ -62,12 +60,11 @@ void main() {
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
             defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-            newHTTPCookie: ({
-              required Map<HttpCookiePropertyKey, Object> properties,
-            }) {
-              cookieProperties = properties;
-              return cookie;
-            },
+            newHTTPCookie:
+                ({required Map<HttpCookiePropertyKey, Object> properties}) {
+                  cookieProperties = properties;
+                  return cookie;
+                },
           ),
         ),
       );
@@ -77,15 +74,12 @@ void main() {
       );
 
       verify(mockCookieStore.setCookie(cookie));
-      expect(
-        cookieProperties,
-        <HttpCookiePropertyKey, Object>{
-          HttpCookiePropertyKey.name: 'a',
-          HttpCookiePropertyKey.value: 'b',
-          HttpCookiePropertyKey.domain: 'c',
-          HttpCookiePropertyKey.path: 'd',
-        },
-      );
+      expect(cookieProperties, <HttpCookiePropertyKey, Object>{
+        HttpCookiePropertyKey.name: 'a',
+        HttpCookiePropertyKey.value: 'b',
+        HttpCookiePropertyKey.domain: 'c',
+        HttpCookiePropertyKey.path: 'd',
+      });
     });
 
     test('setCookie throws argument error with invalid path', () async {

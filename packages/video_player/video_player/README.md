@@ -77,12 +77,16 @@ class _VideoAppState extends State<VideoApp> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'))
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
+    _controller =
+        VideoPlayerController.networkUrl(
+            Uri.parse(
+              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            ),
+          )
+          ..initialize().then((_) {
+            // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+            setState(() {});
+          });
   }
 
   @override
@@ -120,6 +124,7 @@ class _VideoAppState extends State<VideoApp> {
     super.dispose();
   }
 }
+
 ```
 
 ## Usage
@@ -140,3 +145,10 @@ and so on.
 To learn about playback speed limitations, see the [`setPlaybackSpeed` method documentation](https://pub.dev/documentation/video_player/latest/video_player/VideoPlayerController/setPlaybackSpeed.html).
 
 Furthermore, see the example app for an example playback speed implementation.
+
+### Video view type
+
+You can set the video view type of your controller (instance of `VideoPlayerController`) during its creation by passing the `videoViewType` argument.  
+If set to `VideoViewType.platformView`, platform views will be used instead of texture view on supported platforms.
+
+The relative performance of the different view types may vary by platform, and on some platforms the use of platform views may have correctness issues in certain circumstances due to limitations of Flutter's platform view system.

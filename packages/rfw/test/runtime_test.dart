@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -904,7 +904,7 @@ void main() {
     '''));
     expect(
       (runtime.build(
-        tester.element(find.byType(Container)),
+        tester.element(find.byType(View)),
         const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'stateless'),
         data,
         (String eventName, DynamicMap eventArguments) {},
@@ -913,7 +913,7 @@ void main() {
     );
     expect(
       (runtime.build(
-        tester.element(find.byType(Container)),
+        tester.element(find.byType(View)),
         const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'stateful'),
         data,
         (String eventName, DynamicMap eventArguments) {},
@@ -922,7 +922,7 @@ void main() {
     );
     expect(
       (runtime.build(
-        tester.element(find.byType(Container)),
+        tester.element(find.byType(View)),
         const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'switchy'),
         data,
         (String eventName, DynamicMap eventArguments) {},

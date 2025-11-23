@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,8 +19,11 @@ void main() {
     ByteData message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
-    await tester.binding.defaultBinaryMessenger
-        .handlePlatformMessage('flutter/navigation', message, (_) {});
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/navigation',
+      message,
+      (_) {},
+    );
 
     await tester.pumpAndSettle();
     // Still show login page due to redirection
@@ -30,14 +33,15 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('HomeScreen'), findsOneWidget);
 
-    testRouteInformation = <String, dynamic>{
-      'location': '/login',
-    };
+    testRouteInformation = <String, dynamic>{'location': '/login'};
     message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );
-    await tester.binding.defaultBinaryMessenger
-        .handlePlatformMessage('flutter/navigation', message, (_) {});
+    await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
+      'flutter/navigation',
+      message,
+      (_) {},
+    );
 
     await tester.pumpAndSettle();
     // Got redirected back to home page.

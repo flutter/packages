@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -77,11 +77,17 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
         assetUrl = ui_web.assetManager.getAssetUrl(assetUrl);
         uri = assetUrl;
       case DataSourceType.file:
-        return Future<int>.error(UnimplementedError(
-            'web implementation of video_player cannot play local files'));
+        return Future<int>.error(
+          UnimplementedError(
+            'web implementation of video_player cannot play local files',
+          ),
+        );
       case DataSourceType.contentUri:
-        return Future<int>.error(UnimplementedError(
-            'web implementation of video_player cannot play content uri'));
+        return Future<int>.error(
+          UnimplementedError(
+            'web implementation of video_player cannot play content uri',
+          ),
+        );
     }
 
     final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
@@ -92,12 +98,12 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
 
     // TODO(hterkelsen): Use initialization parameters once they are available
     ui_web.platformViewRegistry.registerViewFactory(
-        'videoPlayer-$playerId', (int viewId) => videoElement);
+      'videoPlayer-$playerId',
+      (int viewId) => videoElement,
+    );
 
     final VideoPlayer player = VideoPlayer(videoElement: videoElement)
-      ..initialize(
-        src: uri,
-      );
+      ..initialize(src: uri);
 
     _videoPlayers[playerId] = player;
 

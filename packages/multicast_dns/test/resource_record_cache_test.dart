@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,14 +29,14 @@ void testOverwrite() {
     // Add two different records.
     cache.updateRecords(<ResourceRecord>[
       IPAddressResourceRecord('hest', valid, address: ip1),
-      IPAddressResourceRecord('fisk', valid, address: ip2)
+      IPAddressResourceRecord('fisk', valid, address: ip2),
     ]);
     expect(cache.entryCount, 2);
 
     // Update these records.
     cache.updateRecords(<ResourceRecord>[
       IPAddressResourceRecord('hest', valid, address: ip1),
-      IPAddressResourceRecord('fisk', valid, address: ip2)
+      IPAddressResourceRecord('fisk', valid, address: ip2),
     ]);
     expect(cache.entryCount, 2);
 
@@ -44,7 +44,7 @@ void testOverwrite() {
     // with that name only.)
     cache.updateRecords(<ResourceRecord>[
       IPAddressResourceRecord('hest', valid, address: ip1),
-      IPAddressResourceRecord('hest', valid, address: ip2)
+      IPAddressResourceRecord('hest', valid, address: ip2),
     ]);
     expect(cache.entryCount, 3);
 
@@ -64,12 +64,13 @@ void testTimeout() {
 
     final ResourceRecordCache cache = ResourceRecordCache();
 
-    cache.updateRecords(
-        <ResourceRecord>[IPAddressResourceRecord('hest', valid, address: ip1)]);
+    cache.updateRecords(<ResourceRecord>[
+      IPAddressResourceRecord('hest', valid, address: ip1),
+    ]);
     expect(cache.entryCount, 1);
 
     cache.updateRecords(<ResourceRecord>[
-      IPAddressResourceRecord('fisk', notValid, address: ip1)
+      IPAddressResourceRecord('fisk', notValid, address: ip1),
     ]);
 
     List<ResourceRecord> results = <ResourceRecord>[];

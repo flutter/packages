@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,38 +22,40 @@ void main() {
   testWidgets('Can animate camera with duration', (WidgetTester tester) async {
     final Completer<GoogleMapController> controllerCompleter =
         Completer<GoogleMapController>();
-    await tester.pumpWidget(Directionality(
-      textDirection: TextDirection.ltr,
-      child: GoogleMap(
-        initialCameraPosition: const CameraPosition(target: LatLng(10.0, 15.0)),
-        onMapCreated: (GoogleMapController controller) {
-          controllerCompleter.complete(controller);
-        },
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: const CameraPosition(
+            target: LatLng(10.0, 15.0),
+          ),
+          onMapCreated: (GoogleMapController controller) {
+            controllerCompleter.complete(controller);
+          },
+        ),
       ),
-    ));
+    );
     final GoogleMapController controller = await controllerCompleter.future;
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.animateCameraConfiguration, isNull);
 
-    final CameraUpdate newCameraUpdate =
-        CameraUpdate.newLatLng(const LatLng(20.0, 25.0));
+    final CameraUpdate newCameraUpdate = CameraUpdate.newLatLng(
+      const LatLng(20.0, 25.0),
+    );
     const Duration updateDuration = Duration(seconds: 10);
 
-    await controller.animateCamera(
-      newCameraUpdate,
-      duration: updateDuration,
-    );
+    await controller.animateCamera(newCameraUpdate, duration: updateDuration);
 
     expect(map.animateCameraConfiguration, isNotNull);
     expect(map.animateCameraConfiguration!.cameraUpdate, newCameraUpdate);
-    expect(map.animateCameraConfiguration!.configuration?.duration,
-        updateDuration);
+    expect(
+      map.animateCameraConfiguration!.configuration?.duration,
+      updateDuration,
+    );
 
     /// Tests that the camera update respects the default behavior when the
     /// duration is null.
-    await controller.animateCamera(
-      newCameraUpdate,
-    );
+    await controller.animateCamera(newCameraUpdate);
     expect(map.animateCameraConfiguration!.configuration?.duration, isNull);
   });
 }

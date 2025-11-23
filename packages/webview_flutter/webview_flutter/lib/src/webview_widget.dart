@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,13 +46,13 @@ class WebViewWidget extends StatelessWidget {
     Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers =
         const <Factory<OneSequenceGestureRecognizer>>{},
   }) : this.fromPlatformCreationParams(
-          key: key,
-          params: PlatformWebViewWidgetCreationParams(
-            controller: controller.platform,
-            layoutDirection: layoutDirection,
-            gestureRecognizers: gestureRecognizers,
-          ),
-        );
+         key: key,
+         params: PlatformWebViewWidgetCreationParams(
+           controller: controller.platform,
+           layoutDirection: layoutDirection,
+           gestureRecognizers: gestureRecognizers,
+         ),
+       );
 
   /// Constructs a [WebViewWidget] from creation params for a specific platform.
   ///

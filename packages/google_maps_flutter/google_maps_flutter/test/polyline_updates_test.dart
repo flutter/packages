@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -68,8 +68,10 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
     expect(map.polylineUpdates.last.polylineIdsToRemove.length, 1);
-    expect(map.polylineUpdates.last.polylineIdsToRemove.first,
-        equals(p1.polylineId));
+    expect(
+      map.polylineUpdates.last.polylineIdsToRemove.first,
+      equals(p1.polylineId),
+    );
 
     expect(map.polylineUpdates.last.polylinesToChange.isEmpty, true);
     expect(map.polylineUpdates.last.polylinesToAdd.isEmpty, true);
@@ -77,8 +79,10 @@ void main() {
 
   testWidgets('Updating a polyline', (WidgetTester tester) async {
     const Polyline p1 = Polyline(polylineId: PolylineId('polyline_1'));
-    const Polyline p2 =
-        Polyline(polylineId: PolylineId('polyline_1'), geodesic: true);
+    const Polyline p2 = Polyline(
+      polylineId: PolylineId('polyline_1'),
+      geodesic: true,
+    );
 
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p2}));
@@ -93,8 +97,10 @@ void main() {
 
   testWidgets('Updating a polyline', (WidgetTester tester) async {
     const Polyline p1 = Polyline(polylineId: PolylineId('polyline_1'));
-    const Polyline p2 =
-        Polyline(polylineId: PolylineId('polyline_1'), geodesic: true);
+    const Polyline p2 = Polyline(
+      polylineId: PolylineId('polyline_1'),
+      geodesic: true,
+    );
 
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p2}));
@@ -165,8 +171,10 @@ void main() {
 
     expect(map.polylineUpdates.last.polylinesToChange.first, equals(p2));
     expect(map.polylineUpdates.last.polylinesToAdd.first, equals(p1));
-    expect(map.polylineUpdates.last.polylineIdsToRemove.first,
-        equals(p3.polylineId));
+    expect(
+      map.polylineUpdates.last.polylineIdsToRemove.first,
+      equals(p3.polylineId),
+    );
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
@@ -208,10 +216,14 @@ void main() {
 
     const Polyline p1 = Polyline(polylineId: PolylineId('polyline_1'));
     const Polyline p2 = Polyline(polylineId: PolylineId('polyline_2'));
-    const Polyline p3 =
-        Polyline(polylineId: PolylineId('polyline_3'), width: 1);
-    const Polyline p3updated =
-        Polyline(polylineId: PolylineId('polyline_3'), width: 2);
+    const Polyline p3 = Polyline(
+      polylineId: PolylineId('polyline_3'),
+      width: 1,
+    );
+    const Polyline p3updated = Polyline(
+      polylineId: PolylineId('polyline_3'),
+      width: 2,
+    );
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1, p2}));
@@ -228,8 +240,9 @@ void main() {
 
     expect(map.polylineUpdates[1].polylinesToChange.isEmpty, true);
     expect(map.polylineUpdates[1].polylinesToAdd, <Polyline>{p3});
-    expect(map.polylineUpdates[1].polylineIdsToRemove,
-        <PolylineId>{p2.polylineId});
+    expect(map.polylineUpdates[1].polylineIdsToRemove, <PolylineId>{
+      p2.polylineId,
+    });
 
     expect(map.polylineUpdates[2].polylinesToChange, <Polyline>{p3updated});
     expect(map.polylineUpdates[2].polylinesToAdd.isEmpty, true);

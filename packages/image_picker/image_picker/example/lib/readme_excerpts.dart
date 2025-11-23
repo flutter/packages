@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,16 +12,18 @@ import 'package:image_picker_platform_interface/image_picker_platform_interface.
 // #docregion CameraDelegate
 class MyCameraDelegate extends ImagePickerCameraDelegate {
   @override
-  Future<XFile?> takePhoto(
-      {ImagePickerCameraDelegateOptions options =
-          const ImagePickerCameraDelegateOptions()}) async {
+  Future<XFile?> takePhoto({
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
+  }) async {
     return _takeAPhoto(options.preferredCameraDevice);
   }
 
   @override
-  Future<XFile?> takeVideo(
-      {ImagePickerCameraDelegateOptions options =
-          const ImagePickerCameraDelegateOptions()}) async {
+  Future<XFile?> takeVideo({
+    ImagePickerCameraDelegateOptions options =
+        const ImagePickerCameraDelegateOptions(),
+  }) async {
     return _takeAVideo(options.preferredCameraDevice);
   }
 }
@@ -36,8 +38,9 @@ Future<List<XFile?>> readmePickExample() async {
   // Capture a photo.
   final XFile? photo = await picker.pickImage(source: ImageSource.camera);
   // Pick a video.
-  final XFile? galleryVideo =
-      await picker.pickVideo(source: ImageSource.gallery);
+  final XFile? galleryVideo = await picker.pickVideo(
+    source: ImageSource.gallery,
+  );
   // Capture a video.
   final XFile? cameraVideo = await picker.pickVideo(source: ImageSource.camera);
   // Pick multiple images.

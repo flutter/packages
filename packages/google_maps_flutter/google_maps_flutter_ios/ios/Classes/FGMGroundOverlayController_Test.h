@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,5 +14,16 @@
 - (void)updateFromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)groundOverlay
                               registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                             screenScale:(CGFloat)screenScale;
+
+/// Updates the underlying GMSGroundOverlay with the properties from the given
+/// FGMPlatformGroundOverlay.
+///
+/// Setting the ground overlay to visible will set its map to the given mapView.
++ (void)updateGroundOverlay:(GMSGroundOverlay *)groundOverlay
+    fromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)groundOverlay
+                  withMapView:(GMSMapView *)mapView
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                  screenScale:(CGFloat)screenScale
+                  usingBounds:(BOOL)useBounds;
 
 @end

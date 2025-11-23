@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,12 +55,14 @@ void main() {
         expect(addSizeDirectiveToUrl(url, size), expected);
       });
 
-      test('many directives, sets size and crop, preserves other directives',
-          () {
-        const String url = '$base=s120-c-fSoften=1,50,0';
-        const String expected = '$base=c-fSoften=1,50,0-s20';
-        expect(addSizeDirectiveToUrl(url, size), expected);
-      });
+      test(
+        'many directives, sets size and crop, preserves other directives',
+        () {
+          const String url = '$base=s120-c-fSoften=1,50,0';
+          const String expected = '$base=c-fSoften=1,50,0-s20';
+          expect(addSizeDirectiveToUrl(url, size), expected);
+        },
+      );
     });
   });
 }

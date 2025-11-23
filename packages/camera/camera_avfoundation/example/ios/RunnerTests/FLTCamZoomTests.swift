@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,17 +7,17 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
-  @testable import camera_avfoundation_objc
+  import camera_avfoundation_objc
 #endif
 
 final class FLTCamZoomTests: XCTestCase {
-  private func createCamera() -> (FLTCam, MockCaptureDevice) {
+  private func createCamera() -> (Camera, MockCaptureDevice) {
     let mockDevice = MockCaptureDevice()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { _ in mockDevice }
+    configuration.videoCaptureDeviceFactory = { _ in mockDevice }
     let camera = CameraTestUtils.createTestCamera(configuration)
 
     return (camera, mockDevice)

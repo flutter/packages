@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,6 +55,41 @@ void main() {
               'flutter',
               const <String>['pub', 'get'],
               plugin.directory.path,
+            ),
+          ]),
+        );
+
+        expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for plugin1'),
+              contains('No issues found!'),
+            ]));
+      });
+
+      test('runs pub get in non-example sub-packages', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+            'plugin1', packagesDir, platformSupport: <String, PlatformDetails>{
+          platformIOS: const PlatformDetails(PlatformSupport.inline)
+        });
+        final RepositoryPackage subpackage = createFakePackage(
+            'subpackage', plugin.directory.childDirectory('extras'));
+
+        final List<String> output =
+            await runCapturingPrint(runner, <String>['fetch-deps']);
+
+        expect(
+          processRunner.recordedCalls,
+          orderedEquals(<ProcessCall>[
+            ProcessCall(
+              'flutter',
+              const <String>['pub', 'get'],
+              plugin.directory.path,
+            ),
+            ProcessCall(
+              'dart',
+              const <String>['pub', 'get'],
+              subpackage.directory.path,
             ),
           ]),
         );

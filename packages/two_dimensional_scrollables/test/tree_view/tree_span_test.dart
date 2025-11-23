@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,7 +20,9 @@ void main() {
       expect(
         extent.calculateExtent(
           const TreeRowExtentDelegate(
-              precedingExtent: 100, viewportExtent: 1000),
+            precedingExtent: 100,
+            viewportExtent: 1000,
+          ),
         ),
         150,
       );
@@ -50,7 +52,9 @@ void main() {
       expect(
         extent.calculateExtent(
           const TreeRowExtentDelegate(
-              precedingExtent: 100, viewportExtent: 1000),
+            precedingExtent: 100,
+            viewportExtent: 1000,
+          ),
         ),
         500,
       );
@@ -80,7 +84,9 @@ void main() {
       expect(
         extent.calculateExtent(
           const TreeRowExtentDelegate(
-              precedingExtent: 100, viewportExtent: 1000),
+            precedingExtent: 100,
+            viewportExtent: 1000,
+          ),
         ),
         900,
       );
@@ -103,7 +109,9 @@ void main() {
       expect(
         extent.calculateExtent(
           const TreeRowExtentDelegate(
-              precedingExtent: 100, viewportExtent: 1000),
+            precedingExtent: 100,
+            viewportExtent: 1000,
+          ),
         ),
         1000,
       );
@@ -123,7 +131,9 @@ void main() {
       expect(
         extent.calculateExtent(
           const TreeRowExtentDelegate(
-              precedingExtent: 100, viewportExtent: 1000),
+            precedingExtent: 100,
+            viewportExtent: 1000,
+          ),
         ),
         900,
       );
@@ -143,7 +153,9 @@ void main() {
       expect(
         extent.calculateExtent(
           const TreeRowExtentDelegate(
-              precedingExtent: 100, viewportExtent: 1000),
+            precedingExtent: 100,
+            viewportExtent: 1000,
+          ),
         ),
         100,
       );
@@ -166,13 +178,8 @@ void main() {
     expect(canvas.rect, rect);
     expect(canvas.paint.color, const Color(0xffff0000));
     expect(canvas.paint.isAntiAlias, isFalse);
-    final TestTreeRowBorder border = TestTreeRowBorder(
-      top: const BorderSide(),
-    );
-    decoration = TreeRowDecoration(
-      border: border,
-      borderRadius: radius,
-    );
+    final TestTreeRowBorder border = TestTreeRowBorder(top: const BorderSide());
+    decoration = TreeRowDecoration(border: border, borderRadius: radius);
     decoration.paint(details);
     expect(border.details, details);
     expect(border.radius, radius);

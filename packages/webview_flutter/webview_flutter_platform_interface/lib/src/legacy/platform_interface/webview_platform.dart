@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,8 +14,8 @@ import 'webview_platform_controller.dart';
 /// Signature for callbacks reporting that a [WebViewPlatformController] was created.
 ///
 /// See also the `onWebViewPlatformCreated` argument for [WebViewPlatform.build].
-typedef WebViewPlatformCreatedCallback = void Function(
-    WebViewPlatformController? webViewPlatformController);
+typedef WebViewPlatformCreatedCallback =
+    void Function(WebViewPlatformController? webViewPlatformController);
 
 /// Interface for a platform implementation of a WebView.
 ///
@@ -62,6 +62,7 @@ abstract class WebViewPlatform {
   /// Soon to be deprecated. 'Use `WebViewCookieManagerPlatform.clearCookies` instead.
   Future<bool> clearCookies() {
     throw UnimplementedError(
-        'WebView clearCookies is not implemented on the current platform');
+      'WebView clearCookies is not implemented on the current platform',
+    );
   }
 }

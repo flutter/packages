@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,9 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'URL Launcher',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: const MyHomePage(title: 'URL Launcher'),
     );
   }
@@ -53,9 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     });
     // Check for Android Custom Tab support.
-    launcher
-        .supportsMode(PreferredLaunchMode.inAppBrowserView)
-        .then((bool result) {
+    launcher.supportsMode(PreferredLaunchMode.inAppBrowserView).then((
+      bool result,
+    ) {
       setState(() {
         _hasCustomTabSupport = result;
       });
@@ -66,6 +64,17 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await launcher.launchUrl(
       url,
       const LaunchOptions(mode: PreferredLaunchMode.externalApplication),
+    )) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  Future<void> _launchInNonBrowserExternalApp(String url) async {
+    if (!await launcher.launchUrl(
+      url,
+      const LaunchOptions(
+        mode: PreferredLaunchMode.externalNonBrowserApplication,
+      ),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -93,10 +102,11 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await launcher.launchUrl(
       url,
       const LaunchOptions(
-          mode: PreferredLaunchMode.inAppWebView,
-          webViewConfiguration: InAppWebViewConfiguration(
-            headers: <String, String>{'my_header_key': 'my_header_value'},
-          )),
+        mode: PreferredLaunchMode.inAppWebView,
+        webViewConfiguration: InAppWebViewConfiguration(
+          headers: <String, String>{'my_header_key': 'my_header_value'},
+        ),
+      ),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -106,10 +116,11 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await launcher.launchUrl(
       url,
       const LaunchOptions(
-          mode: PreferredLaunchMode.inAppWebView,
-          webViewConfiguration: InAppWebViewConfiguration(
-            enableJavaScript: false,
-          )),
+        mode: PreferredLaunchMode.inAppWebView,
+        webViewConfiguration: InAppWebViewConfiguration(
+          enableJavaScript: false,
+        ),
+      ),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -119,10 +130,11 @@ class _MyHomePageState extends State<MyHomePage> {
     if (!await launcher.launchUrl(
       url,
       const LaunchOptions(
-          mode: PreferredLaunchMode.inAppWebView,
-          webViewConfiguration: InAppWebViewConfiguration(
-            enableDomStorage: false,
-          )),
+        mode: PreferredLaunchMode.inAppWebView,
+        webViewConfiguration: InAppWebViewConfiguration(
+          enableDomStorage: false,
+        ),
+      ),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -139,10 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _makePhoneCall(String phoneNumber) async {
     // Use `Uri` to ensure that `phoneNumber` is properly URL-encoded.
     // Just using 'tel:$phoneNumber' would create invalid URLs in some cases.
-    final Uri launchUri = Uri(
-      scheme: 'tel',
-      path: phoneNumber,
-    );
+    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
     await launcher.launchUrl(launchUri.toString(), const LaunchOptions());
   }
 
@@ -152,9 +161,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // because the assumption is that every device can launch a web URL.
     const String toLaunch = 'https://www.cylog.org/headers/';
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: ListView(
         children: <Widget>[
           Column(
@@ -163,15 +170,17 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
-                    onChanged: (String text) => _phone = text,
-                    decoration: const InputDecoration(
-                        hintText: 'Input the phone number to launch')),
+                  onChanged: (String text) => _phone = text,
+                  decoration: const InputDecoration(
+                    hintText: 'Input the phone number to launch',
+                  ),
+                ),
               ),
               ElevatedButton(
                 onPressed: _hasCallSupport
                     ? () => setState(() {
-                          _launched = _makePhoneCall(_phone);
-                        })
+                        _launched = _makePhoneCall(_phone);
+                      })
                     : null,
                 child: _hasCallSupport
                     ? const Text('Make phone call')
@@ -182,18 +191,24 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Text(toLaunch),
               ),
               ElevatedButton(
-                onPressed: _hasCustomTabSupport
-                    ? () => setState(() {
-                          _launched = _launchInBrowser(toLaunch);
-                        })
-                    : null,
+                onPressed: () => setState(() {
+                  _launched = _launchInBrowser(toLaunch);
+                }),
                 child: const Text('Launch in browser'),
+              ),
+              ElevatedButton(
+                onPressed: () => setState(() {
+                  _launched = _launchInNonBrowserExternalApp(toLaunch);
+                }),
+                child: const Text('Launch in non-browser app'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInCustomTab(toLaunch);
-                }),
+                onPressed: _hasCustomTabSupport
+                    ? () => setState(() {
+                        _launched = _launchInCustomTab(toLaunch);
+                      })
+                    : null,
                 child: const Text('Launch in Android Custom Tab'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),

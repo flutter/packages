@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,17 +44,14 @@ void main() async {
   });
 
   group('adSense.adUnit', () {
-    testWidgets('Responsive (with adFormat) ad units reflow flutter',
-        (WidgetTester tester) async {
+    testWidgets('Responsive (with adFormat) ad units reflow flutter', (
+      WidgetTester tester,
+    ) async {
       // The size of the ad that we're going to "inject"
       const double expectedHeight = 137;
 
       // When
-      mockAdsByGoogle(
-        mockAd(
-          size: const Size(320, expectedHeight),
-        ),
-      );
+      mockAdsByGoogle(mockAd(size: const Size(320, expectedHeight)));
 
       await adSense.initialize(testClient);
 
@@ -80,47 +77,43 @@ void main() async {
     });
 
     testWidgets(
-        'Fixed size (without adFormat) ad units respect flutter constraints',
-        (WidgetTester tester) async {
-      const double maxHeight = 100;
-      const BoxConstraints constraints = BoxConstraints(maxHeight: maxHeight);
+      'Fixed size (without adFormat) ad units respect flutter constraints',
+      (WidgetTester tester) async {
+        const double maxHeight = 100;
+        const BoxConstraints constraints = BoxConstraints(maxHeight: maxHeight);
 
-      // When
-      mockAdsByGoogle(
-        mockAd(
-          size: const Size(320, 157),
-        ),
-      );
+        // When
+        mockAdsByGoogle(mockAd(size: const Size(320, 157)));
 
-      await adSense.initialize(testClient);
+        await adSense.initialize(testClient);
 
-      final CallbackTracker tracker = CallbackTracker();
-      final Widget adUnitWidget = AdUnitWidget(
-        configuration: AdUnitConfiguration.displayAdUnit(
-          adSlot: testSlot,
-        ),
-        adClient: adSense.adClient,
-        onInjected: tracker.createCallback(),
-      );
+        final CallbackTracker tracker = CallbackTracker();
+        final Widget adUnitWidget = AdUnitWidget(
+          configuration: AdUnitConfiguration.displayAdUnit(adSlot: testSlot),
+          adClient: adSense.adClient,
+          onInjected: tracker.createCallback(),
+        );
 
-      final Widget constrainedAd = Container(
-        constraints: constraints,
-        child: adUnitWidget,
-      );
+        final Widget constrainedAd = Container(
+          constraints: constraints,
+          child: adUnitWidget,
+        );
 
-      await pumpAdWidget(constrainedAd, tester, tracker);
+        await pumpAdWidget(constrainedAd, tester, tracker);
 
-      // Then
-      // Widget level
-      final Finder adUnit = find.byWidget(adUnitWidget);
-      expect(adUnit, findsOneWidget);
+        // Then
+        // Widget level
+        final Finder adUnit = find.byWidget(adUnitWidget);
+        expect(adUnit, findsOneWidget);
 
-      final Size size = tester.getSize(adUnit);
-      expect(size.height, maxHeight);
-    });
+        final Size size = tester.getSize(adUnit);
+        expect(size.height, maxHeight);
+      },
+    );
 
-    testWidgets('Unfilled ad units collapse widget height',
-        (WidgetTester tester) async {
+    testWidgets('Unfilled ad units collapse widget height', (
+      WidgetTester tester,
+    ) async {
       // When
       mockAdsByGoogle(mockAd(adStatus: AdStatus.UNFILLED));
 
@@ -128,9 +121,7 @@ void main() async {
 
       final CallbackTracker tracker = CallbackTracker();
       final Widget adUnitWidget = AdUnitWidget(
-        configuration: AdUnitConfiguration.displayAdUnit(
-          adSlot: testSlot,
-        ),
+        configuration: AdUnitConfiguration.displayAdUnit(adSlot: testSlot),
         adClient: adSense.adClient,
         onInjected: tracker.createCallback(),
       );
@@ -138,8 +129,11 @@ void main() async {
       await pumpAdWidget(adUnitWidget, tester, tracker);
 
       // Then
-      expect(find.byType(HtmlElementView), findsNothing,
-          reason: 'Unfilled ads should remove their platform view');
+      expect(
+        find.byType(HtmlElementView),
+        findsNothing,
+        reason: 'Unfilled ads should remove their platform view',
+      );
 
       final Finder adUnit = find.byWidget(adUnitWidget);
       expect(adUnit, findsOneWidget);
@@ -197,32 +191,43 @@ void main() async {
       // Then
       // Widget level
       final Finder platformViews = find.byType(HtmlElementView);
-      expect(platformViews, findsExactly(2),
-          reason: 'The platform view of unfilled ads should be removed.');
+      expect(
+        platformViews,
+        findsExactly(2),
+        reason: 'The platform view of unfilled ads should be removed.',
+      );
 
       final Finder adUnits = find.byType(AdUnitWidget);
       expect(adUnits, findsExactly(3));
 
-      expect(tester.getSize(adUnits.at(0)).height, 200,
-          reason: 'Responsive ad widget should resize to match its `ins`');
-      expect(tester.getSize(adUnits.at(1)).height, 0,
-          reason: 'Unfulfilled ad should be 0x0');
-      expect(tester.getSize(adUnits.at(2)).height, 100,
-          reason: 'The constrained ad should use the height of container');
+      expect(
+        tester.getSize(adUnits.at(0)).height,
+        200,
+        reason: 'Responsive ad widget should resize to match its `ins`',
+      );
+      expect(
+        tester.getSize(adUnits.at(1)).height,
+        0,
+        reason: 'Unfulfilled ad should be 0x0',
+      );
+      expect(
+        tester.getSize(adUnits.at(2)).height,
+        100,
+        reason: 'The constrained ad should use the height of container',
+      );
     });
   });
 }
 
 // Pumps an AdUnit Widget into a given tester, with some parameters
 Future<void> pumpAdWidget(
-    Widget adUnit, WidgetTester tester, CallbackTracker tracker) async {
+  Widget adUnit,
+  WidgetTester tester,
+  CallbackTracker tracker,
+) async {
   await tester.pumpWidget(
     MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: adUnit,
-        ),
-      ),
+      home: Scaffold(body: Center(child: adUnit)),
     ),
   );
 

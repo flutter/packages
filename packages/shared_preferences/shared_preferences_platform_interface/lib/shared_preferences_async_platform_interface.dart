@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,11 +36,7 @@ abstract base class SharedPreferencesAsyncPlatform {
   );
 
   /// Stores the int [value] associated with the [key].
-  Future<void> setInt(
-    String key,
-    int value,
-    SharedPreferencesOptions options,
-  );
+  Future<void> setInt(String key, int value, SharedPreferencesOptions options);
 
   /// Stores the List<String> [value] associated with the [key].
   Future<void> setStringList(
@@ -53,37 +49,25 @@ abstract base class SharedPreferencesAsyncPlatform {
   ///
   /// Throws a [TypeError] if the returned type is not a String.
   /// May return null for unsupported types.
-  Future<String?> getString(
-    String key,
-    SharedPreferencesOptions options,
-  );
+  Future<String?> getString(String key, SharedPreferencesOptions options);
 
   /// Retrieves the bool [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a bool.
   /// May return null for unsupported types.
-  Future<bool?> getBool(
-    String key,
-    SharedPreferencesOptions options,
-  );
+  Future<bool?> getBool(String key, SharedPreferencesOptions options);
 
   /// Retrieves the double [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not a double.
   /// May return null for unsupported types.
-  Future<double?> getDouble(
-    String key,
-    SharedPreferencesOptions options,
-  );
+  Future<double?> getDouble(String key, SharedPreferencesOptions options);
 
   /// Retrieves the int [value] associated with the [key], if any.
   ///
   /// Throws a [TypeError] if the returned type is not an int.
   /// May return null for unsupported types.
-  Future<int?> getInt(
-    String key,
-    SharedPreferencesOptions options,
-  );
+  Future<int?> getInt(String key, SharedPreferencesOptions options);
 
   /// Retrieves the List<String> [value] associated with the [key], if any.
   ///

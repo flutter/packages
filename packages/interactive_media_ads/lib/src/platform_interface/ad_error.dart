@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -74,7 +74,7 @@ enum AdErrorCode {
   /// No assets were found in the VAST ad response.
   vastAssetNotFound,
 
-  /// A VAST response containing a single <VAST> tag with no child tags.
+  /// A VAST response containing a single VAST tag with no child tags.
   vastEmptyResponse,
 
   /// Assets were found in the VAST ad response for a linear ad, but none of

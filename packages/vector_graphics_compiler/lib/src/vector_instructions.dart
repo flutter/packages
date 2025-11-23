@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -73,17 +73,18 @@ class VectorInstructions {
 
   @override
   int get hashCode => Object.hash(
-      width,
-      height,
-      Object.hashAll(patternData),
-      Object.hashAll(paints),
-      Object.hashAll(paths),
-      Object.hashAll(vertices),
-      Object.hashAll(text),
-      Object.hashAll(commands),
-      Object.hashAll(images),
-      Object.hashAll(drawImages),
-      Object.hashAll(textPositions));
+    width,
+    height,
+    Object.hashAll(patternData),
+    Object.hashAll(paints),
+    Object.hashAll(paths),
+    Object.hashAll(vertices),
+    Object.hashAll(text),
+    Object.hashAll(commands),
+    Object.hashAll(images),
+    Object.hashAll(drawImages),
+    Object.hashAll(textPositions),
+  );
 
   @override
   bool operator ==(Object other) {

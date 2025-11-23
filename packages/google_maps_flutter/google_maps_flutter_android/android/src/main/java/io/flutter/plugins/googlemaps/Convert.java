@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -360,6 +360,14 @@ class Convert {
     return MAP_TYPE_NORMAL;
   }
 
+  // For now, suppress the deprecation warning for LEGACY; in theory using it
+  // no longer does anything, but since that's a server-side decision that could
+  // potentially change. Once enough time has passed that there's no plausible
+  // chance of the server honoring LEGACY again, that mapping can be removed and
+  // it can just return null, causing anyone still using the deprecated value
+  // in Dart to actually request the platform default (which is what the server
+  // is already doing in practice currently).
+  @SuppressWarnings("deprecation")
   static @Nullable MapsInitializer.Renderer toMapRendererType(
       @Nullable Messages.PlatformRendererType type) {
     if (type == null) {

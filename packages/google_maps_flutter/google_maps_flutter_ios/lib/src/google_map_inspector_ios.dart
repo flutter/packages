@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,8 +16,8 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   /// Creates an inspector API instance for a given map ID from
   /// [inspectorProvider].
   GoogleMapsInspectorIOS(
-      MapsInspectorApi? Function(int mapId) inspectorProvider)
-      : _inspectorProvider = inspectorProvider;
+    MapsInspectorApi? Function(int mapId) inspectorProvider,
+  ) : _inspectorProvider = inspectorProvider;
 
   final MapsInspectorApi? Function(int mapId) _inspectorProvider;
 
@@ -54,16 +54,20 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
 
   @override
   Future<MinMaxZoomPreference> getMinMaxZoomLevels({required int mapId}) async {
-    final PlatformZoomRange zoomLevels =
-        await _inspectorProvider(mapId)!.getZoomRange();
+    final PlatformZoomRange zoomLevels = await _inspectorProvider(
+      mapId,
+    )!.getZoomRange();
     return MinMaxZoomPreference(zoomLevels.min, zoomLevels.max);
   }
 
   @override
-  Future<TileOverlay?> getTileOverlayInfo(TileOverlayId tileOverlayId,
-      {required int mapId}) async {
-    final PlatformTileLayer? tileInfo = await _inspectorProvider(mapId)!
-        .getTileOverlayInfo(tileOverlayId.value);
+  Future<TileOverlay?> getTileOverlayInfo(
+    TileOverlayId tileOverlayId, {
+    required int mapId,
+  }) async {
+    final PlatformTileLayer? tileInfo = await _inspectorProvider(
+      mapId,
+    )!.getTileOverlayInfo(tileOverlayId.value);
     if (tileInfo == null) {
       return null;
     }
@@ -80,10 +84,13 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   bool supportsGettingHeatmapInfo() => true;
 
   @override
-  Future<Heatmap?> getHeatmapInfo(HeatmapId heatmapId,
-      {required int mapId}) async {
-    final PlatformHeatmap? heatmapInfo =
-        await _inspectorProvider(mapId)!.getHeatmapInfo(heatmapId.value);
+  Future<Heatmap?> getHeatmapInfo(
+    HeatmapId heatmapId, {
+    required int mapId,
+  }) async {
+    final PlatformHeatmap? heatmapInfo = await _inspectorProvider(
+      mapId,
+    )!.getHeatmapInfo(heatmapId.value);
     if (heatmapInfo == null) {
       return null;
     }
@@ -108,11 +115,13 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
   bool supportsGettingGroundOverlayInfo() => true;
 
   @override
-  Future<GroundOverlay?> getGroundOverlayInfo(GroundOverlayId groundOverlayId,
-      {required int mapId}) async {
-    final PlatformGroundOverlay? groundOverlayInfo =
-        await _inspectorProvider(mapId)!
-            .getGroundOverlayInfo(groundOverlayId.value);
+  Future<GroundOverlay?> getGroundOverlayInfo(
+    GroundOverlayId groundOverlayId, {
+    required int mapId,
+  }) async {
+    final PlatformGroundOverlay? groundOverlayInfo = await _inspectorProvider(
+      mapId,
+    )!.getGroundOverlayInfo(groundOverlayId.value);
 
     if (groundOverlayInfo == null) {
       return null;
@@ -137,18 +146,25 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
         transparency: groundOverlayInfo.transparency,
         visible: groundOverlayInfo.visible,
         clickable: groundOverlayInfo.clickable,
-        anchor:
-            Offset(groundOverlayInfo.anchor!.x, groundOverlayInfo.anchor!.y),
+        anchor: Offset(
+          groundOverlayInfo.anchor!.x,
+          groundOverlayInfo.anchor!.y,
+        ),
         zoomLevel: groundOverlayInfo.zoomLevel,
       );
     } else if (bounds != null) {
       return GroundOverlay.fromBounds(
         groundOverlayId: groundOverlayId,
         bounds: LatLngBounds(
-            southwest:
-                LatLng(bounds.southwest.latitude, bounds.southwest.longitude),
-            northeast:
-                LatLng(bounds.northeast.latitude, bounds.northeast.longitude)),
+          southwest: LatLng(
+            bounds.southwest.latitude,
+            bounds.southwest.longitude,
+          ),
+          northeast: LatLng(
+            bounds.northeast.latitude,
+            bounds.northeast.longitude,
+          ),
+        ),
         image: dummyImage,
         zIndex: groundOverlayInfo.zIndex,
         bearing: groundOverlayInfo.bearing,
@@ -192,10 +208,13 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
     required int mapId,
     required ClusterManagerId clusterManagerId,
   }) async {
-    return (await _inspectorProvider(mapId)!
-            .getClusters(clusterManagerId.value))
-        .map((PlatformCluster cluster) =>
-            GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster))
+    return (await _inspectorProvider(
+          mapId,
+        )!.getClusters(clusterManagerId.value))
+        .map(
+          (PlatformCluster cluster) =>
+              GoogleMapsFlutterIOS.clusterFromPlatformCluster(cluster),
+        )
         .toList();
   }
 
@@ -204,8 +223,9 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
 
   @override
   Future<CameraPosition> getCameraPosition({required int mapId}) async {
-    final PlatformCameraPosition cameraPosition =
-        await _inspectorProvider(mapId)!.getCameraPosition();
+    final PlatformCameraPosition cameraPosition = await _inspectorProvider(
+      mapId,
+    )!.getCameraPosition();
     return CameraPosition(
       target: LatLng(
         cameraPosition.target.latitude,

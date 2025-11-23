@@ -1,3 +1,42 @@
+## 6.2.4
+
+* Updates to Pigeon 26.
+
+## 6.2.3
+
+* Internal restructuring to improve testability.
+
+## 6.2.2
+
+* Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 6.2.1
+
+* Fixes a bug that would cause `serverAuthorizationTokensForScopes` to
+  return null even when called for a user that had just authenticated.
+
+## 6.2.0
+
+* Adds support for the `clearAuthorizationToken` method.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 6.1.0
+
+* Updates to `GoogleSignIn` 9.0.
+* Adds support for the `nonce` parameter.
+
+## 6.0.1
+
+* Returns configuration errors as `PlatformException`s in Dart instead of
+  crashing the app.
+
+## 6.0.0
+
+* **BREAKING CHANGE**: Switches to implementing version 3.0 of the platform
+  interface package, rather than 2.x, significantly changing the API surface.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 5.9.0
 
 * Updates Google Sign-In SDK to 8.0+.

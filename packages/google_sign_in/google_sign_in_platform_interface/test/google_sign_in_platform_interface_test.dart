@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,15 +8,8 @@ import 'package:mockito/mockito.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
-  // Store the initial instance before any tests change it.
-  final GoogleSignInPlatform initialInstance = GoogleSignInPlatform.instance;
-
-  group('$GoogleSignInPlatform', () {
-    test('$MethodChannelGoogleSignIn is the default instance', () {
-      expect(initialInstance, isA<MethodChannelGoogleSignIn>());
-    });
-
-    test('Cannot be implemented with `implements`', () {
+  group('GoogleSignInPlatform', () {
+    test('cannot be implemented with `implements`', () {
       expect(() {
         GoogleSignInPlatform.instance = ImplementsGoogleSignInPlatform();
         // In versions of `package:plugin_platform_interface` prior to fixing
@@ -29,71 +22,135 @@ void main() {
       }, throwsA(anything));
     });
 
-    test('Can be extended', () {
+    test('can be extended', () {
       GoogleSignInPlatform.instance = ExtendsGoogleSignInPlatform();
     });
 
-    test('Can be mocked with `implements`', () {
-      GoogleSignInPlatform.instance = ModernMockImplementation();
+    test('can be mocked with `implements`', () {
+      GoogleSignInPlatform.instance = MockImplementation();
     });
 
-    test('still supports legacy isMock', () {
-      GoogleSignInPlatform.instance = LegacyIsMockImplementation();
+    test('implements authenticationEvents to return null by default', () {
+      // This uses ExtendsGoogleSignInPlatform since that's within the control
+      // of the test file, and doesn't override authenticationEvents; using
+      // the default `.instance` would only validate that the placeholder has
+      // this behavior, which could be implemented in the subclass.
+      expect(ExtendsGoogleSignInPlatform().authenticationEvents, null);
     });
-  });
 
-  group('GoogleSignInTokenData', () {
-    test('can be compared by == operator', () {
-      final GoogleSignInTokenData firstInstance = GoogleSignInTokenData(
-        accessToken: 'accessToken',
-        idToken: 'idToken',
-        serverAuthCode: 'serverAuthCode',
-      );
-      final GoogleSignInTokenData secondInstance = GoogleSignInTokenData(
-        accessToken: 'accessToken',
-        idToken: 'idToken',
-        serverAuthCode: 'serverAuthCode',
-      );
-      expect(firstInstance == secondInstance, isTrue);
-    });
+    test(
+      'Default implementation of clearAuthorizationToken throws unimplemented error',
+      () {
+        final ExtendsGoogleSignInPlatform platform =
+            ExtendsGoogleSignInPlatform();
+
+        expect(
+          () => platform.clearAuthorizationToken(
+            const ClearAuthorizationTokenParams(accessToken: 'someToken'),
+          ),
+          throwsUnimplementedError,
+        );
+      },
+    );
   });
 
   group('GoogleSignInUserData', () {
     test('can be compared by == operator', () {
-      final GoogleSignInUserData firstInstance = GoogleSignInUserData(
+      const GoogleSignInUserData firstInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
         photoUrl: 'photoUrl',
-        idToken: 'idToken',
-        serverAuthCode: 'serverAuthCode',
       );
-      final GoogleSignInUserData secondInstance = GoogleSignInUserData(
+      const GoogleSignInUserData secondInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
         photoUrl: 'photoUrl',
-        idToken: 'idToken',
-        serverAuthCode: 'serverAuthCode',
       );
+      expect(firstInstance == secondInstance, isTrue);
+    });
+  });
+
+  group('AuthenticationTokenData', () {
+    test('can be compared by == operator', () {
+      const AuthenticationTokenData firstInstance = AuthenticationTokenData(
+        idToken: 'idToken',
+      );
+      const AuthenticationTokenData secondInstance = AuthenticationTokenData(
+        idToken: 'idToken',
+      );
+      expect(firstInstance == secondInstance, isTrue);
+    });
+  });
+
+  group('ClientAuthorizationTokenData', () {
+    test('can be compared by == operator', () {
+      const ClientAuthorizationTokenData firstInstance =
+          ClientAuthorizationTokenData(accessToken: 'accessToken');
+      const ClientAuthorizationTokenData secondInstance =
+          ClientAuthorizationTokenData(accessToken: 'accessToken');
+      expect(firstInstance == secondInstance, isTrue);
+    });
+  });
+
+  group('ServerAuthorizationTokenData', () {
+    test('can be compared by == operator', () {
+      const ServerAuthorizationTokenData firstInstance =
+          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
+      const ServerAuthorizationTokenData secondInstance =
+          ServerAuthorizationTokenData(serverAuthCode: 'serverAuthCode');
       expect(firstInstance == secondInstance, isTrue);
     });
   });
 }
 
-class LegacyIsMockImplementation extends Mock implements GoogleSignInPlatform {
-  @override
-  bool get isMock => true;
-}
-
-class ModernMockImplementation extends Mock
+class MockImplementation extends Mock
     with MockPlatformInterfaceMixin
-    implements GoogleSignInPlatform {
-  @override
-  bool get isMock => false;
-}
+    implements GoogleSignInPlatform {}
 
 class ImplementsGoogleSignInPlatform extends Mock
     implements GoogleSignInPlatform {}
 
-class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {}
+class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
+  @override
+  Future<AuthenticationResults?>? attemptLightweightAuthentication(
+    AttemptLightweightAuthenticationParameters params,
+  ) async {
+    return null;
+  }
+
+  @override
+  bool supportsAuthenticate() => false;
+
+  @override
+  Future<AuthenticationResults> authenticate(AuthenticateParameters params) {
+    throw UnimplementedError();
+  }
+
+  @override
+  bool authorizationRequiresUserInteraction() => false;
+
+  @override
+  Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
+    return null;
+  }
+
+  @override
+  Future<void> disconnect(DisconnectParams params) async {}
+
+  @override
+  Future<void> init(InitParameters params) async {}
+
+  @override
+  Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
+    return null;
+  }
+
+  @override
+  Future<void> signOut(SignOutParams params) async {}
+}

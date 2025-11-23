@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,10 +13,58 @@ import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
 import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
-import 'package:mocktail/mocktail.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
 // TODO(srujzs): This is exported in `package:web` 0.6.0. Remove this when it is available.
 import 'package:web/src/helpers/events/streams.dart';
 import 'package:web/web.dart' as web;
+
+@GenerateNiceMocks(<MockSpec<dynamic>>[
+  MockSpec<CameraService>(
+    fallbackGenerators: <Symbol, Function>{
+      #window: windowShim,
+      #getMediaStreamForOptions: getMediaStreamForOptionsShim,
+    },
+  ),
+  MockSpec<JsUtil>(),
+  MockSpec<Camera>(
+    fallbackGenerators: <Symbol, Function>{
+      #videoElement: videoElementShim,
+      #divElement: divElementShim,
+      #window: windowShim,
+      #blobBuilder: blobBuilderShim,
+    },
+  ),
+  MockSpec<CameraOptions>(
+    fallbackGenerators: <Symbol, Function>{
+      #toMediaStreamConstraints: toMediaStreamConstraintsShim,
+    },
+  ),
+])
+export 'mocks.mocks.dart';
+
+web.Window windowShim() => throw UnimplementedError();
+
+Future<web.MediaStream> getMediaStreamForOptionsShim(
+  CameraOptions? options, {
+  int? cameraId = 0,
+}) async {
+  return createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
+      as web.MediaStream;
+}
+
+web.HTMLVideoElement videoElementShim() {
+  return createJSInteropWrapper(MockVideoElement()) as web.HTMLVideoElement;
+}
+
+web.HTMLDivElement divElementShim() => throw UnimplementedError();
+
+web.Blob blobBuilderShim([List<web.Blob>? blobs, String? type]) {
+  throw UnimplementedError();
+}
+
+web.MediaStreamConstraints toMediaStreamConstraintsShim() =>
+    throw UnimplementedError();
 
 @JSExport()
 class MockWindow {
@@ -72,8 +120,6 @@ class MockMediaDevices {
   late JSFunction enumerateDevices;
 }
 
-class MockCameraService extends Mock implements CameraService {}
-
 @JSExport()
 class MockMediaStreamTrack {
   /// web.MediaTrackCapabilities Function();
@@ -91,17 +137,11 @@ class MockMediaStreamTrack {
   JSFunction stop = () {}.toJS;
 }
 
-class MockCamera extends Mock implements Camera {}
-
-class MockCameraOptions extends Mock implements CameraOptions {}
-
 @JSExport()
 class MockVideoElement {
   web.MediaProvider? srcObject;
   web.MediaError? error;
 }
-
-class MockJsUtil extends Mock implements JsUtil {}
 
 @JSExport()
 class MockMediaRecorder {
@@ -151,10 +191,7 @@ class FakeMediaDeviceInfo {
 /// A fake [MediaError] that returns the provided error [_code] and [_message].
 @JSExport()
 class FakeMediaError {
-  FakeMediaError(
-    this.code, [
-    this.message = '',
-  ]);
+  FakeMediaError(this.code, [this.message = '']);
 
   final int code;
   final String message;
@@ -168,8 +205,12 @@ class FakeElementStream<T extends web.Event> extends Fake
   final Stream<T> _stream;
 
   @override
-  StreamSubscription<T> listen(void Function(T event)? onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  StreamSubscription<T> listen(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
     return _stream.listen(
       onData,
       onError: onError,
@@ -190,10 +231,7 @@ class FakeBlobEvent {
 /// A fake [DomException] that returns the provided error [_name] and [_message].
 @JSExport()
 class FakeErrorEvent {
-  FakeErrorEvent(
-    this.type, [
-    this.message = '',
-  ]);
+  FakeErrorEvent(this.type, [this.message = '']);
 
   final String type;
   final String message;
@@ -219,4 +257,30 @@ web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
 }
 
 class MockEventStreamProvider<T extends web.Event> extends Mock
-    implements web.EventStreamProvider<T> {}
+    implements web.EventStreamProvider<T> {
+  @override
+  Stream<T> forTarget(web.EventTarget? e, {bool? useCapture = false}) {
+    return super.noSuchMethod(
+          Invocation.method(
+            #forTarget,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: Stream<T>.empty(),
+        )
+        as Stream<T>;
+  }
+
+  @override
+  ElementStream<T> forElement(web.Element? e, {bool? useCapture = false}) {
+    return super.noSuchMethod(
+          Invocation.method(
+            #forElement,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: FakeElementStream<T>(Stream<T>.empty()),
+        )
+        as ElementStream<T>;
+  }
+}

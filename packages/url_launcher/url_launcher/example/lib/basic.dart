@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,21 +14,22 @@ import 'package:url_launcher/url_launcher.dart';
 final Uri _url = Uri.parse('https://flutter.dev');
 
 void main() => runApp(
-      const MaterialApp(
-        home: Material(
-          child: Center(
-            child: ElevatedButton(
-              onPressed: _launchUrl,
-              child: Text('Show Flutter homepage'),
-            ),
-          ),
+  const MaterialApp(
+    home: Material(
+      child: Center(
+        child: ElevatedButton(
+          onPressed: _launchUrl,
+          child: Text('Show Flutter homepage'),
         ),
       ),
-    );
+    ),
+  ),
+);
 
 Future<void> _launchUrl() async {
   if (!await launchUrl(_url)) {
     throw Exception('Could not launch $_url');
   }
 }
+
 // #enddocregion basic-example

@@ -1,3 +1,26 @@
+## 2.15.7
+
+* Updates to Pigeon 26.
+
+## 2.15.6
+
+* Fixes potential flickers of default property values when adding objects to
+  the map.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.15.5
+
+* Fixes `kCGImageAlphaPremultipliedLast` implicit conversion from enumeration type warning.
+
+## 2.15.4
+
+* Deprecates `zIndex` parameter in Marker in favor of `zIndexInt`.
+
+## 2.15.3
+
+* Fixes new analysis warnings.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+
 ## 2.15.2
 
 * Fixes regression where updating a marker hides its info window.

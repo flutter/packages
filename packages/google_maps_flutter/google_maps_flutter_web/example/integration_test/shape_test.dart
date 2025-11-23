@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,11 +44,7 @@ void main() {
       CircleController(circle: circle, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.event.trigger(
-        circle,
-        'click',
-        gmaps.MapMouseEvent(),
-      );
+      gmaps.event.trigger(circle, 'click', gmaps.MapMouseEvent());
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -79,8 +75,9 @@ void main() {
         expect(controller.circle, isNull);
       });
 
-      testWidgets('cannot call update after remove',
-          (WidgetTester tester) async {
+      testWidgets('cannot call update after remove', (
+        WidgetTester tester,
+      ) async {
         final gmaps.CircleOptions options = gmaps.CircleOptions()
           ..draggable = true;
 
@@ -104,11 +101,7 @@ void main() {
       PolygonController(polygon: polygon, consumeTapEvents: true, onTap: onTap);
 
       // Trigger a click event...
-      gmaps.event.trigger(
-        polygon,
-        'click',
-        gmaps.MapMouseEvent(),
-      );
+      gmaps.event.trigger(polygon, 'click', gmaps.MapMouseEvent());
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -139,8 +132,9 @@ void main() {
         expect(controller.polygon, isNull);
       });
 
-      testWidgets('cannot call update after remove',
-          (WidgetTester tester) async {
+      testWidgets('cannot call update after remove', (
+        WidgetTester tester,
+      ) async {
         final gmaps.PolygonOptions options = gmaps.PolygonOptions()
           ..draggable = true;
 
@@ -168,11 +162,7 @@ void main() {
       );
 
       // Trigger a click event...
-      gmaps.event.trigger(
-        polyline,
-        'click',
-        gmaps.MapMouseEvent(),
-      );
+      gmaps.event.trigger(polyline, 'click', gmaps.MapMouseEvent());
 
       // The event handling is now truly async. Wait for it...
       expect(await methodCalled, isTrue);
@@ -205,8 +195,9 @@ void main() {
         expect(controller.line, isNull);
       });
 
-      testWidgets('cannot call update after remove',
-          (WidgetTester tester) async {
+      testWidgets('cannot call update after remove', (
+        WidgetTester tester,
+      ) async {
         final gmaps.PolylineOptions options = gmaps.PolylineOptions()
           ..draggable = true;
 
@@ -252,8 +243,9 @@ void main() {
         expect(controller.heatmap, isNull);
       });
 
-      testWidgets('cannot call update after remove',
-          (WidgetTester tester) async {
+      testWidgets('cannot call update after remove', (
+        WidgetTester tester,
+      ) async {
         final visualization.HeatmapLayerOptions options =
             visualization.HeatmapLayerOptions()..dissipating = true;
 

@@ -13,5 +13,5 @@ tasks:
     always: true
   - name: validate iOS and macOS podspecs
     script: .ci/scripts/tool_runner.sh
-    args: ["podspec-check"]
+    args: ["podspec-check", "--exclude=script/configs/exclude_xcode_deprecation.yaml"]
     always: true

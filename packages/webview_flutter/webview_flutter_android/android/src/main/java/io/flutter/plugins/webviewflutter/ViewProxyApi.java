@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,6 +39,16 @@ public class ViewProxyApi extends PigeonApiView {
   @Override
   public WebViewPoint getScrollPosition(@NonNull View pigeon_instance) {
     return new WebViewPoint(pigeon_instance.getScrollX(), pigeon_instance.getScrollY());
+  }
+
+  @Override
+  public void setVerticalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setVerticalScrollBarEnabled(enabled);
+  }
+
+  @Override
+  public void setHorizontalScrollBarEnabled(@NonNull View pigeon_instance, boolean enabled) {
+    pigeon_instance.setHorizontalScrollBarEnabled(enabled);
   }
 
   @Override

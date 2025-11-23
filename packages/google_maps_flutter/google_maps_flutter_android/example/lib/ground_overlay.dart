@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,7 @@ enum _GroundOverlayPlacing { position, bounds }
 
 class GroundOverlayPage extends GoogleMapExampleAppPage {
   const GroundOverlayPage({Key? key})
-      : super(const Icon(Icons.map), 'Ground overlay', key: key);
+    : super(const Icon(Icons.map), 'Ground overlay', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +48,13 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   // Bounds for demonstranting placing ground overlays with bounds, and
   // changing bounds.
   final LatLngBounds _groundOverlayBounds1 = LatLngBounds(
-      southwest: const LatLng(37.42, -122.09),
-      northeast: const LatLng(37.423, -122.084));
+    southwest: const LatLng(37.42, -122.09),
+    northeast: const LatLng(37.423, -122.084),
+  );
   final LatLngBounds _groundOverlayBounds2 = LatLngBounds(
-      southwest: const LatLng(37.421, -122.091),
-      northeast: const LatLng(37.424, -122.08));
+    southwest: const LatLng(37.421, -122.091),
+    northeast: const LatLng(37.424, -122.08),
+  );
   late LatLngBounds _currentGroundOverlayBounds;
 
   Offset _anchor = const Offset(0.5, 0.5);
@@ -93,30 +95,31 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
 
     _groundOverlayIndex += 1;
 
-    final GroundOverlayId id =
-        GroundOverlayId('ground_overlay_$_groundOverlayIndex');
+    final GroundOverlayId id = GroundOverlayId(
+      'ground_overlay_$_groundOverlayIndex',
+    );
 
     final GroundOverlay groundOverlay = switch (_placingType) {
       _GroundOverlayPlacing.position => GroundOverlay.fromPosition(
-          groundOverlayId: id,
-          image: assetMapBitmap,
-          position: _currentGroundOverlayPos,
-          width: _dimensions.dx,
-          height: _dimensions.dy,
-          anchor: _anchor,
-          onTap: () {
-            _onGroundOverlayTapped();
-          },
-        ),
+        groundOverlayId: id,
+        image: assetMapBitmap,
+        position: _currentGroundOverlayPos,
+        width: _dimensions.dx,
+        height: _dimensions.dy,
+        anchor: _anchor,
+        onTap: () {
+          _onGroundOverlayTapped();
+        },
+      ),
       _GroundOverlayPlacing.bounds => GroundOverlay.fromBounds(
-          groundOverlayId: id,
-          image: assetMapBitmap,
-          bounds: _currentGroundOverlayBounds,
-          anchor: _anchor,
-          onTap: () {
-            _onGroundOverlayTapped();
-          },
-        ),
+        groundOverlayId: id,
+        image: assetMapBitmap,
+        bounds: _currentGroundOverlayBounds,
+        anchor: _anchor,
+        onTap: () {
+          _onGroundOverlayTapped();
+        },
+      ),
     };
 
     setState(() {
@@ -134,19 +137,22 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
       // Adjusts the bearing by 10 degrees, wrapping around at 360 degrees.
       // 10 is the increment, 350 degrees of the full circle -10.
       _groundOverlay = _groundOverlay!.copyWith(
-          bearingParam: _groundOverlay!.bearing >= 350
-              ? 0
-              : _groundOverlay!.bearing + 10);
+        bearingParam: _groundOverlay!.bearing >= 350
+            ? 0
+            : _groundOverlay!.bearing + 10,
+      );
     });
   }
 
   void _changeTransparency() {
     assert(_groundOverlay != null);
     setState(() {
-      final double transparency =
-          _groundOverlay!.transparency == 0.0 ? 0.5 : 0.0;
-      _groundOverlay =
-          _groundOverlay!.copyWith(transparencyParam: transparency);
+      final double transparency = _groundOverlay!.transparency == 0.0
+          ? 0.5
+          : 0.0;
+      _groundOverlay = _groundOverlay!.copyWith(
+        transparencyParam: transparency,
+      );
     });
   }
 
@@ -184,8 +190,8 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
     setState(() {
       _currentGroundOverlayBounds =
           _currentGroundOverlayBounds == _groundOverlayBounds1
-              ? _groundOverlayBounds2
-              : _groundOverlayBounds1;
+          ? _groundOverlayBounds2
+          : _groundOverlayBounds1;
     });
 
     // Re-add the ground overlay to apply the new position, as the position
@@ -196,8 +202,9 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   void _toggleVisible() {
     assert(_groundOverlay != null);
     setState(() {
-      _groundOverlay =
-          _groundOverlay!.copyWith(visibleParam: !_groundOverlay!.visible);
+      _groundOverlay = _groundOverlay!.copyWith(
+        visibleParam: !_groundOverlay!.visible,
+      );
     });
   }
 
@@ -272,8 +279,9 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
           alignment: WrapAlignment.spaceEvenly,
           children: <Widget>[
             TextButton(
-              onPressed:
-                  _groundOverlay == null ? null : () => _changeTransparency(),
+              onPressed: _groundOverlay == null
+                  ? null
+                  : () => _changeTransparency(),
               child: const Text('change transparency'),
             ),
             TextButton(
@@ -294,26 +302,31 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
             ),
             TextButton(
               onPressed: _groundOverlay == null ? null : () => _changeType(),
-              child: Text(_placingType == _GroundOverlayPlacing.position
-                  ? 'use bounds'
-                  : 'use position'),
+              child: Text(
+                _placingType == _GroundOverlayPlacing.position
+                    ? 'use bounds'
+                    : 'use position',
+              ),
             ),
             TextButton(
-              onPressed: _placingType != _GroundOverlayPlacing.position ||
+              onPressed:
+                  _placingType != _GroundOverlayPlacing.position ||
                       _groundOverlay == null
                   ? null
                   : () => _changePosition(),
               child: const Text('change position'),
             ),
             TextButton(
-              onPressed: _placingType != _GroundOverlayPlacing.position ||
+              onPressed:
+                  _placingType != _GroundOverlayPlacing.position ||
                       _groundOverlay == null
                   ? null
                   : () => _changeDimensions(),
               child: const Text('change dimensions'),
             ),
             TextButton(
-              onPressed: _placingType != _GroundOverlayPlacing.bounds ||
+              onPressed:
+                  _placingType != _GroundOverlayPlacing.bounds ||
                       _groundOverlay == null
                   ? null
                   : () => _changeBounds(),

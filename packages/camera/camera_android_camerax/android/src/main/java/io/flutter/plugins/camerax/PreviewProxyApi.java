@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,6 +8,7 @@ import android.view.Surface;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.camera.core.Preview;
+import androidx.camera.core.ResolutionInfo;
 import androidx.camera.core.SurfaceRequest;
 import androidx.camera.core.resolutionselector.ResolutionSelector;
 import io.flutter.view.TextureRegistry;
@@ -85,7 +86,7 @@ class PreviewProxyApi extends PigeonApiPreview {
 
   @Nullable
   @Override
-  public androidx.camera.core.ResolutionInfo getResolutionInfo(Preview pigeonInstance) {
+  public ResolutionInfo getResolutionInfo(Preview pigeonInstance) {
     return pigeonInstance.getResolutionInfo();
   }
 
@@ -103,16 +104,14 @@ class PreviewProxyApi extends PigeonApiPreview {
       // get destroyed.
       surfaceProducer.setCallback(
           new TextureRegistry.SurfaceProducer.Callback() {
+            @Override
             public void onSurfaceAvailable() {
               // Do nothing. The Preview.SurfaceProvider will handle this whenever a new
               // Surface is needed.
             }
 
             @Override
-            // TODO(bparrishMines): Replace with onSurfaceCleanup once available on stable. See
-            // https://github.com/flutter/flutter/issues/161256.
-            @SuppressWarnings({"deprecation", "removal"})
-            public void onSurfaceDestroyed() {
+            public void onSurfaceCleanup() {
               // Invalidate the SurfaceRequest so that CameraX knows to to make a new request
               // for a surface.
               request.invalidate();
@@ -122,7 +121,7 @@ class PreviewProxyApi extends PigeonApiPreview {
       // Provide surface.
       surfaceProducer.setSize(
           request.getResolution().getWidth(), request.getResolution().getHeight());
-      Surface flutterSurface = surfaceProducer.getSurface();
+      Surface flutterSurface = surfaceProducer.getForcedNewSurface();
       request.provideSurface(
           flutterSurface,
           Executors.newSingleThreadExecutor(),

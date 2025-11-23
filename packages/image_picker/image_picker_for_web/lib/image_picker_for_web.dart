@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,8 +50,10 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     required ImageSource source,
     ImagePickerOptions options = const ImagePickerOptions(),
   }) async {
-    final String? capture =
-        computeCaptureAttribute(source, options.preferredCameraDevice);
+    final String? capture = computeCaptureAttribute(
+      source,
+      options.preferredCameraDevice,
+    );
     final List<XFile> files = await getFiles(
       accept: _kAcceptImageMimeType,
       capture: capture,
@@ -105,8 +107,10 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
   }) async {
-    final String? capture =
-        computeCaptureAttribute(source, preferredCameraDevice);
+    final String? capture = computeCaptureAttribute(
+      source,
+      preferredCameraDevice,
+    );
     final List<XFile> files = await getFiles(
       accept: _kAcceptVideoMimeType,
       capture: capture,
@@ -114,11 +118,20 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     return files.isEmpty ? null : files.first;
   }
 
+  @override
+  Future<List<XFile>> getMultiVideoWithOptions({
+    MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
+  }) async {
+    final List<XFile> files = await getFiles(
+      accept: _kAcceptVideoMimeType,
+      multiple: true,
+    );
+    return files;
+  }
+
   /// Injects a file input, and returns a list of XFile media that the user selected locally.
   @override
-  Future<List<XFile>> getMedia({
-    required MediaOptions options,
-  }) async {
+  Future<List<XFile>> getMedia({required MediaOptions options}) async {
     final List<XFile> images = await getFiles(
       accept: '$_kAcceptImageMimeType,$_kAcceptVideoMimeType',
       multiple: options.allowMultiple,
@@ -189,13 +202,14 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
   }) async {
     return getImageFromSource(
-        source: source,
-        options: ImagePickerOptions(
-          maxWidth: maxWidth,
-          maxHeight: maxHeight,
-          imageQuality: imageQuality,
-          preferredCameraDevice: preferredCameraDevice,
-        ));
+      source: source,
+      options: ImagePickerOptions(
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        imageQuality: imageQuality,
+        preferredCameraDevice: preferredCameraDevice,
+      ),
+    );
   }
 
   /// Injects a file input, and returns a list of XFile images that the user selected locally.
@@ -253,17 +267,19 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     input.onchange = (web.Event event) {
       final List<web.File>? files = _handleOnChangeEvent(event);
       if (!completer.isCompleted && files != null) {
-        completer.complete(files.map((web.File file) {
-          return XFile(
-            web.URL.createObjectURL(file),
-            name: file.name,
-            length: file.size,
-            lastModified: DateTime.fromMillisecondsSinceEpoch(
-              file.lastModified,
-            ),
-            mimeType: file.type,
-          );
-        }).toList());
+        completer.complete(
+          files.map((web.File file) {
+            return XFile(
+              web.URL.createObjectURL(file),
+              name: file.name,
+              length: file.size,
+              lastModified: DateTime.fromMillisecondsSinceEpoch(
+                file.lastModified,
+              ),
+              mimeType: file.type,
+            );
+          }).toList(),
+        );
       }
     }.toJS;
 
@@ -286,8 +302,9 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   web.Element _ensureInitialized(String id) {
     web.Element? target = web.document.querySelector('#$id');
     if (target == null) {
-      final web.Element targetElement =
-          web.document.createElement('flt-image-picker-inputs')..id = id;
+      final web.Element targetElement = web.document.createElement(
+        'flt-image-picker-inputs',
+      )..id = id;
       // TODO(ditman): Append inside the `view` of the running app.
       web.document.body!.append(targetElement);
       target = targetElement;
@@ -334,15 +351,13 @@ class ImagePickerPlugin extends ImagePickerPlatform {
 // Some tools to override behavior for unit-testing
 /// A function that creates a file input with the passed in `accept` and `capture` attributes.
 @visibleForTesting
-typedef OverrideCreateInputFunction = web.HTMLInputElement Function(
-  String? accept,
-  String? capture,
-);
+typedef OverrideCreateInputFunction =
+    web.HTMLInputElement Function(String? accept, String? capture);
 
 /// A function that extracts list of files from the file `input` passed in.
 @visibleForTesting
-typedef OverrideExtractMultipleFilesFromInputFunction = List<web.File> Function(
-    web.HTMLInputElement? input);
+typedef OverrideExtractMultipleFilesFromInputFunction =
+    List<web.File> Function(web.HTMLInputElement? input);
 
 /// Overrides for some of the functionality above.
 @visibleForTesting

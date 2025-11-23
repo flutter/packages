@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,10 +50,13 @@ class WebWebViewControllerCreationParams
 class WebWebViewController extends PlatformWebViewController {
   /// Constructs a [WebWebViewController].
   WebWebViewController(PlatformWebViewControllerCreationParams params)
-      : super.implementation(params is WebWebViewControllerCreationParams
+    : super.implementation(
+        params is WebWebViewControllerCreationParams
             ? params
-            : WebWebViewControllerCreationParams
-                .fromPlatformWebViewControllerCreationParams(params));
+            : WebWebViewControllerCreationParams.fromPlatformWebViewControllerCreationParams(
+                params,
+              ),
+      );
 
   WebWebViewControllerCreationParams get _webWebViewParams =>
       params as WebWebViewControllerCreationParams;
@@ -71,7 +74,8 @@ class WebWebViewController extends PlatformWebViewController {
   Future<void> loadRequest(LoadRequestParams params) async {
     if (!params.uri.hasScheme) {
       throw ArgumentError(
-          'LoadRequestParams#uri is required to have a scheme.');
+        'LoadRequestParams#uri is required to have a scheme.',
+      );
     }
 
     if (params.headers.isEmpty &&
@@ -87,11 +91,12 @@ class WebWebViewController extends PlatformWebViewController {
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
     final web.Response response =
         await _webWebViewParams.httpRequestFactory.request(
-      params.uri.toString(),
-      method: params.method.serialize(),
-      requestHeaders: params.headers,
-      sendData: params.body,
-    ) as web.Response;
+              params.uri.toString(),
+              method: params.method.serialize(),
+              requestHeaders: params.headers,
+              sendData: params.body,
+            )
+            as web.Response;
 
     final String header = response.headers.get('content-type') ?? 'text/html';
     final ContentType contentType = ContentType.parse(header);
@@ -109,7 +114,7 @@ class WebWebViewController extends PlatformWebViewController {
 class WebWebViewWidget extends PlatformWebViewWidget {
   /// Constructs a [WebWebViewWidget].
   WebWebViewWidget(PlatformWebViewWidgetCreationParams params)
-      : super.implementation(params) {
+    : super.implementation(params) {
     final WebWebViewController controller =
         params.controller as WebWebViewController;
     ui_web.platformViewRegistry.registerViewFactory(

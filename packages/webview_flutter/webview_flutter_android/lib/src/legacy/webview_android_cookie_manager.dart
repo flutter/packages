@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,7 +24,8 @@ class WebViewAndroidCookieManager extends WebViewCookieManagerPlatform {
   Future<void> setCookie(WebViewCookie cookie) {
     if (!_isValidPath(cookie.path)) {
       throw ArgumentError(
-          'The path property for the provided cookie was not given a legal value.');
+        'The path property for the provided cookie was not given a legal value.',
+      );
     }
     return _cookieManager.setCookie(
       cookie.domain,

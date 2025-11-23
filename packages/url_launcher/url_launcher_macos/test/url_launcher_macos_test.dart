@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,14 +34,18 @@ void main() {
 
       test('invalid URL returns a PlatformException', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
-        await expectLater(launcher.canLaunch('invalid://u r l'),
-            throwsA(isA<PlatformException>()));
+        await expectLater(
+          launcher.canLaunch('invalid://u r l'),
+          throwsA(isA<PlatformException>()),
+        );
       });
 
       test('passes unexpected PlatformExceptions through', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
-        await expectLater(launcher.canLaunch('unexpectedthrow://someexception'),
-            throwsA(isA<PlatformException>()));
+        await expectLater(
+          launcher.canLaunch('unexpectedthrow://someexception'),
+          throwsA(isA<PlatformException>()),
+        );
       });
     });
 
@@ -49,103 +53,118 @@ void main() {
       test('success', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
         expect(
-            await launcher.launch(
-              'http://example.com/',
-              useSafariVC: false,
-              useWebView: false,
-              enableJavaScript: false,
-              enableDomStorage: false,
-              universalLinksOnly: false,
-              headers: const <String, String>{},
-            ),
-            true);
+          await launcher.launch(
+            'http://example.com/',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          true,
+        );
       });
 
       test('failure', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
         expect(
-            await launcher.launch(
-              'unknown://scheme',
-              useSafariVC: false,
-              useWebView: false,
-              enableJavaScript: false,
-              enableDomStorage: false,
-              universalLinksOnly: false,
-              headers: const <String, String>{},
-            ),
-            false);
+          await launcher.launch(
+            'unknown://scheme',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          false,
+        );
       });
 
       test('invalid URL returns a PlatformException', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
         await expectLater(
-            launcher.launch(
-              'invalid://u r l',
-              useSafariVC: false,
-              useWebView: false,
-              enableJavaScript: false,
-              enableDomStorage: false,
-              universalLinksOnly: false,
-              headers: const <String, String>{},
-            ),
-            throwsA(isA<PlatformException>()));
+          launcher.launch(
+            'invalid://u r l',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          throwsA(isA<PlatformException>()),
+        );
       });
 
       test('passes unexpected PlatformExceptions through', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
         await expectLater(
-            launcher.launch(
-              'unexpectedthrow://someexception',
-              useSafariVC: false,
-              useWebView: false,
-              enableJavaScript: false,
-              enableDomStorage: false,
-              universalLinksOnly: false,
-              headers: const <String, String>{},
-            ),
-            throwsA(isA<PlatformException>()));
+          launcher.launch(
+            'unexpectedthrow://someexception',
+            useSafariVC: false,
+            useWebView: false,
+            enableJavaScript: false,
+            enableDomStorage: false,
+            universalLinksOnly: false,
+            headers: const <String, String>{},
+          ),
+          throwsA(isA<PlatformException>()),
+        );
       });
     });
 
     group('supportsMode', () {
       test('returns true for platformDefault', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
-        expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
-            true);
+        expect(
+          await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+          true,
+        );
       });
 
       test('returns true for external application', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
         expect(
-            await launcher
-                .supportsMode(PreferredLaunchMode.externalApplication),
-            true);
+          await launcher.supportsMode(PreferredLaunchMode.externalApplication),
+          true,
+        );
       });
 
       test('returns false for other modes', () async {
         final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
         expect(
-            await launcher.supportsMode(
-                PreferredLaunchMode.externalNonBrowserApplication),
-            false);
+          await launcher.supportsMode(
+            PreferredLaunchMode.externalNonBrowserApplication,
+          ),
+          false,
+        );
         expect(
-            await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
-            false);
-        expect(await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
-            false);
+          await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+          false,
+        );
+        expect(
+          await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
+          false,
+        );
       });
     });
 
     test('supportsCloseForMode returns false', () async {
       final UrlLauncherMacOS launcher = UrlLauncherMacOS(api: api);
       expect(
-          await launcher
-              .supportsCloseForMode(PreferredLaunchMode.platformDefault),
-          false);
+        await launcher.supportsCloseForMode(
+          PreferredLaunchMode.platformDefault,
+        ),
+        false,
+      );
       expect(
-          await launcher
-              .supportsCloseForMode(PreferredLaunchMode.externalApplication),
-          false);
+        await launcher.supportsCloseForMode(
+          PreferredLaunchMode.externalApplication,
+        ),
+        false,
+      );
     });
   });
 }
@@ -172,7 +191,9 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
         return UrlLauncherBoolResult(value: true);
       case 'invalid':
         return UrlLauncherBoolResult(
-            value: false, error: UrlLauncherError.invalidUrl);
+          value: false,
+          error: UrlLauncherError.invalidUrl,
+        );
       case 'unexpectedthrow':
         throw PlatformException(code: 'argument_error');
       default:

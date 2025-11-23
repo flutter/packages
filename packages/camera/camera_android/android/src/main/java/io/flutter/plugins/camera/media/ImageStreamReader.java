@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,11 +9,14 @@ import android.media.Image;
 import android.media.ImageReader;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Surface;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugins.camera.types.CameraCaptureProperties;
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import java.util.Map;
 
 // Wraps an ImageReader to allow for testing of the image handler.
 public class ImageStreamReader {
+  private static final String TAG = "ImageStreamReader";
 
   /**
    * The image format we are going to send back to dart. Usually it's the same as streamImageFormat
@@ -32,6 +36,16 @@ public class ImageStreamReader {
 
   private final ImageReader imageReader;
   private final ImageStreamReaderUtils imageStreamReaderUtils;
+
+  @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+  @Nullable
+  public Handler handler;
+
+  /**
+   * This hard reference is required so frames don't get randomly dropped before reaching the main
+   * looper.
+   */
+  private Map<String, Object> latestImageBufferHardReference = null;
 
   /**
    * Creates a new instance of the {@link ImageStreamReader}.
@@ -95,40 +109,69 @@ public class ImageStreamReader {
       @NonNull Image image,
       @NonNull CameraCaptureProperties captureProps,
       @NonNull EventChannel.EventSink imageStreamSink) {
-    try {
-      Map<String, Object> imageBuffer = new HashMap<>();
+    Map<String, Object> imageBuffer = new HashMap<>();
 
+    imageBuffer.put("width", image.getWidth());
+    imageBuffer.put("height", image.getHeight());
+    try {
       // Get plane data ready
       if (dartImageFormat == ImageFormat.NV21) {
         imageBuffer.put("planes", parsePlanesForNv21(image));
       } else {
         imageBuffer.put("planes", parsePlanesForYuvOrJpeg(image));
       }
-
-      imageBuffer.put("width", image.getWidth());
-      imageBuffer.put("height", image.getHeight());
-      imageBuffer.put("format", dartImageFormat);
-      imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
-      imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
-      Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
-      imageBuffer.put(
-          "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
-
-      final Handler handler = new Handler(Looper.getMainLooper());
-      handler.post(() -> imageStreamSink.success(imageBuffer));
-      image.close();
-
     } catch (IllegalStateException e) {
-      // Handle "buffer is inaccessible" errors that can happen on some devices from ImageStreamReaderUtils.yuv420ThreePlanesToNV21()
-      final Handler handler = new Handler(Looper.getMainLooper());
+      // Handle "buffer is inaccessible" errors that can happen on some devices from
+      // ImageStreamReaderUtils.yuv420ThreePlanesToNV21()
+      final Handler handler =
+          this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
       handler.post(
           () ->
               imageStreamSink.error(
                   "IllegalStateException",
                   "Caught IllegalStateException: " + e.getMessage(),
                   null));
+    } finally {
       image.close();
     }
+
+    imageBuffer.put("format", dartImageFormat);
+    imageBuffer.put("lensAperture", captureProps.getLastLensAperture());
+    imageBuffer.put("sensorExposureTime", captureProps.getLastSensorExposureTime());
+    Integer sensorSensitivity = captureProps.getLastSensorSensitivity();
+    imageBuffer.put(
+        "sensorSensitivity", sensorSensitivity == null ? null : (double) sensorSensitivity);
+
+    final Handler handler =
+        this.handler != null ? this.handler : new Handler(Looper.getMainLooper());
+
+    // Keep a hard reference to the latest frame, so it isn't dropped before it reaches the main
+    // looper
+    latestImageBufferHardReference = imageBuffer;
+
+    boolean postResult =
+        handler.post(
+            new Runnable() {
+              @VisibleForTesting public WeakReference<Map<String, Object>> weakImageBuffer;
+
+              public Runnable withImageBuffer(Map<String, Object> imageBuffer) {
+                weakImageBuffer = new WeakReference<>(imageBuffer);
+                return this;
+              }
+
+              @Override
+              public void run() {
+                final Map<String, Object> imageBuffer = weakImageBuffer.get();
+                if (imageBuffer == null) {
+                  // The memory was freed by the runtime, most likely due to a memory build-up
+                  // while the main thread was lagging. Frames are silently dropped in this
+                  // case.
+                  Log.d(TAG, "Image buffer was dropped by garbage collector.");
+                  return;
+                }
+                imageStreamSink.success(imageBuffer);
+              }
+            }.withImageBuffer(imageBuffer));
   }
 
   /**

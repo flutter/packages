@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -339,7 +339,7 @@ android {
           buildGradle,
           containsAll(<Matcher>[
             contains('This is the legacy file'),
-            contains('compileSdk 34'),
+            contains('compileSdk 36'),
           ]));
     });
 
@@ -372,7 +372,7 @@ android {
       expect(
           buildGradle,
           containsAll(<Matcher>[
-            contains('compileSdk 34'),
+            contains('compileSdk 36'),
             contains('androidx.lifecycle:lifecycle-runtime'),
           ]));
     });

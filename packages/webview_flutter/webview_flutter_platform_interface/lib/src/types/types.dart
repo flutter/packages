@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,6 +9,7 @@ export 'javascript_dialog_request.dart';
 export 'javascript_log_level.dart';
 export 'javascript_message.dart';
 export 'javascript_mode.dart';
+export 'load_file_params.dart';
 export 'load_request_params.dart';
 export 'navigation_decision.dart';
 export 'navigation_request.dart';
@@ -25,3 +26,4 @@ export 'web_resource_request.dart';
 export 'web_resource_response.dart';
 export 'webview_cookie.dart';
 export 'webview_credential.dart';
+export 'x509_certificate.dart';

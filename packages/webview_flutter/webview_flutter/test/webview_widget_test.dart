@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,47 +23,51 @@ void main() {
           MockPlatformWebViewWidget();
       when(mockPlatformWebViewWidget.build(any)).thenReturn(Container());
 
-      await tester.pumpWidget(WebViewWidget.fromPlatform(
-        platform: mockPlatformWebViewWidget,
-      ));
+      await tester.pumpWidget(
+        WebViewWidget.fromPlatform(platform: mockPlatformWebViewWidget),
+      );
 
       expect(find.byType(Container), findsOneWidget);
     });
 
     testWidgets(
-        'constructor parameters are correctly passed to creation params',
-        (WidgetTester tester) async {
-      WebViewPlatform.instance = TestWebViewPlatform();
+      'constructor parameters are correctly passed to creation params',
+      (WidgetTester tester) async {
+        WebViewPlatform.instance = TestWebViewPlatform();
 
-      final MockPlatformWebViewController mockPlatformWebViewController =
-          MockPlatformWebViewController();
-      final WebViewController webViewController =
-          WebViewController.fromPlatform(
-        mockPlatformWebViewController,
-      );
+        final MockPlatformWebViewController mockPlatformWebViewController =
+            MockPlatformWebViewController();
+        final WebViewController webViewController =
+            WebViewController.fromPlatform(mockPlatformWebViewController);
 
-      final WebViewWidget webViewWidget = WebViewWidget(
-        key: GlobalKey(),
-        controller: webViewController,
-        layoutDirection: TextDirection.rtl,
-        gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
-          Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
-        },
-      );
+        final WebViewWidget webViewWidget = WebViewWidget(
+          key: GlobalKey(),
+          controller: webViewController,
+          layoutDirection: TextDirection.rtl,
+          gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+            Factory<OneSequenceGestureRecognizer>(
+              () => EagerGestureRecognizer(),
+            ),
+          },
+        );
 
-      // The key passed to the default constructor is used by the super class
-      // and not passed to the platform implementation.
-      expect(webViewWidget.platform.params.key, isNull);
-      expect(
-        webViewWidget.platform.params.controller,
-        webViewController.platform,
-      );
-      expect(webViewWidget.platform.params.layoutDirection, TextDirection.rtl);
-      expect(
-        webViewWidget.platform.params.gestureRecognizers.isNotEmpty,
-        isTrue,
-      );
-    });
+        // The key passed to the default constructor is used by the super class
+        // and not passed to the platform implementation.
+        expect(webViewWidget.platform.params.key, isNull);
+        expect(
+          webViewWidget.platform.params.controller,
+          webViewController.platform,
+        );
+        expect(
+          webViewWidget.platform.params.layoutDirection,
+          TextDirection.rtl,
+        );
+        expect(
+          webViewWidget.platform.params.gestureRecognizers.isNotEmpty,
+          isTrue,
+        );
+      },
+    );
   });
 }
 

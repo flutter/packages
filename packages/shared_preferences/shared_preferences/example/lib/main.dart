@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,9 +38,11 @@ class SharedPreferencesDemo extends StatefulWidget {
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   final Future<SharedPreferencesWithCache> _prefs =
       SharedPreferencesWithCache.create(
-          cacheOptions: const SharedPreferencesWithCacheOptions(
-              // This cache will only accept the key 'counter'.
-              allowList: <String>{'counter'}));
+        cacheOptions: const SharedPreferencesWithCacheOptions(
+          // This cache will only accept the key 'counter'.
+          allowList: <String>{'counter'},
+        ),
+      );
   late Future<int> _counter;
   int _externalCounter = 0;
 
@@ -97,9 +99,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SharedPreferencesWithCache Demo'),
-      ),
+      appBar: AppBar(title: const Text('SharedPreferencesWithCache Demo')),
       body: Center(
         child: _WaitForInitialization(
           initialized: _preferencesReady.future,

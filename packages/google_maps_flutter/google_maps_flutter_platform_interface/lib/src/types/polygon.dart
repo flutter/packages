@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -141,9 +141,9 @@ class Polygon implements MapsObject<Polygon> {
 
     addIfPresent('polygonId', polygonId.value);
     addIfPresent('consumeTapEvents', consumeTapEvents);
-    addIfPresent('fillColor', fillColor.value);
+    addIfPresent('fillColor', fillColor.toARGB32());
     addIfPresent('geodesic', geodesic);
-    addIfPresent('strokeColor', strokeColor.value);
+    addIfPresent('strokeColor', strokeColor.toARGB32());
     addIfPresent('strokeWidth', strokeWidth);
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);

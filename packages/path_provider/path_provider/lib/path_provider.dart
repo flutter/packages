@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -55,7 +55,8 @@ Future<Directory> getTemporaryDirectory() async {
   final String? path = await _platform.getTemporaryPath();
   if (path == null) {
     throw MissingPlatformDirectoryException(
-        'Unable to get temporary directory');
+      'Unable to get temporary directory',
+    );
   }
   return Directory(path);
 }
@@ -78,7 +79,8 @@ Future<Directory> getApplicationSupportDirectory() async {
   final String? path = await _platform.getApplicationSupportPath();
   if (path == null) {
     throw MissingPlatformDirectoryException(
-        'Unable to get application support directory');
+      'Unable to get application support directory',
+    );
   }
 
   return Directory(path);
@@ -121,7 +123,8 @@ Future<Directory> getApplicationDocumentsDirectory() async {
   final String? path = await _platform.getApplicationDocumentsPath();
   if (path == null) {
     throw MissingPlatformDirectoryException(
-        'Unable to get application documents directory');
+      'Unable to get application documents directory',
+    );
   }
   return Directory(path);
 }
@@ -137,7 +140,8 @@ Future<Directory> getApplicationCacheDirectory() async {
   final String? path = await _platform.getApplicationCachePath();
   if (path == null) {
     throw MissingPlatformDirectoryException(
-        'Unable to get application cache directory');
+      'Unable to get application cache directory',
+    );
   }
   return Directory(path);
 }
@@ -198,8 +202,9 @@ Future<List<Directory>?> getExternalStorageDirectories({
   /// how this type translates to Android storage directories.
   StorageDirectory? type,
 }) async {
-  final List<String>? paths =
-      await _platform.getExternalStoragePaths(type: type);
+  final List<String>? paths = await _platform.getExternalStoragePaths(
+    type: type,
+  );
   if (paths == null) {
     return null;
   }

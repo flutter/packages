@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,8 +40,9 @@ public abstract class VideoAsset {
   static VideoAsset fromRemoteUrl(
       @Nullable String remoteUrl,
       @NonNull StreamingFormat streamingFormat,
-      @NonNull Map<String, String> httpHeaders) {
-    return new HttpVideoAsset(remoteUrl, streamingFormat, new HashMap<>(httpHeaders));
+      @NonNull Map<String, String> httpHeaders,
+      @Nullable String userAgent) {
+    return new HttpVideoAsset(remoteUrl, streamingFormat, new HashMap<>(httpHeaders), userAgent);
   }
 
   /**

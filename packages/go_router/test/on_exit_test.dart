@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,13 +28,16 @@ void main() {
             onExit: (BuildContext context, GoRouterState state) {
               return allow;
             },
-          )
+          ),
         ],
       ),
     ];
 
-    final GoRouter router =
-        await createRouter(routes, tester, initialLocation: '/1');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/1',
+    );
     expect(find.byKey(page1), findsOneWidget);
 
     router.pop();
@@ -64,11 +67,14 @@ void main() {
         onExit: (BuildContext context, GoRouterState state) {
           return allow;
         },
-      )
+      ),
     ];
 
-    final GoRouter router =
-        await createRouter(routes, tester, initialLocation: '/1');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/1',
+    );
     expect(find.byKey(page1), findsOneWidget);
 
     router.go('/');
@@ -98,13 +104,16 @@ void main() {
             onExit: (BuildContext context, GoRouterState state) async {
               return allow.future;
             },
-          )
+          ),
         ],
       ),
     ];
 
-    final GoRouter router =
-        await createRouter(routes, tester, initialLocation: '/1');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/1',
+    );
     expect(find.byKey(page1), findsOneWidget);
 
     router.pop();
@@ -142,11 +151,14 @@ void main() {
         onExit: (BuildContext context, GoRouterState state) async {
           return allow.future;
         },
-      )
+      ),
     ];
 
-    final GoRouter router =
-        await createRouter(routes, tester, initialLocation: '/1');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/1',
+    );
     expect(find.byKey(page1), findsOneWidget);
 
     router.go('/');
@@ -167,8 +179,9 @@ void main() {
     expect(find.byKey(home), findsOneWidget);
   });
 
-  testWidgets('android back button respects the last route.',
-      (WidgetTester tester) async {
+  testWidgets('android back button respects the last route.', (
+    WidgetTester tester,
+  ) async {
     bool allow = false;
     final UniqueKey home = UniqueKey();
     final List<GoRoute> routes = <GoRoute>[
@@ -192,8 +205,9 @@ void main() {
     expect(await router.routerDelegate.popRoute(), false);
   });
 
-  testWidgets('android back button respects the last route. async',
-      (WidgetTester tester) async {
+  testWidgets('android back button respects the last route. async', (
+    WidgetTester tester,
+  ) async {
     bool allow = false;
     final UniqueKey home = UniqueKey();
     final List<GoRoute> routes = <GoRoute>[
@@ -217,21 +231,25 @@ void main() {
     expect(await router.routerDelegate.popRoute(), false);
   });
 
-  testWidgets('android back button respects the last route with shell route.',
-      (WidgetTester tester) async {
+  testWidgets('android back button respects the last route with shell route.', (
+    WidgetTester tester,
+  ) async {
     bool allow = false;
     final UniqueKey home = UniqueKey();
     final List<RouteBase> routes = <RouteBase>[
-      ShellRoute(builder: (_, __, Widget child) => child, routes: <RouteBase>[
-        GoRoute(
-          path: '/',
-          builder: (BuildContext context, GoRouterState state) =>
-              DummyScreen(key: home),
-          onExit: (BuildContext context, GoRouterState state) {
-            return allow;
-          },
-        ),
-      ])
+      ShellRoute(
+        builder: (_, __, Widget child) => child,
+        routes: <RouteBase>[
+          GoRoute(
+            path: '/',
+            builder: (BuildContext context, GoRouterState state) =>
+                DummyScreen(key: home),
+            onExit: (BuildContext context, GoRouterState state) {
+              return allow;
+            },
+          ),
+        ],
+      ),
     ];
 
     final GoRouter router = await createRouter(routes, tester);
@@ -244,8 +262,9 @@ void main() {
     expect(await router.routerDelegate.popRoute(), false);
   });
 
-  testWidgets('It should provide the correct uri to the onExit callback',
-      (WidgetTester tester) async {
+  testWidgets('It should provide the correct uri to the onExit callback', (
+    WidgetTester tester,
+  ) async {
     final UniqueKey home = UniqueKey();
     final UniqueKey page1 = UniqueKey();
     final UniqueKey page2 = UniqueKey();
@@ -285,17 +304,20 @@ void main() {
                       onExitState3 = state;
                       return true;
                     },
-                  )
+                  ),
                 ],
-              )
+              ),
             ],
-          )
+          ),
         ],
       ),
     ];
 
-    final GoRouter router =
-        await createRouter(routes, tester, initialLocation: '/1/2/3');
+    final GoRouter router = await createRouter(
+      routes,
+      tester,
+      initialLocation: '/1/2/3',
+    );
     expect(find.byKey(page3), findsOneWidget);
 
     router.pop();

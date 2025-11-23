@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,9 +39,7 @@ class WebWebViewPlatform implements WebViewPlatform {
           iFrame.src = initialUrl;
         }
         if (onWebViewPlatformCreated != null) {
-          onWebViewPlatformCreated(
-            WebWebViewPlatformController(iFrame),
-          );
+          onWebViewPlatformCreated(WebWebViewPlatformController(iFrame));
         }
       },
     );
@@ -170,10 +168,7 @@ class WebWebViewPlatformController implements WebViewPlatformController {
   }
 
   @override
-  Future<void> loadHtmlString(
-    String html, {
-    String? baseUrl,
-  }) async {
+  Future<void> loadHtmlString(String html, {String? baseUrl}) async {
     _element.src = Uri.dataFromString(
       html,
       mimeType: 'text/html',
@@ -186,11 +181,14 @@ class WebWebViewPlatformController implements WebViewPlatformController {
     if (!request.uri.hasScheme) {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
-    final web.Response response = await _httpRequestFactory.request(
-        request.uri.toString(),
-        method: request.method.serialize(),
-        requestHeaders: request.headers,
-        sendData: request.body) as web.Response;
+    final web.Response response =
+        await _httpRequestFactory.request(
+              request.uri.toString(),
+              method: request.method.serialize(),
+              requestHeaders: request.headers,
+              sendData: request.body,
+            )
+            as web.Response;
 
     final String contentType =
         response.headers.get('content-type') ?? 'text/html';

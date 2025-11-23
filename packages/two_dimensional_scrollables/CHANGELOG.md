@@ -1,3 +1,22 @@
+## NEXT
+
+* Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 0.3.7
+
+* Fixes missing leading cache extent in TableView.
+
+## 0.3.6
+
+* Fixes typo in API docs.
+
+## 0.3.5
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Updates the simple table sample to demonstrate different types of selection: single-cell
+selection, and multi-cell selection.
+
 ## 0.3.4
 
 * Updates minimum supported SDK version to Flutter 3.22/Dart 3.4.

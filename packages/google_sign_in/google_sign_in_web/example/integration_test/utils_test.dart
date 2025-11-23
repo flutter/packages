@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,7 +6,6 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_identity_services_web/id.dart';
-import 'package:google_identity_services_web/oauth2.dart';
 import 'package:google_sign_in_platform_interface/google_sign_in_platform_interface.dart';
 import 'package:google_sign_in_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
@@ -17,78 +16,56 @@ import 'src/jwt_examples.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  group('gisResponsesToTokenData', () {
-    testWidgets('null objects -> no problem', (_) async {
-      final GoogleSignInTokenData tokens = gisResponsesToTokenData(null, null);
-
-      expect(tokens.accessToken, isNull);
-      expect(tokens.idToken, isNull);
-      expect(tokens.serverAuthCode, isNull);
-    });
-
-    testWidgets('non-null objects are correctly used', (_) async {
-      const String expectedIdToken = 'some-value-for-testing';
-      const String expectedAccessToken = 'another-value-for-testing';
-
-      final CredentialResponse credential =
-          jsifyAs<CredentialResponse>(<String, Object?>{
-        'credential': expectedIdToken,
-      });
-      final TokenResponse token = jsifyAs<TokenResponse>(<String, Object?>{
-        'access_token': expectedAccessToken,
-      });
-      final GoogleSignInTokenData tokens =
-          gisResponsesToTokenData(credential, token);
-
-      expect(tokens.accessToken, expectedAccessToken);
-      expect(tokens.idToken, expectedIdToken);
-      expect(tokens.serverAuthCode, isNull);
-    });
-  });
-
-  group('gisResponsesToUserData', () {
+  group('gisResponsesToAuthenticationEvent', () {
     testWidgets('happy case', (_) async {
-      final GoogleSignInUserData data = gisResponsesToUserData(goodCredential)!;
+      final AuthenticationEventSignIn signIn =
+          gisResponsesToAuthenticationEvent(goodCredential)!
+              as AuthenticationEventSignIn;
+      final GoogleSignInUserData data = signIn.user;
 
       expect(data.displayName, 'Vincent Adultman');
       expect(data.id, '123456');
       expect(data.email, 'adultman@example.com');
       expect(data.photoUrl, 'https://thispersondoesnotexist.com/image?x=.jpg');
-      expect(data.idToken, goodJwtToken);
+      expect(signIn.authenticationTokens.idToken, goodJwtToken);
     });
 
     testWidgets('happy case (minimal)', (_) async {
-      final GoogleSignInUserData data =
-          gisResponsesToUserData(minimalCredential)!;
+      final AuthenticationEventSignIn signIn =
+          gisResponsesToAuthenticationEvent(minimalCredential)!
+              as AuthenticationEventSignIn;
+      final GoogleSignInUserData data = signIn.user;
 
       expect(data.displayName, isNull);
       expect(data.id, '123456');
       expect(data.email, 'adultman@example.com');
       expect(data.photoUrl, isNull);
-      expect(data.idToken, minimalJwtToken);
+      expect(signIn.authenticationTokens.idToken, minimalJwtToken);
     });
 
     testWidgets('null response -> null', (_) async {
-      expect(gisResponsesToUserData(null), isNull);
+      expect(gisResponsesToAuthenticationEvent(null), isNull);
     });
 
     testWidgets('null response.credential -> null', (_) async {
-      expect(gisResponsesToUserData(nullCredential), isNull);
+      expect(gisResponsesToAuthenticationEvent(nullCredential), isNull);
     });
 
     testWidgets('invalid payload -> null', (_) async {
-      final CredentialResponse response =
-          jsifyAs<CredentialResponse>(<String, Object?>{
-        'credential': 'some-bogus.thing-that-is-not.valid-jwt',
-      });
-      expect(gisResponsesToUserData(response), isNull);
+      final CredentialResponse response = jsifyAs<CredentialResponse>(
+        <String, Object?>{
+          'credential': 'some-bogus.thing-that-is-not.valid-jwt',
+        },
+      );
+      expect(gisResponsesToAuthenticationEvent(response), isNull);
     });
   });
 
   group('getCredentialResponseExpirationTimestamp', () {
     testWidgets('Good payload -> data', (_) async {
-      final DateTime? expiration =
-          getCredentialResponseExpirationTimestamp(expiredCredential);
+      final DateTime? expiration = getCredentialResponseExpirationTimestamp(
+        expiredCredential,
+      );
 
       expect(expiration, isNotNull);
       expect(expiration!.millisecondsSinceEpoch, 1430330400 * 1000);
@@ -96,14 +73,17 @@ void main() {
 
     testWidgets('No expiration -> null', (_) async {
       expect(
-          getCredentialResponseExpirationTimestamp(minimalCredential), isNull);
+        getCredentialResponseExpirationTimestamp(minimalCredential),
+        isNull,
+      );
     });
 
     testWidgets('Bad data -> null', (_) async {
-      final CredentialResponse bogus =
-          jsifyAs<CredentialResponse>(<String, Object?>{
-        'credential': 'some-bogus.thing-that-is-not.valid-jwt',
-      });
+      final CredentialResponse bogus = jsifyAs<CredentialResponse>(
+        <String, Object?>{
+          'credential': 'some-bogus.thing-that-is-not.valid-jwt',
+        },
+      );
 
       expect(getCredentialResponseExpirationTimestamp(bogus), isNull);
     });
@@ -118,11 +98,12 @@ void main() {
       expect(data, containsPair('email', 'adultman@example.com'));
       expect(data, containsPair('sub', '123456'));
       expect(
-          data,
-          containsPair(
-            'picture',
-            'https://thispersondoesnotexist.com/image?x=.jpg',
-          ));
+        data,
+        containsPair(
+          'picture',
+          'https://thispersondoesnotexist.com/image?x=.jpg',
+        ),
+      );
     });
 
     testWidgets('happy case (minimal) -> data', (_) async {
@@ -161,11 +142,12 @@ void main() {
       expect(data, containsPair('email', 'adultman@example.com'));
       expect(data, containsPair('sub', '123456'));
       expect(
-          data,
-          containsPair(
-            'picture',
-            'https://thispersondoesnotexist.com/image?x=.jpg',
-          ));
+        data,
+        containsPair(
+          'picture',
+          'https://thispersondoesnotexist.com/image?x=.jpg',
+        ),
+      );
     });
 
     testWidgets('Proper JSON payload -> data', (_) async {

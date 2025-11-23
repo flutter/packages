@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,37 +8,32 @@
 
 #import <GoogleSignIn/GoogleSignIn.h>
 
-NS_ASSUME_NONNULL_BEGIN
+#import "FSIGoogleSignInProtocols.h"
+#import "FSIViewProvider.h"
 
-@class GIDSignIn;
+NS_ASSUME_NONNULL_BEGIN
 
 /// Methods exposed for unit testing.
 @interface FLTGoogleSignInPlugin ()
 
-// Configuration wrapping Google Cloud Console, Google Apps, OpenID,
-// and other initialization metadata.
-@property(strong) GIDConfiguration *configuration;
-
-// Permissions requested during at sign in "init" method call
-// unioned with scopes requested later with incremental authorization
-// "requestScopes" method call.
-// The "email" and "profile" base scopes are always implicitly requested.
-@property(copy) NSSet<NSString *> *requestedScopes;
-
 // Instance used to manage Google Sign In authentication including
 // sign in, sign out, and requesting additional scopes.
-@property(strong, readonly) GIDSignIn *signIn;
+@property(strong, readonly) NSObject<FSIGIDSignIn> *signIn;
 
-/// Inject @c FlutterPluginRegistrar for testing.
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+// A mapping of user IDs to GIDGoogleUser instances to use for follow-up calls.
+@property(nonatomic)
+    NSMutableDictionary<NSString *, NSObject<FSIGIDGoogleUser> *> *usersByIdentifier;
 
-/// Inject @c GIDSignIn for testing.
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+/// Inject view provider for testing.
+- (instancetype)initWithViewProvider:(NSObject<FSIViewProvider> *)viewProvider;
 
-/// Inject @c GIDSignIn and @c googleServiceProperties for testing.
-- (instancetype)initWithSignIn:(GIDSignIn *)signIn
-                     registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+/// Inject @c NSObject<FSIGIDSignIn> for testing.
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider;
+
+/// Inject @c NSObject<FSIGIDSignIn> and @c googleServiceProperties for testing.
+- (instancetype)initWithSignIn:(NSObject<FSIGIDSignIn> *)signIn
+                  viewProvider:(NSObject<FSIViewProvider> *)viewProvider
        googleServiceProperties:(nullable NSDictionary<NSString *, id> *)googleServiceProperties
     NS_DESIGNATED_INITIALIZER;
 

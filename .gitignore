@@ -53,6 +53,7 @@ GeneratedPluginRegistrant.*
 .gradle/
 gradlew
 gradlew.bat
+.cxx/
 
 .project
 .classpath

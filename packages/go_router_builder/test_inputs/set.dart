@@ -1,11 +1,13 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:go_router/go_router.dart';
 
+mixin $SetRoute {}
+
 @TypedGoRoute<SetRoute>(path: '/set-route')
-class SetRoute extends GoRouteData {
+class SetRoute extends GoRouteData with $SetRoute {
   SetRoute({
     required this.ids,
     this.nullableIds,

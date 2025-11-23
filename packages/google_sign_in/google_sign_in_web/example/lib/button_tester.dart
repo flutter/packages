@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,9 +14,9 @@ import 'src/button_configuration_column.dart';
 final GoogleSignInPlatform _platform = GoogleSignInPlatform.instance;
 
 Future<void> main() async {
-  await _platform.initWithParams(const SignInInitParameters(
-    clientId: 'your-client_id.apps.googleusercontent.com',
-  ));
+  await _platform.init(
+    const InitParameters(clientId: 'your-client_id.apps.googleusercontent.com'),
+  );
   runApp(
     const MaterialApp(
       title: 'Sign in with Google button Tester',
@@ -41,19 +41,21 @@ class _ButtonConfiguratorState extends State<ButtonConfiguratorDemo> {
   @override
   void initState() {
     super.initState();
-    _platform.userDataEvents?.listen((GoogleSignInUserData? userData) {
+    _platform.authenticationEvents?.listen((AuthenticationEvent authEvent) {
       setState(() {
-        _userData = userData;
+        switch (authEvent) {
+          case AuthenticationEventSignIn():
+            _userData = authEvent.user;
+          case AuthenticationEventSignOut():
+          case AuthenticationEventException():
+            _userData = null;
+        }
       });
     });
   }
 
   void _handleSignOut() {
-    _platform.signOut();
-    setState(() {
-      // signOut does not broadcast through the userDataEvents, so we fake it.
-      _userData = null;
-    });
+    _platform.signOut(const SignOutParams());
   }
 
   void _handleNewWebButtonConfiguration(GSIButtonConfiguration newConfig) {
@@ -77,7 +79,7 @@ class _ButtonConfiguratorState extends State<ButtonConfiguratorDemo> {
                   onPressed: _handleSignOut,
                   child: const Text('SIGN OUT'),
                 ),
-              ]
+              ],
             ],
           ),
         ),
@@ -92,12 +94,11 @@ class _ButtonConfiguratorState extends State<ButtonConfiguratorDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Sign in with Google button Tester'),
-        ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: _buildBody(),
-        ));
+      appBar: AppBar(title: const Text('Sign in with Google button Tester')),
+      body: ConstrainedBox(
+        constraints: const BoxConstraints.expand(),
+        child: _buildBody(),
+      ),
+    );
   }
 }

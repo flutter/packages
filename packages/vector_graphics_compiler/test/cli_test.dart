@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,9 +44,7 @@ void main() {
     try {
       final IsolateProcessor processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[
-          Pair('test_data/example.svg', output.path),
-        ],
+        <Pair>[Pair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -67,9 +65,7 @@ void main() {
     try {
       final IsolateProcessor processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[
-          Pair('test_data/example.svg', output.path),
-        ],
+        <Pair>[Pair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -120,8 +116,10 @@ void main() {
             .listSync(recursive: true)
             .whereType<File>()
             .where((File element) => element.path.endsWith('vec'))
-            .map((File e) =>
-                p.withoutExtension(p.basenameWithoutExtension(e.path)))
+            .map(
+              (File e) =>
+                  p.withoutExtension(p.basenameWithoutExtension(e.path)),
+            )
             .toList();
 
         if (listEquals(inputTestFiles, outTestFiles)) {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,12 +33,13 @@ void main() {
   group('tile overlay tests', () {
     test('toJson returns correct format', () async {
       const TileOverlay tileOverlay = TileOverlay(
-          tileOverlayId: TileOverlayId('id'),
-          fadeIn: false,
-          transparency: 0.1,
-          zIndex: 1,
-          visible: false,
-          tileSize: 128);
+        tileOverlayId: TileOverlayId('id'),
+        fadeIn: false,
+        transparency: 0.1,
+        zIndex: 1,
+        visible: false,
+        tileSize: 128,
+      );
       final Object json = tileOverlay.toJson();
       expect(json, <String, Object>{
         'tileOverlayId': 'id',
@@ -52,48 +53,58 @@ void main() {
 
     test('invalid transparency throws', () async {
       expect(
-          () => TileOverlay(
-              tileOverlayId: const TileOverlayId('id1'), transparency: -0.1),
-          throwsAssertionError);
+        () => TileOverlay(
+          tileOverlayId: const TileOverlayId('id1'),
+          transparency: -0.1,
+        ),
+        throwsAssertionError,
+      );
       expect(
-          () => TileOverlay(
-              tileOverlayId: const TileOverlayId('id2'), transparency: 1.2),
-          throwsAssertionError);
+        () => TileOverlay(
+          tileOverlayId: const TileOverlayId('id2'),
+          transparency: 1.2,
+        ),
+        throwsAssertionError,
+      );
     });
 
     test('equality', () async {
       final TileProvider tileProvider = _TestTileProvider();
       final TileOverlay tileOverlay1 = TileOverlay(
-          tileOverlayId: const TileOverlayId('id1'),
-          fadeIn: false,
-          tileProvider: tileProvider,
-          transparency: 0.1,
-          zIndex: 1,
-          visible: false,
-          tileSize: 128);
+        tileOverlayId: const TileOverlayId('id1'),
+        fadeIn: false,
+        tileProvider: tileProvider,
+        transparency: 0.1,
+        zIndex: 1,
+        visible: false,
+        tileSize: 128,
+      );
       final TileOverlay tileOverlaySameValues = TileOverlay(
-          tileOverlayId: const TileOverlayId('id1'),
-          fadeIn: false,
-          tileProvider: tileProvider,
-          transparency: 0.1,
-          zIndex: 1,
-          visible: false,
-          tileSize: 128);
+        tileOverlayId: const TileOverlayId('id1'),
+        fadeIn: false,
+        tileProvider: tileProvider,
+        transparency: 0.1,
+        zIndex: 1,
+        visible: false,
+        tileSize: 128,
+      );
       final TileOverlay tileOverlayDifferentId = TileOverlay(
-          tileOverlayId: const TileOverlayId('id2'),
-          fadeIn: false,
-          tileProvider: tileProvider,
-          transparency: 0.1,
-          zIndex: 1,
-          visible: false,
-          tileSize: 128);
+        tileOverlayId: const TileOverlayId('id2'),
+        fadeIn: false,
+        tileProvider: tileProvider,
+        transparency: 0.1,
+        zIndex: 1,
+        visible: false,
+        tileSize: 128,
+      );
       const TileOverlay tileOverlayDifferentProvider = TileOverlay(
-          tileOverlayId: TileOverlayId('id1'),
-          fadeIn: false,
-          transparency: 0.1,
-          zIndex: 1,
-          visible: false,
-          tileSize: 128);
+        tileOverlayId: TileOverlayId('id1'),
+        fadeIn: false,
+        transparency: 0.1,
+        zIndex: 1,
+        visible: false,
+        tileSize: 128,
+      );
       expect(tileOverlay1, tileOverlaySameValues);
       expect(tileOverlay1, isNot(tileOverlayDifferentId));
       expect(tileOverlay1, isNot(tileOverlayDifferentProvider));
@@ -103,13 +114,14 @@ void main() {
       final TileProvider tileProvider = _TestTileProvider();
       // Set non-default values for every parameter.
       final TileOverlay tileOverlay = TileOverlay(
-          tileOverlayId: const TileOverlayId('id1'),
-          fadeIn: false,
-          tileProvider: tileProvider,
-          transparency: 0.1,
-          zIndex: 1,
-          visible: false,
-          tileSize: 128);
+        tileOverlayId: const TileOverlayId('id1'),
+        fadeIn: false,
+        tileProvider: tileProvider,
+        transparency: 0.1,
+        zIndex: 1,
+        visible: false,
+        tileSize: 128,
+      );
       expect(tileOverlay, tileOverlay.clone());
     });
 
@@ -117,23 +129,26 @@ void main() {
       final TileProvider tileProvider = _TestTileProvider();
       const TileOverlayId id = TileOverlayId('id1');
       final TileOverlay tileOverlay = TileOverlay(
-          tileOverlayId: id,
-          fadeIn: false,
-          tileProvider: tileProvider,
-          transparency: 0.1,
-          zIndex: 1,
-          visible: false,
-          tileSize: 128);
+        tileOverlayId: id,
+        fadeIn: false,
+        tileProvider: tileProvider,
+        transparency: 0.1,
+        zIndex: 1,
+        visible: false,
+        tileSize: 128,
+      );
       expect(
-          tileOverlay.hashCode,
-          Object.hash(
-              tileOverlay.tileOverlayId,
-              tileOverlay.fadeIn,
-              tileOverlay.tileProvider,
-              tileOverlay.transparency,
-              tileOverlay.zIndex,
-              tileOverlay.visible,
-              tileOverlay.tileSize));
+        tileOverlay.hashCode,
+        Object.hash(
+          tileOverlay.tileOverlayId,
+          tileOverlay.fadeIn,
+          tileOverlay.tileProvider,
+          tileOverlay.transparency,
+          tileOverlay.zIndex,
+          tileOverlay.visible,
+          tileOverlay.tileSize,
+        ),
+      );
     });
   });
 }

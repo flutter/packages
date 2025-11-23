@@ -1,3 +1,62 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 17.0.0
+
+- **BREAKING CHANGE**
+  - `ShellRoute`'s navigating changes notify `GoRouter`'s observers by default.
+  - Adds `notifyRootObserver` to `ShellRouteBase`, `ShellRoute`, `StatefulShellRoute`, `ShellRouteData.$route`, `TypedShellRoute`, `TypedStatefulShellRoute`.
+
+## 16.3.0
+
+- Adds a top-level `onEnter` callback with access to current and next route states.
+
+## 16.2.5
+
+- Fixes `GoRouter.of(context)` access inside redirect callbacks by providing router access through Zone-based context tracking.
+- Adds support for using context extension methods (e.g., `context.namedLocation()`, `context.go()`) within redirect callbacks.
+
+## 16.2.4
+
+- Fix Android Cold Start deep link with empty path losing scheme and authority.
+
+## 16.2.3
+
+- Fixes an issue where iOS back gesture pops entire ShellRoute instead of the active sub-route.
+
+## 16.2.2
+
+- Fixes broken links in readme.
+
+## 16.2.1
+
+- Adds state restoration topic to documentation.
+
+## 16.2.0
+
+- Adds `RelativeGoRouteData` and `TypedRelativeGoRoute`.
+- Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 16.1.0
+
+- Adds annotation for go_router_builder that enable custom string encoder/decoder [#110781](https://github.com/flutter/flutter/issues/110781). **Requires go_router_builder >= 3.1.0**.
+
+## 16.0.0
+
+- **BREAKING CHANGE**
+  - Bump major version for `GoRouteData` breaking changes.
+  - (Previously 15.2.4) Fixes routing to treat URLs with different cases (e.g., `/Home` vs `/home`) as distinct routes.
+  - (Previously 15.2.3) Updates Type-safe routes topic documentation to use the mixin from `go_router_builder` 3.0.0.
+  - (Previously 15.2.2) Fixes calling `PopScope.onPopInvokedWithResult` in branch routes.
+  - (Previously 15.2.1) Fixes Popping state and re-rendering scaffold at the same time doesn't update the URL on web.
+  - (Previously 15.2.0) `GoRouteData` now defines `.location`, `.go(context)`, `.push(context)`, `.pushReplacement(context)`, and `replace(context)` to be used for [Type-safe routing](https://pub.dev/documentation/go_router/latest/topics/Type-safe%20routes-topic.html). **Requires go_router_builder >= 3.0.0**.
+
+## 15.1.3
+
+- Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+- Fixes typo in API docs.
+
 ## 15.1.2
 
 - Fixes focus request propagation from `GoRouter` to `Navigator` by properly handling the `requestFocus` parameter.
@@ -20,7 +79,7 @@
 ## 14.8.1
 
 - Secured canPop method for the lack of matches in routerDelegate's configuration.
- 
+
 ## 14.8.0
 
 - Adds `preload` parameter to `StatefulShellBranchData.$branch`.

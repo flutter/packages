@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -92,12 +92,13 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
 
     addIfNonNull('${objectName}sToAdd', serializeMapsObjectSet(_objectsToAdd));
     addIfNonNull(
-        '${objectName}sToChange', serializeMapsObjectSet(_objectsToChange));
+      '${objectName}sToChange',
+      serializeMapsObjectSet(_objectsToChange),
+    );
     addIfNonNull(
-        '${objectName}IdsToRemove',
-        _objectIdsToRemove
-            .map<String>((MapsObjectId<T> m) => m.value)
-            .toList());
+      '${objectName}IdsToRemove',
+      _objectIdsToRemove.map<String>((MapsObjectId<T> m) => m.value).toList(),
+    );
 
     return updateMap;
   }
@@ -114,8 +115,11 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
   }
 
   @override
-  int get hashCode => Object.hash(Object.hashAll(_objectsToAdd),
-      Object.hashAll(_objectIdsToRemove), Object.hashAll(_objectsToChange));
+  int get hashCode => Object.hash(
+    Object.hashAll(_objectsToAdd),
+    Object.hashAll(_objectIdsToRemove),
+    Object.hashAll(_objectsToChange),
+  );
 
   @override
   String toString() {

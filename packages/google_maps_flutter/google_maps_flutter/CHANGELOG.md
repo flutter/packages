@@ -1,3 +1,26 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.14.0
+
+* Adds a check that raises a `StateError`
+  when map controller is used after its widget has been disposed.
+
+## 2.13.1
+
+* Fixes exception when dispose is called while asynchronous update from
+  `didUpdateWidget` is executed.
+
+## 2.13.0
+
+* Adds support for camera control button on web.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.12.3
+
+* Updates the example app to use the zIndexInt param instead of the deprecated zIndex.
+
 ## 2.12.2
 
 * Fixes memory leak by disposing stream subscriptions in `GoogleMapController`.

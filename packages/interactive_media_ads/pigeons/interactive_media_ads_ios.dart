@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,6 @@ import 'package:pigeon/pigeon.dart';
         'ios/interactive_media_ads/Sources/interactive_media_ads/InteractiveMediaAdsLibrary.g.swift',
   ),
 )
-
 /// Possible error types while loading or playing ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Enums/IMAErrorType.html.
@@ -340,7 +339,9 @@ abstract class IMAAdDisplayContainer extends NSObject {
 ///
 /// See https://developer.apple.com/documentation/uikit/uiview.
 @ProxyApi(swiftOptions: SwiftProxyApiOptions(import: 'UIKit'))
-abstract class UIView extends NSObject {}
+abstract class UIView extends NSObject {
+  UIView();
+}
 
 /// An object that manages a view hierarchy for your UIKit app.
 ///
@@ -397,7 +398,80 @@ abstract class IMAAdsLoader extends NSObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMASettings.html.
 @ProxyApi()
-abstract class IMASettings extends NSObject {}
+abstract class IMASettings extends NSObject {
+  IMASettings();
+
+  /// Publisher Provided Identification (PPID) sent with ads request.
+  void setPPID(String? ppid);
+
+  /// Language specification used for localization.
+  ///
+  /// `language` must be formatted as a canonicalized IETF BCP 47 language
+  /// identifier such as would be returned by `[NSLocale preferredLanguages]`.
+  ///
+  /// Setting this property after it has been sent to the IMAAdsLoader will be
+  /// ignored and a warning will be logged.
+  void setLanguage(String language);
+
+  /// Specifies maximum number of redirects after which subsequent redirects
+  /// will be denied, and the ad load aborted.
+  ///
+  /// If the number of redirects exceeds `max`, the ad request will fail with
+  /// error code 302.
+  ///
+  /// The default value is 4.
+  void setMaxRedirects(int max);
+
+  /// Feature flags and their states.
+  void setFeatureFlags(Map<String, String> flags);
+
+  /// Enable background audio playback for the SDK.
+  ///
+  /// The default value is false.
+  void setEnableBackgroundPlayback(bool enabled);
+
+  /// Specifies whether to automatically play VMAP and ad rules ad breaks.
+  ///
+  /// The default value is true.
+  void setAutoPlayAdBreaks(bool autoPlay);
+
+  /// Specifies whether to update the MPNowPlayingInfoCenter content with the
+  /// title “Advertisement”.
+  ///
+  /// If disabled, MPNowPlayingInfoCenter is untouched.
+  ///
+  /// The default value is false.
+  void setDisableNowPlayingInfo(bool disable);
+
+  /// The partner specified video player that is integrating with the SDK.
+  void setPlayerType(String? type);
+
+  /// The partner specified player version that is integrating with the SDK.
+  void setPlayerVersion(String? version);
+
+  /// The session ID to identify a single user session.
+  ///
+  /// This should be a UUID.
+  ///
+  /// It is used exclusively for frequency capping across the user session.
+  void setSessionID(String? sessionID);
+
+  /// Controls whether Same App Key is enabled.
+  ///
+  /// The value set persists across app sessions.
+  ///
+  /// The key is enabled by default.
+  void setSameAppKeyEnabled(bool enabled);
+
+  /// Toggles debug mode which will output detailed log information to the
+  /// console.
+  ///
+  /// Debug mode should be disabled in Release and will display a watermark when
+  /// enabled.
+  ///
+  /// The default value is false.
+  void setEnableDebugMode(bool enable);
+}
 
 /// Data class describing the ad request.
 ///
@@ -406,11 +480,95 @@ abstract class IMASettings extends NSObject {}
 abstract class IMAAdsRequest extends NSObject {
   /// Initializes an ads request instance with the given ad tag URL and ad
   /// display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
   IMAAdsRequest(
     String adTagUrl,
     IMAAdDisplayContainer adDisplayContainer,
     IMAContentPlayhead? contentPlayhead,
   );
+
+  /// Initializes an ads request instance with the given canned ads response and
+  /// ad display container.
+  ///
+  /// Serial ad requests may reuse the same `IMAAdDisplayContainer`` by first
+  /// calling `IMAAdsManager.destroy` on its current adsManager. Concurrent
+  /// requests must use different ad containers. Does not support
+  /// Picture-in-Picture.
+  IMAAdsRequest.withAdsResponse(
+    String adsResponse,
+    IMAAdDisplayContainer adDisplayContainer,
+    IMAContentPlayhead? contentPlayhead,
+  );
+
+  /// Specifies the full URL to use for ads loading from an ad server.
+  ///
+  /// Required for any adsRequest.
+  String? getAdTagUrl();
+
+  /// Specifies a VAST, VMAP, or ad rules response to be used instead of making
+  /// a request through an ad tag URL.
+  String? getAdsResponse();
+
+  /// The ad display container.
+  IMAAdDisplayContainer getAdDisplayContainer();
+
+  /// Specifies whether the player intends to start the content and ad in
+  /// response to a user action or whether they will be automatically played.
+  ///
+  /// Changing this setting will have no impact on ad playback.
+  void setAdWillAutoPlay(bool adWillAutoPlay);
+
+  /// Specifies whether the player intends to start the content and ad with no
+  /// volume.
+  ///
+  /// Changing this setting will have no impact on ad playback.
+  void setAdWillPlayMuted(bool adWillPlayMuted);
+
+  /// Specifies whether the player intends to continuously play the content
+  /// videos one after another similar to TV broadcast.
+  ///
+  /// Not calling this function leaves the setting as unknown. Note: Changing
+  /// this setting will have no impact on ad playback.
+  void setContinuousPlayback(bool continuousPlayback);
+
+  /// Specifies the duration of the content in seconds to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  void setContentDuration(double duration);
+
+  /// Specifies the keywords used to describe the content to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  void setContentKeywords(List<String>? keywords);
+
+  /// Specifies the title of the content to be shown.
+  ///
+  /// Used in AdX requests. This parameter is optional.
+  void setContentTitle(String? title);
+
+  /// Specifies the universal link to the content’s screen.
+  ///
+  /// If provided, this parameter is passed to the OM SDK. See
+  /// [Apple documentation](https://developer.apple.com/documentation/xcode/allowing-apps-and-websites-to-link-to-your-content)
+  /// for more information.
+  void setContentURL(String? contentURL);
+
+  /// Specifies the VAST load timeout in milliseconds for the initial request
+  /// and any subsequent wrappers.
+  ///
+  /// This parameter is optional and will override the default timeout.
+  void setVastLoadTimeout(double timeout);
+
+  /// Specifies the maximum amount of time to wait in seconds, after calling
+  /// requestAds, before requesting the ad tag URL.
+  ///
+  /// This can be used to stagger requests during a live-stream event, in order
+  /// to mitigate spikes in the number of requests.
+  void setLiveStreamPrefetchSeconds(double seconds);
 }
 
 /// Delegate object that receives state change callbacks from `IMAAdsLoader`.
@@ -421,16 +579,15 @@ abstract class IMAAdsLoaderDelegate extends NSObject {
   IMAAdsLoaderDelegate();
 
   /// Called when ads are successfully loaded from the ad servers by the loader.
-  late final void Function(
-    IMAAdsLoader loader,
-    IMAAdsLoadedData adsLoadedData,
-  ) adLoaderLoadedWith;
+  late final void Function(IMAAdsLoader loader, IMAAdsLoadedData adsLoadedData)
+  adLoaderLoadedWith;
 
   /// Error reported by the ads loader when loading or requesting an ad fails.
   late final void Function(
     IMAAdsLoader loader,
     IMAAdLoadingErrorData adErrorData,
-  ) adsLoaderFailedWithErrorData;
+  )
+  adsLoaderFailedWithErrorData;
 }
 
 /// Ad data that is returned when the ads loader loads the ad.
@@ -473,6 +630,12 @@ abstract class IMAAdError extends NSObject {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsManager.html.
 @ProxyApi()
 abstract class IMAAdsManager extends NSObject {
+  /// List of content time offsets at which ad breaks are scheduled.
+  ///
+  /// List of double values in seconds. Empty list for single ads or if no ad
+  /// breaks are scheduled.
+  late List<double> adCuePoints;
+
   /// The `IMAAdsManagerDelegate` to notify with events during ad playback.
   void setDelegate(IMAAdsManagerDelegate? delegate);
 
@@ -507,16 +670,12 @@ abstract class IMAAdsManagerDelegate extends NSObject {
   IMAAdsManagerDelegate();
 
   /// Called when there is an IMAAdEvent.
-  late final void Function(
-    IMAAdsManager adsManager,
-    IMAAdEvent event,
-  ) didReceiveAdEvent;
+  late final void Function(IMAAdsManager adsManager, IMAAdEvent event)
+  didReceiveAdEvent;
 
   /// Called when there was an error playing the ad.
-  late final void Function(
-    IMAAdsManager adsManager,
-    IMAAdError error,
-  ) didReceiveAdError;
+  late final void Function(IMAAdsManager adsManager, IMAAdError error)
+  didReceiveAdError;
 
   /// Called when an ad is ready to play.
   late final void Function(IMAAdsManager adsManager) didRequestContentPause;
@@ -538,6 +697,12 @@ abstract class IMAAdEvent extends NSObject {
 
   /// Extra data about the ad.
   late final Map<String, Object>? adData;
+
+  /// The current ad that is playing or just played.
+  ///
+  /// This will be null except for events where an ad is available (start,
+  /// quartiles, midpoint, complete, and tap).
+  late final IMAAd? ad;
 }
 
 /// Set of properties that influence how ads are rendered.
@@ -634,7 +799,7 @@ abstract class IMACompanionAd extends NSObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAdSlot.
 @ProxyApi()
-abstract class IMACompanionAdSlot {
+abstract class IMACompanionAdSlot extends NSObject {
   /// Initializes an instance of a IMACompanionAdSlot with fluid size.
   IMACompanionAdSlot();
 
@@ -654,6 +819,12 @@ abstract class IMACompanionAdSlot {
   /// This instance only creates a weak reference to the delegate, so the Dart
   /// instance should create an explicit reference to receive callbacks.
   void setDelegate(IMACompanionDelegate? delegate);
+
+  /// Width of the slot, in pixels.
+  int width();
+
+  /// Height of the slot, in pixels.
+  int height();
 }
 
 /// Delegate to receive events from the companion ad slot.
@@ -664,10 +835,8 @@ abstract class IMACompanionDelegate extends NSObject {
   IMACompanionDelegate();
 
   /// Called when the slot is either filled or not filled.
-  late void Function(
-    IMACompanionAdSlot slot,
-    bool filled,
-  )? companionAdSlotFilled;
+  late void Function(IMACompanionAdSlot slot, bool filled)?
+  companionAdSlotFilled;
 
   /// Called when the slot is clicked on by the user and will successfully
   /// navigate away.
@@ -680,7 +849,7 @@ abstract class IMACompanionDelegate extends NSObject {
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
-abstract class IMAAdPodInfo {
+abstract class IMAAdPodInfo extends NSObject {
   /// The position of this ad within an ad pod.
   ///
   /// Will be 1 for standalone ads.
@@ -721,4 +890,135 @@ abstract class IMAAdPodInfo {
   ///
   /// Bumpers are short videos used to open and close ad breaks.
   late final bool isBumper;
+}
+
+/// Data object representing a single ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAd.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAAd extends NSObject {
+  /// The ad ID as specified in the VAST response.
+  late final String adId;
+
+  /// The ad title from the VAST response.
+  late final String adTitle;
+
+  /// The ad description.
+  late final String adDescription;
+
+  /// The source ad server information included in the ad response.
+  late final String adSystem;
+
+  /// The companion ads specified in the VAST response when using DAI.
+  ///
+  /// Empty for client-side ads.
+  late final List<IMACompanionAd> companionAds;
+
+  /// Content type of the currently selected creative.
+  ///
+  /// For linear creatives returns the content type of the currently selected
+  /// media file. Returns empty string if no creative or media file is selected
+  /// on this ad.
+  late final String contentType;
+
+  /// The duration of the ad from the VAST response.
+  late final double duration;
+
+  /// The UI elements that will be displayed during ad playback.
+  late final List<UIElementType> uiElements;
+
+  /// The width of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual width of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// width.
+  late final int width;
+
+  /// The height of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual height of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// height.
+  late final int height;
+
+  /// The width of the selected creative as specified in the VAST response.
+  late final int vastMediaWidth;
+
+  /// The height of the selected creative as specified in the VAST response.
+  late final int vastMediaHeight;
+
+  /// The bitrate of the selected creative as specified in the VAST response.
+  late final int vastMediaBitrate;
+
+  /// Specifies whether the ad is linear or non-linear.
+  late final bool isLinear;
+
+  /// Specifies whether the ad is skippable.
+  late final bool isSkippable;
+
+  /// The number of seconds of playback before the ad becomes skippable.
+  ///
+  /// -1 is returned for non skippable ads or if this is unavailable.
+  late final double skipTimeOffset;
+
+  /// Set of ad podding properties.
+  late final IMAAdPodInfo adPodInfo;
+
+  /// String representing custom trafficking parameters from the VAST response.
+  late final String traffickingParameters;
+
+  /// Returns the ID of the selected creative for the ad.
+  late final String creativeID;
+
+  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  ///
+  /// This is the Ad-ID of the selected creative in the VAST response.
+  late final String creativeAdID;
+
+  /// The list of all UniversalAdIds of the selected creative for this ad.
+  ///
+  /// Returns an empty array if no universal ad IDs are found.
+  late final List<IMAUniversalAdID> universalAdIDs;
+
+  /// The advertiser name as defined by the serving party.
+  late final String advertiserName;
+
+  /// Returns the URL associated with the survey for the given ad.
+  late final String? surveyURL;
+
+  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  late final String dealID;
+
+  /// The IDs of the ads, starting with the first wrapper ad.
+  late final List<String> wrapperAdIDs;
+
+  /// The IDs of the ads’ creatives, starting with the first wrapper ad.
+  late final List<String> wrapperCreativeIDs;
+
+  /// Ad systems used for wrapper ads.
+  ///
+  /// The ad systems returned begin with the first wrapper ad and continue to
+  /// each wrapper ad recursively.
+  late final List<String> wrapperSystems;
+}
+
+/// Simple data object containing universal ad ID information.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAUniversalAdID.html.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAUniversalAdID extends NSObject {
+  /// The universal ad ID value.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  late final String adIDValue;
+
+  /// The universal ad ID registry with which the value is registered.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  late final String adIDRegistry;
 }

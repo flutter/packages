@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,9 +10,7 @@ import 'package:flutter/foundation.dart';
 @immutable
 class PendingPurchasesParamsWrapper {
   /// Creates a [PendingPurchasesParamsWrapper].
-  const PendingPurchasesParamsWrapper({
-    required this.enablePrepaidPlans,
-  });
+  const PendingPurchasesParamsWrapper({required this.enablePrepaidPlans});
 
   /// Enables pending purchase for prepaid plans.
   ///

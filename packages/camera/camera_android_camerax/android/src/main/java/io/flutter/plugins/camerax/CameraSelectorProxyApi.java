@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,6 +9,7 @@ import androidx.annotation.Nullable;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExperimentalLensFacing;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +25,8 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
   @ExperimentalLensFacing
   @NonNull
   @Override
-  public CameraSelector pigeon_defaultConstructor(@Nullable LensFacing requireLensFacing) {
+  public CameraSelector pigeon_defaultConstructor(
+      @Nullable LensFacing requireLensFacing, @Nullable CameraInfo cameraInfoForFilter) {
     final CameraSelector.Builder builder = new CameraSelector.Builder();
     if (requireLensFacing != null) {
       switch (requireLensFacing) {
@@ -42,18 +44,21 @@ class CameraSelectorProxyApi extends PigeonApiCameraSelector {
           break;
       }
     }
+    if (cameraInfoForFilter != null) {
+      builder.addCameraFilter(cameraInfos -> Collections.singletonList(cameraInfoForFilter));
+    }
     return builder.build();
   }
 
   @NonNull
   @Override
-  public androidx.camera.core.CameraSelector defaultBackCamera() {
+  public CameraSelector defaultBackCamera() {
     return CameraSelector.DEFAULT_BACK_CAMERA;
   }
 
   @NonNull
   @Override
-  public androidx.camera.core.CameraSelector defaultFrontCamera() {
+  public CameraSelector defaultFrontCamera() {
     return CameraSelector.DEFAULT_FRONT_CAMERA;
   }
 

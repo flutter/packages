@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,6 +14,7 @@ class InteractiveMediaAdsProxy {
   /// Constructs an [InteractiveMediaAdsProxy].
   const InteractiveMediaAdsProxy({
     this.newIMAAdDisplayContainer = IMAAdDisplayContainer.new,
+    this.newUIView = UIView.new,
     this.newUIViewController = UIViewController.new,
     this.newIMAContentPlayhead = IMAContentPlayhead.new,
     this.newIMAAdsLoader = IMAAdsLoader.new,
@@ -31,12 +32,18 @@ class InteractiveMediaAdsProxy {
   final IMAAdDisplayContainer Function({
     required UIView adContainer,
     UIViewController? adContainerViewController,
-  }) newIMAAdDisplayContainer;
+    List<IMACompanionAdSlot>? companionSlots,
+  })
+  newIMAAdDisplayContainer;
+
+  /// Constructs [UIView].
+  final UIView Function() newUIView;
 
   /// Constructs [UIViewController].
   final UIViewController Function({
     void Function(UIViewController, bool)? viewDidAppear,
-  }) newUIViewController;
+  })
+  newUIViewController;
 
   /// Constructs [IMAContentPlayhead].
   final IMAContentPlayhead Function() newIMAContentPlayhead;
@@ -49,30 +56,34 @@ class InteractiveMediaAdsProxy {
     required String adTagUrl,
     required IMAAdDisplayContainer adDisplayContainer,
     IMAContentPlayhead? contentPlayhead,
-  }) newIMAAdsRequest;
+  })
+  newIMAAdsRequest;
 
   /// Constructs [IMAAdsLoaderDelegate].
   final IMAAdsLoaderDelegate Function({
     required void Function(IMAAdsLoaderDelegate, IMAAdsLoader, IMAAdsLoadedData)
-        adLoaderLoadedWith,
+    adLoaderLoadedWith,
     required void Function(
       IMAAdsLoaderDelegate,
       IMAAdsLoader,
       IMAAdLoadingErrorData,
-    ) adsLoaderFailedWithErrorData,
-  }) newIMAAdsLoaderDelegate;
+    )
+    adsLoaderFailedWithErrorData,
+  })
+  newIMAAdsLoaderDelegate;
 
   /// Constructs [IMAAdsManagerDelegate].
   final IMAAdsManagerDelegate Function({
     required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdEvent)
-        didReceiveAdEvent,
+    didReceiveAdEvent,
     required void Function(IMAAdsManagerDelegate, IMAAdsManager, IMAAdError)
-        didReceiveAdError,
+    didReceiveAdError,
     required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-        didRequestContentPause,
+    didRequestContentPause,
     required void Function(IMAAdsManagerDelegate, IMAAdsManager)
-        didRequestContentResume,
-  }) newIMAAdsManagerDelegate;
+    didRequestContentResume,
+  })
+  newIMAAdsManagerDelegate;
 
   /// Constructs [IMAAdsRenderingSettings].
   final IMAAdsRenderingSettings Function() newIMAAdsRenderingSettings;
@@ -82,19 +93,27 @@ class InteractiveMediaAdsProxy {
     required UIView view,
     required FriendlyObstructionPurpose purpose,
     String? detailedReason,
-  }) newIMAFriendlyObstruction;
+  })
+  newIMAFriendlyObstruction;
 
   /// Constructs [IMACompanionAdSlot].
   final IMACompanionAdSlot Function({required UIView view})
-      newIMACompanionAdSlot;
+  newIMACompanionAdSlot;
 
   /// Constructs [IMACompanionAdSlot].
   final IMACompanionAdSlot Function({
     required int width,
     required int height,
     required UIView view,
-  }) sizeIMACompanionAdSlot;
+  })
+  sizeIMACompanionAdSlot;
 
   /// Constructs [IMACompanionDelegate].
-  final IMACompanionDelegate Function() newIMACompanionDelegate;
+  final IMACompanionDelegate Function({
+    void Function(IMACompanionDelegate, IMACompanionAdSlot, bool)?
+    companionAdSlotFilled,
+    void Function(IMACompanionDelegate, IMACompanionAdSlot)?
+    companionSlotWasClicked,
+  })
+  newIMACompanionDelegate;
 }

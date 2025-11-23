@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,18 +44,19 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
             Expanded(
               child: PageTransitionSwitcher(
                 reverse: !_isLoggedIn,
-                transitionBuilder: (
-                  Widget child,
-                  Animation<double> animation,
-                  Animation<double> secondaryAnimation,
-                ) {
-                  return SharedAxisTransition(
-                    animation: animation,
-                    secondaryAnimation: secondaryAnimation,
-                    transitionType: _transitionType!,
-                    child: child,
-                  );
-                },
+                transitionBuilder:
+                    (
+                      Widget child,
+                      Animation<double> animation,
+                      Animation<double> secondaryAnimation,
+                    ) {
+                      return SharedAxisTransition(
+                        animation: animation,
+                        secondaryAnimation: secondaryAnimation,
+                        transitionType: _transitionType!,
+                        child: child,
+                      );
+                    },
                 child: _isLoggedIn ? _CoursePage() : _SignInPage(),
               ),
             ),
@@ -76,34 +77,28 @@ class _SharedAxisTransitionDemoState extends State<SharedAxisTransitionDemo> {
               ),
             ),
             const Divider(thickness: 2.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Radio<SharedAxisTransitionType>(
-                  value: SharedAxisTransitionType.horizontal,
-                  groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType? newValue) {
-                    _updateTransitionType(newValue);
-                  },
-                ),
-                const Text('X'),
-                Radio<SharedAxisTransitionType>(
-                  value: SharedAxisTransitionType.vertical,
-                  groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType? newValue) {
-                    _updateTransitionType(newValue);
-                  },
-                ),
-                const Text('Y'),
-                Radio<SharedAxisTransitionType>(
-                  value: SharedAxisTransitionType.scaled,
-                  groupValue: _transitionType,
-                  onChanged: (SharedAxisTransitionType? newValue) {
-                    _updateTransitionType(newValue);
-                  },
-                ),
-                const Text('Z'),
-              ],
+            RadioGroup<SharedAxisTransitionType>(
+              groupValue: _transitionType,
+              onChanged: (SharedAxisTransitionType? newValue) {
+                _updateTransitionType(newValue);
+              },
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.horizontal,
+                  ),
+                  Text('X'),
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.vertical,
+                  ),
+                  Text('Y'),
+                  Radio<SharedAxisTransitionType>(
+                    value: SharedAxisTransitionType.scaled,
+                  ),
+                  Text('Z'),
+                ],
+              ),
             ),
           ],
         ),
@@ -129,10 +124,7 @@ class _CoursePage extends StatelessWidget {
           child: Text(
             'Bundled categories appear as groups in your feed. '
             'You can always change this later.',
-            style: TextStyle(
-              fontSize: 12.0,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 12.0, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ),
@@ -147,9 +139,7 @@ class _CoursePage extends StatelessWidget {
 }
 
 class _CourseSwitch extends StatefulWidget {
-  const _CourseSwitch({
-    required this.course,
-  });
+  const _CourseSwitch({required this.course});
 
   final String course;
 
@@ -185,10 +175,7 @@ class _SignInPage extends StatelessWidget {
         return Column(
           children: <Widget>[
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 20)),
-            Image.asset(
-              'assets/avatar_logo.png',
-              width: 80,
-            ),
+            Image.asset('assets/avatar_logo.png', width: 80),
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             Text(
               'Hi David Park',
@@ -197,10 +184,7 @@ class _SignInPage extends StatelessWidget {
             Padding(padding: EdgeInsets.symmetric(vertical: maxHeight / 50)),
             const Text(
               'Sign in with your account',
-              style: TextStyle(
-                fontSize: 12.0,
-                color: Colors.grey,
-              ),
+              style: TextStyle(fontSize: 12.0, color: Colors.grey),
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,

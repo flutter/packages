@@ -1,5 +1,5 @@
-group 'io.flutter.plugins.localauth'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.localauth'
+version = '1.0-SNAPSHOT'
 
 buildscript {
     repositories {
@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.0'
+        classpath 'com.android.tools.build:gradle:8.13.1'
     }
 }
 
@@ -22,22 +22,22 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    namespace 'io.flutter.plugins.localauth'
+    namespace = "io.flutter.plugins.localauth"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
 
@@ -56,13 +56,13 @@ android {
 }
 
 dependencies {
-    api "androidx.core:core:1.13.1"
-    api "androidx.biometric:biometric:1.1.0"
-    api "androidx.fragment:fragment:1.6.2"
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-inline:5.2.0'
-    testImplementation 'org.robolectric:robolectric:4.14.1'
-    androidTestImplementation 'androidx.test:runner:1.6.2'
-    androidTestImplementation 'androidx.test:rules:1.6.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    api("androidx.core:core:1.13.1")
+    api("androidx.biometric:biometric:1.1.0")
+    api("androidx.fragment:fragment:1.8.9")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.20.0")
+    testImplementation("org.robolectric:robolectric:4.16")
+    androidTestImplementation("androidx.test:runner:1.7.0")
+    androidTestImplementation("androidx.test:rules:1.7.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
 }

@@ -1,3 +1,48 @@
+## 0.4.6+2
+
+* Updates to Pigeon 26.
+
+## 0.4.6+1
+
+* Refactors internals for improved testability.
+
+## 0.4.6
+
+* Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`
+* Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding 
+`SK2ProductPurchaseResult` when a purchase is cancelled / unverified / pending.
+
+## 0.4.5
+
+* Makes `SKError.userInfo` key non-nullable to comply with json serialization requirements.
+
+## 0.4.4+1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
+## 0.4.4
+
+* Added support for specifying quantity in `SK2ProductPurchaseOptions` (consumable purchases on iOS).
+
+## 0.4.3
+
+* Adds **Introductory Offer Eligibility** support for StoreKit2
+
+## 0.4.2
+
+* Add [jwsRepresentation](https://developer.apple.com/documentation/storekit/verificationresult/jwsrepresentation-21vgo) to `SK2PurchaseDetails` as `serverVerificationData` for secure server-side purchase verification. Use this JSON Web Signature (JWS) value to perform your own JWS verification on your server.
+* Add [jsonRepresentation](https://developer.apple.com/documentation/storekit/transaction/jsonrepresentation) to `SK2PurchaseDetails` as `localVerificationData` for local transaction debugging and verification.
+
+## 0.4.1
+
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds **Win Back Offers** support for StoreKit2:
+    - Includes new `isWinBackOfferEligible` function for eligibility verification
+* Adds **Promotional Offers** support in StoreKit2 purchases
+* Fixes introductory pricing handling in promotional offers list in StoreKit2
+* Ensures proper `appAccountToken` handling for StoreKit2 purchases
+
 ## 0.4.0
 
 * **BREAKING CHANGE:** StoreKit 2 is now the default for all devices that support it.

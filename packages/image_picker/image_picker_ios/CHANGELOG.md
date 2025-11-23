@@ -1,3 +1,18 @@
+## 0.8.13+2
+
+* Updates to Pigeon 26.
+
+## 0.8.13+1
+
+* Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.8.13
+
+* Adds support for `getMultiVideoWithOptions`.
+* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Adds photo to Photos library during test to support iOS 26.
+
 ## 0.8.12+2
 
 * Removes the need for user permissions to pick an image on iOS 14+.

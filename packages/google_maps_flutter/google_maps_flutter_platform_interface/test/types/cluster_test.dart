@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,11 +25,12 @@ void main() {
       expect(cluster.markerIds[0].value, equals('23456'));
       expect(cluster.position, equals(const LatLng(55.0, 66.0)));
       expect(
-          cluster.bounds,
-          LatLngBounds(
-            northeast: const LatLng(88.0, 22.0),
-            southwest: const LatLng(11.0, 99.0),
-          ));
+        cluster.bounds,
+        LatLngBounds(
+          northeast: const LatLng(88.0, 22.0),
+          southwest: const LatLng(11.0, 99.0),
+        ),
+      );
     });
 
     test('constructor markerIds length is > 0', () {
@@ -45,8 +46,10 @@ void main() {
         );
       }
 
-      expect(() => initWithMarkerIds(<MarkerId>[const MarkerId('12342323')]),
-          isNot(throwsAssertionError));
+      expect(
+        () => initWithMarkerIds(<MarkerId>[const MarkerId('12342323')]),
+        isNot(throwsAssertionError),
+      );
       expect(() => initWithMarkerIds(<MarkerId>[]), throwsAssertionError);
     });
   });

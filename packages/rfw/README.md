@@ -199,6 +199,7 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+
 ```
 
 In this example, the "remote" widgets are hardcoded into the
@@ -323,12 +324,15 @@ class _ExampleState extends State<Example> {
     // server, and decode it with [decodeLibraryBlob] rather than parsing the
     // text version using [parseLibraryFile]. However, to make it easier to
     // play with this sample, this uses the slower text format.
-    _runtime.update(remoteName, parseLibraryFile('''
+    _runtime.update(
+      remoteName,
+      parseLibraryFile('''
       import local;
       widget root = GreenBox(
         child: Hello(name: "World"),
       );
-    '''));
+    '''),
+    );
   }
 
   @override
@@ -343,6 +347,7 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+
 ```
 
 Widgets in local widget libraries are represented by closures that are
@@ -582,11 +587,9 @@ The last kind of argument that widgets can have is callbacks.
 
 Since remote widget libraries are declarative and not code, they
 cannot represent executable closures. Instead, they are represented as
-events. For example, here is how the "7" button from the
-[calculator example](https://github.com/flutter/packages/blob/main/packages/rfw/example/wasm/logic/calculator.rfwtxt)
-is represented:
+events. For example:
 
-<?code-excerpt "example/wasm/logic/calculator.rfwtxt (button7)"?>
+<?code-excerpt "test/readme_test.dart (button7)"?>
 ```rfwtxt
 CalculatorButton(label: "7", onPressed: event "digit" { arguments: [7] }),
 ```
@@ -600,7 +603,7 @@ In that example, `CalculatorButton` is itself a remote widget that is
 defined in terms of a `Button`, and the `onPressed` argument
 is passed to the `onPressed` of the `Button`, like this:
 
-<?code-excerpt "example/wasm/logic/calculator.rfwtxt (CalculatorButton)"?>
+<?code-excerpt "test/readme_test.dart (CalculatorButton)"?>
 ```rfwtxt
 widget CalculatorButton = Padding(
   padding: [8.0],
@@ -759,11 +762,11 @@ function.
 
 Compiling a text `rfwtxt` file to the binary `rfw` format can be done
 by calling
-[`encodeLibraryBlob`](https://pub.dev/documentation/rfw/latest/formats/encodeLibraryBlob.html)
+[`encodeLibraryBlob`](https://pub.dev/documentation/rfw/latest/rfw/encodeLibraryBlob.html)
 on the results of calling `parseLibraryFile`.
 
-The example in `example/wasm` has some [elaborate remote
-widgets](https://github.com/flutter/packages/blob/main/packages/rfw/example/wasm/logic/calculator.rfwtxt),
+The example in `example/remote` has some [elaborate remote
+widgets](https://github.com/flutter/packages/blob/main/packages/rfw/example/remote/remote_widget_libraries/counter_app2.rfwtxt),
 including some that manipulate state (`Button`).
 
 #### State
@@ -773,12 +776,12 @@ Buttons must react immediately (in milliseconds) and cannot wait for
 logic that's possibly running on a remote server (maybe many hundreds
 of milliseconds away).
 
-The aforementioned `Button` widget in the `wasm` example tracks a
-local "down" state, manipulates it in reaction to
+The aforementioned `Button` widget in the `remote_widget_libraries` example
+tracks a local "down" state, manipulates it in reaction to
 `onTapDown`/`onTapUp` events, and changes the shadow and margins of
 the button based on its state:
 
-<?code-excerpt "example/wasm/logic/calculator.rfwtxt (Button)"?>
+<?code-excerpt "example/remote/remote_widget_libraries/counter_app2.rfwtxt (Button)"?>
 ```rfwtxt
 widget Button { down: false } = GestureDetector(
   onTap: args.onPressed,
@@ -850,7 +853,7 @@ with the `DynamicContent` under the name `server`.
 > This data is parsed by calling
 > [`parseDataFile`](https://pub.dev/documentation/rfw/latest/formats/parseDataFile.html),
 > which turns it into
-> [`DynamicMap`](https://pub.dev/documentation/rfw/latest/formats/DynamicMap.html).
+> [`DynamicMap`](https://pub.dev/documentation/rfw/latest/rfw/DynamicMap.html).
 > That object is then passed to a
 > [`DynamicContent`](https://pub.dev/documentation/rfw/latest/rfw/DynamicContent-class.html),
 > using
@@ -864,9 +867,9 @@ with the `DynamicContent` under the name `server`.
 >
 > Ideally, rather than dealing with this text form on the client, the
 > data would be turned into a binary form using
-> [`encodeDataBlob`](https://pub.dev/documentation/rfw/latest/formats/encodeDataBlob.html)
+> [`encodeDataBlob`](https://pub.dev/documentation/rfw/latest/rfw/encodeDataBlob.html)
 > on the server, and then parsed on the client using
-> [`decodeDataBlob`](https://pub.dev/documentation/rfw/latest/formats/decodeDataBlob.html).
+> [`decodeDataBlob`](https://pub.dev/documentation/rfw/latest/rfw/decodeDataBlob.html).
 
 First, let's render a plain Flutter `ListView` with the name of each
 product. The `Shop` widget below achieves this:

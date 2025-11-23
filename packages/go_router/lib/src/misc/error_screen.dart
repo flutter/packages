@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,35 +18,32 @@ class ErrorScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Text(
-                'Page Not Found',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 16),
-              Text(error?.toString() ?? 'page not found'),
-              const SizedBox(height: 16),
-              _Button(
-                onPressed: () => context.go('/'),
-                child: const Text(
-                  'Go to home page',
-                  style: TextStyle(color: _kWhite),
-                ),
-              ),
-            ],
+    child: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          const Text(
+            'Page Not Found',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
-        ),
-      );
+          const SizedBox(height: 16),
+          Text(error?.toString() ?? 'page not found'),
+          const SizedBox(height: 16),
+          _Button(
+            onPressed: () => context.go('/'),
+            child: const Text(
+              'Go to home page',
+              style: TextStyle(color: _kWhite),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 class _Button extends StatefulWidget {
-  const _Button({
-    required this.onPressed,
-    required this.child,
-  });
+  const _Button({required this.onPressed, required this.child});
 
   final VoidCallback onPressed;
 
@@ -63,7 +60,8 @@ class _ButtonState extends State<_Button> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _color = (context as Element)
+    _color =
+        (context as Element)
             .findAncestorWidgetOfExactType<WidgetsApp>()
             ?.color ??
         const Color(0xFF2196F3); // blue
@@ -71,11 +69,11 @@ class _ButtonState extends State<_Button> {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        onTap: widget.onPressed,
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          color: _color,
-          child: widget.child,
-        ),
-      );
+    onTap: widget.onPressed,
+    child: Container(
+      padding: const EdgeInsets.all(8),
+      color: _color,
+      child: widget.child,
+    ),
+  );
 }

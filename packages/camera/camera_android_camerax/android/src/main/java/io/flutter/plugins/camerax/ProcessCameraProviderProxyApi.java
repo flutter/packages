@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -45,7 +46,7 @@ class ProcessCameraProviderProxyApi extends PigeonApiProcessCameraProvider {
           try {
             // Camera provider is now guaranteed to be available.
             ResultCompat.success(processCameraProviderFuture.get(), callback);
-          } catch (Exception e) {
+          } catch (InterruptedException | ExecutionException e) {
             ResultCompat.failure(e, callback);
           }
         },

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -78,10 +78,12 @@ final class _ImageReaderRotatedPreviewState
   late StreamSubscription<DeviceOrientation> deviceOrientationSubscription;
 
   Future<int> _getCurrentDefaultDisplayRotationDegrees() async {
-    final int currentDefaultDisplayRotationQuarterTurns =
-        await widget.deviceOrientationManager.getDefaultDisplayRotation();
+    final int currentDefaultDisplayRotationQuarterTurns = await widget
+        .deviceOrientationManager
+        .getDefaultDisplayRotation();
     return getQuarterTurnsFromSurfaceRotationConstant(
-            currentDefaultDisplayRotationQuarterTurns) *
+          currentDefaultDisplayRotationQuarterTurns,
+        ) *
         90;
   }
 
@@ -89,11 +91,14 @@ final class _ImageReaderRotatedPreviewState
   void initState() {
     deviceOrientation = widget.initialDeviceOrientation;
     defaultDisplayRotationDegrees = Future<int>.value(
-        getQuarterTurnsFromSurfaceRotationConstant(
-                widget.initialDefaultDisplayRotation) *
-            90);
-    deviceOrientationSubscription =
-        widget.deviceOrientation.listen((DeviceOrientation event) {
+      getQuarterTurnsFromSurfaceRotationConstant(
+            widget.initialDefaultDisplayRotation,
+          ) *
+          90,
+    );
+    deviceOrientationSubscription = widget.deviceOrientation.listen((
+      DeviceOrientation event,
+    ) {
       // Ensure that we aren't updating the state if the widget is being destroyed.
       if (!mounted) {
         return;
@@ -116,7 +121,8 @@ final class _ImageReaderRotatedPreviewState
   }) {
     // Rotate the camera preview according to
     // https://developer.android.com/media/camera/camera2/camera-preview#orientation_calculation.
-    double rotationDegrees = (sensorOrientationDegrees -
+    double rotationDegrees =
+        (sensorOrientationDegrees -
             currentDefaultDisplayRotationDegrees * sign +
             360) %
         360;
@@ -126,7 +132,7 @@ final class _ImageReaderRotatedPreviewState
     // for this plugin.
     final double extraRotationDegrees =
         getPreAppliedQuarterTurnsRotationFromDeviceOrientation(orientation) *
-            90;
+        90;
     rotationDegrees -= extraRotationDegrees;
 
     return rotationDegrees;
@@ -141,24 +147,38 @@ final class _ImageReaderRotatedPreviewState
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<int>(
-        future: defaultDisplayRotationDegrees,
-        builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            final int currentDefaultDisplayRotation = snapshot.data!;
-            final double rotationDegrees = _computeRotationDegrees(
-              deviceOrientation,
-              currentDefaultDisplayRotation,
-              sensorOrientationDegrees: widget.sensorOrientationDegrees,
-              sign: widget.facingSign,
-            );
+      future: defaultDisplayRotationDegrees,
+      builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          final int currentDefaultDisplayRotation = snapshot.data!;
+          final double rotationDegrees = _computeRotationDegrees(
+            deviceOrientation,
+            currentDefaultDisplayRotation,
+            sensorOrientationDegrees: widget.sensorOrientationDegrees,
+            sign: widget.facingSign,
+          );
 
-            return RotatedBox(
-              quarterTurns: rotationDegrees ~/ 90,
-              child: widget.child,
-            );
-          } else {
-            return const SizedBox.shrink();
+          // If the camera is front facing (widget.facingSign is 1 for front
+          // cameras, -1 for back cameras), mirror the camera preview
+          // according to the current device orientation.
+          Widget cameraPreview = widget.child;
+          if (widget.facingSign == 1) {
+            if (deviceOrientation == DeviceOrientation.portraitDown ||
+                deviceOrientation == DeviceOrientation.portraitUp) {
+              cameraPreview = Transform.scale(scaleY: -1, child: cameraPreview);
+            } else {
+              cameraPreview = Transform.scale(scaleX: -1, child: cameraPreview);
+            }
           }
-        });
+
+          return RotatedBox(
+            quarterTurns: rotationDegrees ~/ 90,
+            child: cameraPreview,
+          );
+        } else {
+          return const SizedBox.shrink();
+        }
+      },
+    );
   }
 }

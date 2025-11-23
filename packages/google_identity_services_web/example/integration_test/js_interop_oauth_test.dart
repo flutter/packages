@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,8 +37,8 @@ void main() async {
         error_callback: (GoogleIdentityServicesError? _) {},
       );
 
-      final utils.ExpectConfigValueFn expectConfigValue =
-          utils.createExpectConfigValue(config as JSObject);
+      final utils.ExpectConfigValueFn expectConfigValue = utils
+          .createExpectConfigValue(config as JSObject);
 
       expectConfigValue('client_id', 'testing_1-2-3');
       expectConfigValue('callback', utils.isAJs('function'));
@@ -62,8 +62,8 @@ void main() async {
         state: 'some-state',
       );
 
-      final utils.ExpectConfigValueFn expectConfigValue =
-          utils.createExpectConfigValue(config as JSObject);
+      final utils.ExpectConfigValueFn expectConfigValue = utils
+          .createExpectConfigValue(config as JSObject);
 
       expectConfigValue('scope', 'one two three');
       expectConfigValue('include_granted_scopes', true);
@@ -89,8 +89,8 @@ void main() async {
         error_callback: (GoogleIdentityServicesError? _) {},
       );
 
-      final utils.ExpectConfigValueFn expectConfigValue =
-          utils.createExpectConfigValue(config as JSObject);
+      final utils.ExpectConfigValueFn expectConfigValue = utils
+          .createExpectConfigValue(config as JSObject);
 
       expectConfigValue('scope', 'one two three');
       expectConfigValue('include_granted_scopes', true);
@@ -108,11 +108,13 @@ void main() async {
 
   group('initTokenClient', () {
     testWidgets('returns a tokenClient', (_) async {
-      final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
-        client_id: 'for-tests',
-        callback: (TokenResponse _) {},
-        scope: <String>['some_scope', 'for_tests', 'not_real'],
-      ));
+      final TokenClient client = oauth2.initTokenClient(
+        TokenClientConfig(
+          client_id: 'for-tests',
+          callback: (TokenResponse _) {},
+          scope: <String>['some_scope', 'for_tests', 'not_real'],
+        ),
+      );
 
       expect(client, isNotNull);
     });
@@ -125,11 +127,13 @@ void main() async {
 
       final List<String> scopes = <String>['some_scope', 'another', 'more'];
 
-      final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
-        client_id: 'for-tests',
-        callback: controller.add,
-        scope: scopes,
-      ));
+      final TokenClient client = oauth2.initTokenClient(
+        TokenClientConfig(
+          client_id: 'for-tests',
+          callback: controller.add,
+          scope: scopes,
+        ),
+      );
 
       utils.setMockTokenResponse(client, 'some-non-null-auth-token-value');
 
@@ -148,17 +152,17 @@ void main() async {
 
       final List<String> scopes = <String>['some_scope', 'another', 'more'];
 
-      final TokenClient client = oauth2.initTokenClient(TokenClientConfig(
-        client_id: 'for-tests',
-        callback: controller.add,
-        scope: <String>['blank'],
-      ));
+      final TokenClient client = oauth2.initTokenClient(
+        TokenClientConfig(
+          client_id: 'for-tests',
+          callback: controller.add,
+          scope: <String>['blank'],
+        ),
+      );
 
       utils.setMockTokenResponse(client, 'some-non-null-auth-token-value');
 
-      client.requestAccessToken(OverridableTokenClientConfig(
-        scope: scopes,
-      ));
+      client.requestAccessToken(OverridableTokenClientConfig(scope: scopes));
 
       final TokenResponse response = await controller.stream.first;
 

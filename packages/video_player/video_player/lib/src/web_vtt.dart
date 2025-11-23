@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,7 +16,7 @@ class WebVTTCaptionFile extends ClosedCaptionFile {
   /// the WebVTT file format.
   /// * See: https://en.wikipedia.org/wiki/WebVTT
   WebVTTCaptionFile(String fileContents)
-      : _captions = _parseCaptionsFromWebVTTString(fileContents);
+    : _captions = _parseCaptionsFromWebVTTString(fileContents);
 
   @override
   List<Caption> get captions => _captions;
@@ -96,8 +96,9 @@ class _CaptionRange {
   // For example:
   // 00:09.000 --> 00:11.000
   static _CaptionRange? fromWebVTTString(String line) {
-    final RegExp format =
-        RegExp(_webVTTTimeStamp + _webVTTArrow + _webVTTTimeStamp);
+    final RegExp format = RegExp(
+      _webVTTTimeStamp + _webVTTArrow + _webVTTTimeStamp,
+    );
 
     if (!format.hasMatch(line)) {
       return null;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:math';
+import 'dart:math' as math show max;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -45,14 +45,15 @@ class VideoPlayerValue {
 
   /// Returns an instance for a video that hasn't been loaded.
   const VideoPlayerValue.uninitialized()
-      : this(duration: Duration.zero, isInitialized: false);
+    : this(duration: Duration.zero, isInitialized: false);
 
   /// Returns an instance with the given [errorDescription].
   const VideoPlayerValue.erroneous(String errorDescription)
-      : this(
-            duration: Duration.zero,
-            isInitialized: false,
-            errorDescription: errorDescription);
+    : this(
+        duration: Duration.zero,
+        isInitialized: false,
+        errorDescription: errorDescription,
+      );
 
   /// The total duration of the video.
   ///
@@ -155,17 +156,17 @@ class VideoPlayerValue {
 
   @override
   int get hashCode => Object.hash(
-        duration,
-        position,
-        buffered,
-        isPlaying,
-        isBuffering,
-        playbackSpeed,
-        errorDescription,
-        size,
-        isInitialized,
-        rotationCorrection,
-      );
+    duration,
+    position,
+    buffered,
+    isPlaying,
+    isBuffering,
+    playbackSpeed,
+    errorDescription,
+    size,
+    isInitialized,
+    rotationCorrection,
+  );
 }
 
 /// A very minimal version of `VideoPlayerController` for running the example
@@ -180,26 +181,24 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     this.dataSource, {
     this.package,
     this.viewType = VideoViewType.textureView,
-  })  : dataSourceType = DataSourceType.asset,
-        super(const VideoPlayerValue(duration: Duration.zero));
+  }) : dataSourceType = DataSourceType.asset,
+       super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from
   /// the network.
   MiniController.network(
     this.dataSource, {
     this.viewType = VideoViewType.textureView,
-  })  : dataSourceType = DataSourceType.network,
-        package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+  }) : dataSourceType = DataSourceType.network,
+       package = null,
+       super(const VideoPlayerValue(duration: Duration.zero));
 
   /// Constructs a [MiniController] playing a video from obtained from a file.
-  MiniController.file(
-    File file, {
-    this.viewType = VideoViewType.textureView,
-  })  : dataSource = Uri.file(file.absolute.path).toString(),
-        dataSourceType = DataSourceType.file,
-        package = null,
-        super(const VideoPlayerValue(duration: Duration.zero));
+  MiniController.file(File file, {this.viewType = VideoViewType.textureView})
+    : dataSource = Uri.file(file.absolute.path).toString(),
+      dataSourceType = DataSourceType.file,
+      package = null,
+      super(const VideoPlayerValue(duration: Duration.zero));
 
   /// The URI to the video file. This will be in different formats depending on
   /// the [DataSourceType] of the original video.
@@ -263,7 +262,8 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
       viewType: viewType,
     );
 
-    _playerId = (await _platform.createWithOptions(creationOptions)) ??
+    _playerId =
+        (await _platform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
@@ -339,16 +339,15 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     if (value.isPlaying) {
       await _platform.play(_playerId);
 
-      _timer = Timer.periodic(
-        const Duration(milliseconds: 500),
-        (Timer timer) async {
-          final Duration? newPosition = await position;
-          if (newPosition == null) {
-            return;
-          }
-          _updatePosition(newPosition);
-        },
-      );
+      _timer = Timer.periodic(const Duration(milliseconds: 500), (
+        Timer timer,
+      ) async {
+        final Duration? newPosition = await position;
+        if (newPosition == null) {
+          return;
+        }
+        _updatePosition(newPosition);
+      });
       await _applyPlaybackSpeed();
     } else {
       await _platform.pause(_playerId);
@@ -357,10 +356,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
 
   Future<void> _applyPlaybackSpeed() async {
     if (value.isPlaying) {
-      await _platform.setPlaybackSpeed(
-        _playerId,
-        value.playbackSpeed,
-      );
+      await _platform.setPlaybackSpeed(_playerId, value.playbackSpeed);
     }
   }
 
@@ -438,9 +434,9 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
+  void dispose() {
     widget.controller.removeListener(_listener);
+    super.dispose();
   }
 
   @override
@@ -457,30 +453,22 @@ class _VideoPlayerState extends State<VideoPlayer> {
 }
 
 class _VideoPlayerWithRotation extends StatelessWidget {
-  const _VideoPlayerWithRotation({
-    required this.rotation,
-    required this.child,
-  });
+  const _VideoPlayerWithRotation({required this.rotation, required this.child});
 
   final int rotation;
   final Widget child;
 
   @override
   Widget build(BuildContext context) {
-    return rotation == 0
-        ? child
-        : Transform.rotate(
-            angle: rotation * pi / 180,
-            child: child,
-          );
+    if (rotation == 0) {
+      return child;
+    }
+    return RotatedBox(quarterTurns: rotation ~/ 90, child: child);
   }
 }
 
 class _VideoScrubber extends StatefulWidget {
-  const _VideoScrubber({
-    required this.child,
-    required this.controller,
-  });
+  const _VideoScrubber({required this.child, required this.controller});
 
   final Widget child;
   final MiniController controller;
@@ -548,9 +536,9 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
   }
 
   @override
-  void deactivate() {
+  void dispose() {
     controller.removeListener(listener);
-    super.deactivate();
+    super.dispose();
   }
 
   @override
@@ -559,29 +547,28 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
     const Color bufferedColor = Color.fromRGBO(50, 50, 200, 0.2);
     const Color backgroundColor = Color.fromRGBO(200, 200, 200, 0.5);
 
-    Widget progressIndicator;
+    final Widget progressIndicator;
     if (controller.value.isInitialized) {
       final int duration = controller.value.duration.inMilliseconds;
       final int position = controller.value.position.inMilliseconds;
 
-      int maxBuffering = 0;
-      for (final DurationRange range in controller.value.buffered) {
-        final int end = range.end.inMilliseconds;
-        if (end > maxBuffering) {
-          maxBuffering = end;
-        }
-      }
+      final double maxBuffering = duration == 0.0
+          ? 0.0
+          : controller.value.buffered
+                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .fold(0, math.max) /
+                duration;
 
       progressIndicator = Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
           LinearProgressIndicator(
-            value: maxBuffering / duration,
+            value: maxBuffering,
             valueColor: const AlwaysStoppedAnimation<Color>(bufferedColor),
             backgroundColor: backgroundColor,
           ),
           LinearProgressIndicator(
-            value: position / duration,
+            value: duration == 0.0 ? 0.0 : position / duration,
             valueColor: const AlwaysStoppedAnimation<Color>(playedColor),
             backgroundColor: Colors.transparent,
           ),

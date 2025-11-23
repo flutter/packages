@@ -1,11 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import Flutter
 import ObjectiveC
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -14,32 +14,32 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let registry: FlutterTextureRegistry
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
-  private let deviceDiscoverer: FLTCameraDeviceDiscovering
+  private let deviceDiscoverer: CameraDeviceDiscoverer
   private let permissionManager: FLTCameraPermissionManager
-  private let captureDeviceFactory: CaptureDeviceFactory
+  private let captureDeviceFactory: VideoCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
-  private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  private let captureDeviceInputFactory: CaptureDeviceInputFactory
 
   /// All FLTCam's state access and capture session related operations should be on run on this queue.
   private let captureSessionQueue: DispatchQueue
 
   /// An internal camera object that manages camera's state and performs camera operations.
-  var camera: FLTCam?
+  var camera: Camera?
 
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = CameraPlugin(
       registry: registrar.textures(),
       messenger: registrar.messenger(),
       globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
-      deviceDiscoverer: FLTDefaultCameraDeviceDiscoverer(),
+      deviceDiscoverer: DefaultCameraDeviceDiscoverer(),
       permissionManager: FLTCameraPermissionManager(
         permissionService: FLTDefaultPermissionService()),
       deviceFactory: { name in
         // TODO(RobertOdrowaz) Implement better error handling and remove non-null assertion
-        FLTDefaultCaptureDevice(device: AVCaptureDevice(uniqueID: name)!)
+        AVCaptureDevice(uniqueID: name)!
       },
-      captureSessionFactory: { FLTDefaultCaptureSession(captureSession: AVCaptureSession()) },
-      captureDeviceInputFactory: FLTDefaultCaptureDeviceInputFactory(),
+      captureSessionFactory: { AVCaptureSession() },
+      captureDeviceInputFactory: DefaultCaptureDeviceInputFactory(),
       captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
 
@@ -50,11 +50,11 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     registry: FlutterTextureRegistry,
     messenger: FlutterBinaryMessenger,
     globalAPI: FCPCameraGlobalEventApi,
-    deviceDiscoverer: FLTCameraDeviceDiscovering,
+    deviceDiscoverer: CameraDeviceDiscoverer,
     permissionManager: FLTCameraPermissionManager,
-    deviceFactory: @escaping CaptureDeviceFactory,
+    deviceFactory: @escaping VideoCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
-    captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
+    captureDeviceInputFactory: CaptureDeviceInputFactory,
     captureSessionQueue: DispatchQueue
   ) {
     self.registry = registry
@@ -69,7 +69,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
 
     super.init()
 
-    FLTDispatchQueueSetSpecific(captureSessionQueue, FLTCaptureSessionQueueSpecific)
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
 
     UIDevice.current.beginGeneratingDeviceOrientationNotifications()
     NotificationCenter.default.addObserver(
@@ -103,8 +104,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
 
     self.captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
-      // `FLTCam.setDeviceOrientation` must be called on capture session queue.
-      strongSelf.camera?.setDeviceOrientation(orientation)
+      // `Camera.deviceOrientation` must be set on capture session queue.
+      strongSelf.camera?.deviceOrientation = orientation
       // `CameraPlugin.sendDeviceOrientation` can be called on any queue.
       strongSelf.sendDeviceOrientation(orientation)
     }
@@ -130,14 +131,11 @@ extension CameraPlugin: FCPCameraApi {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
 
-      var discoveryDevices: [AVCaptureDevice.DeviceType] = [
+      let discoveryDevices: [AVCaptureDevice.DeviceType] = [
         .builtInWideAngleCamera,
         .builtInTelephotoCamera,
+        .builtInUltraWideCamera,
       ]
-
-      if #available(iOS 13.0, *) {
-        discoveryDevices.append(.builtInUltraWideCamera)
-      }
 
       let devices = strongSelf.deviceDiscoverer.discoverySession(
         withDeviceTypes: discoveryDevices,
@@ -147,27 +145,45 @@ extension CameraPlugin: FCPCameraApi {
       var reply: [FCPPlatformCameraDescription] = []
 
       for device in devices {
-        var lensFacing: FCPPlatformCameraLensDirection
-
-        switch device.position {
-        case .back:
-          lensFacing = .back
-        case .front:
-          lensFacing = .front
-        case .unspecified:
-          lensFacing = .external
-        @unknown default:
-          lensFacing = .external
-        }
-
+        let lensFacing = strongSelf.platformLensDirection(for: device)
+        let lensType = strongSelf.platformLensType(for: device)
         let cameraDescription = FCPPlatformCameraDescription.make(
           withName: device.uniqueID,
-          lensDirection: lensFacing
+          lensDirection: lensFacing,
+          lensType: lensType
         )
         reply.append(cameraDescription)
       }
 
       completion(reply, nil)
+    }
+  }
+
+  private func platformLensDirection(for device: CaptureDevice) -> FCPPlatformCameraLensDirection {
+    switch device.position {
+    case .back:
+      return .back
+    case .front:
+      return .front
+    case .unspecified:
+      return .external
+    @unknown default:
+      return .external
+    }
+  }
+
+  private func platformLensType(for device: CaptureDevice) -> FCPPlatformCameraLensType {
+    switch device.deviceType {
+    case .builtInWideAngleCamera:
+      return .wide
+    case .builtInTelephotoCamera:
+      return .telephoto
+    case .builtInUltraWideCamera:
+      return .ultraWide
+    case .builtInDualWideCamera:
+      return .wide
+    default:
+      return .unknown
     }
   }
 
@@ -234,22 +250,20 @@ extension CameraPlugin: FCPCameraApi {
   ) {
     let mediaSettingsAVWrapper = FLTCamMediaSettingsAVWrapper()
 
-    let camConfiguration = FLTCamConfiguration(
+    let camConfiguration = CameraConfiguration(
       mediaSettings: settings,
       mediaSettingsWrapper: mediaSettingsAVWrapper,
       captureDeviceFactory: captureDeviceFactory,
+      audioCaptureDeviceFactory: { AVCaptureDevice.default(for: .audio)! },
       captureSessionFactory: captureSessionFactory,
       captureSessionQueue: captureSessionQueue,
       captureDeviceInputFactory: captureDeviceInputFactory,
       initialCameraName: name
     )
 
-    var error: NSError?
-    let newCamera = FLTCam(configuration: camConfiguration, error: &error)
+    do {
+      let newCamera = try DefaultCamera(configuration: camConfiguration)
 
-    if let error = error {
-      completion(nil, CameraPlugin.flutterErrorFromNSError(error))
-    } else {
       camera?.close()
       camera = newCamera
 
@@ -257,6 +271,8 @@ extension CameraPlugin: FCPCameraApi {
         guard let strongSelf = self else { return }
         completion(NSNumber(value: strongSelf.registry.register(newCamera)), nil)
       }
+    } catch let error as NSError {
+      completion(nil, CameraPlugin.flutterErrorFromNSError(error))
     }
   }
 
@@ -306,9 +322,11 @@ extension CameraPlugin: FCPCameraApi {
 
   public func startImageStream(completion: @escaping (FlutterError?) -> Void) {
     captureSessionQueue.async { [weak self] in
-      guard let strongSelf = self else { return }
-      strongSelf.camera?.startImageStream(with: strongSelf.messenger)
-      completion(nil)
+      guard let strongSelf = self else {
+        completion(nil)
+        return
+      }
+      strongSelf.camera?.startImageStream(with: strongSelf.messenger, completion: completion)
     }
   }
 
@@ -342,7 +360,7 @@ extension CameraPlugin: FCPCameraApi {
     completion: @escaping (FlutterError?) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
-      self?.camera?.lockCapture(orientation)
+      self?.camera?.lockCaptureOrientation(orientation)
       completion(nil)
     }
   }

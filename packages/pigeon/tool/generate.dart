@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,8 +42,12 @@ Future<void> main(List<String> args) async {
       abbr: 'n',
       help: 'Do not autoformat after generation.',
     )
-    ..addFlag(_helpFlag,
-        negatable: false, abbr: 'h', help: 'Print this reference.')
+    ..addFlag(
+      _helpFlag,
+      negatable: false,
+      abbr: 'h',
+      help: 'Print this reference.',
+    )
     ..addFlag(
       _overflowFiller,
       abbr: 'o',
@@ -51,10 +55,12 @@ Future<void> main(List<String> args) async {
           'Injects 120 Enums into the pigeon ast, used for testing overflow utilities.',
       hide: true,
     )
-    ..addMultiOption(_files,
-        help:
-            'Select specific groups of files to generate; $_test or $_example. Defaults to both.',
-        allowed: _fileGroups);
+    ..addMultiOption(
+      _files,
+      help:
+          'Select specific groups of files to generate; $_test or $_example. Defaults to both.',
+      allowed: _fileGroups,
+    );
 
   final ArgResults argResults = parser.parse(args);
   if (argResults.wasParsed(_helpFlag)) {
@@ -76,7 +82,9 @@ ${parser.usage}''');
   if (toGenerate.contains(_test)) {
     print('Generating platform_test/ output...');
     final int generateExitCode = await generateTestPigeons(
-        baseDir: baseDir, includeOverflow: includeOverflow);
+      baseDir: baseDir,
+      includeOverflow: includeOverflow,
+    );
     if (generateExitCode == 0) {
       print('Generation complete!');
     } else {
@@ -98,8 +106,9 @@ ${parser.usage}''');
 
   if (!argResults.wasParsed(_noFormatFlag)) {
     print('Formatting generated output...');
-    final int formatExitCode =
-        await formatAllFiles(repositoryRoot: p.dirname(p.dirname(baseDir)));
+    final int formatExitCode = await formatAllFiles(
+      repositoryRoot: p.dirname(p.dirname(baseDir)),
+    );
     if (formatExitCode != 0) {
       print('Formatting failed; see above for errors.');
       exit(formatExitCode);

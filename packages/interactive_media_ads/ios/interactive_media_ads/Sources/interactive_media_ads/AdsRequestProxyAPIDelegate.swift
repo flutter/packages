@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
   /// The current version of the `interactive_media_ads` plugin.
   ///
   /// This must match the version in pubspec.yaml.
-  static let pluginVersion = "0.2.3+12"
+  static let pluginVersion = "0.3.0+6"
 
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer,
@@ -28,5 +28,96 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
     return IMAAdsRequest(
       adTagUrl: modifiedURL, adDisplayContainer: adDisplayContainer,
       contentPlayhead: contentPlayhead as? ContentPlayheadImpl, userContext: nil)
+  }
+
+  func withAdsResponse(
+    pigeonApi: PigeonApiIMAAdsRequest, adsResponse: String,
+    adDisplayContainer: IMAAdDisplayContainer, contentPlayhead: (any IMAContentPlayhead)?
+  ) throws -> IMAAdsRequest {
+    return IMAAdsRequest(
+      adsResponse: adsResponse, adDisplayContainer: adDisplayContainer,
+      contentPlayhead: contentPlayhead as? ContentPlayheadImpl, userContext: nil)
+  }
+
+  func getAdTagUrl(pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest) throws
+    -> String?
+  {
+    return pigeonInstance.adTagUrl
+  }
+
+  func getAdDisplayContainer(pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest)
+    throws -> IMAAdDisplayContainer
+  {
+    return pigeonInstance.adDisplayContainer
+  }
+
+  func getAdsResponse(pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest) throws
+    -> String?
+  {
+    return pigeonInstance.adsResponse
+  }
+
+  func setAdWillAutoPlay(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, adWillAutoPlay: Bool
+  ) throws {
+    pigeonInstance.adWillAutoPlay = adWillAutoPlay
+  }
+
+  func setAdWillPlayMuted(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, adWillPlayMuted: Bool
+  ) throws {
+    pigeonInstance.adWillPlayMuted = adWillPlayMuted
+  }
+
+  func setContinuousPlayback(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, continuousPlayback: Bool
+  ) throws {
+    pigeonInstance.continuousPlayback = continuousPlayback
+  }
+
+  func setContentDuration(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, duration: Double
+  ) throws {
+    pigeonInstance.contentDuration = Float(duration)
+  }
+
+  func setContentKeywords(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, keywords: [String]?
+  ) throws {
+    pigeonInstance.contentKeywords = keywords
+  }
+
+  func setContentTitle(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, title: String?
+  ) throws {
+    pigeonInstance.contentTitle = title
+  }
+
+  func setContentURL(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, contentURL: String?
+  ) throws {
+    if let contentURL = contentURL {
+      let url = URL(string: contentURL)
+      if let url = url {
+        pigeonInstance.contentURL = url
+      } else {
+        throw (pigeonApi.pigeonRegistrar.apiDelegate as! ProxyApiDelegate)
+          .createConstructorNullError(type: URL.Type.self, parameters: ["string": contentURL])
+      }
+    } else {
+      pigeonInstance.contentURL = nil
+    }
+  }
+
+  func setVastLoadTimeout(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, timeout: Double
+  ) throws {
+    pigeonInstance.vastLoadTimeout = Float(timeout)
+  }
+
+  func setLiveStreamPrefetchSeconds(
+    pigeonApi: PigeonApiIMAAdsRequest, pigeonInstance: IMAAdsRequest, seconds: Double
+  ) throws {
+    pigeonInstance.liveStreamPrefetchSeconds = Float(seconds)
   }
 }

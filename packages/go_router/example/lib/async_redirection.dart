@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,10 +30,10 @@ class App extends StatelessWidget {
   // add the login info into the tree as app state that can change over time
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: title,
-        debugShowCheckedModeBanner: false,
-      );
+    routerConfig: _router,
+    title: title,
+    debugShowCheckedModeBanner: false,
+  );
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
@@ -89,12 +89,11 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..addListener(() {
-        setState(() {});
-      });
+    controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1))
+          ..addListener(() {
+            setState(() {});
+          });
     controller.repeat();
   }
 
@@ -106,26 +105,26 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              if (loggingIn) CircularProgressIndicator(value: controller.value),
-              if (!loggingIn)
-                ElevatedButton(
-                  onPressed: () {
-                    StreamAuthScope.of(context).signIn('test-user');
-                    setState(() {
-                      loggingIn = true;
-                    });
-                  },
-                  child: const Text('Login'),
-                ),
-            ],
-          ),
-        ),
-      );
+    appBar: AppBar(title: const Text(App.title)),
+    body: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          if (loggingIn) CircularProgressIndicator(value: controller.value),
+          if (!loggingIn)
+            ElevatedButton(
+              onPressed: () {
+                StreamAuthScope.of(context).signIn('test-user');
+                setState(() {
+                  loggingIn = true;
+                });
+              },
+              child: const Text('Login'),
+            ),
+        ],
+      ),
+    ),
+  );
 }
 
 /// The home screen.
@@ -145,12 +144,10 @@ class HomeScreen extends StatelessWidget {
             onPressed: () => info.signOut(),
             tooltip: 'Logout: ${info.currentUser}',
             icon: const Icon(Icons.logout),
-          )
+          ),
         ],
       ),
-      body: const Center(
-        child: Text('HomeScreen'),
-      ),
+      body: const Center(child: Text('HomeScreen')),
     );
   }
 }
@@ -158,12 +155,8 @@ class HomeScreen extends StatelessWidget {
 /// A scope that provides [StreamAuth] for the subtree.
 class StreamAuthScope extends InheritedNotifier<StreamAuthNotifier> {
   /// Creates a [StreamAuthScope] sign in scope.
-  StreamAuthScope({
-    super.key,
-    required super.child,
-  }) : super(
-          notifier: StreamAuthNotifier(),
-        );
+  StreamAuthScope({super.key, required super.child})
+    : super(notifier: StreamAuthNotifier());
 
   /// Gets the [StreamAuth].
   static StreamAuth of(BuildContext context) {
@@ -195,7 +188,7 @@ class StreamAuth {
   /// Creates an [StreamAuth] that clear the current user session in
   /// [refeshInterval] second.
   StreamAuth({this.refreshInterval = 20})
-      : _userStreamController = StreamController<String?>.broadcast() {
+    : _userStreamController = StreamController<String?>.broadcast() {
     _userStreamController.stream.listen((String? currentUser) {
       _currentUser = currentUser;
     });

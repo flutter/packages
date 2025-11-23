@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,19 +57,25 @@ void main() {
       final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
 
       await expectLater(
-          launcher.launch(
-            'http://example.com/',
-            useSafariVC: true,
-            useWebView: false,
-            enableJavaScript: false,
-            enableDomStorage: false,
-            universalLinksOnly: false,
-            headers: const <String, String>{},
-          ),
-          throwsA(isA<PlatformException>()
+        launcher.launch(
+          'http://example.com/',
+          useSafariVC: true,
+          useWebView: false,
+          enableJavaScript: false,
+          enableDomStorage: false,
+          universalLinksOnly: false,
+          headers: const <String, String>{},
+        ),
+        throwsA(
+          isA<PlatformException>()
               .having((PlatformException e) => e.code, 'code', 'Launch Error')
-              .having((PlatformException e) => e.message, 'message',
-                  contains('Failed to launch URL: An error'))));
+              .having(
+                (PlatformException e) => e.message,
+                'message',
+                contains('Failed to launch URL: An error'),
+              ),
+        ),
+      );
     });
 
     group('launchUrl', () {
@@ -78,8 +84,10 @@ void main() {
         final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
         const String url = 'http://example.com/';
 
-        final bool launched =
-            await launcher.launchUrl(url, const LaunchOptions());
+        final bool launched = await launcher.launchUrl(
+          url,
+          const LaunchOptions(),
+        );
 
         expect(launched, true);
         expect(api.argument, url);
@@ -90,53 +98,70 @@ void main() {
         final UrlLauncherLinux launcher = UrlLauncherLinux(api: api);
 
         await expectLater(
-            launcher.launchUrl('http://example.com/', const LaunchOptions()),
-            throwsA(isA<PlatformException>()
+          launcher.launchUrl('http://example.com/', const LaunchOptions()),
+          throwsA(
+            isA<PlatformException>()
                 .having((PlatformException e) => e.code, 'code', 'Launch Error')
-                .having((PlatformException e) => e.message, 'message',
-                    contains('Failed to launch URL: An error'))));
+                .having(
+                  (PlatformException e) => e.message,
+                  'message',
+                  contains('Failed to launch URL: An error'),
+                ),
+          ),
+        );
       });
     });
 
     group('supportsMode', () {
       test('returns true for platformDefault', () async {
         final UrlLauncherLinux launcher = UrlLauncherLinux();
-        expect(await launcher.supportsMode(PreferredLaunchMode.platformDefault),
-            true);
+        expect(
+          await launcher.supportsMode(PreferredLaunchMode.platformDefault),
+          true,
+        );
       });
 
       test('returns true for external application', () async {
         final UrlLauncherLinux launcher = UrlLauncherLinux();
         expect(
-            await launcher
-                .supportsMode(PreferredLaunchMode.externalApplication),
-            true);
+          await launcher.supportsMode(PreferredLaunchMode.externalApplication),
+          true,
+        );
       });
 
       test('returns false for other modes', () async {
         final UrlLauncherLinux launcher = UrlLauncherLinux();
         expect(
-            await launcher.supportsMode(
-                PreferredLaunchMode.externalNonBrowserApplication),
-            false);
+          await launcher.supportsMode(
+            PreferredLaunchMode.externalNonBrowserApplication,
+          ),
+          false,
+        );
         expect(
-            await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
-            false);
-        expect(await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
-            false);
+          await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
+          false,
+        );
+        expect(
+          await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
+          false,
+        );
       });
     });
 
     test('supportsCloseForMode returns false', () async {
       final UrlLauncherLinux launcher = UrlLauncherLinux();
       expect(
-          await launcher
-              .supportsCloseForMode(PreferredLaunchMode.platformDefault),
-          false);
+        await launcher.supportsCloseForMode(
+          PreferredLaunchMode.platformDefault,
+        ),
+        false,
+      );
       expect(
-          await launcher
-              .supportsCloseForMode(PreferredLaunchMode.externalApplication),
-          false);
+        await launcher.supportsCloseForMode(
+          PreferredLaunchMode.externalApplication,
+        ),
+        false,
+      );
     });
   });
 }
