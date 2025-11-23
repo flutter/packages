@@ -1281,7 +1281,7 @@ void main() {
 
         // Test gaps between captions where no caption should be found
         // Gap before first caption
-        await controller.seekTo(const Duration(milliseconds: 0));
+        await controller.seekTo(Duration.zero);
         expect(
           controller.value.caption.text,
           '',
