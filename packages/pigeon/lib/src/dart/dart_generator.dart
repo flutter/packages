@@ -137,7 +137,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, omit_obvious_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
     );
     indent.newln();
   }
@@ -432,7 +432,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             );
           }
         } else if (customType.type == CustomTypes.customEnum) {
-          indent.writeln('final int? value = readValue(buffer) as int?;');
+          indent.writeln('final value = readValue(buffer) as int?;');
           indent.writeln(
             'return value == null ? null : ${customType.name}.values[value];',
           );
@@ -1089,7 +1089,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, no_leading_underscores_for_local_identifiers',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, no_leading_underscores_for_local_identifiers, omit_obvious_local_variable_types',
     );
     indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   }
@@ -1287,10 +1287,10 @@ if (wrapped == null) {
     final channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
     final constOrFinal = addSuffixVariable ? 'final' : 'const';
     indent.writeln(
-      "$constOrFinal String ${varNamePrefix}channelName = '$channelName$channelSuffix';",
+      "$constOrFinal ${varNamePrefix}channelName = '$channelName$channelSuffix';",
     );
     indent.writeScoped(
-      'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
+      'final ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       ');',
       () {
         indent.writeln('${varNamePrefix}channelName,');
@@ -1328,8 +1328,7 @@ if (wrapped == null) {
     }
 
     indent.format('''
-final List<Object?>? ${varNamePrefix}replyList =
-\t\tawait $sendFutureVar as List<Object?>?;
+final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
 if (${varNamePrefix}replyList == null) {
 \tthrow _createConnectionError(${varNamePrefix}channelName);
 } else if (${varNamePrefix}replyList.length > 1) {
@@ -1382,7 +1381,7 @@ if (${varNamePrefix}replyList == null) {
     indent.write('');
     indent.addScoped('{', '}', () {
       indent.writeln(
-        'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
+        'final ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
         final channelSuffix = addSuffixVariable ? r'$messageChannelSuffix' : '';
