@@ -26,7 +26,7 @@ class QuickActionsAndroid extends QuickActionsPlatform {
 
   @override
   Future<void> initialize(QuickActionHandler handler) async {
-    final _QuickActionHandlerApi quickActionsHandlerApi =
+    final quickActionsHandlerApi =
         _QuickActionHandlerApi();
     AndroidQuickActionsFlutterApi.setUp(quickActionsHandlerApi);
     _handler = handler;

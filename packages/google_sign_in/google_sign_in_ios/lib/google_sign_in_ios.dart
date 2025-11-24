@@ -217,7 +217,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       // scopes may not report them with the same string as the request.
       // For example, requesting 'email' can instead result in the grant
       // 'https://www.googleapis.com/auth/userinfo.email'.
-      const Set<String> openIdConnectScopes = <String>{
+      const openIdConnectScopes = <String>{
         'email',
         'openid',
         'profile',
@@ -276,7 +276,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     SignInSuccess result,
   ) {
     final UserData userData = result.user;
-    final GoogleSignInUserData user = GoogleSignInUserData(
+    final user = GoogleSignInUserData(
       email: userData.email,
       id: userData.userId,
       displayName: userData.displayName,

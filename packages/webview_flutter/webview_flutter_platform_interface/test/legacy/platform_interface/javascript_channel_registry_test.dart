@@ -6,8 +6,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:webview_flutter_platform_interface/src/webview_flutter_platform_interface_legacy.dart';
 
 void main() {
-  final Map<String, String> log = <String, String>{};
-  final Set<JavascriptChannel> channels = <JavascriptChannel>{
+  final log = <String, String>{};
+  final channels = <JavascriptChannel>{
     JavascriptChannel(
       name: 'js_channel_1',
       onMessageReceived: (JavascriptMessage message) =>
@@ -30,12 +30,12 @@ void main() {
   });
 
   test('ctor should initialize with channels.', () {
-    final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+    final registry = JavascriptChannelRegistry(
       channels,
     );
 
     expect(registry.channels.length, 3);
-    for (final JavascriptChannel channel in channels) {
+    for (final channel in channels) {
       expect(registry.channels[channel.name], channel);
     }
   });
@@ -43,7 +43,7 @@ void main() {
   test(
     'onJavascriptChannelMessage should forward message on correct channel.',
     () {
-      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+      final registry = JavascriptChannelRegistry(
         channels,
       );
 
@@ -59,7 +59,7 @@ void main() {
   test(
     'onJavascriptChannelMessage should throw ArgumentError when message arrives on non-existing channel.',
     () {
-      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+      final registry = JavascriptChannelRegistry(
         channels,
       );
 
@@ -82,7 +82,7 @@ void main() {
   test(
     'updateJavascriptChannelsFromSet should clear all channels when null is supplied.',
     () {
-      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+      final registry = JavascriptChannelRegistry(
         channels,
       );
 
@@ -97,13 +97,13 @@ void main() {
   test(
     'updateJavascriptChannelsFromSet should update registry with new set.',
     () {
-      final JavascriptChannelRegistry registry = JavascriptChannelRegistry(
+      final registry = JavascriptChannelRegistry(
         channels,
       );
 
       expect(registry.channels.length, 3);
 
-      final Set<JavascriptChannel> newChannels = <JavascriptChannel>{
+      final newChannels = <JavascriptChannel>{
         JavascriptChannel(
           name: 'new_js_channel_1',
           onMessageReceived: (JavascriptMessage message) =>
@@ -119,7 +119,7 @@ void main() {
       registry.updateJavascriptChannelsFromSet(newChannels);
 
       expect(registry.channels.length, 2);
-      for (final JavascriptChannel channel in newChannels) {
+      for (final channel in newChannels) {
         expect(registry.channels[channel.name], channel);
       }
     },

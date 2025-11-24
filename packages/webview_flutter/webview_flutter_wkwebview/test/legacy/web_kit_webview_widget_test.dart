@@ -40,7 +40,7 @@ void main() {
 
   group('WebKitWebViewWidget', () {
     _WebViewMocks configureMocks() {
-      final _WebViewMocks mocks = _WebViewMocks(
+      final mocks = _WebViewMocks(
         webView: MockUIViewWKWebView(),
         webViewWidgetProxy: MockWebViewWidgetProxy(),
         userContentController: MockWKUserContentController(),
@@ -121,7 +121,7 @@ void main() {
       bool hasNavigationDelegate = false,
       bool hasProgressTracking = false,
     }) async {
-      final Completer<WebKitWebViewPlatformController> testController =
+      final testController =
           Completer<WebKitWebViewPlatformController>();
       await tester.pumpWidget(
         WebKitWebViewWidget(
@@ -159,13 +159,7 @@ void main() {
       final _WebViewMocks mocks = configureMocks();
       await buildWidget(tester, mocks);
 
-      final void Function(
-        WKUIDelegate,
-        WKWebView,
-        WKWebViewConfiguration,
-        WKNavigationAction,
-      )
-      onCreateWebView =
+      final onCreateWebView =
           verify(
                 mocks.webViewWidgetProxy.createUIDelgate(
                   onCreateWebView: captureAnyNamed('onCreateWebView'),
@@ -178,7 +172,7 @@ void main() {
                 WKNavigationAction,
               );
 
-      final URLRequest request = URLRequest.pigeon_detached(
+      final request = URLRequest.pigeon_detached(
         pigeon_instanceManager: TestInstanceManager(),
       );
       onCreateWebView(
@@ -464,7 +458,7 @@ void main() {
             ),
           );
 
-          final WKUserScript zoomScript =
+          final zoomScript =
               verify(
                     mocks.userContentController.addUserScript(captureAny),
                   ).captured.first
@@ -526,7 +520,7 @@ void main() {
         final WebKitWebViewPlatformController testController =
             await buildWidget(tester, mocks);
 
-        const String htmlString =
+        const htmlString =
             '<html lang=""><body>Test data.</body></html>';
         await testController.loadHtmlString(htmlString, baseUrl: 'baseUrl');
 
@@ -551,7 +545,7 @@ void main() {
           'a': 'header',
         });
 
-        final URLRequest request =
+        final request =
             verify(mocks.webView.load(captureAny)).captured.single
                 as URLRequest;
         verify(request.setAllHttpHeaderFields(<String, String>{'a': 'header'}));
@@ -594,7 +588,7 @@ void main() {
             ),
           );
 
-          final URLRequest request =
+          final request =
               verify(mocks.webView.load(captureAny)).captured.single
                   as URLRequest;
           verify(request.setAllHttpHeaderFields(<String, String>{}));
@@ -620,7 +614,7 @@ void main() {
             ),
           );
 
-          final URLRequest request =
+          final request =
               verify(mocks.webView.load(captureAny)).captured.single
                   as URLRequest;
           verify(
@@ -647,7 +641,7 @@ void main() {
             ),
           );
 
-          final URLRequest request =
+          final request =
               verify(mocks.webView.load(captureAny)).captured.single
                   as URLRequest;
           verify(request.setHttpMethod('post'));
@@ -672,7 +666,7 @@ void main() {
             ),
           );
 
-          final URLRequest request =
+          final request =
               verify(mocks.webView.load(captureAny)).captured.single
                   as URLRequest;
           verify(request.setHttpMethod('post'));
@@ -1147,7 +1141,7 @@ void main() {
         clearInteractions(mocks.userContentController);
         await testController.removeJavascriptChannels(<String>{'c'});
 
-        final WKUserScript zoomScript =
+        final zoomScript =
             verify(
                   mocks.userContentController.addUserScript(captureAny),
                 ).captured.first
@@ -1170,8 +1164,7 @@ void main() {
         final _WebViewMocks mocks = configureMocks();
         await buildWidget(tester, mocks);
 
-        final void Function(WKNavigationDelegate, WKWebView, String)
-        didStartProvisionalNavigation =
+        final didStartProvisionalNavigation =
             verify(
                   mocks.webViewWidgetProxy.createNavigationDelegate(
                     didFinishNavigation: anyNamed('didFinishNavigation'),
@@ -1210,8 +1203,7 @@ void main() {
         final _WebViewMocks mocks = configureMocks();
         await buildWidget(tester, mocks);
 
-        final void Function(WKNavigationDelegate, WKWebView, String)
-        didFinishNavigation =
+        final didFinishNavigation =
             verify(
                   mocks.webViewWidgetProxy.createNavigationDelegate(
                     didFinishNavigation: captureAnyNamed('didFinishNavigation'),
@@ -1252,8 +1244,7 @@ void main() {
         final _WebViewMocks mocks = configureMocks();
         await buildWidget(tester, mocks);
 
-        final void Function(WKNavigationDelegate, WKWebView, NSError)
-        didFailNavigation =
+        final didFailNavigation =
             verify(
                   mocks.webViewWidgetProxy.createNavigationDelegate(
                     didFinishNavigation: anyNamed('didFinishNavigation'),
@@ -1293,7 +1284,7 @@ void main() {
           ),
         );
 
-        final WebResourceError error =
+        final error =
             verify(
                   mocks.callbacksHandler.onWebResourceError(captureAny),
                 ).captured.single
@@ -1310,8 +1301,7 @@ void main() {
         final _WebViewMocks mocks = configureMocks();
         await buildWidget(tester, mocks);
 
-        final void Function(WKNavigationDelegate, WKWebView, NSError)
-        didFailProvisionalNavigation =
+        final didFailProvisionalNavigation =
             verify(
                   mocks.webViewWidgetProxy.createNavigationDelegate(
                     didFinishNavigation: anyNamed('didFinishNavigation'),
@@ -1351,7 +1341,7 @@ void main() {
           ),
         );
 
-        final WebResourceError error =
+        final error =
             verify(
                   mocks.callbacksHandler.onWebResourceError(captureAny),
                 ).captured.single
@@ -1371,8 +1361,7 @@ void main() {
           final _WebViewMocks mocks = configureMocks();
           await buildWidget(tester, mocks);
 
-          final void Function(WKNavigationDelegate, WKWebView)
-          webViewWebContentProcessDidTerminate =
+          final webViewWebContentProcessDidTerminate =
               verify(
                     mocks.webViewWidgetProxy.createNavigationDelegate(
                       didFinishNavigation: anyNamed('didFinishNavigation'),
@@ -1403,7 +1392,7 @@ void main() {
             mocks.webView,
           );
 
-          final WebResourceError error =
+          final error =
               verify(
                     mocks.callbacksHandler.onWebResourceError(captureAny),
                   ).captured.single
@@ -1424,12 +1413,7 @@ void main() {
         final _WebViewMocks mocks = configureMocks();
         await buildWidget(tester, mocks, hasNavigationDelegate: true);
 
-        final Future<NavigationActionPolicy> Function(
-          WKNavigationDelegate,
-          WKWebView,
-          WKNavigationAction,
-        )
-        decidePolicyForNavigationAction =
+        final decidePolicyForNavigationAction =
             verify(
                   mocks.webViewWidgetProxy.createNavigationDelegate(
                     didFinishNavigation: anyNamed('didFinishNavigation'),
@@ -1467,7 +1451,7 @@ void main() {
           ),
         ).thenReturn(true);
 
-        final MockURLRequest mockRequest = MockURLRequest();
+        final mockRequest = MockURLRequest();
         when(
           mockRequest.getUrl(),
         ).thenAnswer((_) => Future<String>.value('https://google.com'));
@@ -1510,8 +1494,7 @@ void main() {
           ),
         );
 
-        final void Function(String, NSObject, Map<KeyValueChangeKey, Object?>)
-        observeValue =
+        final observeValue =
             verify(
                   mocks.webViewWidgetProxy.createWebView(
                     any,
@@ -1558,12 +1541,7 @@ void main() {
             await buildWidget(tester, mocks);
         await testController.addJavascriptChannels(<String>{'hello'});
 
-        final void Function(
-          WKScriptMessageHandler,
-          WKUserContentController,
-          WKScriptMessage,
-        )
-        didReceiveScriptMessage =
+        final didReceiveScriptMessage =
             verify(
                   mocks.webViewWidgetProxy.createScriptMessageHandler(
                     didReceiveScriptMessage: captureAnyNamed(

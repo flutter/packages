@@ -39,7 +39,7 @@ void main() {
       'Default implementation of initialize() should throw unimplemented error',
       () {
         // Arrange
-        final ExtendsQuickActionsPlatform quickActionsPlatform =
+        final quickActionsPlatform =
             ExtendsQuickActionsPlatform();
 
         // Act & Assert
@@ -54,7 +54,7 @@ void main() {
       'Default implementation of setShortcutItems() should throw unimplemented error',
       () {
         // Arrange
-        final ExtendsQuickActionsPlatform quickActionsPlatform =
+        final quickActionsPlatform =
             ExtendsQuickActionsPlatform();
 
         // Act & Assert
@@ -69,7 +69,7 @@ void main() {
       'Default implementation of clearShortcutItems() should throw unimplemented error',
       () {
         // Arrange
-        final ExtendsQuickActionsPlatform quickActionsPlatform =
+        final quickActionsPlatform =
             ExtendsQuickActionsPlatform();
 
         // Act & Assert

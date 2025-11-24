@@ -35,8 +35,8 @@ class GoRouterGenerator extends Generator {
 
   @override
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
-    final Set<String> values = <String>{};
-    final Set<String> getters = <String>{};
+    final values = <String>{};
+    final getters = <String>{};
 
     generateForAnnotation(library, values, getters);
 
@@ -94,7 +94,7 @@ ${getters.map((String e) => "$e,").join('\n')}
       );
     }
 
-    final TypeChecker dataChecker = TypeChecker.fromUrl(
+    final dataChecker = TypeChecker.fromUrl(
       '$_routeDataUrl#$routeData',
     );
     if (!element.allSupertypes.any(

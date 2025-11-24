@@ -14,7 +14,7 @@ Future<GoRouter> createGoRouter(
   Listenable? refreshListenable,
   bool dispose = true,
 }) async {
-  final GoRouter router = GoRouter(
+  final router = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
@@ -33,7 +33,7 @@ Future<GoRouter> createGoRouter(
 Future<GoRouter> createGoRouterWithStatefulShellRoute(
   WidgetTester tester,
 ) async {
-  final GoRouter router = GoRouter(
+  final router = GoRouter(
     initialLocation: '/',
     routes: <RouteBase>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
@@ -91,7 +91,7 @@ Future<GoRouter> createGoRouterWithStatefulShellRouteAndPopScopes(
   PopInvokedWithResultCallback<bool>? onPopBranch,
   PopInvokedWithResultCallback<bool>? onPopBranchSubRoute,
 }) async {
-  final GoRouter router = GoRouter(
+  final router = GoRouter(
     initialLocation: '/c',
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
@@ -143,7 +143,7 @@ void main() {
     testWidgets('restore() update currentConfiguration in pop()', (
       WidgetTester tester,
     ) async {
-      final ValueNotifier<int> valueNotifier = ValueNotifier<int>(0);
+      final valueNotifier = ValueNotifier<int>(0);
       final GoRouter goRouter = await createGoRouter(
         tester,
         refreshListenable: valueNotifier,
@@ -188,9 +188,9 @@ void main() {
     testWidgets('PopScope intercepts back button on root route', (
       WidgetTester tester,
     ) async {
-      bool didPop = false;
+      var didPop = false;
 
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(
@@ -225,9 +225,9 @@ void main() {
     testWidgets(
       'PopScope intercepts back button on StatefulShellRoute builder route',
       (WidgetTester tester) async {
-        bool didPopShellRouteBuilder = false;
-        bool didPopBranch = false;
-        bool didPopBranchSubRoute = false;
+        var didPopShellRouteBuilder = false;
+        var didPopBranch = false;
+        var didPopBranchSubRoute = false;
 
         await createGoRouterWithStatefulShellRouteAndPopScopes(
           tester,
@@ -253,9 +253,9 @@ void main() {
     testWidgets(
       'PopScope intercepts back button on StatefulShellRoute branch route',
       (WidgetTester tester) async {
-        bool didPopShellRouteBuilder = false;
-        bool didPopBranch = false;
-        bool didPopBranchSubRoute = false;
+        var didPopShellRouteBuilder = false;
+        var didPopBranch = false;
+        var didPopBranchSubRoute = false;
 
         await createGoRouterWithStatefulShellRouteAndPopScopes(
           tester,
@@ -281,9 +281,9 @@ void main() {
     testWidgets(
       'PopScope intercepts back button on StatefulShellRoute branch sub route',
       (WidgetTester tester) async {
-        bool didPopShellRouteBuilder = false;
-        bool didPopBranch = false;
-        bool didPopBranchSubRoute = false;
+        var didPopShellRouteBuilder = false;
+        var didPopBranch = false;
+        var didPopBranchSubRoute = false;
 
         final GoRouter goRouter =
             await createGoRouterWithStatefulShellRouteAndPopScopes(
@@ -321,8 +321,8 @@ void main() {
     });
 
     testWidgets('throw if nothing to pop', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final rootKey = GlobalKey<NavigatorState>();
+      final navKey = GlobalKey<NavigatorState>();
       final GoRouter goRouter = await createRouter(<RouteBase>[
         ShellRoute(
           navigatorKey: rootKey,
@@ -357,8 +357,8 @@ void main() {
     testWidgets('poproute return false if nothing to pop', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootKey = GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
+      final rootKey = GlobalKey<NavigatorState>();
+      final navKey = GlobalKey<NavigatorState>();
       final GoRouter goRouter = await createRouter(<RouteBase>[
         ShellRoute(
           navigatorKey: rootKey,
@@ -444,7 +444,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
-        final ShellRouteMatch shellRouteMatch =
+        final shellRouteMatch =
             goRouter.routerDelegate.currentConfiguration.matches.last
                 as ShellRouteMatch;
         expect(shellRouteMatch.matches.length, 2);
@@ -469,7 +469,7 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(goRouter.routerDelegate.currentConfiguration.matches.length, 2);
-        final ShellRouteMatch shellRouteMatch =
+        final shellRouteMatch =
             goRouter.routerDelegate.currentConfiguration.matches.last
                 as ShellRouteMatch;
         expect(shellRouteMatch.matches.length, 2);
@@ -506,7 +506,7 @@ void main() {
     testWidgets('It should return false if there are no matches in the stack', (
       WidgetTester tester,
     ) async {
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[],
       );
@@ -522,7 +522,7 @@ void main() {
     testWidgets('It should replace the last match with the given one', (
       WidgetTester tester,
     ) async {
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(path: '/', builder: (_, __) => const SizedBox()),
@@ -595,7 +595,7 @@ void main() {
     testWidgets('It should replace the last match with the given one', (
       WidgetTester tester,
     ) async {
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(path: '/', builder: (_, __) => const SizedBox()),
@@ -648,7 +648,7 @@ void main() {
     testWidgets('It should replace the last match with the given one', (
       WidgetTester tester,
     ) async {
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(path: '/', builder: (_, __) => const SizedBox()),
@@ -750,7 +750,7 @@ void main() {
       WidgetTester tester, {
       Listenable? refreshListenable,
     }) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(
@@ -869,7 +869,7 @@ void main() {
   testWidgets('dispose unsubscribes from refreshListenable', (
     WidgetTester tester,
   ) async {
-    final FakeRefreshListenable refreshListenable = FakeRefreshListenable();
+    final refreshListenable = FakeRefreshListenable();
     addTearDown(refreshListenable.dispose);
 
     final GoRouter goRouter = await createGoRouter(

@@ -138,18 +138,18 @@ void main() {
   });
 
   test('visitChildren on clips and masks', () {
-    final ResolvedClipNode clip = ResolvedClipNode(
+    final clip = ResolvedClipNode(
       clips: <Path>[],
       child: Node.empty,
     );
 
-    final ResolvedMaskNode mask = ResolvedMaskNode(
+    final mask = ResolvedMaskNode(
       child: Node.empty,
       mask: Node.empty,
       blendMode: BlendMode.color,
     );
 
-    int visitCount = 0;
+    var visitCount = 0;
     clip.visitChildren((Node child) {
       visitCount += 1;
       expect(child, Node.empty);

@@ -19,7 +19,7 @@ void main() {
 
   group('WebViewWidget', () {
     testWidgets('build', (WidgetTester tester) async {
-      final MockPlatformWebViewWidget mockPlatformWebViewWidget =
+      final mockPlatformWebViewWidget =
           MockPlatformWebViewWidget();
       when(mockPlatformWebViewWidget.build(any)).thenReturn(Container());
 
@@ -35,12 +35,12 @@ void main() {
       (WidgetTester tester) async {
         WebViewPlatform.instance = TestWebViewPlatform();
 
-        final MockPlatformWebViewController mockPlatformWebViewController =
+        final mockPlatformWebViewController =
             MockPlatformWebViewController();
-        final WebViewController webViewController =
+        final webViewController =
             WebViewController.fromPlatform(mockPlatformWebViewController);
 
-        final WebViewWidget webViewWidget = WebViewWidget(
+        final webViewWidget = WebViewWidget(
           key: GlobalKey(),
           controller: webViewController,
           layoutDirection: TextDirection.rtl,

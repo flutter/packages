@@ -140,7 +140,7 @@ class _MyAppState extends State<_MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> stack = <Widget>[];
+    final stack = <Widget>[];
     if (_queryProductError == null) {
       stack.add(
         ListView(
@@ -192,7 +192,7 @@ class _MyAppState extends State<_MyApp> {
         'The store is ${_isAvailable ? 'available' : 'unavailable'}.',
       ),
     );
-    final List<Widget> children = <Widget>[storeHeader];
+    final children = <Widget>[storeHeader];
 
     if (!_isAvailable) {
       children.addAll(<Widget>[
@@ -223,19 +223,19 @@ class _MyAppState extends State<_MyApp> {
     if (!_isAvailable) {
       return const Card();
     }
-    const ListTile productHeader = ListTile(
+    const productHeader = ListTile(
       title: Text(
         'Products for Sale',
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
-    const ListTile promoHeader = ListTile(
+    const promoHeader = ListTile(
       title: Text(
         'Products in promo',
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
-    final List<ListTile> productList = <ListTile>[];
+    final productList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
       productList.add(
         ListTile(
@@ -253,7 +253,7 @@ class _MyAppState extends State<_MyApp> {
     // This loading previous purchases code is just a demo. Please do not use this as it is.
     // In your app you should always verify the purchase data using the `verificationData` inside the [PurchaseDetails] object before trusting it.
     // We recommend that you use your own server to verify the purchase data.
-    final Map<String, PurchaseDetails> purchases =
+    final purchases =
         Map<String, PurchaseDetails>.fromEntries(
           _purchases.map((PurchaseDetails purchase) {
             if (purchase.pendingCompletePurchase) {
@@ -284,7 +284,7 @@ class _MyAppState extends State<_MyApp> {
                     foregroundColor: Colors.white,
                   ),
                   onPressed: () {
-                    final PurchaseParam purchaseParam = PurchaseParam(
+                    final purchaseParam = PurchaseParam(
                       productDetails: productDetails,
                     );
                     if (productDetails.id == _kConsumableId) {
@@ -339,7 +339,7 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Future<List<ListTile>> _buildPromoList() async {
-    final List<ListTile> promoList = <ListTile>[];
+    final promoList = <ListTile>[];
     for (final ProductDetails detail in _products) {
       if (detail is AppStoreProduct2Details) {
         final SK2SubscriptionInfo? subscription =
@@ -347,7 +347,7 @@ class _MyAppState extends State<_MyApp> {
         final List<SK2SubscriptionOffer> offers =
             subscription?.promotionalOffers ?? <SK2SubscriptionOffer>[];
 
-        for (final SK2SubscriptionOffer offer in offers) {
+        for (final offer in offers) {
           if (offer.type == SK2SubscriptionOfferType.winBack) {
             final bool eligible = await _iapStoreKitPlatform
                 .isWinBackOfferEligible(detail.id, offer.id ?? '');
@@ -377,7 +377,7 @@ class _MyAppState extends State<_MyApp> {
           foregroundColor: Colors.white,
         ),
         onPressed: () {
-          final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam.fromOffer(
+          final purchaseParam = Sk2PurchaseParam.fromOffer(
             productDetails: productDetails,
             offer: offer,
             signature: SK2SubscriptionOfferSignature(
@@ -407,7 +407,7 @@ class _MyAppState extends State<_MyApp> {
     if (!_isAvailable || _notFoundIds.contains(_kConsumableId)) {
       return const Card();
     }
-    const ListTile consumableHeader = ListTile(
+    const consumableHeader = ListTile(
       title: Text('Purchased consumables'),
     );
     final List<Widget> tokens = _consumables.map((String id) {

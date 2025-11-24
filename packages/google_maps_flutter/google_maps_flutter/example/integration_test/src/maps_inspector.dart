@@ -43,7 +43,7 @@ void runTests() {
 
   testWidgets('testCompassToggle', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
     await pumpMap(
       tester,
       GoogleMap(
@@ -77,7 +77,7 @@ void runTests() {
 
   testWidgets('testMapToolbarToggle', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -122,11 +122,11 @@ void runTests() {
     //
     // Thus we test iOS and Android a little differently here.
     final Key key = GlobalKey();
-    final Completer<GoogleMapController> controllerCompleter =
+    final controllerCompleter =
         Completer<GoogleMapController>();
 
-    const MinMaxZoomPreference initialZoomLevel = MinMaxZoomPreference(4, 8);
-    const MinMaxZoomPreference finalZoomLevel = MinMaxZoomPreference(6, 10);
+    const initialZoomLevel = MinMaxZoomPreference(4, 8);
+    const finalZoomLevel = MinMaxZoomPreference(6, 10);
 
     await pumpMap(
       tester,
@@ -189,7 +189,7 @@ void runTests() {
 
   testWidgets('testZoomGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -226,7 +226,7 @@ void runTests() {
 
   testWidgets('testZoomControlsEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -268,7 +268,7 @@ void runTests() {
 
   testWidgets('testLiteModeEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -303,7 +303,7 @@ void runTests() {
 
   testWidgets('testRotateGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -342,7 +342,7 @@ void runTests() {
 
   testWidgets('testTiltGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -379,7 +379,7 @@ void runTests() {
 
   testWidgets('testScrollGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -418,7 +418,7 @@ void runTests() {
 
   testWidgets('testTraffic', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -453,7 +453,7 @@ void runTests() {
 
   testWidgets('testBuildings', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await pumpMap(
       tester,
@@ -478,7 +478,7 @@ void runTests() {
   group('MyLocationButton', () {
     testWidgets('testMyLocationButtonToggle', (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final Completer<int> mapIdCompleter = Completer<int>();
+      final mapIdCompleter = Completer<int>();
 
       await pumpMap(
         tester,
@@ -519,7 +519,7 @@ void runTests() {
       WidgetTester tester,
     ) async {
       final Key key = GlobalKey();
-      final Completer<int> mapIdCompleter = Completer<int>();
+      final mapIdCompleter = Completer<int>();
 
       await pumpMap(
         tester,
@@ -543,7 +543,7 @@ void runTests() {
       WidgetTester tester,
     ) async {
       final Key key = GlobalKey();
-      final Completer<int> mapIdCompleter = Completer<int>();
+      final mapIdCompleter = Completer<int>();
 
       await pumpMap(
         tester,
@@ -565,27 +565,27 @@ void runTests() {
 
   testWidgets('marker clustering', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    const int clusterManagersAmount = 2;
-    const int markersPerClusterManager = 5;
-    final Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-    final Set<ClusterManager> clusterManagers = <ClusterManager>{};
+    const clusterManagersAmount = 2;
+    const markersPerClusterManager = 5;
+    final markers = <MarkerId, Marker>{};
+    final clusterManagers = <ClusterManager>{};
 
-    for (int i = 0; i < clusterManagersAmount; i++) {
-      final ClusterManagerId clusterManagerId = ClusterManagerId(
+    for (var i = 0; i < clusterManagersAmount; i++) {
+      final clusterManagerId = ClusterManagerId(
         'cluster_manager_$i',
       );
-      final ClusterManager clusterManager = ClusterManager(
+      final clusterManager = ClusterManager(
         clusterManagerId: clusterManagerId,
       );
       clusterManagers.add(clusterManager);
     }
 
-    for (final ClusterManager cm in clusterManagers) {
-      for (int i = 0; i < markersPerClusterManager; i++) {
-        final MarkerId markerId = MarkerId(
+    for (final cm in clusterManagers) {
+      for (var i = 0; i < markersPerClusterManager; i++) {
+        final markerId = MarkerId(
           '${cm.clusterManagerId.value}_marker_$i',
         );
-        final Marker marker = Marker(
+        final marker = Marker(
           markerId: markerId,
           clusterManagerId: cm.clusterManagerId,
           position: LatLng(
@@ -597,7 +597,7 @@ void runTests() {
       }
     }
 
-    final Completer<GoogleMapController> controllerCompleter =
+    final controllerCompleter =
         Completer<GoogleMapController>();
 
     await pumpMap(
@@ -618,7 +618,7 @@ void runTests() {
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
 
-    for (final ClusterManager cm in clusterManagers) {
+    for (final cm in clusterManagers) {
       final List<Cluster> clusters = await inspector.getClusters(
         mapId: controller.mapId,
         clusterManagerId: cm.clusterManagerId,
@@ -644,7 +644,7 @@ void runTests() {
       ),
     );
 
-    for (final ClusterManager cm in clusterManagers) {
+    for (final cm in clusterManagers) {
       final List<Cluster> clusters = await inspector.getClusters(
         mapId: controller.mapId,
         clusterManagerId: cm.clusterManagerId,
@@ -657,7 +657,7 @@ void runTests() {
     'testAnimateCameraWithoutDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final Completer<GoogleMapController> controllerCompleter =
+      final controllerCompleter =
           Completer<GoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
@@ -762,7 +762,7 @@ void runTests() {
     'testAnimateCameraWithDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final Completer<GoogleMapController> controllerCompleter =
+      final controllerCompleter =
           Completer<GoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
@@ -770,8 +770,8 @@ void runTests() {
       /// Completer to track when the camera has come to rest.
       Completer<void>? cameraIdleCompleter;
 
-      const int shortCameraAnimationDurationMS = 200;
-      const int longCameraAnimationDurationMS = 1000;
+      const shortCameraAnimationDurationMS = 200;
+      const longCameraAnimationDurationMS = 1000;
 
       /// Calculate the midpoint duration of the animation test, which will
       /// serve as a reference to verify that animations complete more quickly
@@ -780,7 +780,7 @@ void runTests() {
           (shortCameraAnimationDurationMS + longCameraAnimationDurationMS) ~/ 2;
 
       // Stopwatch to measure the time taken for the animation to complete.
-      final Stopwatch stopwatch = Stopwatch();
+      final stopwatch = Stopwatch();
 
       await tester.pumpWidget(
         Directionality(
@@ -980,7 +980,7 @@ Future<void> _checkCameraUpdateByType(
 ) async {
   // As the target might differ a bit from the expected target, a threshold is
   // used.
-  const double latLngThreshold = 0.05;
+  const latLngThreshold = 0.05;
 
   switch (type) {
     case CameraUpdateType.newCameraPosition:

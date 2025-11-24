@@ -41,7 +41,7 @@ Stream<int> streamIntsAgain({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final EventChannel streamIntsAgainChannel = EventChannel(
+  final streamIntsAgainChannel = EventChannel(
     'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamIntsAgain$instanceName',
     pigeonMethodCodec,
   );

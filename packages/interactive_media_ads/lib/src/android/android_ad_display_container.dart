@@ -65,7 +65,7 @@ final class AndroidAdDisplayContainerCreationParams
 base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Constructs an [AndroidAdDisplayContainer].
   AndroidAdDisplayContainer(super.params) : super.implementation() {
-    final WeakReference<AndroidAdDisplayContainer> weakThis =
+    final weakThis =
         WeakReference<AndroidAdDisplayContainer>(this);
     _videoView = _setUpVideoView(weakThis);
     _frameLayout.addView(_videoView);

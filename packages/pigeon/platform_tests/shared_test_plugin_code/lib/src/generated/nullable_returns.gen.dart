@@ -72,16 +72,16 @@ class NullableReturnHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<int?> doit() async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnHostApi.doit$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -111,8 +111,7 @@ abstract class NullableReturnFlutterApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnFlutterApi.doit$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -155,9 +154,9 @@ class NullableArgHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<int> doit(int? x) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -166,7 +165,7 @@ class NullableArgHostApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[x],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -201,8 +200,7 @@ abstract class NullableArgFlutterApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -216,7 +214,7 @@ abstract class NullableArgFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullableArgFlutterApi.doit was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_x = (args[0] as int?);
+          final arg_x = (args[0] as int?);
           try {
             final int? output = api.doit(arg_x);
             return wrapResponse(result: output);
@@ -251,16 +249,16 @@ class NullableCollectionReturnHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<List<String?>?> doit() async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnHostApi.doit$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -290,8 +288,7 @@ abstract class NullableCollectionReturnFlutterApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnFlutterApi.doit$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -334,9 +331,9 @@ class NullableCollectionArgHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<List<String?>> doit(List<String?>? x) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgHostApi.doit$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -345,7 +342,7 @@ class NullableCollectionArgHostApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[x],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -380,8 +377,7 @@ abstract class NullableCollectionArgFlutterApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgFlutterApi.doit$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,

@@ -40,7 +40,7 @@ class TileOverlayController {
       return null;
     }
 
-    final HTMLImageElement img =
+    final img =
         ownerDocument!.createElement('img') as HTMLImageElement;
     img.width = img.height = logicalTileSize;
     img.hidden = true.toJS;

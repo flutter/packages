@@ -64,7 +64,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   /// Gets external button presses that could occur in another instance, thread,
   /// or via some native system.
   Future<void> _getExternalCounter() async {
-    final SharedPreferencesAsync prefs = SharedPreferencesAsync();
+    final prefs = SharedPreferencesAsync();
     final int externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
     setState(() {
       _externalCounter = externalCounter;
@@ -73,7 +73,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
 
   Future<void> _migratePreferences() async {
     // #docregion migrate
-    const SharedPreferencesOptions sharedPreferencesOptions =
+    const sharedPreferencesOptions =
         SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(

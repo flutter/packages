@@ -152,7 +152,7 @@ class _SignInDemoState extends State<SignInDemo> {
       }
       return;
     }
-    final Map<String, dynamic> data =
+    final data =
         json.decode(response.body) as Map<String, dynamic>;
     final String? namedContact = _pickFirstNamedContact(data);
     setState(() {
@@ -165,8 +165,8 @@ class _SignInDemoState extends State<SignInDemo> {
   }
 
   String? _pickFirstNamedContact(Map<String, dynamic> data) {
-    final List<dynamic>? connections = data['connections'] as List<dynamic>?;
-    final Map<String, dynamic>? contact =
+    final connections = data['connections'] as List<dynamic>?;
+    final contact =
         connections?.firstWhere(
               (dynamic contact) =>
                   (contact as Map<Object?, dynamic>)['names'] != null,
@@ -174,8 +174,8 @@ class _SignInDemoState extends State<SignInDemo> {
             )
             as Map<String, dynamic>?;
     if (contact != null) {
-      final List<dynamic> names = contact['names'] as List<dynamic>;
-      final Map<String, dynamic>? name =
+      final names = contact['names'] as List<dynamic>;
+      final name =
           names.firstWhere(
                 (dynamic name) =>
                     (name as Map<Object?, dynamic>)['displayName'] != null,

@@ -239,9 +239,9 @@ class Api {
   final String pigeonVar_messageChannelSuffix;
 
   Future<FlutterSearchReply> search(FlutterSearchRequest request) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -250,7 +250,7 @@ class Api {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[request],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -271,9 +271,9 @@ class Api {
   }
 
   Future<FlutterSearchReplies> doSearches(FlutterSearchRequests request) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.doSearches$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -282,7 +282,7 @@ class Api {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[request],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -303,9 +303,9 @@ class Api {
   }
 
   Future<FlutterSearchRequests> echo(FlutterSearchRequests requests) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.echo$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -314,7 +314,7 @@ class Api {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[requests],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -335,9 +335,9 @@ class Api {
   }
 
   Future<int> anInt(int value) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -346,7 +346,7 @@ class Api {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);

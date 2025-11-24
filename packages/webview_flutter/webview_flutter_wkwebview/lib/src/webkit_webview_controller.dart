@@ -193,7 +193,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
     );
 
-    final WeakReference<WebKitWebViewController> weakThis =
+    final weakThis =
         WeakReference<WebKitWebViewController>(this);
     _uiDelegate = _webKitParams.webKitProxy.newWKUIDelegate(
       onCreateWebView:
@@ -248,7 +248,7 @@ class WebKitWebViewController extends PlatformWebViewController {
                   return PermissionDecision.prompt;
               }
 
-              final Completer<PermissionDecision> decisionCompleter =
+              final decisionCompleter =
                   Completer<PermissionDecision>();
 
               callback(
@@ -266,7 +266,7 @@ class WebKitWebViewController extends PlatformWebViewController {
             final Future<void> Function(JavaScriptAlertDialogRequest request)?
             callback = weakThis.target?._onJavaScriptAlertDialog;
             if (callback != null) {
-              final JavaScriptAlertDialogRequest request =
+              final request =
                   JavaScriptAlertDialogRequest(
                     message: message,
                     url: await frame.request?.getUrl() ?? '',
@@ -280,7 +280,7 @@ class WebKitWebViewController extends PlatformWebViewController {
             final Future<bool> Function(JavaScriptConfirmDialogRequest request)?
             callback = weakThis.target?._onJavaScriptConfirmDialog;
             if (callback != null) {
-              final JavaScriptConfirmDialogRequest request =
+              final request =
                   JavaScriptConfirmDialogRequest(
                     message: message,
                     url: await frame.request?.getUrl() ?? '',
@@ -298,7 +298,7 @@ class WebKitWebViewController extends PlatformWebViewController {
             )?
             callback = weakThis.target?._onJavaScriptTextInputDialog;
             if (callback != null) {
-              final JavaScriptTextInputDialogRequest request =
+              final request =
                   JavaScriptTextInputDialogRequest(
                     message: prompt,
                     url: await frame.request?.getUrl() ?? '',
@@ -338,7 +338,7 @@ class WebKitWebViewController extends PlatformWebViewController {
                 final ProgressCallback? progressCallback =
                     controller._currentNavigationDelegate?._onProgress;
                 if (progressCallback != null) {
-                  final double progress =
+                  final progress =
                       change[KeyValueChangeKey.newValue]! as double;
                   progressCallback((progress * 100).round());
                 }
@@ -346,14 +346,14 @@ class WebKitWebViewController extends PlatformWebViewController {
                 final UrlChangeCallback? urlChangeCallback =
                     controller._currentNavigationDelegate?._onUrlChange;
                 if (urlChangeCallback != null) {
-                  final URL? url = change[KeyValueChangeKey.newValue] as URL?;
+                  final url = change[KeyValueChangeKey.newValue] as URL?;
                   urlChangeCallback(
                     UrlChange(url: await url?.getAbsoluteString()),
                   );
                 }
               case 'canGoBack':
                 if (controller._onCanGoBackChangeCallback != null) {
-                  final bool canGoBack =
+                  final canGoBack =
                       change[KeyValueChangeKey.newValue]! as bool;
                   controller._onCanGoBackChangeCallback!(canGoBack);
                 }
@@ -503,7 +503,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     _javaScriptChannelParams[webKitParams.name] = webKitParams;
 
-    final String wrapperSource =
+    final wrapperSource =
         'window.${webKitParams.name} = webkit.messageHandlers.${webKitParams.name};';
     final WKUserScript wrapperScript = _webKitParams.webKitProxy
         .newWKUserScript(
@@ -738,7 +738,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           return;
         }
 
-        final Map<String, dynamic> consoleLog =
+        final consoleLog =
             jsonDecode(message.message) as Map<String, dynamic>;
 
         JavaScriptLogLevel level;
@@ -806,7 +806,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       _onScrollPositionChangeCallback = onScrollPositionChange;
 
       if (onScrollPositionChange != null) {
-        final WeakReference<WebKitWebViewController> weakThis =
+        final weakThis =
             WeakReference<WebKitWebViewController>(this);
         _uiScrollViewDelegate = _webKitParams.webKitProxy
             .newUIScrollViewDelegate(
@@ -882,7 +882,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     _javaScriptChannelParams.keys.forEach(
       controller.removeScriptMessageHandler,
     );
-    final Map<String, WebKitJavaScriptChannelParams> remainingChannelParams =
+    final remainingChannelParams =
         Map<String, WebKitJavaScriptChannelParams>.from(
           _javaScriptChannelParams,
         );
@@ -1208,7 +1208,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 params,
               ),
       ) {
-    final WeakReference<WebKitNavigationDelegate> weakThis =
+    final weakThis =
         WeakReference<WebKitNavigationDelegate>(this);
     _navigationDelegate = (this.params as WebKitNavigationDelegateCreationParams)
         .webKitProxy
@@ -1446,7 +1446,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     required URLProtectionSpace protectionSpace,
     required WebKitProxy proxy,
   }) {
-    final Completer<AuthenticationChallengeResponse> responseCompleter =
+    final responseCompleter =
         Completer<AuthenticationChallengeResponse>();
 
     onHttpAuthRequest(
@@ -1486,7 +1486,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     required PlatformException secTrustException,
     required WebKitProxy proxy,
   }) async {
-    final Completer<AuthenticationChallengeResponse> responseCompleter =
+    final responseCompleter =
         Completer<AuthenticationChallengeResponse>();
 
     final List<SecCertificate> certificates =

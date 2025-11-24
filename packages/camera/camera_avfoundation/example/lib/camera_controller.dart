@@ -222,7 +222,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<void> initialize() => _initializeWithDescription(description);
 
   Future<void> _initializeWithDescription(CameraDescription description) async {
-    final Completer<CameraInitializedEvent> initializeCompleter =
+    final initializeCompleter =
         Completer<CameraInitializedEvent>();
 
     _deviceOrientationSubscription = CameraPlatform.instance

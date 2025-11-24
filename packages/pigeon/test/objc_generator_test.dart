@@ -27,7 +27,7 @@ final Enum emptyEnum = Enum(
 
 void main() {
   test('gen one class header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -42,9 +42,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -59,13 +59,13 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSString.*field1'));
   });
 
   test('gen one class source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -80,9 +80,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -97,13 +97,13 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
   });
 
   test('gen one enum header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[],
       enums: <Enum>[
@@ -116,9 +116,9 @@ void main() {
         ),
       ],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -133,14 +133,14 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, Enum1) {'));
     expect(code, contains('  Enum1One = 0,'));
     expect(code, contains('  Enum1Two = 1,'));
   });
 
   test('gen one enum header with prefix', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[],
       enums: <Enum>[
@@ -153,9 +153,9 @@ void main() {
         ),
       ],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -171,14 +171,14 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('typedef NS_ENUM(NSUInteger, PREFIXEnum1) {'));
     expect(code, contains('  PREFIXEnum1One = 0,'));
     expect(code, contains('  PREFIXEnum1Two = 1,'));
   });
 
   test('gen one class source with enum', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -209,9 +209,9 @@ void main() {
         ),
       ],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -226,7 +226,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Foobar'));
     expect(
@@ -238,7 +238,7 @@ void main() {
   });
 
   test('primitive enum host', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Bar',
@@ -272,16 +272,16 @@ void main() {
         ),
       ],
     );
-    final StringBuffer sink = StringBuffer();
-    const InternalObjcOptions options = InternalObjcOptions(
+    final sink = StringBuffer();
+    const options = InternalObjcOptions(
       headerIncludePath: 'foo.h',
       prefix: 'AC',
       objcHeaderOut: '',
       objcSourceOut: '',
     );
     {
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: options,
@@ -292,13 +292,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('typedef NS_ENUM(NSUInteger, ACFoo)'));
       expect(code, contains(':(ACFoo)foo error:'));
     }
     {
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: options,
@@ -309,7 +309,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -322,7 +322,7 @@ void main() {
   });
 
   test('validate nullable primitive enum', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Bar',
@@ -356,7 +356,7 @@ void main() {
         ),
       ],
     );
-    const InternalObjcOptions options = InternalObjcOptions(
+    const options = InternalObjcOptions(
       headerIncludePath: 'foo.h',
       objcHeaderOut: '',
       objcSourceOut: '',
@@ -367,7 +367,7 @@ void main() {
   });
 
   test('gen one class header with enum', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -398,9 +398,9 @@ void main() {
         ),
       ],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -415,7 +415,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains('@property(nonatomic, strong, nullable) Enum1Box * enum1;'),
@@ -423,7 +423,7 @@ void main() {
   });
 
   test('gen one api header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -472,9 +472,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -489,7 +489,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Input'));
     expect(code, contains('@interface Output'));
     expect(code, contains('@protocol Api'));
@@ -499,7 +499,7 @@ void main() {
   });
 
   test('gen one api source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -548,9 +548,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -565,7 +565,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('#import "foo.h"'));
     expect(code, contains('@implementation Input'));
     expect(code, contains('@implementation Output'));
@@ -579,7 +579,7 @@ void main() {
   });
 
   test('all the simple datatypes header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -635,9 +635,9 @@ void main() {
       enums: <Enum>[],
     );
 
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -652,7 +652,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@class FlutterStandardTypedData;'));
     expect(code, matches('@property.*strong.*NSNumber.*aBool'));
@@ -678,7 +678,7 @@ void main() {
   });
 
   test('bool source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -694,9 +694,9 @@ void main() {
       enums: <Enum>[],
     );
 
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -711,7 +711,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@implementation Foobar'));
     expect(
       code,
@@ -720,7 +720,7 @@ void main() {
   });
 
   test('nested class header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -748,9 +748,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -765,7 +765,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains('@property(nonatomic, strong, nullable) Input * nested;'),
@@ -773,7 +773,7 @@ void main() {
   });
 
   test('nested class source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -801,9 +801,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -818,7 +818,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains('pigeonResult.nested = GetNullableObjectAtIndex(list, 0);'),
@@ -826,7 +826,7 @@ void main() {
   });
 
   test('prefix class header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -841,9 +841,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -859,12 +859,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface ABCFoobar'));
   });
 
   test('prefix class source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -879,9 +879,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -897,12 +897,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@implementation ABCFoobar'));
   });
 
   test('prefix nested class header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -955,9 +955,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -973,14 +973,14 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, matches('property.*ABCInput'));
     expect(code, matches('ABCNested.*doSomething.*ABCInput'));
     expect(code, contains('@protocol ABCApi'));
   });
 
   test('prefix nested class source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1033,9 +1033,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -1051,14 +1051,14 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('ABCInput fromList'));
     expect(code, matches(r'ABCInput.*=.*args.*0.*\;'));
     expect(code, contains('void SetUpABCApi('));
   });
 
   test('gen flutter api header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1107,9 +1107,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1124,7 +1124,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Api : NSObject'));
     expect(
       code,
@@ -1136,7 +1136,7 @@ void main() {
   });
 
   test('gen flutter api source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1185,9 +1185,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -1202,13 +1202,13 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@implementation Api'));
     expect(code, matches('void.*doSomething.*Input.*Output.*{'));
   });
 
   test('gen host void header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1244,9 +1244,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1262,12 +1262,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('(void)doSomething:'));
   });
 
   test('gen host void source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1303,9 +1303,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -1321,14 +1321,14 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, isNot(matches('=.*doSomething')));
     expect(code, matches('[.*doSomething:.*]'));
     expect(code, contains('callback(wrapResult(nil, error))'));
   });
 
   test('gen flutter void return header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1364,9 +1364,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1382,12 +1382,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
   });
 
   test('gen flutter void return source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1423,9 +1423,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -1441,13 +1441,13 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('completion:(void (^)(FlutterError *_Nullable))'));
     expect(code, contains('completion(nil)'));
   });
 
   test('gen host void arg header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1478,9 +1478,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1496,12 +1496,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, matches('ABCOutput.*doSomethingWithError:[(]FlutterError'));
   });
 
   test('gen host void arg source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1532,9 +1532,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -1550,12 +1550,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, matches('output.*=.*api doSomethingWithError:&error'));
   });
 
   test('gen flutter void arg header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1586,9 +1586,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1604,7 +1604,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -1614,7 +1614,7 @@ void main() {
   });
 
   test('gen flutter void arg source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -1645,9 +1645,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -1663,7 +1663,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -1674,7 +1674,7 @@ void main() {
   });
 
   test('gen list', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -1689,9 +1689,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1706,13 +1706,13 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSArray.*field1'));
   });
 
   test('gen map', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -1727,9 +1727,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1744,13 +1744,13 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, matches('@property.*NSDictionary.*field1'));
   });
 
   test('gen map field with object', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -1772,9 +1772,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1789,7 +1789,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(
       code,
@@ -1800,7 +1800,7 @@ void main() {
   });
 
   test('gen map argument with object', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1829,9 +1829,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1846,12 +1846,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('(NSDictionary<NSString *, id> *)foo'));
   });
 
   test('async void (input) HostApi header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1897,9 +1897,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1915,7 +1915,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -1925,7 +1925,7 @@ void main() {
   });
 
   test('async output(input) HostApi header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -1975,9 +1975,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -1993,7 +1993,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2003,7 +2003,7 @@ void main() {
   });
 
   test('async output(void) HostApi header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2035,9 +2035,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -2053,7 +2053,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2063,7 +2063,7 @@ void main() {
   });
 
   test('async void (void) HostApi header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2081,9 +2081,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -2099,7 +2099,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2109,7 +2109,7 @@ void main() {
   });
 
   test('async output(input) HostApi source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2159,9 +2159,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -2177,7 +2177,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2187,7 +2187,7 @@ void main() {
   });
 
   test('async void (input) HostApi source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2233,9 +2233,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -2251,7 +2251,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2261,7 +2261,7 @@ void main() {
   });
 
   test('async void (void) HostApi source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2279,9 +2279,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -2297,7 +2297,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2307,7 +2307,7 @@ void main() {
   });
 
   test('async output(void) HostApi source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2339,9 +2339,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -2357,7 +2357,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -2371,10 +2371,10 @@ void main() {
   }
 
   test('source copyright', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: InternalObjcOptions(
@@ -2391,15 +2391,15 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
 
   test('header copyright', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: InternalObjcOptions(
@@ -2416,12 +2416,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, startsWith('// hello world'));
   });
 
   test('field generics', () {
-    final Class classDefinition = Class(
+    final classDefinition = Class(
       name: 'Foobar',
       fields: <NamedType>[
         NamedType(
@@ -2436,14 +2436,14 @@ void main() {
         ),
       ],
     );
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[classDefinition],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -2459,12 +2459,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('NSArray<NSNumber *> * field1'));
   });
 
   test('host generics argument', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2493,9 +2493,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -2511,13 +2511,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -2533,7 +2533,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -2544,7 +2544,7 @@ void main() {
   });
 
   test('flutter generics argument', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -2573,9 +2573,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -2591,13 +2591,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -2613,13 +2613,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSNumber *> *)arg'));
     }
   });
 
   test('host nested generic argument', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2654,9 +2654,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -2672,13 +2672,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('doitArg:(NSArray<NSArray<NSNumber *> *> *)arg'));
     }
   });
 
   test('host generics return', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2702,9 +2702,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -2720,16 +2720,16 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains('- (nullable NSArray<NSNumber *> *)doitWithError:'),
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -2745,13 +2745,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('NSArray<NSNumber *> *output ='));
     }
   });
 
   test('flutter generics return', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -2775,9 +2775,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -2793,16 +2793,16 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains('doitWithCompletion:(void (^)(NSArray<NSNumber *> *'),
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -2818,7 +2818,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains('doitWithCompletion:(void (^)(NSArray<NSNumber *> *'),
@@ -2827,7 +2827,7 @@ void main() {
   });
 
   test('host multiple args', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2863,9 +2863,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -2881,7 +2881,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -2890,9 +2890,9 @@ void main() {
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -2908,7 +2908,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('NSArray<id> *args = message;'));
       expect(
         code,
@@ -2930,7 +2930,7 @@ void main() {
   });
 
   test('host multiple args async', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -2967,9 +2967,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -2985,7 +2985,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -2994,9 +2994,9 @@ void main() {
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -3012,7 +3012,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('NSArray<id> *args = message;'));
       expect(
         code,
@@ -3031,7 +3031,7 @@ void main() {
   });
 
   test('flutter multiple args', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3067,9 +3067,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -3085,7 +3085,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -3094,9 +3094,9 @@ void main() {
       );
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -3112,7 +3112,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains(
@@ -3198,9 +3198,9 @@ void main() {
   test('host custom objc selector', () {
     final Root divideRoot = getDivideRoot(ApiLocation.host);
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -3216,13 +3216,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -3238,7 +3238,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, matches('divideValue:.*by:.*error.*;'));
     }
   });
@@ -3246,9 +3246,9 @@ void main() {
   test('flutter custom objc selector', () {
     final Root divideRoot = getDivideRoot(ApiLocation.flutter);
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -3264,13 +3264,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*;'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -3286,13 +3286,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, matches('divideValue:.*by:.*completion.*{'));
     }
   });
 
   test('test non null field', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[],
       classes: <Class>[
         Class(
@@ -3310,9 +3310,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -3327,13 +3327,13 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains('@interface Foobar'));
     expect(code, contains('@property(nonatomic, copy) NSString * field1'));
   });
 
   test('return nullable flutter header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3353,9 +3353,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -3370,7 +3370,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       matches(
@@ -3380,7 +3380,7 @@ void main() {
   });
 
   test('return nullable flutter source', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3400,9 +3400,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -3417,12 +3417,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, matches(r'doitWithCompletion.*NSNumber \*_Nullable'));
   });
 
   test('return nullable host header', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -3442,9 +3442,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -3459,12 +3459,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, matches(r'nullable NSNumber.*doitWithError'));
   });
 
   test('nullable argument host', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -3490,9 +3490,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -3507,13 +3507,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -3528,7 +3528,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(
         code,
         contains('NSNumber *arg_foo = GetNullableObjectAtIndex(args, 0);'),
@@ -3537,7 +3537,7 @@ void main() {
   });
 
   test('nullable argument flutter', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3563,9 +3563,9 @@ void main() {
       enums: <Enum>[],
     );
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.header,
             languageOptions: const InternalObjcOptions(
@@ -3580,13 +3580,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('doitFoo:(nullable NSNumber *)foo'));
     }
     {
-      final StringBuffer sink = StringBuffer();
-      const ObjcGenerator generator = ObjcGenerator();
-      final OutputFileOptions<InternalObjcOptions> generatorOptions =
+      final sink = StringBuffer();
+      const generator = ObjcGenerator();
+      final generatorOptions =
           OutputFileOptions<InternalObjcOptions>(
             fileType: FileType.source,
             languageOptions: const InternalObjcOptions(
@@ -3601,13 +3601,13 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       expect(code, contains('- (void)doitFoo:(nullable NSNumber *)arg_foo'));
     }
   });
 
   test('background platform channel', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -3628,9 +3628,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -3645,7 +3645,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -3656,7 +3656,7 @@ void main() {
   });
 
   test('transfers documentation comments', () {
-    final List<String> comments = <String>[
+    final comments = <String>[
       ' api comment',
       ' api method comment',
       ' class comment',
@@ -3664,12 +3664,12 @@ void main() {
       ' enum comment',
       ' enum member comment',
     ];
-    int count = 0;
+    var count = 0;
 
-    final List<String> unspacedComments = <String>['////////'];
-    int unspacedCount = 0;
+    final unspacedComments = <String>['////////'];
+    var unspacedCount = 0;
 
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'api',
@@ -3730,9 +3730,9 @@ void main() {
         ),
       ],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -3747,15 +3747,15 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
-    for (final String comment in comments) {
+    final code = sink.toString();
+    for (final comment in comments) {
       expect(code, contains('///$comment'));
     }
     expect(code, contains('/// ///'));
   });
 
   test('creates custom codecs', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3805,9 +3805,9 @@ void main() {
       ],
       enums: <Enum>[],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -3822,12 +3822,12 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, contains(' : FlutterStandardReader'));
   });
 
   test('connection error contains channel name', () {
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3853,9 +3853,9 @@ void main() {
       enums: <Enum>[],
       containsFlutterApi: true,
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -3870,7 +3870,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(
       code,
       contains(
@@ -3881,14 +3881,14 @@ void main() {
   });
 
   test('header of FlutterApi uses correct enum name with prefix', () {
-    final Enum enum1 = Enum(
+    final enum1 = Enum(
       name: 'Enum1',
       members: <EnumMember>[
         EnumMember(name: 'one'),
         EnumMember(name: 'two'),
       ],
     );
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3910,9 +3910,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[enum1],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -3928,20 +3928,20 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, isNot(contains('FLTFLT')));
     expect(code, contains('FLTEnum1Box'));
   });
 
   test('source of FlutterApi uses correct enum name with prefix', () {
-    final Enum enum1 = Enum(
+    final enum1 = Enum(
       name: 'Enum1',
       members: <EnumMember>[
         EnumMember(name: 'one'),
         EnumMember(name: 'two'),
       ],
     );
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstFlutterApi(
           name: 'Api',
@@ -3963,9 +3963,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[enum1],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -3981,25 +3981,25 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, isNot(contains('FLTFLT')));
     expect(code, contains('FLTEnum1Box'));
   });
 
   test('header of HostApi uses correct enum name with prefix', () {
-    final Enum enum1 = Enum(
+    final enum1 = Enum(
       name: 'Enum1',
       members: <EnumMember>[
         EnumMember(name: 'one'),
         EnumMember(name: 'two'),
       ],
     );
-    final TypeDeclaration enumType = TypeDeclaration(
+    final enumType = TypeDeclaration(
       baseName: 'Enum1',
       isNullable: false,
       associatedEnum: enum1,
     );
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -4017,9 +4017,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[enum1],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.header,
           languageOptions: const InternalObjcOptions(
@@ -4035,25 +4035,25 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, isNot(contains('FLTFLT')));
     expect(code, contains('FLTEnum1Box'));
   });
 
   test('source of HostApi uses correct enum name with prefix', () {
-    final Enum enum1 = Enum(
+    final enum1 = Enum(
       name: 'Enum1',
       members: <EnumMember>[
         EnumMember(name: 'one'),
         EnumMember(name: 'two'),
       ],
     );
-    final TypeDeclaration enumType = TypeDeclaration(
+    final enumType = TypeDeclaration(
       baseName: 'Enum1',
       isNullable: false,
       associatedEnum: enum1,
     );
-    final Root root = Root(
+    final root = Root(
       apis: <Api>[
         AstHostApi(
           name: 'Api',
@@ -4071,9 +4071,9 @@ void main() {
       classes: <Class>[],
       enums: <Enum>[enum1],
     );
-    final StringBuffer sink = StringBuffer();
-    const ObjcGenerator generator = ObjcGenerator();
-    final OutputFileOptions<InternalObjcOptions> generatorOptions =
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions =
         OutputFileOptions<InternalObjcOptions>(
           fileType: FileType.source,
           languageOptions: const InternalObjcOptions(
@@ -4089,7 +4089,7 @@ void main() {
       sink,
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
-    final String code = sink.toString();
+    final code = sink.toString();
     expect(code, isNot(contains('FLTFLT')));
     expect(code, contains('FLTEnum1Box'));
   });

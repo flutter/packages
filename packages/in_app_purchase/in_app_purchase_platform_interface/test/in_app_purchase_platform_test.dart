@@ -35,7 +35,7 @@ void main() {
     test(
       'Default implementation of purchaseStream should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -48,7 +48,7 @@ void main() {
     test(
       'Default implementation of isAvailable should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -61,7 +61,7 @@ void main() {
     test(
       'Default implementation of queryProductDetails should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -74,7 +74,7 @@ void main() {
     test(
       'Default implementation of buyNonConsumable should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -89,7 +89,7 @@ void main() {
     test(
       'Default implementation of buyConsumable should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -104,7 +104,7 @@ void main() {
     test(
       'Default implementation of completePurchase should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -117,7 +117,7 @@ void main() {
     test(
       'Default implementation of restorePurchases should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -130,7 +130,7 @@ void main() {
     test(
       'Default implementation of countryCode should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
+        final inAppPurchasePlatform =
             ExtendsInAppPurchasePlatform();
 
         expect(
@@ -170,7 +170,7 @@ void main() {
 
     test('Provider can provide', () {
       ImplementsInAppPurchasePlatformAdditionProvider.register();
-      final ImplementsInAppPurchasePlatformAdditionProvider provider =
+      final provider =
           ImplementsInAppPurchasePlatformAdditionProvider();
       final InAppPurchasePlatformAddition? addition = provider
           .getPlatformAddition();
@@ -178,7 +178,7 @@ void main() {
     });
 
     test('Provider can provide `null`', () {
-      final ImplementsInAppPurchasePlatformAdditionProvider provider =
+      final provider =
           ImplementsInAppPurchasePlatformAdditionProvider();
       final InAppPurchasePlatformAddition? addition = provider
           .getPlatformAddition();

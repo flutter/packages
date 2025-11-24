@@ -105,7 +105,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
 
   void _onElementCreated(Object element) {
     // Create the `ins` element that is going to contain the actual ad.
-    final web.HTMLElement insElement =
+    final insElement =
         (web.document.createElement('ins') as web.HTMLElement)
           ..className = 'adsbygoogle'
           ..style.width = '100%'
@@ -121,7 +121,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     });
 
     // Adding ins inside of the adUnit
-    final web.HTMLDivElement adUnitDiv = element as web.HTMLDivElement
+    final adUnitDiv = element as web.HTMLDivElement
       ..id = 'adUnit${_adUnitCounter++}'
       ..append(insElement);
 
@@ -132,7 +132,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     web.MutationObserver(
       (JSArray<JSObject> entries, web.MutationObserver observer) {
         for (final JSObject entry in entries.toDart) {
-          final web.HTMLElement target =
+          final target =
               (entry as web.MutationRecord).target as web.HTMLElement;
           if (_isLoaded(target)) {
             if (_isFilled(target)) {

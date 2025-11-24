@@ -19,10 +19,10 @@ void main() {
 
   group('WebKitWebViewCookieManager', () {
     test('clearCookies', () {
-      final MockWKWebsiteDataStore mockWKWebsiteDataStore =
+      final mockWKWebsiteDataStore =
           MockWKWebsiteDataStore();
 
-      final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
+      final manager = WebKitWebViewCookieManager(
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
             defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
@@ -46,17 +46,17 @@ void main() {
     });
 
     test('setCookie', () async {
-      final MockWKWebsiteDataStore mockWKWebsiteDataStore =
+      final mockWKWebsiteDataStore =
           MockWKWebsiteDataStore();
 
-      final MockWKHTTPCookieStore mockCookieStore = MockWKHTTPCookieStore();
+      final mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
       Map<HttpCookiePropertyKey, Object?>? cookieProperties;
-      final HTTPCookie cookie = HTTPCookie.pigeon_detached(
+      final cookie = HTTPCookie.pigeon_detached(
         pigeon_instanceManager: TestInstanceManager(),
       );
-      final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
+      final manager = WebKitWebViewCookieManager(
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
             defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
@@ -83,13 +83,13 @@ void main() {
     });
 
     test('setCookie throws argument error with invalid path', () async {
-      final MockWKWebsiteDataStore mockWKWebsiteDataStore =
+      final mockWKWebsiteDataStore =
           MockWKWebsiteDataStore();
 
-      final MockWKHTTPCookieStore mockCookieStore = MockWKHTTPCookieStore();
+      final mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
-      final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
+      final manager = WebKitWebViewCookieManager(
         WebKitWebViewCookieManagerCreationParams(
           webKitProxy: WebKitProxy(
             defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,

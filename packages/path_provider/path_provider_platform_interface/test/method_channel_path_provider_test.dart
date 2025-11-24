@@ -10,18 +10,18 @@ import 'package:platform/platform.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  const String kTemporaryPath = 'temporaryPath';
-  const String kApplicationSupportPath = 'applicationSupportPath';
-  const String kLibraryPath = 'libraryPath';
-  const String kApplicationDocumentsPath = 'applicationDocumentsPath';
-  const String kApplicationCachePath = 'applicationCachePath';
-  const String kExternalCachePaths = 'externalCachePaths';
-  const String kExternalStoragePaths = 'externalStoragePaths';
-  const String kDownloadsPath = 'downloadsPath';
+  const kTemporaryPath = 'temporaryPath';
+  const kApplicationSupportPath = 'applicationSupportPath';
+  const kLibraryPath = 'libraryPath';
+  const kApplicationDocumentsPath = 'applicationDocumentsPath';
+  const kApplicationCachePath = 'applicationCachePath';
+  const kExternalCachePaths = 'externalCachePaths';
+  const kExternalStoragePaths = 'externalStoragePaths';
+  const kDownloadsPath = 'downloadsPath';
 
   group('$MethodChannelPathProvider', () {
     late MethodChannelPathProvider methodChannelPathProvider;
-    final List<MethodCall> log = <MethodCall>[];
+    final log = <MethodCall>[];
 
     setUp(() async {
       methodChannelPathProvider = MethodChannelPathProvider();
@@ -155,7 +155,7 @@ void main() {
       }
     });
 
-    for (final StorageDirectory? type in <StorageDirectory?>[
+    for (final type in <StorageDirectory?>[
       null,
       ...StorageDirectory.values,
     ]) {

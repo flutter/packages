@@ -28,7 +28,7 @@ void main() {
     await testDir.delete(recursive: true);
   });
 
-  final Map<ResolutionPreset, Size> presetExpectedSizes =
+  final presetExpectedSizes =
       <ResolutionPreset, Size>{
         ResolutionPreset.low: const Size(240, 320),
         ResolutionPreset.medium: const Size(480, 720),
@@ -63,8 +63,8 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
 
     // Load video metadata
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -86,11 +86,11 @@ void main() {
       if (cameras.isEmpty) {
         return;
       }
-      for (final CameraDescription cameraDescription in cameras) {
-        bool previousPresetExactlySupported = true;
+      for (final cameraDescription in cameras) {
+        var previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller = CameraController(
+          final controller = CameraController(
             cameraDescription,
             mediaSettings: MediaSettings(resolutionPreset: preset.key),
           );
@@ -120,13 +120,13 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(cameras[0]);
+    final controller = CameraController(cameras[0]);
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
 
     int startPause;
-    int timePaused = 0;
+    var timePaused = 0;
 
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
@@ -152,8 +152,8 @@ void main() {
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -170,7 +170,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(cameras[0]);
+    final controller = CameraController(cameras[0]);
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
@@ -179,7 +179,7 @@ void main() {
 
     // SDK < 26 will throw a platform error when trying to switch and keep the same camera
     // we accept either outcome here, while the native unit tests check the outcome based on the current Android SDK
-    bool failed = false;
+    var failed = false;
     try {
       await controller.setDescription(cameras[1]);
     } catch (err) {
@@ -207,7 +207,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(cameras[0]);
+    final controller = CameraController(cameras[0]);
 
     await controller.initialize();
     await controller.setDescription(cameras[1]);
@@ -222,10 +222,10 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(cameras[0]);
+    final controller = CameraController(cameras[0]);
 
     await controller.initialize();
-    bool isDetecting = false;
+    var isDetecting = false;
 
     await controller.startImageStream((CameraImageData image) {
       if (isDetecting) {
@@ -252,10 +252,10 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(cameras[0]);
+    final controller = CameraController(cameras[0]);
 
     await controller.initialize();
-    bool isDetecting = false;
+    var isDetecting = false;
 
     await controller.startVideoRecording(
       streamCallback: (CameraImageData image) {
@@ -315,10 +315,10 @@ void main() {
     testWidgets('Control FPS', (WidgetTester tester) async {
       final CameraDescription cameraDescription = await getCamera();
 
-      final List<int> lengths = <int>[];
+      final lengths = <int>[];
 
-      for (final int fps in <int>[10, 30]) {
-        final CameraController controller = CameraController(
+      for (final fps in <int>[10, 30]) {
+        final controller = CameraController(
           cameraDescription,
           mediaSettings: MediaSettings(
             resolutionPreset: ResolutionPreset.medium,
@@ -333,14 +333,14 @@ void main() {
         final XFile file = await controller.stopVideoRecording();
 
         // Load video size
-        final File videoFile = File(file.path);
+        final videoFile = File(file.path);
 
         lengths.add(await videoFile.length());
 
         await controller.dispose();
       }
 
-      for (int n = 0; n < lengths.length - 1; n++) {
+      for (var n = 0; n < lengths.length - 1; n++) {
         expect(lengths[n], greaterThan(0));
       }
     });
@@ -348,10 +348,10 @@ void main() {
     testWidgets('Control video bitrate', (WidgetTester tester) async {
       final CameraDescription cameraDescription = await getCamera();
 
-      const int kiloBits = 1000;
-      final List<int> lengths = <int>[];
-      for (final int videoBitrate in <int>[200 * kiloBits, 2000 * kiloBits]) {
-        final CameraController controller = CameraController(
+      const kiloBits = 1000;
+      final lengths = <int>[];
+      for (final videoBitrate in <int>[200 * kiloBits, 2000 * kiloBits]) {
+        final controller = CameraController(
           cameraDescription,
           mediaSettings: MediaSettings(
             resolutionPreset: ResolutionPreset.medium,
@@ -366,27 +366,27 @@ void main() {
         final XFile file = await controller.stopVideoRecording();
 
         // Load video size
-        final File videoFile = File(file.path);
+        final videoFile = File(file.path);
 
         lengths.add(await videoFile.length());
 
         await controller.dispose();
       }
 
-      for (int n = 0; n < lengths.length - 1; n++) {
+      for (var n = 0; n < lengths.length - 1; n++) {
         expect(lengths[n], greaterThan(0));
       }
     });
 
     testWidgets('Control audio bitrate', (WidgetTester tester) async {
-      final List<int> lengths = <int>[];
+      final lengths = <int>[];
 
       final CameraDescription cameraDescription = await getCamera();
 
-      const int kiloBits = 1000;
+      const kiloBits = 1000;
 
-      for (final int audioBitrate in <int>[32 * kiloBits, 256 * kiloBits]) {
-        final CameraController controller = CameraController(
+      for (final audioBitrate in <int>[32 * kiloBits, 256 * kiloBits]) {
+        final controller = CameraController(
           cameraDescription,
           mediaSettings: MediaSettings(
             //region Use lowest video settings for minimize video impact on bitrate
@@ -406,7 +406,7 @@ void main() {
         final XFile file = await controller.stopVideoRecording();
 
         // Load video metadata
-        final File videoFile = File(file.path);
+        final videoFile = File(file.path);
 
         final int length = await videoFile.length();
 
@@ -415,7 +415,7 @@ void main() {
         await controller.dispose();
       }
 
-      for (int n = 0; n < lengths.length - 1; n++) {
+      for (var n = 0; n < lengths.length - 1; n++) {
         expect(lengths[n], greaterThan(0));
       }
     });

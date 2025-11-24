@@ -125,7 +125,7 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final int? value = readValue(buffer) as int?;
+        final value = readValue(buffer) as int?;
         return value == null ? null : EnumState.values[value];
       case 130:
         return DataWithEnum.decode(readValue(buffer)!);
@@ -155,9 +155,9 @@ class EnumApi2Host {
 
   /// This comment is to test method documentation comments.
   Future<DataWithEnum> echo(DataWithEnum data) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Host.echo$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -166,7 +166,7 @@ class EnumApi2Host {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[data],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -203,8 +203,7 @@ abstract class EnumApi2Flutter {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -218,7 +217,7 @@ abstract class EnumApi2Flutter {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final DataWithEnum? arg_data = (args[0] as DataWithEnum?);
+          final arg_data = (args[0] as DataWithEnum?);
           assert(
             arg_data != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.EnumApi2Flutter.echo was null, expected non-null DataWithEnum.',

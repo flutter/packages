@@ -89,7 +89,7 @@ class WebWebViewController extends PlatformWebViewController {
 
   /// Performs an AJAX request defined by [params].
   Future<void> _updateIFrameFromXhr(LoadRequestParams params) async {
-    final web.Response response =
+    final response =
         await _webWebViewParams.httpRequestFactory.request(
               params.uri.toString(),
               method: params.method.serialize(),
@@ -99,7 +99,7 @@ class WebWebViewController extends PlatformWebViewController {
             as web.Response;
 
     final String header = response.headers.get('content-type') ?? 'text/html';
-    final ContentType contentType = ContentType.parse(header);
+    final contentType = ContentType.parse(header);
     final Encoding encoding = Encoding.getByName(contentType.charset) ?? utf8;
 
     _webWebViewParams.iFrame.src = Uri.dataFromString(
@@ -115,7 +115,7 @@ class WebWebViewWidget extends PlatformWebViewWidget {
   /// Constructs a [WebWebViewWidget].
   WebWebViewWidget(PlatformWebViewWidgetCreationParams params)
     : super.implementation(params) {
-    final WebWebViewController controller =
+    final controller =
         params.controller as WebWebViewController;
     ui_web.platformViewRegistry.registerViewFactory(
       controller._webWebViewParams.iFrame.id,

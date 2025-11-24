@@ -63,7 +63,7 @@ Future<void> _prepareTemplate({
   required Directory testTempDir,
 }) async {
   // The src test_fixes directory.
-  final Directory testFixesSrcDir = Directory(
+  final testFixesSrcDir = Directory(
     p.join(packageRoot.path, 'test_fixes'),
   );
 
@@ -71,9 +71,9 @@ Future<void> _prepareTemplate({
   await io.copyPath(testFixesSrcDir.path, testTempDir.path);
 
   // The pubspec.yaml file to create.
-  final File targetPubspecFile = File(p.join(testTempDir.path, 'pubspec.yaml'));
+  final targetPubspecFile = File(p.join(testTempDir.path, 'pubspec.yaml'));
 
-  final String targetYaml =
+  final targetYaml =
       '''
 name: test_fixes
 publish_to: "none"

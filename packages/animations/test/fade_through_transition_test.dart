@@ -10,10 +10,10 @@ void main() {
   testWidgets(
     'FadeThroughPageTransitionsBuilder builds a FadeThroughTransition',
     (WidgetTester tester) async {
-      final AnimationController animation = AnimationController(
+      final animation = AnimationController(
         vsync: const TestVSync(),
       );
-      final AnimationController secondaryAnimation = AnimationController(
+      final secondaryAnimation = AnimationController(
         vsync: const TestVSync(),
       );
 
@@ -34,9 +34,9 @@ void main() {
   testWidgets('FadeThroughTransition runs forward', (
     WidgetTester tester,
   ) async {
-    final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-    const String bottomRoute = '/';
-    const String topRoute = '/a';
+    final navigator = GlobalKey<NavigatorState>();
+    const bottomRoute = '/';
+    const topRoute = '/a';
 
     await tester.pumpWidget(_TestWidget(navigatorKey: navigator));
     expect(find.text(bottomRoute), findsOneWidget);
@@ -116,9 +116,9 @@ void main() {
   testWidgets('FadeThroughTransition runs backwards', (
     WidgetTester tester,
   ) async {
-    final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-    const String bottomRoute = '/';
-    const String topRoute = '/a';
+    final navigator = GlobalKey<NavigatorState>();
+    const bottomRoute = '/';
+    const topRoute = '/a';
 
     await tester.pumpWidget(_TestWidget(navigatorKey: navigator));
     navigator.currentState!.pushNamed('/a');
@@ -206,9 +206,9 @@ void main() {
   testWidgets('FadeThroughTransition does not jump when interrupted', (
     WidgetTester tester,
   ) async {
-    final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-    const String bottomRoute = '/';
-    const String topRoute = '/a';
+    final navigator = GlobalKey<NavigatorState>();
+    const bottomRoute = '/';
+    const topRoute = '/a';
 
     await tester.pumpWidget(_TestWidget(navigatorKey: navigator));
     expect(find.text(bottomRoute), findsOneWidget);
@@ -271,9 +271,9 @@ void main() {
   testWidgets('State is not lost when transitioning', (
     WidgetTester tester,
   ) async {
-    final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-    const String bottomRoute = '/';
-    const String topRoute = '/a';
+    final navigator = GlobalKey<NavigatorState>();
+    const bottomRoute = '/';
+    const topRoute = '/a';
 
     await tester.pumpWidget(
       _TestWidget(
@@ -358,11 +358,11 @@ void main() {
   });
 
   testWidgets('should keep state', (WidgetTester tester) async {
-    final AnimationController animation = AnimationController(
+    final animation = AnimationController(
       vsync: const TestVSync(),
       duration: const Duration(milliseconds: 300),
     );
-    final AnimationController secondaryAnimation = AnimationController(
+    final secondaryAnimation = AnimationController(
       vsync: const TestVSync(),
       duration: const Duration(milliseconds: 300),
     );
@@ -431,7 +431,7 @@ double _getOpacity(String key, WidgetTester tester) {
     matching: find.byType(FadeTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final FadeTransition transition = widget as FadeTransition;
+    final transition = widget as FadeTransition;
     return a * transition.opacity.value;
   });
 }
@@ -442,7 +442,7 @@ double _getScale(String key, WidgetTester tester) {
     matching: find.byType(ScaleTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final ScaleTransition transition = widget as ScaleTransition;
+    final transition = widget as ScaleTransition;
     return a * transition.scale.value;
   });
 }

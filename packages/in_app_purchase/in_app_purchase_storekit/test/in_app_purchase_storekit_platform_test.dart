@@ -18,7 +18,7 @@ import 'store_kit_wrappers/sk_test_stub_objects.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+  final fakeStoreKitPlatform = FakeStoreKitPlatform();
   late InAppPurchaseStoreKitPlatform iapStoreKitPlatform;
 
   setUpAll(() {
@@ -43,7 +43,7 @@ void main() {
 
   group('query product list', () {
     test('should get product list and correct invalid identifiers', () async {
-      final InAppPurchaseStoreKitPlatform connection =
+      final connection =
           InAppPurchaseStoreKitPlatform();
       final ProductDetailsResponse response = await connection
           .queryProductDetails(<String>{'123', '456', '789', '999'});
@@ -66,7 +66,7 @@ void main() {
           message: 'error_message',
           details: <Object, Object>{'info': 'error_info'},
         );
-        final InAppPurchaseStoreKitPlatform connection =
+        final connection =
             InAppPurchaseStoreKitPlatform();
         final ProductDetailsResponse response = await connection
             .queryProductDetails(<String>{'123', '456', '789'});
@@ -91,7 +91,7 @@ void main() {
         1,
         fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
       );
-      final Completer<List<PurchaseDetails>> completer =
+      final completer =
           Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
@@ -108,7 +108,7 @@ void main() {
       final List<PurchaseDetails> details = await completer.future;
 
       expect(details.length, 2);
-      for (int i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
+      for (var i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
         final SKPaymentTransactionWrapper expected =
             fakeStoreKitPlatform.transactionList[i];
         final PurchaseDetails actual = details[i];
@@ -132,7 +132,7 @@ void main() {
       'should emit empty transaction list on purchase stream when there is nothing to restore',
       () async {
         fakeStoreKitPlatform.testRestoredTransactionsNull = true;
-        final Completer<List<PurchaseDetails>?> completer =
+        final completer =
             Completer<List<PurchaseDetails>?>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -164,7 +164,7 @@ void main() {
         2,
         fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
       );
-      final Completer<List<PurchaseDetails>> completer =
+      final completer =
           Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
@@ -179,7 +179,7 @@ void main() {
       await iapStoreKitPlatform.restorePurchases();
       final List<PurchaseDetails> details = await completer.future;
       expect(details.length, 3);
-      for (int i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
+      for (var i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
         final SKPaymentTransactionWrapper expected =
             fakeStoreKitPlatform.transactionList[i];
         final PurchaseDetails actual = details[i];
@@ -212,11 +212,11 @@ void main() {
           0,
           fakeStoreKitPlatform.createPurchasedTransaction('foo', 'bar'),
         );
-        final Completer<List<List<PurchaseDetails>>> completer =
+        final completer =
             Completer<List<List<PurchaseDetails>>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
-        final List<List<PurchaseDetails>> purchaseDetails =
+        final purchaseDetails =
             <List<PurchaseDetails>>[];
 
         late StreamSubscription<List<PurchaseDetails>> subscription;
@@ -234,7 +234,7 @@ void main() {
         final List<List<PurchaseDetails>> details = await completer.future;
         expect(details.length, 2);
         expect(details[0], <List<PurchaseDetails>>[]);
-        for (int i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
+        for (var i = 0; i < fakeStoreKitPlatform.transactionList.length; i++) {
           final SKPaymentTransactionWrapper expected =
               fakeStoreKitPlatform.transactionList[i];
           final PurchaseDetails actual = details[1][i];
@@ -273,7 +273,7 @@ void main() {
           fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
         );
         fakeStoreKitPlatform.receiptData = null;
-        final Completer<List<PurchaseDetails>> completer =
+        final completer =
             Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -291,7 +291,7 @@ void main() {
         await iapStoreKitPlatform.restorePurchases();
         final List<PurchaseDetails> details = await completer.future;
 
-        for (final PurchaseDetails purchase in details) {
+        for (final purchase in details) {
           expect(purchase.verificationData.localVerificationData, isEmpty);
           expect(purchase.verificationData.serverVerificationData, isEmpty);
         }
@@ -325,8 +325,8 @@ void main() {
     test(
       'buying non consumable, should get purchase objects in the purchase update callback',
       () async {
-        final List<PurchaseDetails> details = <PurchaseDetails>[];
-        final Completer<List<PurchaseDetails>> completer =
+        final details = <PurchaseDetails>[];
+        final completer =
             Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -341,7 +341,7 @@ void main() {
             subscription.cancel();
           }
         });
-        final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+        final purchaseParam = AppStorePurchaseParam(
           productDetails: AppStoreProductDetails.fromSKProduct(
             dummyProductWrapper,
           ),
@@ -360,8 +360,8 @@ void main() {
     test(
       'buying consumable, should get purchase objects in the purchase update callback',
       () async {
-        final List<PurchaseDetails> details = <PurchaseDetails>[];
-        final Completer<List<PurchaseDetails>> completer =
+        final details = <PurchaseDetails>[];
+        final completer =
             Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -376,7 +376,7 @@ void main() {
             subscription.cancel();
           }
         });
-        final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+        final purchaseParam = AppStorePurchaseParam(
           productDetails: AppStoreProductDetails.fromSKProduct(
             dummyProductWrapper,
           ),
@@ -391,7 +391,7 @@ void main() {
     );
 
     test('buying consumable, should throw when autoConsume is false', () async {
-      final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+      final purchaseParam = AppStorePurchaseParam(
         productDetails: AppStoreProductDetails.fromSKProduct(
           dummyProductWrapper,
         ),
@@ -408,8 +408,8 @@ void main() {
 
     test('should get failed purchase status', () async {
       fakeStoreKitPlatform.testTransactionFail = true;
-      final List<PurchaseDetails> details = <PurchaseDetails>[];
-      final Completer<IAPError> completer = Completer<IAPError>();
+      final details = <PurchaseDetails>[];
+      final completer = Completer<IAPError>();
       late IAPError error;
 
       final Stream<List<PurchaseDetails>> stream =
@@ -417,7 +417,7 @@ void main() {
       late StreamSubscription<List<PurchaseDetails>> subscription;
       subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
         details.addAll(purchaseDetailsList);
-        for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+        for (final purchaseDetails in purchaseDetailsList) {
           if (purchaseDetails.status == PurchaseStatus.error) {
             error = purchaseDetails.error!;
             completer.complete(error);
@@ -425,7 +425,7 @@ void main() {
           }
         }
       });
-      final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+      final purchaseParam = AppStorePurchaseParam(
         productDetails: AppStoreProductDetails.fromSKProduct(
           dummyProductWrapper,
         ),
@@ -446,8 +446,8 @@ void main() {
       'should get canceled purchase status when error code is SKErrorPaymentCancelled',
       () async {
         fakeStoreKitPlatform.testTransactionCancel = 2;
-        final List<PurchaseDetails> details = <PurchaseDetails>[];
-        final Completer<PurchaseStatus> completer = Completer<PurchaseStatus>();
+        final details = <PurchaseDetails>[];
+        final completer = Completer<PurchaseStatus>();
 
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -456,14 +456,14 @@ void main() {
           List<PurchaseDetails> purchaseDetailsList,
         ) {
           details.addAll(purchaseDetailsList);
-          for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+          for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.status == PurchaseStatus.canceled) {
               completer.complete(purchaseDetails.status);
               subscription.cancel();
             }
           }
         });
-        final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+        final purchaseParam = AppStorePurchaseParam(
           productDetails: AppStoreProductDetails.fromSKProduct(
             dummyProductWrapper,
           ),
@@ -482,8 +482,8 @@ void main() {
       'should get canceled purchase status when error code is SKErrorOverlayCancelled',
       () async {
         fakeStoreKitPlatform.testTransactionCancel = 15;
-        final List<PurchaseDetails> details = <PurchaseDetails>[];
-        final Completer<PurchaseStatus> completer = Completer<PurchaseStatus>();
+        final details = <PurchaseDetails>[];
+        final completer = Completer<PurchaseStatus>();
 
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -492,14 +492,14 @@ void main() {
           List<PurchaseDetails> purchaseDetailsList,
         ) {
           details.addAll(purchaseDetailsList);
-          for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+          for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.status == PurchaseStatus.canceled) {
               completer.complete(purchaseDetails.status);
               subscription.cancel();
             }
           }
         });
-        final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+        final purchaseParam = AppStorePurchaseParam(
           productDetails: AppStoreProductDetails.fromSKProduct(
             dummyProductWrapper,
           ),
@@ -517,8 +517,8 @@ void main() {
     test(
       'buying non consumable, should be able to purchase multiple quantity of one product',
       () async {
-        final List<PurchaseDetails> details = <PurchaseDetails>[];
-        final Completer<List<PurchaseDetails>> completer =
+        final details = <PurchaseDetails>[];
+        final completer =
             Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -527,7 +527,7 @@ void main() {
           List<PurchaseDetails> purchaseDetailsList,
         ) {
           details.addAll(purchaseDetailsList);
-          for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+          for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.pendingCompletePurchase) {
               iapStoreKitPlatform.completePurchase(purchaseDetails);
               completer.complete(details);
@@ -535,9 +535,9 @@ void main() {
             }
           }
         });
-        final AppStoreProductDetails productDetails =
+        final productDetails =
             AppStoreProductDetails.fromSKProduct(dummyProductWrapper);
-        final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+        final purchaseParam = AppStorePurchaseParam(
           productDetails: productDetails,
           quantity: 5,
           applicationUserName: 'appName',
@@ -556,8 +556,8 @@ void main() {
     test(
       'buying consumable, should be able to purchase multiple quantity of one product',
       () async {
-        final List<PurchaseDetails> details = <PurchaseDetails>[];
-        final Completer<List<PurchaseDetails>> completer =
+        final details = <PurchaseDetails>[];
+        final completer =
             Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -566,7 +566,7 @@ void main() {
           List<PurchaseDetails> purchaseDetailsList,
         ) {
           details.addAll(purchaseDetailsList);
-          for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+          for (final purchaseDetails in purchaseDetailsList) {
             if (purchaseDetails.pendingCompletePurchase) {
               iapStoreKitPlatform.completePurchase(purchaseDetails);
               completer.complete(details);
@@ -574,9 +574,9 @@ void main() {
             }
           }
         });
-        final AppStoreProductDetails productDetails =
+        final productDetails =
             AppStoreProductDetails.fromSKProduct(dummyProductWrapper);
-        final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+        final purchaseParam = AppStorePurchaseParam(
           productDetails: productDetails,
           quantity: 5,
           applicationUserName: 'appName',
@@ -593,8 +593,8 @@ void main() {
     test(
       'buying non consumable with discount, should get purchase objects in the purchase update callback',
       () async {
-        final List<PurchaseDetails> details = <PurchaseDetails>[];
-        final Completer<List<PurchaseDetails>> completer =
+        final details = <PurchaseDetails>[];
+        final completer =
             Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
@@ -609,7 +609,7 @@ void main() {
             subscription.cancel();
           }
         });
-        final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+        final purchaseParam = AppStorePurchaseParam(
           productDetails: AppStoreProductDetails.fromSKProduct(
             dummyProductWrapper,
           ),
@@ -633,15 +633,15 @@ void main() {
 
   group('complete purchase', () {
     test('should complete purchase', () async {
-      final List<PurchaseDetails> details = <PurchaseDetails>[];
-      final Completer<List<PurchaseDetails>> completer =
+      final details = <PurchaseDetails>[];
+      final completer =
           Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;
       subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
         details.addAll(purchaseDetailsList);
-        for (final PurchaseDetails purchaseDetails in purchaseDetailsList) {
+        for (final purchaseDetails in purchaseDetailsList) {
           if (purchaseDetails.pendingCompletePurchase) {
             iapStoreKitPlatform.completePurchase(purchaseDetails);
             completer.complete(details);
@@ -649,7 +649,7 @@ void main() {
           }
         }
       });
-      final AppStorePurchaseParam purchaseParam = AppStorePurchaseParam(
+      final purchaseParam = AppStorePurchaseParam(
         productDetails: AppStoreProductDetails.fromSKProduct(
           dummyProductWrapper,
         ),
@@ -683,7 +683,7 @@ void main() {
 
   group('billing configuration', () {
     test('country_code', () async {
-      const String expectedCountryCode = 'CA';
+      const expectedCountryCode = 'CA';
       fakeStoreKitPlatform.setStoreFrontInfo(
         countryCode: expectedCountryCode,
         identifier: 'ABC',

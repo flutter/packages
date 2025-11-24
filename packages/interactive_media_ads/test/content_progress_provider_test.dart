@@ -13,7 +13,7 @@ void main() {
     late final Duration callbackProgress;
     late final Duration callbackDuration;
 
-    final TestContentProgressProvider platformProvider =
+    final platformProvider =
         TestContentProgressProvider(
           const PlatformContentProgressProviderCreationParams(),
           onSetProgress:
@@ -23,7 +23,7 @@ void main() {
               },
         );
 
-    final ContentProgressProvider provider =
+    final provider =
         ContentProgressProvider.fromPlatform(platformProvider);
 
     await provider.setProgress(

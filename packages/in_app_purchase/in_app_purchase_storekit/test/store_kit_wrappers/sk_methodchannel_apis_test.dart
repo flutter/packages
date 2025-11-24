@@ -12,7 +12,7 @@ import 'sk_test_stub_objects.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+  final fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
     setInAppPurchaseHostApis(api: fakeStoreKitPlatform);
@@ -98,7 +98,7 @@ void main() {
     });
 
     test('storefront returns valid SKStoreFrontWrapper object', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
+      final queue = SKPaymentQueueWrapper();
       expect(
         await queue.storefront(),
         SKStorefrontWrapper.fromJson(const <String, dynamic>{
@@ -123,8 +123,8 @@ void main() {
     );
 
     test('should add payment to the payment queue', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      final TestPaymentTransactionObserver observer =
+      final queue = SKPaymentQueueWrapper();
+      final observer =
           TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.addPayment(dummyPayment);
@@ -132,8 +132,8 @@ void main() {
     });
 
     test('should finish transaction', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      final TestPaymentTransactionObserver observer =
+      final queue = SKPaymentQueueWrapper();
+      final observer =
           TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.finishTransaction(dummyTransaction);
@@ -144,8 +144,8 @@ void main() {
     });
 
     test('should restore transaction', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      final TestPaymentTransactionObserver observer =
+      final queue = SKPaymentQueueWrapper();
+      final observer =
           TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.restoreTransactions(applicationUserName: 'aUserID');

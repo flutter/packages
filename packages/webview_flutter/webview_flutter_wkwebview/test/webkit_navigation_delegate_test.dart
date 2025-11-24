@@ -39,7 +39,7 @@ void main() {
     });
 
     test('setOnPageFinished', () async {
-      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+      final webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
@@ -77,7 +77,7 @@ void main() {
     });
 
     test('setOnPageStarted', () async {
-      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+      final webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
@@ -117,7 +117,7 @@ void main() {
     });
 
     test('setOnHttpError from decidePolicyForNavigationResponse', () async {
-      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+      final webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
@@ -167,7 +167,7 @@ void main() {
     });
 
     test('setOnHttpError is not called for error codes < 400', () async {
-      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+      final webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
@@ -217,7 +217,7 @@ void main() {
     });
 
     test('onWebResourceError from didFailNavigation', () async {
-      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+      final webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
@@ -272,7 +272,7 @@ void main() {
     });
 
     test('onWebResourceError from didFailProvisionalNavigation', () async {
-      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+      final webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
@@ -331,7 +331,7 @@ void main() {
     test(
       'onWebResourceError from webViewWebContentProcessDidTerminate',
       () async {
-        final WebKitNavigationDelegate webKitDelegate =
+        final webKitDelegate =
             WebKitNavigationDelegate(
               const WebKitNavigationDelegateCreationParams(
                 webKitProxy: WebKitProxy(
@@ -386,7 +386,7 @@ void main() {
     );
 
     test('onNavigationRequest from decidePolicyForNavigationAction', () async {
-      final WebKitNavigationDelegate webKitDelegate = WebKitNavigationDelegate(
+      final webKitDelegate = WebKitNavigationDelegate(
         const WebKitNavigationDelegateCreationParams(
           webKitProxy: WebKitProxy(
             newWKNavigationDelegate: CapturingNavigationDelegate.new,
@@ -404,7 +404,7 @@ void main() {
 
       await webKitDelegate.setOnNavigationRequest(onNavigationRequest);
 
-      final MockURLRequest mockRequest = MockURLRequest();
+      final mockRequest = MockURLRequest();
       when(
         mockRequest.getUrl(),
       ).thenAnswer((_) => Future<String>.value('https://www.google.com'));
@@ -451,7 +451,7 @@ void main() {
     });
 
     test('onHttpBasicAuthRequest emits host and realm', () async {
-      final WebKitNavigationDelegate iosNavigationDelegate =
+      final iosNavigationDelegate =
           WebKitNavigationDelegate(
             WebKitNavigationDelegateCreationParams(
               webKitProxy: WebKitProxy(
@@ -482,10 +482,10 @@ void main() {
         request.onCancel();
       });
 
-      const String expectedHost = 'expectedHost';
-      const String expectedRealm = 'expectedRealm';
+      const expectedHost = 'expectedHost';
+      const expectedRealm = 'expectedRealm';
 
-      final MockURLAuthenticationChallenge mockChallenge =
+      final mockChallenge =
           MockURLAuthenticationChallenge();
       when(mockChallenge.getProtectionSpace()).thenAnswer((_) {
         return Future<URLProtectionSpace>.value(
@@ -528,12 +528,12 @@ void main() {
     });
 
     test('onHttpNtlmAuthRequest emits host and realm', () async {
-      const String expectedUser = 'user';
-      const String expectedPassword = 'password';
+      const expectedUser = 'user';
+      const expectedPassword = 'password';
       const UrlCredentialPersistence expectedPersistence =
           UrlCredentialPersistence.forSession;
 
-      final WebKitNavigationDelegate iosNavigationDelegate =
+      final iosNavigationDelegate =
           WebKitNavigationDelegate(
             WebKitNavigationDelegateCreationParams(
               webKitProxy: WebKitProxy(
@@ -582,10 +582,10 @@ void main() {
         );
       });
 
-      const String expectedHost = 'expectedHost';
-      const String expectedRealm = 'expectedRealm';
+      const expectedHost = 'expectedHost';
+      const expectedRealm = 'expectedRealm';
 
-      final MockURLAuthenticationChallenge mockChallenge =
+      final mockChallenge =
           MockURLAuthenticationChallenge();
       when(mockChallenge.getProtectionSpace()).thenAnswer(
         expectAsync1((_) {
@@ -636,15 +636,15 @@ void main() {
     });
 
     test('setOnSSlAuthError', () async {
-      const String exceptionCode = 'code';
-      const String exceptionMessage = 'message';
-      final Uint8List copiedExceptions = Uint8List(0);
-      final SecCertificate leafCertificate = SecCertificate.pigeon_detached(
+      const exceptionCode = 'code';
+      const exceptionMessage = 'message';
+      final copiedExceptions = Uint8List(0);
+      final leafCertificate = SecCertificate.pigeon_detached(
         pigeon_instanceManager: TestInstanceManager(),
       );
-      final Uint8List certificateData = Uint8List(0);
+      final certificateData = Uint8List(0);
 
-      final WebKitNavigationDelegate iosNavigationDelegate =
+      final iosNavigationDelegate =
           WebKitNavigationDelegate(
             WebKitNavigationDelegateCreationParams(
               webKitProxy: WebKitProxy(
@@ -694,7 +694,7 @@ void main() {
             ),
           );
 
-      Completer<PlatformSslAuthError> errorCompleter =
+      var errorCompleter =
           Completer<PlatformSslAuthError>();
       await iosNavigationDelegate.setOnSSlAuthError((
         PlatformSslAuthError error,
@@ -702,16 +702,16 @@ void main() {
         errorCompleter.complete(error);
       });
 
-      const int port = 65;
-      const String host = 'host';
+      const port = 65;
+      const host = 'host';
 
-      final MockURLAuthenticationChallenge mockChallenge =
+      final mockChallenge =
           MockURLAuthenticationChallenge();
-      final SecTrust testTrust = SecTrust.pigeon_detached(
+      final testTrust = SecTrust.pigeon_detached(
         pigeon_instanceManager: TestInstanceManager(),
       );
       when(mockChallenge.getProtectionSpace()).thenAnswer((_) async {
-        final MockURLProtectionSpace mockProtectionSpace =
+        final mockProtectionSpace =
             MockURLProtectionSpace();
         when(mockProtectionSpace.port).thenReturn(port);
         when(mockProtectionSpace.host).thenReturn(host);
@@ -724,7 +724,7 @@ void main() {
         return mockProtectionSpace;
       });
 
-      final WKNavigationDelegate testDelegate =
+      final testDelegate =
           WKNavigationDelegate.pigeon_detached(
             pigeon_instanceManager: TestInstanceManager(),
             decidePolicyForNavigationAction: (_, __, ___) async {
@@ -741,7 +741,7 @@ void main() {
               );
             },
           );
-      final WKWebView testWebView = WKWebView.pigeon_detached(
+      final testWebView = WKWebView.pigeon_detached(
         pigeon_instanceManager: TestInstanceManager(),
       );
 
@@ -753,7 +753,7 @@ void main() {
                 mockChallenge,
               );
 
-      WebKitSslAuthError error =
+      var error =
           await errorCompleter.future as WebKitSslAuthError;
       expect(error.certificate?.data, certificateData);
       expect(error.description, '$exceptionCode: $exceptionMessage');
@@ -810,10 +810,10 @@ void main() {
           ),
         );
 
-        final MockURLAuthenticationChallenge mockChallenge =
+        final mockChallenge =
             MockURLAuthenticationChallenge();
         when(mockChallenge.getProtectionSpace()).thenAnswer((_) async {
-          final MockURLProtectionSpace mockProtectionSpace =
+          final mockProtectionSpace =
               MockURLProtectionSpace();
           when(
             mockProtectionSpace.authenticationMethod,
@@ -821,7 +821,7 @@ void main() {
           return mockProtectionSpace;
         });
 
-        final WKNavigationDelegate testDelegate =
+        final testDelegate =
             WKNavigationDelegate.pigeon_detached(
               pigeon_instanceManager: TestInstanceManager(),
               decidePolicyForNavigationAction: (_, __, ___) async {
@@ -838,7 +838,7 @@ void main() {
                 );
               },
             );
-        final WKWebView testWebView = WKWebView.pigeon_detached(
+        final testWebView = WKWebView.pigeon_detached(
           pigeon_instanceManager: TestInstanceManager(),
         );
 

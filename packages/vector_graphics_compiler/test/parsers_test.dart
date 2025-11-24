@@ -11,7 +11,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('Colors', () {
-    final SvgParser parser = SvgParser(
+    final parser = SvgParser(
       '',
       const SvgTheme(),
       'test_key',
@@ -35,8 +35,8 @@ void main() {
   });
 
   test('Colors - mapped', () async {
-    final TestColorMapper mapper = TestColorMapper();
-    final SvgParser parser =
+    final mapper = TestColorMapper();
+    final parser =
         SvgParser(
             '<svg viewBox="0 0 10 10"><rect id="rect1" x="1" y="1" width="5" height="5" fill="red" /></svg>',
             const SvgTheme(),
@@ -157,7 +157,7 @@ void main() {
   });
 
   test('Parses pattern units to double correctly', () {
-    final ViewportNode viewportNode = ViewportNode(
+    final viewportNode = ViewportNode(
       SvgAttributes.empty,
       width: 100,
       height: 1000,

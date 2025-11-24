@@ -223,7 +223,7 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final int? value = readValue(buffer) as int?;
+        final value = readValue(buffer) as int?;
         return value == null ? null : MessageRequestState.values[value];
       case 130:
         return MessageSearchRequest.decode(readValue(buffer)!);
@@ -261,16 +261,16 @@ class MessageApi {
   ///
   /// This comment also tests multiple line comments.
   Future<void> initialize() async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -287,9 +287,9 @@ class MessageApi {
 
   /// This comment is to test method documentation comments.
   Future<MessageSearchReply> search(MessageSearchRequest request) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -298,7 +298,7 @@ class MessageApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[request],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -341,9 +341,9 @@ class MessageNestedApi {
   ///
   /// This comment also tests multiple line comments.
   Future<MessageSearchReply> search(MessageNested nested) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -352,7 +352,7 @@ class MessageNestedApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[nested],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -389,8 +389,7 @@ abstract class MessageFlutterSearchApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -404,7 +403,7 @@ abstract class MessageFlutterSearchApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageFlutterSearchApi.search was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final MessageSearchRequest? arg_request =
+          final arg_request =
               (args[0] as MessageSearchRequest?);
           assert(
             arg_request != null,

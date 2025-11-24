@@ -513,7 +513,7 @@ abstract class ShellRouteBase extends RouteBase {
     List<RouteBase> subRoutes,
     GlobalKey<NavigatorState> navigatorKey,
   ) {
-    for (final RouteBase route in subRoutes) {
+    for (final route in subRoutes) {
       assert(
         route.parentNavigatorKey == null ||
             route.parentNavigatorKey == navigatorKey,
@@ -591,7 +591,7 @@ class ShellRouteContext {
     bool notifyRootObserver,
     String? restorationScopeId,
   ) {
-    final List<NavigatorObserver> effectiveObservers = <NavigatorObserver>[
+    final effectiveObservers = <NavigatorObserver>[
       ...?observers,
     ];
 
@@ -1076,7 +1076,7 @@ class StatefulShellRoute extends ShellRouteBase {
   static bool _debugValidateParentNavigatorKeys(
     List<StatefulShellBranch> branches,
   ) {
-    for (final StatefulShellBranch branch in branches) {
+    for (final branch in branches) {
       for (final RouteBase route in branch.routes) {
         if (route is GoRoute) {
           assert(
@@ -1276,7 +1276,7 @@ class StatefulNavigationShell extends StatefulWidget {
   // TODO(chunhtai): figure out a way to avoid putting navigation API in widget
   // class.
   void goBranch(int index, {bool initialLocation = false}) {
-    final StatefulShellRoute route =
+    final route =
         shellRouteContext.route as StatefulShellRoute;
     final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
@@ -1301,7 +1301,7 @@ class StatefulNavigationShell extends StatefulWidget {
   /// [StatefulShellBranch.initialLocation], if specified, or the location of the
   /// [StatefulShellBranch.defaultRoute].
   String _effectiveInitialBranchLocation(int index) {
-    final StatefulShellRoute route =
+    final route =
         shellRouteContext.route as StatefulShellRoute;
     final StatefulShellBranch branch = route.branches[index];
     final String? initialLocation = branch.initialLocation;
@@ -1311,7 +1311,7 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      final List<String> parameters = <String>[];
+      final parameters = <String>[];
       patternToRegExp(
         route.path,
         parameters,
@@ -1391,7 +1391,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     bool register = true,
   ]) {
     return _branchState.putIfAbsent(branch, () {
-      final _StatefulShellBranchState branchState = _StatefulShellBranchState(
+      final branchState = _StatefulShellBranchState(
         location: _RestorableRouteMatchList(_router.configuration),
       );
       if (register) {
@@ -1416,8 +1416,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   List<RouteMatchBase> _scopeMatches(List<RouteMatchBase> matches) {
-    final List<RouteMatchBase> result = <RouteMatchBase>[];
-    for (final RouteMatchBase match in matches) {
+    final result = <RouteMatchBase>[];
+    for (final match in matches) {
       if (match is ShellRouteMatch) {
         if (match.route == route) {
           result.add(match);
@@ -1447,10 +1447,10 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     );
     final RouteMatchList previousBranchLocation = branchState.location.value;
     branchState.location.value = currentBranchLocation;
-    final bool hasExistingNavigator = branchState.navigator != null;
+    final hasExistingNavigator = branchState.navigator != null;
 
     /// Only update the Navigator of the route match list has changed
-    final bool locationChanged =
+    final locationChanged =
         previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
@@ -1465,7 +1465,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   void _preloadBranches() {
-    for (int i = 0; i < route.branches.length; i++) {
+    for (var i = 0; i < route.branches.length; i++) {
       final StatefulShellBranch branch = route.branches[i];
       if (i != currentIndex && branch.preload && !_isBranchLoaded(branch)) {
         // Find the match for the current StatefulShellRoute in matchList

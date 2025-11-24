@@ -8,7 +8,7 @@ import 'package:web_benchmarks/analysis.dart';
 void main() {
   group('averageBenchmarkResults', () {
     test('succeeds for identical benchmark names and metrics', () {
-      final BenchmarkResults result1 = BenchmarkResults(
+      final result1 = BenchmarkResults(
         <String, List<BenchmarkScore>>{
           'foo': <BenchmarkScore>[
             BenchmarkScore(metric: 'foo.bar', value: 6),
@@ -19,7 +19,7 @@ void main() {
           ],
         },
       );
-      final BenchmarkResults result2 = BenchmarkResults(
+      final result2 = BenchmarkResults(
         <String, List<BenchmarkScore>>{
           'foo': <BenchmarkScore>[
             BenchmarkScore(metric: 'foo.bar', value: 4),
@@ -46,12 +46,12 @@ void main() {
     });
 
     test('fails for mismatched benchmark names', () {
-      final BenchmarkResults result1 = BenchmarkResults(
+      final result1 = BenchmarkResults(
         <String, List<BenchmarkScore>>{
           'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 6)],
         },
       );
-      final BenchmarkResults result2 = BenchmarkResults(
+      final result2 = BenchmarkResults(
         <String, List<BenchmarkScore>>{
           'foo1': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 4)],
         },
@@ -62,12 +62,12 @@ void main() {
     });
 
     test('fails for mismatched benchmark metrics', () {
-      final BenchmarkResults result1 = BenchmarkResults(
+      final result1 = BenchmarkResults(
         <String, List<BenchmarkScore>>{
           'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.bar', value: 6)],
         },
       );
-      final BenchmarkResults result2 = BenchmarkResults(
+      final result2 = BenchmarkResults(
         <String, List<BenchmarkScore>>{
           'foo': <BenchmarkScore>[BenchmarkScore(metric: 'foo.boo', value: 4)],
         },
@@ -79,10 +79,10 @@ void main() {
   });
 
   test('computeDelta', () {
-    final BenchmarkResults benchmark1 = BenchmarkResults.parse(
+    final benchmark1 = BenchmarkResults.parse(
       testBenchmarkResults1,
     );
-    final BenchmarkResults benchmark2 = BenchmarkResults.parse(
+    final benchmark2 = BenchmarkResults.parse(
       testBenchmarkResults2,
     );
     final BenchmarkResults delta = computeDelta(benchmark1, benchmark2);

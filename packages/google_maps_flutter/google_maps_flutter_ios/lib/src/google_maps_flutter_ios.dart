@@ -310,7 +310,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     final Set<TileOverlay> previousSet = currentTileOverlays != null
         ? currentTileOverlays.values.toSet()
         : <TileOverlay>{};
-    final _TileOverlayUpdates updates = _TileOverlayUpdates.from(
+    final updates = _TileOverlayUpdates.from(
       previousSet,
       newTileOverlays,
     );
@@ -494,7 +494,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       'On iOS zoom level must be set when position is set for ground overlays.',
     );
 
-    final PlatformMapViewCreationParams creationParams =
+    final creationParams =
         PlatformMapViewCreationParams(
           initialCameraPosition: _platformCameraPositionFromCameraPosition(
             widgetConfiguration.initialCameraPosition,
@@ -1234,7 +1234,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
   // to support this legacy API that relied on cross-package magic strings.
   final List<double>? padding = (options['padding'] as List<Object?>?)
       ?.cast<double>();
-  final int? mapType = options['mapType'] as int?;
+  final mapType = options['mapType'] as int?;
   return PlatformMapConfiguration(
     compassEnabled: options['compassEnabled'] as bool?,
     cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBoundsJson(

@@ -24,12 +24,12 @@ void main() {
   testWidgets('ShellRoute can use parent navigator key', (
     WidgetTester tester,
   ) async {
-    final GlobalKey<NavigatorState> rootNavigatorKey =
+    final rootNavigatorKey =
         GlobalKey<NavigatorState>();
-    final GlobalKey<NavigatorState> shellNavigatorKey =
+    final shellNavigatorKey =
         GlobalKey<NavigatorState>();
 
-    final List<RouteBase> routes = <RouteBase>[
+    final routes = <RouteBase>[
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         builder: (BuildContext context, GoRouterState state, Widget child) {
@@ -92,12 +92,12 @@ void main() {
   testWidgets('StatefulShellRoute can use parent navigator key', (
     WidgetTester tester,
   ) async {
-    final GlobalKey<NavigatorState> rootNavigatorKey =
+    final rootNavigatorKey =
         GlobalKey<NavigatorState>();
-    final GlobalKey<NavigatorState> shellNavigatorKey =
+    final shellNavigatorKey =
         GlobalKey<NavigatorState>();
 
-    final List<RouteBase> routes = <RouteBase>[
+    final routes = <RouteBase>[
       ShellRoute(
         navigatorKey: shellNavigatorKey,
         builder: (BuildContext context, GoRouterState state, Widget child) {
@@ -159,9 +159,9 @@ void main() {
   });
 
   test('ShellRoute parent navigator key throw if not match', () async {
-    final GlobalKey<NavigatorState> key1 = GlobalKey<NavigatorState>();
-    final GlobalKey<NavigatorState> key2 = GlobalKey<NavigatorState>();
-    bool hasError = false;
+    final key1 = GlobalKey<NavigatorState>();
+    final key2 = GlobalKey<NavigatorState>();
+    var hasError = false;
     try {
       ShellRoute(
         navigatorKey: key1,
@@ -293,9 +293,9 @@ void main() {
     testWidgets(
       'throw if sub route does not conform with parent navigator key',
       (WidgetTester tester) async {
-        final GlobalKey<NavigatorState> key1 = GlobalKey<NavigatorState>();
-        final GlobalKey<NavigatorState> key2 = GlobalKey<NavigatorState>();
-        bool hasError = false;
+        final key1 = GlobalKey<NavigatorState>();
+        final key2 = GlobalKey<NavigatorState>();
+        var hasError = false;
         try {
           ShellRoute(
             navigatorKey: key1,

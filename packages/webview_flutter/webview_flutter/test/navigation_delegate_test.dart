@@ -25,7 +25,7 @@ void main() {
         return NavigationDecision.navigate;
       }
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onNavigationRequest: onNavigationRequest,
       );
 
@@ -37,7 +37,7 @@ void main() {
 
       void onPageStarted(String url) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onPageStarted: onPageStarted,
       );
 
@@ -49,7 +49,7 @@ void main() {
 
       void onPageFinished(String url) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onPageFinished: onPageFinished,
       );
 
@@ -61,7 +61,7 @@ void main() {
 
       void onProgress(int progress) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onProgress: onProgress,
       );
 
@@ -73,7 +73,7 @@ void main() {
 
       void onWebResourceError(WebResourceError error) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onWebResourceError: onWebResourceError,
       );
 
@@ -85,7 +85,7 @@ void main() {
 
       void onUrlChange(UrlChange change) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onUrlChange: onUrlChange,
       );
 
@@ -97,7 +97,7 @@ void main() {
 
       void onHttpAuthRequest(HttpAuthRequest request) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onHttpAuthRequest: onHttpAuthRequest,
       );
 
@@ -109,7 +109,7 @@ void main() {
 
       void onHttpError(HttpResponseError error) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onHttpError: onHttpError,
       );
 
@@ -119,20 +119,20 @@ void main() {
     test('onSslAuthError', () async {
       WebViewPlatform.instance = TestWebViewPlatform();
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onSslAuthError: expectAsync1((SslAuthError error) {
           error.proceed();
         }),
       );
 
-      final void Function(PlatformSslAuthError) callback =
+      final callback =
           verify(
                 (delegate.platform as MockPlatformNavigationDelegate)
                     .setOnSSlAuthError(captureAny),
               ).captured.single
               as void Function(PlatformSslAuthError);
 
-      final MockPlatformSslAuthError mockPlatformError =
+      final mockPlatformError =
           MockPlatformSslAuthError();
       callback(mockPlatformError);
 

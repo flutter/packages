@@ -160,7 +160,7 @@ class SignInDemoState extends State<SignInDemo> {
       print('People API ${response.statusCode} response: ${response.body}');
       return;
     }
-    final Map<String, dynamic> data =
+    final data =
         json.decode(response.body) as Map<String, dynamic>;
     final int contactCount =
         (data['connections'] as List<dynamic>?)?.length ?? 0;

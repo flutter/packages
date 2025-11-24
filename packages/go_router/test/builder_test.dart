@@ -27,7 +27,7 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatch>[
           RouteMatch(
             route: config.routes.first as GoRoute,
@@ -47,7 +47,7 @@ void main() {
     });
 
     testWidgets('Builds ShellRoute', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> shellNavigatorKey =
+      final shellNavigatorKey =
           GlobalKey<NavigatorState>();
       final RouteConfiguration config = createRouteConfiguration(
         routes: <RouteBase>[
@@ -73,7 +73,7 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatchBase>[
           ShellRouteMatch(
             route: config.routes.first as ShellRouteBase,
@@ -101,7 +101,7 @@ void main() {
     });
 
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
+      final rootNavigatorKey =
           GlobalKey<NavigatorState>();
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
@@ -119,7 +119,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatch>[
           RouteMatch(
             route: config.routes.first as GoRoute,
@@ -141,9 +141,9 @@ void main() {
     testWidgets('Builds a Navigator for ShellRoute', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
+      final rootNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
+      final shellNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
@@ -169,7 +169,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatchBase>[
           ShellRouteMatch(
             route: config.routes.first as ShellRouteBase,
@@ -202,9 +202,9 @@ void main() {
     testWidgets('Builds a Navigator for ShellRoute with parentNavigatorKey', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
+      final rootNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
+      final shellNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
@@ -240,7 +240,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatch>[
           RouteMatch(
             route: config.routes.first.routes.first as GoRoute,
@@ -265,9 +265,9 @@ void main() {
     testWidgets('Uses the correct restorationScopeId for ShellRoute', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
+      final rootNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
+      final shellNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
@@ -294,7 +294,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatchBase>[
           ShellRouteMatch(
             route: config.routes.first as ShellRouteBase,
@@ -329,11 +329,11 @@ void main() {
     testWidgets('Uses the correct restorationScopeId for StatefulShellRoute', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
+      final rootNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
+      final shellNavigatorKey =
           GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final GoRouter goRouter = GoRouter(
+      final goRouter = GoRouter(
         initialLocation: '/a',
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
@@ -377,7 +377,7 @@ void main() {
     testWidgets('GoRouter requestFocus defaults to true', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         routes: <RouteBase>[
           GoRoute(
             path: '/',
@@ -400,7 +400,7 @@ void main() {
     testWidgets('GoRouter requestFocus can be set to false', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         routes: <RouteBase>[
           GoRoute(
             path: '/',

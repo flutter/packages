@@ -58,7 +58,7 @@ class SharedPreferencesToolEval {
     required String eventKind,
     Disposable? isAlive,
   }) async {
-    final Completer<Map<String, Object?>> completer =
+    final completer =
         Completer<Map<String, Object?>>();
 
     late final StreamSubscription<Event> streamSubscription;

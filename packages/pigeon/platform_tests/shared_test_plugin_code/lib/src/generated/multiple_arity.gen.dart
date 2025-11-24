@@ -72,9 +72,9 @@ class MultipleArityHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<int> subtract(int x, int y) async {
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityHostApi.subtract$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -83,7 +83,7 @@ class MultipleArityHostApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[x, y],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -118,8 +118,7 @@ abstract class MultipleArityFlutterApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -133,12 +132,12 @@ abstract class MultipleArityFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_x = (args[0] as int?);
+          final arg_x = (args[0] as int?);
           assert(
             arg_x != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.',
           );
-          final int? arg_y = (args[1] as int?);
+          final arg_y = (args[1] as int?);
           assert(
             arg_y != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.MultipleArityFlutterApi.subtract was null, expected non-null int.',

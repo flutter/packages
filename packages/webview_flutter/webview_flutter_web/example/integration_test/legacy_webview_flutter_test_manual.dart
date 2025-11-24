@@ -16,11 +16,11 @@ import 'wrapped_webview.dart';
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  const String someUrl = 'about:blank';
-  const String fakeUrl = 'https://www.flutter.dev/';
+  const someUrl = 'about:blank';
+  const fakeUrl = 'https://www.flutter.dev/';
 
   testWidgets('initialUrl', (WidgetTester tester) async {
-    final Completer<WebViewController> controllerCompleter =
+    final controllerCompleter =
         Completer<WebViewController>();
     await tester.pumpWidget(
       wrappedLegacyWebView(fakeUrl, (WebViewController controller) {
@@ -33,14 +33,14 @@ void main() async {
     await tester.pump(const Duration(seconds: 5));
 
     // Assert an iframe has been rendered to the DOM with the correct src attribute.
-    final web.HTMLIFrameElement? element =
+    final element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(element!.src, fakeUrl);
   });
 
   testWidgets('loadUrl', (WidgetTester tester) async {
-    final Completer<WebViewController> controllerCompleter =
+    final controllerCompleter =
         Completer<WebViewController>();
     await tester.pumpWidget(
       wrappedLegacyWebView(someUrl, (WebViewController controller) {
@@ -55,7 +55,7 @@ void main() async {
     await tester.pump(const Duration(seconds: 5));
 
     // Assert an iframe has been rendered to the DOM with the correct src attribute.
-    final web.HTMLIFrameElement? element =
+    final element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(element!.src, fakeUrl);

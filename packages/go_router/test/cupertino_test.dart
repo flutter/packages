@@ -14,7 +14,7 @@ void main() {
     testWidgets('returns [true] when CupertinoApp is present', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<_DummyStatefulWidgetState> key =
+      final key =
           GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         CupertinoApp(home: DummyStatefulWidget(key: key)),
@@ -26,7 +26,7 @@ void main() {
     testWidgets('returns [false] when MaterialApp is present', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<_DummyStatefulWidgetState> key =
+      final key =
           GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(MaterialApp(home: DummyStatefulWidget(key: key)));
       final bool isCupertino = isCupertinoApp(key.currentContext! as Element);
@@ -35,11 +35,11 @@ void main() {
   });
 
   test('pageBuilderForCupertinoApp creates a [CupertinoPage] accordingly', () {
-    final UniqueKey key = UniqueKey();
-    const String name = 'name';
-    const String arguments = 'arguments';
-    const String restorationId = 'restorationId';
-    const DummyStatefulWidget child = DummyStatefulWidget();
+    final key = UniqueKey();
+    const name = 'name';
+    const arguments = 'arguments';
+    const restorationId = 'restorationId';
+    const child = DummyStatefulWidget();
     final CupertinoPage<void> page = pageBuilderForCupertinoApp(
       key: key,
       name: name,
@@ -62,7 +62,7 @@ void main() {
       ),
     );
 
-    final Exception exception = Exception('Something went wrong!');
+    final exception = Exception('Something went wrong!');
     testWidgets(
       'shows the exception message when provided',
       testPageShowsExceptionMessage(

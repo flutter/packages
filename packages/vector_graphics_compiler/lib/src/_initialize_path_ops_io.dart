@@ -34,7 +34,7 @@ bool initializePathOpsFromFlutterCache() {
     print('path_ops not supported on ${Platform.localeName}');
     return false;
   }
-  final String pathops =
+  final pathops =
       '${cacheRoot.path}/artifacts/engine/$platform/$executable';
   if (!File(pathops).existsSync()) {
     print('Could not locate libpathops at $pathops.');

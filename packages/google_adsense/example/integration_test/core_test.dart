@@ -36,7 +36,7 @@ void main() async {
 
       await adSense.initialize(testClient, jsLoaderTarget: target);
 
-      final web.HTMLScriptElement? injected =
+      final injected =
           target.lastElementChild as web.HTMLScriptElement?;
 
       expect(injected, isNotNull);
@@ -65,7 +65,7 @@ void main() async {
         ),
       );
 
-      final web.HTMLScriptElement injected =
+      final injected =
           target.lastElementChild! as web.HTMLScriptElement;
 
       expect(injected.dataset['adHost'], 'test-adHost');
@@ -90,7 +90,7 @@ void main() async {
     testWidgets('Skips initialization if script is already present.', (
       WidgetTester _,
     ) async {
-      final web.HTMLScriptElement script = web.HTMLScriptElement()
+      final script = web.HTMLScriptElement()
         ..id = 'previously-injected'
         ..src = testScriptUrl;
       final web.HTMLElement target = web.HTMLDivElement()..appendChild(script);

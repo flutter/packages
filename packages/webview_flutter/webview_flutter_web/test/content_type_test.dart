@@ -8,7 +8,7 @@ import 'package:webview_flutter_web/src/content_type.dart';
 void main() {
   group('ContentType.parse', () {
     test('basic content-type (lowers case)', () {
-      final ContentType contentType = ContentType.parse('text/pLaIn');
+      final contentType = ContentType.parse('text/pLaIn');
 
       expect(contentType.mimeType, 'text/plain');
       expect(contentType.boundary, isNull);
@@ -16,7 +16,7 @@ void main() {
     });
 
     test('with charset', () {
-      final ContentType contentType = ContentType.parse(
+      final contentType = ContentType.parse(
         'text/pLaIn; charset=utf-8',
       );
 
@@ -26,7 +26,7 @@ void main() {
     });
 
     test('with boundary', () {
-      final ContentType contentType = ContentType.parse(
+      final contentType = ContentType.parse(
         'text/pLaIn; boundary=---xyz',
       );
 
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('with charset and boundary', () {
-      final ContentType contentType = ContentType.parse(
+      final contentType = ContentType.parse(
         'text/pLaIn; charset=utf-8; boundary=---xyz',
       );
 
@@ -46,7 +46,7 @@ void main() {
     });
 
     test('with boundary and charset', () {
-      final ContentType contentType = ContentType.parse(
+      final contentType = ContentType.parse(
         'text/pLaIn; boundary=---xyz; charset=utf-8',
       );
 
@@ -56,7 +56,7 @@ void main() {
     });
 
     test('with a bunch of whitespace, boundary and charset', () {
-      final ContentType contentType = ContentType.parse(
+      final contentType = ContentType.parse(
         '     text/pLaIn   ; boundary=---xyz;    charset=utf-8    ',
       );
 
@@ -66,7 +66,7 @@ void main() {
     });
 
     test('empty string', () {
-      final ContentType contentType = ContentType.parse('');
+      final contentType = ContentType.parse('');
 
       expect(contentType.mimeType, '');
       expect(contentType.boundary, isNull);

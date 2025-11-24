@@ -31,7 +31,7 @@ void main() {
     await testDir.delete(recursive: true);
   });
 
-  final Map<ResolutionPreset, Size> presetExpectedSizes =
+  final presetExpectedSizes =
       <ResolutionPreset, Size>{
         ResolutionPreset.low: Platform.isAndroid
             ? const Size(240, 320)
@@ -70,8 +70,8 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
 
     // Load video metadata
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -92,11 +92,11 @@ void main() {
       if (cameras.isEmpty) {
         return;
       }
-      for (final CameraDescription cameraDescription in cameras) {
-        bool previousPresetExactlySupported = true;
+      for (final cameraDescription in cameras) {
+        var previousPresetExactlySupported = true;
         for (final MapEntry<ResolutionPreset, Size> preset
             in presetExpectedSizes.entries) {
-          final CameraController controller = CameraController(
+          final controller = CameraController(
             cameraDescription,
             preset.key,
           );
@@ -125,7 +125,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,
@@ -142,8 +142,8 @@ void main() {
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -159,7 +159,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,
@@ -169,14 +169,14 @@ void main() {
     await controller.prepareForVideoRecording();
 
     int startPause;
-    int timePaused = 0;
-    const int pauseIterations = 2;
+    var timePaused = 0;
+    const pauseIterations = 2;
 
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
     sleep(const Duration(milliseconds: 500));
 
-    for (int i = 0; i < pauseIterations; i++) {
+    for (var i = 0; i < pauseIterations; i++) {
       await controller.pauseVideoRecording();
       startPause = DateTime.now().millisecondsSinceEpoch;
       sleep(const Duration(milliseconds: 500));
@@ -190,8 +190,8 @@ void main() {
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -207,14 +207,14 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,
     );
 
     await controller.initialize();
-    bool isDetecting = false;
+    var isDetecting = false;
 
     await controller.startImageStream((CameraImage image) {
       if (isDetecting) {
@@ -239,7 +239,7 @@ void main() {
     List<CameraDescription> cameras,
     ImageFormatGroup? imageFormatGroup,
   ) async {
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras.first,
       ResolutionPreset.low,
       enableAudio: false,
@@ -247,7 +247,7 @@ void main() {
     );
 
     await controller.initialize();
-    final Completer<CameraImage> completer = Completer<CameraImage>();
+    final completer = Completer<CameraImage>();
 
     await controller.startImageStream((CameraImage image) {
       if (!completer.isCompleted) {
@@ -270,7 +270,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
     );
@@ -289,8 +289,8 @@ void main() {
 
     final XFile file = await controller.stopVideoRecording();
 
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -310,7 +310,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,

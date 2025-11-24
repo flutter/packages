@@ -20,10 +20,10 @@ BenchmarkResults computeAverage(List<BenchmarkResults> results) {
     (BenchmarkResults sum, BenchmarkResults next) => sum._sumWith(next),
   );
 
-  final BenchmarkResults average = totalSum;
+  final average = totalSum;
   for (final String benchmark in totalSum.scores.keys) {
     final List<BenchmarkScore> scoresForBenchmark = totalSum.scores[benchmark]!;
-    for (int i = 0; i < scoresForBenchmark.length; i++) {
+    for (var i = 0; i < scoresForBenchmark.length; i++) {
       final BenchmarkScore score = scoresForBenchmark[i];
       final double averageValue = score.value / results.length;
       average.scores[benchmark]![i] = BenchmarkScore(
@@ -42,7 +42,7 @@ BenchmarkResults computeDelta(
   BenchmarkResults baseline,
   BenchmarkResults test,
 ) {
-  final Map<String, List<BenchmarkScore>> delta =
+  final delta =
       <String, List<BenchmarkScore>>{};
   for (final String benchmarkName in test.scores.keys) {
     final List<BenchmarkScore> testScores = test.scores[benchmarkName]!;
@@ -76,7 +76,7 @@ extension _AnalysisExtension on BenchmarkResults {
     BenchmarkResults other, {
     bool throwExceptionOnMismatch = true,
   }) {
-    final Map<String, List<BenchmarkScore>> sum =
+    final sum =
         <String, List<BenchmarkScore>>{};
     for (final String benchmark in scores.keys) {
       // Look up this benchmark in [other].

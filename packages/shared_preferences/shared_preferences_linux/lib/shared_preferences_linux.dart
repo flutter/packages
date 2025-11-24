@@ -107,7 +107,7 @@ class SharedPreferencesLinux extends SharedPreferencesStorePlatform {
     GetAllParameters parameters,
   ) async {
     final PreferencesFilter filter = parameters.filter;
-    final Map<String, Object> withPrefix = Map<String, Object>.from(
+    final withPrefix = Map<String, Object>.from(
       await _readPreferences(),
     );
     withPrefix.removeWhere(
@@ -294,7 +294,7 @@ base class SharedPreferencesAsyncLinux extends SharedPreferencesAsyncPlatform {
   ) async {
     final SharedPreferencesLinuxOptions linuxOptions =
         SharedPreferencesLinuxOptions.fromSharedPreferencesOptions(options);
-    final Map<String, Object> prefs = Map<String, Object>.from(
+    final prefs = Map<String, Object>.from(
       await _readPreferences(linuxOptions.fileName),
     );
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
@@ -353,7 +353,7 @@ Future<Map<String, Object>> _reload(
   FileSystem fs = const LocalFileSystem(),
   PathProviderLinux? pathProvider,
 }) async {
-  Map<String, Object> preferences = <String, Object>{};
+  var preferences = <String, Object>{};
   final File? localDataFile = await _getLocalDataFile(
     fileName,
     fs: fs,

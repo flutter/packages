@@ -605,7 +605,7 @@ class GoogleMapController {
 
   /// Updates the set of [TileOverlay]s.
   void updateTileOverlays(Set<TileOverlay> newOverlays) {
-    final MapsObjectUpdates<TileOverlay> updates =
+    final updates =
         MapsObjectUpdates<TileOverlay>.from(
           _tileOverlays,
           newOverlays,

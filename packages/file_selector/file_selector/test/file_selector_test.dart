@@ -9,11 +9,11 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
   late FakeFileSelector fakePlatformImplementation;
-  const String initialDirectory = '/home/flutteruser';
-  const String confirmButtonText = 'Use this profile picture';
-  const String suggestedName = 'suggested_name';
+  const initialDirectory = '/home/flutteruser';
+  const confirmButtonText = 'Use this profile picture';
+  const suggestedName = 'suggested_name';
 
-  const List<XTypeGroup> acceptedTypeGroups = <XTypeGroup>[
+  const acceptedTypeGroups = <XTypeGroup>[
     XTypeGroup(
       label: 'documents',
       mimeTypes: <String>[
@@ -30,7 +30,7 @@ void main() {
   });
 
   group('openFile', () {
-    final XFile expectedFile = XFile('path');
+    final expectedFile = XFile('path');
 
     test('works', () async {
       fakePlatformImplementation
@@ -89,7 +89,7 @@ void main() {
   });
 
   group('openFiles', () {
-    final List<XFile> expectedFiles = <XFile>[XFile('path')];
+    final expectedFiles = <XFile>[XFile('path')];
 
     test('works', () async {
       fakePlatformImplementation
@@ -152,10 +152,10 @@ void main() {
   });
 
   group('getSaveLocation', () {
-    const String expectedSavePath = '/example/path';
+    const expectedSavePath = '/example/path';
 
     test('works', () async {
-      const int expectedActiveFilter = 1;
+      const expectedActiveFilter = 1;
       fakePlatformImplementation
         ..setExpectations(
           initialDirectory: initialDirectory,
@@ -230,7 +230,7 @@ void main() {
     });
 
     test('sets the directory creation control flag', () async {
-      const bool canCreateDirectories = false;
+      const canCreateDirectories = false;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
         ..setPathsResponse(<String>[expectedSavePath]);
@@ -243,7 +243,7 @@ void main() {
   });
 
   group('getDirectoryPath', () {
-    const String expectedDirectoryPath = '/example/path';
+    const expectedDirectoryPath = '/example/path';
 
     test('works', () async {
       fakePlatformImplementation
@@ -293,7 +293,7 @@ void main() {
     });
 
     test('sets the directory creation control flag', () async {
-      const bool canCreateDirectories = true;
+      const canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
         ..setPathsResponse(<String>[expectedDirectoryPath]);
@@ -306,7 +306,7 @@ void main() {
   });
 
   group('getDirectoryPaths', () {
-    const List<String> expectedDirectoryPaths = <String>[
+    const expectedDirectoryPaths = <String>[
       '/example/path',
       '/example/2/path',
     ];
@@ -356,7 +356,7 @@ void main() {
       expect(directoryPaths, expectedDirectoryPaths);
     });
     test('sets the directory creation control flag', () async {
-      const bool canCreateDirectories = true;
+      const canCreateDirectories = true;
       fakePlatformImplementation
         ..setExpectations(canCreateDirectories: canCreateDirectories)
         ..setPathsResponse(expectedDirectoryPaths);

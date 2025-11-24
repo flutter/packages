@@ -334,10 +334,10 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
       return _mapById[creationId]!.widget!;
     }
 
-    final StreamController<MapEvent<Object?>> controller =
+    final controller =
         StreamController<MapEvent<Object?>>.broadcast();
 
-    final GoogleMapController mapController = GoogleMapController(
+    final mapController = GoogleMapController(
       mapId: creationId,
       streamController: controller,
       widgetConfiguration: widgetConfiguration,

@@ -62,7 +62,7 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   MapConfiguration configuration,
   List<gmaps.MapTypeStyle> styles,
 ) {
-  final gmaps.MapOptions options = gmaps.MapOptions();
+  final options = gmaps.MapOptions();
 
   if (configuration.mapType != null) {
     options.mapTypeId = _gmapTypeIDForPluginType(configuration.mapType!);
@@ -182,7 +182,7 @@ bool _isJsonMapStyle(Map<String, Object?> value) {
 
 // Converts an incoming JSON-encoded Style info, into the correct gmaps array.
 List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
-  List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[];
+  var styles = <gmaps.MapTypeStyle>[];
   if (mapStyleJson != null) {
     try {
       styles =
@@ -191,7 +191,7 @@ List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
                     reviver: (Object? key, Object? value) {
                       if (value is Map &&
                           _isJsonMapStyle(value as Map<String, Object?>)) {
-                        List<MapStyler> stylers = <MapStyler>[];
+                        var stylers = <MapStyler>[];
                         if (value['stylers'] != null) {
                           stylers = (value['stylers']! as List<Object?>)
                               .whereType<Map<String, Object?>>()
@@ -273,7 +273,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final HTMLHeadingElement title =
+    final title =
         (document.createElement('h3') as HTMLHeadingElement)
           ..className = 'infowindow-title'
           ..innerText = markerTitle;
@@ -322,7 +322,7 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
   gmaps.Size? size;
   if (iconConfig.length >= sizeIndex + 1) {
-    final List<Object?>? rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
+    final rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
     if (rawIconSize != null) {
       size = gmaps.Size(rawIconSize[0]! as double, rawIconSize[1]! as double);
     }
@@ -332,7 +332,7 @@ gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
 
 /// Sets the size of the Google Maps icon.
 void _setIconSize({required Size size, required gmaps.Icon icon}) {
-  final gmaps.Size gmapsSize = gmaps.Size(size.width, size.height);
+  final gmapsSize = gmaps.Size(size.width, size.height);
   icon.size = gmapsSize;
   icon.scaledSize = gmapsSize;
 }
@@ -342,7 +342,7 @@ void _setIconAnchor({
   required Offset anchor,
   required gmaps.Icon icon,
 }) {
-  final gmaps.Point gmapsAnchor = gmaps.Point(
+  final gmapsAnchor = gmaps.Point(
     size.width * anchor.dx,
     size.height * anchor.dy,
   );
@@ -400,7 +400,7 @@ Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
 ///
 /// This method attempts to fetch the image size for a given [url].
 Future<Size?> _fetchBitmapSize(String url) async {
-  final HTMLImageElement image = HTMLImageElement()..src = url;
+  final image = HTMLImageElement()..src = url;
 
   // Wait for the onLoad or onError event.
   await Future.any(<Future<Event>>[image.onLoad.first, image.onError.first]);
@@ -451,7 +451,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
 
   // The following code is for the deprecated BitmapDescriptor.fromBytes
   // and BitmapDescriptor.fromAssetImage.
-  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+  final iconConfig = bitmapDescriptor.toJson() as List<Object?>;
   if (iconConfig[0] == 'fromAssetImage') {
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
@@ -467,7 +467,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
     }
   } else if (iconConfig[0] == 'fromBytes') {
     // Grab the bytes, and put them into a blob
-    final List<int> bytes = iconConfig[1]! as List<int>;
+    final bytes = iconConfig[1]! as List<int>;
     // Create a Blob from bytes, but let the browser figure out the encoding
     final Blob blob;
 
@@ -516,7 +516,7 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
 }
 
 gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
-  final gmaps.CircleOptions circleOptions = gmaps.CircleOptions()
+  final circleOptions = gmaps.CircleOptions()
     ..strokeColor = _getCssColor(circle.strokeColor)
     ..strokeOpacity = _getCssOpacity(circle.strokeColor)
     ..strokeWeight = circle.strokeWidth
@@ -534,7 +534,7 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
   final Iterable<Color>? gradientColors = heatmap.gradient?.colors.map(
     (HeatmapGradientColor e) => e.color,
   );
-  final visualization.HeatmapLayerOptions heatmapOptions =
+  final heatmapOptions =
       visualization.HeatmapLayerOptions()
         ..data = heatmap.data
             .map(
@@ -569,9 +569,9 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
 
   final bool isClockwisePolygon = _isPolygonClockwise(path);
 
-  final List<List<gmaps.LatLng>> paths = <List<gmaps.LatLng>>[path];
+  final paths = <List<gmaps.LatLng>>[path];
 
-  for (int i = 0; i < polygon.holes.length; i++) {
+  for (var i = 0; i < polygon.holes.length; i++) {
     final List<LatLng> hole = polygon.holes[i];
     final List<gmaps.LatLng> correctHole = _ensureHoleHasReverseWinding(
       hole,
@@ -630,8 +630,8 @@ List<gmaps.LatLng> _ensureHoleHasReverseWinding(
 /// the `path` is a transformed version of [Polygon.points] or each of the
 /// [Polygon.holes], guaranteeing that `lat` and `lng` can be accessed with `!`.
 bool _isPolygonClockwise(List<gmaps.LatLng> path) {
-  double direction = 0.0;
-  for (int i = 0; i < path.length; i++) {
+  var direction = 0.0;
+  for (var i = 0; i < path.length; i++) {
     direction =
         direction +
         ((path[(i + 1) % path.length].lat - path[i].lat) *
@@ -677,7 +677,7 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
     return value as List<Object?>;
   }
 
-  final List<dynamic> json = update.toJson() as List<dynamic>;
+  final json = update.toJson() as List<dynamic>;
   switch (json[0]) {
     case 'newCameraPosition':
       final Map<String, Object?> position = asJsonObject(json[1]);
@@ -697,7 +697,7 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
       final List<Object?> latLng2 = asJsonList(latLngPair[1]);
-      final double padding = json[2] as double;
+      final padding = json[2] as double;
       map.fitBounds(
         gmaps.LatLngBounds(
           gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
@@ -749,7 +749,7 @@ String urlFromMapBitmap(MapBitmap mapBitmap) {
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
       bytesMapBitmap.byteData.hashCode,
       () {
-        final Blob blob = Blob(
+        final blob = Blob(
           <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
         );
         return URL.createObjectURL(blob as JSObject);
@@ -792,7 +792,7 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
 
   final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
-  final gmaps.Point point = gmaps.Point(
+  final point = gmaps.Point(
     (x / scale) + bottomLeft.x,
     (y / scale) + topRight.y,
   );

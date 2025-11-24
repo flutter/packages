@@ -103,7 +103,7 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
     return _initializedRendererCompleter!.future;
   }
 
-  final Completer<AndroidMapRenderer?> completer =
+  final completer =
       Completer<AndroidMapRenderer?>();
   _initializedRendererCompleter = completer;
 

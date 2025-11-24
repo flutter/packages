@@ -10,7 +10,7 @@ import 'test_helpers.dart';
 
 void main() {
   test('ShellRoute observers test', () {
-    final ShellRoute shell = ShellRoute(
+    final shell = ShellRoute(
       observers: <NavigatorObserver>[HeroController()],
       builder: (BuildContext context, GoRouterState state, Widget child) {
         return SafeArea(child: child);
@@ -31,9 +31,9 @@ void main() {
   testWidgets(
     'GoRouter observers should be notified when navigating within ShellRoute',
     (WidgetTester tester) async {
-      final MockObserver observer = MockObserver();
+      final observer = MockObserver();
 
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
       await createRouter(

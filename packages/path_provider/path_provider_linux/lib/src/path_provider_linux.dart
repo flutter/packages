@@ -47,7 +47,7 @@ class PathProviderLinux extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationSupportPath() async {
-    final Directory directory = Directory(
+    final directory = Directory(
       path.join(xdg.dataHome.path, await _getId()),
     );
     if (directory.existsSync()) {
@@ -56,7 +56,7 @@ class PathProviderLinux extends PathProviderPlatform {
 
     // This plugin originally used the executable name as a directory.
     // Use that if it exists for backwards compatibility.
-    final Directory legacyDirectory = Directory(
+    final legacyDirectory = Directory(
       path.join(xdg.dataHome.path, await _getExecutableName()),
     );
     if (legacyDirectory.existsSync()) {
@@ -75,7 +75,7 @@ class PathProviderLinux extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationCachePath() async {
-    final Directory directory = Directory(
+    final directory = Directory(
       path.join(xdg.cacheHome.path, await _getId()),
     );
     if (!directory.existsSync()) {

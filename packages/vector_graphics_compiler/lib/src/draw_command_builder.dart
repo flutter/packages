@@ -135,9 +135,9 @@ class DrawCommandBuilder {
 
   /// Add an image to the current draw command stack.
   void addImage(ResolvedImageNode node, String? debugString) {
-    final ImageData imageData = ImageData(node.data, node.format.index);
+    final imageData = ImageData(node.data, node.format.index);
     final int imageId = _getOrGenerateId(imageData, _images);
-    final DrawImageData drawImageData = DrawImageData(
+    final drawImageData = DrawImageData(
       imageId,
       node.rect,
       node.transform,

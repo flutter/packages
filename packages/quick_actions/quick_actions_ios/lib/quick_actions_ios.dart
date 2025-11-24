@@ -26,7 +26,7 @@ class QuickActionsIos extends QuickActionsPlatform {
 
   @override
   Future<void> initialize(QuickActionHandler handler) async {
-    final _QuickActionHandlerApi quickActionsHandlerApi =
+    final quickActionsHandlerApi =
         _QuickActionHandlerApi();
     IOSQuickActionsFlutterApi.setUp(quickActionsHandlerApi);
     _handler = handler;

@@ -30,14 +30,14 @@ void main() {
     });
 
     test('getExternalCachePaths throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final pathProvider = PathProviderFoundation(
         ffiLib: FakeFoundationFFI(),
       );
       expect(pathProvider.getExternalCachePaths(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePath throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final pathProvider = PathProviderFoundation(
         ffiLib: FakeFoundationFFI(),
       );
       expect(
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('getExternalStoragePaths throws', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final pathProvider = PathProviderFoundation(
         ffiLib: FakeFoundationFFI(),
       );
       expect(
@@ -57,7 +57,7 @@ void main() {
     });
 
     test('getContainerPath throws on macOS', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final pathProvider = PathProviderFoundation(
         platform: FakePlatformProvider(isMacOS: true),
         ffiLib: FakeFoundationFFI(),
       );

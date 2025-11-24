@@ -132,7 +132,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
       case ImageSource.camera:
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
-        const XTypeGroup typeGroup = XTypeGroup(
+        const typeGroup = XTypeGroup(
           label: 'Images',
           extensions: imageFormats,
         );
@@ -166,7 +166,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
           maxDuration: maxDuration,
         );
       case ImageSource.gallery:
-        const XTypeGroup typeGroup = XTypeGroup(
+        const typeGroup = XTypeGroup(
           label: 'Videos',
           extensions: videoFormats,
         );
@@ -189,7 +189,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    const XTypeGroup typeGroup = XTypeGroup(
+    const typeGroup = XTypeGroup(
       label: 'Images',
       extensions: imageFormats,
     );
@@ -203,7 +203,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) async {
-    const XTypeGroup typeGroup = XTypeGroup(
+    const typeGroup = XTypeGroup(
       label: 'Videos',
       extensions: videoFormats,
     );
@@ -218,7 +218,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
   // they will be silently ignored by the Windows version of the plugin.
   @override
   Future<List<XFile>> getMedia({required MediaOptions options}) async {
-    const XTypeGroup typeGroup = XTypeGroup(
+    const typeGroup = XTypeGroup(
       label: 'images and videos',
       extensions: <String>[...imageFormats, ...videoFormats],
     );

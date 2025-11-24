@@ -57,7 +57,7 @@ void main() {
 
     test('Should send creation data and receive back a camera id', () async {
       // Arrange
-      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      final camera = AndroidCamera(hostApi: mockCameraApi);
       when(
         mockCameraApi.create(
           'Test',
@@ -89,7 +89,7 @@ void main() {
       'Should send creation data and receive back a camera id using createCameraWithSettings',
       () async {
         // Arrange
-        final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+        final camera = AndroidCamera(hostApi: mockCameraApi);
         when(
           mockCameraApi.create(
             'Test',
@@ -130,7 +130,7 @@ void main() {
       'Should throw CameraException when create throws a PlatformException',
       () {
         // Arrange
-        final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+        final camera = AndroidCamera(hostApi: mockCameraApi);
         when(
           mockCameraApi.create(
             'Test',
@@ -181,7 +181,7 @@ void main() {
       'Should throw CameraException when initialize throws a PlatformException',
       () {
         // Arrange
-        final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+        final camera = AndroidCamera(hostApi: mockCameraApi);
         when(
           mockCameraApi.initialize(PlatformImageFormatGroup.yuv420),
         ).thenThrow(
@@ -213,7 +213,7 @@ void main() {
 
     test('Should send initialization data', () async {
       // Arrange
-      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      final camera = AndroidCamera(hostApi: mockCameraApi);
       when(
         mockCameraApi.create(
           'Test',
@@ -260,7 +260,7 @@ void main() {
 
     test('Should send a disposal call on dispose', () async {
       // Arrange
-      final AndroidCamera camera = AndroidCamera(hostApi: mockCameraApi);
+      final camera = AndroidCamera(hostApi: mockCameraApi);
       when(
         mockCameraApi.create(
           'Test',
@@ -338,12 +338,12 @@ void main() {
       // Act
       final Stream<CameraInitializedEvent> eventStream = camera
           .onCameraInitialized(cameraId);
-      final StreamQueue<CameraInitializedEvent> streamQueue =
+      final streamQueue =
           StreamQueue<CameraInitializedEvent>(eventStream);
 
       // Emit test events
-      final PlatformSize previewSize = PlatformSize(width: 3840, height: 2160);
-      final CameraInitializedEvent event = CameraInitializedEvent(
+      final previewSize = PlatformSize(width: 3840, height: 2160);
+      final event = CameraInitializedEvent(
         cameraId,
         previewSize.width,
         previewSize.height,
@@ -374,12 +374,12 @@ void main() {
       final Stream<CameraClosingEvent> eventStream = camera.onCameraClosing(
         cameraId,
       );
-      final StreamQueue<CameraClosingEvent> streamQueue =
+      final streamQueue =
           StreamQueue<CameraClosingEvent>(eventStream);
 
       // Emit test events
-      final CameraClosingEvent event = CameraClosingEvent(cameraId);
-      for (int i = 0; i < 3; i++) {
+      final event = CameraClosingEvent(cameraId);
+      for (var i = 0; i < 3; i++) {
         camera.hostCameraHandlers[cameraId]!.closed();
       }
 
@@ -397,15 +397,15 @@ void main() {
       final Stream<CameraErrorEvent> errorStream = camera.onCameraError(
         cameraId,
       );
-      final StreamQueue<CameraErrorEvent> streamQueue =
+      final streamQueue =
           StreamQueue<CameraErrorEvent>(errorStream);
 
       // Emit test events
-      final CameraErrorEvent event = CameraErrorEvent(
+      final event = CameraErrorEvent(
         cameraId,
         'Error Description',
       );
-      for (int i = 0; i < 3; i++) {
+      for (var i = 0; i < 3; i++) {
         camera.hostCameraHandlers[cameraId]!.error('Error Description');
       }
 
@@ -422,14 +422,14 @@ void main() {
       // Act
       final Stream<DeviceOrientationChangedEvent> eventStream = camera
           .onDeviceOrientationChanged();
-      final StreamQueue<DeviceOrientationChangedEvent> streamQueue =
+      final streamQueue =
           StreamQueue<DeviceOrientationChangedEvent>(eventStream);
 
       // Emit test events
-      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+      const event = DeviceOrientationChangedEvent(
         DeviceOrientation.portraitUp,
       );
-      for (int i = 0; i < 3; i++) {
+      for (var i = 0; i < 3; i++) {
         camera.hostHandler.deviceOrientationChanged(
           PlatformDeviceOrientation.portraitUp,
         );
@@ -480,7 +480,7 @@ void main() {
       'Should fetch CameraDescription instances for available cameras',
       () async {
         // Arrange
-        final List<PlatformCameraDescription> returnData =
+        final returnData =
             <PlatformCameraDescription>[
               PlatformCameraDescription(
                 name: 'Test 1',
@@ -502,10 +502,10 @@ void main() {
 
         // Assert
         expect(cameras.length, returnData.length);
-        for (int i = 0; i < returnData.length; i++) {
+        for (var i = 0; i < returnData.length; i++) {
           final PlatformCameraDescription platformCameraDescription =
               returnData[i];
-          final CameraDescription cameraDescription = CameraDescription(
+          final cameraDescription = CameraDescription(
             name: platformCameraDescription.name,
             lensDirection: cameraLensDirectionFromPlatform(
               platformCameraDescription.lensDirection,
@@ -620,7 +620,7 @@ void main() {
 
     test('Should set the description while recording', () async {
       // Arrange
-      const CameraDescription camera2Description = CameraDescription(
+      const camera2Description = CameraDescription(
         name: 'Test2',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: 0,

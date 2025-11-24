@@ -11,13 +11,13 @@ import 'test_helpers.dart';
 void main() {
   group('RouteConfiguration', () {
     test('throws when parentNavigatorKey is not an ancestor', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> a = GlobalKey<NavigatorState>(
+      final a = GlobalKey<NavigatorState>(
         debugLabel: 'a',
       );
-      final GlobalKey<NavigatorState> b = GlobalKey<NavigatorState>(
+      final b = GlobalKey<NavigatorState>(
         debugLabel: 'b',
       );
 
@@ -59,10 +59,10 @@ void main() {
     });
 
     test('throws when ShellRoute has no children', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final List<RouteBase> shellRouteChildren = <RouteBase>[];
+      final shellRouteChildren = <RouteBase>[];
       expect(() {
         createRouteConfiguration(
           navigatorKey: root,
@@ -78,13 +78,13 @@ void main() {
     test(
       'throws when StatefulShellRoute sub-route uses incorrect parentNavigatorKey',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
-        final GlobalKey<NavigatorState> keyA = GlobalKey<NavigatorState>(
+        final keyA = GlobalKey<NavigatorState>(
           debugLabel: 'A',
         );
-        final GlobalKey<NavigatorState> keyB = GlobalKey<NavigatorState>(
+        final keyB = GlobalKey<NavigatorState>(
           debugLabel: 'B',
         );
 
@@ -126,10 +126,10 @@ void main() {
     test(
       'does not throw when StatefulShellRoute sub-route uses correct parentNavigatorKeys',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
-        final GlobalKey<NavigatorState> keyA = GlobalKey<NavigatorState>(
+        final keyA = GlobalKey<NavigatorState>(
           debugLabel: 'A',
         );
 
@@ -169,10 +169,10 @@ void main() {
     test(
       'throws when a sub-route of StatefulShellRoute has a parentNavigatorKey',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
-        final GlobalKey<NavigatorState> someNavigatorKey =
+        final someNavigatorKey =
             GlobalKey<NavigatorState>();
         expect(() {
           createRouteConfiguration(
@@ -218,13 +218,13 @@ void main() {
     );
 
     test('throws when StatefulShellRoute has duplicate navigator keys', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> keyA = GlobalKey<NavigatorState>(
+      final keyA = GlobalKey<NavigatorState>(
         debugLabel: 'A',
       );
-      final List<GoRoute> shellRouteChildren = <GoRoute>[
+      final shellRouteChildren = <GoRoute>[
         GoRoute(
           path: '/a',
           builder: _mockScreenBuilder,
@@ -257,19 +257,19 @@ void main() {
 
     test('throws when a child of StatefulShellRoute has an incorrect '
         'parentNavigatorKey', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> sectionANavigatorKey =
+      final sectionANavigatorKey =
           GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+      final sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
-      final GoRoute routeA = GoRoute(
+      final routeA = GoRoute(
         path: '/a',
         builder: _mockScreenBuilder,
         parentNavigatorKey: sectionBNavigatorKey,
       );
-      final GoRoute routeB = GoRoute(
+      final routeB = GoRoute(
         path: '/b',
         builder: _mockScreenBuilder,
         parentNavigatorKey: sectionANavigatorKey,
@@ -302,12 +302,12 @@ void main() {
 
     test('throws when a branch of a StatefulShellRoute has an incorrect '
         'initialLocation', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> sectionANavigatorKey =
+      final sectionANavigatorKey =
           GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+      final sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
       expect(() {
         createRouteConfiguration(
@@ -342,12 +342,12 @@ void main() {
 
     test('throws when a branch of a StatefulShellRoute has a initialLocation '
         'that is not a descendant of the same branch', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> sectionANavigatorKey =
+      final sectionANavigatorKey =
           GlobalKey<NavigatorState>();
-      final GlobalKey<NavigatorState> sectionBNavigatorKey =
+      final sectionBNavigatorKey =
           GlobalKey<NavigatorState>();
       expect(() {
         createRouteConfiguration(
@@ -392,7 +392,7 @@ void main() {
 
     test('does not throw when a branch of a StatefulShellRoute has correctly '
         'configured initialLocations', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
 
@@ -576,10 +576,10 @@ void main() {
     test(
       'throws when there is a GoRoute ancestor with a different parentNavigatorKey',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
-        final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+        final shell = GlobalKey<NavigatorState>(
           debugLabel: 'shell',
         );
         expect(() {
@@ -614,13 +614,13 @@ void main() {
     );
 
     test('Does not throw with valid parentNavigatorKey configuration', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+      final shell = GlobalKey<NavigatorState>(
         debugLabel: 'shell',
       );
-      final GlobalKey<NavigatorState> shell2 = GlobalKey<NavigatorState>(
+      final shell2 = GlobalKey<NavigatorState>(
         debugLabel: 'shell2',
       );
       createRouteConfiguration(
@@ -671,10 +671,10 @@ void main() {
     test(
       'Does not throw with multiple nested GoRoutes using parentNavigatorKey in ShellRoute',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
-        final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+        final shell = GlobalKey<NavigatorState>(
           debugLabel: 'shell',
         );
         createRouteConfiguration(
@@ -720,10 +720,10 @@ void main() {
     );
 
     test('Throws when parentNavigatorKeys are overlapping', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+      final shell = GlobalKey<NavigatorState>(
         debugLabel: 'shell',
       );
       expect(
@@ -772,10 +772,10 @@ void main() {
     test(
       'Does not throw when parentNavigatorKeys are overlapping correctly',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
-        final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+        final shell = GlobalKey<NavigatorState>(
           debugLabel: 'shell',
         );
         createRouteConfiguration(
@@ -822,13 +822,13 @@ void main() {
     test('throws when a GoRoute with a different parentNavigatorKey '
         'exists between a GoRoute with a parentNavigatorKey and '
         'its ShellRoute ancestor', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+      final shell = GlobalKey<NavigatorState>(
         debugLabel: 'shell',
       );
-      final GlobalKey<NavigatorState> shell2 = GlobalKey<NavigatorState>(
+      final shell2 = GlobalKey<NavigatorState>(
         debugLabel: 'shell2',
       );
       expect(
@@ -881,7 +881,7 @@ void main() {
     test(
       'does not throw when ShellRoute is the child of another ShellRoute',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
         createRouteConfiguration(
@@ -910,13 +910,13 @@ void main() {
     );
 
     test('Does not throw with valid parentNavigatorKey configuration', () {
-      final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+      final root = GlobalKey<NavigatorState>(
         debugLabel: 'root',
       );
-      final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+      final shell = GlobalKey<NavigatorState>(
         debugLabel: 'shell',
       );
-      final GlobalKey<NavigatorState> shell2 = GlobalKey<NavigatorState>(
+      final shell2 = GlobalKey<NavigatorState>(
         debugLabel: 'shell2',
       );
       createRouteConfiguration(
@@ -967,7 +967,7 @@ void main() {
     test(
       'throws when ShellRoute contains a GoRoute with a parentNavigatorKey',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
         expect(() {
@@ -996,10 +996,10 @@ void main() {
     test(
       'All known route strings returned by debugKnownRoutes are correct',
       () {
-        final GlobalKey<NavigatorState> root = GlobalKey<NavigatorState>(
+        final root = GlobalKey<NavigatorState>(
           debugLabel: 'root',
         );
-        final GlobalKey<NavigatorState> shell = GlobalKey<NavigatorState>(
+        final shell = GlobalKey<NavigatorState>(
           debugLabel: 'shell',
         );
 

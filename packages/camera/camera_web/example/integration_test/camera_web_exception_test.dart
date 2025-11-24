@@ -12,11 +12,11 @@ void main() {
 
   group('CameraWebException', () {
     testWidgets('sets all properties', (WidgetTester tester) async {
-      const int cameraId = 1;
+      const cameraId = 1;
       const CameraErrorCode code = CameraErrorCode.notFound;
-      const String description = 'The camera is not found.';
+      const description = 'The camera is not found.';
 
-      final CameraWebException exception = CameraWebException(
+      final exception = CameraWebException(
         cameraId,
         code,
         description,
@@ -30,11 +30,11 @@ void main() {
     testWidgets('toString includes all properties', (
       WidgetTester tester,
     ) async {
-      const int cameraId = 2;
+      const cameraId = 2;
       const CameraErrorCode code = CameraErrorCode.notReadable;
-      const String description = 'The camera is not readable.';
+      const description = 'The camera is not readable.';
 
-      final CameraWebException exception = CameraWebException(
+      final exception = CameraWebException(
         cameraId,
         code,
         description,

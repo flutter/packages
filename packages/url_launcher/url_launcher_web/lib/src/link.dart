@@ -346,7 +346,7 @@ class LinkViewController extends PlatformViewController {
     String semanticsIdentifier,
   ) {
     final int viewId = params.id;
-    final LinkViewController controller = LinkViewController(
+    final controller = LinkViewController(
       viewId,
       semanticsIdentifier,
     );
@@ -523,7 +523,7 @@ class LinkViewController extends PlatformViewController {
     _element.setAttribute('aria-hidden', 'true');
     _element.setAttribute('tabIndex', '-1');
 
-    final Map<String, dynamic> args = <String, dynamic>{
+    final args = <String, dynamic>{
       'id': viewId,
       'viewType': linkViewType,
     };
@@ -560,7 +560,7 @@ class LinkViewController extends PlatformViewController {
     // Internal links are pushed through Flutter's navigation system instead of
     // letting the browser handle it.
     mouseEvent?.preventDefault();
-    final String routeName = controller._uri.toString();
+    final routeName = controller._uri.toString();
     pushRouteToFrameworkFunction(routeName);
   }
 

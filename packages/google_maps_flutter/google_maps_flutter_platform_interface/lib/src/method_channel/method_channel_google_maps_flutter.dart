@@ -256,7 +256,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         final Map<TileOverlayId, TileOverlay>? tileOverlaysForThisMap =
             _tileOverlays[mapId];
-        final String tileOverlayId = arguments['tileOverlayId']! as String;
+        final tileOverlayId = arguments['tileOverlayId']! as String;
         final TileOverlay? tileOverlay =
             tileOverlaysForThisMap?[TileOverlayId(tileOverlayId)];
         final TileProvider? tileProvider = tileOverlay?.tileProvider;
@@ -271,7 +271,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
         return tile.toJson();
       case 'cluster#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
-        final ClusterManagerId clusterManagerId = ClusterManagerId(
+        final clusterManagerId = ClusterManagerId(
           arguments['clusterManagerId']! as String,
         );
         final LatLng position = LatLng.fromJson(arguments['position'])!;
@@ -284,7 +284,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
               ),
             );
 
-        final LatLngBounds bounds = LatLngBounds(
+        final bounds = LatLngBounds(
           northeast: LatLng.fromJson(latLngData['northeast'])!,
           southwest: LatLng.fromJson(latLngData['southwest'])!,
         );
@@ -389,7 +389,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     final Set<TileOverlay> previousSet = currentTileOverlays != null
         ? currentTileOverlays.values.toSet()
         : <TileOverlay>{};
-    final TileOverlayUpdates updates = TileOverlayUpdates.from(
+    final updates = TileOverlayUpdates.from(
       previousSet,
       newTileOverlays,
     );
@@ -440,7 +440,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     final List<dynamic> successAndError = (await channel(
       mapId,
     ).invokeMethod<List<dynamic>>('map#setStyle', mapStyle))!;
-    final bool success = successAndError[0] as bool;
+    final success = successAndError[0] as bool;
     if (!success) {
       throw MapStyleException(successAndError[1] as String);
     }
@@ -540,7 +540,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     MapObjects mapObjects = const MapObjects(),
     Map<String, dynamic> mapOptions = const <String, dynamic>{},
   }) {
-    final Map<String, dynamic> creationParams = <String, dynamic>{
+    final creationParams = <String, dynamic>{
       'initialCameraPosition': widgetConfiguration.initialCameraPosition
           .toMap(),
       'options': mapOptions,

@@ -12,45 +12,45 @@ void main() {
 
   group('tile overlay updates tests', () {
     test('Correctly set toRemove, toAdd and toChange', () async {
-      const TileOverlay to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
-      const TileOverlay to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
-      const TileOverlay to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const TileOverlay to3Changed = TileOverlay(
+      const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
+      const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
+      const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
+      const to3Changed = TileOverlay(
         tileOverlayId: TileOverlayId('id3'),
         transparency: 0.5,
       );
-      const TileOverlay to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
-      final Set<TileOverlay> previous = <TileOverlay>{to1, to2, to3};
-      final Set<TileOverlay> current = <TileOverlay>{to2, to3Changed, to4};
-      final TileOverlayUpdates updates = TileOverlayUpdates.from(
+      const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
+      final previous = <TileOverlay>{to1, to2, to3};
+      final current = <TileOverlay>{to2, to3Changed, to4};
+      final updates = TileOverlayUpdates.from(
         previous,
         current,
       );
 
-      final Set<TileOverlayId> toRemove = <TileOverlayId>{
+      final toRemove = <TileOverlayId>{
         const TileOverlayId('id1'),
       };
       expect(updates.tileOverlayIdsToRemove, toRemove);
 
-      final Set<TileOverlay> toAdd = <TileOverlay>{to4};
+      final toAdd = <TileOverlay>{to4};
       expect(updates.tileOverlaysToAdd, toAdd);
 
-      final Set<TileOverlay> toChange = <TileOverlay>{to3Changed};
+      final toChange = <TileOverlay>{to3Changed};
       expect(updates.tileOverlaysToChange, toChange);
     });
 
     test('toJson', () async {
-      const TileOverlay to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
-      const TileOverlay to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
-      const TileOverlay to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const TileOverlay to3Changed = TileOverlay(
+      const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
+      const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
+      const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
+      const to3Changed = TileOverlay(
         tileOverlayId: TileOverlayId('id3'),
         transparency: 0.5,
       );
-      const TileOverlay to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
-      final Set<TileOverlay> previous = <TileOverlay>{to1, to2, to3};
-      final Set<TileOverlay> current = <TileOverlay>{to2, to3Changed, to4};
-      final TileOverlayUpdates updates = TileOverlayUpdates.from(
+      const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
+      final previous = <TileOverlay>{to1, to2, to3};
+      final current = <TileOverlay>{to2, to3Changed, to4};
+      final updates = TileOverlayUpdates.from(
         previous,
         current,
       );
@@ -68,27 +68,27 @@ void main() {
     });
 
     test('equality', () async {
-      const TileOverlay to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
-      const TileOverlay to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
-      const TileOverlay to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const TileOverlay to3Changed = TileOverlay(
+      const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
+      const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
+      const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
+      const to3Changed = TileOverlay(
         tileOverlayId: TileOverlayId('id3'),
         transparency: 0.5,
       );
-      const TileOverlay to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
-      final Set<TileOverlay> previous = <TileOverlay>{to1, to2, to3};
-      final Set<TileOverlay> current1 = <TileOverlay>{to2, to3Changed, to4};
-      final Set<TileOverlay> current2 = <TileOverlay>{to2, to3Changed, to4};
-      final Set<TileOverlay> current3 = <TileOverlay>{to2, to4};
-      final TileOverlayUpdates updates1 = TileOverlayUpdates.from(
+      const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
+      final previous = <TileOverlay>{to1, to2, to3};
+      final current1 = <TileOverlay>{to2, to3Changed, to4};
+      final current2 = <TileOverlay>{to2, to3Changed, to4};
+      final current3 = <TileOverlay>{to2, to4};
+      final updates1 = TileOverlayUpdates.from(
         previous,
         current1,
       );
-      final TileOverlayUpdates updates2 = TileOverlayUpdates.from(
+      final updates2 = TileOverlayUpdates.from(
         previous,
         current2,
       );
-      final TileOverlayUpdates updates3 = TileOverlayUpdates.from(
+      final updates3 = TileOverlayUpdates.from(
         previous,
         current3,
       );
@@ -97,17 +97,17 @@ void main() {
     });
 
     test('hashCode', () async {
-      const TileOverlay to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
-      const TileOverlay to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
-      const TileOverlay to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const TileOverlay to3Changed = TileOverlay(
+      const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
+      const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
+      const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
+      const to3Changed = TileOverlay(
         tileOverlayId: TileOverlayId('id3'),
         transparency: 0.5,
       );
-      const TileOverlay to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
-      final Set<TileOverlay> previous = <TileOverlay>{to1, to2, to3};
-      final Set<TileOverlay> current = <TileOverlay>{to2, to3Changed, to4};
-      final TileOverlayUpdates updates = TileOverlayUpdates.from(
+      const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
+      final previous = <TileOverlay>{to1, to2, to3};
+      final current = <TileOverlay>{to2, to3Changed, to4};
+      final updates = TileOverlayUpdates.from(
         previous,
         current,
       );
@@ -122,17 +122,17 @@ void main() {
     });
 
     test('toString', () async {
-      const TileOverlay to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
-      const TileOverlay to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
-      const TileOverlay to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
-      const TileOverlay to3Changed = TileOverlay(
+      const to1 = TileOverlay(tileOverlayId: TileOverlayId('id1'));
+      const to2 = TileOverlay(tileOverlayId: TileOverlayId('id2'));
+      const to3 = TileOverlay(tileOverlayId: TileOverlayId('id3'));
+      const to3Changed = TileOverlay(
         tileOverlayId: TileOverlayId('id3'),
         transparency: 0.5,
       );
-      const TileOverlay to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
-      final Set<TileOverlay> previous = <TileOverlay>{to1, to2, to3};
-      final Set<TileOverlay> current = <TileOverlay>{to2, to3Changed, to4};
-      final TileOverlayUpdates updates = TileOverlayUpdates.from(
+      const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
+      final previous = <TileOverlay>{to1, to2, to3};
+      final current = <TileOverlay>{to2, to3Changed, to4};
+      final updates = TileOverlayUpdates.from(
         previous,
         current,
       );

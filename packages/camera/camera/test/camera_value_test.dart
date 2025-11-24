@@ -11,7 +11,7 @@ import 'camera_preview_test.dart';
 void main() {
   group('camera_value', () {
     test('Can be created', () {
-      const CameraValue cameraValue = CameraValue(
+      const cameraValue = CameraValue(
         isInitialized: false,
         previewSize: Size(10, 10),
         isRecordingPaused: false,
@@ -52,7 +52,7 @@ void main() {
     });
 
     test('Can be created as uninitialized', () {
-      const CameraValue cameraValue = CameraValue.uninitialized(
+      const cameraValue = CameraValue.uninitialized(
         FakeController.fakeDescription,
       );
 
@@ -76,7 +76,7 @@ void main() {
     });
 
     test('Can be copied with isInitialized', () {
-      const CameraValue cv = CameraValue.uninitialized(
+      const cv = CameraValue.uninitialized(
         FakeController.fakeDescription,
       );
       final CameraValue cameraValue = cv.copyWith(isInitialized: true);
@@ -101,7 +101,7 @@ void main() {
     });
 
     test('Has aspectRatio after setting size', () {
-      const CameraValue cv = CameraValue.uninitialized(
+      const cv = CameraValue.uninitialized(
         FakeController.fakeDescription,
       );
       final CameraValue cameraValue = cv.copyWith(
@@ -113,7 +113,7 @@ void main() {
     });
 
     test('hasError is true after setting errorDescription', () {
-      const CameraValue cv = CameraValue.uninitialized(
+      const cv = CameraValue.uninitialized(
         FakeController.fakeDescription,
       );
       final CameraValue cameraValue = cv.copyWith(errorDescription: 'error');
@@ -123,7 +123,7 @@ void main() {
     });
 
     test('Recording paused is false when not recording', () {
-      const CameraValue cv = CameraValue.uninitialized(
+      const cv = CameraValue.uninitialized(
         FakeController.fakeDescription,
       );
       final CameraValue cameraValue = cv.copyWith(
@@ -136,7 +136,7 @@ void main() {
     });
 
     test('toString() works as expected', () {
-      const CameraValue cameraValue = CameraValue(
+      const cameraValue = CameraValue(
         isInitialized: false,
         previewSize: Size(10, 10),
         isRecordingPaused: false,

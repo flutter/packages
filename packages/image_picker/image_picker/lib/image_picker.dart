@@ -77,7 +77,7 @@ class ImagePicker {
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     bool requestFullMetadata = true,
   }) {
-    final ImagePickerOptions imagePickerOptions =
+    final imagePickerOptions =
         ImagePickerOptions.createAndValidate(
           maxWidth: maxWidth,
           maxHeight: maxHeight,
@@ -134,7 +134,7 @@ class ImagePicker {
     int? limit,
     bool requestFullMetadata = true,
   }) {
-    final ImageOptions imageOptions = ImageOptions.createAndValidate(
+    final imageOptions = ImageOptions.createAndValidate(
       maxWidth: maxWidth,
       maxHeight: maxHeight,
       imageQuality: imageQuality,

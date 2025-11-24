@@ -345,7 +345,7 @@ class AndroidWebViewController extends PlatformWebViewController {
             final Future<void> Function(JavaScriptAlertDialogRequest)?
             callback = weakReference.target?._onJavaScriptAlert;
             if (callback != null) {
-              final JavaScriptAlertDialogRequest request =
+              final request =
                   JavaScriptAlertDialogRequest(message: message, url: url);
 
               await callback.call(request);
@@ -360,7 +360,7 @@ class AndroidWebViewController extends PlatformWebViewController {
             final Future<bool> Function(JavaScriptConfirmDialogRequest)?
             callback = weakReference.target?._onJavaScriptConfirm;
             if (callback != null) {
-              final JavaScriptConfirmDialogRequest request =
+              final request =
                   JavaScriptConfirmDialogRequest(message: message, url: url);
               final bool result = await callback.call(request);
               return result;
@@ -381,7 +381,7 @@ class AndroidWebViewController extends PlatformWebViewController {
             final Future<String> Function(JavaScriptTextInputDialogRequest)?
             callback = weakReference.target?._onJavaScriptPrompt;
             if (callback != null) {
-              final JavaScriptTextInputDialogRequest request =
+              final request =
                   JavaScriptTextInputDialogRequest(
                     message: message,
                     url: url,
@@ -1260,7 +1260,7 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
   // Attempt to handle custom views with a default implementation if it has not
   // been set.
   void _trySetDefaultOnShowCustomWidgetCallbacks(BuildContext context) {
-    final AndroidWebViewController controller =
+    final controller =
         _androidParams.controller as AndroidWebViewController;
 
     if (controller._onShowCustomWidgetCallback == null) {
@@ -1505,7 +1505,7 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
                 params,
               ),
       ) {
-    final WeakReference<AndroidNavigationDelegate> weakThis =
+    final weakThis =
         WeakReference<AndroidNavigationDelegate>(this);
 
     _webViewClient = (this.params as AndroidNavigationDelegateCreationParams)

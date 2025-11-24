@@ -29,7 +29,7 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
   required SharedPreferencesOptions sharedPreferencesAsyncOptions,
   required String migrationCompletedKey,
 }) async {
-  final SharedPreferencesAsync sharedPreferencesAsyncInstance =
+  final sharedPreferencesAsyncInstance =
       SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
 
   if (await sharedPreferencesAsyncInstance.containsKey(migrationCompletedKey)) {
@@ -39,7 +39,7 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
   await legacySharedPreferencesInstance.reload();
   final Set<String> keys = legacySharedPreferencesInstance.getKeys();
 
-  for (final String key in keys) {
+  for (final key in keys) {
     final Object? value = legacySharedPreferencesInstance.get(key);
     switch (value.runtimeType) {
       case const (bool):

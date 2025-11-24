@@ -43,7 +43,7 @@ class TileOverlaysController extends GeometryController {
   }
 
   void _addTileOverlay(TileOverlay tileOverlay) {
-    final TileOverlayController controller = TileOverlayController(
+    final controller = TileOverlayController(
       tileOverlay: tileOverlay,
     );
     _tileOverlays[tileOverlay.tileOverlayId] = controller;

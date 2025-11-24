@@ -95,7 +95,7 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
 
     _groundOverlayIndex += 1;
 
-    final GroundOverlayId id = GroundOverlayId(
+    final id = GroundOverlayId(
       'ground_overlay_$_groundOverlayIndex',
     );
 
@@ -147,7 +147,7 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
   void _changeTransparency() {
     assert(_groundOverlay != null);
     setState(() {
-      final double transparency = _groundOverlay!.transparency == 0.0
+      final transparency = _groundOverlay!.transparency == 0.0
           ? 0.5
           : 0.0;
       _groundOverlay = _groundOverlay!.copyWith(
@@ -244,7 +244,7 @@ class GroundOverlayBodyState extends State<GroundOverlayBody> {
 
   @override
   Widget build(BuildContext context) {
-    final Set<GroundOverlay> overlays = <GroundOverlay>{
+    final overlays = <GroundOverlay>{
       if (_groundOverlay != null) _groundOverlay!,
     };
     return Column(

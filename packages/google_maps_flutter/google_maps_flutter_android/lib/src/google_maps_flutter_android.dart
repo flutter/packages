@@ -332,7 +332,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     final Set<TileOverlay> previousSet = currentTileOverlays != null
         ? currentTileOverlays.values.toSet()
         : <TileOverlay>{};
-    final _TileOverlayUpdates updates = _TileOverlayUpdates.from(
+    final updates = _TileOverlayUpdates.from(
       previousSet,
       newTileOverlays,
     );
@@ -565,7 +565,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       'On Android width must be set when position is set for ground overlays.',
     );
 
-    final PlatformMapViewCreationParams creationParams =
+    final creationParams =
         PlatformMapViewCreationParams(
           initialCameraPosition: _platformCameraPositionFromCameraPosition(
             widgetConfiguration.initialCameraPosition,
@@ -597,7 +597,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
               .toList(),
         );
 
-    const String viewType = 'plugins.flutter.dev/google_maps_android';
+    const viewType = 'plugins.flutter.dev/google_maps_android';
     if (useAndroidViewSurface) {
       return PlatformViewLink(
         viewType: viewType,
@@ -1386,7 +1386,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
   // to support this legacy API that relied on cross-package magic strings.
   final List<double>? padding = (options['padding'] as List<Object?>?)
       ?.cast<double>();
-  final int? mapType = options['mapType'] as int?;
+  final mapType = options['mapType'] as int?;
   return PlatformMapConfiguration(
     compassEnabled: options['compassEnabled'] as bool?,
     cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBoundsJson(

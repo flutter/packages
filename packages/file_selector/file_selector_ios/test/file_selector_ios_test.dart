@@ -31,14 +31,14 @@ void main() {
     });
 
     test('passes the accepted type groups correctly', () async {
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
         uniformTypeIdentifiers: <String>['public.text'],
       );
 
-      const XTypeGroup groupTwo = XTypeGroup(
+      const groupTwo = XTypeGroup(
         label: 'image',
         extensions: <String>['jpg'],
         mimeTypes: <String>['image/jpg'],
@@ -59,7 +59,7 @@ void main() {
       expect(api.passedConfig?.allowMultiSelection, isFalse);
     });
     test('throws for a type group that does not support iOS', () async {
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         label: 'images',
         webWildCards: <String>['images/*'],
       );
@@ -79,7 +79,7 @@ void main() {
     });
 
     test('correctly handles a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(label: 'text');
+      const group = XTypeGroup(label: 'text');
 
       await expectLater(
         plugin.openFile(acceptedTypeGroups: <XTypeGroup>[group]),
@@ -98,14 +98,14 @@ void main() {
     });
 
     test('passes the accepted type groups correctly', () async {
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         label: 'text',
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
         uniformTypeIdentifiers: <String>['public.text'],
       );
 
-      const XTypeGroup groupTwo = XTypeGroup(
+      const groupTwo = XTypeGroup(
         label: 'image',
         extensions: <String>['jpg'],
         mimeTypes: <String>['image/jpg'],
@@ -126,7 +126,7 @@ void main() {
     });
 
     test('throws for a type group that does not support iOS', () async {
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         label: 'images',
         webWildCards: <String>['images/*'],
       );
@@ -146,7 +146,7 @@ void main() {
     });
 
     test('correctly handles a wildcard group', () async {
-      const XTypeGroup group = XTypeGroup(label: 'text');
+      const group = XTypeGroup(label: 'text');
 
       await expectLater(
         plugin.openFiles(acceptedTypeGroups: <XTypeGroup>[group]),

@@ -404,11 +404,11 @@ class PigeonInstanceManager {
       return PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
     }
     WidgetsFlutterBinding.ensureInitialized();
-    final _PigeonInternalInstanceManagerApi api =
+    final api =
         _PigeonInternalInstanceManagerApi();
     // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
-    final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+    final instanceManager = PigeonInstanceManager(
       onWeakReferenceRemoved: (int identifier) {
         api.removeStrongReference(identifier);
       },
@@ -487,7 +487,7 @@ class PigeonInstanceManager {
   /// [identifier] is not removed first. This can be done with
   /// [removeWeakReference].
   T? remove<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
-    final T? instance = _weakInstances[identifier]?.target as T?;
+    final instance = _weakInstances[identifier]?.target as T?;
     assert(
       instance == null,
       'A strong instance with identifier $identifier is being removed despite the weak reference still existing: $instance',
@@ -587,8 +587,7 @@ class _PigeonInternalInstanceManagerApi {
     PigeonInstanceManager? instanceManager,
   }) {
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -602,7 +601,7 @@ class _PigeonInternalInstanceManagerApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_identifier = (args[0] as int?);
+          final arg_identifier = (args[0] as int?);
           assert(
             arg_identifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.',
@@ -625,9 +624,9 @@ class _PigeonInternalInstanceManagerApi {
   }
 
   Future<void> removeStrongReference(int identifier) async {
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.removeStrongReference';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -636,7 +635,7 @@ class _PigeonInternalInstanceManagerApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[identifier],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -655,16 +654,16 @@ class _PigeonInternalInstanceManagerApi {
   ///
   /// This is typically called after a hot restart.
   Future<void> clear() async {
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PigeonInternalInstanceManager.clear';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -727,7 +726,7 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final int? value = readValue(buffer) as int?;
+        final value = readValue(buffer) as int?;
         return value == null ? null : ProxyApiTestEnum.values[value];
       default:
         return super.readValueOfType(type, buffer);
@@ -1068,9 +1067,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.pigeon_defaultConstructor';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -1117,7 +1116,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           nullableProxyApiParam,
         ]);
     () async {
-      final List<Object?>? pigeonVar_replyList =
+      final pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -1390,9 +1389,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.namedConstructor';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -1421,7 +1420,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
           aNullableProxyApi,
         ]);
     () async {
-      final List<Object?>? pigeonVar_replyList =
+      final pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -2212,14 +2211,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     Future<String> Function(ProxyApiTestClass pigeon_instance, String aString)?
     flutterEchoAsyncString,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
           pigeon_instanceManager ?? PigeonInstanceManager.instance,
         );
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    final binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2233,7 +2231,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoop was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -2256,8 +2254,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2271,7 +2268,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowError was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -2294,8 +2291,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2309,7 +2305,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterThrowErrorFromVoid was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -2332,8 +2328,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2347,13 +2342,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool was null, expected non-null ProxyApiTestClass.',
           );
-          final bool? arg_aBool = (args[1] as bool?);
+          final arg_aBool = (args[1] as bool?);
           assert(
             arg_aBool != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoBool was null, expected non-null bool.',
@@ -2377,8 +2372,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2392,13 +2386,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt was null, expected non-null ProxyApiTestClass.',
           );
-          final int? arg_anInt = (args[1] as int?);
+          final arg_anInt = (args[1] as int?);
           assert(
             arg_anInt != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoInt was null, expected non-null int.',
@@ -2422,8 +2416,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2437,13 +2430,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble was null, expected non-null ProxyApiTestClass.',
           );
-          final double? arg_aDouble = (args[1] as double?);
+          final arg_aDouble = (args[1] as double?);
           assert(
             arg_aDouble != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoDouble was null, expected non-null double.',
@@ -2465,8 +2458,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2480,13 +2472,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString was null, expected non-null ProxyApiTestClass.',
           );
-          final String? arg_aString = (args[1] as String?);
+          final arg_aString = (args[1] as String?);
           assert(
             arg_aString != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoString was null, expected non-null String.',
@@ -2508,8 +2500,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2523,13 +2514,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List was null, expected non-null ProxyApiTestClass.',
           );
-          final Uint8List? arg_aList = (args[1] as Uint8List?);
+          final arg_aList = (args[1] as Uint8List?);
           assert(
             arg_aList != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoUint8List was null, expected non-null Uint8List.',
@@ -2552,8 +2543,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2567,7 +2557,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -2598,8 +2588,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2613,7 +2602,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -2643,8 +2632,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2658,7 +2646,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoMap was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -2689,8 +2677,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2704,7 +2691,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApiMap was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -2735,8 +2722,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2750,13 +2736,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestClass.',
           );
-          final ProxyApiTestEnum? arg_anEnum = (args[1] as ProxyApiTestEnum?);
+          final arg_anEnum = (args[1] as ProxyApiTestEnum?);
           assert(
             arg_anEnum != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoEnum was null, expected non-null ProxyApiTestEnum.',
@@ -2780,8 +2766,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2795,13 +2780,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoProxyApi was null, expected non-null ProxyApiTestClass.',
           );
-          final ProxyApiSuperClass? arg_aProxyApi =
+          final arg_aProxyApi =
               (args[1] as ProxyApiSuperClass?);
           assert(
             arg_aProxyApi != null,
@@ -2825,8 +2810,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2840,13 +2824,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableBool was null, expected non-null ProxyApiTestClass.',
           );
-          final bool? arg_aBool = (args[1] as bool?);
+          final arg_aBool = (args[1] as bool?);
           try {
             final bool? output =
                 (flutterEchoNullableBool ??
@@ -2865,8 +2849,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2880,13 +2863,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableInt was null, expected non-null ProxyApiTestClass.',
           );
-          final int? arg_anInt = (args[1] as int?);
+          final arg_anInt = (args[1] as int?);
           try {
             final int? output =
                 (flutterEchoNullableInt ??
@@ -2905,8 +2888,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2920,13 +2902,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableDouble was null, expected non-null ProxyApiTestClass.',
           );
-          final double? arg_aDouble = (args[1] as double?);
+          final arg_aDouble = (args[1] as double?);
           try {
             final double? output =
                 (flutterEchoNullableDouble ??
@@ -2945,8 +2927,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -2960,13 +2941,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableString was null, expected non-null ProxyApiTestClass.',
           );
-          final String? arg_aString = (args[1] as String?);
+          final arg_aString = (args[1] as String?);
           try {
             final String? output =
                 (flutterEchoNullableString ??
@@ -2985,8 +2966,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -3000,13 +2980,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableUint8List was null, expected non-null ProxyApiTestClass.',
           );
-          final Uint8List? arg_aList = (args[1] as Uint8List?);
+          final arg_aList = (args[1] as Uint8List?);
           try {
             final Uint8List? output =
                 (flutterEchoNullableUint8List ??
@@ -3025,8 +3005,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -3040,7 +3019,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -3066,8 +3045,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -3081,7 +3059,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableMap was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -3107,8 +3085,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -3122,13 +3099,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableEnum was null, expected non-null ProxyApiTestClass.',
           );
-          final ProxyApiTestEnum? arg_anEnum = (args[1] as ProxyApiTestEnum?);
+          final arg_anEnum = (args[1] as ProxyApiTestEnum?);
           try {
             final ProxyApiTestEnum? output =
                 (flutterEchoNullableEnum ??
@@ -3147,8 +3124,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -3162,13 +3138,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoNullableProxyApi was null, expected non-null ProxyApiTestClass.',
           );
-          final ProxyApiSuperClass? arg_aProxyApi =
+          final arg_aProxyApi =
               (args[1] as ProxyApiSuperClass?);
           try {
             final ProxyApiSuperClass? output =
@@ -3188,8 +3164,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -3203,7 +3178,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterNoopAsync was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
@@ -3225,8 +3200,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -3240,13 +3214,13 @@ class ProxyApiTestClass extends ProxyApiSuperClass
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiTestClass? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiTestClass?);
           assert(
             arg_pigeon_instance != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString was null, expected non-null ProxyApiTestClass.',
           );
-          final String? arg_aString = (args[1] as String?);
+          final arg_aString = (args[1] as String?);
           assert(
             arg_aString != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.flutterEchoAsyncString was null, expected non-null String.',
@@ -3270,7 +3244,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   ProxyApiSuperClass pigeonVar_attachedField() {
-    final ProxyApiSuperClass pigeonVar_instance =
+    final pigeonVar_instance =
         ProxyApiSuperClass.pigeon_detached(
           pigeon_binaryMessenger: pigeon_binaryMessenger,
           pigeon_instanceManager: pigeon_instanceManager,
@@ -3281,9 +3255,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(pigeonVar_instance);
     () async {
-      const String pigeonVar_channelName =
+      const pigeonVar_channelName =
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.attachedField';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
+      final pigeonVar_channel =
           BasicMessageChannel<Object?>(
             pigeonVar_channelName,
             pigeonChannelCodec,
@@ -3292,7 +3266,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
         <Object?>[this, pigeonVar_instanceIdentifier],
       );
-      final List<Object?>? pigeonVar_replyList =
+      final pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -3310,18 +3284,18 @@ class ProxyApiTestClass extends ProxyApiSuperClass
   }
 
   static ProxyApiSuperClass pigeonVar_staticAttachedField() {
-    final ProxyApiSuperClass pigeonVar_instance =
+    final pigeonVar_instance =
         ProxyApiSuperClass.pigeon_detached();
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(PigeonInstanceManager.instance);
     final BinaryMessenger pigeonVar_binaryMessenger =
         ServicesBinding.instance.defaultBinaryMessenger;
     final int pigeonVar_instanceIdentifier = PigeonInstanceManager.instance
         .addDartCreatedInstance(pigeonVar_instance);
     () async {
-      const String pigeonVar_channelName =
+      const pigeonVar_channelName =
           'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAttachedField';
-      final BasicMessageChannel<Object?> pigeonVar_channel =
+      final pigeonVar_channel =
           BasicMessageChannel<Object?>(
             pigeonVar_channelName,
             pigeonChannelCodec,
@@ -3330,7 +3304,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
       final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
         <Object?>[pigeonVar_instanceIdentifier],
       );
-      final List<Object?>? pigeonVar_replyList =
+      final pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -3353,9 +3327,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.noop';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3364,7 +3338,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3384,9 +3358,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwError';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3395,7 +3369,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3415,9 +3389,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwErrorFromVoid';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3426,7 +3400,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3446,9 +3420,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwFlutterError';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3457,7 +3431,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3477,9 +3451,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoInt';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3488,7 +3462,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3513,9 +3487,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoDouble';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3524,7 +3498,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3549,9 +3523,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoBool';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3560,7 +3534,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3585,9 +3559,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3596,7 +3570,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3621,9 +3595,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoUint8List';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3632,7 +3606,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3657,9 +3631,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoObject';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3668,7 +3642,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3693,9 +3667,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3704,7 +3678,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3732,9 +3706,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApiList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3743,7 +3717,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3769,9 +3743,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3780,7 +3754,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3809,9 +3783,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApiMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3820,7 +3794,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3846,9 +3820,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoEnum';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3857,7 +3831,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3882,9 +3856,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoProxyApi';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3893,7 +3867,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aProxyApi],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3918,9 +3892,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableInt';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3929,7 +3903,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3949,9 +3923,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableDouble';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3960,7 +3934,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3980,9 +3954,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableBool';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -3991,7 +3965,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4011,9 +3985,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4022,7 +3996,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4044,9 +4018,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableUint8List';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4055,7 +4029,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4075,9 +4049,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableObject';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4086,7 +4060,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4106,9 +4080,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4117,7 +4091,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4139,9 +4113,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4150,7 +4124,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4172,9 +4146,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableEnum';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4183,7 +4157,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4205,9 +4179,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoNullableProxyApi';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4216,7 +4190,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aNullableProxyApi],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4237,9 +4211,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.noopAsync';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4248,7 +4222,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4268,9 +4242,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncInt';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4279,7 +4253,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4304,9 +4278,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncDouble';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4315,7 +4289,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4340,9 +4314,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncBool';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4351,7 +4325,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4376,9 +4350,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4387,7 +4361,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4412,9 +4386,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncUint8List';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4423,7 +4397,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4448,9 +4422,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncObject';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4459,7 +4433,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4484,9 +4458,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4495,7 +4469,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4520,9 +4494,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4531,7 +4505,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4557,9 +4531,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncEnum';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4568,7 +4542,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4593,9 +4567,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncError';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4604,7 +4578,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4624,9 +4598,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncErrorFromVoid';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4635,7 +4609,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4655,9 +4629,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.throwAsyncFlutterError';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4666,7 +4640,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4686,9 +4660,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableInt';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4697,7 +4671,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4717,9 +4691,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableDouble';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4728,7 +4702,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4748,9 +4722,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableBool';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4759,7 +4733,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4779,9 +4753,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4790,7 +4764,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4810,9 +4784,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableUint8List';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4821,7 +4795,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4841,9 +4815,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableObject';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4852,7 +4826,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4872,9 +4846,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4883,7 +4857,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4905,9 +4879,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4916,7 +4890,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4939,9 +4913,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoAsyncNullableEnum';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -4950,7 +4924,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4972,21 +4946,21 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     if (PigeonOverrides.proxyApiTestClass_staticNoop != null) {
       return PigeonOverrides.proxyApiTestClass_staticNoop!();
     }
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
           pigeon_instanceManager ?? PigeonInstanceManager.instance,
         );
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    final pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticNoop';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5009,14 +4983,14 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     if (PigeonOverrides.proxyApiTestClass_echoStaticString != null) {
       return PigeonOverrides.proxyApiTestClass_echoStaticString!(aString);
     }
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
           pigeon_instanceManager ?? PigeonInstanceManager.instance,
         );
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    final pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.echoStaticString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5025,7 +4999,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5052,21 +5026,21 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     if (PigeonOverrides.proxyApiTestClass_staticAsyncNoop != null) {
       return PigeonOverrides.proxyApiTestClass_staticAsyncNoop!();
     }
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
           pigeon_instanceManager ?? PigeonInstanceManager.instance,
         );
-    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    final pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.staticAsyncNoop';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5085,9 +5059,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterNoop';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5096,7 +5070,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5115,9 +5089,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterThrowError';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5126,7 +5100,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5145,9 +5119,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterThrowErrorFromVoid';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5156,7 +5130,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5175,9 +5149,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoBool';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5186,7 +5160,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5210,9 +5184,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoInt';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5221,7 +5195,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5245,9 +5219,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoDouble';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5256,7 +5230,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5280,9 +5254,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5291,7 +5265,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5315,9 +5289,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoUint8List';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5326,7 +5300,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5350,9 +5324,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5361,7 +5335,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5387,9 +5361,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApiList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5398,7 +5372,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5425,9 +5399,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5436,7 +5410,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5463,9 +5437,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApiMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5474,7 +5448,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5499,9 +5473,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoEnum';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5510,7 +5484,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5536,9 +5510,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoProxyApi';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5547,7 +5521,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aProxyApi],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5571,9 +5545,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableBool';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5582,7 +5556,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5601,9 +5575,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableInt';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5612,7 +5586,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5631,9 +5605,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableDouble';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5642,7 +5616,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5661,9 +5635,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5672,7 +5646,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5693,9 +5667,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableUint8List';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5704,7 +5678,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5725,9 +5699,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableList';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5736,7 +5710,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5757,9 +5731,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableMap';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5768,7 +5742,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5790,9 +5764,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableEnum';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5801,7 +5775,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5822,9 +5796,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoNullableProxyApi';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5833,7 +5807,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aProxyApi],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5852,9 +5826,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterNoopAsync';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5863,7 +5837,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5882,9 +5856,9 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiTestClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiTestClass.callFlutterEchoAsyncString';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -5893,7 +5867,7 @@ class ProxyApiTestClass extends ProxyApiSuperClass
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this, aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -5991,9 +5965,9 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiSuperClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_defaultConstructor';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6003,7 +5977,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
       <Object?>[pigeonVar_instanceIdentifier],
     );
     () async {
-      final List<Object?>? pigeonVar_replyList =
+      final pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -6040,14 +6014,13 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     ProxyApiSuperClass Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
           pigeon_instanceManager ?? PigeonInstanceManager.instance,
         );
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    final binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -6061,7 +6034,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          final arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.pigeon_newInstance was null, expected non-null int.',
@@ -6093,9 +6066,9 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecProxyApiSuperClass;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiSuperClass.aSuperMethod';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6104,7 +6077,7 @@ class ProxyApiSuperClass extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6169,14 +6142,13 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
     ProxyApiInterface Function()? pigeon_newInstance,
     void Function(ProxyApiInterface pigeon_instance)? anInterfaceMethod,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
           pigeon_instanceManager ?? PigeonInstanceManager.instance,
         );
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    final binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -6190,7 +6162,7 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          final arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.pigeon_newInstance was null, expected non-null int.',
@@ -6218,8 +6190,7 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
     }
 
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -6233,7 +6204,7 @@ class ProxyApiInterface extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ProxyApiInterface.anInterfaceMethod was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final ProxyApiInterface? arg_pigeon_instance =
+          final arg_pigeon_instance =
               (args[0] as ProxyApiInterface?);
           assert(
             arg_pigeon_instance != null,
@@ -6290,9 +6261,9 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecClassWithApiRequirement;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_defaultConstructor';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6302,7 +6273,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
       <Object?>[pigeonVar_instanceIdentifier],
     );
     () async {
-      final List<Object?>? pigeonVar_replyList =
+      final pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
         throw _createConnectionError(pigeonVar_channelName);
@@ -6339,14 +6310,13 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     PigeonInstanceManager? pigeon_instanceManager,
     ClassWithApiRequirement Function()? pigeon_newInstance,
   }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+    final pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
           pigeon_instanceManager ?? PigeonInstanceManager.instance,
         );
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    final binaryMessenger = pigeon_binaryMessenger;
     {
-      final BasicMessageChannel<Object?>
-      pigeonVar_channel = BasicMessageChannel<Object?>(
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -6360,7 +6330,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          final arg_pigeon_instanceIdentifier = (args[0] as int?);
           assert(
             arg_pigeon_instanceIdentifier != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.pigeon_newInstance was null, expected non-null int.',
@@ -6392,9 +6362,9 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecClassWithApiRequirement;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
-    const String pigeonVar_channelName =
+    const pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.ClassWithApiRequirement.aMethod';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6403,7 +6373,7 @@ class ClassWithApiRequirement extends PigeonInternalProxyApiBaseClass {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[this],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);

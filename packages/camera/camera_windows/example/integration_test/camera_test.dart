@@ -104,7 +104,7 @@ void main() {
           .instance
           .onDeviceOrientationChanged();
 
-      final StreamQueue<DeviceOrientationChangedEvent> streamQueue =
+      final streamQueue =
           StreamQueue<DeviceOrientationChangedEvent>(eventStream);
 
       expect(

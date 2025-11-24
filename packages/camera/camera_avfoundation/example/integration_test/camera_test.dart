@@ -30,7 +30,7 @@ void main() {
     await testDir.delete(recursive: true);
   });
 
-  final Map<ResolutionPreset, Size> presetExpectedSizes =
+  final presetExpectedSizes =
       <ResolutionPreset, Size>{
         ResolutionPreset.low: const Size(288, 352),
         ResolutionPreset.medium: const Size(480, 640),
@@ -63,7 +63,7 @@ void main() {
     final XFile file = await controller.takePicture();
 
     // Load picture
-    final File fileImage = File(file.path);
+    final fileImage = File(file.path);
     final Image image = await decodeImageFromList(fileImage.readAsBytesSync());
 
     // Verify image dimensions are as expected
@@ -82,11 +82,11 @@ void main() {
     if (cameras.isEmpty) {
       return;
     }
-    for (final CameraDescription cameraDescription in cameras) {
-      bool previousPresetExactlySupported = true;
+    for (final cameraDescription in cameras) {
+      var previousPresetExactlySupported = true;
       for (final MapEntry<ResolutionPreset, Size> preset
           in presetExpectedSizes.entries) {
-        final CameraController controller = CameraController(
+        final controller = CameraController(
           cameraDescription,
           preset.key,
         );
@@ -120,8 +120,8 @@ void main() {
     final XFile file = await controller.stopVideoRecording();
 
     // Load video metadata
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -143,11 +143,11 @@ void main() {
     if (cameras.isEmpty) {
       return;
     }
-    for (final CameraDescription cameraDescription in cameras) {
-      bool previousPresetExactlySupported = true;
+    for (final cameraDescription in cameras) {
+      var previousPresetExactlySupported = true;
       for (final MapEntry<ResolutionPreset, Size> preset
           in presetExpectedSizes.entries) {
-        final CameraController controller = CameraController(
+        final controller = CameraController(
           cameraDescription,
           preset.key,
         );
@@ -174,7 +174,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,
@@ -184,7 +184,7 @@ void main() {
     await controller.prepareForVideoRecording();
 
     int startPause;
-    int timePaused = 0;
+    var timePaused = 0;
 
     await controller.startVideoRecording();
     final int recordingStart = DateTime.now().millisecondsSinceEpoch;
@@ -210,8 +210,8 @@ void main() {
     final int recordingTime =
         DateTime.now().millisecondsSinceEpoch - recordingStart;
 
-    final File videoFile = File(file.path);
-    final VideoPlayerController videoController = VideoPlayerController.file(
+    final videoFile = File(file.path);
+    final videoController = VideoPlayerController.file(
       videoFile,
     );
     await videoController.initialize();
@@ -228,7 +228,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,
@@ -250,7 +250,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,
@@ -267,7 +267,7 @@ void main() {
     List<CameraDescription> cameras,
     ImageFormatGroup? imageFormatGroup,
   ) async {
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras.first,
       ResolutionPreset.low,
       enableAudio: false,
@@ -275,7 +275,7 @@ void main() {
     );
 
     await controller.initialize();
-    final Completer<CameraImageData> completer = Completer<CameraImageData>();
+    final completer = Completer<CameraImageData>();
 
     await controller.startImageStream((CameraImageData image) {
       if (!completer.isCompleted) {
@@ -322,7 +322,7 @@ void main() {
       return;
     }
 
-    final CameraController controller = CameraController(
+    final controller = CameraController(
       cameras[0],
       ResolutionPreset.low,
       enableAudio: false,
@@ -330,7 +330,7 @@ void main() {
 
     await controller.initialize();
     await controller.prepareForVideoRecording();
-    final Completer<CameraImageData> completer = Completer<CameraImageData>();
+    final completer = Completer<CameraImageData>();
     await controller.startVideoRecording(
       streamCallback: (CameraImageData image) {
         if (!completer.isCompleted) {
@@ -354,9 +354,9 @@ void main() {
     if (cameras.isEmpty) {
       return;
     }
-    for (final CameraDescription cameraDescription in cameras) {
+    for (final cameraDescription in cameras) {
       for (final ImageFileFormat fileFormat in ImageFileFormat.values) {
-        final CameraController controller = CameraController(
+        final controller = CameraController(
           cameraDescription,
           ResolutionPreset.low,
         );
@@ -377,9 +377,9 @@ void main() {
         return;
       }
 
-      final List<int> lengths = <int>[];
-      for (final int fps in <int>[10, 30]) {
-        final CameraController controller = CameraController.withSettings(
+      final lengths = <int>[];
+      for (final fps in <int>[10, 30]) {
+        final controller = CameraController.withSettings(
           cameras.first,
           mediaSettings: MediaSettings(
             resolutionPreset: ResolutionPreset.medium,
@@ -395,14 +395,14 @@ void main() {
         final XFile file = await controller.stopVideoRecording();
 
         // Load video size
-        final File videoFile = File(file.path);
+        final videoFile = File(file.path);
 
         lengths.add(await videoFile.length());
 
         await controller.dispose();
       }
 
-      for (int n = 0; n < lengths.length - 1; n++) {
+      for (var n = 0; n < lengths.length - 1; n++) {
         expect(
           lengths[n],
           lessThan(lengths[n + 1]),
@@ -418,10 +418,10 @@ void main() {
         return;
       }
 
-      const int kiloBits = 1024;
-      final List<int> lengths = <int>[];
-      for (final int videoBitrate in <int>[100 * kiloBits, 1000 * kiloBits]) {
-        final CameraController controller = CameraController.withSettings(
+      const kiloBits = 1024;
+      final lengths = <int>[];
+      for (final videoBitrate in <int>[100 * kiloBits, 1000 * kiloBits]) {
+        final controller = CameraController.withSettings(
           cameras.first,
           mediaSettings: MediaSettings(
             resolutionPreset: ResolutionPreset.medium,
@@ -437,14 +437,14 @@ void main() {
         final XFile file = await controller.stopVideoRecording();
 
         // Load video size
-        final File videoFile = File(file.path);
+        final videoFile = File(file.path);
 
         lengths.add(await videoFile.length());
 
         await controller.dispose();
       }
 
-      for (int n = 0; n < lengths.length - 1; n++) {
+      for (var n = 0; n < lengths.length - 1; n++) {
         expect(
           lengths[n],
           lessThan(lengths[n + 1]),
@@ -460,11 +460,11 @@ void main() {
         return;
       }
 
-      final List<int> lengths = <int>[];
+      final lengths = <int>[];
 
-      const int kiloBits = 1024;
-      for (final int audioBitrate in <int>[32 * kiloBits, 64 * kiloBits]) {
-        final CameraController controller = CameraController.withSettings(
+      const kiloBits = 1024;
+      for (final audioBitrate in <int>[32 * kiloBits, 64 * kiloBits]) {
+        final controller = CameraController.withSettings(
           cameras.first,
           mediaSettings: MediaSettings(
             resolutionPreset: ResolutionPreset.low,
@@ -483,7 +483,7 @@ void main() {
         final XFile file = await controller.stopVideoRecording();
 
         // Load video metadata
-        final File videoFile = File(file.path);
+        final videoFile = File(file.path);
 
         final int length = await videoFile.length();
 
@@ -492,7 +492,7 @@ void main() {
         await controller.dispose();
       }
 
-      for (int n = 0; n < lengths.length - 1; n++) {
+      for (var n = 0; n < lengths.length - 1; n++) {
         expect(
           lengths[n],
           lessThan(lengths[n + 1]),

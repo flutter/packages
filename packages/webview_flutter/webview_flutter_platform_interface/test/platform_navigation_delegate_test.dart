@@ -15,7 +15,7 @@ void main() {
   });
 
   test('Cannot be implemented with `implements`', () {
-    const PlatformNavigationDelegateCreationParams params =
+    const params =
         PlatformNavigationDelegateCreationParams();
     when(
       WebViewPlatform.instance!.createPlatformNavigationDelegate(params),
@@ -34,7 +34,7 @@ void main() {
   });
 
   test('Can be extended', () {
-    const PlatformNavigationDelegateCreationParams params =
+    const params =
         PlatformNavigationDelegateCreationParams();
     when(
       WebViewPlatform.instance!.createPlatformNavigationDelegate(params),
@@ -44,7 +44,7 @@ void main() {
   });
 
   test('Can be mocked with `implements`', () {
-    const PlatformNavigationDelegateCreationParams params =
+    const params =
         PlatformNavigationDelegateCreationParams();
     when(
       WebViewPlatform.instance!.createPlatformNavigationDelegate(params),

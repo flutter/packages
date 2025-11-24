@@ -22,7 +22,7 @@ import 'package:web/web.dart';
 import 'overlays_test.mocks.dart';
 
 MockTileProvider neverTileProvider() {
-  final MockTileProvider tileProvider = MockTileProvider();
+  final tileProvider = MockTileProvider();
   when(
     tileProvider.getTile(any, any, any),
   ).thenAnswer((_) => Completer<Tile>().future);
@@ -145,7 +145,7 @@ void main() {
     });
 
     testWidgets('clearTileCache', (WidgetTester tester) async {
-      final Completer<GoogleMapController> controllerCompleter =
+      final controllerCompleter =
           Completer<GoogleMapController>();
       await tester.pumpWidget(
         MaterialApp(

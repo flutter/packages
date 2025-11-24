@@ -28,7 +28,7 @@ void main() {
   group('WebWebViewController', () {
     group('WebWebViewControllerCreationParams', () {
       test('sets iFrame fields', () {
-        final WebWebViewControllerCreationParams params =
+        final params =
             WebWebViewControllerCreationParams();
 
         expect(params.iFrame.id, contains('webView'));
@@ -40,7 +40,7 @@ void main() {
 
     group('loadHtmlString', () {
       test('loadHtmlString loads html into iframe', () async {
-        final WebWebViewController controller = WebWebViewController(
+        final controller = WebWebViewController(
           WebWebViewControllerCreationParams(),
         );
 
@@ -52,7 +52,7 @@ void main() {
       });
 
       test('loadHtmlString escapes "#" correctly', () async {
-        final WebWebViewController controller = WebWebViewController(
+        final controller = WebWebViewController(
           WebWebViewControllerCreationParams(),
         );
 
@@ -66,7 +66,7 @@ void main() {
 
     group('loadRequest', () {
       test('throws ArgumentError on missing scheme', () async {
-        final WebWebViewController controller = WebWebViewController(
+        final controller = WebWebViewController(
           WebWebViewControllerCreationParams(),
         );
 
@@ -79,9 +79,9 @@ void main() {
       });
 
       test('skips XHR for simple GETs (no headers, no data)', () async {
-        final MockHttpRequestFactory mockHttpRequestFactory =
+        final mockHttpRequestFactory =
             MockHttpRequestFactory();
-        final WebWebViewController controller = WebWebViewController(
+        final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,
           ),
@@ -109,15 +109,15 @@ void main() {
       });
 
       test('makes request and loads response into iframe', () async {
-        final MockHttpRequestFactory mockHttpRequestFactory =
+        final mockHttpRequestFactory =
             MockHttpRequestFactory();
-        final WebWebViewController controller = WebWebViewController(
+        final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,
           ),
         );
 
-        final web.Response fakeResponse = web.Response(
+        final fakeResponse = web.Response(
           'test data'.toJS,
           <String, Object>{
                 'headers': <String, Object>{'content-type': 'text/plain'},
@@ -159,9 +159,9 @@ void main() {
       });
 
       test('parses content-type response header correctly', () async {
-        final MockHttpRequestFactory mockHttpRequestFactory =
+        final mockHttpRequestFactory =
             MockHttpRequestFactory();
-        final WebWebViewController controller = WebWebViewController(
+        final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,
           ),
@@ -169,7 +169,7 @@ void main() {
 
         final Encoding iso = Encoding.getByName('latin1')!;
 
-        final web.Response fakeResponse = web.Response(
+        final fakeResponse = web.Response(
           String.fromCharCodes(iso.encode('España')).toJS,
           <String, Object>{
                 'headers': <String, Object>{
@@ -202,15 +202,15 @@ void main() {
       });
 
       test('escapes "#" correctly', () async {
-        final MockHttpRequestFactory mockHttpRequestFactory =
+        final mockHttpRequestFactory =
             MockHttpRequestFactory();
-        final WebWebViewController controller = WebWebViewController(
+        final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,
           ),
         );
 
-        final web.Response fakeResponse = web.Response(
+        final fakeResponse = web.Response(
           '#'.toJS,
           <String, Object>{
                 'headers': <String, Object>{'content-type': 'text/html'},

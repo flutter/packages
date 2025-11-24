@@ -14,7 +14,7 @@ void main() {
     test(
       'SKProductSubscriptionPeriodWrapper should have property values consistent with map',
       () {
-        final SKProductSubscriptionPeriodWrapper wrapper =
+        final wrapper =
             SKProductSubscriptionPeriodWrapper.fromJson(
               buildSubscriptionPeriodMap(dummySubscription),
             );
@@ -25,7 +25,7 @@ void main() {
     test(
       'SKProductSubscriptionPeriodWrapper should have properties to be default values if map is empty',
       () {
-        final SKProductSubscriptionPeriodWrapper wrapper =
+        final wrapper =
             SKProductSubscriptionPeriodWrapper.fromJson(
               const <String, dynamic>{},
             );
@@ -37,7 +37,7 @@ void main() {
     test(
       'SKProductDiscountWrapper should have property values consistent with map',
       () {
-        final SKProductDiscountWrapper wrapper =
+        final wrapper =
             SKProductDiscountWrapper.fromJson(buildDiscountMap(dummyDiscount));
         expect(wrapper, equals(dummyDiscount));
       },
@@ -45,7 +45,7 @@ void main() {
 
     test('SKProductDiscountWrapper missing identifier and type should have '
         'property values consistent with map', () {
-      final SKProductDiscountWrapper wrapper =
+      final wrapper =
           SKProductDiscountWrapper.fromJson(
             buildDiscountMapMissingIdentifierAndType(
               dummyDiscountMissingIdentifierAndType,
@@ -57,7 +57,7 @@ void main() {
     test(
       'SKProductDiscountWrapper should have properties to be default if map is empty',
       () {
-        final SKProductDiscountWrapper wrapper =
+        final wrapper =
             SKProductDiscountWrapper.fromJson(const <String, dynamic>{});
         expect(wrapper.price, '');
         expect(
@@ -83,7 +83,7 @@ void main() {
     test(
       'SKProductWrapper should have property values consistent with map',
       () {
-        final SKProductWrapper wrapper = SKProductWrapper.fromJson(
+        final wrapper = SKProductWrapper.fromJson(
           buildProductMap(dummyProductWrapper),
         );
         expect(wrapper, equals(dummyProductWrapper));
@@ -93,7 +93,7 @@ void main() {
     test(
       'SKProductWrapper should have properties to be default if map is empty',
       () {
-        final SKProductWrapper wrapper = SKProductWrapper.fromJson(
+        final wrapper = SKProductWrapper.fromJson(
           const <String, dynamic>{},
         );
         expect(wrapper.productIdentifier, '');
@@ -115,10 +115,10 @@ void main() {
     );
 
     test('toProductDetails() should return correct Product object', () {
-      final SKProductWrapper wrapper = SKProductWrapper.fromJson(
+      final wrapper = SKProductWrapper.fromJson(
         buildProductMap(dummyProductWrapper),
       );
-      final AppStoreProductDetails product =
+      final product =
           AppStoreProductDetails.fromSKProduct(wrapper);
       expect(product.title, wrapper.localizedTitle);
       expect(product.description, wrapper.localizedDescription);
@@ -128,26 +128,26 @@ void main() {
     });
 
     test('SKProductResponse wrapper should match', () {
-      final SkProductResponseWrapper wrapper =
+      final wrapper =
           SkProductResponseWrapper.fromJson(
             buildProductResponseMap(dummyProductResponseWrapper),
           );
       expect(wrapper, equals(dummyProductResponseWrapper));
     });
     test('SKProductResponse wrapper should default to empty list', () {
-      final Map<String, List<dynamic>> productResponseMapEmptyList =
+      final productResponseMapEmptyList =
           <String, List<dynamic>>{
             'products': <Map<String, dynamic>>[],
             'invalidProductIdentifiers': <String>[],
           };
-      final SkProductResponseWrapper wrapper =
+      final wrapper =
           SkProductResponseWrapper.fromJson(productResponseMapEmptyList);
       expect(wrapper.products.length, 0);
       expect(wrapper.invalidProductIdentifiers.length, 0);
     });
 
     test('LocaleWrapper should have property values consistent with map', () {
-      final SKPriceLocaleWrapper wrapper = SKPriceLocaleWrapper.fromJson(
+      final wrapper = SKPriceLocaleWrapper.fromJson(
         buildLocaleMap(dollarLocale),
       );
       expect(wrapper, equals(dollarLocale));
@@ -156,7 +156,7 @@ void main() {
 
   group('Payment queue related object tests', () {
     test('Should construct correct SKPaymentWrapper from json', () {
-      final SKPaymentWrapper payment = SKPaymentWrapper.fromJson(
+      final payment = SKPaymentWrapper.fromJson(
         dummyPayment.toMap(),
       );
       expect(payment, equals(dummyPayment));
@@ -188,12 +188,12 @@ void main() {
     );
 
     test('Should construct correct SKError from json', () {
-      final SKError error = SKError.fromJson(buildErrorMap(dummyError));
+      final error = SKError.fromJson(buildErrorMap(dummyError));
       expect(error, equals(dummyError));
     });
 
     test('Should construct correct SKTransactionWrapper from json', () {
-      final SKPaymentTransactionWrapper transaction =
+      final transaction =
           SKPaymentTransactionWrapper.fromJson(
             buildTransactionMap(dummyTransaction),
           );
@@ -201,7 +201,7 @@ void main() {
     });
 
     test('toPurchaseDetails() should return correct PurchaseDetail object', () {
-      final AppStorePurchaseDetails details =
+      final details =
           AppStorePurchaseDetails.fromSKTransaction(
             dummyTransaction,
             'receipt data',
@@ -221,7 +221,7 @@ void main() {
     });
 
     test('SKPaymentTransactionWrapper.toFinishMap set correct value', () {
-      final SKPaymentTransactionWrapper transactionWrapper =
+      final transactionWrapper =
           SKPaymentTransactionWrapper(
             payment: dummyPayment,
             transactionState: SKPaymentTransactionStateWrapper.failed,
@@ -235,7 +235,7 @@ void main() {
     test(
       'SKPaymentTransactionWrapper.toFinishMap should set transactionIdentifier to null when necessary',
       () {
-        final SKPaymentTransactionWrapper transactionWrapper =
+        final transactionWrapper =
             SKPaymentTransactionWrapper(
               payment: dummyPayment,
               transactionState: SKPaymentTransactionStateWrapper.failed,

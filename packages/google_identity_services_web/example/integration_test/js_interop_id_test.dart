@@ -25,7 +25,7 @@ void main() async {
 
   group('renderButton', () {
     testWidgets('supports a js-interop target from any library', (_) async {
-      final web.HTMLDivElement target =
+      final target =
           web.document.createElement('div') as web.HTMLDivElement;
 
       id.renderButton(target);
@@ -37,7 +37,7 @@ void main() async {
 
   group('IdConfig', () {
     testWidgets('passes values from Dart to JS', (_) async {
-      final IdConfiguration config = IdConfiguration(
+      final config = IdConfiguration(
         client_id: 'testing_1-2-3',
         auto_select: false,
         callback: (_) {},
@@ -93,7 +93,7 @@ void main() async {
         id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
         utils.setMockMomentNotification('skipped', 'user_cancel');
 
-        final StreamController<PromptMomentNotification> controller =
+        final controller =
             StreamController<PromptMomentNotification>();
 
         id.prompt(controller.add);
@@ -112,7 +112,7 @@ void main() async {
         id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
         utils.setMockMomentNotification('skipped', 'random_invalid_reason');
 
-        final StreamController<PromptMomentNotification> controller =
+        final controller =
             StreamController<PromptMomentNotification>();
 
         id.prompt(controller.add);
@@ -125,10 +125,10 @@ void main() async {
     );
 
     testWidgets('calls config callback with credential response', (_) async {
-      const String expected = 'should_be_a_proper_jwt_token';
+      const expected = 'should_be_a_proper_jwt_token';
       utils.setMockCredentialResponse(expected);
 
-      final StreamController<CredentialResponse> controller =
+      final controller =
           StreamController<CredentialResponse>();
 
       id.initialize(

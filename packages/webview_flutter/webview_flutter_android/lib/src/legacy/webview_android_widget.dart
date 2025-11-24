@@ -269,7 +269,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
   @override
   Future<void> loadFile(String absoluteFilePath) {
-    final String url = absoluteFilePath.startsWith('file://')
+    final url = absoluteFilePath.startsWith('file://')
         ? absoluteFilePath
         : 'file://$absoluteFilePath';
 
@@ -393,7 +393,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             return !_javaScriptChannels.containsKey(channelName);
           })
           .map<Future<void>>((String channelName) {
-            final WebViewAndroidJavaScriptChannel javaScriptChannel =
+            final javaScriptChannel =
                 WebViewAndroidJavaScriptChannel(
                   channelName: channelName,
                   javascriptChannelRegistry: javascriptChannelRegistry,

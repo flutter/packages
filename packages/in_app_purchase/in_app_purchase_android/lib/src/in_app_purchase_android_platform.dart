@@ -213,7 +213,7 @@ class InAppPurchaseAndroidPlatform extends InAppPurchasePlatform {
       'On Android, the `purchase` should always be of type `GooglePlayPurchaseDetails`.',
     );
 
-    final GooglePlayPurchaseDetails googlePurchase =
+    final googlePurchase =
         purchase as GooglePlayPurchaseDetails;
 
     if (googlePurchase.billingClientPurchase.isAcknowledged) {

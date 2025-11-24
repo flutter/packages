@@ -30,7 +30,7 @@ void main() {
     });
 
     testWidgets('initialize() calls load', (WidgetTester _) async {
-      bool loadCalled = false;
+      var loadCalled = false;
 
       video['load'] = () {
         loadCalled = true;
@@ -64,7 +64,7 @@ void main() {
     });
 
     testWidgets('setVolume', (WidgetTester tester) async {
-      final VideoPlayer player = VideoPlayer(videoElement: video)..initialize();
+      final player = VideoPlayer(videoElement: video)..initialize();
 
       player.setVolume(0);
       expect(video.muted, isTrue, reason: 'muted attribute should be true');
@@ -97,7 +97,7 @@ void main() {
     });
 
     testWidgets('setPlaybackSpeed', (WidgetTester tester) async {
-      final VideoPlayer player = VideoPlayer(videoElement: video)..initialize();
+      final player = VideoPlayer(videoElement: video)..initialize();
 
       expect(
         () {
@@ -118,7 +118,7 @@ void main() {
 
     group('seekTo', () {
       testWidgets('negative time - throws assert', (WidgetTester tester) async {
-        final VideoPlayer player = VideoPlayer(videoElement: video)
+        final player = VideoPlayer(videoElement: video)
           ..initialize();
 
         expect(
@@ -134,7 +134,7 @@ void main() {
         WidgetTester tester,
       ) async {
         makeSetCurrentTimeThrow(video);
-        final VideoPlayer player = VideoPlayer(videoElement: video)
+        final player = VideoPlayer(videoElement: video)
           ..initialize();
 
         expect(
@@ -161,7 +161,7 @@ void main() {
       late VideoPlayer player;
       late Stream<VideoEvent> timedStream;
 
-      final Set<VideoEventType> bufferingEvents = <VideoEventType>{
+      final bufferingEvents = <VideoEventType>{
         VideoEventType.bufferingStart,
         VideoEventType.bufferingEnd,
       };

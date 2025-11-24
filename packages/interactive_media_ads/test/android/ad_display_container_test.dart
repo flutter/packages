@@ -39,7 +39,7 @@ void main() {
 
   group('AndroidAdDisplayContainer', () {
     testWidgets('build with key', (WidgetTester tester) async {
-      final AndroidAdDisplayContainer container = AndroidAdDisplayContainer(
+      final container = AndroidAdDisplayContainer(
         AndroidAdDisplayContainerCreationParams(
           key: const Key('testKey'),
           onContainerAdded: (_) {},
@@ -55,7 +55,7 @@ void main() {
     });
 
     testWidgets('onContainerAdded is called', (WidgetTester tester) async {
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -78,9 +78,9 @@ void main() {
             }) => MockVideoAdPlayer(),
       );
 
-      final MockPlatformViewsServiceProxy mockPlatformViewsProxy =
+      final mockPlatformViewsProxy =
           MockPlatformViewsServiceProxy();
-      final MockSurfaceAndroidViewController mockAndroidViewController =
+      final mockAndroidViewController =
           MockSurfaceAndroidViewController();
 
       late final int platformViewId;
@@ -98,7 +98,7 @@ void main() {
         return mockAndroidViewController;
       });
 
-      final AndroidAdDisplayContainer container = AndroidAdDisplayContainer(
+      final container = AndroidAdDisplayContainer(
         AndroidAdDisplayContainerCreationParams(
           onContainerAdded: expectAsync1((_) {}),
           platformViewsProxy: mockPlatformViewsProxy,
@@ -110,7 +110,7 @@ void main() {
         Builder(builder: (BuildContext context) => container.build(context)),
       );
 
-      final void Function(int) onPlatformCreatedCallback =
+      final onPlatformCreatedCallback =
           verify(
                 mockAndroidViewController.addOnPlatformViewCreatedListener(
                   captureAny,
@@ -137,7 +137,7 @@ void main() {
       late final void Function(ima.VideoView, ima.MediaPlayer)
       onCompletionCallback;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -186,7 +186,7 @@ void main() {
       final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
 
-      final MockVideoAdPlayerCallback mockPlayerCallback =
+      final mockPlayerCallback =
           MockVideoAdPlayerCallback();
       addCallbackCallback(MockVideoAdPlayer(), mockPlayerCallback);
 
@@ -209,7 +209,7 @@ void main() {
       late final void Function(ima.VideoView, ima.MediaPlayer, int, int)
       onErrorCallback;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -259,7 +259,7 @@ void main() {
       final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
 
-      final MockVideoAdPlayerCallback mockPlayerCallback =
+      final mockPlayerCallback =
           MockVideoAdPlayerCallback();
       addCallbackCallback(MockVideoAdPlayer(), mockPlayerCallback);
 
@@ -285,10 +285,10 @@ void main() {
       late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       playAdCallback;
 
-      const int adDuration = 100;
-      const int adProgress = 10;
+      const adDuration = 100;
+      const adProgress = 10;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -297,7 +297,7 @@ void main() {
               dynamic onCompletion,
             }) {
               onPreparedCallback = onPrepared!;
-              final MockVideoView mockVideoView = MockVideoView();
+              final mockVideoView = MockVideoView();
               when(
                 mockVideoView.getCurrentPosition(),
               ).thenAnswer((_) async => adProgress);
@@ -349,11 +349,11 @@ void main() {
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
       playAdCallback(MockVideoAdPlayer(), mockAdMediaInfo);
 
-      final MockVideoAdPlayerCallback mockPlayerCallback =
+      final mockPlayerCallback =
           MockVideoAdPlayerCallback();
       addCallbackCallback(MockVideoAdPlayer(), mockPlayerCallback);
 
-      final MockMediaPlayer mockMediaPlayer = MockMediaPlayer();
+      final mockMediaPlayer = MockMediaPlayer();
       when(mockMediaPlayer.getDuration()).thenAnswer((_) async => adDuration);
 
       await onPreparedCallback(MockVideoView(), mockMediaPlayer);
@@ -380,7 +380,7 @@ void main() {
       late final Future<void> Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       pauseAdCallback;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -393,7 +393,7 @@ void main() {
               onPreparedCallback =
                   onPrepared!
                       as Future<void> Function(ima.VideoView, ima.MediaPlayer);
-              final MockVideoView mockVideoView = MockVideoView();
+              final mockVideoView = MockVideoView();
               when(
                 mockVideoView.getCurrentPosition(),
               ).thenAnswer((_) async => 10);
@@ -444,7 +444,7 @@ void main() {
       final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
 
-      final MockMediaPlayer mockMediaPlayer = MockMediaPlayer();
+      final mockMediaPlayer = MockMediaPlayer();
       when(mockMediaPlayer.getDuration()).thenAnswer((_) async => 100);
 
       await onPreparedCallback(MockVideoView(), mockMediaPlayer);
@@ -470,7 +470,7 @@ void main() {
       late final Future<void> Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       pauseAdCallback;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -483,7 +483,7 @@ void main() {
               onPreparedCallback =
                   onPrepared!
                       as Future<void> Function(ima.VideoView, ima.MediaPlayer);
-              final MockVideoView mockVideoView = MockVideoView();
+              final mockVideoView = MockVideoView();
               when(
                 mockVideoView.getCurrentPosition(),
               ).thenAnswer((_) async => 10);
@@ -535,7 +535,7 @@ void main() {
       final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
 
-      final MockMediaPlayer mockMediaPlayer = MockMediaPlayer();
+      final mockMediaPlayer = MockMediaPlayer();
       when(mockMediaPlayer.getDuration()).thenAnswer((_) async => 100);
 
       await onPreparedCallback(MockVideoView(), mockMediaPlayer);
@@ -562,7 +562,7 @@ void main() {
       late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       playAdCallback;
 
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -575,7 +575,7 @@ void main() {
               onPreparedCallback =
                   onPrepared!
                       as Future<void> Function(ima.VideoView, ima.MediaPlayer);
-              final MockVideoView mockVideoView = MockVideoView();
+              final mockVideoView = MockVideoView();
               when(
                 mockVideoView.getCurrentPosition(),
               ).thenAnswer((_) async => 10);
@@ -628,7 +628,7 @@ void main() {
       when(mockAdMediaInfo.url).thenReturn('url');
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
 
-      final MockMediaPlayer mockMediaPlayer = MockMediaPlayer();
+      final mockMediaPlayer = MockMediaPlayer();
       when(mockMediaPlayer.getDuration()).thenAnswer((_) async => 100);
 
       await onPreparedCallback(MockVideoView(), mockMediaPlayer);
@@ -658,8 +658,8 @@ void main() {
       late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       playAdCallback;
 
-      final MockVideoView mockVideoView = MockVideoView();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final mockVideoView = MockVideoView();
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({dynamic onError, dynamic onPrepared, dynamic onCompletion}) {
@@ -696,7 +696,7 @@ void main() {
         ),
       );
 
-      const String videoUrl = 'url';
+      const videoUrl = 'url';
       final ima.AdMediaInfo mockAdMediaInfo = MockAdMediaInfo();
       when(mockAdMediaInfo.url).thenReturn(videoUrl);
       loadAdCallback(MockVideoAdPlayer(), mockAdMediaInfo, MockAdPodInfo());
@@ -709,11 +709,11 @@ void main() {
       late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       stopAdCallback;
 
-      final MockFrameLayout mockFrameLayout = MockFrameLayout();
-      late final MockVideoView mockVideoView = MockVideoView();
-      late final MockVideoView mockVideoView2 = MockVideoView();
-      int newViewVideoCallCount = 0;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final mockFrameLayout = MockFrameLayout();
+      late final mockVideoView = MockVideoView();
+      late final mockVideoView2 = MockVideoView();
+      var newViewVideoCallCount = 0;
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => mockFrameLayout,
         newVideoView:
             ({dynamic onError, dynamic onPrepared, dynamic onCompletion}) {
@@ -768,11 +768,11 @@ void main() {
     test('release resets state and sets a new VideoView', () async {
       late final void Function(ima.VideoAdPlayer) releaseCallback;
 
-      final MockFrameLayout mockFrameLayout = MockFrameLayout();
-      late final MockVideoView mockVideoView = MockVideoView();
-      late final MockVideoView mockVideoView2 = MockVideoView();
-      int newViewVideoCallCount = 0;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final mockFrameLayout = MockFrameLayout();
+      late final mockVideoView = MockVideoView();
+      late final mockVideoView2 = MockVideoView();
+      var newViewVideoCallCount = 0;
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => mockFrameLayout,
         newVideoView:
             ({dynamic onError, dynamic onPrepared, dynamic onCompletion}) {
@@ -827,10 +827,10 @@ void main() {
     testWidgets('AdDisplayContainer adds CompanionAdSlots', (
       WidgetTester tester,
     ) async {
-      final MockAdDisplayContainer mockAdDisplayContainer =
+      final mockAdDisplayContainer =
           MockAdDisplayContainer();
-      final MockCompanionAdSlot mockCompanionAdSlot = MockCompanionAdSlot();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final mockCompanionAdSlot = MockCompanionAdSlot();
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -852,7 +852,7 @@ void main() {
               required dynamic stopAd,
             }) => MockVideoAdPlayer(),
         instanceImaSdkFactory: () {
-          final MockImaSdkFactory mockFactory = MockImaSdkFactory();
+          final mockFactory = MockImaSdkFactory();
           when(
             mockFactory.createCompanionAdSlot(),
           ).thenAnswer((_) async => mockCompanionAdSlot);
@@ -860,9 +860,9 @@ void main() {
         },
       );
 
-      final MockPlatformViewsServiceProxy mockPlatformViewsProxy =
+      final mockPlatformViewsProxy =
           MockPlatformViewsServiceProxy();
-      final MockSurfaceAndroidViewController mockAndroidViewController =
+      final mockAndroidViewController =
           MockSurfaceAndroidViewController();
 
       late final int platformViewId;
@@ -880,9 +880,9 @@ void main() {
         return mockAndroidViewController;
       });
 
-      final Completer<void> onContainerAddedCompleter = Completer<void>();
+      final onContainerAddedCompleter = Completer<void>();
 
-      final AndroidAdDisplayContainer container = AndroidAdDisplayContainer(
+      final container = AndroidAdDisplayContainer(
         AndroidAdDisplayContainerCreationParams(
           onContainerAdded: (_) => onContainerAddedCompleter.complete(),
           platformViewsProxy: mockPlatformViewsProxy,
@@ -902,7 +902,7 @@ void main() {
         Builder(builder: (BuildContext context) => container.build(context)),
       );
 
-      final void Function(int) onPlatformCreatedCallback =
+      final onPlatformCreatedCallback =
           verify(
                 mockAndroidViewController.addOnPlatformViewCreatedListener(
                   captureAny,
@@ -937,8 +937,8 @@ void main() {
       late final void Function(ima.VideoAdPlayer, ima.AdMediaInfo)
       stopAdCallback;
 
-      final MockVideoView mockVideoView = MockVideoView();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final mockVideoView = MockVideoView();
+      final imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
         newVideoView:
             ({
@@ -985,7 +985,7 @@ void main() {
         ),
       );
 
-      final MockVideoAdPlayerCallback mockPlayerCallback =
+      final mockPlayerCallback =
           MockVideoAdPlayerCallback();
       addCallbackCallback(MockVideoAdPlayer(), mockPlayerCallback);
 

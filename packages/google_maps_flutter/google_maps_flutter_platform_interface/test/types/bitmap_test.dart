@@ -219,7 +219,7 @@ void main() {
         test(
           'mipmaps determines dpi',
           () async {
-            const ImageConfiguration imageConfiguration = ImageConfiguration(
+            const imageConfiguration = ImageConfiguration(
               devicePixelRatio: 3,
             );
 
@@ -592,8 +592,8 @@ void main() {
       );
 
       test('create with size', () async {
-        const Size size = Size(100, 200);
-        const ImageConfiguration imageConfiguration = ImageConfiguration(
+        const size = Size(100, 200);
+        const imageConfiguration = ImageConfiguration(
           size: size,
         );
         final BitmapDescriptor descriptor = await AssetMapBitmap.create(
@@ -774,7 +774,7 @@ void main() {
     });
 
     test('construct', () {
-      const PinConfig pinConfig = PinConfig(
+      const pinConfig = PinConfig(
         backgroundColor: Colors.green,
         borderColor: Colors.blue,
       );
@@ -791,7 +791,7 @@ void main() {
     });
 
     test('construct with glyph text', () {
-      const PinConfig pinConfig = PinConfig(
+      const pinConfig = PinConfig(
         backgroundColor: Colors.green,
         borderColor: Colors.blue,
         glyph: TextGlyph(text: 'Hello', textColor: Colors.red),
@@ -817,7 +817,7 @@ void main() {
 
     test('construct with glyph bitmap', () async {
       const BitmapDescriptor bitmap = AssetBitmap(name: 'red_square.png');
-      const PinConfig pinConfig = PinConfig(
+      const pinConfig = PinConfig(
         backgroundColor: Colors.black,
         borderColor: Colors.red,
         glyph: BitmapGlyph(bitmap: bitmap),

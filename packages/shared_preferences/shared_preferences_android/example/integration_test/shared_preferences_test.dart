@@ -15,7 +15,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('SharedPreferencesAndroid', () {
-    const Map<String, Object> flutterTestValues = <String, Object>{
+    const flutterTestValues = <String, Object>{
       'flutter.String': 'hello world',
       'flutter.Bool': true,
       'flutter.Int': 42,
@@ -23,7 +23,7 @@ void main() {
       'flutter.StringList': <String>['foo', 'bar'],
     };
 
-    const Map<String, Object> prefixTestValues = <String, Object>{
+    const prefixTestValues = <String, Object>{
       'prefix.String': 'hello world',
       'prefix.Bool': true,
       'prefix.Int': 42,
@@ -31,7 +31,7 @@ void main() {
       'prefix.StringList': <String>['foo', 'bar'],
     };
 
-    const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    const nonPrefixTestValues = <String, Object>{
       'String': 'hello world',
       'Bool': true,
       'Int': 42,
@@ -39,7 +39,7 @@ void main() {
       'StringList': <String>['foo', 'bar'],
     };
 
-    final Map<String, Object> allTestValues = <String, Object>{};
+    final allTestValues = <String, Object>{};
 
     allTestValues.addAll(flutterTestValues);
     allTestValues.addAll(prefixTestValues);
@@ -532,7 +532,7 @@ void main() {
     });
 
     testWidgets('remove', (WidgetTester _) async {
-      const String key = 'testKey';
+      const key = 'testKey';
       await preferences.setValue(
         'String',
         key,
@@ -593,9 +593,9 @@ void main() {
     });
 
     testWidgets('simultaneous writes', (WidgetTester _) async {
-      final List<Future<bool>> writes = <Future<bool>>[];
-      const int writeCount = 100;
-      for (int i = 1; i <= writeCount; i++) {
+      final writes = <Future<bool>>[];
+      const writeCount = 100;
+      for (var i = 1; i <= writeCount; i++) {
         writes.add(preferences.setValue('Int', 'Int', i));
       }
       final List<bool> result = await Future.wait(writes, eagerError: true);
@@ -609,21 +609,21 @@ void main() {
     });
 
     testWidgets('string clash with lists and doubles', (WidgetTester _) async {
-      const String key = 'aKey';
-      const String value = 'a string value';
+      const key = 'aKey';
+      const value = 'a string value';
       await preferences.clearWithParameters(
         ClearParameters(filter: PreferencesFilter(prefix: '')),
       );
 
       // Special prefixes used to store datatypes that can't be stored directly
       // in SharedPreferences as strings instead.
-      const List<String> specialPrefixes = <String>[
+      const specialPrefixes = <String>[
         // Prefix for lists:
         'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBhIGxpc3Qu',
         // Prefix for doubles:
         'VGhpcyBpcyB0aGUgcHJlZml4IGZvciBEb3VibGUu',
       ];
-      for (final String prefix in specialPrefixes) {
+      for (final prefix in specialPrefixes) {
         expect(
           preferences.setValue('String', key, prefix + value),
           throwsA(isA<PlatformException>()),
@@ -677,17 +677,17 @@ void main() {
     );
   });
 
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
+  const stringKey = 'testString';
+  const boolKey = 'testBool';
+  const intKey = 'testInt';
+  const doubleKey = 'testDouble';
+  const listKey = 'testList';
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
 
   SharedPreferencesAsyncAndroidOptions getOptions({
     required bool useDataStore,
@@ -721,7 +721,7 @@ void main() {
 
   void runAsyncTests(bool useDataStore) {
     group('shared_preferences_async', () {
-      final String backend = useDataStore ? 'DataStore' : 'SharedPreferences';
+      final backend = useDataStore ? 'DataStore' : 'SharedPreferences';
 
       testWidgets('set and get String with $backend', (WidgetTester _) async {
         final SharedPreferencesAsyncAndroidOptions options = getOptions(
@@ -998,7 +998,7 @@ void main() {
             useDataStore: useDataStore,
             fileName: 'notDefault',
           );
-          final SharedPreferencesAsyncAndroid preferences =
+          final preferences =
               getPreferences() as SharedPreferencesAsyncAndroid;
           await clearPreferences(preferences, options);
           final SharedPreferencesPigeonOptions pigeonOptions = preferences
@@ -1026,7 +1026,7 @@ void main() {
             useDataStore: useDataStore,
             fileName: 'notDefault',
           );
-          final SharedPreferencesAsyncAndroid preferences =
+          final preferences =
               getPreferences() as SharedPreferencesAsyncAndroid;
           await clearPreferences(preferences, options);
           await Future.wait(<Future<void>>[
@@ -1057,7 +1057,7 @@ void main() {
             useDataStore: useDataStore,
             fileName: 'notDefault',
           );
-          final SharedPreferencesAsyncAndroid preferences =
+          final preferences =
               getPreferences() as SharedPreferencesAsyncAndroid;
           await clearPreferences(preferences, options);
           await Future.wait(<Future<void>>[

@@ -20,7 +20,7 @@ void main() {
       'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt',
       PrimitiveHostApi.pigeonChannelCodec,
     );
-    final PrimitiveHostApi api = PrimitiveHostApi(
+    final api = PrimitiveHostApi(
       binaryMessenger: mockMessenger,
     );
     final int result = await api.anInt(1);
@@ -34,7 +34,7 @@ void main() {
       'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList',
       PrimitiveHostApi.pigeonChannelCodec,
     );
-    final PrimitiveHostApi api = PrimitiveHostApi(
+    final api = PrimitiveHostApi(
       binaryMessenger: mockMessenger,
     );
     final List<bool?> result = await api.aBoolList(<bool?>[true]);
@@ -51,7 +51,7 @@ void main() {
         any,
       ),
     ).thenAnswer((Invocation realInvocation) {
-      final MessageHandler? handler =
+      final handler =
           realInvocation.positionalArguments[1] as MessageHandler?;
       handler!(
         PrimitiveFlutterApi.pigeonChannelCodec.encodeMessage(<Object?>[
@@ -70,7 +70,7 @@ void main() {
       'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap',
       PrimitiveHostApi.pigeonChannelCodec,
     );
-    final PrimitiveHostApi api = PrimitiveHostApi(
+    final api = PrimitiveHostApi(
       binaryMessenger: mockMessenger,
     );
     final Map<String?, int?> result = await api.aStringIntMap(<String?, int?>{

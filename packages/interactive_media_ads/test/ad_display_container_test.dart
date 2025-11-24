@@ -14,7 +14,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('build', (WidgetTester tester) async {
-    final TestPlatformAdDisplayContainer adDisplayContainer =
+    final adDisplayContainer =
         TestPlatformAdDisplayContainer(
           PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
           onBuild: (_) => Container(),
@@ -50,7 +50,7 @@ void main() {
         },
       );
 
-      final AdDisplayContainer adDisplayContainer = AdDisplayContainer(
+      final adDisplayContainer = AdDisplayContainer(
         key: GlobalKey(),
         onContainerAdded: (_) {},
       );

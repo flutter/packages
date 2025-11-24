@@ -16,10 +16,10 @@ import 'content_progress_provider_test.mocks.dart';
 void main() {
   group('AndroidContentProgressProvider', () {
     test('setProgress', () async {
-      final MockContentProgressProvider mockContentProgressProvider =
+      final mockContentProgressProvider =
           MockContentProgressProvider();
 
-      final AndroidContentProgressProvider provider =
+      final provider =
           AndroidContentProgressProvider(
             AndroidContentProgressProviderCreationParams(
               proxy: InteractiveMediaAdsProxy(

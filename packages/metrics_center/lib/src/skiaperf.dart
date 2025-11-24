@@ -99,7 +99,7 @@ class SkiaPerfPoint extends MetricPoint {
 
     final String subResult = p.tags[kSubResultKey] ?? kSkiaPerfValueKey;
 
-    final Map<String, String> options = <String, String>{}
+    final options = <String, String>{}
       ..addEntries(
         p.tags.entries.where(
           (MapEntry<String, dynamic> entry) =>
@@ -169,7 +169,7 @@ class SkiaPerfPoint extends MetricPoint {
   static Map<String, dynamic> toSkiaPerfJson(List<SkiaPerfPoint> points) {
     assert(points.isNotEmpty);
     assert(() {
-      for (final SkiaPerfPoint p in points) {
+      for (final p in points) {
         if (p.githubRepo != points[0].githubRepo ||
             p.gitHash != points[0].gitHash) {
           return false;
@@ -178,8 +178,8 @@ class SkiaPerfPoint extends MetricPoint {
       return true;
     }(), 'All points must have same githubRepo and gitHash');
 
-    final Map<String, dynamic> results = <String, dynamic>{};
-    for (final SkiaPerfPoint p in points) {
+    final results = <String, dynamic>{};
+    for (final p in points) {
       final Map<String, dynamic> subResultJson = p._toSubResultJson();
       if (results[p.testName] == null) {
         results[p.testName] = <String, dynamic>{
@@ -238,7 +238,7 @@ class SkiaPerfGcsAdaptor {
     final List<int> content = utf8.encode(jsonString);
 
     // Retry multiple times as GCS may return 504 timeout.
-    for (int retry = 0; retry < 5; retry += 1) {
+    for (var retry = 0; retry < 5; retry += 1) {
       try {
         await _gcsBucket.writeBytes(objectName, content);
         return;
@@ -265,7 +265,7 @@ class SkiaPerfGcsAdaptor {
   /// 504 happens.
   Future<List<SkiaPerfPoint>> readPoints(String objectName) async {
     // Retry multiple times as GCS may return 504 timeout.
-    for (int retry = 0; retry < 5; retry += 1) {
+    for (var retry = 0; retry < 5; retry += 1) {
       try {
         return await _readPointsWithoutRetry(objectName);
       } catch (e) {
@@ -294,21 +294,21 @@ class SkiaPerfGcsAdaptor {
 
     final Stream<List<int>> stream = _gcsBucket.read(objectName);
     final Stream<int> byteStream = stream.expand((List<int> x) => x);
-    final Map<String, dynamic> decodedJson =
+    final decodedJson =
         jsonDecode(utf8.decode(await byteStream.toList()))
             as Map<String, dynamic>;
 
-    final List<SkiaPerfPoint> points = <SkiaPerfPoint>[];
+    final points = <SkiaPerfPoint>[];
 
     final String firstGcsNameComponent = objectName.split('/')[0];
     _populateGcsNameToGithubRepoMapIfNeeded();
     final String githubRepo = _gcsNameToGithubRepo[firstGcsNameComponent]!;
 
-    final String? gitHash = decodedJson[kSkiaPerfGitHashKey] as String?;
-    final Map<String, dynamic> results =
+    final gitHash = decodedJson[kSkiaPerfGitHashKey] as String?;
+    final results =
         decodedJson[kSkiaPerfResultsKey] as Map<String, dynamic>;
     for (final String name in results.keys) {
-      final Map<String, dynamic> subResultMap =
+      final subResultMap =
           results[name][kSkiaPerfDefaultConfig] as Map<String, dynamic>;
       for (final String subResult in subResultMap.keys.where(
         (String s) => s != kSkiaPerfOptionsKey,
@@ -352,7 +352,7 @@ class SkiaPerfGcsAdaptor {
     final String month = commitUtcTime.month.toString().padLeft(2, '0');
     final String day = commitUtcTime.day.toString().padLeft(2, '0');
     final String hour = commitUtcTime.hour.toString().padLeft(2, '0');
-    final String dateComponents = '${commitUtcTime.year}/$month/$day/$hour';
+    final dateComponents = '${commitUtcTime.year}/$month/$day/$hour';
     return '$topComponent/$dateComponents/$revision/${taskName}_values.json';
   }
 
@@ -414,15 +414,15 @@ class SkiaPerfDestination extends MetricDestination {
     String projectId, {
     bool isTesting = false,
   }) async {
-    final Storage storage = Storage(client, projectId);
+    final storage = Storage(client, projectId);
     final String bucketName = isTesting ? kTestBucketName : kBucketName;
     if (!await storage.bucketExists(bucketName)) {
       throw StateError('Bucket $bucketName does not exist.');
     }
-    final SkiaPerfGcsAdaptor adaptor = SkiaPerfGcsAdaptor(
+    final adaptor = SkiaPerfGcsAdaptor(
       storage.bucket(bucketName),
     );
-    final GcsLock lock = GcsLock(StorageApi(client), bucketName);
+    final lock = GcsLock(StorageApi(client), bucketName);
     return SkiaPerfDestination(adaptor, lock);
   }
 
@@ -446,7 +446,7 @@ class SkiaPerfDestination extends MetricDestination {
     }
 
     // All created locks must be released before returning
-    final List<Future<void>> lockFutures = <Future<void>>[];
+    final lockFutures = <Future<void>>[];
 
     // 2nd, read existing points from the gcs object and update with new ones.
     for (final String repo in pointMap.keys) {
@@ -468,7 +468,7 @@ class SkiaPerfDestination extends MetricDestination {
             final List<SkiaPerfPoint> oldPoints = await _gcs.readPoints(
               objectName,
             );
-            for (final SkiaPerfPoint p in oldPoints) {
+            for (final p in oldPoints) {
               if (newPoints![p.id] == null) {
                 newPoints[p.id] = p;
               }

@@ -27,7 +27,7 @@ void main() {
 
   group('IOSAdDisplayContainer', () {
     testWidgets('build with key', (WidgetTester tester) async {
-      final IOSAdDisplayContainer container = IOSAdDisplayContainer(
+      final container = IOSAdDisplayContainer(
         IOSAdDisplayContainerCreationParams(
           key: const Key('testKey'),
           onContainerAdded: (_) {},
@@ -44,19 +44,19 @@ void main() {
 
     testWidgets('onContainerAdded is called', (WidgetTester tester) async {
       late final void Function(UIViewController, bool) viewDidAppearCallback;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newUIViewController:
             ({void Function(UIViewController, bool)? viewDidAppear}) {
               viewDidAppearCallback = viewDidAppear!;
 
-              final PigeonInstanceManager instanceManager =
+              final instanceManager =
                   PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-              final UIView view = UIView.pigeon_detached(
+              final view = UIView.pigeon_detached(
                 pigeon_instanceManager: instanceManager,
               );
               instanceManager.addDartCreatedInstance(view);
 
-              final MockUIViewController mockController =
+              final mockController =
                   MockUIViewController();
               when(mockController.view).thenReturn(view);
               return mockController;
@@ -69,9 +69,9 @@ void main() {
             }) => MockIMAAdDisplayContainer(),
       );
 
-      final Completer<void> onContainerAddedCompleter = Completer<void>();
+      final onContainerAddedCompleter = Completer<void>();
 
-      final IOSAdDisplayContainer container = IOSAdDisplayContainer(
+      final container = IOSAdDisplayContainer(
         IOSAdDisplayContainerCreationParams(
           onContainerAdded: (_) => onContainerAddedCompleter.complete(),
           imaProxy: imaProxy,
@@ -82,7 +82,7 @@ void main() {
         Builder(builder: (BuildContext context) => container.build(context)),
       );
 
-      final UiKitView view =
+      final view =
           find.byType(UiKitView).evaluate().single.widget as UiKitView;
       view.onPlatformViewCreated!.call(0);
 
@@ -98,26 +98,26 @@ void main() {
     testWidgets('AdDisplayContainer ads CompanionAdSlots', (
       WidgetTester tester,
     ) async {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final MockIMACompanionAdSlot mockCompanionAdSlot =
+      final mockCompanionAdSlot =
           MockIMACompanionAdSlot();
       late final void Function(UIViewController, bool) viewDidAppearCallback;
-      final Completer<List<IMACompanionAdSlot>?> addedAdSlotsCompleter =
+      final addedAdSlotsCompleter =
           Completer<List<IMACompanionAdSlot>?>();
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newUIViewController:
             ({void Function(UIViewController, bool)? viewDidAppear}) {
               viewDidAppearCallback = viewDidAppear!;
 
-              final UIView view = UIView.pigeon_detached(
+              final view = UIView.pigeon_detached(
                 pigeon_instanceManager: instanceManager,
               );
               instanceManager.addDartCreatedInstance(view);
 
-              final MockUIViewController mockController =
+              final mockController =
                   MockUIViewController();
               when(mockController.view).thenReturn(view);
               return mockController;
@@ -144,9 +144,9 @@ void main() {
         },
       );
 
-      final Completer<void> onContainerAddedCompleter = Completer<void>();
+      final onContainerAddedCompleter = Completer<void>();
 
-      final IOSAdDisplayContainer container = IOSAdDisplayContainer(
+      final container = IOSAdDisplayContainer(
         IOSAdDisplayContainerCreationParams(
           onContainerAdded: (_) => onContainerAddedCompleter.complete(),
           companionSlots: <PlatformCompanionAdSlot>[
@@ -165,7 +165,7 @@ void main() {
         Builder(builder: (BuildContext context) => container.build(context)),
       );
 
-      final UiKitView view =
+      final view =
           find.byType(UiKitView).evaluate().single.widget as UiKitView;
       view.onPlatformViewCreated!.call(0);
 

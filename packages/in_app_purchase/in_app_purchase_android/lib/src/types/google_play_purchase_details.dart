@@ -30,7 +30,7 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
     PurchaseWrapper purchase,
   ) {
     return purchase.products.map((String productId) {
-      final GooglePlayPurchaseDetails purchaseDetails =
+      final purchaseDetails =
           GooglePlayPurchaseDetails(
             purchaseID: purchase.orderId,
             productID: productId,

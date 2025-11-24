@@ -15,11 +15,11 @@ class OpenMultipleImagesPage extends StatelessWidget {
   const OpenMultipleImagesPage({super.key});
 
   Future<void> _openImageFile(BuildContext context) async {
-    const XTypeGroup jpgsTypeGroup = XTypeGroup(
+    const jpgsTypeGroup = XTypeGroup(
       label: 'JPEGs',
       extensions: <String>['jpg', 'jpeg'],
     );
-    const XTypeGroup pngTypeGroup = XTypeGroup(
+    const pngTypeGroup = XTypeGroup(
       label: 'PNGs',
       extensions: <String>['png'],
     );

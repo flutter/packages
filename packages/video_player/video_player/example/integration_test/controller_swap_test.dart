@@ -18,14 +18,14 @@ void main() {
     'can substitute one controller by another without crashing',
     (WidgetTester tester) async {
       // Use WebM for web to allow CI to use Chromium.
-      const String videoAssetKey = kIsWeb
+      const videoAssetKey = kIsWeb
           ? 'assets/Butterfly-209.webm'
           : 'assets/Butterfly-209.mp4';
 
-      final VideoPlayerController controller = VideoPlayerController.asset(
+      final controller = VideoPlayerController.asset(
         videoAssetKey,
       );
-      final VideoPlayerController another = VideoPlayerController.asset(
+      final another = VideoPlayerController.asset(
         videoAssetKey,
       );
       await controller.initialize();
@@ -33,8 +33,8 @@ void main() {
       await controller.setVolume(0);
       await another.setVolume(0);
 
-      final Completer<void> started = Completer<void>();
-      final Completer<void> ended = Completer<void>();
+      final started = Completer<void>();
+      final ended = Completer<void>();
 
       another.addListener(() {
         if (another.value.isBuffering && !started.isCompleted) {

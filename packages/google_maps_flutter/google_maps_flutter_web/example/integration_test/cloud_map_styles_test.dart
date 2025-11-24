@@ -29,7 +29,7 @@ void main() {
   testWidgets('cloudMapId present => mapId set & styles omitted', (
     WidgetTester tester,
   ) async {
-    const MapConfiguration testMapConfig = MapConfiguration(
+    const testMapConfig = MapConfiguration(
       mapId: 'test-cloud-map-id',
     );
 
@@ -37,7 +37,7 @@ void main() {
       const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
     );
 
-    final StreamController<MapEvent<Object?>> stream =
+    final stream =
         StreamController<MapEvent<Object?>>();
     addTearDown(() {
       // Stream is closed by controller.dispose()
@@ -45,7 +45,7 @@ void main() {
 
     gmaps.MapOptions? captured;
 
-    final GoogleMapController controller = GoogleMapController(
+    final controller = GoogleMapController(
       mapId: 1, // Internal controller ID
       streamController: stream,
       widgetConfiguration: cfg(),
@@ -58,7 +58,7 @@ void main() {
       },
     );
 
-    final List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[
+    final styles = <gmaps.MapTypeStyle>[
       gmaps.MapTypeStyle()
         ..featureType = 'road'
         ..elementType = 'geometry',
@@ -84,14 +84,14 @@ void main() {
       const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
     );
 
-    final StreamController<MapEvent<Object?>> stream =
+    final stream =
         StreamController<MapEvent<Object?>>();
     addTearDown(() {
       // Stream is closed by controller.dispose()
     });
 
     gmaps.MapOptions? captured;
-    final GoogleMapController controller = GoogleMapController(
+    final controller = GoogleMapController(
       mapId: 2, // Internal controller ID
       streamController: stream,
       widgetConfiguration: cfg(),
@@ -103,7 +103,7 @@ void main() {
       },
     );
 
-    final List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[
+    final styles = <gmaps.MapTypeStyle>[
       gmaps.MapTypeStyle()
         ..featureType = 'poi'
         ..elementType = 'labels',

@@ -9,7 +9,7 @@ import 'package:google_fonts/src/google_fonts_variant.dart';
 
 void main() {
   testWidgets('toString() works for normal w400', (WidgetTester tester) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
+    const familyWithVariant =
         GoogleFontsFamilyWithVariant(
           family: 'Foo',
           googleFontsVariant: GoogleFontsVariant(
@@ -22,7 +22,7 @@ void main() {
   });
 
   testWidgets('toString() works for italic w100', (WidgetTester tester) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
+    const familyWithVariant =
         GoogleFontsFamilyWithVariant(
           family: 'Foo',
           googleFontsVariant: GoogleFontsVariant(
@@ -37,7 +37,7 @@ void main() {
   testWidgets('toApiFilenamePrefix() works for italic w100', (
     WidgetTester tester,
   ) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
+    const familyWithVariant =
         GoogleFontsFamilyWithVariant(
           family: 'Foo',
           googleFontsVariant: GoogleFontsVariant(
@@ -52,7 +52,7 @@ void main() {
   testWidgets('toApiFilenamePrefix() works for regular', (
     WidgetTester tester,
   ) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
+    const familyWithVariant =
         GoogleFontsFamilyWithVariant(
           family: 'Foo',
           googleFontsVariant: GoogleFontsVariant(

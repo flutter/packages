@@ -11,7 +11,7 @@ void main() {
 
   group('DeviceOrientationChangedEvent tests', () {
     test('Constructor should initialize all properties', () {
-      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+      const event = DeviceOrientationChangedEvent(
         DeviceOrientation.portraitUp,
       );
 
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final DeviceOrientationChangedEvent event =
+      final event =
           DeviceOrientationChangedEvent.fromJson(const <String, dynamic>{
             'orientation': 'portraitUp',
           });
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('toJson should return a map with all fields', () {
-      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+      const event = DeviceOrientationChangedEvent(
         DeviceOrientation.portraitUp,
       );
 
@@ -39,28 +39,28 @@ void main() {
     });
 
     test('equals should return true if objects are the same', () {
-      const DeviceOrientationChangedEvent firstEvent =
+      const firstEvent =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
-      const DeviceOrientationChangedEvent secondEvent =
+      const secondEvent =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
 
       expect(firstEvent == secondEvent, true);
     });
 
     test('equals should return false if orientation is different', () {
-      const DeviceOrientationChangedEvent firstEvent =
+      const firstEvent =
           DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
-      const DeviceOrientationChangedEvent secondEvent =
+      const secondEvent =
           DeviceOrientationChangedEvent(DeviceOrientation.landscapeLeft);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('hashCode should match hashCode of all properties', () {
-      const DeviceOrientationChangedEvent event = DeviceOrientationChangedEvent(
+      const event = DeviceOrientationChangedEvent(
         DeviceOrientation.portraitUp,
       );
-      final int expectedHashCode = event.orientation.hashCode;
+      final expectedHashCode = event.orientation.hashCode;
 
       expect(event.hashCode, expectedHashCode);
     });

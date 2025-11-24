@@ -291,7 +291,7 @@ class CameraController extends ValueNotifier<CameraValue> {
       );
     }
     try {
-      final Completer<CameraInitializedEvent> initializeCompleter =
+      final initializeCompleter =
           Completer<CameraInitializedEvent>();
 
       _deviceOrientationSubscription = CameraPlatform.instance

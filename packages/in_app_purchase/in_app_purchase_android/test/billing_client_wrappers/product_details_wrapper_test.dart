@@ -40,7 +40,7 @@ void main() {
 
   group('BillingResultWrapper', () {
     test('operator == of ProductDetailsWrapper works fine', () {
-      const ProductDetailsWrapper firstProductDetailsInstance =
+      const firstProductDetailsInstance =
           ProductDetailsWrapper(
             description: 'description',
             title: 'title',
@@ -74,7 +74,7 @@ void main() {
               ),
             ],
           );
-      const ProductDetailsWrapper secondProductDetailsInstance =
+      const secondProductDetailsInstance =
           ProductDetailsWrapper(
             description: 'description',
             title: 'title',
@@ -115,12 +115,12 @@ void main() {
     });
 
     test('operator == of BillingResultWrapper works fine', () {
-      const BillingResultWrapper firstBillingResultInstance =
+      const firstBillingResultInstance =
           BillingResultWrapper(
             responseCode: BillingResponse.ok,
             debugMessage: 'debugMessage',
           );
-      const BillingResultWrapper secondBillingResultInstance =
+      const secondBillingResultInstance =
           BillingResultWrapper(
             responseCode: BillingResponse.ok,
             debugMessage: 'debugMessage',

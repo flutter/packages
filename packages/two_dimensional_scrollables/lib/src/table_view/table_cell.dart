@@ -74,7 +74,7 @@ class TableViewParentData extends TwoDimensionalViewportParentData {
 
   @override
   String toString() {
-    String mergeDetails = '';
+    var mergeDetails = '';
     if (rowMergeStart != null || columnMergeStart != null) {
       mergeDetails += ', merged';
     }
@@ -198,9 +198,9 @@ class _TableViewCell extends ParentDataWidget<TableViewParentData> {
 
   @override
   void applyParentData(RenderObject renderObject) {
-    final TableViewParentData parentData =
+    final parentData =
         renderObject.parentData! as TableViewParentData;
-    bool needsLayout = false;
+    var needsLayout = false;
     if (parentData.rowMergeStart != rowMergeStart) {
       assert(rowMergeStart == null || rowMergeStart! >= 0);
       parentData.rowMergeStart = rowMergeStart;

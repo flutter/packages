@@ -16,9 +16,9 @@ import 'companion_ad_slot_test.mocks.dart';
 void main() {
   group('IOSCompanionAdSlot', () {
     test('instantiate CompanionAdSlot with size', () async {
-      final MockIMACompanionAdSlot mockCompanionAdSlot =
+      final mockCompanionAdSlot =
           MockIMACompanionAdSlot();
-      final IOSCompanionAdSlotCreationParams params =
+      final params =
           IOSCompanionAdSlotCreationParams(
             size: CompanionAdSlotSize.fixed(width: 300, height: 400),
             proxy: InteractiveMediaAdsProxy(
@@ -40,14 +40,14 @@ void main() {
             ),
           );
 
-      final IOSCompanionAdSlot adSlot = IOSCompanionAdSlot(params);
+      final adSlot = IOSCompanionAdSlot(params);
       expect(adSlot.nativeCompanionAdSlot, mockCompanionAdSlot);
     });
 
     test('IOSCompanionAdSlot receives onClick', () async {
-      final MockIMACompanionAdSlot mockCompanionAdSlot =
+      final mockCompanionAdSlot =
           MockIMACompanionAdSlot();
-      final IOSCompanionAdSlotCreationParams params =
+      final params =
           IOSCompanionAdSlotCreationParams(
             size: CompanionAdSlotSize.fixed(width: 300, height: 400),
             onClicked: expectAsync0(() {}),
@@ -85,10 +85,10 @@ void main() {
             ),
           );
 
-      final IOSCompanionAdSlot adSlot = IOSCompanionAdSlot(params);
+      final adSlot = IOSCompanionAdSlot(params);
       expect(adSlot.nativeCompanionAdSlot, mockCompanionAdSlot);
 
-      final IMACompanionDelegate delegate =
+      final delegate =
           verify(mockCompanionAdSlot.setDelegate(captureAny)).captured.single
               as IMACompanionDelegate;
 

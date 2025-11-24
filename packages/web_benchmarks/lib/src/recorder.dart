@@ -30,7 +30,7 @@ const int kTotalSampleCount = _kWarmUpSampleCount + kMeasuredSampleCount;
 
 /// Measures the amount of time [action] takes.
 Duration timeAction(VoidCallback action) {
-  final Stopwatch stopwatch = Stopwatch()..start();
+  final stopwatch = Stopwatch()..start();
   action();
   stopwatch.stop();
   return stopwatch.elapsed;
@@ -226,7 +226,7 @@ abstract class SceneBuilderRecorder extends Recorder {
 
   @override
   Future<Profile> run() {
-    final Completer<Profile> profileCompleter = Completer<Profile>();
+    final profileCompleter = Completer<Profile>();
     _profile = Profile(name: name);
 
     PlatformDispatcher.instance.onBeginFrame = (_) {
@@ -242,7 +242,7 @@ abstract class SceneBuilderRecorder extends Recorder {
       final FlutterView? view = PlatformDispatcher.instance.implicitView;
       try {
         _profile.record(BenchmarkMetric.drawFrame.label, () {
-          final SceneBuilder sceneBuilder = SceneBuilder();
+          final sceneBuilder = SceneBuilder();
           onDrawFrame(sceneBuilder);
           _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
@@ -435,7 +435,7 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
     late void Function(List<FrameTiming> frameTimings) frameTimingsCallback;
     binding.addTimingsCallback(
       frameTimingsCallback = (List<FrameTiming> frameTimings) {
-        for (final FrameTiming frameTiming in frameTimings) {
+        for (final frameTiming in frameTimings) {
           localProfile.addDataPoint(
             BenchmarkMetric.flutterFrameTotalTime.label,
             frameTiming.totalSpan,
@@ -689,8 +689,8 @@ class Profile {
   /// Returns a JSON representation of the profile that will be sent to the
   /// server.
   Map<String, dynamic> toJson() {
-    final List<String> scoreKeys = <String>[];
-    final Map<String, dynamic> json = <String, dynamic>{
+    final scoreKeys = <String>[];
+    final json = <String, dynamic>{
       'name': name,
       'scoreKeys': scoreKeys,
     };
@@ -726,7 +726,7 @@ class Profile {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     buffer.writeln('name: $name');
     for (final String key in scoreData.keys) {
       final Timeseries timeseries = scoreData[key]!;

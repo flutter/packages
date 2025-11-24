@@ -22,7 +22,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
   @override
   Node visitClipNode(ClipNode clipNode, AffineMatrix data) {
     final AffineMatrix childTransform = clipNode.concatTransform(data);
-    final List<Path> transformedClips = <Path>[
+    final transformedClips = <Path>[
       for (final Path clip in clipNode.resolver(clipNode.clipId))
         clip.transformed(childTransform),
     ];
@@ -98,8 +98,8 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     final Paint? paint = pathNode.computePaint(originalBounds, transform);
     if (paint != null) {
       if (pathNode.attributes.stroke?.dashArray != null) {
-        final List<Node> children = <Node>[];
-        final ParentNode parent = ParentNode(
+        final children = <Node>[];
+        final parent = ParentNode(
           pathNode.attributes,
           children: children,
         );
@@ -258,11 +258,11 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     double? width = double.tryParse(attributes.raw['width'] ?? '');
     double? height = double.tryParse(attributes.raw['height'] ?? '');
     if (width == null || height == null) {
-      final ImageSizeData data = ImageSizeData.fromBytes(imageNode.data);
+      final data = ImageSizeData.fromBytes(imageNode.data);
       width ??= data.width.toDouble();
       height ??= data.height.toDouble();
     }
-    final Rect rect = Rect.fromLTWH(left, top, width, height);
+    final rect = Rect.fromLTWH(left, top, width, height);
 
     // Determine if this image can be drawn without any transforms because
     // it only has an offset and/or scale.
