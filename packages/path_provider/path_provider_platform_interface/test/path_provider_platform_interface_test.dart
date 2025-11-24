@@ -15,8 +15,7 @@ void main() {
     });
 
     test('getApplicationCachePath throws unimplemented error', () {
-      final pathProviderPlatform =
-          ExtendsPathProviderPlatform();
+      final pathProviderPlatform = ExtendsPathProviderPlatform();
 
       expect(
         () => pathProviderPlatform.getApplicationCachePath(),

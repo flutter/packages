@@ -12,11 +12,10 @@ void setUpTolerantComparator({
   required double precisionTolerance,
 }) {
   final GoldenFileComparator oldComparator = goldenFileComparator;
-  final newComparator =
-      _TolerantGoldenFileComparator(
-        Uri.parse(testPath),
-        precisionTolerance: precisionTolerance,
-      );
+  final newComparator = _TolerantGoldenFileComparator(
+    Uri.parse(testPath),
+    precisionTolerance: precisionTolerance,
+  );
 
   goldenFileComparator = newComparator;
 

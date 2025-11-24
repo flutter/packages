@@ -30,16 +30,15 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final event =
-          CameraInitializedEvent.fromJson(const <String, dynamic>{
-            'cameraId': 1,
-            'previewWidth': 1024.0,
-            'previewHeight': 640.0,
-            'exposureMode': 'auto',
-            'exposurePointSupported': true,
-            'focusMode': 'auto',
-            'focusPointSupported': true,
-          });
+      final event = CameraInitializedEvent.fromJson(const <String, dynamic>{
+        'cameraId': 1,
+        'previewWidth': 1024.0,
+        'previewHeight': 640.0,
+        'exposureMode': 'auto',
+        'exposurePointSupported': true,
+        'focusMode': 'auto',
+        'focusPointSupported': true,
+      });
 
       expect(event.cameraId, 1);
       expect(event.previewWidth, 1024);
@@ -286,11 +285,7 @@ void main() {
 
   group('CameraResolutionChangesEvent tests', () {
     test('Constructor should initialize all properties', () {
-      const event = CameraResolutionChangedEvent(
-        1,
-        1024,
-        640,
-      );
+      const event = CameraResolutionChangedEvent(1, 1024, 640);
 
       expect(event.cameraId, 1);
       expect(event.captureWidth, 1024);
@@ -298,12 +293,13 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final event =
-          CameraResolutionChangedEvent.fromJson(const <String, dynamic>{
-            'cameraId': 1,
-            'captureWidth': 1024.0,
-            'captureHeight': 640.0,
-          });
+      final event = CameraResolutionChangedEvent.fromJson(
+        const <String, dynamic>{
+          'cameraId': 1,
+          'captureWidth': 1024.0,
+          'captureHeight': 640.0,
+        },
+      );
 
       expect(event.cameraId, 1);
       expect(event.captureWidth, 1024);
@@ -311,11 +307,7 @@ void main() {
     });
 
     test('toJson should return a map with all fields', () {
-      const event = CameraResolutionChangedEvent(
-        1,
-        1024,
-        640,
-      );
+      const event = CameraResolutionChangedEvent(1, 1024, 640);
 
       final Map<String, dynamic> jsonMap = event.toJson();
 
@@ -326,47 +318,35 @@ void main() {
     });
 
     test('equals should return true if objects are the same', () {
-      const firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const secondEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
+      const firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const secondEvent = CameraResolutionChangedEvent(1, 1024, 640);
 
       expect(firstEvent == secondEvent, true);
     });
 
     test('equals should return false if cameraId is different', () {
-      const firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const secondEvent =
-          CameraResolutionChangedEvent(2, 1024, 640);
+      const firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const secondEvent = CameraResolutionChangedEvent(2, 1024, 640);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if captureWidth is different', () {
-      const firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const secondEvent =
-          CameraResolutionChangedEvent(1, 2048, 640);
+      const firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const secondEvent = CameraResolutionChangedEvent(1, 2048, 640);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('equals should return false if captureHeight is different', () {
-      const firstEvent =
-          CameraResolutionChangedEvent(1, 1024, 640);
-      const secondEvent =
-          CameraResolutionChangedEvent(1, 1024, 980);
+      const firstEvent = CameraResolutionChangedEvent(1, 1024, 640);
+      const secondEvent = CameraResolutionChangedEvent(1, 1024, 980);
 
       expect(firstEvent == secondEvent, false);
     });
 
     test('hashCode should match hashCode of all properties', () {
-      const event = CameraResolutionChangedEvent(
-        1,
-        1024,
-        640,
-      );
+      const event = CameraResolutionChangedEvent(1, 1024, 640);
       final int expectedHashCode = Object.hash(
         event.cameraId.hashCode,
         event.captureWidth,
@@ -385,9 +365,9 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final event = CameraClosingEvent.fromJson(
-        const <String, dynamic>{'cameraId': 1},
-      );
+      final event = CameraClosingEvent.fromJson(const <String, dynamic>{
+        'cameraId': 1,
+      });
 
       expect(event.cameraId, 1);
     });
@@ -432,9 +412,10 @@ void main() {
     });
 
     test('fromJson should initialize all properties', () {
-      final event = CameraErrorEvent.fromJson(
-        const <String, dynamic>{'cameraId': 1, 'description': 'Error'},
-      );
+      final event = CameraErrorEvent.fromJson(const <String, dynamic>{
+        'cameraId': 1,
+        'description': 'Error',
+      });
 
       expect(event.cameraId, 1);
       expect(event.description, 'Error');

@@ -23,13 +23,11 @@ void main() {
   const testDouble = 3.14159;
   const testList = <String>['foo', 'bar'];
 
-  final emptyOptions =
-      SharedPreferencesAsyncFoundationOptions();
+  final emptyOptions = SharedPreferencesAsyncFoundationOptions();
 
   SharedPreferencesAsyncFoundation getPreferences() {
     final api = _FakeSharedPreferencesApi();
-    final preferences =
-        SharedPreferencesAsyncFoundation(api: api);
+    final preferences = SharedPreferencesAsyncFoundation(api: api);
 
     return preferences;
   }

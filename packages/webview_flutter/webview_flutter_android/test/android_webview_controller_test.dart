@@ -593,8 +593,7 @@ void main() {
 
     test('loadFlutterAsset when asset does not exist', () async {
       final mockWebView = MockWebView();
-      final mockAssetManager =
-          MockFlutterAssetManager();
+      final mockAssetManager = MockFlutterAssetManager();
       final AndroidWebViewController controller = createControllerWithMocks(
         mockFlutterAssetManager: mockAssetManager,
         mockWebView: mockWebView,
@@ -624,8 +623,7 @@ void main() {
 
     test('loadFlutterAsset when asset does exists', () async {
       final mockWebView = MockWebView();
-      final mockAssetManager =
-          MockFlutterAssetManager();
+      final mockAssetManager = MockFlutterAssetManager();
       final AndroidWebViewController controller = createControllerWithMocks(
         mockFlutterAssetManager: mockAssetManager,
         mockWebView: mockWebView,
@@ -654,8 +652,7 @@ void main() {
       'loadFlutterAsset when asset name contains characters that should be escaped',
       () async {
         final mockWebView = MockWebView();
-        final mockAssetManager =
-            MockFlutterAssetManager();
+        final mockAssetManager = MockFlutterAssetManager();
         final AndroidWebViewController controller = createControllerWithMocks(
           mockFlutterAssetManager: mockAssetManager,
           mockWebView: mockWebView,
@@ -727,9 +724,7 @@ void main() {
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
       );
-      final requestParams = LoadRequestParams(
-        uri: Uri.parse('flutter.dev'),
-      );
+      final requestParams = LoadRequestParams(uri: Uri.parse('flutter.dev'));
 
       try {
         await controller.loadRequest(requestParams);
@@ -893,8 +888,7 @@ void main() {
     });
 
     test('setPlatformNavigationDelegate', () async {
-      final mockNavigationDelegate =
-          MockAndroidNavigationDelegate();
+      final mockNavigationDelegate = MockAndroidNavigationDelegate();
       final mockWebView = MockWebView();
       final mockWebChromeClient = MockWebChromeClient();
       final mockWebViewClient = MockWebViewClient();
@@ -1144,8 +1138,9 @@ void main() {
             },
       );
 
-      final testView = android_webview
-          .View.pigeon_detached(pigeon_instanceManager: testInstanceManager);
+      final testView = android_webview.View.pigeon_detached(
+        pigeon_instanceManager: testInstanceManager,
+      );
       var showCustomViewCalled = false;
       var hideCustomViewCalled = false;
 
@@ -1213,12 +1208,9 @@ void main() {
         await request.grant();
       });
 
-      final permissionTypes = <String>[
-        PermissionRequestConstants.audioCapture,
-      ];
+      final permissionTypes = <String>[PermissionRequestConstants.audioCapture];
 
-      final mockPermissionRequest =
-          MockPermissionRequest();
+      final mockPermissionRequest = MockPermissionRequest();
       when(mockPermissionRequest.resources).thenReturn(permissionTypes);
 
       onPermissionRequestCallback(
@@ -1277,8 +1269,7 @@ void main() {
           callbackCalled = true;
         });
 
-        final mockPermissionRequest =
-            MockPermissionRequest();
+        final mockPermissionRequest = MockPermissionRequest();
         when(
           mockPermissionRequest.resources,
         ).thenReturn(<String>['unknownType']);
@@ -1508,8 +1499,7 @@ void main() {
             },
       );
 
-      final logs =
-          <String, JavaScriptLogLevel>{};
+      final logs = <String, JavaScriptLogLevel>{};
       await controller.setOnConsoleMessage((
         JavaScriptConsoleMessage message,
       ) async {
@@ -2043,8 +2033,9 @@ void main() {
   test('webViewIdentifier', () {
     final mockWebView = MockWebView();
 
-    final instanceManager =
-        android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+    final instanceManager = android_webview.PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
     instanceManager.addHostCreatedInstance(mockWebView, 0);
 
     when(mockWebView.pigeon_instanceManager).thenReturn(instanceManager);
@@ -2107,8 +2098,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager =
-          android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = android_webview.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       instanceManager.addDartCreatedInstance(mockWebView);
 
       final webViewWidget = AndroidWebViewWidget(
@@ -2137,12 +2129,12 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager =
-          android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = android_webview.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       instanceManager.addDartCreatedInstance(mockWebView);
 
-      final mockPlatformViewsService =
-          MockPlatformViewsServiceProxy();
+      final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
       when(
         mockPlatformViewsService.initSurfaceAndroidView(
@@ -2191,12 +2183,12 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager =
-          android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = android_webview.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       instanceManager.addDartCreatedInstance(mockWebView);
 
-      final mockPlatformViewsService =
-          MockPlatformViewsServiceProxy();
+      final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
       when(
         mockPlatformViewsService.initExpensiveAndroidView(
@@ -2251,8 +2243,9 @@ void main() {
       onShowCustomViewCallback;
 
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager =
-          android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = android_webview.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       instanceManager.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
@@ -2281,8 +2274,7 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final mockPlatformViewsService =
-          MockPlatformViewsServiceProxy();
+      final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
       when(
         mockPlatformViewsService.initSurfaceAndroidView(
@@ -2332,12 +2324,12 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager =
-          android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = android_webview.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       instanceManager.addDartCreatedInstance(mockWebView);
 
-      final mockPlatformViewsService =
-          MockPlatformViewsServiceProxy();
+      final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
       when(
         mockPlatformViewsService.initSurfaceAndroidView(
@@ -2407,14 +2399,12 @@ void main() {
       'PlatformView does not rebuild when creation params stay the same',
       (WidgetTester tester) async {
         final android_webview.WebView mockWebView = MockWebView();
-        final instanceManager =
-            android_webview.PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            );
+        final instanceManager = android_webview.PigeonInstanceManager(
+          onWeakReferenceRemoved: (_) {},
+        );
         instanceManager.addDartCreatedInstance(mockWebView);
 
-        final mockPlatformViewsService =
-            MockPlatformViewsServiceProxy();
+        final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
         final AndroidWebViewController controller = createControllerWithMocks(
           mockWebView: mockWebView,
@@ -2491,21 +2481,21 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager =
-          android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = android_webview.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       instanceManager.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
       );
 
-      final customViewWidget =
-          AndroidCustomViewWidget.private(
-            key: const Key('test_custom_view'),
-            customView: mockWebView,
-            controller: controller,
-            instanceManager: instanceManager,
-          );
+      final customViewWidget = AndroidCustomViewWidget.private(
+        key: const Key('test_custom_view'),
+        customView: mockWebView,
+        controller: controller,
+        instanceManager: instanceManager,
+      );
 
       await tester.pumpWidget(
         Builder(
@@ -2521,16 +2511,16 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager =
-          android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = android_webview.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
       instanceManager.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
       );
 
-      final mockPlatformViewsService =
-          MockPlatformViewsServiceProxy();
+      final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
       when(
         mockPlatformViewsService.initSurfaceAndroidView(
@@ -2543,13 +2533,12 @@ void main() {
         ),
       ).thenReturn(MockSurfaceAndroidViewController());
 
-      final customViewWidget =
-          AndroidCustomViewWidget.private(
-            controller: controller,
-            customView: mockWebView,
-            platformViewsServiceProxy: mockPlatformViewsService,
-            instanceManager: instanceManager,
-          );
+      final customViewWidget = AndroidCustomViewWidget.private(
+        controller: controller,
+        customView: mockWebView,
+        platformViewsServiceProxy: mockPlatformViewsService,
+        instanceManager: instanceManager,
+      );
 
       await tester.pumpWidget(
         Builder(

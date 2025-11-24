@@ -163,25 +163,20 @@ void main() {
   });
 
   test('TableSpanDecoration', () {
-    var decoration = const TableSpanDecoration(
-      color: Color(0xffff0000),
-    );
+    var decoration = const TableSpanDecoration(color: Color(0xffff0000));
     final canvas = TestCanvas();
     const rect = Rect.fromLTWH(0, 0, 10, 10);
-    final details =
-        TableSpanDecorationPaintDetails(
-          canvas: canvas,
-          rect: rect,
-          axisDirection: AxisDirection.down,
-        );
+    final details = TableSpanDecorationPaintDetails(
+      canvas: canvas,
+      rect: rect,
+      axisDirection: AxisDirection.down,
+    );
     final radius = BorderRadius.circular(10.0);
     decoration.paint(details);
     expect(canvas.rect, rect);
     expect(canvas.paint.color, const Color(0xffff0000));
     expect(canvas.paint.isAntiAlias, isFalse);
-    final border = TestTableSpanBorder(
-      leading: const BorderSide(),
-    );
+    final border = TestTableSpanBorder(leading: const BorderSide());
     decoration = TableSpanDecoration(border: border, borderRadius: radius);
     decoration.paint(details);
     expect(border.details, details);
@@ -884,15 +879,14 @@ void main() {
     // |*********|********|        |
     // |*********|********|        |
     // +---------+--------+--------+
-    final scenario1MergedRows =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          TableVicinity.zero.copyWith(row: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (1, 2),
-          const TableVicinity(row: 2, column: 1): (1, 2),
-          const TableVicinity(row: 2, column: 2): (2, 2),
-          const TableVicinity(row: 3, column: 2): (2, 2),
-        };
+    final scenario1MergedRows = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      TableVicinity.zero.copyWith(row: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (1, 2),
+      const TableVicinity(row: 2, column: 1): (1, 2),
+      const TableVicinity(row: 2, column: 2): (2, 2),
+      const TableVicinity(row: 3, column: 2): (2, 2),
+    };
 
     TableView buildScenario1({
       bool reverseVertical = false,
@@ -947,15 +941,14 @@ void main() {
     // |////////|        |M(2,2)***********|
     // |////////|        |*****************|
     // +--------+--------+--------+--------+
-    final scenario2MergedColumns =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          TableVicinity.zero.copyWith(column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (1, 2),
-          const TableVicinity(row: 1, column: 2): (1, 2),
-          const TableVicinity(row: 2, column: 2): (2, 2),
-          const TableVicinity(row: 2, column: 3): (2, 2),
-        };
+    final scenario2MergedColumns = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      TableVicinity.zero.copyWith(column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (1, 2),
+      const TableVicinity(row: 1, column: 2): (1, 2),
+      const TableVicinity(row: 2, column: 2): (2, 2),
+      const TableVicinity(row: 2, column: 3): (2, 2),
+    };
 
     TableView buildScenario2({
       bool reverseVertical = false,
@@ -1013,28 +1006,26 @@ void main() {
     // |////////|        |                 |
     // |////////|        |                 |
     // +--------+--------+--------+--------+
-    final scenario3MergedRows =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          const TableVicinity(row: 1, column: 0): (0, 2),
-          const TableVicinity(row: 0, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 2): (1, 2),
-          const TableVicinity(row: 2, column: 2): (1, 2),
-          const TableVicinity(row: 1, column: 3): (1, 2),
-          const TableVicinity(row: 2, column: 3): (1, 2),
-        };
-    final scenario3MergedColumns =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          const TableVicinity(row: 1, column: 0): (0, 2),
-          const TableVicinity(row: 0, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 2): (2, 2),
-          const TableVicinity(row: 2, column: 2): (2, 2),
-          const TableVicinity(row: 1, column: 3): (2, 2),
-          const TableVicinity(row: 2, column: 3): (2, 2),
-        };
+    final scenario3MergedRows = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      const TableVicinity(row: 1, column: 0): (0, 2),
+      const TableVicinity(row: 0, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 2): (1, 2),
+      const TableVicinity(row: 2, column: 2): (1, 2),
+      const TableVicinity(row: 1, column: 3): (1, 2),
+      const TableVicinity(row: 2, column: 3): (1, 2),
+    };
+    final scenario3MergedColumns = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      const TableVicinity(row: 1, column: 0): (0, 2),
+      const TableVicinity(row: 0, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 2): (2, 2),
+      const TableVicinity(row: 2, column: 2): (2, 2),
+      const TableVicinity(row: 1, column: 3): (2, 2),
+      const TableVicinity(row: 2, column: 3): (2, 2),
+    };
 
     TableView buildScenario3({
       Axis mainAxis = Axis.vertical,

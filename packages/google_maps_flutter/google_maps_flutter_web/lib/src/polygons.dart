@@ -33,8 +33,7 @@ class PolygonsController extends GeometryController {
       googleMap,
       polygon,
     );
-    final gmPolygon = gmaps.Polygon(polygonOptions)
-      ..map = googleMap;
+    final gmPolygon = gmaps.Polygon(polygonOptions)..map = googleMap;
     final controller = PolygonController(
       polygon: gmPolygon,
       consumeTapEvents: polygon.consumeTapEvents,

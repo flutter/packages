@@ -24,9 +24,7 @@ void main() {
           expectAccept: '.jpg,.jpeg,image/png,image/*',
         );
 
-        final plugin = FileSelectorWeb(
-          domHelper: mockDomHelper,
-        );
+        final plugin = FileSelectorWeb(domHelper: mockDomHelper);
 
         const typeGroup = XTypeGroup(
           label: 'images',
@@ -52,9 +50,7 @@ void main() {
         // Simulate returning an empty list of files from the DomHelper...
         final mockDomHelper = MockDomHelper(files: <XFile>[]);
 
-        final plugin = FileSelectorWeb(
-          domHelper: mockDomHelper,
-        );
+        final plugin = FileSelectorWeb(domHelper: mockDomHelper);
 
         final XFile? file = await plugin.openFile();
 
@@ -73,9 +69,7 @@ void main() {
           expectMultiple: true,
         );
 
-        final plugin = FileSelectorWeb(
-          domHelper: mockDomHelper,
-        );
+        final plugin = FileSelectorWeb(domHelper: mockDomHelper);
 
         const typeGroup = XTypeGroup(
           label: 'files',

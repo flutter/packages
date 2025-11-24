@@ -298,9 +298,7 @@ void main() {
     final Directory directoryContents = await getApplicationSupportDirectory();
     expect(directoryContents.listSync().isEmpty, isTrue);
 
-    final cachedFile = File(
-      '${directoryContents.path}/$expectedCachedFile',
-    );
+    final cachedFile = File('${directoryContents.path}/$expectedCachedFile');
     cachedFile.createSync();
     cachedFile.writeAsStringSync('file contents');
 
@@ -319,9 +317,7 @@ void main() {
     final Directory directoryContents = await getApplicationSupportDirectory();
     expect(directoryContents.listSync().isEmpty, isTrue);
 
-    final cachedFile = File(
-      '${directoryContents.path}/$expectedCachedFile',
-    );
+    final cachedFile = File('${directoryContents.path}/$expectedCachedFile');
     cachedFile.createSync();
     cachedFile.writeAsStringSync('file contents');
 

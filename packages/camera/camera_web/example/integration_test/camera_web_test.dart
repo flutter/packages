@@ -824,10 +824,8 @@ void main() {
 
         when(camera.videoElement).thenReturn(videoElement);
 
-        final errorProvider =
-            MockEventStreamProvider<Event>();
-        final abortProvider =
-            MockEventStreamProvider<Event>();
+        final errorProvider = MockEventStreamProvider<Event>();
+        final abortProvider = MockEventStreamProvider<Event>();
 
         (CameraPlatform.instance as CameraPlugin).videoElementOnErrorProvider =
             errorProvider;
@@ -1232,8 +1230,7 @@ void main() {
       testWidgets('listens to the onVideoRecordingError stream', (
         WidgetTester tester,
       ) async {
-        final videoRecordingErrorController =
-            StreamController<ErrorEvent>();
+        final videoRecordingErrorController = StreamController<ErrorEvent>();
 
         when(
           camera.onVideoRecordingError,
@@ -1366,8 +1363,7 @@ void main() {
         WidgetTester tester,
       ) async {
         final camera = MockCamera();
-        final videoRecordingErrorController =
-            StreamController<ErrorEvent>();
+        final videoRecordingErrorController = StreamController<ErrorEvent>();
         final capturedVideo = XFile('/bogus/test');
 
         when(camera.startVideoRecording()).thenAnswer((_) async {});
@@ -2208,10 +2204,7 @@ void main() {
 
     testWidgets('buildPreview returns an HtmlElementView '
         'with an appropriate view type', (WidgetTester tester) async {
-      final camera = Camera(
-        textureId: cameraId,
-        cameraService: cameraService,
-      );
+      final camera = Camera(textureId: cameraId, cameraService: cameraService);
 
       // Save the camera in the camera plugin.
       (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
@@ -2253,10 +2246,8 @@ void main() {
 
         when(camera.videoElement).thenReturn(videoElement);
 
-        final errorProvider =
-            MockEventStreamProvider<Event>();
-        final abortProvider =
-            MockEventStreamProvider<Event>();
+        final errorProvider = MockEventStreamProvider<Event>();
+        final abortProvider = MockEventStreamProvider<Event>();
 
         (CameraPlatform.instance as CameraPlugin).videoElementOnErrorProvider =
             errorProvider;
@@ -2445,10 +2436,8 @@ void main() {
 
         when(camera.videoElement).thenReturn(videoElement);
 
-        final errorProvider =
-            MockEventStreamProvider<Event>();
-        final abortProvider =
-            MockEventStreamProvider<Event>();
+        final errorProvider = MockEventStreamProvider<Event>();
+        final abortProvider = MockEventStreamProvider<Event>();
 
         (CameraPlatform.instance as CameraPlugin).videoElementOnErrorProvider =
             errorProvider;
@@ -2494,8 +2483,7 @@ void main() {
             .instance
             .onCameraInitialized(cameraId);
 
-        final streamQueue =
-            StreamQueue<CameraInitializedEvent>(eventStream);
+        final streamQueue = StreamQueue<CameraInitializedEvent>(eventStream);
 
         await CameraPlatform.instance.initializeCamera(cameraId);
 
@@ -2534,8 +2522,7 @@ void main() {
         final Stream<CameraClosingEvent> eventStream = CameraPlatform.instance
             .onCameraClosing(cameraId);
 
-        final streamQueue =
-            StreamQueue<CameraClosingEvent>(eventStream);
+        final streamQueue = StreamQueue<CameraClosingEvent>(eventStream);
 
         await CameraPlatform.instance.initializeCamera(cameraId);
 
@@ -2563,8 +2550,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           await CameraPlatform.instance.initializeCamera(cameraId);
 
@@ -2603,8 +2589,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           await CameraPlatform.instance.initializeCamera(cameraId);
 
@@ -2638,8 +2623,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           await CameraPlatform.instance.initializeCamera(cameraId);
 
@@ -2671,8 +2655,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.takePicture(cameraId),
@@ -2705,8 +2688,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.setFlashMode(
@@ -2742,8 +2724,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.getMaxZoomLevel(cameraId),
@@ -2776,8 +2757,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.getMinZoomLevel(cameraId),
@@ -2810,8 +2790,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.setZoomLevel(cameraId, 100.0),
@@ -2844,8 +2823,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.resumePreview(cameraId),
@@ -2882,8 +2860,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.startVideoRecording(cameraId),
@@ -2910,8 +2887,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           await CameraPlatform.instance.initializeCamera(cameraId);
           await CameraPlatform.instance.startVideoRecording(cameraId);
@@ -2948,8 +2924,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.stopVideoRecording(cameraId),
@@ -2982,8 +2957,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.pauseVideoRecording(cameraId),
@@ -3016,8 +2990,7 @@ void main() {
           final Stream<CameraErrorEvent> eventStream = CameraPlatform.instance
               .onCameraError(cameraId);
 
-          final streamQueue =
-              StreamQueue<CameraErrorEvent>(eventStream);
+          final streamQueue = StreamQueue<CameraErrorEvent>(eventStream);
 
           expect(
             () async => CameraPlatform.instance.resumeVideoRecording(cameraId),
@@ -3043,19 +3016,17 @@ void main() {
       ) async {
         final camera = MockCamera();
         final capturedVideo = XFile('/bogus/test');
-        final stream =
-            Stream<VideoRecordedEvent>.value(
-              VideoRecordedEvent(cameraId, capturedVideo, Duration.zero),
-            );
+        final stream = Stream<VideoRecordedEvent>.value(
+          VideoRecordedEvent(cameraId, capturedVideo, Duration.zero),
+        );
         when(camera.onVideoRecordedEvent).thenAnswer((_) => stream);
 
         // Save the camera in the camera plugin.
         (CameraPlatform.instance as CameraPlugin).cameras[cameraId] = camera;
 
-        final streamQueue =
-            StreamQueue<VideoRecordedEvent>(
-              CameraPlatform.instance.onVideoRecordedEvent(cameraId),
-            );
+        final streamQueue = StreamQueue<VideoRecordedEvent>(
+          CameraPlatform.instance.onVideoRecordedEvent(cameraId),
+        );
 
         expect(
           await streamQueue.next,
@@ -3064,12 +3035,10 @@ void main() {
       });
 
       group('onDeviceOrientationChanged', () {
-        final eventStreamController =
-            StreamController<Event>();
+        final eventStreamController = StreamController<Event>();
 
         setUp(() {
-          final provider =
-              MockEventStreamProvider<Event>();
+          final provider = MockEventStreamProvider<Event>();
           (CameraPlatform.instance as CameraPlugin)
                   .orientationOnChangeProvider =
               provider;
@@ -3093,8 +3062,9 @@ void main() {
           final Stream<DeviceOrientationChangedEvent> eventStream =
               CameraPlatform.instance.onDeviceOrientationChanged();
 
-          final streamQueue =
-              StreamQueue<DeviceOrientationChangedEvent>(eventStream);
+          final streamQueue = StreamQueue<DeviceOrientationChangedEvent>(
+            eventStream,
+          );
 
           expect(
             await streamQueue.next,
@@ -3125,8 +3095,9 @@ void main() {
           final Stream<DeviceOrientationChangedEvent> eventStream =
               CameraPlatform.instance.onDeviceOrientationChanged();
 
-          final streamQueue =
-              StreamQueue<DeviceOrientationChangedEvent>(eventStream);
+          final streamQueue = StreamQueue<DeviceOrientationChangedEvent>(
+            eventStream,
+          );
 
           // Change the screen orientation to landscapePrimary and
           // emit an event on the screenOrientation.onChange stream.

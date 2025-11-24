@@ -248,17 +248,15 @@ class NonNullFieldHostApi {
   ) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldHostApi.search$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[nested],
     );
-    final pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -306,8 +304,7 @@ abstract class NonNullFieldFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_request =
-              (args[0] as NonNullFieldSearchRequest?);
+          final arg_request = (args[0] as NonNullFieldSearchRequest?);
           assert(
             arg_request != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NonNullFieldFlutterApi.search was null, expected non-null NonNullFieldSearchRequest.',

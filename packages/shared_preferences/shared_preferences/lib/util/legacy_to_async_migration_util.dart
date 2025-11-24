@@ -29,8 +29,9 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
   required SharedPreferencesOptions sharedPreferencesAsyncOptions,
   required String migrationCompletedKey,
 }) async {
-  final sharedPreferencesAsyncInstance =
-      SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
+  final sharedPreferencesAsyncInstance = SharedPreferencesAsync(
+    options: sharedPreferencesAsyncOptions,
+  );
 
   if (await sharedPreferencesAsyncInstance.containsKey(migrationCompletedKey)) {
     return;

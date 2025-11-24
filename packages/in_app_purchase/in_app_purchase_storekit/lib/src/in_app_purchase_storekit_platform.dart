@@ -330,19 +330,18 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
     if (productDetails.isEmpty) {
       invalidIdentifiers = identifiers.toList();
     }
-    final productDetailsResponse =
-        ProductDetailsResponse(
-          productDetails: productDetails,
-          notFoundIDs: invalidIdentifiers,
-          error: exception == null
-              ? null
-              : IAPError(
-                  source: kIAPSource,
-                  code: exception.code,
-                  message: exception.message ?? '',
-                  details: exception.details,
-                ),
-        );
+    final productDetailsResponse = ProductDetailsResponse(
+      productDetails: productDetails,
+      notFoundIDs: invalidIdentifiers,
+      error: exception == null
+          ? null
+          : IAPError(
+              source: kIAPSource,
+              code: exception.code,
+              message: exception.message ?? '',
+              details: exception.details,
+            ),
+    );
     return productDetailsResponse;
   }
 

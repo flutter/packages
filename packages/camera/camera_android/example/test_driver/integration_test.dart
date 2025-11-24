@@ -17,8 +17,7 @@ Future<void> main() async {
     print('This test must be run on a POSIX host. Skipping...');
     exit(0);
   }
-  final adbExists =
-      Process.runSync('which', <String>['adb']).exitCode == 0;
+  final adbExists = Process.runSync('which', <String>['adb']).exitCode == 0;
   if (!adbExists) {
     print(r'This test needs ADB to exist on the $PATH. Skipping...');
     exit(0);

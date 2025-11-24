@@ -12,8 +12,9 @@ import 'package:interactive_media_ads/src/platform_interface/platform_interface.
 void main() {
   group('IOSAdsManagerDelegate', () {
     test('didReceiveAdEvent calls onAdEvent', () {
-      final instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(
         ima.IMAAdsManagerDelegate,
@@ -91,8 +92,9 @@ void main() {
     });
 
     test('didRequestContentPause calls onAdEvent', () {
-      final instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
       didRequestContentPauseCallback;
@@ -159,8 +161,9 @@ void main() {
     });
 
     test('didRequestContentResume calls onAdEvent', () {
-      final instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
       didRequestContentResumeCallback;
@@ -227,8 +230,9 @@ void main() {
     });
 
     test('didReceiveAdError calls onAdErrorEvent', () {
-      final instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(
         ima.IMAAdsManagerDelegate,

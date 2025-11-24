@@ -68,11 +68,7 @@ void main() {
         EnumMember(name: 'two'),
       ],
     );
-    final root = Root(
-      apis: <Api>[],
-      classes: <Class>[],
-      enums: <Enum>[anEnum],
-    );
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[anEnum]);
     final sink = StringBuffer();
     const generator = DartGenerator();
     generator.generate(
@@ -1748,11 +1744,7 @@ void main() {
       pubspecFile.writeAsStringSync('''
 name: foobar
 ''');
-      final root = Root(
-        classes: <Class>[],
-        apis: <Api>[],
-        enums: <Enum>[],
-      );
+      final root = Root(classes: <Class>[], apis: <Api>[], enums: <Enum>[]);
       final sink = StringBuffer();
       const testGenerator = DartGenerator();
       testGenerator.generateTest(

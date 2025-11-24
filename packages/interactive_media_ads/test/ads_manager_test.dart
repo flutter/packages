@@ -13,15 +13,13 @@ import 'test_stubs.dart';
 
 void main() {
   test('init', () async {
-    final adsRenderingSettings =
-        AdsRenderingSettings.fromPlatform(
-          TestAdsRenderingSettings(
-            const PlatformAdsRenderingSettingsCreationParams(),
-          ),
-        );
+    final adsRenderingSettings = AdsRenderingSettings.fromPlatform(
+      TestAdsRenderingSettings(
+        const PlatformAdsRenderingSettingsCreationParams(),
+      ),
+    );
 
-    final settingsCompleter =
-        Completer<PlatformAdsRenderingSettings>();
+    final settingsCompleter = Completer<PlatformAdsRenderingSettings>();
 
     final platformManager = TestAdsManager(
       onInit: ({PlatformAdsRenderingSettings? settings}) async {
@@ -35,9 +33,7 @@ void main() {
   });
 
   test('start', () async {
-    final platformManager = TestAdsManager(
-      onStart: expectAsync1((_) async {}),
-    );
+    final platformManager = TestAdsManager(onStart: expectAsync1((_) async {}));
 
     final AdsManager manager = createAdsManager(platformManager);
     await manager.start();
@@ -68,27 +64,21 @@ void main() {
   });
 
   test('pause', () async {
-    final platformManager = TestAdsManager(
-      onPause: expectAsync0(() async {}),
-    );
+    final platformManager = TestAdsManager(onPause: expectAsync0(() async {}));
 
     final AdsManager manager = createAdsManager(platformManager);
     await manager.pause();
   });
 
   test('resume', () async {
-    final platformManager = TestAdsManager(
-      onResume: expectAsync0(() async {}),
-    );
+    final platformManager = TestAdsManager(onResume: expectAsync0(() async {}));
 
     final AdsManager manager = createAdsManager(platformManager);
     await manager.resume();
   });
 
   test('skip', () async {
-    final platformManager = TestAdsManager(
-      onSkip: expectAsync0(() async {}),
-    );
+    final platformManager = TestAdsManager(onSkip: expectAsync0(() async {}));
 
     final AdsManager manager = createAdsManager(platformManager);
     await manager.skip();

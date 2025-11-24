@@ -49,15 +49,15 @@ void main() {
             ({void Function(UIViewController, bool)? viewDidAppear}) {
               viewDidAppearCallback = viewDidAppear!;
 
-              final instanceManager =
-                  PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+              final instanceManager = PigeonInstanceManager(
+                onWeakReferenceRemoved: (_) {},
+              );
               final view = UIView.pigeon_detached(
                 pigeon_instanceManager: instanceManager,
               );
               instanceManager.addDartCreatedInstance(view);
 
-              final mockController =
-                  MockUIViewController();
+              final mockController = MockUIViewController();
               when(mockController.view).thenReturn(view);
               return mockController;
             },
@@ -82,8 +82,7 @@ void main() {
         Builder(builder: (BuildContext context) => container.build(context)),
       );
 
-      final view =
-          find.byType(UiKitView).evaluate().single.widget as UiKitView;
+      final view = find.byType(UiKitView).evaluate().single.widget as UiKitView;
       view.onPlatformViewCreated!.call(0);
 
       // Ensure onContainerAdded is not called until viewDidAppear is called.
@@ -102,11 +101,9 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final mockCompanionAdSlot =
-          MockIMACompanionAdSlot();
+      final mockCompanionAdSlot = MockIMACompanionAdSlot();
       late final void Function(UIViewController, bool) viewDidAppearCallback;
-      final addedAdSlotsCompleter =
-          Completer<List<IMACompanionAdSlot>?>();
+      final addedAdSlotsCompleter = Completer<List<IMACompanionAdSlot>?>();
       final imaProxy = InteractiveMediaAdsProxy(
         newUIViewController:
             ({void Function(UIViewController, bool)? viewDidAppear}) {
@@ -117,8 +114,7 @@ void main() {
               );
               instanceManager.addDartCreatedInstance(view);
 
-              final mockController =
-                  MockUIViewController();
+              final mockController = MockUIViewController();
               when(mockController.view).thenReturn(view);
               return mockController;
             },
@@ -165,8 +161,7 @@ void main() {
         Builder(builder: (BuildContext context) => container.build(context)),
       );
 
-      final view =
-          find.byType(UiKitView).evaluate().single.widget as UiKitView;
+      final view = find.byType(UiKitView).evaluate().single.widget as UiKitView;
       view.onPlatformViewCreated!.call(0);
 
       viewDidAppearCallback(MockUIViewController(), true);

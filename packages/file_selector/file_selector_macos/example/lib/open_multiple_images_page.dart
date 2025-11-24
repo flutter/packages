@@ -19,10 +19,7 @@ class OpenMultipleImagesPage extends StatelessWidget {
       label: 'JPEGs',
       extensions: <String>['jpg', 'jpeg'],
     );
-    const pngTypeGroup = XTypeGroup(
-      label: 'PNGs',
-      extensions: <String>['png'],
-    );
+    const pngTypeGroup = XTypeGroup(label: 'PNGs', extensions: <String>['png']);
     final List<XFile> files = await FileSelectorPlatform.instance.openFiles(
       acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
     );

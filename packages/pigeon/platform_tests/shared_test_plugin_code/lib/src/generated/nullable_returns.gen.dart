@@ -74,15 +74,13 @@ class NullableReturnHostApi {
   Future<int?> doit() async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableReturnHostApi.doit$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -156,17 +154,15 @@ class NullableArgHostApi {
   Future<int> doit(int? x) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableArgHostApi.doit$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[x],
     );
-    final pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -251,15 +247,13 @@ class NullableCollectionReturnHostApi {
   Future<List<String?>?> doit() async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnHostApi.doit$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -333,17 +327,15 @@ class NullableCollectionArgHostApi {
   Future<List<String?>> doit(List<String?>? x) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionArgHostApi.doit$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[x],
     );
-    final pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

@@ -699,18 +699,10 @@ void main() {
         final horizontalController = ScrollController();
         addTearDown(verticalController.dispose);
         addTearDown(horizontalController.dispose);
-        const rootForegroundDecoration = TreeRowDecoration(
-          color: Colors.red,
-        );
-        const rootBackgroundDecoration = TreeRowDecoration(
-          color: Colors.blue,
-        );
-        const foregroundDecoration = TreeRowDecoration(
-          color: Colors.orange,
-        );
-        const backgroundDecoration = TreeRowDecoration(
-          color: Colors.green,
-        );
+        const rootForegroundDecoration = TreeRowDecoration(color: Colors.red);
+        const rootBackgroundDecoration = TreeRowDecoration(color: Colors.blue);
+        const foregroundDecoration = TreeRowDecoration(color: Colors.orange);
+        const backgroundDecoration = TreeRowDecoration(color: Colors.green);
         final treeView = TreeView<String>(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,

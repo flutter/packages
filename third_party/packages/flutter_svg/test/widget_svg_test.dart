@@ -74,8 +74,7 @@ void main() {
   );
 
   setUpAll(() {
-    final oldComparator =
-        goldenFileComparator as LocalFileComparator;
+    final oldComparator = goldenFileComparator as LocalFileComparator;
     final newComparator = _TolerantComparator(
       Uri.parse('${oldComparator.basedir}test'),
     );

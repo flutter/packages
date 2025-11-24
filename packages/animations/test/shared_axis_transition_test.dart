@@ -12,9 +12,7 @@ void main() {
     testWidgets(
       'SharedAxisPageTransitionsBuilder builds a SharedAxisTransition',
       (WidgetTester tester) async {
-        final animation = AnimationController(
-          vsync: const TestVSync(),
-        );
+        final animation = AnimationController(vsync: const TestVSync());
         final secondaryAnimation = AnimationController(
           vsync: const TestVSync(),
         );
@@ -662,9 +660,7 @@ void main() {
     testWidgets(
       'SharedAxisPageTransitionsBuilder builds a SharedAxisTransition',
       (WidgetTester tester) async {
-        final animation = AnimationController(
-          vsync: const TestVSync(),
-        );
+        final animation = AnimationController(vsync: const TestVSync());
         final secondaryAnimation = AnimationController(
           vsync: const TestVSync(),
         );
@@ -1312,9 +1308,7 @@ void main() {
     testWidgets(
       'SharedAxisPageTransitionsBuilder builds a SharedAxisTransition',
       (WidgetTester tester) async {
-        final animation = AnimationController(
-          vsync: const TestVSync(),
-        );
+        final animation = AnimationController(vsync: const TestVSync());
         final secondaryAnimation = AnimationController(
           vsync: const TestVSync(),
         );

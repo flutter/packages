@@ -97,11 +97,10 @@ TextStyle googleFontsTextStyle({
     fontStyle: textStyle.fontStyle ?? FontStyle.normal,
   );
   final GoogleFontsVariant matchedVariant = _closestMatch(variant, fonts.keys);
-  final familyWithVariant =
-      GoogleFontsFamilyWithVariant(
-        family: fontFamily,
-        googleFontsVariant: matchedVariant,
-      );
+  final familyWithVariant = GoogleFontsFamilyWithVariant(
+    family: fontFamily,
+    googleFontsVariant: matchedVariant,
+  );
 
   final descriptor = GoogleFontsDescriptor(
     familyWithVariant: familyWithVariant,
@@ -129,8 +128,7 @@ TextStyle googleFontsTextStyle({
 /// the [fontUrl] and stored on device. In all cases, the returned future
 /// completes once the font is loaded into the [FontLoader].
 Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
-  final familyWithVariantString = descriptor.familyWithVariant
-      .toString();
+  final familyWithVariantString = descriptor.familyWithVariant.toString();
   final String fontName = descriptor.familyWithVariant.toApiFilenamePrefix();
   final String fileHash = descriptor.file.expectedFileHash;
   // If this font has already already loaded or is loading, then there is no

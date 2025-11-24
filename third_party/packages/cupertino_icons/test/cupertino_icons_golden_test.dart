@@ -75,10 +75,7 @@ void registerTestForIconGroup(List<IconData> iconGroup) {
 
   testWidgets('font golden test: $range', (WidgetTester tester) async {
     addTearDown(tester.view.reset);
-    const canvasSize = Size(
-      iconSize * iconsPerRow,
-      iconSize * iconsPerCol,
-    );
+    const canvasSize = Size(iconSize * iconsPerRow, iconSize * iconsPerCol);
     tester.view.physicalSize = canvasSize * tester.view.devicePixelRatio;
 
     const Widget fillerBox = SizedBox.square(dimension: iconSize);

@@ -107,9 +107,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
     GetAllParameters parameters,
   ) async {
     final PreferencesFilter filter = parameters.filter;
-    final withPrefix = Map<String, Object>.from(
-      await _readPreferences(),
-    );
+    final withPrefix = Map<String, Object>.from(await _readPreferences());
     withPrefix.removeWhere(
       (String key, _) =>
           !(key.startsWith(filter.prefix) &&

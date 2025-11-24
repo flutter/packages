@@ -51,8 +51,7 @@ void main() {
     required MockCameraSelector mockCameraSelector,
     required int sensorRotationDegrees,
   }) {
-    final mockProcessCameraProvider =
-        MockProcessCameraProvider();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
     final mockCameraInfo = MockCameraInfo();
     final mockCamera = MockCamera();
 
@@ -219,8 +218,7 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
-          final camera2cameraInfo =
-              MockCamera2CameraInfo();
+          final camera2cameraInfo = MockCamera2CameraInfo();
           when(
             camera2cameraInfo.getCameraCharacteristic(any),
           ).thenAnswer((_) async => 90);
@@ -280,8 +278,7 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) {
-          final mockAspectRatioStrategy =
-              MockAspectRatioStrategy();
+          final mockAspectRatioStrategy = MockAspectRatioStrategy();
           when(
             mockAspectRatioStrategy.getFallbackRule(),
           ).thenAnswer((_) async => fallbackRule);
@@ -323,8 +320,7 @@ void main() {
     required Future<String> Function() getUiOrientation,
     required Future<int> Function() getDefaultDisplayRotation,
   }) {
-    final deviceOrientationManager =
-        MockDeviceOrientationManager();
+    final deviceOrientationManager = MockDeviceOrientationManager();
     when(
       deviceOrientationManager.getUiOrientation(),
     ).thenAnswer((_) => getUiOrientation());
@@ -1011,8 +1007,7 @@ void main() {
 
         // Tell camera that handlesCropAndRotation is true, set camera initial device orientation
         // to portrait down, set initial default display rotation to 0 degrees clockwise.
-        final mockDeviceOrientationManager =
-            MockDeviceOrientationManager();
+        final mockDeviceOrientationManager = MockDeviceOrientationManager();
         when(mockDeviceOrientationManager.getUiOrientation()).thenAnswer(
           (_) => Future<String>.value(
             _serializeDeviceOrientation(testDeviceOrientation),
@@ -1044,13 +1039,12 @@ void main() {
         // Calculated according to: counterClockwiseCurrentDefaultDisplayRotation - cameraPreviewPreAppliedRotation,
         // where the cameraPreviewPreAppliedRotation is the clockwise rotation applied by the CameraPreview widget
         // according to the current device orientation (fixed to portraitDown for this test, so it is 180).
-        final expectedRotationPerDefaultDisplayRotation =
-            <int, int>{
-              Surface.rotation0: _180DegreesClockwise,
-              Surface.rotation90: _90DegreesClockwise,
-              Surface.rotation180: _0DegreesClockwise,
-              Surface.rotation270: _270DegreesClockwise,
-            };
+        final expectedRotationPerDefaultDisplayRotation = <int, int>{
+          Surface.rotation0: _180DegreesClockwise,
+          Surface.rotation90: _90DegreesClockwise,
+          Surface.rotation180: _0DegreesClockwise,
+          Surface.rotation270: _270DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
@@ -1062,8 +1056,9 @@ void main() {
             mockDeviceOrientationManager.getDefaultDisplayRotation(),
           ).thenAnswer((_) => Future<int>.value(currentDefaultDisplayRotation));
 
-          const testEvent =
-              DeviceOrientationChangedEvent(testDeviceOrientation);
+          const testEvent = DeviceOrientationChangedEvent(
+            testDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -1148,21 +1143,21 @@ void main() {
         // where the cameraPreviewPreAppliedRotation is the clockwise rotation applied by the CameraPreview widget
         // according to the current device orientation. counterClockwiseCurrentDefaultDisplayRotation is fixed to 90 for
         // this test (the counter-clockwise rotation of the clockwise 270 degree default display rotation).
-        final expectedRotationPerDeviceOrientation =
-            <DeviceOrientation, int>{
-              DeviceOrientation.portraitUp: _90DegreesClockwise,
-              DeviceOrientation.landscapeRight: _0DegreesClockwise,
-              DeviceOrientation.portraitDown: _270DegreesClockwise,
-              DeviceOrientation.landscapeLeft: _180DegreesClockwise,
-            };
+        final expectedRotationPerDeviceOrientation = <DeviceOrientation, int>{
+          DeviceOrientation.portraitUp: _90DegreesClockwise,
+          DeviceOrientation.landscapeRight: _0DegreesClockwise,
+          DeviceOrientation.portraitDown: _270DegreesClockwise,
+          DeviceOrientation.landscapeLeft: _180DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
 
         for (final DeviceOrientation currentDeviceOrientation
             in expectedRotationPerDeviceOrientation.keys) {
-          final testEvent =
-              DeviceOrientationChangedEvent(currentDeviceOrientation);
+          final testEvent = DeviceOrientationChangedEvent(
+            currentDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -1810,8 +1805,7 @@ void main() {
 
         // Tell camera that handlesCropAndRotation is true, set camera initial device orientation
         // to portrait down, set initial default display rotation to 0 degrees clockwise.
-        final mockDeviceOrientationManager =
-            MockDeviceOrientationManager();
+        final mockDeviceOrientationManager = MockDeviceOrientationManager();
         when(mockDeviceOrientationManager.getUiOrientation()).thenAnswer(
           (_) => Future<String>.value(
             _serializeDeviceOrientation(testDeviceOrientation),
@@ -1842,13 +1836,12 @@ void main() {
         // Calculated according to: ((270 - counterClockwiseDefaultDisplayRotation * 1 + 360) % 360) - 90.
         // 90 is used in this calculation for the CameraPreview pre-applied rotation because it is the
         // rotation that the CameraPreview widget aapplies based on the landscape right device orientation.
-        final expectedRotationPerDefaultDisplayRotation =
-            <int, int>{
-              Surface.rotation0: _180DegreesClockwise,
-              Surface.rotation90: _270DegreesClockwise,
-              Surface.rotation180: _0DegreesClockwise,
-              Surface.rotation270: _90DegreesClockwise,
-            };
+        final expectedRotationPerDefaultDisplayRotation = <int, int>{
+          Surface.rotation0: _180DegreesClockwise,
+          Surface.rotation90: _270DegreesClockwise,
+          Surface.rotation180: _0DegreesClockwise,
+          Surface.rotation270: _90DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
@@ -1860,8 +1853,9 @@ void main() {
             mockDeviceOrientationManager.getDefaultDisplayRotation(),
           ).thenAnswer((_) async => currentDefaultDisplayRotation);
 
-          const testEvent =
-              DeviceOrientationChangedEvent(testDeviceOrientation);
+          const testEvent = DeviceOrientationChangedEvent(
+            testDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -1959,21 +1953,21 @@ void main() {
         // Calculated according to: ((90 - 270 * 1 + 360) % 360) - cameraPreviewPreAppliedRotation.
         // 270 is used in this calculation for the device orientation because it is the
         // counter-clockwise degrees of the default display rotation.
-        final expectedRotationPerDeviceOrientation =
-            <DeviceOrientation, int>{
-              DeviceOrientation.portraitUp: _180DegreesClockwise,
-              DeviceOrientation.landscapeRight: _90DegreesClockwise,
-              DeviceOrientation.portraitDown: _0DegreesClockwise,
-              DeviceOrientation.landscapeLeft: _270DegreesClockwise,
-            };
+        final expectedRotationPerDeviceOrientation = <DeviceOrientation, int>{
+          DeviceOrientation.portraitUp: _180DegreesClockwise,
+          DeviceOrientation.landscapeRight: _90DegreesClockwise,
+          DeviceOrientation.portraitDown: _0DegreesClockwise,
+          DeviceOrientation.landscapeLeft: _270DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
 
         for (final DeviceOrientation currentDeviceOrientation
             in expectedRotationPerDeviceOrientation.keys) {
-          final testEvent =
-              DeviceOrientationChangedEvent(currentDeviceOrientation);
+          final testEvent = DeviceOrientationChangedEvent(
+            currentDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -2211,8 +2205,7 @@ void main() {
           'camera is front facing, then the preview Texture is rotated 90 degrees clockwise',
           (WidgetTester tester) async {
             // Set up test front camera with sensor orientation degrees 90.
-            final mockFrontCameraSelector =
-                MockCameraSelector();
+            final mockFrontCameraSelector = MockCameraSelector();
             final MockProcessCameraProvider mockProcessCameraProvider =
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockFrontCameraSelector,
@@ -2290,8 +2283,7 @@ void main() {
           'camera is back facing, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
             // Set up test front camera with sensor orientation degrees 90.
-            final mockBackCameraSelector =
-                MockCameraSelector();
+            final mockBackCameraSelector = MockCameraSelector();
             final MockProcessCameraProvider mockProcessCameraProvider =
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockBackCameraSelector,

@@ -71,32 +71,29 @@ Future<void> main() async {
   const kMetric1 = 'flutter_repo_batch_maximum';
   const kMetric2 = 'flutter_repo_watch_maximum';
 
-  final cocoonPointRev1Metric1 =
-      MetricPoint(kValue1, const <String, String>{
-        kGithubRepoKey: kFlutterFrameworkRepo,
-        kGitRevisionKey: kFrameworkRevision1,
-        kNameKey: kTaskName,
-        kSubResultKey: kMetric1,
-        kUnitKey: 's',
-      });
+  final cocoonPointRev1Metric1 = MetricPoint(kValue1, const <String, String>{
+    kGithubRepoKey: kFlutterFrameworkRepo,
+    kGitRevisionKey: kFrameworkRevision1,
+    kNameKey: kTaskName,
+    kSubResultKey: kMetric1,
+    kUnitKey: 's',
+  });
 
-  final cocoonPointRev1Metric2 =
-      MetricPoint(kValue2, const <String, String>{
-        kGithubRepoKey: kFlutterFrameworkRepo,
-        kGitRevisionKey: kFrameworkRevision1,
-        kNameKey: kTaskName,
-        kSubResultKey: kMetric2,
-        kUnitKey: 's',
-      });
+  final cocoonPointRev1Metric2 = MetricPoint(kValue2, const <String, String>{
+    kGithubRepoKey: kFlutterFrameworkRepo,
+    kGitRevisionKey: kFrameworkRevision1,
+    kNameKey: kTaskName,
+    kSubResultKey: kMetric2,
+    kUnitKey: 's',
+  });
 
-  final cocoonPointRev2Metric1 =
-      MetricPoint(kValue3, const <String, String>{
-        kGithubRepoKey: kFlutterFrameworkRepo,
-        kGitRevisionKey: kFrameworkRevision2,
-        kNameKey: kTaskName,
-        kSubResultKey: kMetric1,
-        kUnitKey: 's',
-      });
+  final cocoonPointRev2Metric1 = MetricPoint(kValue3, const <String, String>{
+    kGithubRepoKey: kFlutterFrameworkRepo,
+    kGitRevisionKey: kFrameworkRevision2,
+    kNameKey: kTaskName,
+    kSubResultKey: kMetric1,
+    kUnitKey: 's',
+  });
 
   final cocoonPointBetaRev1Metric1 =
       MetricPoint(kValue1, const <String, String>{
@@ -161,29 +158,20 @@ Future<void> main() async {
   );
 
   test('Throw if invalid points are converted to SkiaPoint', () {
-    final noGithubRepoPoint = MetricPoint(
-      kValue1,
-      const <String, String>{
-        kGitRevisionKey: kFrameworkRevision1,
-        kNameKey: kTaskName,
-      },
-    );
+    final noGithubRepoPoint = MetricPoint(kValue1, const <String, String>{
+      kGitRevisionKey: kFrameworkRevision1,
+      kNameKey: kTaskName,
+    });
 
-    final noGitRevisionPoint = MetricPoint(
-      kValue1,
-      const <String, String>{
-        kGithubRepoKey: kFlutterFrameworkRepo,
-        kNameKey: kTaskName,
-      },
-    );
+    final noGitRevisionPoint = MetricPoint(kValue1, const <String, String>{
+      kGithubRepoKey: kFlutterFrameworkRepo,
+      kNameKey: kTaskName,
+    });
 
-    final noTestNamePoint = MetricPoint(
-      kValue1,
-      const <String, String>{
-        kGithubRepoKey: kFlutterFrameworkRepo,
-        kGitRevisionKey: kFrameworkRevision1,
-      },
-    );
+    final noTestNamePoint = MetricPoint(kValue1, const <String, String>{
+      kGithubRepoKey: kFlutterFrameworkRepo,
+      kGitRevisionKey: kFrameworkRevision1,
+    });
 
     expect(() => SkiaPerfPoint.fromPoint(noGithubRepoPoint), throwsA(anything));
     expect(
@@ -194,9 +182,7 @@ Future<void> main() async {
   });
 
   test('Correctly convert a metric point from cocoon to SkiaPoint', () {
-    final skiaPoint1 = SkiaPerfPoint.fromPoint(
-      cocoonPointRev1Metric1,
-    );
+    final skiaPoint1 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1);
     expect(skiaPoint1, isNotNull);
     expect(skiaPoint1.testName, equals(kTaskName));
     expect(skiaPoint1.subResult, equals(kMetric1));
@@ -207,9 +193,7 @@ Future<void> main() async {
   test('Cocoon points correctly encode into Skia perf json format', () {
     final p1 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1);
     final p2 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric2);
-    final p3 = SkiaPerfPoint.fromPoint(
-      cocoonPointBetaRev1Metric1,
-    );
+    final p3 = SkiaPerfPoint.fromPoint(cocoonPointBetaRev1Metric1);
 
     const encoder = JsonEncoder.withIndent('  ');
 
@@ -318,9 +302,7 @@ Future<void> main() async {
     'but different options are converted to Skia perf points',
     () {
       final p1 = SkiaPerfPoint.fromPoint(cocoonPointRev1Metric1);
-      final p2 = SkiaPerfPoint.fromPoint(
-        cocoonPointBetaRev1Metric1BadBranch,
-      );
+      final p2 = SkiaPerfPoint.fromPoint(cocoonPointBetaRev1Metric1BadBranch);
 
       expect(
         () => SkiaPerfPoint.toSkiaPerfJson(<SkiaPerfPoint>[p1, p2]),
@@ -432,17 +414,13 @@ Future<void> main() async {
   GcsLock? testLock;
   final Map<String, dynamic>? credentialsJson = getTestGcpCredentialsJson();
   if (credentialsJson != null) {
-    final credentials =
-        ServiceAccountCredentials.fromJson(credentialsJson);
+    final credentials = ServiceAccountCredentials.fromJson(credentialsJson);
 
     final AutoRefreshingAuthClient client = await clientViaServiceAccount(
       credentials,
       Storage.SCOPES,
     );
-    final storage = Storage(
-      client,
-      credentialsJson['project_id'] as String,
-    );
+    final storage = Storage(client, credentialsJson['project_id'] as String);
 
     const kTestBucketName = 'flutter-skia-perf-test';
 
@@ -651,10 +629,7 @@ Future<void> main() async {
       kValue2,
     ]);
 
-    final updated = MetricPoint(
-      kValue3,
-      cocoonPointRev1Metric1.tags,
-    );
+    final updated = MetricPoint(kValue3, cocoonPointRev1Metric1.tags);
 
     await dst.update(
       <MetricPoint>[updated, cocoonPointRev2Metric1],

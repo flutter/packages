@@ -278,8 +278,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     required Uri newLocationUri,
     required Object? newState,
   }) {
-    const deepCollectionEquality =
-        DeepCollectionEquality();
+    const deepCollectionEquality = DeepCollectionEquality();
     return !deepCollectionEquality.equals(
           _value.uri.path,
           newLocationUri.path,

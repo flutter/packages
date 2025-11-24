@@ -254,8 +254,7 @@ class SKPaymentQueueWrapper {
         }
       case 'shouldAddStorePayment':
         {
-          final arguments =
-              call.arguments as Map<Object?, Object?>;
+          final arguments = call.arguments as Map<Object?, Object?>;
           final payment = SKPaymentWrapper.fromJson(
             (arguments['payment']! as Map<dynamic, dynamic>)
                 .cast<String, dynamic>(),
@@ -310,13 +309,11 @@ class SKPaymentQueueWrapper {
     final SKPaymentQueueDelegateWrapper delegate = _paymentQueueDelegate!;
     switch (call.method) {
       case 'shouldContinueTransaction':
-        final arguments =
-            call.arguments as Map<Object?, Object?>;
-        final transaction =
-            SKPaymentTransactionWrapper.fromJson(
-              (arguments['transaction']! as Map<dynamic, dynamic>)
-                  .cast<String, dynamic>(),
-            );
+        final arguments = call.arguments as Map<Object?, Object?>;
+        final transaction = SKPaymentTransactionWrapper.fromJson(
+          (arguments['transaction']! as Map<dynamic, dynamic>)
+              .cast<String, dynamic>(),
+        );
         final storefront = SKStorefrontWrapper.fromJson(
           (arguments['storefront']! as Map<dynamic, dynamic>)
               .cast<String, dynamic>(),

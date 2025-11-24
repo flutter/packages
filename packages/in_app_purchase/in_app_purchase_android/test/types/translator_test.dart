@@ -22,12 +22,11 @@ void main() {
     });
 
     test('convertToUserChoiceDetailsProduct', () {
-      const expected =
-          GooglePlayUserChoiceDetailsProduct(
-            id: 'id',
-            offerToken: 'offerToken',
-            productType: GooglePlayProductType.inapp,
-          );
+      const expected = GooglePlayUserChoiceDetailsProduct(
+        id: 'id',
+        offerToken: 'offerToken',
+        productType: GooglePlayProductType.inapp,
+      );
       expect(
         Translator.convertToUserChoiceDetailsProduct(
           UserChoiceDetailsProductWrapper(
@@ -40,18 +39,16 @@ void main() {
       );
     });
     test('convertToUserChoiceDetailsProduct', () {
-      const expectedProduct1 =
-          GooglePlayUserChoiceDetailsProduct(
-            id: 'id1',
-            offerToken: 'offerToken1',
-            productType: GooglePlayProductType.inapp,
-          );
-      const expectedProduct2 =
-          GooglePlayUserChoiceDetailsProduct(
-            id: 'id2',
-            offerToken: 'offerToken2',
-            productType: GooglePlayProductType.subs,
-          );
+      const expectedProduct1 = GooglePlayUserChoiceDetailsProduct(
+        id: 'id1',
+        offerToken: 'offerToken1',
+        productType: GooglePlayProductType.inapp,
+      );
+      const expectedProduct2 = GooglePlayUserChoiceDetailsProduct(
+        id: 'id2',
+        offerToken: 'offerToken2',
+        productType: GooglePlayProductType.subs,
+      );
       const expected = GooglePlayUserChoiceDetails(
         originalExternalTransactionId: 'originalExternalTransactionId',
         externalTransactionToken: 'externalTransactionToken',

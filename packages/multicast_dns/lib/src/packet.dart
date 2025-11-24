@@ -175,11 +175,7 @@ _FQDNReadResult _readFQDN(
         offset++;
         if (partLength > 0) {
           checkLength(offset + partLength);
-          final partBytes = Uint8List.view(
-            data.buffer,
-            offset,
-            partLength,
-          );
+          final partBytes = Uint8List.view(data.buffer, offset, partLength);
           offset += partLength;
           // According to the RFC, this is supposed to be utf-8 encoded, but
           // we should continue decoding even if it isn't to avoid dropping the

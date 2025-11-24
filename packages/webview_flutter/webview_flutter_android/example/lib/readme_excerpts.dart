@@ -10,8 +10,7 @@ Future<void> enablePaymentRequest() async {
   final controller = PlatformWebViewController(
     AndroidWebViewControllerCreationParams(),
   );
-  final androidController =
-      controller as AndroidWebViewController;
+  final androidController = controller as AndroidWebViewController;
   // #docregion payment_request_example
   final bool paymentRequestEnabled = await androidController
       .isWebViewFeatureSupported(WebViewFeatureType.paymentRequest);
@@ -30,8 +29,7 @@ Future<void> setGeolocationPermissionsPrompt() async {
   final controller = PlatformWebViewController(
     AndroidWebViewControllerCreationParams(),
   );
-  final androidController =
-      controller as AndroidWebViewController;
+  final androidController = controller as AndroidWebViewController;
   // #docregion geolocation_example
   await androidController.setGeolocationPermissionsPromptCallbacks(
     onShowPrompt: (GeolocationPermissionsRequestParams request) async {

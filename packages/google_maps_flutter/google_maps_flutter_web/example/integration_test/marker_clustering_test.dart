@@ -20,9 +20,7 @@ void main() {
       GoogleMapsInspectorPlatform.instance!;
 
   const mapCenter = LatLng(20, 20);
-  const initialCameraPosition = CameraPosition(
-    target: mapCenter,
-  );
+  const initialCameraPosition = CameraPosition(target: mapCenter);
 
   group('MarkersController', () {
     const testMapId = 33930;
@@ -91,10 +89,7 @@ void main() {
         _copyMarkerWithClusterManagerId(initialMarkers.first, null),
       };
 
-      final markerUpdates = MarkerUpdates.from(
-        initialMarkers,
-        updatedMarkers,
-      );
+      final markerUpdates = MarkerUpdates.from(initialMarkers, updatedMarkers);
       await plugin.updateMarkers(markerUpdates, mapId: mapId);
 
       final List<Cluster> updatedClusters =

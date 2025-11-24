@@ -55,8 +55,7 @@ void main() {
 
   group('query product list', () {
     test('should get product list and correct invalid identifiers', () async {
-      final connection =
-          InAppPurchaseStoreKitPlatform();
+      final connection = InAppPurchaseStoreKitPlatform();
       final ProductDetailsResponse response = await connection
           .queryProductDetails(<String>{'123', '456', '789'});
       final List<ProductDetails> products = response.productDetails;
@@ -75,8 +74,7 @@ void main() {
           message: 'error_message',
           details: <Object, Object>{'info': 'error_info'},
         );
-        final connection =
-            InAppPurchaseStoreKitPlatform();
+        final connection = InAppPurchaseStoreKitPlatform();
         final ProductDetailsResponse response = await connection
             .queryProductDetails(<String>{'123', '456', '789'});
         expect(response.productDetails, <ProductDetails>[]);
@@ -95,8 +93,7 @@ void main() {
       'buying non consumable, should get purchase objects in the purchase update callback',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -130,8 +127,7 @@ void main() {
       'buying consumable, should get purchase objects in the purchase update callback',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -179,8 +175,7 @@ void main() {
       'buying consumable, should get PurchaseVerificationData with serverVerificationData and localVerificationData',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -239,13 +234,12 @@ void main() {
     test(
       'should process Sk2PurchaseParam with promotionalOffer only',
       () async {
-        final fakeSignature =
-            SK2SubscriptionOfferSignature(
-              keyID: 'key123',
-              signature: 'signature123',
-              nonce: 'nonce123',
-              timestamp: 1234567890,
-            );
+        final fakeSignature = SK2SubscriptionOfferSignature(
+          keyID: 'key123',
+          signature: 'signature123',
+          nonce: 'nonce123',
+          timestamp: 1234567890,
+        );
 
         final purchaseParam = Sk2PurchaseParam(
           productDetails: AppStoreProduct2Details.fromSK2Product(
@@ -355,8 +349,7 @@ void main() {
       fakeStoreKit2Platform.transactionList.add(
         fakeStoreKit2Platform.createRestoredTransaction('foo', 'RT2'),
       );
-      final completer =
-          Completer<List<PurchaseDetails>>();
+      final completer = Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
 

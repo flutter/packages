@@ -113,9 +113,7 @@ void main() {
       const double testRotationParam = 100;
       final bool testVisibleParam = !marker.visible;
       const double testZIndexParam = 100;
-      const testClusterManagerIdParam = ClusterManagerId(
-        'DEF123',
-      );
+      const testClusterManagerIdParam = ClusterManagerId('DEF123');
       final log = <String>[];
 
       final Marker copy = marker.copyWith(

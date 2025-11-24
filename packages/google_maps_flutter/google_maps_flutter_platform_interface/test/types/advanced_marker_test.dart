@@ -9,9 +9,7 @@ void main() {
 
   group('$AdvancedMarker', () {
     test('constructor defaults', () {
-      final marker = AdvancedMarker(
-        markerId: const MarkerId('ABC123'),
-      );
+      final marker = AdvancedMarker(markerId: const MarkerId('ABC123'));
 
       expect(marker.alpha, equals(1.0));
       expect(marker.anchor, equals(const Offset(0.5, 1.0)));
@@ -120,9 +118,7 @@ void main() {
       const double testRotationParam = 100;
       final bool testVisibleParam = !marker.visible;
       const double testZIndexParam = 100;
-      const testClusterManagerIdParam = ClusterManagerId(
-        'DEF123',
-      );
+      const testClusterManagerIdParam = ClusterManagerId('DEF123');
       final log = <String>[];
       const MarkerCollisionBehavior testCollisionBehavior =
           MarkerCollisionBehavior.requiredAndHidesOptional;

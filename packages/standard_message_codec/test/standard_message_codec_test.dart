@@ -126,10 +126,7 @@ void main() {
     );
 
     test('of float list when unaligned', () {
-      final floats = Float32List.fromList(<double>[
-        3.14,
-        double.nan,
-      ]);
+      final floats = Float32List.fromList(<double>[3.14, double.nan]);
       final write = WriteBuffer();
       write.putUint8(9);
       write.putFloat32List(floats);
@@ -143,10 +140,7 @@ void main() {
     });
 
     test('of double list when unaligned', () {
-      final doubles = Float64List.fromList(<double>[
-        3.14,
-        double.nan,
-      ]);
+      final doubles = Float64List.fromList(<double>[3.14, double.nan]);
       final write = WriteBuffer();
       write.putUint8(9);
       write.putFloat64List(doubles);

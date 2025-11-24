@@ -58,8 +58,7 @@ class SharedPreferencesToolEval {
     required String eventKind,
     Disposable? isAlive,
   }) async {
-    final completer =
-        Completer<Map<String, Object?>>();
+    final completer = Completer<Map<String, Object?>>();
 
     late final StreamSubscription<Event> streamSubscription;
     streamSubscription = _service.onExtensionEvent.listen((Event event) {

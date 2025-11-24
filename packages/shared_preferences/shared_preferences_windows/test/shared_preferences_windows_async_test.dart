@@ -28,8 +28,7 @@ void main() {
   const testDouble = 3.14159;
   const testList = <String>['foo', 'bar'];
 
-  const emptyOptions =
-      SharedPreferencesWindowsOptions();
+  const emptyOptions = SharedPreferencesWindowsOptions();
 
   setUp(() {
     fs = MemoryFileSystem.test();

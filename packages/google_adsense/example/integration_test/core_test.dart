@@ -36,8 +36,7 @@ void main() async {
 
       await adSense.initialize(testClient, jsLoaderTarget: target);
 
-      final injected =
-          target.lastElementChild as web.HTMLScriptElement?;
+      final injected = target.lastElementChild as web.HTMLScriptElement?;
 
       expect(injected, isNotNull);
       expect(injected!.src, testScriptUrl);
@@ -65,8 +64,7 @@ void main() async {
         ),
       );
 
-      final injected =
-          target.lastElementChild! as web.HTMLScriptElement;
+      final injected = target.lastElementChild! as web.HTMLScriptElement;
 
       expect(injected.dataset['adHost'], 'test-adHost');
       expect(

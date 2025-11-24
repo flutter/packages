@@ -122,8 +122,7 @@ void main() async {
 
   group('requestAccessToken', () {
     testWidgets('passes through configuration', (_) async {
-      final controller =
-          StreamController<TokenResponse>();
+      final controller = StreamController<TokenResponse>();
 
       final scopes = <String>['some_scope', 'another', 'more'];
 
@@ -147,8 +146,7 @@ void main() async {
     });
 
     testWidgets('configuration can be overridden', (_) async {
-      final controller =
-          StreamController<TokenResponse>();
+      final controller = StreamController<TokenResponse>();
 
       final scopes = <String>['some_scope', 'another', 'more'];
 

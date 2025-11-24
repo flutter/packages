@@ -103,12 +103,7 @@ class TreeRowBorder extends SpanBorder {
 
   @override
   void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
-    final border = Border(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-    );
+    final border = Border(top: top, bottom: bottom, left: left, right: right);
     border.paint(details.canvas, details.rect, borderRadius: borderRadius);
   }
 }

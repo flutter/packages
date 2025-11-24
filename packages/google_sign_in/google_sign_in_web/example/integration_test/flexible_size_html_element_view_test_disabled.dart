@@ -63,8 +63,7 @@ void main() {
     ) async {
       const childSize = Size(300, 40);
 
-      final resizable =
-          web.document.createElement('div') as web.HTMLDivElement;
+      final resizable = web.document.createElement('div') as web.HTMLDivElement;
       resize(resizable, childSize);
 
       final Element element = await pumpResizableWidget(
@@ -84,8 +83,7 @@ void main() {
       const initialSize = Size(160, 100);
       const newSize = Size(300, 40);
 
-      final resizable =
-          web.document.createElement('div') as web.HTMLDivElement;
+      final resizable = web.document.createElement('div') as web.HTMLDivElement;
       resize(resizable, newSize);
 
       final Element element = await pumpResizableWidget(
@@ -107,11 +105,11 @@ void main() {
       final Size expandedSize = initialSize * 2;
       final Size contractedSize = initialSize / 2;
 
-      final resizable =
-          web.document.createElement('div') as web.HTMLDivElement..setAttribute(
-            'style',
-            'width: 100%; height: 100%; background: #fabada;',
-          );
+      final resizable = web.document.createElement('div') as web.HTMLDivElement
+        ..setAttribute(
+          'style',
+          'width: 100%; height: 100%; background: #fabada;',
+        );
 
       final Element element = await pumpResizableWidget(
         tester,
@@ -178,8 +176,7 @@ class ResizableFromJs extends StatelessWidget {
     ui_web.platformViewRegistry.registerViewFactory(
       'resizable_from_js_$instanceId',
       (int viewId) {
-        final element =
-            web.document.createElement('div') as web.HTMLDivElement;
+        final element = web.document.createElement('div') as web.HTMLDivElement;
         element.setAttribute(
           'style',
           'width: 100%; height: 100%; overflow: hidden; background: red;',

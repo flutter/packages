@@ -346,10 +346,7 @@ class LinkViewController extends PlatformViewController {
     String semanticsIdentifier,
   ) {
     final int viewId = params.id;
-    final controller = LinkViewController(
-      viewId,
-      semanticsIdentifier,
-    );
+    final controller = LinkViewController(viewId, semanticsIdentifier);
     controller._initialize().then((_) {
       /// Because _initialize is async, it can happen that [LinkViewController.dispose]
       /// may get called before this `then` callback.
@@ -523,10 +520,7 @@ class LinkViewController extends PlatformViewController {
     _element.setAttribute('aria-hidden', 'true');
     _element.setAttribute('tabIndex', '-1');
 
-    final args = <String, dynamic>{
-      'id': viewId,
-      'viewType': linkViewType,
-    };
+    final args = <String, dynamic>{'id': viewId, 'viewType': linkViewType};
     await SystemChannels.platform_views.invokeMethod<void>('create', args);
   }
 

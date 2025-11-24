@@ -1340,12 +1340,10 @@ EncodableValue $_overflowClassName::FromEncodableList(
           );
           indent.addScoped('{', '}', () {
             for (final customType in enumeratedTypes) {
-              final encodeString =
-                  customType.type == CustomTypes.customClass
+              final encodeString = customType.type == CustomTypes.customClass
                   ? 'std::any_cast<${customType.name}>(*custom_value).ToEncodableList()'
                   : 'static_cast<int>(std::any_cast<${customType.name}>(*custom_value))';
-              final valueString =
-                  customType.enumeration < maximumCodecFieldKey
+              final valueString = customType.enumeration < maximumCodecFieldKey
                   ? encodeString
                   : 'wrap.ToEncodableList()';
               final int enumeration =
@@ -1494,8 +1492,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
           indent.addScoped('{', '});', () {
             String successCallbackArgument;
             successCallbackArgument = 'return_value';
-            final encodedReplyName =
-                'encodable_$successCallbackArgument';
+            final encodedReplyName = 'encodable_$successCallbackArgument';
             final listReplyName = 'list_$successCallbackArgument';
             indent.writeln(
               'std::unique_ptr<EncodableValue> response = GetCodec().DecodeMessage(reply, reply_size);',
@@ -1616,8 +1613,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
                       );
                       final String argName = _getSafeArgumentName(index, arg);
 
-                      final encodableArgName =
-                          '${_encodablePrefix}_$argName';
+                      final encodableArgName = '${_encodablePrefix}_$argName';
                       indent.writeln(
                         'const auto& $encodableArgName = args.at($index);',
                       );
@@ -1641,8 +1637,7 @@ EncodableValue $_overflowClassName::FromEncodableList(
                         encodableArgName: encodableArgName,
                         apiType: ApiType.host,
                       );
-                      final unwrapEnum =
-                          arg.type.isEnum && arg.type.isNullable
+                      final unwrapEnum = arg.type.isEnum && arg.type.isNullable
                           ? ' ? &(*$argName) : nullptr'
                           : '';
                       methodArgument.add('$argName$unwrapEnum');

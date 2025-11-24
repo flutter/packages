@@ -175,9 +175,7 @@ void main() {
     testWidgets('on removed confirmed should remove key', (
       WidgetTester tester,
     ) async {
-      const value = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const value = SharedPreferencesData.string(value: 'value');
       stubDataState(value);
       await pumpDataPanel(tester);
       await tester.tap(find.text('Remove'));

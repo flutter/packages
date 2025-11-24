@@ -64,15 +64,13 @@ void main() {
         unawaited(loadWebSdk(target: target, nonce: expectedNonce));
 
         // Target now should have a child that is a script element
-        final script =
-            target.firstElementChild! as web.HTMLScriptElement;
+        final script = target.firstElementChild! as web.HTMLScriptElement;
         expect(script.nonce, expectedNonce);
       });
 
       test('defaults to a nonce set in other script of the page', () async {
         const expectedNonce = 'another-random-nonce';
-        final otherScript = web.HTMLScriptElement()
-          ..nonce = expectedNonce;
+        final otherScript = web.HTMLScriptElement()..nonce = expectedNonce;
         web.document.head?.appendChild(otherScript);
 
         // This test doesn't simulate the callback that completes the future, and
@@ -80,8 +78,7 @@ void main() {
         unawaited(loadWebSdk(target: target));
 
         // Target now should have a child that is a script element
-        final script =
-            target.firstElementChild! as web.HTMLScriptElement;
+        final script = target.firstElementChild! as web.HTMLScriptElement;
         expect(script.nonce, expectedNonce);
 
         otherScript.remove();
@@ -98,8 +95,7 @@ void main() {
         unawaited(loadWebSdk(target: target, nonce: expectedNonce));
 
         // Target now should have a child that is a script element
-        final script =
-            target.firstElementChild! as web.HTMLScriptElement;
+        final script = target.firstElementChild! as web.HTMLScriptElement;
         expect(script.nonce, expectedNonce);
 
         otherScript.remove();
@@ -115,8 +111,7 @@ void main() {
         unawaited(loadWebSdk(target: target, nonce: null));
 
         // Target now should have a child that is a script element
-        final script =
-            target.firstElementChild! as web.HTMLScriptElement;
+        final script = target.firstElementChild! as web.HTMLScriptElement;
 
         expect(script.nonce, isEmpty);
         expect(script.hasAttribute('nonce'), isFalse);

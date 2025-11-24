@@ -30,9 +30,7 @@ void main() {
       ]);
     });
 
-    final api = MultipleArityHostApi(
-      binaryMessenger: mockMessenger,
-    );
+    final api = MultipleArityHostApi(binaryMessenger: mockMessenger);
     final int result = await api.subtract(30, 10);
     expect(result, 20);
   });

@@ -12,9 +12,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group(MethodChannelSharedPreferencesStore, () {
-    const channel = MethodChannel(
-      'plugins.flutter.io/shared_preferences',
-    );
+    const channel = MethodChannel('plugins.flutter.io/shared_preferences');
 
     const flutterTestValues = <String, Object>{
       'flutter.String': 'hello world',
@@ -71,8 +69,7 @@ void main() {
               );
               final prefix = arguments['prefix']! as String;
               Set<String>? allowSet;
-              final allowList =
-                  arguments['allowList'] as List<dynamic>?;
+              final allowList = arguments['allowList'] as List<dynamic>?;
               if (allowList != null) {
                 allowSet = <String>{};
                 for (final dynamic key in allowList) {
@@ -104,8 +101,7 @@ void main() {
               );
               final prefix = arguments['prefix']! as String;
               Set<String>? allowSet;
-              final allowList =
-                  arguments['allowList'] as List<dynamic>?;
+              final allowList = arguments['allowList'] as List<dynamic>?;
               if (allowList != null) {
                 allowSet = <String>{};
                 for (final dynamic key in allowList) {

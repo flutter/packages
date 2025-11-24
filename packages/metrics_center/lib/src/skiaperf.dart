@@ -305,8 +305,7 @@ class SkiaPerfGcsAdaptor {
     final String githubRepo = _gcsNameToGithubRepo[firstGcsNameComponent]!;
 
     final gitHash = decodedJson[kSkiaPerfGitHashKey] as String?;
-    final results =
-        decodedJson[kSkiaPerfResultsKey] as Map<String, dynamic>;
+    final results = decodedJson[kSkiaPerfResultsKey] as Map<String, dynamic>;
     for (final String name in results.keys) {
       final subResultMap =
           results[name][kSkiaPerfDefaultConfig] as Map<String, dynamic>;
@@ -419,9 +418,7 @@ class SkiaPerfDestination extends MetricDestination {
     if (!await storage.bucketExists(bucketName)) {
       throw StateError('Bucket $bucketName does not exist.');
     }
-    final adaptor = SkiaPerfGcsAdaptor(
-      storage.bucket(bucketName),
-    );
+    final adaptor = SkiaPerfGcsAdaptor(storage.bucket(bucketName));
     final lock = GcsLock(StorageApi(client), bucketName);
     return SkiaPerfDestination(adaptor, lock);
   }

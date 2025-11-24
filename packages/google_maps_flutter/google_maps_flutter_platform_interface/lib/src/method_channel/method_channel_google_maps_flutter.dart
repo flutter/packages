@@ -389,10 +389,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
     final Set<TileOverlay> previousSet = currentTileOverlays != null
         ? currentTileOverlays.values.toSet()
         : <TileOverlay>{};
-    final updates = TileOverlayUpdates.from(
-      previousSet,
-      newTileOverlays,
-    );
+    final updates = TileOverlayUpdates.from(previousSet, newTileOverlays);
     _tileOverlays[mapId] = keyTileOverlayId(newTileOverlays);
     return channel(
       mapId,

@@ -437,18 +437,14 @@ class _MyAppState extends State<_MyApp> {
     // This loading previous purchases code is just a demo. Please do not use this as it is.
     // In your app you should always verify the purchase data using the `verificationData` inside the [PurchaseDetails] object before trusting it.
     // We recommend that you use your own server to verify the purchase data.
-    final purchases =
-        Map<String, PurchaseDetails>.fromEntries(
-          _purchases.map((PurchaseDetails purchase) {
-            if (purchase.pendingCompletePurchase) {
-              _inAppPurchasePlatform.completePurchase(purchase);
-            }
-            return MapEntry<String, PurchaseDetails>(
-              purchase.productID,
-              purchase,
-            );
-          }),
-        );
+    final purchases = Map<String, PurchaseDetails>.fromEntries(
+      _purchases.map((PurchaseDetails purchase) {
+        if (purchase.pendingCompletePurchase) {
+          _inAppPurchasePlatform.completePurchase(purchase);
+        }
+        return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
+      }),
+    );
     productList.addAll(
       _products.map((ProductDetails productDetails) {
         final PurchaseDetails? previousPurchase = purchases[productDetails.id];
@@ -472,17 +468,16 @@ class _MyAppState extends State<_MyApp> {
                           productDetails as GooglePlayProductDetails,
                           purchases,
                         );
-                    final purchaseParam =
-                        GooglePlayPurchaseParam(
-                          productDetails: productDetails,
-                          changeSubscriptionParam: oldSubscription != null
-                              ? ChangeSubscriptionParam(
-                                  oldPurchaseDetails: oldSubscription,
-                                  replacementMode:
-                                      ReplacementMode.withTimeProration,
-                                )
-                              : null,
-                        );
+                    final purchaseParam = GooglePlayPurchaseParam(
+                      productDetails: productDetails,
+                      changeSubscriptionParam: oldSubscription != null
+                          ? ChangeSubscriptionParam(
+                              oldPurchaseDetails: oldSubscription,
+                              replacementMode:
+                                  ReplacementMode.withTimeProration,
+                            )
+                          : null,
+                    );
                     if (productDetails.id == _kConsumableId) {
                       _inAppPurchasePlatform.buyConsumable(
                         purchaseParam: purchaseParam,
@@ -520,9 +515,7 @@ class _MyAppState extends State<_MyApp> {
     if (!_isAvailable || _notFoundIds.contains(_kConsumableId)) {
       return const Card();
     }
-    const consumableHeader = ListTile(
-      title: Text('Purchased consumables'),
-    );
+    const consumableHeader = ListTile(title: Text('Purchased consumables'));
     final List<Widget> tokens = _consumables.map((String id) {
       return GridTile(
         child: IconButton(

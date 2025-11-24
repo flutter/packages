@@ -88,9 +88,7 @@ void main() {
 
       testWidgets('creates a video element '
           'with correct properties', (WidgetTester tester) async {
-        const audioConstraints = AudioConstraints(
-          enabled: true,
-        );
+        const audioConstraints = AudioConstraints(enabled: true);
         final videoConstraints = VideoConstraints(
           facingMode: FacingModeConstraint(CameraType.user),
         );
@@ -177,9 +175,7 @@ void main() {
           'when CameraService.getMediaStreamForOptions throws', (
         WidgetTester tester,
       ) async {
-        final exception = Exception(
-          'A media stream exception occured.',
-        );
+        final exception = Exception('A media stream exception occured.');
 
         when(
           cameraService.getMediaStreamForOptions(
@@ -338,8 +334,7 @@ void main() {
 
           await camera.play();
 
-          final capturedConstraints =
-              <MediaTrackConstraints>[];
+          final capturedConstraints = <MediaTrackConstraints>[];
           mockVideoTrack.applyConstraints =
               ([MediaTrackConstraints? constraints]) {
                 if (constraints != null) {
@@ -365,8 +360,7 @@ void main() {
 
           await camera.play();
 
-          final capturedConstraints =
-              <MediaTrackConstraints>[];
+          final capturedConstraints = <MediaTrackConstraints>[];
           mockVideoTrack.applyConstraints =
               ([MediaTrackConstraints? constraints]) {
                 if (constraints != null) {
@@ -483,8 +477,7 @@ void main() {
               ..window = window
               ..stream = videoStream;
 
-        final capturedConstraints =
-            <MediaTrackConstraints>[];
+        final capturedConstraints = <MediaTrackConstraints>[];
         mockVideoTrack.applyConstraints =
             ([MediaTrackConstraints? constraints]) {
               if (constraints != null) {
@@ -514,8 +507,7 @@ void main() {
               ..window = window
               ..stream = videoStream;
 
-        final capturedConstraints =
-            <MediaTrackConstraints>[];
+        final capturedConstraints = <MediaTrackConstraints>[];
         mockVideoTrack.applyConstraints =
             ([MediaTrackConstraints? constraints]) {
               if (constraints != null) {
@@ -721,8 +713,7 @@ void main() {
             videoTrack: videoTrack,
           );
 
-          final capturedConstraints =
-              <MediaTrackConstraints>[];
+          final capturedConstraints = <MediaTrackConstraints>[];
           mockVideoTrack.applyConstraints =
               ([MediaTrackConstraints? constraints]) {
                 if (constraints != null) {
@@ -944,10 +935,8 @@ void main() {
       group('startVideoRecording', () {
         testWidgets('creates a media recorder '
             'with appropriate options', (WidgetTester tester) async {
-          final camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          )..isVideoTypeSupported = isVideoTypeSupported;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..isVideoTypeSupported = isVideoTypeSupported;
 
           await camera.initialize();
           await camera.play();
@@ -964,10 +953,9 @@ void main() {
         testWidgets('listens to the media recorder data events', (
           WidgetTester tester,
         ) async {
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = isVideoTypeSupported;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = isVideoTypeSupported;
 
           await camera.initialize();
           await camera.play();
@@ -989,10 +977,9 @@ void main() {
         testWidgets('listens to the media recorder stop events', (
           WidgetTester tester,
         ) async {
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = isVideoTypeSupported;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = isVideoTypeSupported;
 
           await camera.initialize();
           await camera.play();
@@ -1009,10 +996,9 @@ void main() {
         });
 
         testWidgets('starts a video recording', (WidgetTester tester) async {
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = isVideoTypeSupported;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = isVideoTypeSupported;
 
           await camera.initialize();
           await camera.play();
@@ -1030,10 +1016,8 @@ void main() {
         group('throws a CameraWebException', () {
           testWidgets('with notSupported error '
               'when no video types are supported', (WidgetTester tester) async {
-            final camera = Camera(
-              textureId: 1,
-              cameraService: cameraService,
-            )..isVideoTypeSupported = (String type) => false;
+            final camera = Camera(textureId: 1, cameraService: cameraService)
+              ..isVideoTypeSupported = (String type) => false;
 
             await camera.initialize();
             await camera.play();
@@ -1060,10 +1044,8 @@ void main() {
 
       group('pauseVideoRecording', () {
         testWidgets('pauses a video recording', (WidgetTester tester) async {
-          final camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          )..mediaRecorder = mediaRecorder;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder;
 
           var pauses = 0;
           mockMediaRecorder.pause = () {
@@ -1080,10 +1062,7 @@ void main() {
             'if the video recording was not started', (
           WidgetTester tester,
         ) async {
-          final camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          );
+          final camera = Camera(textureId: 1, cameraService: cameraService);
 
           expect(
             camera.pauseVideoRecording,
@@ -1106,10 +1085,8 @@ void main() {
 
       group('resumeVideoRecording', () {
         testWidgets('resumes a video recording', (WidgetTester tester) async {
-          final camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          )..mediaRecorder = mediaRecorder;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder;
 
           var resumes = 0;
           mockMediaRecorder.resume = () {
@@ -1126,10 +1103,7 @@ void main() {
             'if the video recording was not started', (
           WidgetTester tester,
         ) async {
-          final camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          );
+          final camera = Camera(textureId: 1, cameraService: cameraService);
 
           expect(
             camera.resumeVideoRecording,
@@ -1154,10 +1128,9 @@ void main() {
         testWidgets('stops a video recording and '
             'returns the captured file '
             'based on all video data parts', (WidgetTester tester) async {
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = isVideoTypeSupported;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = isVideoTypeSupported;
 
           await camera.initialize();
           await camera.play();
@@ -1230,10 +1203,7 @@ void main() {
             'if the video recording was not started', (
           WidgetTester tester,
         ) async {
-          final camera = Camera(
-            textureId: 1,
-            cameraService: cameraService,
-          );
+          final camera = Camera(textureId: 1, cameraService: cameraService);
 
           expect(
             camera.stopVideoRecording,
@@ -1269,10 +1239,9 @@ void main() {
         testWidgets('stops listening to the media recorder data events', (
           WidgetTester tester,
         ) async {
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = isVideoTypeSupported;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = isVideoTypeSupported;
 
           await camera.initialize();
           await camera.play();
@@ -1298,10 +1267,9 @@ void main() {
         testWidgets('stops listening to the media recorder stop events', (
           WidgetTester tester,
         ) async {
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = isVideoTypeSupported;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = isVideoTypeSupported;
 
           await camera.initialize();
           await camera.play();
@@ -1324,16 +1292,13 @@ void main() {
         testWidgets('stops listening to the media recorder errors', (
           WidgetTester tester,
         ) async {
-          final onErrorStreamController =
-              StreamController<ErrorEvent>();
-          final provider =
-              MockEventStreamProvider<Event>();
+          final onErrorStreamController = StreamController<ErrorEvent>();
+          final provider = MockEventStreamProvider<Event>();
 
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = isVideoTypeSupported
-                ..mediaRecorderOnErrorProvider = provider;
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = isVideoTypeSupported
+            ..mediaRecorderOnErrorProvider = provider;
 
           when(
             provider.forTarget(mediaRecorder),
@@ -1419,10 +1384,9 @@ void main() {
           final mediaRecorder =
               createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
 
-          final camera =
-              Camera(textureId: 1, cameraService: cameraService)
-                ..mediaRecorder = mediaRecorder
-                ..isVideoTypeSupported = (String type) => type == 'video/webm';
+          final camera = Camera(textureId: 1, cameraService: cameraService)
+            ..mediaRecorder = mediaRecorder
+            ..isVideoTypeSupported = (String type) => type == 'video/webm';
 
           await camera.initialize();
           await camera.play();
@@ -1439,8 +1403,9 @@ void main() {
                 }
               }.toJS;
 
-          final streamQueue =
-              StreamQueue<VideoRecordedEvent>(camera.onVideoRecordedEvent);
+          final streamQueue = StreamQueue<VideoRecordedEvent>(
+            camera.onVideoRecordedEvent,
+          );
 
           await camera.startVideoRecording();
 
@@ -1495,8 +1460,7 @@ void main() {
             cameraService: cameraService,
           );
 
-          final streamQueue =
-              StreamQueue<MediaStreamTrack>(camera.onEnded);
+          final streamQueue = StreamQueue<MediaStreamTrack>(camera.onEnded);
 
           await camera.initialize();
 
@@ -1519,8 +1483,7 @@ void main() {
             cameraService: cameraService,
           );
 
-          final streamQueue =
-              StreamQueue<MediaStreamTrack>(camera.onEnded);
+          final streamQueue = StreamQueue<MediaStreamTrack>(camera.onEnded);
 
           await camera.initialize();
 
@@ -1544,10 +1507,8 @@ void main() {
           final mockMediaRecorder = MockMediaRecorder();
           final mediaRecorder =
               createJSInteropWrapper(mockMediaRecorder) as MediaRecorder;
-          final errorController =
-              StreamController<ErrorEvent>();
-          final provider =
-              MockEventStreamProvider<Event>();
+          final errorController = StreamController<ErrorEvent>();
+          final provider = MockEventStreamProvider<Event>();
 
           final camera =
               Camera(textureId: textureId, cameraService: cameraService)

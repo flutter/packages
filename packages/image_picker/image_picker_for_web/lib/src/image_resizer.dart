@@ -49,8 +49,7 @@ class ImageResizer {
 
   /// Loads the `blobUrl` into a [web.HTMLImageElement].
   Future<web.HTMLImageElement> loadImage(String blobUrl) {
-    final imageLoadCompleter =
-        Completer<web.HTMLImageElement>();
+    final imageLoadCompleter = Completer<web.HTMLImageElement>();
     final imageElement = web.HTMLImageElement();
     imageElement
       ..src = blobUrl

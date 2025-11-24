@@ -365,10 +365,7 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       }
       rowOffset += rowSpan.configuration.padding.leading;
 
-      final vicinity = TreeVicinity(
-        depth: _rowDepths[row]!,
-        row: row,
-      );
+      final vicinity = TreeVicinity(depth: _rowDepths[row]!, row: row);
       final RenderBox child = buildOrObtainChildFor(vicinity)!;
       final TwoDimensionalViewportParentData parentData = parentDataOf(child);
       final childConstraints = BoxConstraints(
@@ -529,10 +526,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     required int trailingRow,
   }) {
     // Row decorations
-    final foregroundRows =
-        <Rect, TreeRowDecoration>{};
-    final backgroundRows =
-        <Rect, TreeRowDecoration>{};
+    final foregroundRows = <Rect, TreeRowDecoration>{};
+    final backgroundRows = <Rect, TreeRowDecoration>{};
 
     var currentRow = leadingRow;
     while (currentRow <= trailingRow) {
@@ -578,12 +573,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // Get to painting.
     // Background decorations first.
     backgroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
-      final paintingDetails =
-          TreeRowDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: horizontalAxisDirection,
-          );
+      final paintingDetails = TreeRowDecorationPaintDetails(
+        canvas: context.canvas,
+        rect: rect,
+        axisDirection: horizontalAxisDirection,
+      );
       decoration.paint(paintingDetails);
     });
     // Child nodes.
@@ -600,12 +594,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     }
     // Foreground decorations.
     foregroundRows.forEach((Rect rect, TreeRowDecoration decoration) {
-      final paintingDetails =
-          TreeRowDecorationPaintDetails(
-            canvas: context.canvas,
-            rect: rect,
-            axisDirection: horizontalAxisDirection,
-          );
+      final paintingDetails = TreeRowDecorationPaintDetails(
+        canvas: context.canvas,
+        rect: rect,
+        axisDirection: horizontalAxisDirection,
+      );
       decoration.paint(paintingDetails);
     });
   }
@@ -667,8 +660,7 @@ class _Span
       _disposeRecognizers();
       return;
     }
-    final newRecognizers =
-        <Type, GestureRecognizer>{};
+    final newRecognizers = <Type, GestureRecognizer>{};
     for (final Type type in configuration.recognizerFactories.keys) {
       assert(!newRecognizers.containsKey(type));
       newRecognizers[type] =

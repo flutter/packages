@@ -90,11 +90,12 @@ void main() {
   // NSString, etc.) that aren't available in an actual unit test. For these
   // tests, the platform is stubbed out.
   group('unit', () {
-    final platformVariants =
-        ValueVariant<FakePlatformProvider>(<FakePlatformProvider>{
-          FakePlatformProvider(isIOS: true),
-          FakePlatformProvider(isMacOS: true),
-        });
+    final platformVariants = ValueVariant<FakePlatformProvider>(
+      <FakePlatformProvider>{
+        FakePlatformProvider(isIOS: true),
+        FakePlatformProvider(isMacOS: true),
+      },
+    );
 
     // These tests use the actual filesystem, since an injectable filesystem
     // would add a runtime dependency to the package, so everything is contained

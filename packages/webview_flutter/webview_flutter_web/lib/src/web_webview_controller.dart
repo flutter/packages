@@ -115,8 +115,7 @@ class WebWebViewWidget extends PlatformWebViewWidget {
   /// Constructs a [WebWebViewWidget].
   WebWebViewWidget(PlatformWebViewWidgetCreationParams params)
     : super.implementation(params) {
-    final controller =
-        params.controller as WebWebViewController;
+    final controller = params.controller as WebWebViewController;
     ui_web.platformViewRegistry.registerViewFactory(
       controller._webWebViewParams.iFrame.id,
       (int viewId) => controller._webWebViewParams.iFrame,

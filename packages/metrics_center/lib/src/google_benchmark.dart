@@ -45,8 +45,7 @@ class GoogleBenchmarkParser {
         jsonDecode(File(jsonFileName).readAsStringSync())
             as Map<String, dynamic>;
 
-    final rawContext =
-        jsonResult['context'] as Map<String, dynamic>;
+    final rawContext = jsonResult['context'] as Map<String, dynamic>;
     final Map<String, String> context = rawContext.map<String, String>(
       (String k, dynamic v) => MapEntry<String, String>(k, v.toString()),
     )..removeWhere((String k, String v) => _kContextIgnoreKeys.contains(k));

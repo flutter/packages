@@ -121,8 +121,7 @@ void main() {
       bool hasNavigationDelegate = false,
       bool hasProgressTracking = false,
     }) async {
-      final testController =
-          Completer<WebKitWebViewPlatformController>();
+      final testController = Completer<WebKitWebViewPlatformController>();
       await tester.pumpWidget(
         WebKitWebViewWidget(
           creationParams:
@@ -520,8 +519,7 @@ void main() {
         final WebKitWebViewPlatformController testController =
             await buildWidget(tester, mocks);
 
-        const htmlString =
-            '<html lang=""><body>Test data.</body></html>';
+        const htmlString = '<html lang=""><body>Test data.</body></html>';
         await testController.loadHtmlString(htmlString, baseUrl: 'baseUrl');
 
         verify(

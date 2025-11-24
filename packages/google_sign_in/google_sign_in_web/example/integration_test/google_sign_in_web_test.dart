@@ -29,23 +29,18 @@ void main() {
     const expectedClientId = '3xp3c73d_c113n7_1d';
 
     testWidgets('Loads clientId when set in a meta', (_) async {
-      final plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.autoDetectedClientId, isNull);
 
       // Add it to the test page now, and try again
-      final meta =
-          web.document.createElement('meta') as web.HTMLMetaElement
-            ..name = clientIdMetaName
-            ..content = expectedClientId;
+      final meta = web.document.createElement('meta') as web.HTMLMetaElement
+        ..name = clientIdMetaName
+        ..content = expectedClientId;
 
       web.document.head!.appendChild(meta);
 
-      final another = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final another = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(another.autoDetectedClientId, expectedClientId);
 
@@ -123,9 +118,7 @@ void main() {
 
   group('support queries', () {
     testWidgets('reports lack of support for authenticate', (_) async {
-      final plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.supportsAuthenticate(), false);
     });
@@ -133,9 +126,7 @@ void main() {
     testWidgets('reports requirement for user interaction to authorize', (
       _,
     ) async {
-      final plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.authorizationRequiresUserInteraction(), true);
     });
@@ -144,9 +135,7 @@ void main() {
   group('(with mocked GIS)', () {
     late GoogleSignInPlugin plugin;
     late MockGisSdkClient mockGis;
-    const options = InitParameters(
-      clientId: 'some-non-null-client-id',
-    );
+    const options = InitParameters(clientId: 'some-non-null-client-id');
 
     setUp(() {
       mockGis = MockGisSdkClient();
@@ -323,8 +312,7 @@ void main() {
 
         expect(token?.serverAuthCode, someAuthCode);
 
-        final passedRequest =
-            arguments.first! as AuthorizationRequestDetails;
+        final passedRequest = arguments.first! as AuthorizationRequestDetails;
         expect(passedRequest.scopes, request.scopes);
         expect(passedRequest.userId, request.userId);
         expect(passedRequest.email, request.email);
@@ -372,8 +360,7 @@ void main() {
   });
 
   group('userDataEvents', () {
-    final controller =
-        StreamController<AuthenticationEvent>.broadcast();
+    final controller = StreamController<AuthenticationEvent>.broadcast();
     late GoogleSignInPlugin plugin;
 
     setUp(() {

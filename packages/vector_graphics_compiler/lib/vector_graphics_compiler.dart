@@ -65,13 +65,7 @@ VectorInstructions parse(
   bool enableOverdrawOptimizer = true,
   ColorMapper? colorMapper,
 }) {
-  final parser = SvgParser(
-    xml,
-    theme,
-    key,
-    warningsAsErrors,
-    colorMapper,
-  );
+  final parser = SvgParser(xml, theme, key, warningsAsErrors, colorMapper);
   parser.enableMaskingOptimizer = enableMaskingOptimizer;
   parser.enableClippingOptimizer = enableClippingOptimizer;
   parser.enableOverdrawOptimizer = enableOverdrawOptimizer;

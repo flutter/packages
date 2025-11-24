@@ -390,11 +390,10 @@ class ObjcGeneratorAdapter implements GeneratorAdapter {
     if (options.objcOptions == null) {
       return;
     }
-    final outputFileOptions =
-        OutputFileOptions<InternalObjcOptions>(
-          fileType: fileType,
-          languageOptions: options.objcOptions!,
-        );
+    final outputFileOptions = OutputFileOptions<InternalObjcOptions>(
+      fileType: fileType,
+      languageOptions: options.objcOptions!,
+    );
     const generator = ObjcGenerator();
     generator.generate(
       outputFileOptions,
@@ -537,11 +536,10 @@ class CppGeneratorAdapter implements GeneratorAdapter {
     if (options.cppOptions == null) {
       return;
     }
-    final outputFileOptions =
-        OutputFileOptions<InternalCppOptions>(
-          fileType: fileType,
-          languageOptions: options.cppOptions!,
-        );
+    final outputFileOptions = OutputFileOptions<InternalCppOptions>(
+      fileType: fileType,
+      languageOptions: options.cppOptions!,
+    );
     const generator = CppGenerator();
     generator.generate(
       outputFileOptions,
@@ -599,11 +597,10 @@ class GObjectGeneratorAdapter implements GeneratorAdapter {
     if (options.gobjectOptions == null) {
       return;
     }
-    final outputFileOptions =
-        OutputFileOptions<InternalGObjectOptions>(
-          fileType: fileType,
-          languageOptions: options.gobjectOptions!,
-        );
+    final outputFileOptions = OutputFileOptions<InternalGObjectOptions>(
+      fileType: fileType,
+      languageOptions: options.gobjectOptions!,
+    );
     const generator = GObjectGenerator();
     generator.generate(
       outputFileOptions,

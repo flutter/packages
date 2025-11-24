@@ -59,8 +59,7 @@ class JavaOptions {
   /// Creates a [JavaOptions] from a Map representation where:
   /// `x = JavaOptions.fromMap(x.toMap())`.
   static JavaOptions fromMap(Map<String, Object> map) {
-    final copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return JavaOptions(
       className: map['className'] as String?,
       package: map['package'] as String?,
@@ -313,9 +312,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       field,
       (TypeDeclaration x) => _javaTypeForBuiltinDartType(x),
     );
-    final nullability = field.type.isNullable
-        ? '@Nullable '
-        : '@NonNull ';
+    final nullability = field.type.isNullable ? '@Nullable ' : '@NonNull ';
     addDocumentationComments(
       indent,
       field.documentationComments,
@@ -444,9 +441,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
           field,
           (TypeDeclaration x) => _javaTypeForBuiltinDartType(x),
         );
-        final nullability = field.type.isNullable
-            ? '@Nullable'
-            : '@NonNull';
+        final nullability = field.type.isNullable ? '@Nullable' : '@NonNull';
         indent.newln();
         indent.writeln(
           'private @Nullable ${hostDatatype.datatype} ${field.name};',
@@ -678,10 +673,7 @@ class JavaGenerator extends StructuredGenerator<InternalJavaOptions> {
       name: 'wrapped',
       type: const TypeDeclaration(baseName: 'Object', isNullable: true),
     );
-    final overflowFields = <NamedType>[
-      overflowInteration,
-      overflowObject,
-    ];
+    final overflowFields = <NamedType>[overflowInteration, overflowObject];
     final overflowClass = Class(
       name: _overflowClassName,
       fields: overflowFields,
@@ -1120,9 +1112,7 @@ if (wrapped == null) {
               });
             }
             if (method.isAsynchronous) {
-              final resultValue = method.returnType.isVoid
-                  ? 'null'
-                  : 'result';
+              final resultValue = method.returnType.isVoid ? 'null' : 'result';
               final String resultType = _getResultType(method.returnType);
               final resultParam = method.returnType.isVoid
                   ? ''
@@ -1147,8 +1137,7 @@ $resultType $resultName =
 ''');
               methodArgument.add(resultName);
             }
-            final call =
-                'api.${method.name}(${methodArgument.join(', ')})';
+            final call = 'api.${method.name}(${methodArgument.join(', ')})';
             if (method.isAsynchronous) {
               indent.writeln('$call;');
             } else {

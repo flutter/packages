@@ -16,27 +16,25 @@ import 'content_progress_provider_test.mocks.dart';
 void main() {
   group('AndroidContentProgressProvider', () {
     test('setProgress', () async {
-      final mockContentProgressProvider =
-          MockContentProgressProvider();
+      final mockContentProgressProvider = MockContentProgressProvider();
 
-      final provider =
-          AndroidContentProgressProvider(
-            AndroidContentProgressProviderCreationParams(
-              proxy: InteractiveMediaAdsProxy(
-                newContentProgressProvider: () => mockContentProgressProvider,
-                newVideoProgressUpdate:
-                    ({required int currentTimeMs, required int durationMs}) {
-                      expect(currentTimeMs, 1000);
-                      expect(durationMs, 10000);
-                      return ima.VideoProgressUpdate.pigeon_detached(
-                        pigeon_instanceManager: ima.PigeonInstanceManager(
-                          onWeakReferenceRemoved: (_) {},
-                        ),
-                      );
-                    },
-              ),
-            ),
-          );
+      final provider = AndroidContentProgressProvider(
+        AndroidContentProgressProviderCreationParams(
+          proxy: InteractiveMediaAdsProxy(
+            newContentProgressProvider: () => mockContentProgressProvider,
+            newVideoProgressUpdate:
+                ({required int currentTimeMs, required int durationMs}) {
+                  expect(currentTimeMs, 1000);
+                  expect(durationMs, 10000);
+                  return ima.VideoProgressUpdate.pigeon_detached(
+                    pigeon_instanceManager: ima.PigeonInstanceManager(
+                      onWeakReferenceRemoved: (_) {},
+                    ),
+                  );
+                },
+          ),
+        ),
+      );
 
       await provider.setProgress(
         progress: const Duration(seconds: 1),

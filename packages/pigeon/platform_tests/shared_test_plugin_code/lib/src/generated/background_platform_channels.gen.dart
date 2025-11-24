@@ -60,19 +60,17 @@ class BackgroundApi2Host {
   Future<int> add(int x, int y) async {
     final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.BackgroundApi2Host.add$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[
         <Object?>[x, y],
       ],
     );
-    final pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {

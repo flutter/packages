@@ -78,8 +78,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
@@ -100,8 +99,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
@@ -118,8 +116,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.nonce, nonce);
     });
 
@@ -211,8 +208,7 @@ void main() {
           mockApi.getCredential(captureAny),
         );
         expect(verification.callCount, 1);
-        final params =
-            verification.captured[0] as GetCredentialRequestParams;
+        final params = verification.captured[0] as GetCredentialRequestParams;
         expect(params.useButtonFlow, isFalse);
         expect(params.googleIdOptionParams.filterToAuthorized, isTrue);
         expect(params.googleIdOptionParams.autoSelectEnabled, isTrue);
@@ -233,8 +229,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
@@ -253,8 +248,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
@@ -267,8 +261,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.hostedDomain, hostedDomain);
     });
 
@@ -281,8 +274,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.nonce, nonce);
     });
 
@@ -513,13 +505,12 @@ void main() {
   group('clientAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test('passes expected values', () async {
       const scopes = <String>['a', 'b'];
@@ -726,13 +717,12 @@ void main() {
   group('serverAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test('serverAuthorizationTokensForScopes passes expected values', () async {
       const scopes = <String>['a', 'b'];

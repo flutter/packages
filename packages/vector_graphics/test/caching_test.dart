@@ -271,9 +271,7 @@ void main() {
   ) async {
     final testBundle = TestAssetBundle();
     final GlobalKey key = GlobalKey();
-    final loader = ControlledAssetBytesLoader(
-      'foo.svg',
-    );
+    final loader = ControlledAssetBytesLoader('foo.svg');
 
     await tester.pumpWidget(
       DefaultAssetBundle(

@@ -11,13 +11,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('Colors', () {
-    final parser = SvgParser(
-      '',
-      const SvgTheme(),
-      'test_key',
-      true,
-      null,
-    );
+    final parser = SvgParser('', const SvgTheme(), 'test_key', true, null);
     expect(parser.parseColor('null', attributeName: 'foo', id: null), null);
     expect(
       parser.parseColor('red', attributeName: 'foo', id: null),

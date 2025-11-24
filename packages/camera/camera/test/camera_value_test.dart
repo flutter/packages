@@ -76,9 +76,7 @@ void main() {
     });
 
     test('Can be copied with isInitialized', () {
-      const cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(isInitialized: true);
 
       expect(cameraValue, isA<CameraValue>());
@@ -101,9 +99,7 @@ void main() {
     });
 
     test('Has aspectRatio after setting size', () {
-      const cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(
         isInitialized: true,
         previewSize: const Size(20, 10),
@@ -113,9 +109,7 @@ void main() {
     });
 
     test('hasError is true after setting errorDescription', () {
-      const cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(errorDescription: 'error');
 
       expect(cameraValue.hasError, isTrue);
@@ -123,9 +117,7 @@ void main() {
     });
 
     test('Recording paused is false when not recording', () {
-      const cv = CameraValue.uninitialized(
-        FakeController.fakeDescription,
-      );
+      const cv = CameraValue.uninitialized(FakeController.fakeDescription);
       final CameraValue cameraValue = cv.copyWith(
         isInitialized: true,
         isRecordingVideo: false,

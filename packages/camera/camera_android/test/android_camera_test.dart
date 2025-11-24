@@ -338,8 +338,7 @@ void main() {
       // Act
       final Stream<CameraInitializedEvent> eventStream = camera
           .onCameraInitialized(cameraId);
-      final streamQueue =
-          StreamQueue<CameraInitializedEvent>(eventStream);
+      final streamQueue = StreamQueue<CameraInitializedEvent>(eventStream);
 
       // Emit test events
       final previewSize = PlatformSize(width: 3840, height: 2160);
@@ -374,8 +373,7 @@ void main() {
       final Stream<CameraClosingEvent> eventStream = camera.onCameraClosing(
         cameraId,
       );
-      final streamQueue =
-          StreamQueue<CameraClosingEvent>(eventStream);
+      final streamQueue = StreamQueue<CameraClosingEvent>(eventStream);
 
       // Emit test events
       final event = CameraClosingEvent(cameraId);
@@ -397,14 +395,10 @@ void main() {
       final Stream<CameraErrorEvent> errorStream = camera.onCameraError(
         cameraId,
       );
-      final streamQueue =
-          StreamQueue<CameraErrorEvent>(errorStream);
+      final streamQueue = StreamQueue<CameraErrorEvent>(errorStream);
 
       // Emit test events
-      final event = CameraErrorEvent(
-        cameraId,
-        'Error Description',
-      );
+      final event = CameraErrorEvent(cameraId, 'Error Description');
       for (var i = 0; i < 3; i++) {
         camera.hostCameraHandlers[cameraId]!.error('Error Description');
       }
@@ -422,13 +416,12 @@ void main() {
       // Act
       final Stream<DeviceOrientationChangedEvent> eventStream = camera
           .onDeviceOrientationChanged();
-      final streamQueue =
-          StreamQueue<DeviceOrientationChangedEvent>(eventStream);
+      final streamQueue = StreamQueue<DeviceOrientationChangedEvent>(
+        eventStream,
+      );
 
       // Emit test events
-      const event = DeviceOrientationChangedEvent(
-        DeviceOrientation.portraitUp,
-      );
+      const event = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (var i = 0; i < 3; i++) {
         camera.hostHandler.deviceOrientationChanged(
           PlatformDeviceOrientation.portraitUp,
@@ -480,19 +473,18 @@ void main() {
       'Should fetch CameraDescription instances for available cameras',
       () async {
         // Arrange
-        final returnData =
-            <PlatformCameraDescription>[
-              PlatformCameraDescription(
-                name: 'Test 1',
-                lensDirection: PlatformCameraLensDirection.front,
-                sensorOrientation: 1,
-              ),
-              PlatformCameraDescription(
-                name: 'Test 2',
-                lensDirection: PlatformCameraLensDirection.back,
-                sensorOrientation: 2,
-              ),
-            ];
+        final returnData = <PlatformCameraDescription>[
+          PlatformCameraDescription(
+            name: 'Test 1',
+            lensDirection: PlatformCameraLensDirection.front,
+            sensorOrientation: 1,
+          ),
+          PlatformCameraDescription(
+            name: 'Test 2',
+            lensDirection: PlatformCameraLensDirection.back,
+            sensorOrientation: 2,
+          ),
+        ];
         when(
           mockCameraApi.getAvailableCameras(),
         ).thenAnswer((_) async => returnData);

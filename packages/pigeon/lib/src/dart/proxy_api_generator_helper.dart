@@ -394,16 +394,16 @@ Iterable<cb.Constructor> constructors(
         )
         ..optionalParameters.addAll(parameters)
         ..body = cb.Block((cb.BlockBuilder builder) {
-          final forwardedParams =
-              <String, cb.Expression>{
-                for (final cb.Parameter parameter in parameters)
-                  parameter.name: cb.refer(parameter.name),
-              };
-          final forwardedParamsWithoutMessengerAndManager = <String, cb.Expression>{
-            for (final cb.Parameter parameter
-                in parametersWithoutMessengerAndManager)
+          final forwardedParams = <String, cb.Expression>{
+            for (final cb.Parameter parameter in parameters)
               parameter.name: cb.refer(parameter.name),
           };
+          final forwardedParamsWithoutMessengerAndManager =
+              <String, cb.Expression>{
+                for (final cb.Parameter parameter
+                    in parametersWithoutMessengerAndManager)
+                  parameter.name: cb.refer(parameter.name),
+              };
 
           builder.statements.addAll(<cb.Code>[
             cb.Code(
@@ -907,8 +907,7 @@ Iterable<cb.Method> attachedFieldMethods(
     yield cb.Method((cb.MethodBuilder builder) {
       final String type = addGenericTypesNullable(field.type);
       const instanceName = '${varNamePrefix}instance';
-      const identifierInstanceName =
-          '${varNamePrefix}instanceIdentifier';
+      const identifierInstanceName = '${varNamePrefix}instanceIdentifier';
       builder
         ..name = '$varNamePrefix${field.name}'
         ..static = field.isStatic

@@ -175,8 +175,7 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final options = gmaps.MarkerOptions()
-          ..draggable = true;
+        final options = gmaps.MarkerOptions()..draggable = true;
 
         controller.remove();
 

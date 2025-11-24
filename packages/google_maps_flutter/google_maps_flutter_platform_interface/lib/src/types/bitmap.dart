@@ -118,8 +118,7 @@ abstract class BitmapDescriptor {
       case AssetMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
-        final jsonMap =
-            jsonList[1] as Map<String, dynamic>;
+        final jsonMap = jsonList[1] as Map<String, dynamic>;
         assert(jsonMap.containsKey('assetName'));
         assert(jsonMap.containsKey('bitmapScaling'));
         assert(jsonMap.containsKey('imagePixelRatio'));
@@ -146,8 +145,7 @@ abstract class BitmapDescriptor {
       case BytesMapBitmap.type:
         assert(jsonList.length == 2);
         assert(jsonList[1] != null && jsonList[1] is Map<String, dynamic>);
-        final jsonMap =
-            jsonList[1] as Map<String, dynamic>;
+        final jsonMap = jsonList[1] as Map<String, dynamic>;
         assert(jsonMap.containsKey('byteData'));
         assert(jsonMap.containsKey('bitmapScaling'));
         assert(jsonMap.containsKey('imagePixelRatio'));
@@ -256,11 +254,7 @@ abstract class BitmapDescriptor {
     if (!mipmaps && devicePixelRatio != null) {
       return AssetImageBitmap(name: assetName, scale: devicePixelRatio);
     }
-    final assetImage = AssetImage(
-      assetName,
-      package: package,
-      bundle: bundle,
-    );
+    final assetImage = AssetImage(assetName, package: package, bundle: bundle);
     final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
       configuration,
     );
@@ -811,11 +805,7 @@ class AssetMapBitmap extends MapBitmap {
     MapBitmapScaling bitmapScaling = MapBitmapScaling.auto,
   }) async {
     assert(assetName.isNotEmpty, 'The asset name must not be empty.');
-    final assetImage = AssetImage(
-      assetName,
-      package: package,
-      bundle: bundle,
-    );
+    final assetImage = AssetImage(assetName, package: package, bundle: bundle);
     final AssetBundleImageKey assetBundleImageKey = await assetImage.obtainKey(
       configuration,
     );

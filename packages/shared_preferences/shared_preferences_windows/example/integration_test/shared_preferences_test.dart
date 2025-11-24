@@ -366,8 +366,7 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    const emptyOptions =
-        SharedPreferencesWindowsOptions();
+    const emptyOptions = SharedPreferencesWindowsOptions();
 
     const stringKey = 'testString';
     const boolKey = 'testBool';

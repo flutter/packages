@@ -439,8 +439,7 @@ void main() {
       ) async {
         await buildWidget(tester);
 
-        const htmlString =
-            '<html lang=""><body>Test data.</body></html>';
+        const htmlString = '<html lang=""><body>Test data.</body></html>';
         await testController.loadHtmlString(htmlString);
 
         verify(
@@ -457,8 +456,7 @@ void main() {
       testWidgets('loadHtmlString with base URL', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        const htmlString =
-            '<html lang=""><body>Test data.</body></html>';
+        const htmlString = '<html lang=""><body>Test data.</body></html>';
         await testController.loadHtmlString(
           htmlString,
           baseUrl: 'https://flutter.dev',

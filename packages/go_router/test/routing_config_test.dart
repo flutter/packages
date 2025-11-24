@@ -118,11 +118,8 @@ void main() {
   testWidgets('routing config works after routing changes case 3', (
     WidgetTester tester,
   ) async {
-    final key = GlobalKey<_StatefulTestState>(
-      debugLabel: 'testState',
-    );
-    final rootNavigatorKey =
-        GlobalKey<NavigatorState>(debugLabel: 'root');
+    final key = GlobalKey<_StatefulTestState>(debugLabel: 'testState');
+    final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
     final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
@@ -163,13 +160,9 @@ void main() {
     // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
     skip: true,
     (WidgetTester tester) async {
-      final key = GlobalKey<_StatefulTestState>(
-        debugLabel: 'testState',
-      );
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final shellNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final key = GlobalKey<_StatefulTestState>(debugLabel: 'testState');
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
       final config = ValueNotifier<RoutingConfig>(
         RoutingConfig(

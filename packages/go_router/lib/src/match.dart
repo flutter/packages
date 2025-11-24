@@ -641,8 +641,7 @@ class RouteMatchList with Diagnosticable {
         newMatches.isNotEmpty &&
         otherMatches.last.route == newMatches.last.route) {
       assert(newMatches.last is ShellRouteMatch);
-      final lastShellRouteMatch =
-          newMatches.removeLast() as ShellRouteMatch;
+      final lastShellRouteMatch = newMatches.removeLast() as ShellRouteMatch;
       newMatches.add(
         // Create a new copy of the `lastShellRouteMatch`.
         lastShellRouteMatch.copyWith(
@@ -711,13 +710,11 @@ class RouteMatchList with Diagnosticable {
       caseSensitive: newRoute.caseSensitive,
     );
     final Set<String> validParameters = newParameters.toSet();
-    final newPathParameters =
-        Map<String, String>.fromEntries(
-          pathParameters.entries.where(
-            (MapEntry<String, String> value) =>
-                validParameters.contains(value.key),
-          ),
-        );
+    final newPathParameters = Map<String, String>.fromEntries(
+      pathParameters.entries.where(
+        (MapEntry<String, String> value) => validParameters.contains(value.key),
+      ),
+    );
     final Uri newUri = uri.replace(
       path: patternToPath(fullPath, newPathParameters),
     );
@@ -939,8 +936,7 @@ class _RouteMatchListEncoder
   final RouteConfiguration configuration;
   @override
   Map<Object?, Object?> convert(RouteMatchList input) {
-    final imperativeMatches =
-        <ImperativeRouteMatch>[];
+    final imperativeMatches = <ImperativeRouteMatch>[];
     input.visitRouteMatches((RouteMatchBase match) {
       if (match is ImperativeRouteMatch) {
         imperativeMatches.add(match);
@@ -1016,8 +1012,7 @@ class _RouteMatchListDecoder
 
   @override
   RouteMatchList convert(Map<Object?, Object?> input) {
-    final rootLocation =
-        input[RouteMatchListCodec._locationKey]! as String;
+    final rootLocation = input[RouteMatchListCodec._locationKey]! as String;
     final encodedExtra =
         input[RouteMatchListCodec._extraKey]! as Map<Object?, Object?>;
     final Object? extra;

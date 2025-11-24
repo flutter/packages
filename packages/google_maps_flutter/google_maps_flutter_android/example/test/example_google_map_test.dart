@@ -75,10 +75,7 @@ void main() {
     const m1 = Marker(markerId: MarkerId('marker_1'));
     const m2 = Marker(markerId: MarkerId('marker_2'));
     const m3 = Marker(markerId: MarkerId('marker_3'));
-    const m3updated = Marker(
-      markerId: MarkerId('marker_3'),
-      draggable: true,
-    );
+    const m3updated = Marker(markerId: MarkerId('marker_3'), draggable: true);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(markers: <Marker>{m1, m2}));
@@ -109,10 +106,7 @@ void main() {
 
     const p1 = Polygon(polygonId: PolygonId('polygon_1'));
     const p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    const p3 = Polygon(
-      polygonId: PolygonId('polygon_3'),
-      strokeWidth: 1,
-    );
+    const p3 = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
     const p3updated = Polygon(
       polygonId: PolygonId('polygon_3'),
       strokeWidth: 2,
@@ -149,14 +143,8 @@ void main() {
 
     const p1 = Polyline(polylineId: PolylineId('polyline_1'));
     const p2 = Polyline(polylineId: PolylineId('polyline_2'));
-    const p3 = Polyline(
-      polylineId: PolylineId('polyline_3'),
-      width: 1,
-    );
-    const p3updated = Polyline(
-      polylineId: PolylineId('polyline_3'),
-      width: 2,
-    );
+    const p3 = Polyline(polylineId: PolylineId('polyline_3'), width: 1);
+    const p3updated = Polyline(polylineId: PolylineId('polyline_3'), width: 2);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p2}));

@@ -598,11 +598,7 @@ abstract class RouteBaseConfig {
     ConstantReader reader,
     InterfaceElement2 element,
   ) {
-    final definition = RouteBaseConfig._fromAnnotation(
-      reader,
-      element,
-      null,
-    );
+    final definition = RouteBaseConfig._fromAnnotation(reader, element, null);
 
     if (element != definition.routeDataClass) {
       throw InvalidGenerationSourceError(

@@ -229,8 +229,7 @@ class GisSdkClient {
   Future<String?> requestServerAuthCode(
     AuthorizationRequestDetails request,
   ) async {
-    final completer =
-        Completer<(String? code, Exception? e)>();
+    final completer = Completer<(String? code, Exception? e)>();
     final CodeClient codeClient = _initializeCodeClient(
       userHint: request.userId,
       onResponse: (CodeResponse response) {
@@ -311,8 +310,7 @@ class GisSdkClient {
       return null;
     }
 
-    final completer =
-        Completer<(String? token, Exception? e)>();
+    final completer = Completer<(String? token, Exception? e)>();
     final TokenClient tokenClient = _initializeTokenClient(
       _clientId,
       scopes: scopes,

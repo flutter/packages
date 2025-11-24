@@ -22,9 +22,7 @@ const bool enableLogs = false;
 final Logger log = Logger('GoRouter tests');
 
 Future<void> sendPlatformUrl(String url, WidgetTester tester) async {
-  final testRouteInformation = <String, dynamic>{
-    'location': url,
-  };
+  final testRouteInformation = <String, dynamic>{'location': url};
   final ByteData message = const JSONMethodCodec().encodeMethodCall(
     MethodCall('pushRouteInformation', testRouteInformation),
   );
@@ -119,9 +117,7 @@ void main() {
     });
 
     testWidgets('match no routes', (WidgetTester tester) async {
-      final routes = <GoRoute>[
-        GoRoute(path: '/', builder: dummy),
-      ];
+      final routes = <GoRoute>[GoRoute(path: '/', builder: dummy)];
 
       final GoRouter router = await createRouter(
         routes,
@@ -934,8 +930,7 @@ void main() {
     testWidgets('Handles the Android back button correctly with ShellRoute', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
 
       final routes = <RouteBase>[
         ShellRoute(
@@ -1030,8 +1025,7 @@ void main() {
           expect(log, expectations);
         }
 
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>();
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
 
         final routes = <RouteBase>[
           GoRoute(
@@ -1077,8 +1071,7 @@ void main() {
         expect(log, expectations);
       }
 
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
 
       final routes = <RouteBase>[
         GoRoute(
@@ -1175,12 +1168,9 @@ void main() {
         expect(log, expectations);
       }
 
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final shellNavigatorKeyA =
-          GlobalKey<NavigatorState>();
-      final shellNavigatorKeyB =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final shellNavigatorKeyA = GlobalKey<NavigatorState>();
+      final shellNavigatorKeyB = GlobalKey<NavigatorState>();
 
       final routes = <RouteBase>[
         ShellRoute(
@@ -1302,9 +1292,7 @@ void main() {
 
         log.clear();
         router.push('/c?foo=bar');
-        final codec = RouteMatchListCodec(
-          router.configuration,
-        );
+        final codec = RouteMatchListCodec(router.configuration);
         await tester.pumpAndSettle();
         expect(log, <Object>[
           isMethodCall('selectMultiEntryHistory', arguments: null),
@@ -1331,9 +1319,7 @@ void main() {
 
       log.clear();
       router.push('/settings');
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       await tester.pumpAndSettle();
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
@@ -1356,9 +1342,7 @@ void main() {
 
       log.clear();
       router.push('/settings');
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       await tester.pumpAndSettle();
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
@@ -1386,9 +1370,7 @@ void main() {
         tester,
         initialLocation: '/settings',
       );
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       log.clear();
       router.pop();
       await tester.pumpAndSettle();
@@ -1427,9 +1409,7 @@ void main() {
         tester,
         initialLocation: '/settings/profile',
       );
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       log.clear();
       router.pop();
       router.pop();
@@ -1463,9 +1443,7 @@ void main() {
         tester,
         initialLocation: '/settings/123',
       );
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       log.clear();
       router.pop();
       await tester.pumpAndSettle();
@@ -1497,9 +1475,7 @@ void main() {
         tester,
         initialLocation: '/123/',
       );
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       log.clear();
       router.pop();
       await tester.pumpAndSettle();
@@ -1516,8 +1492,7 @@ void main() {
     testWidgets('Can manually pop root navigator and display correct url', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
 
       final routes = <RouteBase>[
         GoRoute(
@@ -1558,9 +1533,7 @@ void main() {
         initialLocation: '/b/c',
         navigatorKey: rootNavigatorKey,
       );
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       expect(find.text('Screen C'), findsOneWidget);
       expect(log, <Object>[
         isMethodCall('selectMultiEntryHistory', arguments: null),
@@ -1615,14 +1588,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(const ValueKey<String>('settings-1')), findsOneWidget);
 
-      final arguments =
-          log.last.arguments as Map<Object?, Object?>;
+      final arguments = log.last.arguments as Map<Object?, Object?>;
       // Stores the state after the last push. This should contain the encoded
       // RouteMatchList.
       final Object? state =
           (log.last.arguments as Map<Object?, Object?>)['state'];
-      final location =
-          (arguments['location'] ?? arguments['uri']!) as String;
+      final location = (arguments['location'] ?? arguments['uri']!) as String;
 
       router.go('/');
       await tester.pumpAndSettle();
@@ -1664,9 +1635,7 @@ void main() {
           return '/login';
         },
       );
-      final codec = RouteMatchListCodec(
-        router.configuration,
-      );
+      final codec = RouteMatchListCodec(router.configuration);
       await tester.pumpAndSettle();
       expect(find.byKey(login), findsNothing);
       expect(tester.takeException(), isNull);
@@ -3656,8 +3625,7 @@ void main() {
 
       expect(matches.matches, hasLength(2));
       expect(find.byType(PersonScreen), findsOneWidget);
-      final imperativeRouteMatch =
-          matches.matches.last as ImperativeRouteMatch;
+      final imperativeRouteMatch = matches.matches.last as ImperativeRouteMatch;
       expect(imperativeRouteMatch.matches.uri.toString(), loc);
       expect(imperativeRouteMatch.matches.pathParameters['fid'], fid);
       expect(imperativeRouteMatch.matches.pathParameters['pid'], pid);
@@ -3734,8 +3702,7 @@ void main() {
 
       expect(router.routerDelegate.currentConfiguration.uri.toString(), loc);
       expect(matches.matches, hasLength(1));
-      final shellRouteMatch =
-          matches.matches.first as ShellRouteMatch;
+      final shellRouteMatch = matches.matches.first as ShellRouteMatch;
       expect(shellRouteMatch.matches, hasLength(3));
       expect(find.byType(PersonScreen), findsOneWidget);
       expect(matches.pathParameters['fid'], fid);
@@ -3974,8 +3941,7 @@ void main() {
   });
 
   group('GoRouterHelper extensions', () {
-    final key =
-        GlobalKey<DummyStatefulWidgetState>();
+    final key = GlobalKey<DummyStatefulWidgetState>();
     final routes = <GoRoute>[
       GoRoute(
         path: '/',
@@ -3992,21 +3958,15 @@ void main() {
     ];
 
     const name = 'page1';
-    final params = <String, String>{
-      'a-param-key': 'a-param-value',
-    };
-    final queryParams = <String, String>{
-      'a-query-key': 'a-query-value',
-    };
+    final params = <String, String>{'a-param-key': 'a-param-value'};
+    final queryParams = <String, String>{'a-query-key': 'a-query-value'};
     const location = '/page1';
     const extra = 'Hello';
 
     testWidgets('calls [namedLocation] on closest GoRouter', (
       WidgetTester tester,
     ) async {
-      final router = GoRouterNamedLocationSpy(
-        routes: routes,
-      );
+      final router = GoRouterNamedLocationSpy(routes: routes);
       addTearDown(router.dispose);
       await tester.pumpWidget(
         MaterialApp.router(routerConfig: router, title: 'GoRouter Example'),
@@ -4276,10 +4236,8 @@ void main() {
 
     testWidgets('Pops from the correct navigator when a sub-route is placed on '
         'the root Navigator', (WidgetTester tester) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final shellNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
 
       final routes = <RouteBase>[
         ShellRoute(
@@ -4333,8 +4291,7 @@ void main() {
     });
 
     testWidgets('Builds StatefulShellRoute', (WidgetTester tester) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
 
       final routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
@@ -4385,8 +4342,7 @@ void main() {
     testWidgets('Builds StatefulShellRoute as a sub-route', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
 
       final routes = <RouteBase>[
         GoRoute(
@@ -4444,10 +4400,8 @@ void main() {
     testWidgets(
       'Navigation with goBranch is correctly handled in StatefulShellRoute',
       (WidgetTester tester) async {
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>();
-        final statefulWidgetKey =
-            GlobalKey<DummyStatefulWidgetState>();
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
+        final statefulWidgetKey = GlobalKey<DummyStatefulWidgetState>();
         StatefulNavigationShell? routeState;
 
         final routes = <RouteBase>[
@@ -4546,10 +4500,8 @@ void main() {
       'Navigates to correct nested navigation tree in StatefulShellRoute '
       'and maintains state',
       (WidgetTester tester) async {
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>();
-        final statefulWidgetKey =
-            GlobalKey<DummyStatefulWidgetState>();
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
+        final statefulWidgetKey = GlobalKey<DummyStatefulWidgetState>();
         StatefulNavigationShell? routeState;
 
         final routes = <RouteBase>[
@@ -4687,10 +4639,8 @@ void main() {
     testWidgets('Maintains state for nested StatefulShellRoute', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final statefulWidgetKey =
-          GlobalKey<DummyStatefulWidgetState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final statefulWidgetKey = GlobalKey<DummyStatefulWidgetState>();
       StatefulNavigationShell? routeState1;
       StatefulNavigationShell? routeState2;
 
@@ -4815,12 +4765,9 @@ void main() {
       'Pops from the correct Navigator in a StatefulShellRoute when the '
       'Android back button is pressed',
       (WidgetTester tester) async {
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>();
-        final sectionANavigatorKey =
-            GlobalKey<NavigatorState>();
-        final sectionBNavigatorKey =
-            GlobalKey<NavigatorState>();
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
+        final sectionANavigatorKey = GlobalKey<NavigatorState>();
+        final sectionBNavigatorKey = GlobalKey<NavigatorState>();
         StatefulNavigationShell? routeState;
 
         final routes = <RouteBase>[
@@ -4914,8 +4861,7 @@ void main() {
 
     testWidgets('Maintains extra navigation information when navigating '
         'between branches in StatefulShellRoute', (WidgetTester tester) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
       StatefulNavigationShell? routeState;
 
       final routes = <RouteBase>[
@@ -4980,8 +4926,7 @@ void main() {
         'navigating between branches in StatefulShellRoute', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
       StatefulNavigationShell? routeState;
 
       final routes = <RouteBase>[
@@ -5056,18 +5001,22 @@ void main() {
     testWidgets('Preloads routes correctly in a StatefulShellRoute', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final statefulWidgetKeyA =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'A');
-      final statefulWidgetKeyB =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'B');
-      final statefulWidgetKeyC =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'C');
-      final statefulWidgetKeyD =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'D');
-      final statefulWidgetKeyE =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'E');
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final statefulWidgetKeyA = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'A',
+      );
+      final statefulWidgetKeyB = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'B',
+      );
+      final statefulWidgetKeyC = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'C',
+      );
+      final statefulWidgetKeyD = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'D',
+      );
+      final statefulWidgetKeyE = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'E',
+      );
 
       final routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
@@ -5159,16 +5108,19 @@ void main() {
     testWidgets('Preloads nested routes correctly in a StatefulShellRoute', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final statefulWidgetKeyA =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'A');
-      final statefulWidgetKeyB =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'B');
-      final statefulWidgetKeyC =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'C');
-      final statefulWidgetKeyD =
-          GlobalKey<DummyStatefulWidgetState>(debugLabel: 'D');
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final statefulWidgetKeyA = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'A',
+      );
+      final statefulWidgetKeyB = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'B',
+      );
+      final statefulWidgetKeyC = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'C',
+      );
+      final statefulWidgetKeyD = GlobalKey<DummyStatefulWidgetState>(
+        debugLabel: 'D',
+      );
 
       final routes = <RouteBase>[
         StatefulShellRoute.indexedStack(
@@ -5243,8 +5195,7 @@ void main() {
 
     testWidgets('Redirects are correctly handled when switching branch in a '
         'StatefulShellRoute', (WidgetTester tester) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
       StatefulNavigationShell? routeState;
 
       final routes = <RouteBase>[
@@ -5346,10 +5297,8 @@ void main() {
     testWidgets(
       'Pushed top-level route is correctly handled by StatefulShellRoute',
       (WidgetTester tester) async {
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>();
-        final nestedNavigatorKey =
-            GlobalKey<NavigatorState>();
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
+        final nestedNavigatorKey = GlobalKey<NavigatorState>();
         StatefulNavigationShell? routeState;
 
         final routes = <RouteBase>[
@@ -5481,10 +5430,10 @@ void main() {
       // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
       skip: true,
       (WidgetTester tester) async {
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>(debugLabel: 'root');
-        final statefulShellKey =
-            GlobalKey<StatefulNavigationShellState>(debugLabel: 'shell');
+        final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+        final statefulShellKey = GlobalKey<StatefulNavigationShellState>(
+          debugLabel: 'shell',
+        );
         StatefulNavigationShell? routeState;
         StatefulShellBranch makeBranch(String name) => StatefulShellBranch(
           navigatorKey: GlobalKey<NavigatorState>(debugLabel: 'branch-$name'),
@@ -5519,10 +5468,9 @@ void main() {
           ),
         ];
 
-        final config =
-            ValueNotifier<RoutingConfig>(
-              RoutingConfig(routes: createRoutes(true)),
-            );
+        final config = ValueNotifier<RoutingConfig>(
+          RoutingConfig(routes: createRoutes(true)),
+        );
         addTearDown(config.dispose);
         await createRouterWithRoutingConfig(
           navigatorKey: rootNavigatorKey,
@@ -5556,8 +5504,7 @@ void main() {
       testWidgets(
         'It should return false if Navigator.canPop() returns false.',
         (WidgetTester tester) async {
-          final navigatorKey =
-              GlobalKey<NavigatorState>();
+          final navigatorKey = GlobalKey<NavigatorState>();
           final router = GoRouter(
             initialLocation: '/',
             navigatorKey: navigatorKey,
@@ -5612,8 +5559,7 @@ void main() {
       testWidgets('It checks if ShellRoute navigators can pop', (
         WidgetTester tester,
       ) async {
-        final shellNavigatorKey =
-            GlobalKey<NavigatorState>();
+        final shellNavigatorKey = GlobalKey<NavigatorState>();
         final router = GoRouter(
           initialLocation: '/a',
           routes: <RouteBase>[
@@ -5678,8 +5624,7 @@ void main() {
       testWidgets('It checks if StatefulShellRoute navigators can pop', (
         WidgetTester tester,
       ) async {
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>();
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
         final router = GoRouter(
           navigatorKey: rootNavigatorKey,
           initialLocation: '/a',
@@ -5749,12 +5694,8 @@ void main() {
       testWidgets('Pageless route should include in can pop', (
         WidgetTester tester,
       ) async {
-        final root = GlobalKey<NavigatorState>(
-          debugLabel: 'root',
-        );
-        final shell = GlobalKey<NavigatorState>(
-          debugLabel: 'shell',
-        );
+        final root = GlobalKey<NavigatorState>(debugLabel: 'root');
+        final shell = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
         final router = GoRouter(
           navigatorKey: root,
@@ -5801,12 +5742,8 @@ void main() {
       testWidgets(
         'Should pop from the correct navigator when parentNavigatorKey is set',
         (WidgetTester tester) async {
-          final root = GlobalKey<NavigatorState>(
-            debugLabel: 'root',
-          );
-          final shell = GlobalKey<NavigatorState>(
-            debugLabel: 'shell',
-          );
+          final root = GlobalKey<NavigatorState>(debugLabel: 'root');
+          final shell = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
           final router = GoRouter(
             initialLocation: '/a/b',
@@ -5885,12 +5822,8 @@ void main() {
       testWidgets('Should pop dialog if it is present', (
         WidgetTester tester,
       ) async {
-        final root = GlobalKey<NavigatorState>(
-          debugLabel: 'root',
-        );
-        final shell = GlobalKey<NavigatorState>(
-          debugLabel: 'shell',
-        );
+        final root = GlobalKey<NavigatorState>(debugLabel: 'root');
+        final shell = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
         final router = GoRouter(
           initialLocation: '/a',
@@ -6124,8 +6057,7 @@ void main() {
     testWidgets('Restores state of branches in StatefulShellRoute correctly', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
       final statefulWidgetKeyA =
           GlobalKey<DummyRestorableStatefulWidgetState>();
       final statefulWidgetKeyB =
@@ -6286,8 +6218,7 @@ void main() {
     testWidgets(
       'Restores state of imperative routes in StatefulShellRoute correctly',
       (WidgetTester tester) async {
-        final rootNavigatorKey =
-            GlobalKey<NavigatorState>();
+        final rootNavigatorKey = GlobalKey<NavigatorState>();
         final statefulWidgetKeyA =
             GlobalKey<DummyRestorableStatefulWidgetState>();
         final statefulWidgetKeyB =
@@ -6749,8 +6680,7 @@ class IsRouteUpdateCall extends Matcher {
     if (item.arguments is! Map) {
       return false;
     }
-    final arguments =
-        item.arguments as Map<String, dynamic>;
+    final arguments = item.arguments as Map<String, dynamic>;
     // TODO(chunhtai): update this when minimum flutter version includes
     // https://github.com/flutter/flutter/pull/119968.
     // https://github.com/flutter/flutter/issues/124045.

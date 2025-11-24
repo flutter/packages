@@ -16,11 +16,7 @@ void main() {
       const CameraErrorCode code = CameraErrorCode.notFound;
       const description = 'The camera is not found.';
 
-      final exception = CameraWebException(
-        cameraId,
-        code,
-        description,
-      );
+      final exception = CameraWebException(cameraId, code, description);
 
       expect(exception.cameraId, equals(cameraId));
       expect(exception.code, equals(code));
@@ -34,11 +30,7 @@ void main() {
       const CameraErrorCode code = CameraErrorCode.notReadable;
       const description = 'The camera is not readable.';
 
-      final exception = CameraWebException(
-        cameraId,
-        code,
-        description,
-      );
+      final exception = CameraWebException(cameraId, code, description);
 
       expect(
         exception.toString(),

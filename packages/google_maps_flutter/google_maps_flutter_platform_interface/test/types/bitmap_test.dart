@@ -219,9 +219,7 @@ void main() {
         test(
           'mipmaps determines dpi',
           () async {
-            const imageConfiguration = ImageConfiguration(
-              devicePixelRatio: 3,
-            );
+            const imageConfiguration = ImageConfiguration(devicePixelRatio: 3);
 
             final BitmapDescriptor mip = await BitmapDescriptor.fromAssetImage(
               imageConfiguration,
@@ -593,9 +591,7 @@ void main() {
 
       test('create with size', () async {
         const size = Size(100, 200);
-        const imageConfiguration = ImageConfiguration(
-          size: size,
-        );
+        const imageConfiguration = ImageConfiguration(size: size);
         final BitmapDescriptor descriptor = await AssetMapBitmap.create(
           imageConfiguration,
           'red_square.png',

@@ -331,14 +331,13 @@ void main() {
     test(
       'onWebResourceError from webViewWebContentProcessDidTerminate',
       () async {
-        final webKitDelegate =
-            WebKitNavigationDelegate(
-              const WebKitNavigationDelegateCreationParams(
-                webKitProxy: WebKitProxy(
-                  newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                ),
-              ),
-            );
+        final webKitDelegate = WebKitNavigationDelegate(
+          const WebKitNavigationDelegateCreationParams(
+            webKitProxy: WebKitProxy(
+              newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            ),
+          ),
+        );
 
         late final WebKitWebResourceError callbackError;
         void onWebResourceError(WebResourceError error) {
@@ -451,25 +450,24 @@ void main() {
     });
 
     test('onHttpBasicAuthRequest emits host and realm', () async {
-      final iosNavigationDelegate =
-          WebKitNavigationDelegate(
-            WebKitNavigationDelegateCreationParams(
-              webKitProxy: WebKitProxy(
-                newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                createAsyncAuthenticationChallengeResponse:
-                    (
-                      UrlSessionAuthChallengeDisposition disposition,
-                      URLCredential? credential,
-                    ) async {
-                      return AuthenticationChallengeResponse.pigeon_detached(
-                        disposition: UrlSessionAuthChallengeDisposition
-                            .performDefaultHandling,
-                        pigeon_instanceManager: TestInstanceManager(),
-                      );
-                    },
-              ),
-            ),
-          );
+      final iosNavigationDelegate = WebKitNavigationDelegate(
+        WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            createAsyncAuthenticationChallengeResponse:
+                (
+                  UrlSessionAuthChallengeDisposition disposition,
+                  URLCredential? credential,
+                ) async {
+                  return AuthenticationChallengeResponse.pigeon_detached(
+                    disposition: UrlSessionAuthChallengeDisposition
+                        .performDefaultHandling,
+                    pigeon_instanceManager: TestInstanceManager(),
+                  );
+                },
+          ),
+        ),
+      );
 
       String? callbackHost;
       String? callbackRealm;
@@ -485,8 +483,7 @@ void main() {
       const expectedHost = 'expectedHost';
       const expectedRealm = 'expectedRealm';
 
-      final mockChallenge =
-          MockURLAuthenticationChallenge();
+      final mockChallenge = MockURLAuthenticationChallenge();
       when(mockChallenge.getProtectionSpace()).thenAnswer((_) {
         return Future<URLProtectionSpace>.value(
           URLProtectionSpace.pigeon_detached(
@@ -533,38 +530,37 @@ void main() {
       const UrlCredentialPersistence expectedPersistence =
           UrlCredentialPersistence.forSession;
 
-      final iosNavigationDelegate =
-          WebKitNavigationDelegate(
-            WebKitNavigationDelegateCreationParams(
-              webKitProxy: WebKitProxy(
-                newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                createAsyncAuthenticationChallengeResponse:
-                    (
-                      UrlSessionAuthChallengeDisposition disposition,
-                      URLCredential? credential,
-                    ) async {
-                      return AuthenticationChallengeResponse.pigeon_detached(
-                        disposition: disposition,
-                        credential: credential,
-                        pigeon_instanceManager: TestInstanceManager(),
-                      );
-                    },
-                withUserAsyncURLCredential:
-                    (
-                      String user,
-                      String password,
-                      UrlCredentialPersistence persistence,
-                    ) async {
-                      expect(user, expectedUser);
-                      expect(password, expectedPassword);
-                      expect(persistence, expectedPersistence);
-                      return URLCredential.pigeon_detached(
-                        pigeon_instanceManager: TestInstanceManager(),
-                      );
-                    },
-              ),
-            ),
-          );
+      final iosNavigationDelegate = WebKitNavigationDelegate(
+        WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            createAsyncAuthenticationChallengeResponse:
+                (
+                  UrlSessionAuthChallengeDisposition disposition,
+                  URLCredential? credential,
+                ) async {
+                  return AuthenticationChallengeResponse.pigeon_detached(
+                    disposition: disposition,
+                    credential: credential,
+                    pigeon_instanceManager: TestInstanceManager(),
+                  );
+                },
+            withUserAsyncURLCredential:
+                (
+                  String user,
+                  String password,
+                  UrlCredentialPersistence persistence,
+                ) async {
+                  expect(user, expectedUser);
+                  expect(password, expectedPassword);
+                  expect(persistence, expectedPersistence);
+                  return URLCredential.pigeon_detached(
+                    pigeon_instanceManager: TestInstanceManager(),
+                  );
+                },
+          ),
+        ),
+      );
 
       String? callbackHost;
       String? callbackRealm;
@@ -585,8 +581,7 @@ void main() {
       const expectedHost = 'expectedHost';
       const expectedRealm = 'expectedRealm';
 
-      final mockChallenge =
-          MockURLAuthenticationChallenge();
+      final mockChallenge = MockURLAuthenticationChallenge();
       when(mockChallenge.getProtectionSpace()).thenAnswer(
         expectAsync1((_) {
           return Future<URLProtectionSpace>.value(
@@ -644,58 +639,56 @@ void main() {
       );
       final certificateData = Uint8List(0);
 
-      final iosNavigationDelegate =
-          WebKitNavigationDelegate(
-            WebKitNavigationDelegateCreationParams(
-              webKitProxy: WebKitProxy(
-                newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                createAsyncAuthenticationChallengeResponse:
-                    (
-                      UrlSessionAuthChallengeDisposition disposition,
-                      URLCredential? credential,
-                    ) async {
-                      return AuthenticationChallengeResponse.pigeon_detached(
-                        disposition: disposition,
-                        credential: credential,
-                        pigeon_instanceManager: TestInstanceManager(),
-                      );
-                    },
-                serverTrustAsyncURLCredential: (_) async {
-                  return URLCredential.pigeon_detached(
-                    pigeon_instanceManager: TestInstanceManager(),
-                  );
-                },
-                evaluateWithErrorSecTrust: (_) async {
-                  throw PlatformException(
-                    code: exceptionCode,
-                    message: exceptionMessage,
-                  );
-                },
-                copyExceptionsSecTrust: (_) async => copiedExceptions,
-                setExceptionsSecTrust: expectAsync2((
-                  _,
-                  Uint8List? exceptions,
+      final iosNavigationDelegate = WebKitNavigationDelegate(
+        WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            createAsyncAuthenticationChallengeResponse:
+                (
+                  UrlSessionAuthChallengeDisposition disposition,
+                  URLCredential? credential,
                 ) async {
-                  expect(exceptions, copiedExceptions);
-                  return true;
-                }),
-                getTrustResultSecTrust: (_) async {
-                  return GetTrustResultResponse.pigeon_detached(
-                    result: DartSecTrustResultType.recoverableTrustFailure,
-                    resultCode: 0,
+                  return AuthenticationChallengeResponse.pigeon_detached(
+                    disposition: disposition,
+                    credential: credential,
                     pigeon_instanceManager: TestInstanceManager(),
                   );
                 },
-                copyCertificateChainSecTrust: (_) async {
-                  return <SecCertificate>[leafCertificate];
-                },
-                copyDataSecCertificate: (_) async => certificateData,
-              ),
-            ),
-          );
+            serverTrustAsyncURLCredential: (_) async {
+              return URLCredential.pigeon_detached(
+                pigeon_instanceManager: TestInstanceManager(),
+              );
+            },
+            evaluateWithErrorSecTrust: (_) async {
+              throw PlatformException(
+                code: exceptionCode,
+                message: exceptionMessage,
+              );
+            },
+            copyExceptionsSecTrust: (_) async => copiedExceptions,
+            setExceptionsSecTrust: expectAsync2((
+              _,
+              Uint8List? exceptions,
+            ) async {
+              expect(exceptions, copiedExceptions);
+              return true;
+            }),
+            getTrustResultSecTrust: (_) async {
+              return GetTrustResultResponse.pigeon_detached(
+                result: DartSecTrustResultType.recoverableTrustFailure,
+                resultCode: 0,
+                pigeon_instanceManager: TestInstanceManager(),
+              );
+            },
+            copyCertificateChainSecTrust: (_) async {
+              return <SecCertificate>[leafCertificate];
+            },
+            copyDataSecCertificate: (_) async => certificateData,
+          ),
+        ),
+      );
 
-      var errorCompleter =
-          Completer<PlatformSslAuthError>();
+      var errorCompleter = Completer<PlatformSslAuthError>();
       await iosNavigationDelegate.setOnSSlAuthError((
         PlatformSslAuthError error,
       ) {
@@ -705,14 +698,12 @@ void main() {
       const port = 65;
       const host = 'host';
 
-      final mockChallenge =
-          MockURLAuthenticationChallenge();
+      final mockChallenge = MockURLAuthenticationChallenge();
       final testTrust = SecTrust.pigeon_detached(
         pigeon_instanceManager: TestInstanceManager(),
       );
       when(mockChallenge.getProtectionSpace()).thenAnswer((_) async {
-        final mockProtectionSpace =
-            MockURLProtectionSpace();
+        final mockProtectionSpace = MockURLProtectionSpace();
         when(mockProtectionSpace.port).thenReturn(port);
         when(mockProtectionSpace.host).thenReturn(host);
         when(
@@ -724,23 +715,22 @@ void main() {
         return mockProtectionSpace;
       });
 
-      final testDelegate =
-          WKNavigationDelegate.pigeon_detached(
+      final testDelegate = WKNavigationDelegate.pigeon_detached(
+        pigeon_instanceManager: TestInstanceManager(),
+        decidePolicyForNavigationAction: (_, __, ___) async {
+          return NavigationActionPolicy.cancel;
+        },
+        decidePolicyForNavigationResponse: (_, __, ___) async {
+          return NavigationResponsePolicy.cancel;
+        },
+        didReceiveAuthenticationChallenge: (_, __, ___) async {
+          return AuthenticationChallengeResponse.pigeon_detached(
+            disposition:
+                UrlSessionAuthChallengeDisposition.performDefaultHandling,
             pigeon_instanceManager: TestInstanceManager(),
-            decidePolicyForNavigationAction: (_, __, ___) async {
-              return NavigationActionPolicy.cancel;
-            },
-            decidePolicyForNavigationResponse: (_, __, ___) async {
-              return NavigationResponsePolicy.cancel;
-            },
-            didReceiveAuthenticationChallenge: (_, __, ___) async {
-              return AuthenticationChallengeResponse.pigeon_detached(
-                disposition:
-                    UrlSessionAuthChallengeDisposition.performDefaultHandling,
-                pigeon_instanceManager: TestInstanceManager(),
-              );
-            },
           );
+        },
+      );
       final testWebView = WKWebView.pigeon_detached(
         pigeon_instanceManager: TestInstanceManager(),
       );
@@ -753,8 +743,7 @@ void main() {
                 mockChallenge,
               );
 
-      var error =
-          await errorCompleter.future as WebKitSslAuthError;
+      var error = await errorCompleter.future as WebKitSslAuthError;
       expect(error.certificate?.data, certificateData);
       expect(error.description, '$exceptionCode: $exceptionMessage');
       expect(error.host, host);
@@ -810,34 +799,31 @@ void main() {
           ),
         );
 
-        final mockChallenge =
-            MockURLAuthenticationChallenge();
+        final mockChallenge = MockURLAuthenticationChallenge();
         when(mockChallenge.getProtectionSpace()).thenAnswer((_) async {
-          final mockProtectionSpace =
-              MockURLProtectionSpace();
+          final mockProtectionSpace = MockURLProtectionSpace();
           when(
             mockProtectionSpace.authenticationMethod,
           ).thenReturn(NSUrlAuthenticationMethod.httpBasic);
           return mockProtectionSpace;
         });
 
-        final testDelegate =
-            WKNavigationDelegate.pigeon_detached(
+        final testDelegate = WKNavigationDelegate.pigeon_detached(
+          pigeon_instanceManager: TestInstanceManager(),
+          decidePolicyForNavigationAction: (_, __, ___) async {
+            return NavigationActionPolicy.cancel;
+          },
+          decidePolicyForNavigationResponse: (_, __, ___) async {
+            return NavigationResponsePolicy.cancel;
+          },
+          didReceiveAuthenticationChallenge: (_, __, ___) async {
+            return AuthenticationChallengeResponse.pigeon_detached(
+              disposition:
+                  UrlSessionAuthChallengeDisposition.performDefaultHandling,
               pigeon_instanceManager: TestInstanceManager(),
-              decidePolicyForNavigationAction: (_, __, ___) async {
-                return NavigationActionPolicy.cancel;
-              },
-              decidePolicyForNavigationResponse: (_, __, ___) async {
-                return NavigationResponsePolicy.cancel;
-              },
-              didReceiveAuthenticationChallenge: (_, __, ___) async {
-                return AuthenticationChallengeResponse.pigeon_detached(
-                  disposition:
-                      UrlSessionAuthChallengeDisposition.performDefaultHandling,
-                  pigeon_instanceManager: TestInstanceManager(),
-                );
-              },
             );
+          },
+        );
         final testWebView = WKWebView.pigeon_detached(
           pigeon_instanceManager: TestInstanceManager(),
         );

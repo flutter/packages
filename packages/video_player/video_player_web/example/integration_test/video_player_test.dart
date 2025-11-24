@@ -118,8 +118,7 @@ void main() {
 
     group('seekTo', () {
       testWidgets('negative time - throws assert', (WidgetTester tester) async {
-        final player = VideoPlayer(videoElement: video)
-          ..initialize();
+        final player = VideoPlayer(videoElement: video)..initialize();
 
         expect(
           () {
@@ -134,8 +133,7 @@ void main() {
         WidgetTester tester,
       ) async {
         makeSetCurrentTimeThrow(video);
-        final player = VideoPlayer(videoElement: video)
-          ..initialize();
+        final player = VideoPlayer(videoElement: video)..initialize();
 
         expect(
           () {

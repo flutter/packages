@@ -282,10 +282,8 @@ Page resource error:
   }
 
   Future<void> openDialog(HttpAuthRequest httpRequest) async {
-    final usernameTextController =
-        TextEditingController();
-    final passwordTextController =
-        TextEditingController();
+    final usernameTextController = TextEditingController();
+    final passwordTextController = TextEditingController();
 
     return showDialog(
       context: context,
@@ -684,9 +682,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _promptForUrl(BuildContext context) {
-    final urlTextController = TextEditingController(
-      text: 'https://',
-    );
+    final urlTextController = TextEditingController(text: 'https://');
 
     return showDialog<String>(
       context: context,

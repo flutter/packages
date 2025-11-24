@@ -506,10 +506,7 @@ void main() {
     testWidgets('It should return false if there are no matches in the stack', (
       WidgetTester tester,
     ) async {
-      final goRouter = GoRouter(
-        initialLocation: '/',
-        routes: <GoRoute>[],
-      );
+      final goRouter = GoRouter(initialLocation: '/', routes: <GoRoute>[]);
       addTearDown(goRouter.dispose);
       await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       await tester.pumpAndSettle();

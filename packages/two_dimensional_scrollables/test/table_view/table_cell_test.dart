@@ -397,24 +397,22 @@ void main() {
       // |         |                 |
       // +---------+--------+--------+
       //   ...       ...      ...
-      final mergedColumns =
-          <TableVicinity, (int, int)>{
-            const TableVicinity(row: 0, column: 1): (1, 2), // M(0, 1)
-            const TableVicinity(row: 0, column: 2): (1, 2), // M(0, 1)
-            const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
-          };
-      final mergedRows =
-          <TableVicinity, (int, int)>{
-            TableVicinity.zero: (0, 2), // M(0, 0)
-            TableVicinity.zero.copyWith(row: 1): (0, 2), // M(0,0)
-            const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
-            const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
-          };
+      final mergedColumns = <TableVicinity, (int, int)>{
+        const TableVicinity(row: 0, column: 1): (1, 2), // M(0, 1)
+        const TableVicinity(row: 0, column: 2): (1, 2), // M(0, 1)
+        const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
+      };
+      final mergedRows = <TableVicinity, (int, int)>{
+        TableVicinity.zero: (0, 2), // M(0, 0)
+        TableVicinity.zero.copyWith(row: 1): (0, 2), // M(0,0)
+        const TableVicinity(row: 1, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 1, column: 2): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 1): (1, 2), // M(1, 1)
+        const TableVicinity(row: 2, column: 2): (1, 2), // M(1, 1)
+      };
 
       TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) {
         if (mergedColumns.keys.contains(vicinity) ||

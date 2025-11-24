@@ -79,8 +79,7 @@ void main() {
     });
 
     testWidgets('contentComplete', (WidgetTester tester) async {
-      final mockAdPlayerCallback =
-          MockVideoAdPlayerCallback();
+      final mockAdPlayerCallback = MockVideoAdPlayerCallback();
       final AndroidAdDisplayContainer container = await _pumpAdDisplayContainer(
         tester,
         mockAdPlayerCallback: mockAdPlayerCallback,
@@ -132,10 +131,9 @@ void main() {
         ),
       );
 
-      final progressProvider =
-          AndroidContentProgressProvider(
-            AndroidContentProgressProviderCreationParams(proxy: proxy),
-          );
+      final progressProvider = AndroidContentProgressProvider(
+        AndroidContentProgressProviderCreationParams(proxy: proxy),
+      );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdTagUrl(
           adTagUrl: 'url',
@@ -198,10 +196,9 @@ void main() {
         ),
       );
 
-      final progressProvider =
-          AndroidContentProgressProvider(
-            AndroidContentProgressProviderCreationParams(proxy: proxy),
-          );
+      final progressProvider = AndroidContentProgressProvider(
+        AndroidContentProgressProviderCreationParams(proxy: proxy),
+      );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdsResponse(
           adsResponse: 'url',
@@ -279,8 +276,7 @@ void main() {
         ),
       );
 
-      final mockLoadedEvent =
-          MockAdsManagerLoadedEvent();
+      final mockLoadedEvent = MockAdsManagerLoadedEvent();
       when(mockLoadedEvent.manager).thenReturn(MockAdsManager());
 
       await addEventListenerCompleter.future;
@@ -397,10 +393,8 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
         },
   );
 
-  final mockPlatformViewsProxy =
-      MockPlatformViewsServiceProxy();
-  final mockAndroidViewController =
-      MockSurfaceAndroidViewController();
+  final mockPlatformViewsProxy = MockPlatformViewsServiceProxy();
+  final mockAndroidViewController = MockSurfaceAndroidViewController();
 
   late final int platformViewId;
   when(
@@ -417,8 +411,7 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
     return mockAndroidViewController;
   });
 
-  final adDisplayContainerCompleter =
-      Completer<AndroidAdDisplayContainer>();
+  final adDisplayContainerCompleter = Completer<AndroidAdDisplayContainer>();
 
   final container = AndroidAdDisplayContainer(
     AndroidAdDisplayContainerCreationParams(

@@ -1120,8 +1120,7 @@ void main() {
       });
 
       testWidgets('updateGroundOverlays', (WidgetTester tester) async {
-        final mock =
-            MockGroundOverlaysController();
+        final mock = MockGroundOverlaysController();
         controller = createController()
           ..debugSetOverrides(groundOverlays: mock);
 
@@ -1141,12 +1140,11 @@ void main() {
           image: image,
           bounds: bounds,
         );
-        final groundOverlayToBeRemoved =
-            GroundOverlay.fromPosition(
-              groundOverlayId: const GroundOverlayId('to-be-removed'),
-              image: image,
-              position: position,
-            );
+        final groundOverlayToBeRemoved = GroundOverlay.fromPosition(
+          groundOverlayId: const GroundOverlayId('to-be-removed'),
+          image: image,
+          position: position,
+        );
         final groundOverlayToBeAdded = GroundOverlay.fromPosition(
           groundOverlayId: const GroundOverlayId('to-be-added'),
           image: image,

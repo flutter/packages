@@ -28,9 +28,7 @@ void main() {
   });
 
   testWidgets('Initializing a tile overlay', (WidgetTester tester) async {
-    const t1 = TileOverlay(
-      tileOverlayId: TileOverlayId('tile_overlay_1'),
-    );
+    const t1 = TileOverlay(tileOverlayId: TileOverlayId('tile_overlay_1'));
     await tester.pumpWidget(_mapWithTileOverlays(<TileOverlay>{t1}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
@@ -38,12 +36,8 @@ void main() {
   });
 
   testWidgets('Adding a tile overlay', (WidgetTester tester) async {
-    const t1 = TileOverlay(
-      tileOverlayId: TileOverlayId('tile_overlay_1'),
-    );
-    const t2 = TileOverlay(
-      tileOverlayId: TileOverlayId('tile_overlay_2'),
-    );
+    const t1 = TileOverlay(tileOverlayId: TileOverlayId('tile_overlay_1'));
+    const t2 = TileOverlay(tileOverlayId: TileOverlayId('tile_overlay_2'));
 
     await tester.pumpWidget(_mapWithTileOverlays(<TileOverlay>{t1}));
     await tester.pumpWidget(_mapWithTileOverlays(<TileOverlay>{t1, t2}));
@@ -53,9 +47,7 @@ void main() {
   });
 
   testWidgets('Removing a tile overlay', (WidgetTester tester) async {
-    const t1 = TileOverlay(
-      tileOverlayId: TileOverlayId('tile_overlay_1'),
-    );
+    const t1 = TileOverlay(tileOverlayId: TileOverlayId('tile_overlay_1'));
 
     await tester.pumpWidget(_mapWithTileOverlays(<TileOverlay>{t1}));
     await tester.pumpWidget(_mapWithTileOverlays(<TileOverlay>{}));
@@ -65,9 +57,7 @@ void main() {
   });
 
   testWidgets('Updating a tile overlay', (WidgetTester tester) async {
-    const t1 = TileOverlay(
-      tileOverlayId: TileOverlayId('tile_overlay_1'),
-    );
+    const t1 = TileOverlay(tileOverlayId: TileOverlayId('tile_overlay_1'));
     const t2 = TileOverlay(
       tileOverlayId: TileOverlayId('tile_overlay_1'),
       zIndex: 10,

@@ -129,8 +129,7 @@ abstract class TestHostApi {
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null.',
               );
               final List<Object?> args = (message as List<Object?>?)!;
-              final arg_request =
-                  (args[0] as MessageSearchRequest?);
+              final arg_request = (args[0] as MessageSearchRequest?);
               assert(
                 arg_request != null,
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null, expected non-null MessageSearchRequest.',

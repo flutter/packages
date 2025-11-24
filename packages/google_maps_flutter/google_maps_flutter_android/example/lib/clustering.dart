@@ -122,12 +122,9 @@ class ClusteringBodyState extends State<ClusteringBody> {
       return;
     }
 
-    final clusterManagerIdVal =
-        'cluster_manager_id_$_clusterManagerIdCounter';
+    final clusterManagerIdVal = 'cluster_manager_id_$_clusterManagerIdCounter';
     _clusterManagerIdCounter++;
-    final clusterManagerId = ClusterManagerId(
-      clusterManagerIdVal,
-    );
+    final clusterManagerId = ClusterManagerId(clusterManagerIdVal);
 
     final clusterManager = ClusterManager(
       clusterManagerId: clusterManagerId,

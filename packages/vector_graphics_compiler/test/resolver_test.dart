@@ -138,10 +138,7 @@ void main() {
   });
 
   test('visitChildren on clips and masks', () {
-    final clip = ResolvedClipNode(
-      clips: <Path>[],
-      child: Node.empty,
-    );
+    final clip = ResolvedClipNode(clips: <Path>[], child: Node.empty);
 
     final mask = ResolvedMaskNode(
       child: Node.empty,

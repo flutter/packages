@@ -48,22 +48,10 @@ void main() {
     final correctList = <Object?>['a', 2, 'three'];
     final List<Object?> matchingList = correctList.toList();
     final differentList = <Object?>['a', 2, 'three', 4.0];
-    final correctMap = <String, Object?>{
-      'a': 1,
-      'b': 2,
-      'c': 'three',
-    };
+    final correctMap = <String, Object?>{'a': 1, 'b': 2, 'c': 'three'};
     final matchingMap = <String, Object?>{...correctMap};
-    final differentKeyMap = <String, Object?>{
-      'a': 1,
-      'b': 2,
-      'd': 'three',
-    };
-    final differentValueMap = <String, Object?>{
-      'a': 1,
-      'b': 2,
-      'c': 'five',
-    };
+    final differentKeyMap = <String, Object?>{'a': 1, 'b': 2, 'd': 'three'};
+    final differentValueMap = <String, Object?>{'a': 1, 'b': 2, 'c': 'five'};
     final correctListInMap = <String, Object?>{
       'a': 1,
       'b': 2,
@@ -81,16 +69,8 @@ void main() {
     };
     final correctMapInList = <Object?>['a', 2, correctMap];
     final matchingMapInList = <Object?>['a', 2, matchingMap];
-    final differentKeyMapInList = <Object?>[
-      'a',
-      2,
-      differentKeyMap,
-    ];
-    final differentValueMapInList = <Object?>[
-      'a',
-      2,
-      differentValueMap,
-    ];
+    final differentKeyMapInList = <Object?>['a', 2, differentKeyMap];
+    final differentValueMapInList = <Object?>['a', 2, differentValueMap];
 
     test('equality method correctly checks deep equality', () {
       final AllNullableTypes generic = genericAllNullableTypes;
@@ -110,9 +90,7 @@ void main() {
       'equality method correctly identifies non-matching lists in classes',
       () {
         final withList = AllNullableTypes(list: correctList);
-        final withDifferentList = AllNullableTypes(
-          list: differentList,
-        );
+        final withDifferentList = AllNullableTypes(list: differentList);
         expect(withList == withDifferentList, false);
       },
     );
@@ -121,9 +99,7 @@ void main() {
       'equality method correctly identifies matching -but unique- lists in classes',
       () {
         final withList = AllNullableTypes(list: correctList);
-        final withDifferentList = AllNullableTypes(
-          list: matchingList,
-        );
+        final withDifferentList = AllNullableTypes(list: matchingList);
         expect(withList, withDifferentList);
       },
     );
@@ -132,9 +108,7 @@ void main() {
       'equality method correctly identifies non-matching keys in maps in classes',
       () {
         final withMap = AllNullableTypes(map: correctMap);
-        final withDifferentMap = AllNullableTypes(
-          map: differentKeyMap,
-        );
+        final withDifferentMap = AllNullableTypes(map: differentKeyMap);
         expect(withMap == withDifferentMap, false);
       },
     );
@@ -143,9 +117,7 @@ void main() {
       'equality method correctly identifies non-matching values in maps in classes',
       () {
         final withMap = AllNullableTypes(map: correctMap);
-        final withDifferentMap = AllNullableTypes(
-          map: differentValueMap,
-        );
+        final withDifferentMap = AllNullableTypes(map: differentValueMap);
         expect(withMap == withDifferentMap, false);
       },
     );
@@ -154,9 +126,7 @@ void main() {
       'equality method correctly identifies matching -but unique- maps in classes',
       () {
         final withMap = AllNullableTypes(map: correctMap);
-        final withDifferentMap = AllNullableTypes(
-          map: matchingMap,
-        );
+        final withDifferentMap = AllNullableTypes(map: matchingMap);
         expect(withMap, withDifferentMap);
       },
     );
@@ -164,9 +134,7 @@ void main() {
     test(
       'equality method correctly identifies non-matching lists nested in maps in classes',
       () {
-        final withListInMap = AllNullableTypes(
-          map: correctListInMap,
-        );
+        final withListInMap = AllNullableTypes(map: correctListInMap);
         final withDifferentListInMap = AllNullableTypes(
           map: differentListInMap,
         );
@@ -177,12 +145,8 @@ void main() {
     test(
       'equality method correctly identifies matching -but unique- lists nested in maps in classes',
       () {
-        final withListInMap = AllNullableTypes(
-          map: correctListInMap,
-        );
-        final withDifferentListInMap = AllNullableTypes(
-          map: matchingListInMap,
-        );
+        final withListInMap = AllNullableTypes(map: correctListInMap);
+        final withDifferentListInMap = AllNullableTypes(map: matchingListInMap);
         expect(withListInMap, withDifferentListInMap);
       },
     );
@@ -190,9 +154,7 @@ void main() {
     test(
       'equality method correctly identifies non-matching keys in maps nested in lists in classes',
       () {
-        final withMapInList = AllNullableTypes(
-          list: correctMapInList,
-        );
+        final withMapInList = AllNullableTypes(list: correctMapInList);
         final withDifferentMapInList = AllNullableTypes(
           list: differentKeyMapInList,
         );
@@ -203,9 +165,7 @@ void main() {
     test(
       'equality method correctly identifies non-matching values in maps nested in lists in classes',
       () {
-        final withMapInList = AllNullableTypes(
-          list: correctMapInList,
-        );
+        final withMapInList = AllNullableTypes(list: correctMapInList);
         final withDifferentMapInList = AllNullableTypes(
           list: differentValueMapInList,
         );
@@ -216,9 +176,7 @@ void main() {
     test(
       'equality method correctly identifies matching -but unique- maps nested in lists in classes',
       () {
-        final withMapInList = AllNullableTypes(
-          list: correctMapInList,
-        );
+        final withMapInList = AllNullableTypes(list: correctMapInList);
         final withDifferentMapInList = AllNullableTypes(
           list: matchingMapInList,
         );

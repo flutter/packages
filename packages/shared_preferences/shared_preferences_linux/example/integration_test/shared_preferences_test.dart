@@ -366,8 +366,7 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    const emptyOptions =
-        SharedPreferencesLinuxOptions();
+    const emptyOptions = SharedPreferencesLinuxOptions();
 
     const stringKey = 'testString';
     const boolKey = 'testBool';

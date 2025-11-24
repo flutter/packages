@@ -15,8 +15,7 @@ import 'content_progress_provider_test.mocks.dart';
 void main() {
   group('IOSContentProgressProvider', () {
     test('setProgress', () async {
-      final mockContentPlayhead =
-          MockIMAContentPlayhead();
+      final mockContentPlayhead = MockIMAContentPlayhead();
 
       final provider = IOSContentProgressProvider(
         IOSContentProgressProviderCreationParams(

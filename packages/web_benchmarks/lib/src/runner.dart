@@ -155,10 +155,8 @@ class BenchmarkServer {
       throw Exception('Failed to build the benchmark.');
     }
 
-    final profileData =
-        Completer<List<Map<String, dynamic>>>();
-    final collectedProfiles =
-        <Map<String, dynamic>>[];
+    final profileData = Completer<List<Map<String, dynamic>>>();
+    final collectedProfiles = <Map<String, dynamic>>[];
     List<String>? benchmarks;
     late Iterator<String> benchmarkIterator;
 
@@ -348,8 +346,7 @@ class BenchmarkServer {
       final List<Map<String, dynamic>> profiles = await profileData.future;
 
       print('Received profile data');
-      final results =
-          <String, List<BenchmarkScore>>{};
+      final results = <String, List<BenchmarkScore>>{};
       for (final profile in profiles) {
         final benchmarkName = profile['name'] as String;
         if (benchmarkName.isEmpty) {

@@ -105,12 +105,11 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
 
   void _onElementCreated(Object element) {
     // Create the `ins` element that is going to contain the actual ad.
-    final insElement =
-        (web.document.createElement('ins') as web.HTMLElement)
-          ..className = 'adsbygoogle'
-          ..style.width = '100%'
-          ..style.height = '100%'
-          ..style.display = 'block';
+    final insElement = (web.document.createElement('ins') as web.HTMLElement)
+      ..className = 'adsbygoogle'
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.display = 'block';
 
     // Apply the widget configuration to insElement
     <String, String>{

@@ -191,8 +191,7 @@ void main() {
   });
 
   test('Calls onError callback in case of socket error', () async {
-    final datagramSocket =
-        FakeRawDatagramSocketThatSendsError();
+    final datagramSocket = FakeRawDatagramSocketThatSendsError();
     final client = MDnsClient(
       rawDatagramSocketFactory:
           (

@@ -425,8 +425,7 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    const emptyOptions =
-        SharedPreferencesWebOptions();
+    const emptyOptions = SharedPreferencesWebOptions();
 
     const stringKey = 'testString';
     const boolKey = 'testBool';

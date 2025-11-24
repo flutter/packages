@@ -49,8 +49,7 @@ void main() {
         columnBuilder: (_) => span,
         cellBuilder: (_, __) => cell,
       );
-      final delegate =
-          tableView.delegate as TableCellBuilderDelegate;
+      final delegate = tableView.delegate as TableCellBuilderDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
@@ -1978,15 +1977,9 @@ void main() {
         // cell if it extends into an area we have not computed the layout for
         // yet.
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final mergedRows = List<int>.generate(
-          10,
-          (int index) => index,
-        );
+        final mergedRows = List<int>.generate(10, (int index) => index);
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final mergedColumns = List<int>.generate(
-          10,
-          (int index) => index + 1,
-        );
+        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -2046,10 +2039,7 @@ void main() {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final mergedColumns = List<int>.generate(
-          10,
-          (int index) => index + 1,
-        );
+        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -2100,10 +2090,7 @@ void main() {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final mergedRows = List<int>.generate(
-          10,
-          (int index) => index,
-        );
+        final mergedRows = List<int>.generate(10, (int index) => index);
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -2156,8 +2143,7 @@ void main() {
           <TableViewCell>[cell, cell, cell],
         ],
       );
-      final delegate =
-          tableView.delegate as TableCellListDelegate;
+      final delegate = tableView.delegate as TableCellListDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
@@ -2215,8 +2201,7 @@ void main() {
     testWidgets('parent data and table vicinities', (
       WidgetTester tester,
     ) async {
-      final childKeys =
-          <TableVicinity, UniqueKey>{};
+      final childKeys = <TableVicinity, UniqueKey>{};
       const span = TableSpan(extent: FixedTableSpanExtent(200));
       final tableView = TableView.builder(
         rowCount: 5,
@@ -2274,8 +2259,7 @@ void main() {
     });
 
     testWidgets('TableSpanPadding', (WidgetTester tester) async {
-      final childKeys =
-          <TableVicinity, UniqueKey>{};
+      final childKeys = <TableVicinity, UniqueKey>{};
       const columnSpan = TableSpan(
         extent: FixedTableSpanExtent(200),
         padding: TableSpanPadding(leading: 10.0, trailing: 20.0),
@@ -3623,31 +3607,28 @@ void main() {
       // Regression tests for https://github.com/flutter/flutter/issues/143526
       // These tests all use the same collection of merged pinned cells in a
       // variety of combinations.
-      final bothMerged =
-          <TableVicinity, ({int start, int span})>{
-            TableVicinity.zero: (start: 0, span: 2),
-            const TableVicinity(row: 1, column: 0): (start: 0, span: 2),
-            const TableVicinity(row: 0, column: 1): (start: 0, span: 2),
-            const TableVicinity(row: 1, column: 1): (start: 0, span: 2),
-          };
+      final bothMerged = <TableVicinity, ({int start, int span})>{
+        TableVicinity.zero: (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 0): (start: 0, span: 2),
+        const TableVicinity(row: 0, column: 1): (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 1): (start: 0, span: 2),
+      };
 
-      final rowMerged =
-          <TableVicinity, ({int start, int span})>{
-            const TableVicinity(row: 2, column: 0): (start: 2, span: 2),
-            const TableVicinity(row: 3, column: 0): (start: 2, span: 2),
-            const TableVicinity(row: 4, column: 1): (start: 4, span: 3),
-            const TableVicinity(row: 5, column: 1): (start: 4, span: 3),
-            const TableVicinity(row: 6, column: 1): (start: 4, span: 3),
-          };
+      final rowMerged = <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 2, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 3, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 4, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 5, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 6, column: 1): (start: 4, span: 3),
+      };
 
-      final columnMerged =
-          <TableVicinity, ({int start, int span})>{
-            const TableVicinity(row: 0, column: 2): (start: 2, span: 2),
-            const TableVicinity(row: 0, column: 3): (start: 2, span: 2),
-            const TableVicinity(row: 1, column: 4): (start: 4, span: 3),
-            const TableVicinity(row: 1, column: 5): (start: 4, span: 3),
-            const TableVicinity(row: 1, column: 6): (start: 4, span: 3),
-          };
+      final columnMerged = <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 0, column: 2): (start: 2, span: 2),
+        const TableVicinity(row: 0, column: 3): (start: 2, span: 2),
+        const TableVicinity(row: 1, column: 4): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 5): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 6): (start: 4, span: 3),
+      };
       const span = TableSpan(extent: FixedTableSpanExtent(75));
 
       testWidgets('Normal axes', (WidgetTester tester) async {

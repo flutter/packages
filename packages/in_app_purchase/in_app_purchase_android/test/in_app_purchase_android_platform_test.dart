@@ -268,8 +268,7 @@ void main() {
     });
 
     test('returns ProductDetailsResponseWrapper', () async {
-      final completer =
-          Completer<List<PurchaseDetails>>();
+      final completer = Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapAndroidPlatform.purchaseStream;
 
@@ -302,8 +301,7 @@ void main() {
 
       expect(restoredPurchases.length, 2);
       for (final element in restoredPurchases) {
-        final purchase =
-            element as GooglePlayPurchaseDetails;
+        final purchase = element as GooglePlayPurchaseDetails;
 
         expect(purchase.productID, dummyPurchase.products.first);
         expect(purchase.purchaseID, dummyPurchase.orderId);
@@ -364,8 +362,7 @@ void main() {
 
           return convertToPigeonResult(expectedBillingResult);
         });
-        final completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -548,22 +545,19 @@ void main() {
         final consumeCompleter = Completer<String>();
         // adding call back for consume purchase
         const BillingResponse expectedCode = BillingResponse.ok;
-        const expectedBillingResultForConsume =
-            BillingResultWrapper(
-              responseCode: expectedCode,
-              debugMessage: debugMessage,
-            );
+        const expectedBillingResultForConsume = BillingResultWrapper(
+          responseCode: expectedCode,
+          debugMessage: debugMessage,
+        );
         when(mockApi.consumeAsync(any)).thenAnswer((
           Invocation invocation,
         ) async {
-          final purchaseToken =
-              invocation.positionalArguments.first as String;
+          final purchaseToken = invocation.positionalArguments.first as String;
           consumeCompleter.complete(purchaseToken);
           return convertToPigeonResult(expectedBillingResultForConsume);
         });
 
-        final completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -584,8 +578,7 @@ void main() {
         );
 
         // Verify that the result has succeeded
-        final result =
-            await completer.future as GooglePlayPurchaseDetails;
+        final result = await completer.future as GooglePlayPurchaseDetails;
         expect(launchResult, isTrue);
         expect(result.billingClientPurchase, isNotNull);
         expect(
@@ -688,14 +681,12 @@ void main() {
       final consumeCompleter = Completer<String>();
       // adding call back for consume purchase
       const BillingResponse expectedCode = BillingResponse.error;
-      const expectedBillingResultForConsume =
-          BillingResultWrapper(
-            responseCode: expectedCode,
-            debugMessage: debugMessage,
-          );
+      const expectedBillingResultForConsume = BillingResultWrapper(
+        responseCode: expectedCode,
+        debugMessage: debugMessage,
+      );
       when(mockApi.consumeAsync(any)).thenAnswer((Invocation invocation) async {
-        final purchaseToken =
-            invocation.positionalArguments.first as String;
+        final purchaseToken = invocation.positionalArguments.first as String;
         consumeCompleter.complete(purchaseToken);
         return convertToPigeonResult(expectedBillingResultForConsume);
       });
@@ -719,8 +710,7 @@ void main() {
       await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
       // Verify that the result has an error for the failed consumption
-      final result =
-          await completer.future as GooglePlayPurchaseDetails;
+      final result = await completer.future as GooglePlayPurchaseDetails;
       expect(result.billingClientPurchase, isNotNull);
       expect(
         result.billingClientPurchase.purchaseToken,
@@ -773,16 +763,14 @@ void main() {
         final consumeCompleter = Completer<String?>();
         // adding call back for consume purchase
         const BillingResponse expectedCode = BillingResponse.ok;
-        const expectedBillingResultForConsume =
-            BillingResultWrapper(
-              responseCode: expectedCode,
-              debugMessage: debugMessage,
-            );
+        const expectedBillingResultForConsume = BillingResultWrapper(
+          responseCode: expectedCode,
+          debugMessage: debugMessage,
+        );
         when(mockApi.consumeAsync(any)).thenAnswer((
           Invocation invocation,
         ) async {
-          final purchaseToken =
-              invocation.positionalArguments.first as String;
+          final purchaseToken = invocation.positionalArguments.first as String;
           consumeCompleter.complete(purchaseToken);
           return convertToPigeonResult(expectedBillingResultForConsume);
         });
@@ -849,22 +837,19 @@ void main() {
         final consumeCompleter = Completer<String>();
         // adding call back for consume purchase
         const BillingResponse expectedCode = BillingResponse.userCanceled;
-        const expectedBillingResultForConsume =
-            BillingResultWrapper(
-              responseCode: expectedCode,
-              debugMessage: debugMessage,
-            );
+        const expectedBillingResultForConsume = BillingResultWrapper(
+          responseCode: expectedCode,
+          debugMessage: debugMessage,
+        );
         when(mockApi.consumeAsync(any)).thenAnswer((
           Invocation invocation,
         ) async {
-          final purchaseToken =
-              invocation.positionalArguments.first as String;
+          final purchaseToken = invocation.positionalArguments.first as String;
           consumeCompleter.complete(purchaseToken);
           return convertToPigeonResult(expectedBillingResultForConsume);
         });
 
-        final completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -883,8 +868,7 @@ void main() {
         await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
         // Verify that the result has an error for the failed consumption
-        final result =
-            await completer.future as GooglePlayPurchaseDetails;
+        final result = await completer.future as GooglePlayPurchaseDetails;
         expect(result.status, PurchaseStatus.canceled);
       },
     );
@@ -913,8 +897,7 @@ void main() {
           return convertToPigeonResult(expectedBillingResult);
         });
 
-        final completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -959,8 +942,7 @@ void main() {
           GooglePlayPurchaseDetails.fromPurchase(
             dummyUnacknowledgedPurchase,
           ).first;
-      final completer =
-          Completer<BillingResultWrapper>();
+      final completer = Completer<BillingResultWrapper>();
       purchaseDetails.status = PurchaseStatus.purchased;
       if (purchaseDetails.pendingCompletePurchase) {
         final BillingResultWrapper billingResultWrapper =

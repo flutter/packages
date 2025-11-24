@@ -5,10 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('DefaultSvgTheme', () {
     testWidgets('changes propagate to SvgPicture', (WidgetTester tester) async {
-      const svgTheme = SvgTheme(
-        currentColor: Color(0xFF733821),
-        xHeight: 6.0,
-      );
+      const svgTheme = SvgTheme(currentColor: Color(0xFF733821), xHeight: 6.0);
 
       final svgPictureWidget = SvgPicture.string('''
 <svg viewBox="0 0 10 10">

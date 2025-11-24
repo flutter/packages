@@ -310,13 +310,12 @@ void main() {
   group('clientAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test(
       'passes expected values to addScopes if interaction is allowed',
@@ -352,8 +351,7 @@ void main() {
         final VerificationResult verification = verify(
           mockApi.addScopes(captureAny, _testUser.id),
         );
-        final passedScopes =
-            verification.captured[0] as List<String>;
+        final passedScopes = verification.captured[0] as List<String>;
         expect(passedScopes, scopes);
       },
     );
@@ -765,13 +763,12 @@ void main() {
   group('serverAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test(
       'passes expected values to addScopes if interaction is allowed',
@@ -807,8 +804,7 @@ void main() {
         final VerificationResult verification = verify(
           mockApi.addScopes(captureAny, _testUser.id),
         );
-        final passedScopes =
-            verification.captured[0] as List<String>;
+        final passedScopes = verification.captured[0] as List<String>;
         expect(passedScopes, scopes);
       },
     );

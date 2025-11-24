@@ -63,8 +63,7 @@ class DartOptions {
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   static DartOptions fromMap(Map<String, Object> map) {
-    final copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return DartOptions(
       copyrightHeader: copyrightHeader?.cast<String>(),
       sourceOutPath: map['sourceOutPath'] as String?,
@@ -270,8 +269,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       for (final NamedType field in getFieldsInSerializationOrder(
         classDefinition,
       )) {
-        final required =
-            !field.type.isNullable && field.defaultValue == null
+        final required = !field.type.isNullable && field.defaultValue == null
             ? 'required '
             : '';
         final defaultValueString = field.defaultValue == null
@@ -1387,9 +1385,7 @@ if (${varNamePrefix}replyList == null) {
         'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
-        final channelSuffix = addSuffixVariable
-            ? r'$messageChannelSuffix'
-            : '';
+        final channelSuffix = addSuffixVariable ? r'$messageChannelSuffix' : '';
         indent.writeln("'$channelName$channelSuffix', $pigeonChannelCodec,");
         indent.writeln('binaryMessenger: binaryMessenger);');
       });
@@ -1408,8 +1404,7 @@ if (${varNamePrefix}replyList == null) {
         indent.addScoped('{', '});', () {
           final String returnTypeString = addGenericTypesNullable(returnType);
           final isAsync = isAsynchronous;
-          const emptyReturnStatement =
-              'return wrapResponse(empty: true);';
+          const emptyReturnStatement = 'return wrapResponse(empty: true);';
           String call;
           if (parameters.isEmpty) {
             call = 'api.$name()';
@@ -1557,9 +1552,7 @@ String _getMethodParameterSignature(
 
     final String type = addGenericTypesNullable(p.type);
 
-    final defaultValue = p.defaultValue == null
-        ? ''
-        : ' = ${p.defaultValue}';
+    final defaultValue = p.defaultValue == null ? '' : ' = ${p.defaultValue}';
     return '$required$type ${p.name}$defaultValue';
   }
 
@@ -1579,9 +1572,7 @@ String _getMethodParameterSignature(
   }
   final trailingComma =
       optionalPositionalParams.isNotEmpty || namedParams.isNotEmpty ? ',' : '';
-  final baseParams = signature.isNotEmpty
-      ? '$signature$trailingComma '
-      : '';
+  final baseParams = signature.isNotEmpty ? '$signature$trailingComma ' : '';
   if (optionalPositionalParams.isNotEmpty) {
     final trailingComma =
         requiredPositionalParams.length + optionalPositionalParams.length > 2

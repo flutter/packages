@@ -23,8 +23,7 @@ void main() {
 
   test('Can decode a message without a stroke and vertices', () {
     final buffer = VectorGraphicsBuffer();
-    final listener =
-        FlutterVectorGraphicsListener();
+    final listener = FlutterVectorGraphicsListener();
     final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
     codec.writeDrawVertices(
       buffer,
@@ -40,8 +39,7 @@ void main() {
 
   test('Can decode a message with a fill and path', () {
     final buffer = VectorGraphicsBuffer();
-    final listener =
-        FlutterVectorGraphicsListener();
+    final listener = FlutterVectorGraphicsListener();
     final int paintId = codec.writeFill(buffer, 23, 0);
     final int pathId = codec.writePath(
       buffer,
@@ -61,8 +59,7 @@ void main() {
   });
 
   test('Asserts if toPicture is called more than once', () {
-    final listener =
-        FlutterVectorGraphicsListener();
+    final listener = FlutterVectorGraphicsListener();
     listener.toPicture();
 
     expect(listener.toPicture, throwsAssertionError);
@@ -214,8 +211,7 @@ void main() {
 
     expect(find.byType(SizedBox), findsNWidgets(2));
 
-    final sizedBox =
-        find.byType(SizedBox).evaluate().last.widget as SizedBox;
+    final sizedBox = find.byType(SizedBox).evaluate().last.widget as SizedBox;
 
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 200);
@@ -631,10 +627,7 @@ void main() {
       'foo': Uint8List(0).buffer.asByteData(),
       'packages/packageName/foo': Uint8List(1).buffer.asByteData(),
     });
-    final loader = AssetBytesLoader(
-      'foo',
-      assetBundle: bundle,
-    );
+    final loader = AssetBytesLoader('foo', assetBundle: bundle);
     final packageLoader = AssetBytesLoader(
       'foo',
       assetBundle: bundle,

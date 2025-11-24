@@ -79,9 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
       await _disposeVideoController();
-      final controller = VideoPlayerController.file(
-        File(file.path),
-      );
+      final controller = VideoPlayerController.file(File(file.path));
       _controller = controller;
       await controller.setVolume(1.0);
       await controller.initialize();

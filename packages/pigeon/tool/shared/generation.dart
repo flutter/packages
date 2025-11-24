@@ -54,9 +54,7 @@ String _snakeToPascalCase(String snake) {
 // TODO(stuartmorgan): Remove the need for this when addressing
 // https://github.com/flutter/flutter/issues/115168.
 String _javaFilenameForName(String inputName) {
-  const specialCases = <String, String>{
-    'message': 'MessagePigeon',
-  };
+  const specialCases = <String, String>{'message': 'MessagePigeon'};
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
 
@@ -259,15 +257,14 @@ Future<int> runPigeon({
   // parse results in advance when overflow is included to avoid exposing as public option
   final ParseResults parseResults = Pigeon().parseFile(input);
   if (injectOverflowTypes) {
-    final addedEnums = List<Enum>.generate(
-      totalCustomCodecKeysAllowed - 1,
-      (final int tag) {
-        return Enum(
-          name: 'FillerEnum$tag',
-          members: <EnumMember>[EnumMember(name: 'FillerMember$tag')],
-        );
-      },
-    );
+    final addedEnums = List<Enum>.generate(totalCustomCodecKeysAllowed - 1, (
+      final int tag,
+    ) {
+      return Enum(
+        name: 'FillerEnum$tag',
+        members: <EnumMember>[EnumMember(name: 'FillerMember$tag')],
+      );
+    });
     addedEnums.addAll(parseResults.root.enums);
     parseResults.root.enums = addedEnums;
   }

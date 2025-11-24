@@ -45,9 +45,7 @@ void main() {
   });
 
   group('$MethodChannelUrlLauncher', () {
-    const channel = MethodChannel(
-      'plugins.flutter.io/url_launcher',
-    );
+    const channel = MethodChannel('plugins.flutter.io/url_launcher');
     final log = <MethodCall>[];
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall methodCall) async {

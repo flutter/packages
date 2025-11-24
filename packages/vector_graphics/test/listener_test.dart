@@ -74,8 +74,7 @@ void main() {
 
   test('Scales image correctly', () async {
     final factory = TestPictureFactory();
-    final listener =
-        FlutterVectorGraphicsListener(pictureFactory: factory);
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onImage(0, 0, base64.decode(bluePngPixel));
     await listener.waitForImageDecode();
     listener.onDrawImage(0, 10, 10, 30, 30, null);
@@ -91,8 +90,7 @@ void main() {
 
   test('Pattern start clips the new canvas', () async {
     final factory = TestPictureFactory();
-    final listener =
-        FlutterVectorGraphicsListener(pictureFactory: factory);
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onPatternStart(0, 0, 0, 100, 100, Matrix4.identity().storage);
     final Invocation clipRect = factory.fakeCanvases.last.invocations.single;
     expect(clipRect.isMethod, true);
@@ -105,8 +103,7 @@ void main() {
 
   test('Text position is respected', () async {
     final factory = TestPictureFactory();
-    final listener =
-        FlutterVectorGraphicsListener(pictureFactory: factory);
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onPaintObject(
       color: const ui.Color(0xff000000).toARGB32(),
       strokeCap: null,
@@ -138,8 +135,7 @@ void main() {
 
   test('should assert when imageId is invalid', () async {
     final factory = TestPictureFactory();
-    final listener =
-        FlutterVectorGraphicsListener(pictureFactory: factory);
+    final listener = FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onImage(0, 0, base64.decode(bluePngPixel));
     await listener.waitForImageDecode();
     expect(

@@ -32,8 +32,7 @@ void main() {
     test('init', () async {
       final mockAdsManager = MockIMAAdsManager();
 
-      final mockAdsRenderingSettings =
-          MockIMAAdsRenderingSettings();
+      final mockAdsRenderingSettings = MockIMAAdsRenderingSettings();
 
       final adsManager = IOSAdsManager(mockAdsManager);
 

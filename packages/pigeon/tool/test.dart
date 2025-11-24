@@ -103,19 +103,13 @@ ${parser.usage}''');
       iOSSwiftUnitTests,
       iOSSwiftIntegrationTests,
     ];
-    const linuxTests = <String>[
-      linuxUnitTests,
-      linuxIntegrationTests,
-    ];
+    const linuxTests = <String>[linuxUnitTests, linuxIntegrationTests];
     const macOSTests = <String>[
       macOSObjCIntegrationTests,
       macOSSwiftUnitTests,
       macOSSwiftIntegrationTests,
     ];
-    const windowsTests = <String>[
-      windowsUnitTests,
-      windowsIntegrationTests,
-    ];
+    const windowsTests = <String>[windowsUnitTests, windowsIntegrationTests];
 
     if (Platform.isMacOS) {
       testsToRun = <String>[

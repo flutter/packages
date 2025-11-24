@@ -303,8 +303,7 @@ Future<int> _runIOSObjCIntegrationTests({bool ciMode = false}) async {
     return _noDeviceAvailableExitCode;
   }
 
-  const examplePath =
-      './$_alternateLanguageTestPluginRelativePath/example';
+  const examplePath = './$_alternateLanguageTestPluginRelativePath/example';
   return runFlutterCommand(examplePath, 'test', <String>[
     _integrationTestFileRelativePath,
     '-d',
@@ -313,8 +312,7 @@ Future<int> _runIOSObjCIntegrationTests({bool ciMode = false}) async {
 }
 
 Future<int> _runMacOSObjCIntegrationTests({bool ciMode = false}) async {
-  const examplePath =
-      './$_alternateLanguageTestPluginRelativePath/example';
+  const examplePath = './$_alternateLanguageTestPluginRelativePath/example';
   return runFlutterCommand(examplePath, 'test', <String>[
     _integrationTestFileRelativePath,
     '-d',
@@ -412,8 +410,7 @@ Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
   }
 
   const buildDirBase = '$examplePath/build/linux';
-  const buildRelativeBinaryPath =
-      'debug/plugins/test_plugin/test_plugin_test';
+  const buildRelativeBinaryPath = 'debug/plugins/test_plugin/test_plugin_test';
   const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
   const x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
   final testBinary = File(arm64Path).existsSync() ? arm64Path : x64Path;

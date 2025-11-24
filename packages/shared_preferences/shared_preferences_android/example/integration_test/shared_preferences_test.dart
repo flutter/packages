@@ -998,8 +998,7 @@ void main() {
             useDataStore: useDataStore,
             fileName: 'notDefault',
           );
-          final preferences =
-              getPreferences() as SharedPreferencesAsyncAndroid;
+          final preferences = getPreferences() as SharedPreferencesAsyncAndroid;
           await clearPreferences(preferences, options);
           final SharedPreferencesPigeonOptions pigeonOptions = preferences
               .convertOptionsToPigeonOptions(options);
@@ -1026,8 +1025,7 @@ void main() {
             useDataStore: useDataStore,
             fileName: 'notDefault',
           );
-          final preferences =
-              getPreferences() as SharedPreferencesAsyncAndroid;
+          final preferences = getPreferences() as SharedPreferencesAsyncAndroid;
           await clearPreferences(preferences, options);
           await Future.wait(<Future<void>>[
             preferences.setString(stringKey, testString, options),
@@ -1057,8 +1055,7 @@ void main() {
             useDataStore: useDataStore,
             fileName: 'notDefault',
           );
-          final preferences =
-              getPreferences() as SharedPreferencesAsyncAndroid;
+          final preferences = getPreferences() as SharedPreferencesAsyncAndroid;
           await clearPreferences(preferences, options);
           await Future.wait(<Future<void>>[
             preferences.setString(stringKey, testString, options),

@@ -14,8 +14,7 @@ void main() {
     testWidgets('returns [true] when MaterialApp is present', (
       WidgetTester tester,
     ) async {
-      final key =
-          GlobalKey<_DummyStatefulWidgetState>();
+      final key = GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(MaterialApp(home: DummyStatefulWidget(key: key)));
       final bool isMaterial = isMaterialApp(key.currentContext! as Element);
       expect(isMaterial, true);
@@ -24,8 +23,7 @@ void main() {
     testWidgets('returns [false] when CupertinoApp is present', (
       WidgetTester tester,
     ) async {
-      final key =
-          GlobalKey<_DummyStatefulWidgetState>();
+      final key = GlobalKey<_DummyStatefulWidgetState>();
       await tester.pumpWidget(
         CupertinoApp(home: DummyStatefulWidget(key: key)),
       );

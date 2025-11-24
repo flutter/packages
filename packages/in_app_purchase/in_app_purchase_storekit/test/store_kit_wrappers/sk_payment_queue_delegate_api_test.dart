@@ -68,8 +68,7 @@ void main() {
     'handleObserverCallbacks should call SKTransactionObserverWrapper.restoreCompletedTransactionsFailed',
     () async {
       final queue = SKPaymentQueueWrapper();
-      final testObserver =
-          TestTransactionObserverWrapper();
+      final testObserver = TestTransactionObserverWrapper();
       queue.setTransactionObserver(testObserver);
 
       final arguments = <dynamic, dynamic>{

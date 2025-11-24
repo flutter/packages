@@ -94,8 +94,7 @@ void main() {
 
   test('return null to nonnull', () async {
     final BinaryMessenger mockMessenger = MockBinaryMessenger();
-    const channel =
-        'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt';
+    const channel = 'dev.flutter.pigeon.pigeon_integration_tests.Api.anInt';
     when(mockMessenger.send(channel, any)).thenAnswer((
       Invocation realInvocation,
     ) async {
@@ -117,9 +116,7 @@ void main() {
     ) async {
       return Api.pigeonChannelCodec.encodeMessage(<Object?>[123]);
     });
-    final api = NullableArgHostApi(
-      binaryMessenger: mockMessenger,
-    );
+    final api = NullableArgHostApi(binaryMessenger: mockMessenger);
     expect(await api.doit(null), 123);
   });
 
@@ -134,15 +131,12 @@ void main() {
         <String?>['123'],
       ]);
     });
-    final api = NullableCollectionArgHostApi(
-      binaryMessenger: mockMessenger,
-    );
+    final api = NullableCollectionArgHostApi(binaryMessenger: mockMessenger);
     expect(await api.doit(null), <String?>['123']);
   });
 
   test('receive null parameters', () {
-    final mockFlutterApi =
-        MockNullableArgFlutterApi();
+    final mockFlutterApi = MockNullableArgFlutterApi();
     when(mockFlutterApi.doit(null)).thenReturn(14);
 
     NullableArgFlutterApi.setUp(mockFlutterApi);
@@ -168,8 +162,7 @@ void main() {
   });
 
   test('receive null collection parameters', () {
-    final mockFlutterApi =
-        MockNullableCollectionArgFlutterApi();
+    final mockFlutterApi = MockNullableCollectionArgFlutterApi();
     when(mockFlutterApi.doit(null)).thenReturn(<String?>['14']);
 
     NullableCollectionArgFlutterApi.setUp(mockFlutterApi);
@@ -210,9 +203,7 @@ void main() {
         null,
       ]);
     });
-    final api = NullableReturnHostApi(
-      binaryMessenger: mockMessenger,
-    );
+    final api = NullableReturnHostApi(binaryMessenger: mockMessenger);
     expect(await api.doit(), null);
   });
 
@@ -227,15 +218,12 @@ void main() {
         <Object?>[null],
       );
     });
-    final api = NullableCollectionReturnHostApi(
-      binaryMessenger: mockMessenger,
-    );
+    final api = NullableCollectionReturnHostApi(binaryMessenger: mockMessenger);
     expect(await api.doit(), null);
   });
 
   test('send null return', () async {
-    final mockFlutterApi =
-        MockNullableReturnFlutterApi();
+    final mockFlutterApi = MockNullableReturnFlutterApi();
     when(mockFlutterApi.doit()).thenReturn(null);
 
     NullableReturnFlutterApi.setUp(mockFlutterApi);
@@ -258,14 +246,12 @@ void main() {
   });
 
   test('send null collection return', () async {
-    final mockFlutterApi =
-        MockNullableCollectionReturnFlutterApi();
+    final mockFlutterApi = MockNullableCollectionReturnFlutterApi();
     when(mockFlutterApi.doit()).thenReturn(null);
 
     NullableCollectionReturnFlutterApi.setUp(mockFlutterApi);
 
-    final resultCompleter =
-        Completer<List<String?>?>();
+    final resultCompleter = Completer<List<String?>?>();
     unawaited(
       binding.defaultBinaryMessenger.handlePlatformMessage(
         'dev.flutter.pigeon.pigeon_integration_tests.NullableCollectionReturnFlutterApi.doit',

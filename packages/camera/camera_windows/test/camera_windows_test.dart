@@ -52,8 +52,7 @@ void main() {
           mockApi.create(captureAny, captureAny),
         );
         expect(verification.captured[0], cameraName);
-        final settings =
-            verification.captured[1] as PlatformMediaSettings?;
+        final settings = verification.captured[1] as PlatformMediaSettings?;
         expect(settings, isNotNull);
         expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
         expect(cameraId, 1);
@@ -64,8 +63,7 @@ void main() {
         () {
           // Arrange
           const exceptionCode = 'TESTING_ERROR_CODE';
-          const exceptionMessage =
-              'Mock error message used during testing.';
+          const exceptionMessage = 'Mock error message used during testing.';
           final mockApi = MockCameraApi();
           when(mockApi.create(any, any)).thenAnswer((_) async {
             throw PlatformException(
@@ -103,8 +101,7 @@ void main() {
         () {
           // Arrange
           const exceptionCode = 'TESTING_ERROR_CODE';
-          const exceptionMessage =
-              'Mock error message used during testing.';
+          const exceptionMessage = 'Mock error message used during testing.';
           final mockApi = MockCameraApi();
           when(mockApi.initialize(any)).thenAnswer((_) async {
             throw PlatformException(
@@ -232,8 +229,7 @@ void main() {
         final Stream<CameraClosingEvent> eventStream = plugin.onCameraClosing(
           cameraId,
         );
-        final streamQueue =
-            StreamQueue<CameraClosingEvent>(eventStream);
+        final streamQueue = StreamQueue<CameraClosingEvent>(eventStream);
 
         // Emit test events
         final event = CameraClosingEvent(cameraId);
@@ -255,8 +251,7 @@ void main() {
         final Stream<CameraErrorEvent> errorStream = plugin.onCameraError(
           cameraId,
         );
-        final streamQueue =
-            StreamQueue<CameraErrorEvent>(errorStream);
+        final streamQueue = StreamQueue<CameraErrorEvent>(errorStream);
 
         // Emit test events
         const errorMessage = 'Error Description';

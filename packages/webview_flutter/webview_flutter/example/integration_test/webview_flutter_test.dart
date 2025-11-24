@@ -109,9 +109,7 @@ Future<void> main() async {
   });
 
   testWidgets('loadRequest with headers', (WidgetTester tester) async {
-    final headers = <String, String>{
-      'test_header': 'flutter_test_header',
-    };
+    final headers = <String, String>{'test_header': 'flutter_test_header'};
 
     final pageLoads = StreamController<String>();
 
@@ -232,8 +230,7 @@ Future<void> main() async {
           params = const PlatformWebViewControllerCreationParams();
         }
 
-        var controller =
-            WebViewController.fromPlatformCreationParams(params);
+        var controller = WebViewController.fromPlatformCreationParams(params);
         await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
         await controller.setNavigationDelegate(
@@ -298,8 +295,7 @@ Future<void> main() async {
         } else {
           params = const PlatformWebViewControllerCreationParams();
         }
-        final controller =
-            WebViewController.fromPlatformCreationParams(params);
+        final controller = WebViewController.fromPlatformCreationParams(params);
         await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
         await controller.setNavigationDelegate(
@@ -392,8 +388,7 @@ Future<void> main() async {
           params = const PlatformWebViewControllerCreationParams();
         }
 
-        var controller =
-            WebViewController.fromPlatformCreationParams(params);
+        var controller = WebViewController.fromPlatformCreationParams(params);
         await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
         await controller.setNavigationDelegate(
           NavigationDelegate(onPageFinished: (_) => pageLoaded.complete()),
@@ -607,8 +602,7 @@ Future<void> main() async {
     });
 
     testWidgets('onWebResourceError', (WidgetTester tester) async {
-      final errorCompleter =
-          Completer<WebResourceError>();
+      final errorCompleter = Completer<WebResourceError>();
 
       final controller = WebViewController();
       await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
@@ -630,8 +624,7 @@ Future<void> main() async {
     testWidgets('onWebResourceError is not called with valid url', (
       WidgetTester tester,
     ) async {
-      final errorCompleter =
-          Completer<WebResourceError>();
+      final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
 
       final controller = WebViewController();
@@ -693,8 +686,7 @@ Future<void> main() async {
     });
 
     testWidgets('onHttpError', (WidgetTester tester) async {
-      final errorCompleter =
-          Completer<HttpResponseError>();
+      final errorCompleter = Completer<HttpResponseError>();
 
       final controller = WebViewController();
       unawaited(controller.setJavaScriptMode(JavaScriptMode.unrestricted));
@@ -727,8 +719,7 @@ Future<void> main() async {
         </html>
       ''';
 
-      final errorCompleter =
-          Completer<HttpResponseError>();
+      final errorCompleter = Completer<HttpResponseError>();
       final pageFinishCompleter = Completer<void>();
 
       final controller = WebViewController();

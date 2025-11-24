@@ -20,8 +20,7 @@ void main() {
   });
 
   testWidgets('Can animate camera with duration', (WidgetTester tester) async {
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,

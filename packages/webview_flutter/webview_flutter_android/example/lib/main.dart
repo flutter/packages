@@ -288,10 +288,8 @@ Page resource error:
   }
 
   Future<void> openDialog(HttpAuthRequest httpRequest) async {
-    final usernameTextController =
-        TextEditingController();
-    final passwordTextController =
-        TextEditingController();
+    final usernameTextController = TextEditingController();
+    final passwordTextController = TextEditingController();
 
     return showDialog(
       context: context,
@@ -581,8 +579,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onVideoExample(BuildContext context) {
-    final androidController =
-        webViewController as AndroidWebViewController;
+    final androidController = webViewController as AndroidWebViewController;
     // #docregion fullscreen_example
     androidController.setCustomWidgetCallbacks(
       onShowCustomWidget: (Widget widget, OnHideCustomWidgetCallback callback) {

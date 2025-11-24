@@ -393,11 +393,10 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             return !_javaScriptChannels.containsKey(channelName);
           })
           .map<Future<void>>((String channelName) {
-            final javaScriptChannel =
-                WebViewAndroidJavaScriptChannel(
-                  channelName: channelName,
-                  javascriptChannelRegistry: javascriptChannelRegistry,
-                );
+            final javaScriptChannel = WebViewAndroidJavaScriptChannel(
+              channelName: channelName,
+              javascriptChannelRegistry: javascriptChannelRegistry,
+            );
             _javaScriptChannels[channelName] = javaScriptChannel;
             return webView.addJavaScriptChannel(javaScriptChannel);
           }),

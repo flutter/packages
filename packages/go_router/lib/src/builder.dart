@@ -202,10 +202,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   void _updatePages(BuildContext context) {
     assert(_pages == null);
     final pages = <Page<Object?>>[];
-    final pageToRouteMatchBase =
-        <Page<Object?>, RouteMatchBase>{};
-    final registry =
-        <Page<Object?>, GoRouterState>{};
+    final pageToRouteMatchBase = <Page<Object?>, RouteMatchBase>{};
+    final registry = <Page<Object?>, GoRouterState>{};
     if (widget.matchList.isError) {
       pages.add(_buildErrorPage(context, widget.matchList));
     } else {

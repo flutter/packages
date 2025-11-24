@@ -197,12 +197,11 @@ class SharedPreferencesWithCache {
     required SharedPreferencesWithCacheOptions cacheOptions,
     Map<String, Object?>? cache,
   }) async {
-    final preferences =
-        SharedPreferencesWithCache._create(
-          sharedPreferencesOptions: sharedPreferencesOptions,
-          cacheOptions: cacheOptions,
-          cache: cache,
-        );
+    final preferences = SharedPreferencesWithCache._create(
+      sharedPreferencesOptions: sharedPreferencesOptions,
+      cacheOptions: cacheOptions,
+      cache: cache,
+    );
 
     await preferences.reloadCache();
 

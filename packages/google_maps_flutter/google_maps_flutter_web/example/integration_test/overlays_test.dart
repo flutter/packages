@@ -145,8 +145,7 @@ void main() {
     });
 
     testWidgets('clearTileCache', (WidgetTester tester) async {
-      final controllerCompleter =
-          Completer<GoogleMapController>();
+      final controllerCompleter = Completer<GoogleMapController>();
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

@@ -90,9 +90,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       (WidgetTester _) async {
         final api = HostIntegrationCoreApi();
 
-        final listTypes = AllNullableTypes(
-          list: <String?>['String', null],
-        );
+        final listTypes = AllNullableTypes(list: <String?>['String', null]);
 
         final AllNullableTypes? echoNullFilledClass = await api
             .echoAllNullableTypes(listTypes);
@@ -136,8 +134,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       (WidgetTester _) async {
         final api = HostIntegrationCoreApi();
 
-        final allTypesNull =
-            AllNullableTypesWithoutRecursion();
+        final allTypesNull = AllNullableTypesWithoutRecursion();
 
         final AllNullableTypesWithoutRecursion? echoNullFilledClass = await api
             .echoAllNullableTypesWithoutRecursion(allTypesNull);
@@ -150,8 +147,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       (WidgetTester _) async {
         final api = HostIntegrationCoreApi();
 
-        final listTypes =
-            AllNullableTypesWithoutRecursion(list: <String?>['String', null]);
+        final listTypes = AllNullableTypesWithoutRecursion(
+          list: <String?>['String', null],
+        );
 
         final AllNullableTypesWithoutRecursion? echoNullFilledClass = await api
             .echoAllNullableTypesWithoutRecursion(listTypes);
@@ -165,10 +163,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       (WidgetTester _) async {
         final api = HostIntegrationCoreApi();
 
-        final listTypes =
-            AllNullableTypesWithoutRecursion(
-              map: <String?, String?>{'String': 'string', 'null': null},
-            );
+        final listTypes = AllNullableTypesWithoutRecursion(
+          map: <String?, String?>{'String': 'string', 'null': null},
+        );
 
         final AllNullableTypesWithoutRecursion? echoNullFilledClass = await api
             .echoAllNullableTypesWithoutRecursion(listTypes);
@@ -376,18 +373,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       WidgetTester _,
     ) async {
       final api = HostIntegrationCoreApi();
-      final data = <int>[
-        102,
-        111,
-        114,
-        116,
-        121,
-        45,
-        116,
-        119,
-        111,
-        0,
-      ];
+      final data = <int>[102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
       final sentUint8List = Uint8List.fromList(data);
       final Uint8List receivedUint8List = await api.echoUint8List(
         sentUint8List,
@@ -718,18 +704,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       WidgetTester _,
     ) async {
       final api = HostIntegrationCoreApi();
-      final data = <int>[
-        102,
-        111,
-        114,
-        116,
-        121,
-        45,
-        116,
-        119,
-        111,
-        0,
-      ];
+      final data = <int>[102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
       final sentUint8List = Uint8List.fromList(data);
       final Uint8List? receivedUint8List = await api.echoNullableUint8List(
         sentUint8List,
@@ -1150,8 +1125,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       (WidgetTester _) async {
         final api = HostIntegrationCoreApi();
 
-        final allTypesNull =
-            AllNullableTypesWithoutRecursion();
+        final allTypesNull = AllNullableTypesWithoutRecursion();
 
         final AllNullableTypesWithoutRecursion? echoNullFilledClass = await api
             .echoAsyncNullableAllNullableTypesWithoutRecursion(allTypesNull);
@@ -1215,18 +1189,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       WidgetTester _,
     ) async {
       final api = HostIntegrationCoreApi();
-      final data = <int>[
-        102,
-        111,
-        114,
-        116,
-        121,
-        45,
-        116,
-        119,
-        111,
-        0,
-      ];
+      final data = <int>[102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
       final sentUint8List = Uint8List.fromList(data);
       final Uint8List receivedUint8List = await api.echoAsyncUint8List(
         sentUint8List,
@@ -1415,18 +1378,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       'nullable Uint8List async serialize and deserialize correctly',
       (WidgetTester _) async {
         final api = HostIntegrationCoreApi();
-        final data = <int>[
-          102,
-          111,
-          114,
-          116,
-          121,
-          45,
-          116,
-          119,
-          111,
-          0,
-        ];
+        final data = <int>[102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
         final sentUint8List = Uint8List.fromList(data);
         final Uint8List? receivedUint8List = await api
             .echoAsyncNullableUint8List(sentUint8List);
@@ -1689,12 +1641,8 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echo string succeeds with suffix with multiple instances', (
       _,
     ) async {
-      final apiWithSuffixOne = HostSmallApi(
-        messageChannelSuffix: 'suffixOne',
-      );
-      final apiWithSuffixTwo = HostSmallApi(
-        messageChannelSuffix: 'suffixTwo',
-      );
+      final apiWithSuffixOne = HostSmallApi(messageChannelSuffix: 'suffixOne');
+      final apiWithSuffixTwo = HostSmallApi(messageChannelSuffix: 'suffixTwo');
       const sentString = "I'm a computer";
       final String echoStringOne = await apiWithSuffixOne.echo(sentString);
       final String echoStringTwo = await apiWithSuffixTwo.echo(sentString);
@@ -1890,18 +1838,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     ) async {
       final api = HostIntegrationCoreApi();
 
-      final data = <int>[
-        102,
-        111,
-        114,
-        116,
-        121,
-        45,
-        116,
-        119,
-        111,
-        0,
-      ];
+      final data = <int>[102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
       final sentObject = Uint8List.fromList(data);
       final Uint8List echoObject = await api.callFlutterEchoUint8List(
         sentObject,
@@ -2186,18 +2123,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       WidgetTester _,
     ) async {
       final api = HostIntegrationCoreApi();
-      final data = <int>[
-        102,
-        111,
-        114,
-        116,
-        121,
-        45,
-        116,
-        119,
-        111,
-        0,
-      ];
+      final data = <int>[102, 111, 114, 116, 121, 45, 116, 119, 111, 0];
       final sentObject = Uint8List.fromList(data);
       final Uint8List? echoObject = await api.callFlutterEchoNullableUint8List(
         sentObject,
@@ -2739,9 +2665,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     testWidgets('echoAsyncMap', (_) async {
       final ProxyApiTestClass api = _createGenericProxyApiTestClass();
 
-      final value = <String?, Object?>{
-        'something': ProxyApiSuperClass(),
-      };
+      final value = <String?, Object?>{'something': ProxyApiSuperClass()};
       expect(await api.echoAsyncMap(value), value);
     });
 
@@ -2987,10 +2911,9 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
             aMap,
       );
 
-      final value =
-          <String?, ProxyApiTestClass?>{
-            'a String': _createGenericProxyApiTestClass(),
-          };
+      final value = <String?, ProxyApiTestClass?>{
+        'a String': _createGenericProxyApiTestClass(),
+      };
       expect(await api.callFlutterEchoProxyApiMap(value), value);
     });
 

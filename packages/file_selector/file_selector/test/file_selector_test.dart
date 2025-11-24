@@ -306,10 +306,7 @@ void main() {
   });
 
   group('getDirectoryPaths', () {
-    const expectedDirectoryPaths = <String>[
-      '/example/path',
-      '/example/2/path',
-    ];
+    const expectedDirectoryPaths = <String>['/example/path', '/example/2/path'];
 
     test('works', () async {
       fakePlatformImplementation

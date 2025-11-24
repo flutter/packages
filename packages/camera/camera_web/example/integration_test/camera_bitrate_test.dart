@@ -58,8 +58,7 @@ void main() {
       final mockMediaDevices = MockMediaDevices();
 
       final window = createJSInteropWrapper(mockWindow) as Window;
-      final navigator =
-          createJSInteropWrapper(mockNavigator) as Navigator;
+      final navigator = createJSInteropWrapper(mockNavigator) as Navigator;
       final mediaDevices =
           createJSInteropWrapper(mockMediaDevices) as MediaDevices;
 

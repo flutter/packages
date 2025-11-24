@@ -67,25 +67,23 @@ void main() {
   group('legacy constructors', () {
     test('$CameraImage can be created', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      final cameraImage = CameraImage.fromPlatformData(
-        <dynamic, dynamic>{
-          'format': 35,
-          'height': 1,
-          'width': 4,
-          'lensAperture': 1.8,
-          'sensorExposureTime': 9991324,
-          'sensorSensitivity': 92.0,
-          'planes': <dynamic>[
-            <dynamic, dynamic>{
-              'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-              'bytesPerPixel': 1,
-              'bytesPerRow': 4,
-              'height': 1,
-              'width': 4,
-            },
-          ],
-        },
-      );
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': 35,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4,
+          },
+        ],
+      });
       expect(cameraImage.height, 1);
       expect(cameraImage.width, 4);
       expect(cameraImage.format.group, ImageFormatGroup.yuv420);
@@ -95,123 +93,113 @@ void main() {
     test('$CameraImage has ImageFormatGroup.yuv420 for iOS', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      final cameraImage = CameraImage.fromPlatformData(
-        <dynamic, dynamic>{
-          'format': 875704438,
-          'height': 1,
-          'width': 4,
-          'lensAperture': 1.8,
-          'sensorExposureTime': 9991324,
-          'sensorSensitivity': 92.0,
-          'planes': <dynamic>[
-            <dynamic, dynamic>{
-              'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-              'bytesPerPixel': 1,
-              'bytesPerRow': 4,
-              'height': 1,
-              'width': 4,
-            },
-          ],
-        },
-      );
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': 875704438,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4,
+          },
+        ],
+      });
       expect(cameraImage.format.group, ImageFormatGroup.yuv420);
     });
 
     test('$CameraImage has ImageFormatGroup.yuv420 for Android', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-      final cameraImage = CameraImage.fromPlatformData(
-        <dynamic, dynamic>{
-          'format': 35,
-          'height': 1,
-          'width': 4,
-          'lensAperture': 1.8,
-          'sensorExposureTime': 9991324,
-          'sensorSensitivity': 92.0,
-          'planes': <dynamic>[
-            <dynamic, dynamic>{
-              'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-              'bytesPerPixel': 1,
-              'bytesPerRow': 4,
-              'height': 1,
-              'width': 4,
-            },
-          ],
-        },
-      );
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': 35,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4,
+          },
+        ],
+      });
       expect(cameraImage.format.group, ImageFormatGroup.yuv420);
     });
 
     test('$CameraImage has ImageFormatGroup.nv21 for android', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-      final cameraImage = CameraImage.fromPlatformData(
-        <dynamic, dynamic>{
-          'format': 17,
-          'height': 1,
-          'width': 4,
-          'lensAperture': 1.8,
-          'sensorExposureTime': 9991324,
-          'sensorSensitivity': 92.0,
-          'planes': <dynamic>[
-            <dynamic, dynamic>{
-              'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-              'bytesPerPixel': 1,
-              'bytesPerRow': 4,
-              'height': 1,
-              'width': 4,
-            },
-          ],
-        },
-      );
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': 17,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4,
+          },
+        ],
+      });
       expect(cameraImage.format.group, ImageFormatGroup.nv21);
     });
 
     test('$CameraImage has ImageFormatGroup.bgra8888 for iOS', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      final cameraImage = CameraImage.fromPlatformData(
-        <dynamic, dynamic>{
-          'format': 1111970369,
-          'height': 1,
-          'width': 4,
-          'lensAperture': 1.8,
-          'sensorExposureTime': 9991324,
-          'sensorSensitivity': 92.0,
-          'planes': <dynamic>[
-            <dynamic, dynamic>{
-              'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-              'bytesPerPixel': 1,
-              'bytesPerRow': 4,
-              'height': 1,
-              'width': 4,
-            },
-          ],
-        },
-      );
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': 1111970369,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4,
+          },
+        ],
+      });
       expect(cameraImage.format.group, ImageFormatGroup.bgra8888);
     });
 
     test('$CameraImage has ImageFormatGroup.unknown', () {
-      final cameraImage = CameraImage.fromPlatformData(
-        <dynamic, dynamic>{
-          'format': null,
-          'height': 1,
-          'width': 4,
-          'lensAperture': 1.8,
-          'sensorExposureTime': 9991324,
-          'sensorSensitivity': 92.0,
-          'planes': <dynamic>[
-            <dynamic, dynamic>{
-              'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
-              'bytesPerPixel': 1,
-              'bytesPerRow': 4,
-              'height': 1,
-              'width': 4,
-            },
-          ],
-        },
-      );
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
+        'format': null,
+        'height': 1,
+        'width': 4,
+        'lensAperture': 1.8,
+        'sensorExposureTime': 9991324,
+        'sensorSensitivity': 92.0,
+        'planes': <dynamic>[
+          <dynamic, dynamic>{
+            'bytes': Uint8List.fromList(<int>[1, 2, 3, 4]),
+            'bytesPerPixel': 1,
+            'bytesPerRow': 4,
+            'height': 1,
+            'width': 4,
+          },
+        ],
+      });
       expect(cameraImage.format.group, ImageFormatGroup.unknown);
     });
   });

@@ -119,10 +119,9 @@ Future<void> main() async {
                             )?
                             observeValue,
                           }) {
-                            final platformWebView =
-                                PlatformWebView(
-                                  initialConfiguration: initialConfiguration,
-                                );
+                            final platformWebView = PlatformWebView(
+                              initialConfiguration: initialConfiguration,
+                            );
                             finalizer.attach(
                               platformWebView.nativeWebView,
                               webViewToken,
@@ -214,9 +213,7 @@ Future<void> main() async {
   });
 
   testWidgets('loadRequest with headers', (WidgetTester tester) async {
-    final headers = <String, String>{
-      'test_header': 'flutter_test_header',
-    };
+    final headers = <String, String>{'test_header': 'flutter_test_header'};
 
     final pageLoads = StreamController<String>();
 
@@ -980,8 +977,7 @@ Future<void> main() async {
     });
 
     testWidgets('onWebResourceError', (WidgetTester tester) async {
-      final errorCompleter =
-          Completer<WebResourceError>();
+      final errorCompleter = Completer<WebResourceError>();
 
       final controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
@@ -1021,8 +1017,7 @@ Future<void> main() async {
     testWidgets('onWebResourceError is not called with valid url', (
       WidgetTester tester,
     ) async {
-      final errorCompleter =
-          Completer<WebResourceError>();
+      final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
 
       final controller = PlatformWebViewController(
@@ -1081,8 +1076,7 @@ Future<void> main() async {
         const Utf8Encoder().convert(iframeTest),
       );
 
-      final errorCompleter =
-          Completer<WebResourceError>();
+      final errorCompleter = Completer<WebResourceError>();
       final pageFinishCompleter = Completer<void>();
 
       final controller = PlatformWebViewController(
@@ -1124,8 +1118,7 @@ Future<void> main() async {
     });
 
     testWidgets('onHttpError', (WidgetTester tester) async {
-      final errorCompleter =
-          Completer<HttpResponseError>();
+      final errorCompleter = Completer<HttpResponseError>();
 
       final controller = PlatformWebViewController(
         const PlatformWebViewControllerCreationParams(),
@@ -1173,8 +1166,7 @@ Future<void> main() async {
         </html>
       ''';
 
-      final errorCompleter =
-          Completer<HttpResponseError>();
+      final errorCompleter = Completer<HttpResponseError>();
       final pageFinishCompleter = Completer<void>();
 
       final controller = PlatformWebViewController(
@@ -1400,10 +1392,9 @@ Future<void> main() async {
       const PlatformWebViewControllerCreationParams(),
     );
 
-    final navigationDelegate =
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        );
+    final navigationDelegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
     await navigationDelegate.setOnHttpAuthRequest(
       (HttpAuthRequest request) => authRequested.complete(),
     );
@@ -1438,10 +1429,9 @@ Future<void> main() async {
       const PlatformWebViewControllerCreationParams(),
     );
 
-    final navigationDelegate =
-        PlatformNavigationDelegate(
-          const PlatformNavigationDelegateCreationParams(),
-        );
+    final navigationDelegate = PlatformNavigationDelegate(
+      const PlatformNavigationDelegateCreationParams(),
+    );
     await navigationDelegate.setOnPageFinished((_) => pageFinished.complete());
     await navigationDelegate.setOnHttpAuthRequest(
       (HttpAuthRequest request) => request.onProceed(

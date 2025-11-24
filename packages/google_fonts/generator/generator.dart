@@ -112,9 +112,7 @@ Future<void> _tryUrl(http.Client client, Uri url, Font font) async {
   try {
     final http.Response fileContents = await client.get(url);
     final int actualFileLength = fileContents.bodyBytes.length;
-    final actualFileHash = sha256
-        .convert(fileContents.bodyBytes)
-        .toString();
+    final actualFileHash = sha256.convert(fileContents.bodyBytes).toString();
     if (font.file.fileSize != actualFileLength ||
         _hashToString(font.file.hash) != actualFileHash) {
       throw Exception('Font from $url did not match length of or checksum.');
@@ -240,8 +238,7 @@ void _generateDartCode(Directory fontDirectory) {
   }
 
   // Part font methods by first letter.
-  final methodsByLetter =
-      <String, List<Map<String, dynamic>>>{};
+  final methodsByLetter = <String, List<Map<String, dynamic>>>{};
   final allParts = <Map<String, dynamic>>[];
 
   for (final map in methods) {

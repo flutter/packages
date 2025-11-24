@@ -120,8 +120,7 @@ void main() {
     });
 
     test('passes billingChoiceMode userChoiceBilling when set', () async {
-      final completer =
-          Completer<UserChoiceDetailsWrapper>();
+      final completer = Completer<UserChoiceDetailsWrapper>();
       billingClient = BillingClient(
         (PurchasesResultWrapper _) {},
         (UserChoiceDetailsWrapper details) => completer.complete(details),
@@ -278,8 +277,7 @@ void main() {
       final VerificationResult result = verify(
         mockApi.launchBillingFlow(captureAny),
       );
-      final params =
-          result.captured.single as PlatformBillingFlowParams;
+      final params = result.captured.single as PlatformBillingFlowParams;
       expect(params.product, equals(productDetails.productId));
       expect(params.accountId, equals(accountId));
       expect(params.obfuscatedProfileId, equals(profileId));
@@ -343,8 +341,7 @@ void main() {
         final VerificationResult result = verify(
           mockApi.launchBillingFlow(captureAny),
         );
-        final params =
-            result.captured.single as PlatformBillingFlowParams;
+        final params = result.captured.single as PlatformBillingFlowParams;
         expect(params.product, equals(productDetails.productId));
         expect(params.accountId, equals(accountId));
         expect(params.oldProduct, equals(dummyOldPurchase.products.first));
@@ -385,8 +382,7 @@ void main() {
         final VerificationResult result = verify(
           mockApi.launchBillingFlow(captureAny),
         );
-        final params =
-            result.captured.single as PlatformBillingFlowParams;
+        final params = result.captured.single as PlatformBillingFlowParams;
         expect(params.product, equals(productDetails.productId));
         expect(params.accountId, equals(accountId));
         expect(params.oldProduct, equals(dummyOldPurchase.products.first));
@@ -430,8 +426,7 @@ void main() {
         final VerificationResult result = verify(
           mockApi.launchBillingFlow(captureAny),
         );
-        final params =
-            result.captured.single as PlatformBillingFlowParams;
+        final params = result.captured.single as PlatformBillingFlowParams;
         expect(params.product, equals(productDetails.productId));
         expect(params.accountId, equals(accountId));
         expect(params.oldProduct, equals(dummyOldPurchase.products.first));
@@ -465,8 +460,7 @@ void main() {
       final VerificationResult result = verify(
         mockApi.launchBillingFlow(captureAny),
       );
-      final params =
-          result.captured.single as PlatformBillingFlowParams;
+      final params = result.captured.single as PlatformBillingFlowParams;
       expect(params.product, equals(productDetails.productId));
       expect(params.accountId, isNull);
     });
@@ -475,9 +469,7 @@ void main() {
   group('queryPurchases', () {
     test('serializes and deserializes data', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
-      final expectedList = <PurchaseWrapper>[
-        dummyPurchase,
-      ];
+      final expectedList = <PurchaseWrapper>[dummyPurchase];
       const debugMessage = 'dummy message';
       const expectedBillingResult = BillingResultWrapper(
         responseCode: expectedCode,
@@ -658,12 +650,11 @@ void main() {
 
   group('createAlternativeBillingOnlyReportingDetails', () {
     test('returns object', () async {
-      const expected =
-          AlternativeBillingOnlyReportingDetailsWrapper(
-            responseCode: BillingResponse.ok,
-            debugMessage: 'debug',
-            externalTransactionToken: 'abc123youandme',
-          );
+      const expected = AlternativeBillingOnlyReportingDetailsWrapper(
+        responseCode: BillingResponse.ok,
+        debugMessage: 'debug',
+        externalTransactionToken: 'abc123youandme',
+      );
       when(
         mockApi.createAlternativeBillingOnlyReportingDetailsAsync(),
       ).thenAnswer(

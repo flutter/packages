@@ -591,9 +591,7 @@ class ShellRouteContext {
     bool notifyRootObserver,
     String? restorationScopeId,
   ) {
-    final effectiveObservers = <NavigatorObserver>[
-      ...?observers,
-    ];
+    final effectiveObservers = <NavigatorObserver>[...?observers];
 
     if (notifyRootObserver) {
       final List<NavigatorObserver>? rootObservers = GoRouter.maybeOf(
@@ -1276,8 +1274,7 @@ class StatefulNavigationShell extends StatefulWidget {
   // TODO(chunhtai): figure out a way to avoid putting navigation API in widget
   // class.
   void goBranch(int index, {bool initialLocation = false}) {
-    final route =
-        shellRouteContext.route as StatefulShellRoute;
+    final route = shellRouteContext.route as StatefulShellRoute;
     final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
     if (shellState != null) {
@@ -1301,8 +1298,7 @@ class StatefulNavigationShell extends StatefulWidget {
   /// [StatefulShellBranch.initialLocation], if specified, or the location of the
   /// [StatefulShellBranch.defaultRoute].
   String _effectiveInitialBranchLocation(int index) {
-    final route =
-        shellRouteContext.route as StatefulShellRoute;
+    final route = shellRouteContext.route as StatefulShellRoute;
     final StatefulShellBranch branch = route.branches[index];
     final String? initialLocation = branch.initialLocation;
     if (initialLocation != null) {
@@ -1450,8 +1446,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     final hasExistingNavigator = branchState.navigator != null;
 
     /// Only update the Navigator of the route match list has changed
-    final locationChanged =
-        previousBranchLocation != currentBranchLocation;
+    final locationChanged = previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
         context,

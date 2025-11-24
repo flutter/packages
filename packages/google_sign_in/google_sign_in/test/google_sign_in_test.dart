@@ -99,8 +99,7 @@ void main() {
       final GoogleSignInAuthenticationEvent event = await eventFuture;
 
       expect(event, isA<GoogleSignInAuthenticationEventSignIn>());
-      final signIn =
-          event as GoogleSignInAuthenticationEventSignIn;
+      final signIn = event as GoogleSignInAuthenticationEventSignIn;
       expect(signIn.user.id, defaultUser.id);
       expect(signIn.user.authentication.idToken, idToken);
     });
@@ -177,8 +176,7 @@ void main() {
       final GoogleSignInAuthenticationEvent event = await eventFuture;
 
       expect(event, isA<GoogleSignInAuthenticationEventSignIn>());
-      final signIn =
-          event as GoogleSignInAuthenticationEventSignIn;
+      final signIn = event as GoogleSignInAuthenticationEventSignIn;
       expect(signIn.user.id, defaultUser.id);
       expect(signIn.user.authentication.idToken, idToken);
     });
@@ -452,8 +450,7 @@ void main() {
       final VerificationResult verification = verify(
         mockPlatform.authenticate(captureAny),
       );
-      final params =
-          verification.captured[0] as AuthenticateParameters;
+      final params = verification.captured[0] as AuthenticateParameters;
       expect(params.scopeHint, scopes);
     });
 
@@ -773,8 +770,7 @@ void main() {
       final VerificationResult verification = verify(
         mockPlatform.clearAuthorizationToken(captureAny),
       );
-      final params =
-          verification.captured[0] as ClearAuthorizationTokenParams;
+      final params = verification.captured[0] as ClearAuthorizationTokenParams;
       expect(params.accessToken, token);
     });
   });

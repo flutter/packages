@@ -64,9 +64,7 @@ class _CaptionRange {
   // For example:
   // 00:01:54,724 --> 00:01:56,760
   static _CaptionRange fromSubRipString(String line) {
-    final format = RegExp(
-      _subRipTimeStamp + _subRipArrow + _subRipTimeStamp,
-    );
+    final format = RegExp(_subRipTimeStamp + _subRipArrow + _subRipTimeStamp);
 
     if (!format.hasMatch(line)) {
       return _CaptionRange(Duration.zero, Duration.zero);

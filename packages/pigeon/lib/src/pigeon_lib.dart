@@ -450,23 +450,18 @@ class Pigeon {
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
-    final includedPaths = <String>[
-      path.absolute(path.normalize(inputPath)),
-    ];
+    final includedPaths = <String>[path.absolute(path.normalize(inputPath))];
     final collection = AnalysisContextCollection(
       includedPaths: includedPaths,
       sdkPath: sdkPath,
     );
 
     final compilationErrors = <Error>[];
-    final rootBuilder = RootBuilder(
-      File(inputPath).readAsStringSync(),
-    );
+    final rootBuilder = RootBuilder(File(inputPath).readAsStringSync());
     for (final AnalysisContext context in collection.contexts) {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
-        final result =
-            session.getParsedUnit(path) as ParsedUnitResult;
+        final result = session.getParsedUnit(path) as ParsedUnitResult;
         if (result.diagnostics.isEmpty) {
           final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);

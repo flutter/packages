@@ -189,9 +189,7 @@ void main() {
         instanceManager: instanceManager ?? TestInstanceManager(),
       );
 
-      final controller = WebKitWebViewController(
-        controllerCreationParams,
-      );
+      final controller = WebKitWebViewController(controllerCreationParams);
 
       when(
         nonNullMockWebView.scrollView,
@@ -228,8 +226,7 @@ void main() {
 
     group('WebKitWebViewControllerCreationParams', () {
       test('allowsInlineMediaPlayback', () {
-        final mockConfiguration =
-            MockWKWebViewConfiguration();
+        final mockConfiguration = MockWKWebViewConfiguration();
 
         WebKitWebViewControllerCreationParams(
           webKitProxy: WebKitProxy(
@@ -243,8 +240,7 @@ void main() {
       });
 
       test('limitsNavigationsToAppBoundDomains', () {
-        final mockConfiguration =
-            MockWKWebViewConfiguration();
+        final mockConfiguration = MockWKWebViewConfiguration();
 
         WebKitWebViewControllerCreationParams(
           webKitProxy: WebKitProxy(
@@ -262,8 +258,7 @@ void main() {
       test(
         'limitsNavigationsToAppBoundDomains is not called if it uses default value (false)',
         () {
-          final mockConfiguration =
-              MockWKWebViewConfiguration();
+          final mockConfiguration = MockWKWebViewConfiguration();
 
           WebKitWebViewControllerCreationParams(
             webKitProxy: WebKitProxy(
@@ -281,8 +276,7 @@ void main() {
       );
 
       test('mediaTypesRequiringUserAction', () {
-        final mockConfiguration =
-            MockWKWebViewConfiguration();
+        final mockConfiguration = MockWKWebViewConfiguration();
 
         WebKitWebViewControllerCreationParams(
           webKitProxy: WebKitProxy(
@@ -306,8 +300,7 @@ void main() {
       test(
         'mediaTypesRequiringUserAction defaults to include audio and video',
         () {
-          final mockConfiguration =
-              MockWKWebViewConfiguration();
+          final mockConfiguration = MockWKWebViewConfiguration();
 
           WebKitWebViewControllerCreationParams(
             webKitProxy: WebKitProxy(
@@ -329,8 +322,7 @@ void main() {
       test(
         'mediaTypesRequiringUserAction sets value to none if set is empty',
         () {
-          final mockConfiguration =
-              MockWKWebViewConfiguration();
+          final mockConfiguration = MockWKWebViewConfiguration();
 
           WebKitWebViewControllerCreationParams(
             webKitProxy: WebKitProxy(
@@ -798,8 +790,7 @@ void main() {
     });
 
     test('disable zoom', () async {
-      final mockUserContentController =
-          MockWKUserContentController();
+      final mockUserContentController = MockWKUserContentController();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockUserContentController: mockUserContentController,
@@ -860,8 +851,7 @@ void main() {
     });
 
     test('enable JavaScript', () async {
-      final mockWebpagePreferences =
-          MockWKWebpagePreferences();
+      final mockWebpagePreferences = MockWKWebpagePreferences();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockWebpagePreferences: mockWebpagePreferences,
@@ -873,8 +863,7 @@ void main() {
     });
 
     test('disable JavaScript', () async {
-      final mockWebpagePreferences =
-          MockWKWebpagePreferences();
+      final mockWebpagePreferences = MockWKWebpagePreferences();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockWebpagePreferences: mockWebpagePreferences,
@@ -889,8 +878,7 @@ void main() {
       'enable JavaScript calls WKPreferences.setJavaScriptEnabled for lower versions',
       () async {
         final mockPreferences = MockWKPreferences();
-        final mockWebpagePreferences =
-            MockWKWebpagePreferences();
+        final mockWebpagePreferences = MockWKWebpagePreferences();
         when(
           mockWebpagePreferences.setAllowsContentJavaScript(any),
         ).thenThrow(PlatformException(code: 'PigeonUnsupportedOperationError'));
@@ -907,8 +895,7 @@ void main() {
     );
 
     test('clearCache', () {
-      final mockWebsiteDataStore =
-          MockWKWebsiteDataStore();
+      final mockWebsiteDataStore = MockWKWebsiteDataStore();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockWebsiteDataStore: mockWebsiteDataStore,
@@ -925,8 +912,7 @@ void main() {
     });
 
     test('clearLocalStorage', () {
-      final mockWebsiteDataStore =
-          MockWKWebsiteDataStore();
+      final mockWebsiteDataStore = MockWKWebsiteDataStore();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockWebsiteDataStore: mockWebsiteDataStore,
@@ -958,15 +944,13 @@ void main() {
             },
       );
 
-      final javaScriptChannelParams =
-          WebKitJavaScriptChannelParams(
-            name: 'name',
-            onMessageReceived: (JavaScriptMessage message) {},
-            webKitProxy: webKitProxy,
-          );
+      final javaScriptChannelParams = WebKitJavaScriptChannelParams(
+        name: 'name',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
 
-      final mockUserContentController =
-          MockWKUserContentController();
+      final mockUserContentController = MockWKUserContentController();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockUserContentController: mockUserContentController,
@@ -1006,19 +990,17 @@ void main() {
               );
             },
       );
-      final mockUserContentController =
-          MockWKUserContentController();
+      final mockUserContentController = MockWKUserContentController();
       final WebKitWebViewController controller = createControllerWithMocks(
         mockUserContentController: mockUserContentController,
       );
 
       const nonUniqueName = 'name';
-      final javaScriptChannelParams =
-          WebKitJavaScriptChannelParams(
-            name: nonUniqueName,
-            onMessageReceived: (JavaScriptMessage message) {},
-            webKitProxy: webKitProxy,
-          );
+      final javaScriptChannelParams = WebKitJavaScriptChannelParams(
+        name: nonUniqueName,
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
       await controller.addJavaScriptChannel(javaScriptChannelParams);
 
       expect(
@@ -1050,15 +1032,13 @@ void main() {
             },
       );
 
-      final javaScriptChannelParams =
-          WebKitJavaScriptChannelParams(
-            name: 'name',
-            onMessageReceived: (JavaScriptMessage message) {},
-            webKitProxy: webKitProxy,
-          );
+      final javaScriptChannelParams = WebKitJavaScriptChannelParams(
+        name: 'name',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
 
-      final mockUserContentController =
-          MockWKUserContentController();
+      final mockUserContentController = MockWKUserContentController();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockUserContentController: mockUserContentController,
@@ -1093,22 +1073,19 @@ void main() {
             },
       );
 
-      final javaScriptChannelParams1 =
-          WebKitJavaScriptChannelParams(
-            name: 'name1',
-            onMessageReceived: (JavaScriptMessage message) {},
-            webKitProxy: webKitProxy,
-          );
+      final javaScriptChannelParams1 = WebKitJavaScriptChannelParams(
+        name: 'name1',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
 
-      final javaScriptChannelParams2 =
-          WebKitJavaScriptChannelParams(
-            name: 'name2',
-            onMessageReceived: (JavaScriptMessage message) {},
-            webKitProxy: webKitProxy,
-          );
+      final javaScriptChannelParams2 = WebKitJavaScriptChannelParams(
+        name: 'name2',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
 
-      final mockUserContentController =
-          MockWKUserContentController();
+      final mockUserContentController = MockWKUserContentController();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockUserContentController: mockUserContentController,
@@ -1163,15 +1140,13 @@ void main() {
             },
       );
 
-      final javaScriptChannelParams =
-          WebKitJavaScriptChannelParams(
-            name: 'name',
-            onMessageReceived: (JavaScriptMessage message) {},
-            webKitProxy: webKitProxy,
-          );
+      final javaScriptChannelParams = WebKitJavaScriptChannelParams(
+        name: 'name',
+        onMessageReceived: (JavaScriptMessage message) {},
+        webKitProxy: webKitProxy,
+      );
 
-      final mockUserContentController =
-          MockWKUserContentController();
+      final mockUserContentController = MockWKUserContentController();
 
       final WebKitWebViewController controller = createControllerWithMocks(
         mockUserContentController: mockUserContentController,
@@ -1221,15 +1196,14 @@ void main() {
         createMockWebView: (_, {dynamic observeValue}) => mockWebView,
       );
 
-      final navigationDelegate =
-          WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(
-              webKitProxy: WebKitProxy(
-                newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                newWKUIDelegate: CapturingUIDelegate.new,
-              ),
-            ),
-          );
+      final navigationDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            newWKUIDelegate: CapturingUIDelegate.new,
+          ),
+        ),
+      );
 
       controller.setPlatformNavigationDelegate(navigationDelegate);
 
@@ -1276,14 +1250,13 @@ void main() {
         ),
       );
 
-      final navigationDelegate =
-          WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(
-              webKitProxy: WebKitProxy(
-                newWKNavigationDelegate: CapturingNavigationDelegate.new,
-              ),
-            ),
-          );
+      final navigationDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
 
       late final int callbackProgress;
       await navigationDelegate.setOnProgress(
@@ -1369,14 +1342,13 @@ void main() {
               },
         );
 
-        final navigationDelegate =
-            WebKitNavigationDelegate(
-              const WebKitNavigationDelegateCreationParams(
-                webKitProxy: WebKitProxy(
-                  newWKNavigationDelegate: CapturingNavigationDelegate.new,
-                ),
-              ),
-            );
+        final navigationDelegate = WebKitNavigationDelegate(
+          const WebKitNavigationDelegateCreationParams(
+            webKitProxy: WebKitProxy(
+              newWKNavigationDelegate: CapturingNavigationDelegate.new,
+            ),
+          ),
+        );
 
         // First value of onProgress does nothing.
         await navigationDelegate.setOnProgress((_) {});
@@ -1433,14 +1405,13 @@ void main() {
         ]),
       );
 
-      final navigationDelegate =
-          WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(
-              webKitProxy: WebKitProxy(
-                newWKNavigationDelegate: CapturingNavigationDelegate.new,
-              ),
-            ),
-          );
+      final navigationDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
 
       final urlChangeCompleter = Completer<UrlChange>();
       await navigationDelegate.setOnUrlChange(
@@ -1492,14 +1463,13 @@ void main() {
             },
       );
 
-      final navigationDelegate =
-          WebKitNavigationDelegate(
-            const WebKitNavigationDelegateCreationParams(
-              webKitProxy: WebKitProxy(
-                newWKNavigationDelegate: CapturingNavigationDelegate.new,
-              ),
-            ),
-          );
+      final navigationDelegate = WebKitNavigationDelegate(
+        const WebKitNavigationDelegateCreationParams(
+          webKitProxy: WebKitProxy(
+            newWKNavigationDelegate: CapturingNavigationDelegate.new,
+          ),
+        ),
+      );
 
       final urlChangeCompleter = Completer<UrlChange>();
       await navigationDelegate.setOnUrlChange(
@@ -1762,8 +1732,7 @@ void main() {
       test(
         'setConsoleLogCallback should inject the correct JavaScript',
         () async {
-          final mockUserContentController =
-              MockWKUserContentController();
+          final mockUserContentController = MockWKUserContentController();
           final WebKitWebViewController controller = createControllerWithMocks(
             mockUserContentController: mockUserContentController,
           );
@@ -1775,10 +1744,8 @@ void main() {
           final List<dynamic> capturedScripts = verify(
             mockUserContentController.addUserScript(captureAny),
           ).captured.toList();
-          final messageHandlerScript =
-              capturedScripts[0] as WKUserScript;
-          final overrideConsoleScript =
-              capturedScripts[1] as WKUserScript;
+          final messageHandlerScript = capturedScripts[0] as WKUserScript;
+          final overrideConsoleScript = capturedScripts[1] as WKUserScript;
 
           expect(messageHandlerScript.isForMainFrameOnly, isFalse);
           expect(
@@ -1848,14 +1815,12 @@ window.addEventListener("error", function(e) {
       );
 
       test('setConsoleLogCallback should parse levels correctly', () async {
-        final mockUserContentController =
-            MockWKUserContentController();
+        final mockUserContentController = MockWKUserContentController();
         final WebKitWebViewController controller = createControllerWithMocks(
           mockUserContentController: mockUserContentController,
         );
 
-        final logs =
-            <JavaScriptLogLevel, String>{};
+        final logs = <JavaScriptLogLevel, String>{};
         await controller.setOnConsoleMessage(
           (JavaScriptConsoleMessage message) =>
               logs[message.level] = message.message,
@@ -1979,8 +1944,7 @@ window.addEventListener("error", function(e) {
 
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      final changeCompleter =
-          Completer<ScrollPositionChange>();
+      final changeCompleter = Completer<ScrollPositionChange>();
       await controller.setOnScrollPositionChange((ScrollPositionChange change) {
         changeCompleter.complete(change);
       });

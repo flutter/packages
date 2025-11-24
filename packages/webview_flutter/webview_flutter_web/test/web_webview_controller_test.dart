@@ -28,8 +28,7 @@ void main() {
   group('WebWebViewController', () {
     group('WebWebViewControllerCreationParams', () {
       test('sets iFrame fields', () {
-        final params =
-            WebWebViewControllerCreationParams();
+        final params = WebWebViewControllerCreationParams();
 
         expect(params.iFrame.id, contains('webView'));
         expect(params.iFrame.style.width, '100%');
@@ -79,8 +78,7 @@ void main() {
       });
 
       test('skips XHR for simple GETs (no headers, no data)', () async {
-        final mockHttpRequestFactory =
-            MockHttpRequestFactory();
+        final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,
@@ -109,8 +107,7 @@ void main() {
       });
 
       test('makes request and loads response into iframe', () async {
-        final mockHttpRequestFactory =
-            MockHttpRequestFactory();
+        final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,
@@ -159,8 +156,7 @@ void main() {
       });
 
       test('parses content-type response header correctly', () async {
-        final mockHttpRequestFactory =
-            MockHttpRequestFactory();
+        final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,
@@ -202,8 +198,7 @@ void main() {
       });
 
       test('escapes "#" correctly', () async {
-        final mockHttpRequestFactory =
-            MockHttpRequestFactory();
+        final mockHttpRequestFactory = MockHttpRequestFactory();
         final controller = WebWebViewController(
           WebWebViewControllerCreationParams(
             httpRequestFactory: mockHttpRequestFactory,

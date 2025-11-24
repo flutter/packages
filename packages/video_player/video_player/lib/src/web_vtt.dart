@@ -96,9 +96,7 @@ class _CaptionRange {
   // For example:
   // 00:09.000 --> 00:11.000
   static _CaptionRange? fromWebVTTString(String line) {
-    final format = RegExp(
-      _webVTTTimeStamp + _webVTTArrow + _webVTTTimeStamp,
-    );
+    final format = RegExp(_webVTTTimeStamp + _webVTTArrow + _webVTTTimeStamp);
 
     if (!format.hasMatch(line)) {
       return null;

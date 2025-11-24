@@ -117,8 +117,7 @@ void main() {
 
   testWidgets('updateMinMaxZoomLevels', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     const initialZoomLevel = MinMaxZoomPreference(4, 8);
     const finalZoomLevel = MinMaxZoomPreference(6, 10);
@@ -374,8 +373,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 600));
 
-      final mapControllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final mapControllerCompleter = Completer<ExampleGoogleMapController>();
       final Key key = GlobalKey();
       await tester.pumpWidget(
         Directionality(
@@ -420,8 +418,7 @@ void main() {
         northeast: const LatLng(0, 0),
       );
 
-      final mapControllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final mapControllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -664,8 +661,7 @@ void main() {
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -694,8 +690,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -727,8 +722,7 @@ void main() {
 
   testWidgets('testSetMapStyle null string', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -753,8 +747,7 @@ void main() {
 
   testWidgets('testGetLatLng', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -794,8 +787,7 @@ void main() {
     'testGetZoomLevel',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -835,8 +827,7 @@ void main() {
     'testScreenCoordinate',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -874,8 +865,7 @@ void main() {
   );
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
     final map = ExampleGoogleMap(
       initialCameraPosition: _kInitialCameraPosition,
       onMapCreated: (ExampleGoogleMapController controller) async {
@@ -921,8 +911,7 @@ void main() {
     );
     final markers = <Marker>{marker};
 
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -969,12 +958,9 @@ void main() {
     const clusterManager = ClusterManager(
       clusterManagerId: ClusterManagerId('cluster_manager'),
     );
-    final clusterManagers = <ClusterManager>{
-      clusterManager,
-    };
+    final clusterManagers = <ClusterManager>{clusterManager};
 
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -1029,8 +1015,7 @@ void main() {
   testWidgets(
     'testTakeSnapshot',
     (WidgetTester tester) async {
-      final controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -1253,20 +1238,14 @@ void main() {
     final clusterManagers = <ClusterManager>{};
 
     for (var i = 0; i < clusterManagersAmount; i++) {
-      final clusterManagerId = ClusterManagerId(
-        'cluster_manager_$i',
-      );
-      final clusterManager = ClusterManager(
-        clusterManagerId: clusterManagerId,
-      );
+      final clusterManagerId = ClusterManagerId('cluster_manager_$i');
+      final clusterManager = ClusterManager(clusterManagerId: clusterManagerId);
       clusterManagers.add(clusterManager);
     }
 
     for (final cm in clusterManagers) {
       for (var i = 0; i < markersPerClusterManager; i++) {
-        final markerId = MarkerId(
-          '${cm.clusterManagerId.value}_marker_$i',
-        );
+        final markerId = MarkerId('${cm.clusterManagerId.value}_marker_$i');
         final marker = Marker(
           markerId: markerId,
           clusterManagerId: cm.clusterManagerId,
@@ -1279,8 +1258,7 @@ void main() {
       }
     }
 
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
@@ -1405,8 +1383,7 @@ void main() {
 
   testWidgets('getStyleError reports last error', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -1432,8 +1409,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -1550,8 +1526,7 @@ void main() {
         ),
       ),
     };
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -1576,11 +1551,8 @@ void main() {
     // ignore: deprecated_member_use
     final BitmapDescriptor icon = BitmapDescriptor.fromBytes(bytes);
 
-    final markers = <Marker>{
-      Marker(markerId: const MarkerId('1'), icon: icon),
-    };
-    final controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final markers = <Marker>{Marker(markerId: const MarkerId('1'), icon: icon)};
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -1862,8 +1834,7 @@ void main() {
     'testAnimateCameraWithoutDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 
@@ -1956,8 +1927,7 @@ void main() {
     'testAnimateCameraWithDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 

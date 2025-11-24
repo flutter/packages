@@ -80,14 +80,13 @@ Future<PictureInfo> decodeVectorGraphics(
 
     @pragma('vm:prefer-inline')
     Future<PictureInfo> process() {
-      final listener =
-          FlutterVectorGraphicsListener(
-            id: loader.hashCode,
-            locale: locale,
-            textDirection: textDirection,
-            clipViewbox: clipViewbox,
-            onError: onError,
-          );
+      final listener = FlutterVectorGraphicsListener(
+        id: loader.hashCode,
+        locale: locale,
+        textDirection: textDirection,
+        clipViewbox: clipViewbox,
+        onError: onError,
+      );
       DecodeResponse response = _codec.decode(data, listener);
       if (response.complete) {
         return SynchronousFuture<PictureInfo>(listener.toPicture());
@@ -498,16 +497,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     PictureRecorder? patternRecorder,
     Canvas canvas,
   ) {
-    final patternListener =
-        FlutterVectorGraphicsListener._(
-          0,
-          _pictureFactory,
-          patternRecorder!,
-          canvas,
-          _locale,
-          _textDirection,
-          _clipViewbox,
-        );
+    final patternListener = FlutterVectorGraphicsListener._(
+      0,
+      _pictureFactory,
+      patternRecorder!,
+      canvas,
+      _locale,
+      _textDirection,
+      _clipViewbox,
+    );
 
     patternListener._size = Size(
       currentPattern!._width,

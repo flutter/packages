@@ -22,14 +22,9 @@ void main() {
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};
-      final updates = TileOverlayUpdates.from(
-        previous,
-        current,
-      );
+      final updates = TileOverlayUpdates.from(previous, current);
 
-      final toRemove = <TileOverlayId>{
-        const TileOverlayId('id1'),
-      };
+      final toRemove = <TileOverlayId>{const TileOverlayId('id1')};
       expect(updates.tileOverlayIdsToRemove, toRemove);
 
       final toAdd = <TileOverlay>{to4};
@@ -50,10 +45,7 @@ void main() {
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};
-      final updates = TileOverlayUpdates.from(
-        previous,
-        current,
-      );
+      final updates = TileOverlayUpdates.from(previous, current);
 
       final Object json = updates.toJson();
       expect(json, <String, Object>{
@@ -80,18 +72,9 @@ void main() {
       final current1 = <TileOverlay>{to2, to3Changed, to4};
       final current2 = <TileOverlay>{to2, to3Changed, to4};
       final current3 = <TileOverlay>{to2, to4};
-      final updates1 = TileOverlayUpdates.from(
-        previous,
-        current1,
-      );
-      final updates2 = TileOverlayUpdates.from(
-        previous,
-        current2,
-      );
-      final updates3 = TileOverlayUpdates.from(
-        previous,
-        current3,
-      );
+      final updates1 = TileOverlayUpdates.from(previous, current1);
+      final updates2 = TileOverlayUpdates.from(previous, current2);
+      final updates3 = TileOverlayUpdates.from(previous, current3);
       expect(updates1, updates2);
       expect(updates1, isNot(updates3));
     });
@@ -107,10 +90,7 @@ void main() {
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};
-      final updates = TileOverlayUpdates.from(
-        previous,
-        current,
-      );
+      final updates = TileOverlayUpdates.from(previous, current);
       expect(
         updates.hashCode,
         Object.hash(
@@ -132,10 +112,7 @@ void main() {
       const to4 = TileOverlay(tileOverlayId: TileOverlayId('id4'));
       final previous = <TileOverlay>{to1, to2, to3};
       final current = <TileOverlay>{to2, to3Changed, to4};
-      final updates = TileOverlayUpdates.from(
-        previous,
-        current,
-      );
+      final updates = TileOverlayUpdates.from(previous, current);
       expect(
         updates.toString(),
         'TileOverlayUpdates(add: ${updates.tileOverlaysToAdd}, '

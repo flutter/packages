@@ -39,8 +39,7 @@ void main() {
   });
 
   test('Can be extended', () {
-    const params =
-        PlatformWebViewControllerCreationParams();
+    const params = PlatformWebViewControllerCreationParams();
     when(
       (WebViewPlatform.instance! as MockWebViewPlatform)
           .createPlatformWebViewController(any),
@@ -76,10 +75,9 @@ void main() {
   );
 
   test('loadFileWithParams redirects to loadFile with correct path', () async {
-    final controller =
-        LoadFileSpyPlatformWebViewController(
-          const PlatformWebViewControllerCreationParams(),
-        );
+    final controller = LoadFileSpyPlatformWebViewController(
+      const PlatformWebViewControllerCreationParams(),
+    );
 
     const testPath = 'file:///test/index.html';
     const params = LoadFileParams(absoluteFilePath: testPath);

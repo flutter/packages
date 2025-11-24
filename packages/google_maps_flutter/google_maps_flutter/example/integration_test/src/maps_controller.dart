@@ -26,8 +26,7 @@ void runTests() {
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 600));
 
-      final mapControllerCompleter =
-          Completer<GoogleMapController>();
+      final mapControllerCompleter = Completer<GoogleMapController>();
       final Key key = GlobalKey();
       await tester.pumpWidget(
         Directionality(
@@ -93,8 +92,7 @@ void runTests() {
         northeast: const LatLng(0, 0),
       );
 
-      final mapControllerCompleter =
-          Completer<GoogleMapController>();
+      final mapControllerCompleter = Completer<GoogleMapController>();
 
       await pumpMap(
         tester,
@@ -166,8 +164,7 @@ void runTests() {
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,
@@ -192,8 +189,7 @@ void runTests() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,
@@ -219,8 +215,7 @@ void runTests() {
 
   testWidgets('testSetMapStyle null string', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,
@@ -241,8 +236,7 @@ void runTests() {
 
   testWidgets('testGetLatLng', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,
@@ -278,8 +272,7 @@ void runTests() {
     'testGetZoomLevel',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<GoogleMapController>();
+      final controllerCompleter = Completer<GoogleMapController>();
 
       await pumpMap(
         tester,
@@ -315,8 +308,7 @@ void runTests() {
     'testScreenCoordinate',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<GoogleMapController>();
+      final controllerCompleter = Completer<GoogleMapController>();
 
       await pumpMap(
         tester,
@@ -351,8 +343,7 @@ void runTests() {
   );
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,
@@ -398,8 +389,7 @@ void runTests() {
     );
     final markers = <Marker>{marker};
 
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,
@@ -554,8 +544,7 @@ void runTests() {
   testWidgets(
     'testTakeSnapshot',
     (WidgetTester tester) async {
-      final controllerCompleter =
-          Completer<GoogleMapController>();
+      final controllerCompleter = Completer<GoogleMapController>();
 
       await pumpMap(
         tester,
@@ -601,8 +590,7 @@ void runTests() {
 
   testWidgets('getStyleError reports last error', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,

@@ -79,10 +79,7 @@ void main() {
 
   testWidgets('Updating a polyline', (WidgetTester tester) async {
     const p1 = Polyline(polylineId: PolylineId('polyline_1'));
-    const p2 = Polyline(
-      polylineId: PolylineId('polyline_1'),
-      geodesic: true,
-    );
+    const p2 = Polyline(polylineId: PolylineId('polyline_1'), geodesic: true);
 
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p2}));
@@ -97,10 +94,7 @@ void main() {
 
   testWidgets('Updating a polyline', (WidgetTester tester) async {
     const p1 = Polyline(polylineId: PolylineId('polyline_1'));
-    const p2 = Polyline(
-      polylineId: PolylineId('polyline_1'),
-      geodesic: true,
-    );
+    const p2 = Polyline(polylineId: PolylineId('polyline_1'), geodesic: true);
 
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1}));
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p2}));
@@ -216,14 +210,8 @@ void main() {
 
     const p1 = Polyline(polylineId: PolylineId('polyline_1'));
     const p2 = Polyline(polylineId: PolylineId('polyline_2'));
-    const p3 = Polyline(
-      polylineId: PolylineId('polyline_3'),
-      width: 1,
-    );
-    const p3updated = Polyline(
-      polylineId: PolylineId('polyline_3'),
-      width: 2,
-    );
+    const p3 = Polyline(polylineId: PolylineId('polyline_3'), width: 1);
+    const p3updated = Polyline(polylineId: PolylineId('polyline_3'), width: 2);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithPolylines(<Polyline>{p1, p2}));

@@ -60,9 +60,7 @@ void main() {
       gmaps.Marker? marker;
       gmaps.LatLng? position;
 
-      final markers = <Marker>{
-        const Marker(markerId: MarkerId('1')),
-      };
+      final markers = <Marker>{const Marker(markerId: MarkerId('1'))};
       await controller.addMarkers(markers);
 
       marker = controller.markers[const MarkerId('1')]?.marker;
@@ -537,9 +535,7 @@ void main() {
     ) async {
       const markerId = MarkerId('1');
 
-      final markers = <Marker>{
-        const Marker(markerId: markerId, zIndexInt: 4),
-      };
+      final markers = <Marker>{const Marker(markerId: markerId, zIndexInt: 4)};
 
       await controller.addMarkers(markers);
 

@@ -300,8 +300,7 @@ void main() {
     });
 
     test('non-web URL with default options', () async {
-      const emailLaunchUrlString =
-          'mailto:smith@example.com?subject=Hello';
+      const emailLaunchUrlString = 'mailto:smith@example.com?subject=Hello';
       mock
         ..setLaunchExpectations(
           url: emailLaunchUrlString,

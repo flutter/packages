@@ -135,8 +135,7 @@ class _WebViewExampleState extends State<WebViewExample> {
       params = const PlatformWebViewControllerCreationParams();
     }
 
-    final controller =
-        WebViewController.fromPlatformCreationParams(params);
+    final controller = WebViewController.fromPlatformCreationParams(params);
     // #enddocregion platform_features
 
     controller
@@ -238,10 +237,8 @@ Page resource error:
   }
 
   Future<void> openDialog(HttpAuthRequest httpRequest) async {
-    final usernameTextController =
-        TextEditingController();
-    final passwordTextController =
-        TextEditingController();
+    final usernameTextController = TextEditingController();
+    final passwordTextController = TextEditingController();
 
     return showDialog(
       context: context,

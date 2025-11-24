@@ -50,8 +50,7 @@ void main() {
         mockApi.create(captureAny, captureAny),
       );
       expect(verification.captured[0], cameraName);
-      final settings =
-          verification.captured[1] as PlatformMediaSettings?;
+      final settings = verification.captured[1] as PlatformMediaSettings?;
       expect(settings, isNotNull);
       expect(settings?.resolutionPreset, PlatformResolutionPreset.high);
       expect(cameraId, 1);
@@ -90,8 +89,7 @@ void main() {
           mockApi.create(captureAny, captureAny),
         );
         expect(verification.captured[0], cameraName);
-        final settings =
-            verification.captured[1] as PlatformMediaSettings?;
+        final settings = verification.captured[1] as PlatformMediaSettings?;
         expect(settings, isNotNull);
         expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
         expect(settings?.framesPerSecond, fps);
@@ -107,8 +105,7 @@ void main() {
       () {
         // Arrange
         const exceptionCode = 'TESTING_ERROR_CODE';
-        const exceptionMessage =
-            'Mock error message used during testing.';
+        const exceptionMessage = 'Mock error message used during testing.';
         final mockApi = MockCameraApi();
         when(mockApi.create(any, any)).thenAnswer((_) async {
           throw PlatformException(
@@ -146,8 +143,7 @@ void main() {
       () {
         // Arrange
         const exceptionCode = 'TESTING_ERROR_CODE';
-        const exceptionMessage =
-            'Mock error message used during testing.';
+        const exceptionMessage = 'Mock error message used during testing.';
         final mockApi = MockCameraApi();
         when(mockApi.initialize(any, any)).thenAnswer((_) async {
           throw PlatformException(
@@ -285,8 +281,7 @@ void main() {
       // Act
       final Stream<CameraInitializedEvent> eventStream = camera
           .onCameraInitialized(cameraId);
-      final streamQueue =
-          StreamQueue<CameraInitializedEvent>(eventStream);
+      final streamQueue = StreamQueue<CameraInitializedEvent>(eventStream);
 
       final previewSize = PlatformSize(width: 3840, height: 2160);
       // Emit test events
@@ -321,8 +316,7 @@ void main() {
       final Stream<CameraErrorEvent> errorStream = camera.onCameraError(
         cameraId,
       );
-      final streamQueue =
-          StreamQueue<CameraErrorEvent>(errorStream);
+      final streamQueue = StreamQueue<CameraErrorEvent>(errorStream);
 
       // Emit test events
       const errorMessage = 'Error Description';
@@ -344,13 +338,12 @@ void main() {
       // Act
       final Stream<DeviceOrientationChangedEvent> eventStream = camera
           .onDeviceOrientationChanged();
-      final streamQueue =
-          StreamQueue<DeviceOrientationChangedEvent>(eventStream);
+      final streamQueue = StreamQueue<DeviceOrientationChangedEvent>(
+        eventStream,
+      );
 
       // Emit test events
-      const event = DeviceOrientationChangedEvent(
-        DeviceOrientation.portraitUp,
-      );
+      const event = DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
       for (var i = 0; i < 3; i++) {
         camera.hostHandler.deviceOrientationChanged(
           PlatformDeviceOrientation.portraitUp,
@@ -402,19 +395,18 @@ void main() {
     test(
       'Should fetch CameraDescription instances for available cameras',
       () async {
-        final returnData =
-            <PlatformCameraDescription>[
-              PlatformCameraDescription(
-                name: 'Test 1',
-                lensDirection: PlatformCameraLensDirection.front,
-                lensType: PlatformCameraLensType.ultraWide,
-              ),
-              PlatformCameraDescription(
-                name: 'Test 2',
-                lensDirection: PlatformCameraLensDirection.back,
-                lensType: PlatformCameraLensType.telephoto,
-              ),
-            ];
+        final returnData = <PlatformCameraDescription>[
+          PlatformCameraDescription(
+            name: 'Test 1',
+            lensDirection: PlatformCameraLensDirection.front,
+            lensType: PlatformCameraLensType.ultraWide,
+          ),
+          PlatformCameraDescription(
+            name: 'Test 2',
+            lensDirection: PlatformCameraLensDirection.back,
+            lensType: PlatformCameraLensType.telephoto,
+          ),
+        ];
         when(mockApi.getAvailableCameras()).thenAnswer((_) async => returnData);
 
         final List<CameraDescription> cameras = await camera.availableCameras();
@@ -571,8 +563,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.setExposurePoint(captureAny),
       );
-      final passedPoint =
-          verification.captured[0] as PlatformPoint?;
+      final passedPoint = verification.captured[0] as PlatformPoint?;
       expect(passedPoint?.x, point.x);
       expect(passedPoint?.y, point.y);
     });
@@ -583,8 +574,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.setExposurePoint(captureAny),
       );
-      final passedPoint =
-          verification.captured[0] as PlatformPoint?;
+      final passedPoint = verification.captured[0] as PlatformPoint?;
       expect(passedPoint, null);
     });
 
@@ -648,8 +638,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.setFocusPoint(captureAny),
       );
-      final passedPoint =
-          verification.captured[0] as PlatformPoint?;
+      final passedPoint = verification.captured[0] as PlatformPoint?;
       expect(passedPoint?.x, point.x);
       expect(passedPoint?.y, point.y);
     });
@@ -660,8 +649,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.setFocusPoint(captureAny),
       );
-      final passedPoint =
-          verification.captured[0] as PlatformPoint?;
+      final passedPoint = verification.captured[0] as PlatformPoint?;
       expect(passedPoint, null);
     });
 

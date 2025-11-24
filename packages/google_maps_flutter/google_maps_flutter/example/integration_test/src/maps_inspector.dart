@@ -122,8 +122,7 @@ void runTests() {
     //
     // Thus we test iOS and Android a little differently here.
     final Key key = GlobalKey();
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     const initialZoomLevel = MinMaxZoomPreference(4, 8);
     const finalZoomLevel = MinMaxZoomPreference(6, 10);
@@ -571,20 +570,14 @@ void runTests() {
     final clusterManagers = <ClusterManager>{};
 
     for (var i = 0; i < clusterManagersAmount; i++) {
-      final clusterManagerId = ClusterManagerId(
-        'cluster_manager_$i',
-      );
-      final clusterManager = ClusterManager(
-        clusterManagerId: clusterManagerId,
-      );
+      final clusterManagerId = ClusterManagerId('cluster_manager_$i');
+      final clusterManager = ClusterManager(clusterManagerId: clusterManagerId);
       clusterManagers.add(clusterManager);
     }
 
     for (final cm in clusterManagers) {
       for (var i = 0; i < markersPerClusterManager; i++) {
-        final markerId = MarkerId(
-          '${cm.clusterManagerId.value}_marker_$i',
-        );
+        final markerId = MarkerId('${cm.clusterManagerId.value}_marker_$i');
         final marker = Marker(
           markerId: markerId,
           clusterManagerId: cm.clusterManagerId,
@@ -597,8 +590,7 @@ void runTests() {
       }
     }
 
-    final controllerCompleter =
-        Completer<GoogleMapController>();
+    final controllerCompleter = Completer<GoogleMapController>();
 
     await pumpMap(
       tester,
@@ -657,8 +649,7 @@ void runTests() {
     'testAnimateCameraWithoutDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<GoogleMapController>();
+      final controllerCompleter = Completer<GoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 
@@ -762,8 +753,7 @@ void runTests() {
     'testAnimateCameraWithDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final controllerCompleter =
-          Completer<GoogleMapController>();
+      final controllerCompleter = Completer<GoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 

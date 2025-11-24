@@ -60,9 +60,7 @@ void main() {
     });
 
     testWidgets('changeCircles', (WidgetTester tester) async {
-      final circles = <Circle>{
-        const Circle(circleId: CircleId('1')),
-      };
+      final circles = <Circle>{const Circle(circleId: CircleId('1'))};
       controller.addCircles(circles);
 
       expect(controller.circles[const CircleId('1')]?.circle?.visible, isTrue);
@@ -176,9 +174,7 @@ void main() {
     });
 
     testWidgets('changePolygons', (WidgetTester tester) async {
-      final polygons = <Polygon>{
-        const Polygon(polygonId: PolygonId('1')),
-      };
+      final polygons = <Polygon>{const Polygon(polygonId: PolygonId('1'))};
       controller.addPolygons(polygons);
 
       expect(
@@ -383,9 +379,7 @@ void main() {
     });
 
     testWidgets('changePolylines', (WidgetTester tester) async {
-      final polylines = <Polyline>{
-        const Polyline(polylineId: PolylineId('1')),
-      };
+      final polylines = <Polyline>{const Polyline(polylineId: PolylineId('1'))};
       controller.addPolylines(polylines);
 
       expect(controller.lines[const PolylineId('1')]?.line?.visible, isTrue);

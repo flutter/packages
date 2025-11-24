@@ -278,9 +278,7 @@ void main() {
 
     expect(controller, isNotNull);
 
-    final headers = <String, String>{
-      'CACHE-CONTROL': 'ABC',
-    };
+    final headers = <String, String>{'CACHE-CONTROL': 'ABC'};
     await controller!.loadUrl('https://flutter.io', headers: headers);
 
     verify(
@@ -1027,8 +1025,7 @@ void main() {
       final params = args[0] as CreationParams;
       expect(params.webSettings!.hasNavigationDelegate, true);
 
-      final handler =
-          args[1] as WebViewPlatformCallbacksHandler;
+      final handler = args[1] as WebViewPlatformCallbacksHandler;
 
       // The navigation delegate only allows navigation to https://flutter.dev
       // so we should still be in https://youtube.com.

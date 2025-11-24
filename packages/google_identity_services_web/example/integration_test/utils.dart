@@ -55,8 +55,7 @@ Matcher isAJs(String thing) => isA<JSAny?>().having(
 Future<void> installGisMock() {
   final completer = Completer<void>();
 
-  final script =
-      web.document.createElement('script') as web.HTMLScriptElement;
+  final script = web.document.createElement('script') as web.HTMLScriptElement;
   script.src = 'mock-gis.js';
   script.type = 'module';
   script.addEventListener(
@@ -72,8 +71,7 @@ Future<void> installGisMock() {
 
 /// Fakes authorization with the given scopes.
 Future<TokenResponse> fakeAuthZWithScopes(List<String> scopes) {
-  final controller =
-      StreamController<TokenResponse>();
+  final controller = StreamController<TokenResponse>();
   final TokenClient client = oauth2.initTokenClient(
     TokenClientConfig(
       client_id: 'for-tests',

@@ -61,9 +61,7 @@ void main() {
 
     test('should select key', () async {
       const keys = <String>['key1', 'key2'];
-      const keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(evalMock.fetchAllKeys()).thenAnswer(
         (_) async => (asyncKeys: keys, legacyKeys: const <String>[]),
       );
@@ -87,9 +85,7 @@ void main() {
 
     test('should select key for legacy api', () async {
       const keys = <String>['key1', 'key2'];
-      const keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(evalMock.fetchAllKeys()).thenAnswer(
         (_) async => (asyncKeys: const <String>[], legacyKeys: keys),
       );
@@ -153,9 +149,7 @@ void main() {
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
-      const keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(
         evalMock.fetchValue('key1', false),
       ).thenAnswer((_) async => keyValue);
@@ -173,9 +167,7 @@ void main() {
       when(
         evalMock.fetchAllKeys(),
       ).thenAnswer((_) async => (asyncKeys: asyncKeys, legacyKeys: legacyKeys));
-      const keyValue = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const keyValue = SharedPreferencesData.string(value: 'value');
       when(
         evalMock.fetchValue('key1', false),
       ).thenAnswer((_) async => keyValue);

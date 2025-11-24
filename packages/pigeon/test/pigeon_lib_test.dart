@@ -529,8 +529,7 @@ abstract class NestorApi {
       objcHeaderOut: '',
       objcSourceOut: '',
     );
-    final objcHeaderGeneratorAdapter =
-        ObjcGeneratorAdapter();
+    final objcHeaderGeneratorAdapter = ObjcGeneratorAdapter();
     final buffer = StringBuffer();
     objcHeaderGeneratorAdapter.generate(
       buffer,
@@ -548,8 +547,7 @@ abstract class NestorApi {
       objcHeaderOut: '',
       objcSourceOut: '',
     );
-    final objcSourceGeneratorAdapter =
-        ObjcGeneratorAdapter();
+    final objcSourceGeneratorAdapter = ObjcGeneratorAdapter();
     final buffer = StringBuffer();
     objcSourceGeneratorAdapter.generate(
       buffer,
@@ -1176,8 +1174,7 @@ abstract class Api {
       dartTestOut: 'stdout',
       dartOut: 'stdout',
     );
-    final dartTestGeneratorAdapter =
-        DartTestGeneratorAdapter();
+    final dartTestGeneratorAdapter = DartTestGeneratorAdapter();
     final buffer = StringBuffer();
     dartTestGeneratorAdapter.generate(
       buffer,
@@ -1458,9 +1455,7 @@ abstract class Api {
   test('generator validation', () async {
     final completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final generator = _ValidatorGeneratorAdapter(
-        stdout,
-      );
+      final generator = _ValidatorGeneratorAdapter(stdout);
       final int result = await Pigeon.run(
         <String>['--input', input.path],
         adapters: <GeneratorAdapter>[generator],
@@ -1475,9 +1470,7 @@ abstract class Api {
   test('generator validation skipped', () async {
     final completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final generator = _ValidatorGeneratorAdapter(
-        null,
-      );
+      final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.run(
         <String>['--input', input.path, '--dart_out', 'foo.dart'],
         adapters: <GeneratorAdapter>[generator],
@@ -1492,9 +1485,7 @@ abstract class Api {
   test('run with PigeonOptions', () async {
     final completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final generator = _ValidatorGeneratorAdapter(
-        null,
-      );
+      final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.runWithOptions(
         PigeonOptions(input: input.path, dartOut: 'foo.dart'),
         adapters: <GeneratorAdapter>[generator],

@@ -233,8 +233,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   Widget _buildPlatformView(int playerId) {
-    final creationParams =
-        PlatformVideoViewCreationParams(playerId: playerId);
+    final creationParams = PlatformVideoViewCreationParams(playerId: playerId);
 
     return IgnorePointer(
       // IgnorePointer so that GestureDetector can be used above the platform view.

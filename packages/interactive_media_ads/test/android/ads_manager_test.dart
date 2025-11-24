@@ -39,8 +39,7 @@ void main() {
       final mockAdsManager = MockAdsManager();
 
       final mockImaSdkFactory = MockImaSdkFactory();
-      final mockAdsRenderingSettings =
-          MockAdsRenderingSettings();
+      final mockAdsRenderingSettings = MockAdsRenderingSettings();
       when(mockImaSdkFactory.createAdsRenderingSettings()).thenAnswer(
         (_) => Future<ima.AdsRenderingSettings>.value(mockAdsRenderingSettings),
       );
@@ -137,10 +136,7 @@ void main() {
         },
       );
 
-      final adsManager = AndroidAdsManager(
-        mockAdsManager,
-        proxy: proxy,
-      );
+      final adsManager = AndroidAdsManager(mockAdsManager, proxy: proxy);
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
@@ -178,10 +174,7 @@ void main() {
             },
       );
 
-      final adsManager = AndroidAdsManager(
-        mockAdsManager,
-        proxy: proxy,
-      );
+      final adsManager = AndroidAdsManager(mockAdsManager, proxy: proxy);
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(

@@ -12,12 +12,7 @@ List<Node> parse(
   String? templateName,
   String delimiters,
 ) {
-  final parser = Parser(
-    source,
-    templateName,
-    delimiters,
-    lenient: lenient,
-  );
+  final parser = Parser(source, templateName, delimiters, lenient: lenient);
   return parser.parse();
 }
 
@@ -173,11 +168,7 @@ class Parser {
       children.add(TextNode(token.value, token.start, token.end));
     } else {
       final last = children.removeLast() as TextNode;
-      final node = TextNode(
-        last.text + token.value,
-        last.start,
-        token.end,
-      );
+      final node = TextNode(last.text + token.value, last.start, token.end);
       children.add(node);
     }
   }

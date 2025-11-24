@@ -42,8 +42,7 @@ BenchmarkResults computeDelta(
   BenchmarkResults baseline,
   BenchmarkResults test,
 ) {
-  final delta =
-      <String, List<BenchmarkScore>>{};
+  final delta = <String, List<BenchmarkScore>>{};
   for (final String benchmarkName in test.scores.keys) {
     final List<BenchmarkScore> testScores = test.scores[benchmarkName]!;
     final List<BenchmarkScore>? baselineScores = baseline.scores[benchmarkName];
@@ -76,8 +75,7 @@ extension _AnalysisExtension on BenchmarkResults {
     BenchmarkResults other, {
     bool throwExceptionOnMismatch = true,
   }) {
-    final sum =
-        <String, List<BenchmarkScore>>{};
+    final sum = <String, List<BenchmarkScore>>{};
     for (final String benchmark in scores.keys) {
       // Look up this benchmark in [other].
       final List<BenchmarkScore>? matchingBenchmark = other.scores[benchmark];

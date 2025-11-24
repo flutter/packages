@@ -106,10 +106,7 @@ void main() {
     });
 
     test('MaxSpanExtent', () {
-      const extent = MaxSpanExtent(
-        FixedSpanExtent(100),
-        RemainingSpanExtent(),
-      );
+      const extent = MaxSpanExtent(FixedSpanExtent(100), RemainingSpanExtent());
       expect(
         extent.calculateExtent(
           const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -125,10 +122,7 @@ void main() {
     });
 
     test('MinSpanExtent', () {
-      const extent = MinSpanExtent(
-        FixedSpanExtent(100),
-        RemainingSpanExtent(),
-      );
+      const extent = MinSpanExtent(FixedSpanExtent(100), RemainingSpanExtent());
       expect(
         extent.calculateExtent(
           const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),

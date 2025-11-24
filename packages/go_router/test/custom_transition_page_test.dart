@@ -31,9 +31,7 @@ void main() {
   testWidgets('NoTransitionPage does not apply any transition', (
     WidgetTester tester,
   ) async {
-    final showHomeValueNotifier = ValueNotifier<bool>(
-      false,
-    );
+    final showHomeValueNotifier = ValueNotifier<bool>(false);
     addTearDown(showHomeValueNotifier.dispose);
     await tester.pumpWidget(
       MaterialApp(
@@ -112,9 +110,7 @@ void main() {
     WidgetTester tester,
   ) async {
     const homeKey = ValueKey<String>('home');
-    const dismissibleModalKey = ValueKey<String>(
-      'dismissibleModal',
-    );
+    const dismissibleModalKey = ValueKey<String>('dismissibleModal');
 
     final router = GoRouter(
       routes: <GoRoute>[

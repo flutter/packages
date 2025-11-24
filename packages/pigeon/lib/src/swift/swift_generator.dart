@@ -347,12 +347,10 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
           for (final customType in enumeratedTypes) {
             indent.add('if let value = value as? ${customType.name} ');
             indent.addScoped('{', '} else ', () {
-              final encodeString =
-                  customType.type == CustomTypes.customClass
+              final encodeString = customType.type == CustomTypes.customClass
                   ? 'toList()'
                   : 'rawValue';
-              final valueString =
-                  customType.enumeration < maximumCodecFieldKey
+              final valueString = customType.enumeration < maximumCodecFieldKey
                   ? 'value.$encodeString'
                   : 'wrap.toList()';
               final int enumeration =
@@ -476,10 +474,7 @@ class SwiftGenerator extends StructuredGenerator<InternalSwiftOptions> {
       name: 'wrapped',
       type: const TypeDeclaration(baseName: 'Object', isNullable: true),
     );
-    final overflowFields = <NamedType>[
-      overflowInt,
-      overflowObject,
-    ];
+    final overflowFields = <NamedType>[overflowInt, overflowObject];
     final overflowClass = Class(
       name: _overflowClassName,
       fields: overflowFields,
@@ -1010,8 +1005,7 @@ if (wrapped == nil) {
           indent.writeln(
             'let codec = ${_getMessageCodecName(generatorOptions)}.shared',
           );
-          const setHandlerCondition =
-              'let instanceManager = instanceManager';
+          const setHandlerCondition = 'let instanceManager = instanceManager';
           _writeHostMethodMessageHandler(
             indent,
             name: 'removeStrongReference',
@@ -1284,8 +1278,7 @@ if (wrapped == nil) {
       associatedProxyApi: api,
     );
 
-    final swiftApiDelegateName =
-        '${hostProxyApiPrefix}Delegate${api.name}';
+    final swiftApiDelegateName = '${hostProxyApiPrefix}Delegate${api.name}';
     final type = api.hasMethodsRequiringImplementation()
         ? 'protocol'
         : 'open class';
@@ -1315,8 +1308,7 @@ if (wrapped == nil) {
     });
     indent.newln();
 
-    final swiftApiProtocolName =
-        '${hostProxyApiPrefix}Protocol${api.name}';
+    final swiftApiProtocolName = '${hostProxyApiPrefix}Protocol${api.name}';
     indent.writeScoped('protocol $swiftApiProtocolName {', '}', () {
       _writeProxyApiFlutterMethods(
         indent,
@@ -1879,9 +1871,7 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
         }
         if (isAsynchronous) {
           final resultName = returnType.isVoid ? 'nil' : 'res';
-          final successVariableInit = returnType.isVoid
-              ? ''
-              : '(let res)';
+          final successVariableInit = returnType.isVoid ? '' : '(let res)';
           indent.write('$call ');
 
           indent.addScoped('{ result in', '}', () {
@@ -2505,9 +2495,7 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
                       List<String> methodParameters, {
                       required String apiVarName,
                     }) {
-                      final tryStatement = method.isAsynchronous
-                          ? ''
-                          : 'try ';
+                      final tryStatement = method.isAsynchronous ? '' : 'try ';
                       final parameters = <String>[
                         'pigeonApi: $apiVarName',
                         // Skip the identifier used by the InstanceManager.
@@ -2764,8 +2752,7 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
   }
 
   void _writeProxyApiImports(Indent indent, Iterable<AstProxyApi> apis) {
-    final apisOfImports =
-        <String, List<AstProxyApi>>{};
+    final apisOfImports = <String, List<AstProxyApi>>{};
     for (final proxyApi in apis) {
       final String? import = proxyApi.swiftOptions?.import;
       if (import != null) {

@@ -28,9 +28,7 @@ void main() {
   });
 
   testWidgets('Initializing a cluster manager', (WidgetTester tester) async {
-    const cm1 = ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_1'),
-    );
+    const cm1 = ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
     await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{cm1}));
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
@@ -50,12 +48,8 @@ void main() {
   });
 
   testWidgets('Adding a cluster manager', (WidgetTester tester) async {
-    const cm1 = ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_1'),
-    );
-    const cm2 = ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_2'),
-    );
+    const cm1 = ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
+    const cm2 = ClusterManager(clusterManagerId: ClusterManagerId('cm_2'));
 
     await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{cm1}));
     await tester.pumpWidget(
@@ -81,9 +75,7 @@ void main() {
   });
 
   testWidgets('Removing a cluster manager', (WidgetTester tester) async {
-    const cm1 = ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_1'),
-    );
+    const cm1 = ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
 
     await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{cm1}));
     await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{}));
@@ -110,12 +102,8 @@ void main() {
   testWidgets('Updating a cluster manager with same data', (
     WidgetTester tester,
   ) async {
-    const cm1 = ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_1'),
-    );
-    const cm2 = ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_1'),
-    );
+    const cm1 = ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
+    const cm2 = ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
 
     await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{cm1}));
     await tester.pumpWidget(_mapWithClusterManagers(<ClusterManager>{cm2}));
@@ -141,12 +129,8 @@ void main() {
   // are added to [ClusterManager] in the future, this test will need to be
   // updated accordingly to check that changes are triggered.
   testWidgets('Multi update with same data', (WidgetTester tester) async {
-    var cm1 = const ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_1'),
-    );
-    var cm2 = const ClusterManager(
-      clusterManagerId: ClusterManagerId('cm_2'),
-    );
+    var cm1 = const ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
+    var cm2 = const ClusterManager(clusterManagerId: ClusterManagerId('cm_2'));
     final prev = <ClusterManager>{cm1, cm2};
     cm1 = const ClusterManager(clusterManagerId: ClusterManagerId('cm_1'));
     cm2 = const ClusterManager(clusterManagerId: ClusterManagerId('cm_2'));
@@ -173,12 +157,8 @@ void main() {
   // are added to [ClusterManager] in the future, this test will need to be
   // updated accordingly to check that changes are triggered.
   testWidgets('Partial update with same data', (WidgetTester tester) async {
-    const cm1 = ClusterManager(
-      clusterManagerId: ClusterManagerId('heatmap_1'),
-    );
-    const cm2 = ClusterManager(
-      clusterManagerId: ClusterManagerId('heatmap_2'),
-    );
+    const cm1 = ClusterManager(clusterManagerId: ClusterManagerId('heatmap_1'));
+    const cm2 = ClusterManager(clusterManagerId: ClusterManagerId('heatmap_2'));
     var cm3 = const ClusterManager(
       clusterManagerId: ClusterManagerId('heatmap_3'),
     );

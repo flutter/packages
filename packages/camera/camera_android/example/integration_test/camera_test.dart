@@ -28,15 +28,14 @@ void main() {
     await testDir.delete(recursive: true);
   });
 
-  final presetExpectedSizes =
-      <ResolutionPreset, Size>{
-        ResolutionPreset.low: const Size(240, 320),
-        ResolutionPreset.medium: const Size(480, 720),
-        ResolutionPreset.high: const Size(720, 1280),
-        ResolutionPreset.veryHigh: const Size(1080, 1920),
-        ResolutionPreset.ultraHigh: const Size(2160, 3840),
-        // Don't bother checking for max here since it could be anything.
-      };
+  final presetExpectedSizes = <ResolutionPreset, Size>{
+    ResolutionPreset.low: const Size(240, 320),
+    ResolutionPreset.medium: const Size(480, 720),
+    ResolutionPreset.high: const Size(720, 1280),
+    ResolutionPreset.veryHigh: const Size(1080, 1920),
+    ResolutionPreset.ultraHigh: const Size(2160, 3840),
+    // Don't bother checking for max here since it could be anything.
+  };
 
   /// Verify that [actual] has dimensions that are at least as large as
   /// [expectedSize]. Allows for a mismatch in portrait vs landscape. Returns
@@ -64,9 +63,7 @@ void main() {
 
     // Load video metadata
     final videoFile = File(file.path);
-    final videoController = VideoPlayerController.file(
-      videoFile,
-    );
+    final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final Size video = videoController.value.size;
 
@@ -153,9 +150,7 @@ void main() {
         DateTime.now().millisecondsSinceEpoch - recordingStart;
 
     final videoFile = File(file.path);
-    final videoController = VideoPlayerController.file(
-      videoFile,
-    );
+    final videoController = VideoPlayerController.file(videoFile);
     await videoController.initialize();
     final int duration = videoController.value.duration.inMilliseconds;
     await videoController.dispose();

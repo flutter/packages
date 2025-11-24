@@ -24,10 +24,7 @@ void main() {
 
       testWidgets('network svg', (WidgetTester widgetTester) async {
         final http.Client fakeClient = _FakeHttpClient();
-        final asset = SvgPicture.network(
-          'svg.dart',
-          httpClient: fakeClient,
-        );
+        final asset = SvgPicture.network('svg.dart', httpClient: fakeClient);
         await widgetTester.pumpWidget(asset);
 
         expect(find.svg(asset.bytesLoader), findsOneWidget);

@@ -101,10 +101,7 @@ void main() {
 
   testWidgets('Updating a polygon', (WidgetTester tester) async {
     const p1 = Polygon(polygonId: PolygonId('polygon_1'));
-    const p2 = Polygon(
-      polygonId: PolygonId('polygon_1'),
-      geodesic: true,
-    );
+    const p2 = Polygon(polygonId: PolygonId('polygon_1'), geodesic: true);
 
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p2}));
@@ -119,10 +116,7 @@ void main() {
 
   testWidgets('Mutate a polygon', (WidgetTester tester) async {
     final points = <LatLng>[const LatLng(0.0, 0.0)];
-    final p1 = Polygon(
-      polygonId: const PolygonId('polygon_1'),
-      points: points,
-    );
+    final p1 = Polygon(polygonId: const PolygonId('polygon_1'), points: points);
     await tester.pumpWidget(_mapWithPolygons(<Polygon>{p1}));
 
     p1.points.add(const LatLng(1.0, 1.0));
@@ -408,10 +402,7 @@ void main() {
 
     const p1 = Polygon(polygonId: PolygonId('polygon_1'));
     const p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    const p3 = Polygon(
-      polygonId: PolygonId('polygon_3'),
-      strokeWidth: 1,
-    );
+    const p3 = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
     const p3updated = Polygon(
       polygonId: PolygonId('polygon_3'),
       strokeWidth: 2,

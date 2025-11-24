@@ -93,9 +93,7 @@ void main() {
   });
 
   test('mapId falls back to cloudMapId', () {
-    const config = MapConfiguration(
-      cloudMapId: 'cloud-map-id',
-    );
+    const config = MapConfiguration(cloudMapId: 'cloud-map-id');
     final Map<String, Object> json = jsonForMapConfiguration(config);
     expect(json, <String, Object>{
       'mapId': 'cloud-map-id',

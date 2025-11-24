@@ -55,8 +55,7 @@ void main() {
     // each method, since that would cover this issue.
     test('non-void invokeMethods handle types correctly', () async {
       const mapId = 0;
-      final maps =
-          MethodChannelGoogleMapsFlutter();
+      final maps = MethodChannelGoogleMapsFlutter();
       configureMockMap(
         maps,
         mapId: mapId,
@@ -104,18 +103,18 @@ void main() {
         'position': <double>[1.0, 1.0],
       };
 
-      final maps =
-          MethodChannelGoogleMapsFlutter();
+      final maps = MethodChannelGoogleMapsFlutter();
       maps.ensureChannelInitialized(mapId);
 
-      final markerDragStartStream =
-          StreamQueue<MarkerDragStartEvent>(
-            maps.onMarkerDragStart(mapId: mapId),
-          );
-      final markerDragStream =
-          StreamQueue<MarkerDragEvent>(maps.onMarkerDrag(mapId: mapId));
-      final markerDragEndStream =
-          StreamQueue<MarkerDragEndEvent>(maps.onMarkerDragEnd(mapId: mapId));
+      final markerDragStartStream = StreamQueue<MarkerDragStartEvent>(
+        maps.onMarkerDragStart(mapId: mapId),
+      );
+      final markerDragStream = StreamQueue<MarkerDragEvent>(
+        maps.onMarkerDrag(mapId: mapId),
+      );
+      final markerDragEndStream = StreamQueue<MarkerDragEndEvent>(
+        maps.onMarkerDragEnd(mapId: mapId),
+      );
 
       await sendPlatformMessage(
         mapId,

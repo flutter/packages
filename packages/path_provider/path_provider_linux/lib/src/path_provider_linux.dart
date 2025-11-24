@@ -47,9 +47,7 @@ class PathProviderLinux extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationSupportPath() async {
-    final directory = Directory(
-      path.join(xdg.dataHome.path, await _getId()),
-    );
+    final directory = Directory(path.join(xdg.dataHome.path, await _getId()));
     if (directory.existsSync()) {
       return directory.path;
     }
@@ -75,9 +73,7 @@ class PathProviderLinux extends PathProviderPlatform {
 
   @override
   Future<String?> getApplicationCachePath() async {
-    final directory = Directory(
-      path.join(xdg.cacheHome.path, await _getId()),
-    );
+    final directory = Directory(path.join(xdg.cacheHome.path, await _getId()));
     if (!directory.existsSync()) {
       await directory.create(recursive: true);
     }

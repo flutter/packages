@@ -99,10 +99,7 @@ class ResolvingVisitor extends Visitor<Node, AffineMatrix> {
     if (paint != null) {
       if (pathNode.attributes.stroke?.dashArray != null) {
         final children = <Node>[];
-        final parent = ParentNode(
-          pathNode.attributes,
-          children: children,
-        );
+        final parent = ParentNode(pathNode.attributes, children: children);
         if (paint.fill != null) {
           children.add(
             ResolvedPathNode(

@@ -30,10 +30,7 @@ void main() {
   group('Methods that require a proper Projection', () {
     const center = LatLng(43.3078, -5.6958);
     const size = Size(320, 240);
-    const initialCamera = CameraPosition(
-      target: center,
-      zoom: 14,
-    );
+    const initialCamera = CameraPosition(target: center, zoom: 14);
 
     late Completer<GoogleMapController> controllerCompleter;
     late void Function(GoogleMapController) onMapCreated;

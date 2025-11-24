@@ -354,9 +354,7 @@ void main() {
   testWidgets(
     'textBaseline is honored when passed in via the TextStyle param',
     (WidgetTester tester) async {
-      const textStyle = TextStyle(
-        textBaseline: TextBaseline.ideographic,
-      );
+      const textStyle = TextStyle(textBaseline: TextBaseline.ideographic);
       final TextStyle outputTextStyle = GoogleFonts.rancho(
         textStyle: textStyle,
       );
@@ -377,9 +375,7 @@ void main() {
 
   testWidgets('textBaseline from the top-level param takes precedence over '
       'textBaseline from the TextStyle param', (WidgetTester tester) async {
-    const textStyle = TextStyle(
-      textBaseline: TextBaseline.ideographic,
-    );
+    const textStyle = TextStyle(textBaseline: TextBaseline.ideographic);
     final TextStyle outputTextStyle = GoogleFonts.rancho(
       textStyle: textStyle,
       textBaseline: TextBaseline.alphabetic,
@@ -551,9 +547,7 @@ void main() {
   testWidgets(
     'fontFeatures is honored when passed in via the TextStyle param',
     (WidgetTester tester) async {
-      const fontFeatures = <FontFeature>[
-        FontFeature.slashedZero(),
-      ];
+      const fontFeatures = <FontFeature>[FontFeature.slashedZero()];
       const textStyle = TextStyle(fontFeatures: fontFeatures);
       final TextStyle outputTextStyle = GoogleFonts.rancho(
         textStyle: textStyle,
@@ -566,9 +560,7 @@ void main() {
   testWidgets('fontFeatures is honored when passed in as a top-level param', (
     WidgetTester tester,
   ) async {
-    const fontFeatures = <FontFeature>[
-      FontFeature.oldstyleFigures(),
-    ];
+    const fontFeatures = <FontFeature>[FontFeature.oldstyleFigures()];
     final TextStyle outputTextStyle = GoogleFonts.rancho(
       fontFeatures: fontFeatures,
     );
@@ -578,12 +570,8 @@ void main() {
 
   testWidgets('fontFeatures from the top-level param takes precedence over '
       'fontFeatures from the TextStyle param', (WidgetTester tester) async {
-    const fontFeatures1 = <FontFeature>[
-      FontFeature.slashedZero(),
-    ];
-    const fontFeatures2 = <FontFeature>[
-      FontFeature.oldstyleFigures(),
-    ];
+    const fontFeatures1 = <FontFeature>[FontFeature.slashedZero()];
+    const fontFeatures2 = <FontFeature>[FontFeature.oldstyleFigures()];
     const textStyle = TextStyle(fontFeatures: fontFeatures1);
     final TextStyle outputTextStyle = GoogleFonts.rancho(
       textStyle: textStyle,
@@ -664,9 +652,7 @@ void main() {
   testWidgets(
     'decorationStyle is honored when passed in via the TextStyle param',
     (WidgetTester tester) async {
-      const textStyle = TextStyle(
-        decorationStyle: TextDecorationStyle.dashed,
-      );
+      const textStyle = TextStyle(decorationStyle: TextDecorationStyle.dashed);
       final TextStyle outputTextStyle = GoogleFonts.rancho(
         textStyle: textStyle,
       );
@@ -691,9 +677,7 @@ void main() {
 
   testWidgets('decorationStyle from the top-level param takes precedence over '
       'decorationStyle from the TextStyle param', (WidgetTester tester) async {
-    const textStyle = TextStyle(
-      decorationStyle: TextDecorationStyle.dashed,
-    );
+    const textStyle = TextStyle(decorationStyle: TextDecorationStyle.dashed);
     final TextStyle outputTextStyle = GoogleFonts.rancho(
       textStyle: textStyle,
       decorationStyle: TextDecorationStyle.dotted,
@@ -812,9 +796,7 @@ void main() {
   testWidgets('TextTheme equality when used in a ThemeData', (
     WidgetTester tester,
   ) async {
-    final myAppTheme = ThemeData(
-      textTheme: GoogleFonts.poppinsTextTheme(),
-    );
+    final myAppTheme = ThemeData(textTheme: GoogleFonts.poppinsTextTheme());
 
     expect(myAppTheme.textTheme, equals(GoogleFonts.poppinsTextTheme()));
   });

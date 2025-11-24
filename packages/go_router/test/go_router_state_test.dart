@@ -263,10 +263,8 @@ void main() {
     testWidgets('GoRouterState topRoute accessible from StatefulShellRoute', (
       WidgetTester tester,
     ) async {
-      final rootNavigatorKey =
-          GlobalKey<NavigatorState>();
-      final shellNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
       final routes = <RouteBase>[
         ShellRoute(
           navigatorKey: shellNavigatorKey,

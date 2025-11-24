@@ -25,22 +25,21 @@ void main() {
         pigeon_instanceManager: _TestInstanceManager(),
       );
       final mockCompanionAdSlot = MockCompanionAdSlot();
-      final params =
-          AndroidCompanionAdSlotCreationParams(
-            size: CompanionAdSlotSize.fixed(width: 300, height: 400),
-            proxy: InteractiveMediaAdsProxy(
-              newFrameLayout: () {
-                return frameLayout;
-              },
-              instanceImaSdkFactory: () {
-                final mockFactory = MockImaSdkFactory();
-                when(
-                  mockFactory.createCompanionAdSlot(),
-                ).thenAnswer((_) async => mockCompanionAdSlot);
-                return mockFactory;
-              },
-            ),
-          );
+      final params = AndroidCompanionAdSlotCreationParams(
+        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
+        proxy: InteractiveMediaAdsProxy(
+          newFrameLayout: () {
+            return frameLayout;
+          },
+          instanceImaSdkFactory: () {
+            final mockFactory = MockImaSdkFactory();
+            when(
+              mockFactory.createCompanionAdSlot(),
+            ).thenAnswer((_) async => mockCompanionAdSlot);
+            return mockFactory;
+          },
+        ),
+      );
 
       final adSlot = AndroidCompanionAdSlot(params);
       await adSlot.getNativeCompanionAdSlot();
@@ -51,35 +50,34 @@ void main() {
 
     test('AndroidCompanionAdSlot receives onClick', () async {
       final mockCompanionAdSlot = MockCompanionAdSlot();
-      final params =
-          AndroidCompanionAdSlotCreationParams(
-            size: CompanionAdSlotSize.fixed(width: 300, height: 400),
-            onClicked: expectAsync0(() {}),
-            proxy: InteractiveMediaAdsProxy(
-              newFrameLayout: () {
-                return ima.FrameLayout.pigeon_detached(
+      final params = AndroidCompanionAdSlotCreationParams(
+        size: CompanionAdSlotSize.fixed(width: 300, height: 400),
+        onClicked: expectAsync0(() {}),
+        proxy: InteractiveMediaAdsProxy(
+          newFrameLayout: () {
+            return ima.FrameLayout.pigeon_detached(
+              pigeon_instanceManager: _TestInstanceManager(),
+            );
+          },
+          instanceImaSdkFactory: () {
+            final mockFactory = MockImaSdkFactory();
+            when(
+              mockFactory.createCompanionAdSlot(),
+            ).thenAnswer((_) async => mockCompanionAdSlot);
+            return mockFactory;
+          },
+          newCompanionAdSlotClickListener:
+              ({
+                required void Function(ima.CompanionAdSlotClickListener)
+                onCompanionAdClick,
+              }) {
+                return ima.CompanionAdSlotClickListener.pigeon_detached(
+                  onCompanionAdClick: onCompanionAdClick,
                   pigeon_instanceManager: _TestInstanceManager(),
                 );
               },
-              instanceImaSdkFactory: () {
-                final mockFactory = MockImaSdkFactory();
-                when(
-                  mockFactory.createCompanionAdSlot(),
-                ).thenAnswer((_) async => mockCompanionAdSlot);
-                return mockFactory;
-              },
-              newCompanionAdSlotClickListener:
-                  ({
-                    required void Function(ima.CompanionAdSlotClickListener)
-                    onCompanionAdClick,
-                  }) {
-                    return ima.CompanionAdSlotClickListener.pigeon_detached(
-                      onCompanionAdClick: onCompanionAdClick,
-                      pigeon_instanceManager: _TestInstanceManager(),
-                    );
-                  },
-            ),
-          );
+        ),
+      );
 
       final adSlot = AndroidCompanionAdSlot(params);
       await adSlot.getNativeCompanionAdSlot();

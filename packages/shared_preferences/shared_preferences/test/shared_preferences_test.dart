@@ -290,8 +290,7 @@ void main() {
   });
 
   test('unimplemented errors in withParameters methods are updated', () async {
-    final localStore =
-        UnimplementedSharedPreferencesStore();
+    final localStore = UnimplementedSharedPreferencesStore();
     SharedPreferencesStorePlatform.instance = localStore;
     SharedPreferences.resetStatic();
     SharedPreferences.setPrefix('');
@@ -312,8 +311,7 @@ void main() {
   test(
     'non-Unimplemented errors pass through withParameters methods correctly',
     () async {
-      final localStore =
-          ThrowingSharedPreferencesStore();
+      final localStore = ThrowingSharedPreferencesStore();
       SharedPreferencesStorePlatform.instance = localStore;
       SharedPreferences.resetStatic();
       SharedPreferences.setPrefix('');

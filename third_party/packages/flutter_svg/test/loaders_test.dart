@@ -113,10 +113,7 @@ void main() {
 
   test("SvgNetworkLoader doesn't close passed client", () async {
     final client = VerifyCloseClient();
-    final loader = SvgNetworkLoader(
-      '',
-      httpClient: client as http.Client,
-    );
+    final loader = SvgNetworkLoader('', httpClient: client as http.Client);
 
     expect(client.closeCalled, isFalse);
     await loader.prepareMessage(null);

@@ -137,11 +137,7 @@ class DrawCommandBuilder {
   void addImage(ResolvedImageNode node, String? debugString) {
     final imageData = ImageData(node.data, node.format.index);
     final int imageId = _getOrGenerateId(imageData, _images);
-    final drawImageData = DrawImageData(
-      imageId,
-      node.rect,
-      node.transform,
-    );
+    final drawImageData = DrawImageData(imageId, node.rect, node.transform);
 
     final int drawImageId = _getOrGenerateId(drawImageData, _drawImages);
     _commands.add(

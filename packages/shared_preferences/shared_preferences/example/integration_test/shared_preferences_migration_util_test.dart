@@ -65,8 +65,7 @@ void runAllGroups(
   bool keysCollide = false,
 }) {
   group('default sharedPreferencesAsyncOptions', () {
-    const sharedPreferencesAsyncOptions =
-        SharedPreferencesOptions();
+    const sharedPreferencesAsyncOptions = SharedPreferencesOptions();
 
     runTests(
       sharedPreferencesAsyncOptions,

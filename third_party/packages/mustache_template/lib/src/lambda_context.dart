@@ -115,12 +115,7 @@ class LambdaContext implements m.LambdaContext {
       delimiters,
     );
 
-    final renderer = Renderer.lambda(
-      _renderer,
-      source,
-      _renderer.indent,
-      sink,
-    );
+    final renderer = Renderer.lambda(_renderer, source, _renderer.indent, sink);
 
     if (value != null) {
       renderer.push(value);

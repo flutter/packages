@@ -43,8 +43,7 @@ void main() {
 
   group('query product list', () {
     test('should get product list and correct invalid identifiers', () async {
-      final connection =
-          InAppPurchaseStoreKitPlatform();
+      final connection = InAppPurchaseStoreKitPlatform();
       final ProductDetailsResponse response = await connection
           .queryProductDetails(<String>{'123', '456', '789', '999'});
       final List<ProductDetails> products = response.productDetails;
@@ -66,8 +65,7 @@ void main() {
           message: 'error_message',
           details: <Object, Object>{'info': 'error_info'},
         );
-        final connection =
-            InAppPurchaseStoreKitPlatform();
+        final connection = InAppPurchaseStoreKitPlatform();
         final ProductDetailsResponse response = await connection
             .queryProductDetails(<String>{'123', '456', '789'});
         expect(response.productDetails, <ProductDetails>[]);
@@ -91,8 +89,7 @@ void main() {
         1,
         fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
       );
-      final completer =
-          Completer<List<PurchaseDetails>>();
+      final completer = Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
 
@@ -132,8 +129,7 @@ void main() {
       'should emit empty transaction list on purchase stream when there is nothing to restore',
       () async {
         fakeStoreKitPlatform.testRestoredTransactionsNull = true;
-        final completer =
-            Completer<List<PurchaseDetails>?>();
+        final completer = Completer<List<PurchaseDetails>?>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -164,8 +160,7 @@ void main() {
         2,
         fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
       );
-      final completer =
-          Completer<List<PurchaseDetails>>();
+      final completer = Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
 
@@ -212,12 +207,10 @@ void main() {
           0,
           fakeStoreKitPlatform.createPurchasedTransaction('foo', 'bar'),
         );
-        final completer =
-            Completer<List<List<PurchaseDetails>>>();
+        final completer = Completer<List<List<PurchaseDetails>>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
-        final purchaseDetails =
-            <List<PurchaseDetails>>[];
+        final purchaseDetails = <List<PurchaseDetails>>[];
 
         late StreamSubscription<List<PurchaseDetails>> subscription;
         subscription = stream.listen((
@@ -273,8 +266,7 @@ void main() {
           fakeStoreKitPlatform.createRestoredTransaction('foo', 'RT2'),
         );
         fakeStoreKitPlatform.receiptData = null;
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -326,8 +318,7 @@ void main() {
       'buying non consumable, should get purchase objects in the purchase update callback',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -361,8 +352,7 @@ void main() {
       'buying consumable, should get purchase objects in the purchase update callback',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -518,8 +508,7 @@ void main() {
       'buying non consumable, should be able to purchase multiple quantity of one product',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
         late StreamSubscription<List<PurchaseDetails>> subscription;
@@ -535,8 +524,9 @@ void main() {
             }
           }
         });
-        final productDetails =
-            AppStoreProductDetails.fromSKProduct(dummyProductWrapper);
+        final productDetails = AppStoreProductDetails.fromSKProduct(
+          dummyProductWrapper,
+        );
         final purchaseParam = AppStorePurchaseParam(
           productDetails: productDetails,
           quantity: 5,
@@ -557,8 +547,7 @@ void main() {
       'buying consumable, should be able to purchase multiple quantity of one product',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
         late StreamSubscription<List<PurchaseDetails>> subscription;
@@ -574,8 +563,9 @@ void main() {
             }
           }
         });
-        final productDetails =
-            AppStoreProductDetails.fromSKProduct(dummyProductWrapper);
+        final productDetails = AppStoreProductDetails.fromSKProduct(
+          dummyProductWrapper,
+        );
         final purchaseParam = AppStorePurchaseParam(
           productDetails: productDetails,
           quantity: 5,
@@ -594,8 +584,7 @@ void main() {
       'buying non consumable with discount, should get purchase objects in the purchase update callback',
       () async {
         final details = <PurchaseDetails>[];
-        final completer =
-            Completer<List<PurchaseDetails>>();
+        final completer = Completer<List<PurchaseDetails>>();
         final Stream<List<PurchaseDetails>> stream =
             iapStoreKitPlatform.purchaseStream;
 
@@ -634,8 +623,7 @@ void main() {
   group('complete purchase', () {
     test('should complete purchase', () async {
       final details = <PurchaseDetails>[];
-      final completer =
-          Completer<List<PurchaseDetails>>();
+      final completer = Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapStoreKitPlatform.purchaseStream;
       late StreamSubscription<List<PurchaseDetails>> subscription;

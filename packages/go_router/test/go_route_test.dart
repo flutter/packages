@@ -24,10 +24,8 @@ void main() {
   testWidgets('ShellRoute can use parent navigator key', (
     WidgetTester tester,
   ) async {
-    final rootNavigatorKey =
-        GlobalKey<NavigatorState>();
-    final shellNavigatorKey =
-        GlobalKey<NavigatorState>();
+    final rootNavigatorKey = GlobalKey<NavigatorState>();
+    final shellNavigatorKey = GlobalKey<NavigatorState>();
 
     final routes = <RouteBase>[
       ShellRoute(
@@ -92,10 +90,8 @@ void main() {
   testWidgets('StatefulShellRoute can use parent navigator key', (
     WidgetTester tester,
   ) async {
-    final rootNavigatorKey =
-        GlobalKey<NavigatorState>();
-    final shellNavigatorKey =
-        GlobalKey<NavigatorState>();
+    final rootNavigatorKey = GlobalKey<NavigatorState>();
+    final shellNavigatorKey = GlobalKey<NavigatorState>();
 
     final routes = <RouteBase>[
       ShellRoute(

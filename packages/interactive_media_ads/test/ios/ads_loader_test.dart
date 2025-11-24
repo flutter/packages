@@ -84,8 +84,7 @@ void main() {
       const adTag = 'myAdTag';
 
       final mockLoader = MockIMAAdsLoader();
-      final contentPlayheadInstance =
-          ima.IMAContentPlayhead();
+      final contentPlayheadInstance = ima.IMAContentPlayhead();
       final mockRequest = MockIMAAdsRequest();
       final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsLoader: ({ima.IMASettings? settings}) => mockLoader,
@@ -247,8 +246,9 @@ void main() {
       // Trigger lazy initialization of native IMAAdsLoader
       await adsLoader.contentComplete();
 
-      final instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       adsLoaderFailedWithErrorDataCallback(
         MockIMAAdsLoaderDelegate(),
@@ -272,8 +272,9 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
   final imaProxy = InteractiveMediaAdsProxy(
     newUIViewController:
         ({void Function(ima.UIViewController, bool)? viewDidAppear}) {
-          final instanceManager =
-              ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+          final instanceManager = ima.PigeonInstanceManager(
+            onWeakReferenceRemoved: (_) {},
+          );
           final view = ima.UIView.pigeon_detached(
             pigeon_instanceManager: instanceManager,
           );
@@ -303,8 +304,7 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
     Builder(builder: (BuildContext context) => container.build(context)),
   );
 
-  final view =
-      find.byType(UiKitView).evaluate().single.widget as UiKitView;
+  final view = find.byType(UiKitView).evaluate().single.widget as UiKitView;
   view.onPlatformViewCreated!.call(0);
 
   await tester.pumpAndSettle(const Duration(seconds: 1));

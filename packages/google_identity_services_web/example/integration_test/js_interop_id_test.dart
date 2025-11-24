@@ -25,8 +25,7 @@ void main() async {
 
   group('renderButton', () {
     testWidgets('supports a js-interop target from any library', (_) async {
-      final target =
-          web.document.createElement('div') as web.HTMLDivElement;
+      final target = web.document.createElement('div') as web.HTMLDivElement;
 
       id.renderButton(target);
 
@@ -93,8 +92,7 @@ void main() async {
         id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
         utils.setMockMomentNotification('skipped', 'user_cancel');
 
-        final controller =
-            StreamController<PromptMomentNotification>();
+        final controller = StreamController<PromptMomentNotification>();
 
         id.prompt(controller.add);
 
@@ -112,8 +110,7 @@ void main() async {
         id.initialize(IdConfiguration(client_id: 'testing_1-2-3'));
         utils.setMockMomentNotification('skipped', 'random_invalid_reason');
 
-        final controller =
-            StreamController<PromptMomentNotification>();
+        final controller = StreamController<PromptMomentNotification>();
 
         id.prompt(controller.add);
 
@@ -128,8 +125,7 @@ void main() async {
       const expected = 'should_be_a_proper_jwt_token';
       utils.setMockCredentialResponse(expected);
 
-      final controller =
-          StreamController<CredentialResponse>();
+      final controller = StreamController<CredentialResponse>();
 
       id.initialize(
         IdConfiguration(client_id: 'testing_1-2-3', callback: controller.add),

@@ -323,12 +323,7 @@ void main() {
       const source =
           "'{{ foo }} sdfffffffffffffffffffffffffffffffffffffffffffff "
           'dsfsdf sdfdsa fdsfads fsdfdsfadsf dsfasdfsdf sdfdsfsadf sdfadsfsdf ';
-      final ex = TemplateException(
-        'boom!',
-        'foo.mustache',
-        source,
-        2,
-      );
+      final ex = TemplateException('boom!', 'foo.mustache', source, 2);
       ex.toString();
     });
 

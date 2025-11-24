@@ -30,9 +30,7 @@ List<TreeViewNode<String>> simpleNodeSet = <TreeViewNode<String>>[
 void main() {
   group('TreeViewNode', () {
     test('getters, toString', () {
-      final children = <TreeViewNode<String>>[
-        TreeViewNode<String>('child'),
-      ];
+      final children = <TreeViewNode<String>>[TreeViewNode<String>('child')];
       final node = TreeViewNode<String>(
         'parent',
         children: children,
@@ -63,9 +61,7 @@ void main() {
     testWidgets('TreeView sets ups parent and depth properties', (
       WidgetTester tester,
     ) async {
-      final children = <TreeViewNode<String>>[
-        TreeViewNode<String>('child'),
-      ];
+      final children = <TreeViewNode<String>>[TreeViewNode<String>('child')];
       final node = TreeViewNode<String>(
         'parent',
         children: children,

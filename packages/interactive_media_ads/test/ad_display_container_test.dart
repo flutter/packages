@@ -14,11 +14,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('build', (WidgetTester tester) async {
-    final adDisplayContainer =
-        TestPlatformAdDisplayContainer(
-          PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
-          onBuild: (_) => Container(),
-        );
+    final adDisplayContainer = TestPlatformAdDisplayContainer(
+      PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
+      onBuild: (_) => Container(),
+    );
 
     await tester.pumpWidget(
       AdDisplayContainer.fromPlatform(platform: adDisplayContainer),

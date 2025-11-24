@@ -29,16 +29,13 @@ void main() {
   testWidgets('cloudMapId present => mapId set & styles omitted', (
     WidgetTester tester,
   ) async {
-    const testMapConfig = MapConfiguration(
-      mapId: 'test-cloud-map-id',
-    );
+    const testMapConfig = MapConfiguration(mapId: 'test-cloud-map-id');
 
     await tester.pumpWidget(
       const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
     );
 
-    final stream =
-        StreamController<MapEvent<Object?>>();
+    final stream = StreamController<MapEvent<Object?>>();
     addTearDown(() {
       // Stream is closed by controller.dispose()
     });
@@ -84,8 +81,7 @@ void main() {
       const Directionality(textDirection: TextDirection.ltr, child: SizedBox()),
     );
 
-    final stream =
-        StreamController<MapEvent<Object?>>();
+    final stream = StreamController<MapEvent<Object?>>();
     addTearDown(() {
       // Stream is closed by controller.dispose()
     });

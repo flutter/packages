@@ -698,13 +698,11 @@ void main() {
     });
 
     test('Lambda v2...', () {
-      const template =
-          '<{{#markdown}}dsfsf dsfsdf dfsdfsd{{/markdown}}>';
-      final values =
-          <String, dynamic Function(dynamic ctx)>{
-            // ignore: avoid_dynamic_calls
-            'markdown': (dynamic ctx) => ctx.source,
-          };
+      const template = '<{{#markdown}}dsfsf dsfsdf dfsdfsd{{/markdown}}>';
+      final values = <String, dynamic Function(dynamic ctx)>{
+        // ignore: avoid_dynamic_calls
+        'markdown': (dynamic ctx) => ctx.source,
+      };
       const output = '<dsfsf dsfsdf dfsdfsd>';
       expect(parse(template).renderString(values), equals(output));
     });
@@ -817,12 +815,11 @@ void main() {
   group('Lambda context', () {
     test('LambdaContext write', () {
       const template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final values =
-          <String, Null Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              ctx.write('foo');
-            },
-          };
+      final values = <String, Null Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          ctx.write('foo');
+        },
+      };
       const output = '<foo>';
       expect(parse(template).renderString(values), equals(output));
     });
@@ -841,54 +838,48 @@ void main() {
 
     test('LambdaContext render with value', () {
       const template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final values =
-          <String, Null Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              ctx.render(value: <String, String>{'content': 'oi!'});
-            },
-          };
+      final values = <String, Null Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          ctx.render(value: <String, String>{'content': 'oi!'});
+        },
+      };
       const output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext renderString with value', () {
       const template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final values =
-          <String, String Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              return ctx.renderString(
-                value: <String, String>{'content': 'oi!'},
-              );
-            },
-          };
+      final values = <String, String Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          return ctx.renderString(value: <String, String>{'content': 'oi!'});
+        },
+      };
       const output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext write and return', () {
       const template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final values =
-          <String, String Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              ctx.write('foo');
-              return 'bar';
-            },
-          };
+      final values = <String, String Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          ctx.write('foo');
+          return 'bar';
+        },
+      };
       const output = '<foobar>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext renderSource with value', () {
       const template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final values =
-          <String, String Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              return ctx.renderSource(
-                ctx.source,
-                value: <String, String>{'content': 'oi!'},
-              );
-            },
-          };
+      final values = <String, String Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          return ctx.renderSource(
+            ctx.source,
+            value: <String, String>{'content': 'oi!'},
+          );
+        },
+      };
       const output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
     });

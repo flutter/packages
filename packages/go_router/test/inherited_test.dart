@@ -51,8 +51,7 @@ void main() {
       goRouter: goRouter,
       child: Container(),
     );
-    final properties =
-        DiagnosticPropertiesBuilder();
+    final properties = DiagnosticPropertiesBuilder();
     inheritedGoRouter.debugFillProperties(properties);
     expect(properties.properties.length, 1);
     expect(properties.properties.first, isA<DiagnosticsProperty<GoRouter>>());

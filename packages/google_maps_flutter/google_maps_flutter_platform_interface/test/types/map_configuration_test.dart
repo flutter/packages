@@ -109,9 +109,7 @@ void main() {
     });
 
     test('handle webCameraControlEnabled', () async {
-      const diff = MapConfiguration(
-        webCameraControlEnabled: true,
-      );
+      const diff = MapConfiguration(webCameraControlEnabled: true);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -165,9 +163,7 @@ void main() {
           southwest: const LatLng(5, 15),
         ),
       );
-      final diff = MapConfiguration(
-        cameraTargetBounds: newBounds,
-      );
+      final diff = MapConfiguration(cameraTargetBounds: newBounds);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -183,9 +179,7 @@ void main() {
     });
 
     test('handle mapType', () async {
-      const diff = MapConfiguration(
-        mapType: MapType.satellite,
-      );
+      const diff = MapConfiguration(mapType: MapType.satellite);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -202,9 +196,7 @@ void main() {
 
     test('handle minMaxZoomPreference', () async {
       const newZoomPref = MinMaxZoomPreference(3.3, 4.5);
-      const diff = MapConfiguration(
-        minMaxZoomPreference: newZoomPref,
-      );
+      const diff = MapConfiguration(minMaxZoomPreference: newZoomPref);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -220,9 +212,7 @@ void main() {
     });
 
     test('handle rotateGesturesEnabled', () async {
-      const diff = MapConfiguration(
-        rotateGesturesEnabled: true,
-      );
+      const diff = MapConfiguration(rotateGesturesEnabled: true);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -238,9 +228,7 @@ void main() {
     });
 
     test('handle scrollGesturesEnabled', () async {
-      const diff = MapConfiguration(
-        scrollGesturesEnabled: true,
-      );
+      const diff = MapConfiguration(scrollGesturesEnabled: true);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -272,9 +260,7 @@ void main() {
     });
 
     test('handle fortyFiveDegreeImageryEnabled', () async {
-      const diff = MapConfiguration(
-        fortyFiveDegreeImageryEnabled: true,
-      );
+      const diff = MapConfiguration(fortyFiveDegreeImageryEnabled: true);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -370,9 +356,7 @@ void main() {
     });
 
     test('handle myLocationButtonEnabled', () async {
-      const diff = MapConfiguration(
-        myLocationButtonEnabled: true,
-      );
+      const diff = MapConfiguration(myLocationButtonEnabled: true);
 
       const empty = MapConfiguration();
       final MapConfiguration updated = diffBase.applyDiff(diff);
@@ -388,10 +372,7 @@ void main() {
     });
 
     test('handle padding', () async {
-      const newPadding = EdgeInsets.symmetric(
-        vertical: 1.0,
-        horizontal: 3.0,
-      );
+      const newPadding = EdgeInsets.symmetric(vertical: 1.0, horizontal: 3.0);
       const diff = MapConfiguration(padding: newPadding);
 
       const empty = MapConfiguration();
@@ -514,9 +495,7 @@ void main() {
     });
 
     test('is false with webCameraControlEnabled', () async {
-      const diff = MapConfiguration(
-        webCameraControlEnabled: true,
-      );
+      const diff = MapConfiguration(webCameraControlEnabled: true);
 
       expect(diff.isEmpty, false);
     });
@@ -548,42 +527,32 @@ void main() {
           southwest: const LatLng(5, 15),
         ),
       );
-      final diff = MapConfiguration(
-        cameraTargetBounds: newBounds,
-      );
+      final diff = MapConfiguration(cameraTargetBounds: newBounds);
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with mapType', () async {
-      const diff = MapConfiguration(
-        mapType: MapType.satellite,
-      );
+      const diff = MapConfiguration(mapType: MapType.satellite);
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with minMaxZoomPreference', () async {
       const newZoomPref = MinMaxZoomPreference(3.3, 4.5);
-      const diff = MapConfiguration(
-        minMaxZoomPreference: newZoomPref,
-      );
+      const diff = MapConfiguration(minMaxZoomPreference: newZoomPref);
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with rotateGesturesEnabled', () async {
-      const diff = MapConfiguration(
-        rotateGesturesEnabled: true,
-      );
+      const diff = MapConfiguration(rotateGesturesEnabled: true);
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with scrollGesturesEnabled', () async {
-      const diff = MapConfiguration(
-        scrollGesturesEnabled: true,
-      );
+      const diff = MapConfiguration(scrollGesturesEnabled: true);
 
       expect(diff.isEmpty, false);
     });
@@ -625,18 +594,13 @@ void main() {
     });
 
     test('is false with myLocationButtonEnabled', () async {
-      const diff = MapConfiguration(
-        myLocationButtonEnabled: true,
-      );
+      const diff = MapConfiguration(myLocationButtonEnabled: true);
 
       expect(diff.isEmpty, false);
     });
 
     test('is false with padding', () async {
-      const newPadding = EdgeInsets.symmetric(
-        vertical: 1.0,
-        horizontal: 3.0,
-      );
+      const newPadding = EdgeInsets.symmetric(vertical: 1.0, horizontal: 3.0);
       const diff = MapConfiguration(padding: newPadding);
 
       expect(diff.isEmpty, false);

@@ -8,8 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('Can be opened via GlobalKey', (WidgetTester tester) async {
-    final openContainerKey =
-        GlobalKey<OpenContainerState>();
+    final openContainerKey = GlobalKey<OpenContainerState>();
 
     await tester.pumpWidget(
       _boilerplate(
@@ -107,10 +106,7 @@ void main() {
     expect(_getOpacity(tester, 'Open'), 0.0);
     expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    final dataClosed = _TrackedData(
-      closedMaterial,
-      closedMaterialRect,
-    );
+    final dataClosed = _TrackedData(closedMaterial, closedMaterialRect);
 
     // Jump to the start of the fade in.
     await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
@@ -429,10 +425,7 @@ void main() {
     expect(_getOpacity(tester, 'Open'), 0.0);
     expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    final dataClosed = _TrackedData(
-      closedMaterial,
-      closedMaterialRect,
-    );
+    final dataClosed = _TrackedData(closedMaterial, closedMaterialRect);
 
     // The fade-out takes 1/5 of 300ms. Let's jump to the midpoint of that.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/10 = 30ms
@@ -1306,9 +1299,7 @@ void main() {
   testWidgets(
     'Container partly offscreen can be opened without crash - vertical',
     (WidgetTester tester) async {
-      final controller = ScrollController(
-        initialScrollOffset: 50,
-      );
+      final controller = ScrollController(initialScrollOffset: 50);
       await tester.pumpWidget(
         Center(
           child: SizedBox(
@@ -1382,9 +1373,7 @@ void main() {
   testWidgets(
     'Container partly offscreen can be opened without crash - horizontal',
     (WidgetTester tester) async {
-      final controller = ScrollController(
-        initialScrollOffset: 50,
-      );
+      final controller = ScrollController(initialScrollOffset: 50);
       await tester.pumpWidget(
         Center(
           child: SizedBox(
@@ -1852,8 +1841,7 @@ class _TrackedData {
 }
 
 double _getRadius(Material material) {
-  final shape =
-      material.shape as RoundedRectangleBorder?;
+  final shape = material.shape as RoundedRectangleBorder?;
   if (shape == null) {
     return 0.0;
   }

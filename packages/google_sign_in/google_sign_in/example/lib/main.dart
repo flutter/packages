@@ -152,8 +152,7 @@ class _SignInDemoState extends State<SignInDemo> {
       }
       return;
     }
-    final data =
-        json.decode(response.body) as Map<String, dynamic>;
+    final data = json.decode(response.body) as Map<String, dynamic>;
     final String? namedContact = _pickFirstNamedContact(data);
     setState(() {
       if (namedContact != null) {

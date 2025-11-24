@@ -40,9 +40,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -66,15 +64,9 @@ void main() {
         EnumMember(name: 'two'),
       ],
     );
-    final root = Root(
-      apis: <Api>[],
-      classes: <Class>[],
-      enums: <Enum>[anEnum],
-    );
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[anEnum]);
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -124,9 +116,7 @@ void main() {
       ],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -182,9 +172,7 @@ void main() {
       ],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -248,9 +236,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -399,9 +385,7 @@ void main() {
 
     final sink = StringBuffer();
 
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -479,9 +463,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -537,9 +519,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -590,9 +570,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -640,9 +618,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -690,9 +666,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -725,9 +699,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -757,9 +729,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -801,9 +771,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -872,9 +840,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -940,9 +906,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -982,9 +946,7 @@ void main() {
       enums: <Enum>[anEnum],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1042,9 +1004,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1080,9 +1040,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1125,9 +1083,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1169,9 +1125,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1208,9 +1162,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1249,9 +1201,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1302,9 +1252,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1356,9 +1304,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1400,9 +1346,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1437,9 +1381,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1478,9 +1420,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1519,9 +1459,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1577,9 +1515,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1667,9 +1603,7 @@ void main() {
       ],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1743,9 +1677,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1764,10 +1696,7 @@ void main() {
       returnType: const TypeDeclaration.voidDeclaration(),
       parameters: <Parameter>[],
     );
-    final api = AstHostApi(
-      name: 'SomeApi',
-      methods: <Method>[method],
-    );
+    final api = AstHostApi(name: 'SomeApi', methods: <Method>[method]);
     final root = Root(
       apis: <Api>[api],
       classes: <Class>[],
@@ -1822,9 +1751,7 @@ void main() {
       containsFlutterApi: true,
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1874,9 +1801,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,
@@ -1915,9 +1840,7 @@ void main() {
       enums: <Enum>[],
     );
     final sink = StringBuffer();
-    const kotlinOptions = InternalKotlinOptions(
-      kotlinOut: '',
-    );
+    const kotlinOptions = InternalKotlinOptions(kotlinOut: '');
     const generator = KotlinGenerator();
     generator.generate(
       kotlinOptions,

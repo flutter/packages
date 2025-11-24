@@ -7,10 +7,7 @@ import 'package:shared_test_plugin_code/src/generated/null_fields.gen.dart';
 
 void main() {
   test('test constructor with values', () {
-    final request = NullFieldsSearchRequest(
-      query: 'query',
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(query: 'query', identifier: 1);
 
     final reply = NullFieldsSearchReply(
       result: 'result',
@@ -28,9 +25,7 @@ void main() {
   });
 
   test('test request constructor with nulls', () {
-    final request = NullFieldsSearchRequest(
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(identifier: 1);
 
     expect(request.query, isNull);
   });
@@ -96,27 +91,19 @@ void main() {
   });
 
   test('test request encode with values', () {
-    final request = NullFieldsSearchRequest(
-      query: 'query',
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(query: 'query', identifier: 1);
 
     expect(request.encode(), <Object?>['query', 1]);
   });
 
   test('test request encode with null', () {
-    final request = NullFieldsSearchRequest(
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(identifier: 1);
 
     expect(request.encode(), <Object?>[null, 1]);
   });
 
   test('test reply encode with values', () {
-    final request = NullFieldsSearchRequest(
-      query: 'query',
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(query: 'query', identifier: 1);
     final reply = NullFieldsSearchReply(
       result: 'result',
       error: 'error',

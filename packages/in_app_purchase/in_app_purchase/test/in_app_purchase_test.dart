@@ -93,9 +93,7 @@ void main() {
     });
 
     test('buyConsumable', () async {
-      final purchaseParam = PurchaseParam(
-        productDetails: productDetails,
-      );
+      final purchaseParam = PurchaseParam(productDetails: productDetails);
       final bool result = await inAppPurchase.buyConsumable(
         purchaseParam: purchaseParam,
       );
@@ -113,9 +111,7 @@ void main() {
     });
 
     test('buyConsumable with autoConsume=false', () async {
-      final purchaseParam = PurchaseParam(
-        productDetails: productDetails,
-      );
+      final purchaseParam = PurchaseParam(productDetails: productDetails);
       final bool result = await inAppPurchase.buyConsumable(
         purchaseParam: purchaseParam,
         autoConsume: false,

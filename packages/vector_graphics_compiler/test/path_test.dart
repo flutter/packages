@@ -55,8 +55,7 @@ void main() {
   });
 
   test('addRect', () {
-    final builder = PathBuilder()
-      ..addRect(const Rect.fromLTRB(10, 10, 20, 20));
+    final builder = PathBuilder()..addRect(const Rect.fromLTRB(10, 10, 20, 20));
 
     expect(
       builder.toPath().toFlutterString(),
@@ -247,14 +246,7 @@ void main() {
 
   test('Cubic length', () {
     // Value is very close to what Skia says for same input.
-    const command = CubicToCommand(
-      1.0,
-      15.327,
-      15.326,
-      1.0,
-      33.0,
-      1.0,
-    );
+    const command = CubicToCommand(1.0, 15.327, 15.326, 1.0, 33.0, 1.0);
     expect(command.computeLength(Point.zero), 38.16245134493276);
 
     // Trivially describes a line.

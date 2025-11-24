@@ -24,9 +24,7 @@ void main() {
 
   (GoogleMapsFlutterAndroid, MockMapsApi) setUpMockMap({required int mapId}) {
     final api = MockMapsApi();
-    final maps = GoogleMapsFlutterAndroid(
-      apiProvider: (_) => api,
-    );
+    final maps = GoogleMapsFlutterAndroid(apiProvider: (_) => api);
     maps.ensureApiInitialized(mapId);
     return (maps, api);
   }
@@ -83,9 +81,7 @@ void main() {
 
   test('init calls waitForMap', () async {
     final api = MockMapsApi();
-    final maps = GoogleMapsFlutterAndroid(
-      apiProvider: (_) => api,
-    );
+    final maps = GoogleMapsFlutterAndroid(apiProvider: (_) => api);
 
     await maps.init(1);
 
@@ -113,8 +109,7 @@ void main() {
     final VerificationResult verification = verify(
       api.getScreenCoordinate(captureAny),
     );
-    final passedLatLng =
-        verification.captured[0] as PlatformLatLng;
+    final passedLatLng = verification.captured[0] as PlatformLatLng;
     expect(passedLatLng.latitude, latLng.latitude);
     expect(passedLatLng.longitude, latLng.longitude);
   });
@@ -181,10 +176,8 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
-    final scroll =
-        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
+    final scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
@@ -202,10 +195,8 @@ void main() {
     final VerificationResult verification = verify(
       api.animateCamera(captureAny, captureAny),
     );
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
-    final scroll =
-        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
+    final scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
@@ -220,8 +211,9 @@ void main() {
     );
 
     final CameraUpdate update = CameraUpdate.scrollBy(10, 20);
-    const configuration =
-        CameraUpdateAnimationConfiguration(duration: Duration(seconds: 1));
+    const configuration = CameraUpdateAnimationConfiguration(
+      duration: Duration(seconds: 1),
+    );
     expect(configuration.duration?.inSeconds, 1);
     await maps.animateCameraWithConfiguration(
       update,
@@ -232,10 +224,8 @@ void main() {
     final VerificationResult verification = verify(
       api.animateCamera(captureAny, captureAny),
     );
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
-    final scroll =
-        passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
+    final scroll = passedUpdate.cameraUpdate as PlatformCameraUpdateScrollBy;
     update as CameraUpdateScrollBy;
     expect(scroll.dx, update.dx);
     expect(scroll.dy, update.dy);
@@ -346,8 +336,7 @@ void main() {
     final VerificationResult verification = verify(
       api.updateMapConfiguration(captureAny),
     );
-    final passedConfig =
-        verification.captured[0] as PlatformMapConfiguration;
+    final passedConfig = verification.captured[0] as PlatformMapConfiguration;
     // Each set option should be present.
     expect(passedConfig.compassEnabled, true);
     expect(passedConfig.mapType, PlatformMapType.terrain);
@@ -396,8 +385,7 @@ void main() {
     final VerificationResult verification = verify(
       api.updateMapConfiguration(captureAny),
     );
-    final passedConfig =
-        verification.captured[0] as PlatformMapConfiguration;
+    final passedConfig = verification.captured[0] as PlatformMapConfiguration;
     // Each set option should be present.
     expect(passedConfig.compassEnabled, true);
     expect(passedConfig.mapType, PlatformMapType.terrain);
@@ -444,10 +432,8 @@ void main() {
     final VerificationResult verification = verify(
       api.updateCircles(captureAny, captureAny, captureAny),
     );
-    final toAdd =
-        verification.captured[0] as List<PlatformCircle>;
-    final toChange =
-        verification.captured[1] as List<PlatformCircle>;
+    final toAdd = verification.captured[0] as List<PlatformCircle>;
+    final toChange = verification.captured[1] as List<PlatformCircle>;
     final toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
@@ -490,12 +476,8 @@ void main() {
       mapId: mapId,
     );
 
-    const object1 = ClusterManager(
-      clusterManagerId: ClusterManagerId('1'),
-    );
-    const object3 = ClusterManager(
-      clusterManagerId: ClusterManagerId('3'),
-    );
+    const object1 = ClusterManager(clusterManagerId: ClusterManagerId('1'));
+    const object3 = ClusterManager(clusterManagerId: ClusterManagerId('3'));
     await maps.updateClusterManagers(
       ClusterManagerUpdates.from(
         <ClusterManager>{object1},
@@ -507,8 +489,7 @@ void main() {
     final VerificationResult verification = verify(
       api.updateClusterManagers(captureAny, captureAny),
     );
-    final toAdd =
-        verification.captured[0] as List<PlatformClusterManager>;
+    final toAdd = verification.captured[0] as List<PlatformClusterManager>;
     final toRemove = verification.captured[1] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
@@ -541,10 +522,8 @@ void main() {
     final VerificationResult verification = verify(
       api.updateMarkers(captureAny, captureAny, captureAny),
     );
-    final toAdd =
-        verification.captured[0] as List<PlatformMarker>;
-    final toChange =
-        verification.captured[1] as List<PlatformMarker>;
+    final toAdd = verification.captured[0] as List<PlatformMarker>;
+    final toChange = verification.captured[1] as List<PlatformMarker>;
     final toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
@@ -630,10 +609,8 @@ void main() {
     final VerificationResult verification = verify(
       api.updatePolygons(captureAny, captureAny, captureAny),
     );
-    final toAdd =
-        verification.captured[0] as List<PlatformPolygon>;
-    final toChange =
-        verification.captured[1] as List<PlatformPolygon>;
+    final toAdd = verification.captured[0] as List<PlatformPolygon>;
+    final toChange = verification.captured[1] as List<PlatformPolygon>;
     final toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
@@ -703,10 +680,8 @@ void main() {
     final VerificationResult verification = verify(
       api.updatePolylines(captureAny, captureAny, captureAny),
     );
-    final toAdd =
-        verification.captured[0] as List<PlatformPolyline>;
-    final toChange =
-        verification.captured[1] as List<PlatformPolyline>;
+    final toAdd = verification.captured[0] as List<PlatformPolyline>;
+    final toChange = verification.captured[1] as List<PlatformPolyline>;
     final toRemove = verification.captured[2] as List<String>;
     void expectPolyline(PlatformPolyline actual, Polyline expected) {
       expect(actual.polylineId, expected.polylineId.value);
@@ -769,9 +744,7 @@ void main() {
     );
 
     const object1 = TileOverlay(tileOverlayId: TileOverlayId('1'));
-    const object2old = TileOverlay(
-      tileOverlayId: TileOverlayId('2'),
-    );
+    const object2old = TileOverlay(tileOverlayId: TileOverlayId('2'));
     final TileOverlay object2new = object2old.copyWith(zIndexParam: 42);
     const object3 = TileOverlay(tileOverlayId: TileOverlayId('3'));
     // Pre-set the initial state, since this update method doesn't take the old
@@ -790,10 +763,8 @@ void main() {
     final VerificationResult verification = verify(
       api.updateTileOverlays(captureAny, captureAny, captureAny),
     );
-    final toAdd =
-        verification.captured[0] as List<PlatformTileOverlay>;
-    final toChange =
-        verification.captured[1] as List<PlatformTileOverlay>;
+    final toAdd = verification.captured[0] as List<PlatformTileOverlay>;
+    final toChange = verification.captured[1] as List<PlatformTileOverlay>;
     final toRemove = verification.captured[2] as List<String>;
     void expectTileOverlay(PlatformTileOverlay actual, TileOverlay expected) {
       expect(actual.tileOverlayId, expected.tileOverlayId.value);
@@ -868,10 +839,8 @@ void main() {
       api.updateGroundOverlays(captureAny, captureAny, captureAny),
     );
 
-    final toAdd =
-        verification.captured[0] as List<PlatformGroundOverlay>;
-    final toChange =
-        verification.captured[1] as List<PlatformGroundOverlay>;
+    final toAdd = verification.captured[0] as List<PlatformGroundOverlay>;
+    final toChange = verification.captured[1] as List<PlatformGroundOverlay>;
     final toRemove = verification.captured[2] as List<String>;
     // Object one should be removed.
     expect(toRemove.length, 1);
@@ -1010,22 +979,22 @@ void main() {
     const dragStartId = 'drag-start-marker';
     const dragId = 'drag-marker';
     const dragEndId = 'drag-end-marker';
-    final fakePosition = PlatformLatLng(
-      latitude: 1.0,
-      longitude: 1.0,
-    );
+    final fakePosition = PlatformLatLng(latitude: 1.0, longitude: 1.0);
 
     final maps = GoogleMapsFlutterAndroid();
     final HostMapMessageHandler callbackHandler = maps.ensureHandlerInitialized(
       mapId,
     );
 
-    final markerDragStartStream =
-        StreamQueue<MarkerDragStartEvent>(maps.onMarkerDragStart(mapId: mapId));
-    final markerDragStream =
-        StreamQueue<MarkerDragEvent>(maps.onMarkerDrag(mapId: mapId));
-    final markerDragEndStream =
-        StreamQueue<MarkerDragEndEvent>(maps.onMarkerDragEnd(mapId: mapId));
+    final markerDragStartStream = StreamQueue<MarkerDragStartEvent>(
+      maps.onMarkerDragStart(mapId: mapId),
+    );
+    final markerDragStream = StreamQueue<MarkerDragEvent>(
+      maps.onMarkerDrag(mapId: mapId),
+    );
+    final markerDragEndStream = StreamQueue<MarkerDragEndEvent>(
+      maps.onMarkerDragEnd(mapId: mapId),
+    );
 
     // Simulate messages from the native side.
     callbackHandler.onMarkerDragStart(dragStartId, fakePosition);
@@ -1046,9 +1015,7 @@ void main() {
       mapId,
     );
 
-    final stream = StreamQueue<MarkerTapEvent>(
-      maps.onMarkerTap(mapId: mapId),
-    );
+    final stream = StreamQueue<MarkerTapEvent>(maps.onMarkerTap(mapId: mapId));
 
     // Simulate message from the native side.
     callbackHandler.onMarkerTap(objectId);
@@ -1065,9 +1032,7 @@ void main() {
       mapId,
     );
 
-    final stream = StreamQueue<CircleTapEvent>(
-      maps.onCircleTap(mapId: mapId),
-    );
+    final stream = StreamQueue<CircleTapEvent>(maps.onCircleTap(mapId: mapId));
 
     // Simulate message from the native side.
     callbackHandler.onCircleTap(objectId);
@@ -1078,10 +1043,7 @@ void main() {
   test('clusters send tap events to correct stream', () async {
     const mapId = 1;
     const managerId = 'manager-id';
-    final fakePosition = PlatformLatLng(
-      latitude: 10,
-      longitude: 20,
-    );
+    final fakePosition = PlatformLatLng(latitude: 10, longitude: 20);
     final fakeBounds = PlatformLatLngBounds(
       southwest: PlatformLatLng(latitude: 30, longitude: 40),
       northeast: PlatformLatLng(latitude: 50, longitude: 60),
@@ -1171,10 +1133,9 @@ void main() {
       mapId,
     );
 
-    final stream =
-        StreamQueue<GroundOverlayTapEvent>(
-          maps.onGroundOverlayTap(mapId: mapId),
-        );
+    final stream = StreamQueue<GroundOverlayTapEvent>(
+      maps.onGroundOverlayTap(mapId: mapId),
+    );
 
     // Simulate message from the native side.
     callbackHandler.onGroundOverlayTap(objectId);
@@ -1209,8 +1170,7 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
     final typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateNewCameraPosition;
     update as CameraUpdateNewCameraPosition;
@@ -1235,8 +1195,7 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
     final typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLng;
     update as CameraUpdateNewLatLng;
@@ -1258,8 +1217,7 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
     final typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngBounds;
     update as CameraUpdateNewLatLngBounds;
@@ -1293,8 +1251,7 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
     final typedUpdate =
         passedUpdate.cameraUpdate as PlatformCameraUpdateNewLatLngZoom;
     update as CameraUpdateNewLatLngZoom;
@@ -1314,10 +1271,8 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate =
-        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomBy;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
+    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoomBy;
     update as CameraUpdateZoomBy;
     expect(typedUpdate.focus?.x, update.focus?.dx);
     expect(typedUpdate.focus?.y, update.focus?.dy);
@@ -1334,10 +1289,8 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate =
-        passedUpdate.cameraUpdate as PlatformCameraUpdateZoomTo;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
+    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoomTo;
     update as CameraUpdateZoomTo;
     expect(typedUpdate.zoom, update.zoom);
   });
@@ -1352,10 +1305,8 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate =
-        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
+    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
     expect(typedUpdate.out, false);
   });
 
@@ -1369,10 +1320,8 @@ void main() {
     await maps.moveCamera(update, mapId: mapId);
 
     final VerificationResult verification = verify(api.moveCamera(captureAny));
-    final passedUpdate =
-        verification.captured[0] as PlatformCameraUpdate;
-    final typedUpdate =
-        passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
+    final passedUpdate = verification.captured[0] as PlatformCameraUpdate;
+    final typedUpdate = passedUpdate.cameraUpdate as PlatformCameraUpdateZoom;
     expect(typedUpdate.out, true);
   });
 
@@ -1396,8 +1345,7 @@ void main() {
     final PlatformBitmap platformBitmap =
         GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
     expect(platformBitmap.bitmap, isA<PlatformBitmapDefaultMarker>());
-    final typedBitmap =
-        platformBitmap.bitmap as PlatformBitmapDefaultMarker;
+    final typedBitmap = platformBitmap.bitmap as PlatformBitmapDefaultMarker;
     expect(typedBitmap.hue, 10.0);
   });
 
@@ -1412,8 +1360,7 @@ void main() {
     final PlatformBitmap platformBitmap =
         GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
     expect(platformBitmap.bitmap, isA<PlatformBitmapBytesMap>());
-    final typedBitmap =
-        platformBitmap.bitmap as PlatformBitmapBytesMap;
+    final typedBitmap = platformBitmap.bitmap as PlatformBitmapBytesMap;
     expect(typedBitmap.byteData, data);
     expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
     expect(typedBitmap.imagePixelRatio, 2.0);
@@ -1432,8 +1379,7 @@ void main() {
     final PlatformBitmap platformBitmap =
         GoogleMapsFlutterAndroid.platformBitmapFromBitmapDescriptor(bitmap);
     expect(platformBitmap.bitmap, isA<PlatformBitmapAssetMap>());
-    final typedBitmap =
-        platformBitmap.bitmap as PlatformBitmapAssetMap;
+    final typedBitmap = platformBitmap.bitmap as PlatformBitmapAssetMap;
     expect(typedBitmap.assetName, assetName);
     expect(typedBitmap.bitmapScaling, PlatformMapBitmapScaling.auto);
     expect(typedBitmap.imagePixelRatio, 2.0);

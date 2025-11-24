@@ -10,12 +10,8 @@ void main() {
   testWidgets(
     'FadeThroughPageTransitionsBuilder builds a FadeThroughTransition',
     (WidgetTester tester) async {
-      final animation = AnimationController(
-        vsync: const TestVSync(),
-      );
-      final secondaryAnimation = AnimationController(
-        vsync: const TestVSync(),
-      );
+      final animation = AnimationController(vsync: const TestVSync());
+      final secondaryAnimation = AnimationController(vsync: const TestVSync());
 
       await tester.pumpWidget(
         const FadeThroughPageTransitionsBuilder().buildTransitions<void>(

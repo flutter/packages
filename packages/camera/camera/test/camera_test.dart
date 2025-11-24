@@ -62,10 +62,7 @@ void main() {
       'debugCheckIsDisposed should not throw assertion error when disposed',
       () {
         const description = MockCameraDescription();
-        final controller = CameraController(
-          description,
-          ResolutionPreset.low,
-        );
+        final controller = CameraController(description, ResolutionPreset.low);
 
         controller.dispose();
 
@@ -77,10 +74,7 @@ void main() {
       'debugCheckIsDisposed should throw assertion error when not disposed',
       () {
         const description = MockCameraDescription();
-        final controller = CameraController(
-          description,
-          ResolutionPreset.low,
-        );
+        final controller = CameraController(description, ResolutionPreset.low);
 
         expect(() => controller.debugCheckIsDisposed(), throwsAssertionError);
       },

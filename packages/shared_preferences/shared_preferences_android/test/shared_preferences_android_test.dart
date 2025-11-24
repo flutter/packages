@@ -47,8 +47,9 @@ void main() {
   allTestValuesForComparison.addAll(prefixTestValues);
   allTestValuesForComparison.addAll(nonPrefixTestValues);
 
-  final allTestValuesForAddingDirectlyToCache =
-      <String, Object>{...allTestValuesForComparison};
+  final allTestValuesForAddingDirectlyToCache = <String, Object>{
+    ...allTestValuesForComparison,
+  };
 
   final encodedListStringValue =
       '$jsonListPrefix${jsonEncode(<String>['foo', 'bar'])}';

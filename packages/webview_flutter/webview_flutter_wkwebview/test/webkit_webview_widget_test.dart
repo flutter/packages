@@ -225,8 +225,7 @@ WebKitWebViewController createTestWebViewController(
               return mockWKUIDelegate;
             },
         newUIScrollViewDelegate: ({dynamic scrollViewDidScroll}) {
-          final mockScrollViewDelegate =
-              MockUIScrollViewDelegate();
+          final mockScrollViewDelegate = MockUIScrollViewDelegate();
           when(
             mockScrollViewDelegate.pigeon_copy(),
           ).thenReturn(MockUIScrollViewDelegate());

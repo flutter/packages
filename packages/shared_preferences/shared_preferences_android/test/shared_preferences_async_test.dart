@@ -30,11 +30,10 @@ void main() {
 
   SharedPreferencesAsyncAndroid getPreferences(bool useDataStore) {
     final api = _FakeSharedPreferencesApi();
-    final preferences =
-        SharedPreferencesAsyncAndroid(
-          dataStoreApi: api,
-          sharedPreferencesApi: api,
-        );
+    final preferences = SharedPreferencesAsyncAndroid(
+      dataStoreApi: api,
+      sharedPreferencesApi: api,
+    );
 
     return preferences;
   }
@@ -42,12 +41,11 @@ void main() {
   void runTests(bool useDataStore) {
     final backend = useDataStore ? 'DataStore' : 'SharedPreferences';
 
-    final emptyOptions =
-        SharedPreferencesAsyncAndroidOptions(
-          backend: useDataStore
-              ? SharedPreferencesAndroidBackendLibrary.DataStore
-              : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-        );
+    final emptyOptions = SharedPreferencesAsyncAndroidOptions(
+      backend: useDataStore
+          ? SharedPreferencesAndroidBackendLibrary.DataStore
+          : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+    );
 
     test('set and get String with $backend', () async {
       final SharedPreferencesAsyncAndroid preferences = getPreferences(

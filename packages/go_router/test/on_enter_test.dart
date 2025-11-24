@@ -259,8 +259,7 @@ void main() {
       Future<bool> isAuthenticated() =>
           Future<bool>.value(isAuthenticatedResult);
 
-      final paramsSink =
-          StreamController<({String current, String next})>();
+      final paramsSink = StreamController<({String current, String next})>();
       final Stream<({String current, String next})> paramsStream = paramsSink
           .stream
           .asBroadcastStream();
@@ -416,8 +415,7 @@ void main() {
       Future<bool> isAuthenticated() =>
           Future<bool>.value(isAuthenticatedResult);
 
-      final paramsSink =
-          StreamController<({String current, String next})>();
+      final paramsSink = StreamController<({String current, String next})>();
       final Stream<({String current, String next})> paramsStream = paramsSink
           .stream
           .asBroadcastStream();
@@ -641,8 +639,7 @@ void main() {
             Future<bool>.value(isAuthenticatedResult);
 
         // Stream to capture onEnter calls
-        final paramsSink =
-            StreamController<({String current, String next})>();
+        final paramsSink = StreamController<({String current, String next})>();
         // Use broadcast stream for potentially multiple listeners/expects if needed,
         // although expectLater handles one listener well.
         final Stream<({String current, String next})> paramsStream = paramsSink
@@ -678,8 +675,7 @@ void main() {
                   next: next.uri.toString(),
                 ));
 
-                final isNavigatingToProtected =
-                    next.uri.path == '/protected';
+                final isNavigatingToProtected = next.uri.path == '/protected';
 
                 // Allow navigation if not going to the protected route
                 if (!isNavigatingToProtected) {

@@ -68,8 +68,7 @@ class ObjcOptions {
   /// Creates a [ObjcOptions] from a Map representation where:
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   static ObjcOptions fromMap(Map<String, Object> map) {
-    final copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
       headerIncludePath: map['headerIncludePath'] as String?,
       prefix: map['prefix'] as String?,
@@ -1233,9 +1232,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
     }
 
     // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
-    final lastSelectorComponent = func.isAsynchronous
-        ? 'completion'
-        : 'error';
+    final lastSelectorComponent = func.isAsynchronous ? 'completion' : 'error';
     final String selector = _getSelector(func, lastSelectorComponent);
     indent.writeln(
       'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);',

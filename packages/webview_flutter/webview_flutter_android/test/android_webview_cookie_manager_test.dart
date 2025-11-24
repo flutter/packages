@@ -43,8 +43,10 @@ void main() {
           const PlatformWebViewCookieManagerCreationParams(),
         );
 
-    final androidCookieManager =
-        AndroidWebViewCookieManager(params, cookieManager: MockCookieManager());
+    final androidCookieManager = AndroidWebViewCookieManager(
+      params,
+      cookieManager: MockCookieManager(),
+    );
 
     expect(
       () => androidCookieManager.setCookie(
@@ -83,13 +85,14 @@ void main() {
   );
 
   test('setAcceptThirdPartyCookies', () async {
-    final mockController =
-        MockAndroidWebViewController();
+    final mockController = MockAndroidWebViewController();
 
-    final instanceManager =
-        android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-    final webView = android_webview
-        .WebView.pigeon_detached(pigeon_instanceManager: instanceManager);
+    final instanceManager = android_webview.PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final webView = android_webview.WebView.pigeon_detached(
+      pigeon_instanceManager: instanceManager,
+    );
 
     final int webViewIdentifier = instanceManager.addDartCreatedInstance(
       webView,

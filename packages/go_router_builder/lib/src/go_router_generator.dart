@@ -94,9 +94,7 @@ ${getters.map((String e) => "$e,").join('\n')}
       );
     }
 
-    final dataChecker = TypeChecker.fromUrl(
-      '$_routeDataUrl#$routeData',
-    );
+    final dataChecker = TypeChecker.fromUrl('$_routeDataUrl#$routeData');
     if (!element.allSupertypes.any(
       (InterfaceType element) => dataChecker.isExactlyType(element),
     )) {

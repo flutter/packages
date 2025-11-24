@@ -45,8 +45,7 @@ void main() {
     test('loadUrl sets url on iframe src attribute', () {
       // Setup
       final fakeIFrame = web.HTMLIFrameElement();
-      final controller =
-          WebWebViewPlatformController(fakeIFrame);
+      final controller = WebWebViewPlatformController(fakeIFrame);
       // Run
       controller.loadUrl('http://example.com/', null);
       // Verify
@@ -57,8 +56,7 @@ void main() {
       test('loadHtmlString loads html into iframe', () {
         // Setup
         final fakeIFrame = web.HTMLIFrameElement();
-        final controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final controller = WebWebViewPlatformController(fakeIFrame);
         // Run
         controller.loadHtmlString('test html');
         // Verify
@@ -71,8 +69,7 @@ void main() {
       test('loadHtmlString escapes "#" correctly', () {
         // Setup
         final fakeIFrame = web.HTMLIFrameElement();
-        final controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final controller = WebWebViewPlatformController(fakeIFrame);
         // Run
         controller.loadHtmlString('#');
         // Verify
@@ -84,8 +81,7 @@ void main() {
       test('loadRequest throws ArgumentError on missing scheme', () {
         // Setup
         final fakeIFrame = web.HTMLIFrameElement();
-        final controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final controller = WebWebViewPlatformController(fakeIFrame);
 
         // Run & Verify
         expect(
@@ -104,8 +100,7 @@ void main() {
         () async {
           // Setup
           final fakeIFrame = web.HTMLIFrameElement();
-          final controller =
-              WebWebViewPlatformController(fakeIFrame);
+          final controller = WebWebViewPlatformController(fakeIFrame);
 
           final fakeResponse = web.Response(
             'test data'.toJS,
@@ -115,8 +110,7 @@ void main() {
                 as web.ResponseInit,
           );
 
-          final mockHttpRequestFactory =
-              MockHttpRequestFactory();
+          final mockHttpRequestFactory = MockHttpRequestFactory();
           when(
             mockHttpRequestFactory.request(
               any,
@@ -157,8 +151,7 @@ void main() {
       test('loadRequest escapes "#" correctly', () async {
         // Setup
         final fakeIFrame = web.HTMLIFrameElement();
-        final controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final controller = WebWebViewPlatformController(fakeIFrame);
 
         final fakeResponse = web.Response(
           '#'.toJS,
@@ -168,8 +161,7 @@ void main() {
               as web.ResponseInit,
         );
 
-        final mockHttpRequestFactory =
-            MockHttpRequestFactory();
+        final mockHttpRequestFactory = MockHttpRequestFactory();
         when(
           mockHttpRequestFactory.request(
             any,

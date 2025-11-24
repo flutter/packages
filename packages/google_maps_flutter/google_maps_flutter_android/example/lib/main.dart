@@ -98,8 +98,7 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
     return _initializedRendererCompleter!.future;
   }
 
-  final completer =
-      Completer<AndroidMapRenderer?>();
+  final completer = Completer<AndroidMapRenderer?>();
   _initializedRendererCompleter = completer;
 
   WidgetsFlutterBinding.ensureInitialized();

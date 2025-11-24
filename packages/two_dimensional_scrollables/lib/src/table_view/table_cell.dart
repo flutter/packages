@@ -198,8 +198,7 @@ class _TableViewCell extends ParentDataWidget<TableViewParentData> {
 
   @override
   void applyParentData(RenderObject renderObject) {
-    final parentData =
-        renderObject.parentData! as TableViewParentData;
+    final parentData = renderObject.parentData! as TableViewParentData;
     var needsLayout = false;
     if (parentData.rowMergeStart != rowMergeStart) {
       assert(rowMergeStart == null || rowMergeStart! >= 0);

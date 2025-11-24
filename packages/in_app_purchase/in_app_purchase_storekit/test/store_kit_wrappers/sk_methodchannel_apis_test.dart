@@ -124,8 +124,7 @@ void main() {
 
     test('should add payment to the payment queue', () async {
       final queue = SKPaymentQueueWrapper();
-      final observer =
-          TestPaymentTransactionObserver();
+      final observer = TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.addPayment(dummyPayment);
       expect(fakeStoreKitPlatform.payments.first, equals(dummyPayment));
@@ -133,8 +132,7 @@ void main() {
 
     test('should finish transaction', () async {
       final queue = SKPaymentQueueWrapper();
-      final observer =
-          TestPaymentTransactionObserver();
+      final observer = TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.finishTransaction(dummyTransaction);
       expect(
@@ -145,8 +143,7 @@ void main() {
 
     test('should restore transaction', () async {
       final queue = SKPaymentQueueWrapper();
-      final observer =
-          TestPaymentTransactionObserver();
+      final observer = TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.restoreTransactions(applicationUserName: 'aUserID');
       expect(

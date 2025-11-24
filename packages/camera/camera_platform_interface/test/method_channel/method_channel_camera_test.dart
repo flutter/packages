@@ -351,8 +351,7 @@ void main() {
         // Act
         final Stream<CameraInitializedEvent> eventStream = camera
             .onCameraInitialized(cameraId);
-        final streamQueue =
-            StreamQueue<CameraInitializedEvent>(eventStream);
+        final streamQueue = StreamQueue<CameraInitializedEvent>(eventStream);
 
         // Emit test events
         final event = CameraInitializedEvent(
@@ -380,14 +379,13 @@ void main() {
         // Act
         final Stream<CameraResolutionChangedEvent> resolutionStream = camera
             .onCameraResolutionChanged(cameraId);
-        final streamQueue =
-            StreamQueue<CameraResolutionChangedEvent>(resolutionStream);
+        final streamQueue = StreamQueue<CameraResolutionChangedEvent>(
+          resolutionStream,
+        );
 
         // Emit test events
-        final fhdEvent =
-            CameraResolutionChangedEvent(cameraId, 1920, 1080);
-        final uhdEvent =
-            CameraResolutionChangedEvent(cameraId, 3840, 2160);
+        final fhdEvent = CameraResolutionChangedEvent(cameraId, 1920, 1080);
+        final uhdEvent = CameraResolutionChangedEvent(cameraId, 3840, 2160);
         await camera.handleCameraMethodCall(
           MethodCall('resolution_changed', fhdEvent.toJson()),
           cameraId,
@@ -420,8 +418,7 @@ void main() {
         final Stream<CameraClosingEvent> eventStream = camera.onCameraClosing(
           cameraId,
         );
-        final streamQueue =
-            StreamQueue<CameraClosingEvent>(eventStream);
+        final streamQueue = StreamQueue<CameraClosingEvent>(eventStream);
 
         // Emit test events
         final event = CameraClosingEvent(cameraId);
@@ -452,14 +449,10 @@ void main() {
         final Stream<CameraErrorEvent> errorStream = camera.onCameraError(
           cameraId,
         );
-        final streamQueue =
-            StreamQueue<CameraErrorEvent>(errorStream);
+        final streamQueue = StreamQueue<CameraErrorEvent>(errorStream);
 
         // Emit test events
-        final event = CameraErrorEvent(
-          cameraId,
-          'Error Description',
-        );
+        final event = CameraErrorEvent(cameraId, 'Error Description');
         await camera.handleCameraMethodCall(
           MethodCall('error', event.toJson()),
           cameraId,
@@ -486,12 +479,14 @@ void main() {
         // Act
         final Stream<DeviceOrientationChangedEvent> eventStream = camera
             .onDeviceOrientationChanged();
-        final streamQueue =
-            StreamQueue<DeviceOrientationChangedEvent>(eventStream);
+        final streamQueue = StreamQueue<DeviceOrientationChangedEvent>(
+          eventStream,
+        );
 
         // Emit test events
-        const event =
-            DeviceOrientationChangedEvent(DeviceOrientation.portraitUp);
+        const event = DeviceOrientationChangedEvent(
+          DeviceOrientation.portraitUp,
+        );
         await camera.handleDeviceMethodCall(
           MethodCall('orientation_changed', event.toJson()),
         );

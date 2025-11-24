@@ -622,9 +622,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
 
     while (!reachedRowEnd()) {
       final bool isPinned = row < delegate.pinnedRowCount;
-      final leadingOffset = isPinned
-          ? startOfPinnedRow
-          : startOfRegularRow;
+      final leadingOffset = isPinned ? startOfPinnedRow : startOfRegularRow;
       _Span? span = _rowMetrics.remove(row);
       final TableSpan? configuration =
           span?.configuration ?? delegate.buildRow(row);
@@ -1316,10 +1314,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     required Offset offset,
   }) {
     // Column decorations
-    final foregroundColumns =
-        <Rect, TableSpanDecoration>{};
-    final backgroundColumns =
-        <Rect, TableSpanDecoration>{};
+    final foregroundColumns = <Rect, TableSpanDecoration>{};
+    final backgroundColumns = <Rect, TableSpanDecoration>{};
 
     final TableSpan rowSpan = _rowMetrics[leadingVicinity.row]!.configuration;
     for (
@@ -1331,8 +1327,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       if (columnSpan.backgroundDecoration != null ||
           columnSpan.foregroundDecoration != null ||
           _mergedColumns.contains(column)) {
-        final decorationCells =
-            <({RenderBox leading, RenderBox trailing})>[];
+        final decorationCells = <({RenderBox leading, RenderBox trailing})>[];
         if (_mergedColumns.isEmpty || !_mergedColumns.contains(column)) {
           // One decoration across the whole column.
           decorationCells.add((
@@ -1360,10 +1355,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           late RenderBox trailingCell;
           int currentRow = leadingVicinity.row;
           while (currentRow <= trailingVicinity.row) {
-            var vicinity = TableVicinity(
-              column: column,
-              row: currentRow,
-            );
+            var vicinity = TableVicinity(column: column, row: currentRow);
             leadingCell = getChildFor(vicinity)!;
             if (parentDataOf(leadingCell).columnMergeStart != null) {
               // Merged portion decorated individually since it exceeds the
@@ -1428,8 +1420,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           );
         }
 
-        for (final cell
-            in decorationCells) {
+        for (final cell in decorationCells) {
           // If this was a merged cell, the decoration is defined by the leading
           // cell, which may come from a different column.
           final int columnIndex =
@@ -1459,10 +1450,8 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
 
     // Row decorations
-    final foregroundRows =
-        <Rect, TableSpanDecoration>{};
-    final backgroundRows =
-        <Rect, TableSpanDecoration>{};
+    final foregroundRows = <Rect, TableSpanDecoration>{};
+    final backgroundRows = <Rect, TableSpanDecoration>{};
     final TableSpan columnSpan =
         _columnMetrics[leadingVicinity.column]!.configuration;
     for (int row = leadingVicinity.row; row <= trailingVicinity.row; row++) {
@@ -1470,8 +1459,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       if (rowSpan.backgroundDecoration != null ||
           rowSpan.foregroundDecoration != null ||
           _mergedRows.contains(row)) {
-        final decorationCells =
-            <({RenderBox leading, RenderBox trailing})>[];
+        final decorationCells = <({RenderBox leading, RenderBox trailing})>[];
         if (_mergedRows.isEmpty || !_mergedRows.contains(row)) {
           // One decoration across the whole row.
           decorationCells.add((
@@ -1499,10 +1487,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           late RenderBox trailingCell;
           int currentColumn = leadingVicinity.column;
           while (currentColumn <= trailingVicinity.column) {
-            var vicinity = TableVicinity(
-              column: currentColumn,
-              row: row,
-            );
+            var vicinity = TableVicinity(column: currentColumn, row: row);
             leadingCell = getChildFor(vicinity)!;
             if (parentDataOf(leadingCell).rowMergeStart != null) {
               // Merged portion decorated individually since it exceeds the
@@ -1567,8 +1552,7 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
           );
         }
 
-        for (final cell
-            in decorationCells) {
+        for (final cell in decorationCells) {
           // If this was a merged cell, the decoration is defined by the leading
           // cell, which may come from a different row.
           final int rowIndex =
@@ -1605,41 +1589,37 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // Default, row major order. Rows go first.
       case Axis.vertical:
         backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: horizontalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: horizontalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: verticalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: verticalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
       // Column major order. Columns go first.
       case Axis.horizontal:
         backgroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: verticalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: verticalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
         backgroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: horizontalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: horizontalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
     }
@@ -1679,41 +1659,37 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
       // Default, row major order. Rows go first.
       case Axis.vertical:
         foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: horizontalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: horizontalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: verticalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: verticalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
       // Column major order. Columns go first.
       case Axis.horizontal:
         foregroundColumns.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: verticalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: verticalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
         foregroundRows.forEach((Rect rect, TableSpanDecoration decoration) {
-          final paintingDetails =
-              TableSpanDecorationPaintDetails(
-                canvas: context.canvas,
-                rect: rect,
-                axisDirection: horizontalAxisDirection,
-              );
+          final paintingDetails = TableSpanDecorationPaintDetails(
+            canvas: context.canvas,
+            rect: rect,
+            axisDirection: horizontalAxisDirection,
+          );
           decoration.paint(paintingDetails);
         });
     }
@@ -1790,8 +1766,7 @@ class _Span
       _disposeRecognizers();
       return;
     }
-    final newRecognizers =
-        <Type, GestureRecognizer>{};
+    final newRecognizers = <Type, GestureRecognizer>{};
     for (final Type type in configuration.recognizerFactories.keys) {
       assert(!newRecognizers.containsKey(type));
       newRecognizers[type] =

@@ -644,12 +644,10 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    final emptyOptions =
-        SharedPreferencesAsyncFoundationOptions();
-    final optionsWithSuiteName =
-        SharedPreferencesAsyncFoundationOptions(
-          suiteName: 'group.example.sharedPreferencesFoundation',
-        );
+    final emptyOptions = SharedPreferencesAsyncFoundationOptions();
+    final optionsWithSuiteName = SharedPreferencesAsyncFoundationOptions(
+      suiteName: 'group.example.sharedPreferencesFoundation',
+    );
 
     const stringKey = 'testString';
     const boolKey = 'testBool';

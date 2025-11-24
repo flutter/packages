@@ -132,10 +132,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
       case ImageSource.camera:
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
-        const typeGroup = XTypeGroup(
-          label: 'Images',
-          extensions: imageFormats,
-        );
+        const typeGroup = XTypeGroup(label: 'Images', extensions: imageFormats);
         final XFile? file = await fileSelector.openFile(
           acceptedTypeGroups: <XTypeGroup>[typeGroup],
         );
@@ -166,10 +163,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
           maxDuration: maxDuration,
         );
       case ImageSource.gallery:
-        const typeGroup = XTypeGroup(
-          label: 'Videos',
-          extensions: videoFormats,
-        );
+        const typeGroup = XTypeGroup(label: 'Videos', extensions: videoFormats);
         final XFile? file = await fileSelector.openFile(
           acceptedTypeGroups: <XTypeGroup>[typeGroup],
         );
@@ -189,10 +183,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    const typeGroup = XTypeGroup(
-      label: 'Images',
-      extensions: imageFormats,
-    );
+    const typeGroup = XTypeGroup(label: 'Images', extensions: imageFormats);
     final List<XFile> files = await fileSelector.openFiles(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
     );
@@ -203,10 +194,7 @@ class ImagePickerWindows extends CameraDelegatingImagePickerPlatform {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) async {
-    const typeGroup = XTypeGroup(
-      label: 'Videos',
-      extensions: videoFormats,
-    );
+    const typeGroup = XTypeGroup(label: 'Videos', extensions: videoFormats);
     final List<XFile> files = await fileSelector.openFiles(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
     );

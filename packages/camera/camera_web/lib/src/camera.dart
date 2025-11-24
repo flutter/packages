@@ -456,9 +456,7 @@ class Camera {
   /// Throws a [CameraWebException] if the browser does not support any of the
   /// available video mime types from [_videoMimeType].
   Future<void> startVideoRecording() async {
-    final options = web.MediaRecorderOptions(
-      mimeType: _videoMimeType,
-    );
+    final options = web.MediaRecorderOptions(mimeType: _videoMimeType);
     if (recorderOptions.audioBitrate != null) {
       options.audioBitsPerSecond = recorderOptions.audioBitrate!;
     }

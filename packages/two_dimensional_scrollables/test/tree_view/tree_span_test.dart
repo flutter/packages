@@ -163,9 +163,7 @@ void main() {
   });
 
   test('TreeRowDecoration', () {
-    var decoration = const TreeRowDecoration(
-      color: Color(0xffff0000),
-    );
+    var decoration = const TreeRowDecoration(color: Color(0xffff0000));
     final canvas = TestCanvas();
     const rect = Rect.fromLTWH(0, 0, 10, 10);
     final details = TreeRowDecorationPaintDetails(

@@ -73,8 +73,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
 
   Future<void> _migratePreferences() async {
     // #docregion migrate
-    const sharedPreferencesOptions =
-        SharedPreferencesOptions();
+    const sharedPreferencesOptions = SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
       legacySharedPreferencesInstance: prefs,

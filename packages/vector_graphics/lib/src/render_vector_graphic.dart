@@ -318,12 +318,7 @@ class RenderVectorGraphic extends RenderBox {
       colorPaint.colorFilter = colorFilter;
     }
     colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
-    final src = ui.Rect.fromLTWH(
-      0,
-      0,
-      width.toDouble(),
-      height.toDouble(),
-    );
+    final src = ui.Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
     final dst = ui.Rect.fromLTWH(
       offset.dx,
       offset.dy,

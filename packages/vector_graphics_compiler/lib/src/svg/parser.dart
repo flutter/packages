@@ -414,8 +414,7 @@ class _Elements {
             ),
           );
         } else {
-          final errorMessage =
-              'Unsupported clipPath child ${event.name}';
+          final errorMessage = 'Unsupported clipPath child ${event.name}';
           if (warningsAsErrors) {
             throw UnsupportedError(errorMessage);
           }
@@ -463,11 +462,7 @@ class _Elements {
       final Uint8List data = base64.decode(
         xlinkHref.substring(commaLocation).replaceAll(_whitespacePattern, ''),
       );
-      final image = ImageNode(
-        data,
-        format,
-        parserState._currentAttributes,
-      );
+      final image = ImageNode(data, format, parserState._currentAttributes);
       parserState.currentGroup!.addChild(
         image,
         clipResolver: parserState._definitions.getClipPath,

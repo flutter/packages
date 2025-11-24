@@ -594,10 +594,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
       name: 'wrapped',
       type: const TypeDeclaration(baseName: 'Object', isNullable: true),
     );
-    final overflowFields = <NamedType>[
-      overflowInt,
-      overflowObject,
-    ];
+    final overflowFields = <NamedType>[overflowInt, overflowObject];
     final overflowClass = Class(
       name:
           '${generatorOptions.fileSpecificClassNameComponent}$_overflowClassName',

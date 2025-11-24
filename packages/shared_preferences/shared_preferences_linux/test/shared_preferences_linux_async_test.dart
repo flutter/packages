@@ -28,8 +28,7 @@ void main() {
   const testDouble = 3.14159;
   const testList = <String>['foo', 'bar'];
 
-  const emptyOptions =
-      SharedPreferencesLinuxOptions();
+  const emptyOptions = SharedPreferencesLinuxOptions();
 
   setUp(() {
     fs = MemoryFileSystem.test();

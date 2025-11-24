@@ -264,10 +264,7 @@ void main() {
     testWidgets('It should build the page from the overridden build method', (
       WidgetTester tester,
     ) async {
-      final goRouter = GoRouter(
-        initialLocation: '/build',
-        routes: _routes,
-      );
+      final goRouter = GoRouter(initialLocation: '/build', routes: _routes);
       addTearDown(goRouter.dispose);
       await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
       expect(find.byKey(const Key('build')), findsOneWidget);
@@ -649,10 +646,7 @@ void main() {
   testWidgets('It should redirect using the overridden redirect method', (
     WidgetTester tester,
   ) async {
-    final goRouter = GoRouter(
-      initialLocation: '/redirect',
-      routes: _routes,
-    );
+    final goRouter = GoRouter(initialLocation: '/redirect', routes: _routes);
     addTearDown(goRouter.dispose);
     await tester.pumpWidget(MaterialApp.router(routerConfig: goRouter));
     expect(find.byKey(const Key('build')), findsNothing);
@@ -702,9 +696,7 @@ void main() {
     expect(find.byKey(const Key('buildPage')), findsNothing);
   });
   test('TypedGoRoute with default parameters', () {
-    const typedGoRoute = TypedGoRoute<GoRouteData>(
-      path: '/path',
-    );
+    const typedGoRoute = TypedGoRoute<GoRouteData>(path: '/path');
 
     expect(typedGoRoute.path, '/path');
     expect(typedGoRoute.name, isNull);
@@ -762,8 +754,9 @@ void main() {
   });
 
   test('TypedRelativeGoRoute with default parameters', () {
-    const typedGoRoute =
-        TypedRelativeGoRoute<RelativeGoRouteData>(path: 'path');
+    const typedGoRoute = TypedRelativeGoRoute<RelativeGoRouteData>(
+      path: 'path',
+    );
 
     expect(typedGoRoute.path, 'path');
     expect(typedGoRoute.caseSensitive, true);
@@ -771,17 +764,16 @@ void main() {
   });
 
   test('TypedRelativeGoRoute with provided parameters', () {
-    const typedGoRoute =
+    const typedGoRoute = TypedRelativeGoRoute<RelativeGoRouteData>(
+      path: 'path',
+      caseSensitive: false,
+      routes: <TypedRoute<RouteData>>[
         TypedRelativeGoRoute<RelativeGoRouteData>(
-          path: 'path',
+          path: 'sub-path',
           caseSensitive: false,
-          routes: <TypedRoute<RouteData>>[
-            TypedRelativeGoRoute<RelativeGoRouteData>(
-              path: 'sub-path',
-              caseSensitive: false,
-            ),
-          ],
-        );
+        ),
+      ],
+    );
 
     expect(typedGoRoute.path, 'path');
     expect(typedGoRoute.caseSensitive, false);

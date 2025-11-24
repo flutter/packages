@@ -108,8 +108,7 @@ class GooglePlayProductDetails extends ProductDetails {
         ),
       ];
     } else {
-      final productDetailList =
-          <GooglePlayProductDetails>[];
+      final productDetailList = <GooglePlayProductDetails>[];
       for (
         var subscriptionIndex = 0;
         subscriptionIndex < productDetails.subscriptionOfferDetails!.length;

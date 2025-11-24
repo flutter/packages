@@ -14,11 +14,10 @@ void main() {
     countryCode: 'USA',
   );
 
-  final subPeriod =
-      SKProductSubscriptionPeriodWrapper(
-        numberOfUnits: 1,
-        unit: SKSubscriptionPeriodUnit.month,
-      );
+  final subPeriod = SKProductSubscriptionPeriodWrapper(
+    numberOfUnits: 1,
+    unit: SKSubscriptionPeriodUnit.month,
+  );
 
   final discount = SKProductDiscountWrapper(
     price: '0.99',
@@ -126,8 +125,7 @@ void main() {
       priceLocale: SK2PriceLocale(currencyCode: 'USD', currencySymbol: r'$'),
     );
 
-    final details =
-        AppStoreProduct2Details.fromSK2Product(product);
+    final details = AppStoreProduct2Details.fromSK2Product(product);
 
     expect(details.sk2Product, product);
     expect(details.price, product.displayPrice);

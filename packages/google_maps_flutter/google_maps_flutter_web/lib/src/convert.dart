@@ -273,10 +273,9 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final title =
-        (document.createElement('h3') as HTMLHeadingElement)
-          ..className = 'infowindow-title'
-          ..innerText = markerTitle;
+    final title = (document.createElement('h3') as HTMLHeadingElement)
+      ..className = 'infowindow-title'
+      ..innerText = markerTitle;
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
@@ -534,27 +533,26 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
   final Iterable<Color>? gradientColors = heatmap.gradient?.colors.map(
     (HeatmapGradientColor e) => e.color,
   );
-  final heatmapOptions =
-      visualization.HeatmapLayerOptions()
-        ..data = heatmap.data
-            .map(
-              (WeightedLatLng e) => visualization.WeightedLocation()
-                ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
-                ..weight = e.weight,
-            )
-            .toList()
-            .toJS
-        ..dissipating = heatmap.dissipating
-        ..gradient = gradientColors == null
-            ? null
-            : <Color>[
-                // Web needs a first color with 0 alpha
-                gradientColors.first.withAlpha(0),
-                ...gradientColors,
-              ].map(_getCssColorWithAlpha).toList()
-        ..maxIntensity = heatmap.maxIntensity
-        ..opacity = heatmap.opacity
-        ..radius = heatmap.radius.radius;
+  final heatmapOptions = visualization.HeatmapLayerOptions()
+    ..data = heatmap.data
+        .map(
+          (WeightedLatLng e) => visualization.WeightedLocation()
+            ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
+            ..weight = e.weight,
+        )
+        .toList()
+        .toJS
+    ..dissipating = heatmap.dissipating
+    ..gradient = gradientColors == null
+        ? null
+        : <Color>[
+            // Web needs a first color with 0 alpha
+            gradientColors.first.withAlpha(0),
+            ...gradientColors,
+          ].map(_getCssColorWithAlpha).toList()
+    ..maxIntensity = heatmap.maxIntensity
+    ..opacity = heatmap.opacity
+    ..radius = heatmap.radius.radius;
   return heatmapOptions;
 }
 
@@ -749,9 +747,7 @@ String urlFromMapBitmap(MapBitmap mapBitmap) {
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
       bytesMapBitmap.byteData.hashCode,
       () {
-        final blob = Blob(
-          <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
-        );
+        final blob = Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
         return URL.createObjectURL(blob as JSObject);
       },
     ),

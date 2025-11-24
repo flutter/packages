@@ -15,9 +15,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -33,9 +31,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -58,9 +54,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addDartCreatedInstance(object);
 
@@ -77,9 +71,7 @@ void main() {
         },
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -96,9 +88,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -114,9 +104,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
@@ -129,9 +117,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addDartCreatedInstance(object);
       expect(() => instanceManager.remove(0), throwsAssertionError);
@@ -142,9 +128,7 @@ void main() {
         onWeakReferenceRemoved: (_) {},
       );
 
-      final object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);

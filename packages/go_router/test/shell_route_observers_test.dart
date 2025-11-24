@@ -33,9 +33,7 @@ void main() {
     (WidgetTester tester) async {
       final observer = MockObserver();
 
-      final root = GlobalKey<NavigatorState>(
-        debugLabel: 'root',
-      );
+      final root = GlobalKey<NavigatorState>(debugLabel: 'root');
       await createRouter(
         <RouteBase>[
           GoRoute(path: '/', builder: (_, __) => const Text('Home')),

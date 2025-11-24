@@ -42,8 +42,9 @@ void main() async {
     error_callback: onError,
   );
 
-  final overridableCfg =
-      OverridableTokenClientConfig(scope: scopes + myConnectionsScopes);
+  final overridableCfg = OverridableTokenClientConfig(
+    scope: scopes + myConnectionsScopes,
+  );
 
   final TokenClient client = oauth2.initTokenClient(config);
 

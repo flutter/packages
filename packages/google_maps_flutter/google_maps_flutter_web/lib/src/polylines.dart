@@ -33,8 +33,7 @@ class PolylinesController extends GeometryController {
       googleMap,
       polyline,
     );
-    final gmPolyline = gmaps.Polyline(polylineOptions)
-      ..map = googleMap;
+    final gmPolyline = gmaps.Polyline(polylineOptions)..map = googleMap;
     final controller = PolylineController(
       polyline: gmPolyline,
       consumeTapEvents: polyline.consumeTapEvents,

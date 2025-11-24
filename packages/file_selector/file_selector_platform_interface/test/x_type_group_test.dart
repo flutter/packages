@@ -67,10 +67,7 @@ void main() {
         label: 'utis',
         uniformTypeIdentifiers: <String>['public.text'],
       );
-      const webOnly = XTypeGroup(
-        label: 'web',
-        webWildCards: <String>['.txt'],
-      );
+      const webOnly = XTypeGroup(label: 'web', webWildCards: <String>['.txt']);
 
       expect(extensionOnly.allowsAny, false);
       expect(mimeOnly.allowsAny, false);
@@ -80,9 +77,7 @@ void main() {
 
     group('macUTIs -> uniformTypeIdentifiers transition', () {
       test('passing only macUTIs should fill uniformTypeIdentifiers', () {
-        const uniformTypeIdentifiers = <String>[
-          'public.plain-text',
-        ];
+        const uniformTypeIdentifiers = <String>['public.plain-text'];
         const group = XTypeGroup(macUTIs: uniformTypeIdentifiers);
 
         expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
@@ -91,9 +86,7 @@ void main() {
       test(
         'passing only uniformTypeIdentifiers should fill uniformTypeIdentifiers',
         () {
-          const uniformTypeIdentifiers = <String>[
-            'public.plain-text',
-          ];
+          const uniformTypeIdentifiers = <String>['public.plain-text'];
           const group = XTypeGroup(
             uniformTypeIdentifiers: uniformTypeIdentifiers,
           );
@@ -103,9 +96,7 @@ void main() {
       );
 
       test('macUTIs getter return macUTIs value passed in constructor', () {
-        const uniformTypeIdentifiers = <String>[
-          'public.plain-text',
-        ];
+        const uniformTypeIdentifiers = <String>['public.plain-text'];
         const group = XTypeGroup(macUTIs: uniformTypeIdentifiers);
 
         expect(group.macUTIs, uniformTypeIdentifiers);
@@ -114,9 +105,7 @@ void main() {
       test(
         'macUTIs getter returns uniformTypeIdentifiers value passed in constructor',
         () {
-          const uniformTypeIdentifiers = <String>[
-            'public.plain-text',
-          ];
+          const uniformTypeIdentifiers = <String>['public.plain-text'];
           const group = XTypeGroup(
             uniformTypeIdentifiers: uniformTypeIdentifiers,
           );

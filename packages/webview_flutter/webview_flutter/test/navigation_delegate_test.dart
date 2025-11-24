@@ -37,9 +37,7 @@ void main() {
 
       void onPageStarted(String url) {}
 
-      final delegate = NavigationDelegate(
-        onPageStarted: onPageStarted,
-      );
+      final delegate = NavigationDelegate(onPageStarted: onPageStarted);
 
       verify(delegate.platform.setOnPageStarted(onPageStarted));
     });
@@ -49,9 +47,7 @@ void main() {
 
       void onPageFinished(String url) {}
 
-      final delegate = NavigationDelegate(
-        onPageFinished: onPageFinished,
-      );
+      final delegate = NavigationDelegate(onPageFinished: onPageFinished);
 
       verify(delegate.platform.setOnPageFinished(onPageFinished));
     });
@@ -61,9 +57,7 @@ void main() {
 
       void onProgress(int progress) {}
 
-      final delegate = NavigationDelegate(
-        onProgress: onProgress,
-      );
+      final delegate = NavigationDelegate(onProgress: onProgress);
 
       verify(delegate.platform.setOnProgress(onProgress));
     });
@@ -85,9 +79,7 @@ void main() {
 
       void onUrlChange(UrlChange change) {}
 
-      final delegate = NavigationDelegate(
-        onUrlChange: onUrlChange,
-      );
+      final delegate = NavigationDelegate(onUrlChange: onUrlChange);
 
       verify(delegate.platform.setOnUrlChange(onUrlChange));
     });
@@ -97,9 +89,7 @@ void main() {
 
       void onHttpAuthRequest(HttpAuthRequest request) {}
 
-      final delegate = NavigationDelegate(
-        onHttpAuthRequest: onHttpAuthRequest,
-      );
+      final delegate = NavigationDelegate(onHttpAuthRequest: onHttpAuthRequest);
 
       verify(delegate.platform.setOnHttpAuthRequest(onHttpAuthRequest));
     });
@@ -109,9 +99,7 @@ void main() {
 
       void onHttpError(HttpResponseError error) {}
 
-      final delegate = NavigationDelegate(
-        onHttpError: onHttpError,
-      );
+      final delegate = NavigationDelegate(onHttpError: onHttpError);
 
       verify(delegate.platform.setOnHttpError(onHttpError));
     });
@@ -132,8 +120,7 @@ void main() {
               ).captured.single
               as void Function(PlatformSslAuthError);
 
-      final mockPlatformError =
-          MockPlatformSslAuthError();
+      final mockPlatformError = MockPlatformSslAuthError();
       callback(mockPlatformError);
 
       verify(mockPlatformError.proceed());

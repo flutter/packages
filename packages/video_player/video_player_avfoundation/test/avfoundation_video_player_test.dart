@@ -25,8 +25,7 @@ void main() {
     MockVideoPlayerInstanceApi,
   )
   setUpMockPlayer({required int playerId}) {
-    final pluginApi =
-        MockAVFoundationVideoPlayerApi();
+    final pluginApi = MockAVFoundationVideoPlayerApi();
     final instanceApi = MockVideoPlayerInstanceApi();
     final player = AVFoundationVideoPlayer(
       pluginApi: pluginApi,
@@ -100,8 +99,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(
@@ -165,8 +163,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
@@ -188,9 +185,7 @@ void main() {
         api.createForTextureView(any),
       ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
 
-      const headers = <String, String>{
-        'Authorization': 'Bearer token',
-      };
+      const headers = <String, String>{'Authorization': 'Bearer token'};
       await player.create(
         DataSource(
           sourceType: DataSourceType.network,
@@ -201,8 +196,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.httpHeaders, headers);
     });
 
@@ -228,8 +222,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(
@@ -271,8 +264,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(
@@ -311,8 +303,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, uri);
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
@@ -335,9 +326,7 @@ void main() {
         (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
       );
 
-      const headers = <String, String>{
-        'Authorization': 'Bearer token',
-      };
+      const headers = <String, String>{'Authorization': 'Bearer token'};
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
           dataSource: DataSource(
@@ -352,8 +341,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.httpHeaders, headers);
       expect(playerId, newPlayerId);
     });
@@ -384,8 +372,7 @@ void main() {
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
       );
-      final creationOptions =
-          verification.captured[0] as CreationOptions;
+      final creationOptions = verification.captured[0] as CreationOptions;
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(

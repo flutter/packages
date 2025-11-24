@@ -191,10 +191,7 @@ void main() {
     const m1 = Marker(markerId: MarkerId('marker_1'));
     const m2 = Marker(markerId: MarkerId('marker_2'));
     const m3 = Marker(markerId: MarkerId('marker_3'));
-    const m3updated = Marker(
-      markerId: MarkerId('marker_3'),
-      draggable: true,
-    );
+    const m3updated = Marker(markerId: MarkerId('marker_3'), draggable: true);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithMarkers(<Marker>{m1, m2}));

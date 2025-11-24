@@ -59,8 +59,7 @@ class BenchmarkResults {
 
   /// Deserializes a JSON object to create a [BenchmarkResults] object.
   factory BenchmarkResults.parse(Map<String, Object?> json) {
-    final results =
-        <String, List<BenchmarkScore>>{};
+    final results = <String, List<BenchmarkScore>>{};
     for (final String key in json.keys) {
       final List<BenchmarkScore> scores = (json[key]! as List<Object?>)
           .cast<Map<String, Object?>>()

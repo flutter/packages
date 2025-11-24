@@ -22,12 +22,8 @@ void main() {
           ? 'assets/Butterfly-209.webm'
           : 'assets/Butterfly-209.mp4';
 
-      final controller = VideoPlayerController.asset(
-        videoAssetKey,
-      );
-      final another = VideoPlayerController.asset(
-        videoAssetKey,
-      );
+      final controller = VideoPlayerController.asset(videoAssetKey);
+      final another = VideoPlayerController.asset(videoAssetKey);
       await controller.initialize();
       await another.initialize();
       await controller.setVolume(0);

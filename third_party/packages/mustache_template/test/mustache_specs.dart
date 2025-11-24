@@ -63,8 +63,7 @@ void _defineGroupFromFile(String filename, String text) {
         "Could not render right '''$templateOneline'''",
       );
       final Object? expected = t['expected'];
-      final partials =
-          t['partials'] as Map<String, Object?>?;
+      final partials = t['partials'] as Map<String, Object?>?;
       String? partial(String name) {
         if (partials == null) {
           return null;

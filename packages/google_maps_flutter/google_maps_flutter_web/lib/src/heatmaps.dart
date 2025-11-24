@@ -27,9 +27,7 @@ class HeatmapsController extends GeometryController {
   void _addHeatmap(Heatmap heatmap) {
     final visualization.HeatmapLayerOptions heatmapOptions =
         _heatmapOptionsFromHeatmap(heatmap);
-    final gmHeatmap = visualization.HeatmapLayer(
-      heatmapOptions,
-    );
+    final gmHeatmap = visualization.HeatmapLayer(heatmapOptions);
     gmHeatmap.map = googleMap;
     final controller = HeatmapController(heatmap: gmHeatmap);
     _heatmapIdToController[heatmap.heatmapId] = controller;

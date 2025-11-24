@@ -1337,8 +1337,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     // Create and set Analyzer that can read image data for image streaming.
-    final weakThis =
-        WeakReference<AndroidCameraCameraX>(this);
+    final weakThis = WeakReference<AndroidCameraCameraX>(this);
     Future<void> analyze(ImageProxy imageProxy) async {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
       final cameraImagePlanes = <CameraImagePlane>[];
@@ -1487,8 +1486,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///  * Send a [CameraErrorEvent] if the [CameraState] indicates that the
   ///    camera is in error state.
   Observer<CameraState> _createCameraClosingObserver(int cameraId) {
-    final weakThis =
-        WeakReference<AndroidCameraCameraX>(this);
+    final weakThis = WeakReference<AndroidCameraCameraX>(this);
 
     // Callback method used to implement the behavior described above:
     void onChanged(CameraState state) {
@@ -1780,8 +1778,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       // Add new metering point with specified meteringMode, which may involve
       // replacing a metering point with the same specified meteringMode from
       // the current focus and metering action.
-      var newMeteringPointInfos =
-          <(MeteringPoint, MeteringMode)>[];
+      var newMeteringPointInfos = <(MeteringPoint, MeteringMode)>[];
 
       if (currentFocusMeteringAction != null) {
         final Iterable<(MeteringPoint, MeteringMode)> originalMeteringPoints =

@@ -20,8 +20,7 @@ void main() async {
   const fakeUrl = 'https://www.flutter.dev/';
 
   testWidgets('initialUrl', (WidgetTester tester) async {
-    final controllerCompleter =
-        Completer<WebViewController>();
+    final controllerCompleter = Completer<WebViewController>();
     await tester.pumpWidget(
       wrappedLegacyWebView(fakeUrl, (WebViewController controller) {
         controllerCompleter.complete(controller);
@@ -40,8 +39,7 @@ void main() async {
   });
 
   testWidgets('loadUrl', (WidgetTester tester) async {
-    final controllerCompleter =
-        Completer<WebViewController>();
+    final controllerCompleter = Completer<WebViewController>();
     await tester.pumpWidget(
       wrappedLegacyWebView(someUrl, (WebViewController controller) {
         controllerCompleter.complete(controller);

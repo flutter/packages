@@ -39,11 +39,10 @@ class GroundOverlaysController extends GeometryController {
       groundOverlay.bounds!,
     );
 
-    final groundOverlayOptions =
-        gmaps.GroundOverlayOptions()
-          ..opacity = 1.0 - groundOverlay.transparency
-          ..clickable = groundOverlay.clickable
-          ..map = groundOverlay.visible ? googleMap : null;
+    final groundOverlayOptions = gmaps.GroundOverlayOptions()
+      ..opacity = 1.0 - groundOverlay.transparency
+      ..clickable = groundOverlay.clickable
+      ..map = groundOverlay.visible ? googleMap : null;
 
     final overlay = gmaps.GroundOverlay(
       urlFromMapBitmap(groundOverlay.image),

@@ -19,8 +19,7 @@ void main() {
   test(
     'passing non-default InAppBrowserConfiguration to LaunchOptions works',
     () {
-      const browserConfiguration =
-          InAppBrowserConfiguration(showTitle: true);
+      const browserConfiguration = InAppBrowserConfiguration(showTitle: true);
 
       const launchOptions = LaunchOptions(
         browserConfiguration: browserConfiguration,

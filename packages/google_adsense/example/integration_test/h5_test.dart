@@ -28,9 +28,7 @@ void main() {
       mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final adBreakPlacement = AdBreakPlacement(
-        type: BreakType.reward,
-      );
+      final adBreakPlacement = AdBreakPlacement(type: BreakType.reward);
 
       h5GamesAds.adBreak(adBreakPlacement);
 

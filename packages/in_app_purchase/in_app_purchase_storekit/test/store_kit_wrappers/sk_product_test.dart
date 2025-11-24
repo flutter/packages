@@ -14,10 +14,9 @@ void main() {
     test(
       'SKProductSubscriptionPeriodWrapper should have property values consistent with map',
       () {
-        final wrapper =
-            SKProductSubscriptionPeriodWrapper.fromJson(
-              buildSubscriptionPeriodMap(dummySubscription),
-            );
+        final wrapper = SKProductSubscriptionPeriodWrapper.fromJson(
+          buildSubscriptionPeriodMap(dummySubscription),
+        );
         expect(wrapper, equals(dummySubscription));
       },
     );
@@ -25,10 +24,9 @@ void main() {
     test(
       'SKProductSubscriptionPeriodWrapper should have properties to be default values if map is empty',
       () {
-        final wrapper =
-            SKProductSubscriptionPeriodWrapper.fromJson(
-              const <String, dynamic>{},
-            );
+        final wrapper = SKProductSubscriptionPeriodWrapper.fromJson(
+          const <String, dynamic>{},
+        );
         expect(wrapper.numberOfUnits, 0);
         expect(wrapper.unit, SKSubscriptionPeriodUnit.day);
       },
@@ -37,28 +35,29 @@ void main() {
     test(
       'SKProductDiscountWrapper should have property values consistent with map',
       () {
-        final wrapper =
-            SKProductDiscountWrapper.fromJson(buildDiscountMap(dummyDiscount));
+        final wrapper = SKProductDiscountWrapper.fromJson(
+          buildDiscountMap(dummyDiscount),
+        );
         expect(wrapper, equals(dummyDiscount));
       },
     );
 
     test('SKProductDiscountWrapper missing identifier and type should have '
         'property values consistent with map', () {
-      final wrapper =
-          SKProductDiscountWrapper.fromJson(
-            buildDiscountMapMissingIdentifierAndType(
-              dummyDiscountMissingIdentifierAndType,
-            ),
-          );
+      final wrapper = SKProductDiscountWrapper.fromJson(
+        buildDiscountMapMissingIdentifierAndType(
+          dummyDiscountMissingIdentifierAndType,
+        ),
+      );
       expect(wrapper, equals(dummyDiscountMissingIdentifierAndType));
     });
 
     test(
       'SKProductDiscountWrapper should have properties to be default if map is empty',
       () {
-        final wrapper =
-            SKProductDiscountWrapper.fromJson(const <String, dynamic>{});
+        final wrapper = SKProductDiscountWrapper.fromJson(
+          const <String, dynamic>{},
+        );
         expect(wrapper.price, '');
         expect(
           wrapper.priceLocale,
@@ -93,9 +92,7 @@ void main() {
     test(
       'SKProductWrapper should have properties to be default if map is empty',
       () {
-        final wrapper = SKProductWrapper.fromJson(
-          const <String, dynamic>{},
-        );
+        final wrapper = SKProductWrapper.fromJson(const <String, dynamic>{});
         expect(wrapper.productIdentifier, '');
         expect(wrapper.localizedTitle, '');
         expect(wrapper.localizedDescription, '');
@@ -118,8 +115,7 @@ void main() {
       final wrapper = SKProductWrapper.fromJson(
         buildProductMap(dummyProductWrapper),
       );
-      final product =
-          AppStoreProductDetails.fromSKProduct(wrapper);
+      final product = AppStoreProductDetails.fromSKProduct(wrapper);
       expect(product.title, wrapper.localizedTitle);
       expect(product.description, wrapper.localizedDescription);
       expect(product.id, wrapper.productIdentifier);
@@ -128,20 +124,19 @@ void main() {
     });
 
     test('SKProductResponse wrapper should match', () {
-      final wrapper =
-          SkProductResponseWrapper.fromJson(
-            buildProductResponseMap(dummyProductResponseWrapper),
-          );
+      final wrapper = SkProductResponseWrapper.fromJson(
+        buildProductResponseMap(dummyProductResponseWrapper),
+      );
       expect(wrapper, equals(dummyProductResponseWrapper));
     });
     test('SKProductResponse wrapper should default to empty list', () {
-      final productResponseMapEmptyList =
-          <String, List<dynamic>>{
-            'products': <Map<String, dynamic>>[],
-            'invalidProductIdentifiers': <String>[],
-          };
-      final wrapper =
-          SkProductResponseWrapper.fromJson(productResponseMapEmptyList);
+      final productResponseMapEmptyList = <String, List<dynamic>>{
+        'products': <Map<String, dynamic>>[],
+        'invalidProductIdentifiers': <String>[],
+      };
+      final wrapper = SkProductResponseWrapper.fromJson(
+        productResponseMapEmptyList,
+      );
       expect(wrapper.products.length, 0);
       expect(wrapper.invalidProductIdentifiers.length, 0);
     });
@@ -156,9 +151,7 @@ void main() {
 
   group('Payment queue related object tests', () {
     test('Should construct correct SKPaymentWrapper from json', () {
-      final payment = SKPaymentWrapper.fromJson(
-        dummyPayment.toMap(),
-      );
+      final payment = SKPaymentWrapper.fromJson(dummyPayment.toMap());
       expect(payment, equals(dummyPayment));
     });
 
@@ -193,19 +186,17 @@ void main() {
     });
 
     test('Should construct correct SKTransactionWrapper from json', () {
-      final transaction =
-          SKPaymentTransactionWrapper.fromJson(
-            buildTransactionMap(dummyTransaction),
-          );
+      final transaction = SKPaymentTransactionWrapper.fromJson(
+        buildTransactionMap(dummyTransaction),
+      );
       expect(transaction, equals(dummyTransaction));
     });
 
     test('toPurchaseDetails() should return correct PurchaseDetail object', () {
-      final details =
-          AppStorePurchaseDetails.fromSKTransaction(
-            dummyTransaction,
-            'receipt data',
-          );
+      final details = AppStorePurchaseDetails.fromSKTransaction(
+        dummyTransaction,
+        'receipt data',
+      );
       expect(dummyTransaction.transactionIdentifier, details.purchaseID);
       expect(dummyTransaction.payment.productIdentifier, details.productID);
       expect(dummyTransaction.transactionTimeStamp, isNotNull);
@@ -221,12 +212,11 @@ void main() {
     });
 
     test('SKPaymentTransactionWrapper.toFinishMap set correct value', () {
-      final transactionWrapper =
-          SKPaymentTransactionWrapper(
-            payment: dummyPayment,
-            transactionState: SKPaymentTransactionStateWrapper.failed,
-            transactionIdentifier: 'abcd',
-          );
+      final transactionWrapper = SKPaymentTransactionWrapper(
+        payment: dummyPayment,
+        transactionState: SKPaymentTransactionStateWrapper.failed,
+        transactionIdentifier: 'abcd',
+      );
       final Map<String, String?> finishMap = transactionWrapper.toFinishMap();
       expect(finishMap['transactionIdentifier'], 'abcd');
       expect(finishMap['productIdentifier'], dummyPayment.productIdentifier);
@@ -235,11 +225,10 @@ void main() {
     test(
       'SKPaymentTransactionWrapper.toFinishMap should set transactionIdentifier to null when necessary',
       () {
-        final transactionWrapper =
-            SKPaymentTransactionWrapper(
-              payment: dummyPayment,
-              transactionState: SKPaymentTransactionStateWrapper.failed,
-            );
+        final transactionWrapper = SKPaymentTransactionWrapper(
+          payment: dummyPayment,
+          transactionState: SKPaymentTransactionStateWrapper.failed,
+        );
         final Map<String, String?> finishMap = transactionWrapper.toFinishMap();
         expect(finishMap['transactionIdentifier'], null);
       },

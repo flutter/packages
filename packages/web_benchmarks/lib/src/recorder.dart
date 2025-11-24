@@ -690,10 +690,7 @@ class Profile {
   /// server.
   Map<String, dynamic> toJson() {
     final scoreKeys = <String>[];
-    final json = <String, dynamic>{
-      'name': name,
-      'scoreKeys': scoreKeys,
-    };
+    final json = <String, dynamic>{'name': name, 'scoreKeys': scoreKeys};
 
     for (final String key in scoreData.keys) {
       final Timeseries timeseries = scoreData[key]!;

@@ -30,9 +30,7 @@ void main() {
   });
 
   test('ctor should initialize with channels.', () {
-    final registry = JavascriptChannelRegistry(
-      channels,
-    );
+    final registry = JavascriptChannelRegistry(channels);
 
     expect(registry.channels.length, 3);
     for (final channel in channels) {
@@ -43,9 +41,7 @@ void main() {
   test(
     'onJavascriptChannelMessage should forward message on correct channel.',
     () {
-      final registry = JavascriptChannelRegistry(
-        channels,
-      );
+      final registry = JavascriptChannelRegistry(channels);
 
       registry.onJavascriptChannelMessage(
         'js_channel_2',
@@ -59,9 +55,7 @@ void main() {
   test(
     'onJavascriptChannelMessage should throw ArgumentError when message arrives on non-existing channel.',
     () {
-      final registry = JavascriptChannelRegistry(
-        channels,
-      );
+      final registry = JavascriptChannelRegistry(channels);
 
       expect(
         () => registry.onJavascriptChannelMessage(
@@ -82,9 +76,7 @@ void main() {
   test(
     'updateJavascriptChannelsFromSet should clear all channels when null is supplied.',
     () {
-      final registry = JavascriptChannelRegistry(
-        channels,
-      );
+      final registry = JavascriptChannelRegistry(channels);
 
       expect(registry.channels.length, 3);
 
@@ -97,9 +89,7 @@ void main() {
   test(
     'updateJavascriptChannelsFromSet should update registry with new set.',
     () {
-      final registry = JavascriptChannelRegistry(
-        channels,
-      );
+      final registry = JavascriptChannelRegistry(channels);
 
       expect(registry.channels.length, 3);
 

@@ -225,10 +225,7 @@ class _SharedPreferencesStateProviderState
       service,
       serviceManager: serviceManager,
     );
-    final toolEval = SharedPreferencesToolEval(
-      service,
-      extensionEval,
-    );
+    final toolEval = SharedPreferencesToolEval(service, extensionEval);
     _notifier = SharedPreferencesStateNotifier(toolEval);
     _notifier.fetchAllKeys();
   }
