@@ -90,7 +90,7 @@ class _MyHomePageState extends State<_MyHomePage> {
       _painters.add(SvgPicture.asset(assetName));
     }
 
-    for (int i = 0; i < iconNames.length; i++) {
+    for (var i = 0; i < iconNames.length; i++) {
       _painters.add(
         Directionality(
           textDirection: TextDirection.ltr,

@@ -8,7 +8,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('DrawCommandBuilder does not emit empty paths', () {
-    final DrawCommandBuilder builder = DrawCommandBuilder();
+    final builder = DrawCommandBuilder();
     builder.addPath(Path(), const Paint(), null, null);
     expect(builder.toInstructions(100, 100).commands, isEmpty);
   });

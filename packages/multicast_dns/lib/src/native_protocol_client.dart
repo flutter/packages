@@ -25,7 +25,7 @@ class ResourceRecordCache {
 
   /// The number of entries in the cache.
   int get entryCount {
-    int count = 0;
+    var count = 0;
     for (final SplayTreeMap<String, List<ResourceRecord>> map
         in _cache.values) {
       for (final List<ResourceRecord> records in map.values) {
@@ -40,8 +40,8 @@ class ResourceRecordCache {
     // TODO(karlklose): include flush bit in the record and only flush if
     // necessary.
     // Clear the cache for all name/type combinations to be updated.
-    final Map<int, Set<String>> seenRecordTypes = <int, Set<String>>{};
-    for (final ResourceRecord record in records) {
+    final seenRecordTypes = <int, Set<String>>{};
+    for (final record in records) {
       // TODO(dnfield): Update this to use set literal syntax when we're able to bump the SDK constraint.
       seenRecordTypes[record.resourceRecordType] ??=
           Set<String>(); // ignore: prefer_collection_literals

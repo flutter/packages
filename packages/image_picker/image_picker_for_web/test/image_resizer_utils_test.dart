@@ -30,8 +30,8 @@ void main() {
       );
 
       test('image size is scaled when maxWidth is set', () {
-        const Size imageSize = Size(500, 300);
-        const int maxWidth = 400;
+        const imageSize = Size(500, 300);
+        const maxWidth = 400;
         final Size scaledSize = calculateSizeOfDownScaledImage(
           Size(imageSize.width, imageSize.height),
           maxWidth.toDouble(),
@@ -42,8 +42,8 @@ void main() {
       });
 
       test('image size is scaled when maxHeight is set', () {
-        const Size imageSize = Size(500, 300);
-        const int maxHeight = 400;
+        const imageSize = Size(500, 300);
+        const maxHeight = 400;
         final Size scaledSize = calculateSizeOfDownScaledImage(
           Size(imageSize.width, imageSize.height),
           null,
@@ -54,9 +54,9 @@ void main() {
       });
 
       test('image size is scaled when both maxWidth and maxHeight is set', () {
-        const Size imageSize = Size(1120, 2000);
-        const int maxHeight = 1200;
-        const int maxWidth = 99;
+        const imageSize = Size(1120, 2000);
+        const maxHeight = 1200;
+        const maxWidth = 99;
         final Size scaledSize = calculateSizeOfDownScaledImage(
           Size(imageSize.width, imageSize.height),
           maxWidth.toDouble(),

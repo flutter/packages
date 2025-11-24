@@ -14,7 +14,7 @@ void main() {
     }
   });
   test('Path tests', () {
-    final Path path = Path()
+    final path = Path()
       ..lineTo(10, 0)
       ..lineTo(10, 10)
       ..lineTo(0, 10)
@@ -50,7 +50,7 @@ void main() {
       50,
     ]);
 
-    final SvgPathProxy proxy = SvgPathProxy();
+    final proxy = SvgPathProxy();
     path.replay(proxy);
     expect(
       proxy.toString(),
@@ -60,13 +60,13 @@ void main() {
   });
 
   test('Ops test', () {
-    final Path cubics = Path()
+    final cubics = Path()
       ..moveTo(16, 128)
       ..cubicTo(16, 66, 66, 16, 128, 16)
       ..cubicTo(240, 66, 16, 66, 240, 128)
       ..close();
 
-    final Path quad = Path()
+    final quad = Path()
       ..moveTo(55, 16)
       ..lineTo(200, 80)
       ..lineTo(198, 230)
@@ -106,7 +106,7 @@ void main() {
   });
 
   test('Quad', () {
-    final Path top = Path()
+    final top = Path()
       ..moveTo(87.998, 103.591)
       ..lineTo(82.72, 103.591)
       ..lineTo(82.72, 106.64999999999999)
@@ -114,7 +114,7 @@ void main() {
       ..lineTo(87.998, 103.591)
       ..close();
 
-    final Path bottom = Path()
+    final bottom = Path()
       ..moveTo(116.232, 154.452)
       ..lineTo(19.031999999999996, 154.452)
       ..cubicTo(

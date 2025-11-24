@@ -60,7 +60,8 @@ abstract class PackageCommand extends Command<void> {
     );
     argParser.addOption(
       _shardIndexArg,
-      help: 'Specifies the zero-based index of the shard to '
+      help:
+          'Specifies the zero-based index of the shard to '
           'which the command applies.',
       valueHelp: 'i',
       defaultsTo: '0',
@@ -71,69 +72,94 @@ abstract class PackageCommand extends Command<void> {
       valueHelp: 'n',
       defaultsTo: '1',
     );
-    argParser.addFlag(_exactMatchOnlyArg,
-        help: 'Disables package group matching in package selection.',
-        negatable: false);
+    argParser.addFlag(
+      _exactMatchOnlyArg,
+      help: 'Disables package group matching in package selection.',
+      negatable: false,
+    );
     argParser.addMultiOption(
       _excludeArg,
       abbr: 'e',
-      help: 'A list of packages to exclude from this command.\n\n'
+      help:
+          'A list of packages to exclude from this command.\n\n'
           'Alternately, a list of one or more YAML files that contain a list '
           'of packages to exclude.',
       defaultsTo: <String>[],
     );
-    argParser.addFlag(_runOnChangedPackagesArg,
-        negatable: false,
-        help: 'Run the command on changed packages.\n'
-            'If no packages have changed, or if there have been changes that may\n'
-            'affect all packages, the command runs on all packages.\n'
-            'Packages excluded with $_excludeArg are excluded even if changed.\n'
-            'See $_baseShaArg if a custom base is needed to determine the diff.\n\n'
-            'Cannot be combined with $_packagesArg.\n');
-    argParser.addFlag(_runOnDirtyPackagesArg,
-        negatable: false,
-        help:
-            'Run the command on packages with changes that have not been committed.\n'
-            'Packages excluded with $_excludeArg are excluded even if changed.\n'
-            'Cannot be combined with $_packagesArg.\n',
-        hide: true);
-    argParser.addFlag(_packagesForBranchArg,
-        negatable: false,
-        help: 'This runs on all packages changed in the last commit on main '
-            '(or master), and behaves like --run-on-changed-packages on '
-            'any other branch.\n\n'
-            'Cannot be combined with $_packagesArg.\n\n'
-            'This is intended for use in CI.\n',
-        hide: true);
-    argParser.addMultiOption(_filterPackagesArg,
-        help: 'Filters any selected packages to only those included in this '
-            'list. This is intended for use in CI with flags such as '
-            '--$_packagesForBranchArg.\n\n'
-            'Entries can be package names or YAML files that contain a list '
-            'of package names.',
-        defaultsTo: <String>[],
-        hide: true);
-    argParser.addFlag(_currentPackageArg,
-        negatable: false,
-        help:
-            'Set the target package(s) based on the current working directory.\n'
-            '- If the current working directory is (or is inside) a package, '
-            'that package will be targeted.\n'
-            '- If the current working directory is the root of a federated '
-            'plugin group, that group will be targeted.\n'
-            'Cannot be combined with $_packagesArg.\n');
-    argParser.addOption(_baseShaArg,
-        help: 'The base sha used to determine git diff. \n'
-            'This is useful when $_runOnChangedPackagesArg is specified.\n'
-            'If not specified, merge-base is used as base sha.');
-    argParser.addOption(_baseBranchArg,
-        help: 'The base branch whose merge base is used as the base SHA if '
-            '--$_baseShaArg is not provided. \n'
-            'If not specified, "main" is used as the base branch.');
-    argParser.addFlag(_logTimingArg,
-        help: 'Logs timing information.\n\n'
-            'Currently only logs per-package timing for multi-package commands, '
-            'but more information may be added in the future.');
+    argParser.addFlag(
+      _runOnChangedPackagesArg,
+      negatable: false,
+      help:
+          'Run the command on changed packages.\n'
+          'If no packages have changed, or if there have been changes that may\n'
+          'affect all packages, the command runs on all packages.\n'
+          'Packages excluded with $_excludeArg are excluded even if changed.\n'
+          'See $_baseShaArg if a custom base is needed to determine the diff.\n\n'
+          'Cannot be combined with $_packagesArg.\n',
+    );
+    argParser.addFlag(
+      _runOnDirtyPackagesArg,
+      negatable: false,
+      help:
+          'Run the command on packages with changes that have not been committed.\n'
+          'Packages excluded with $_excludeArg are excluded even if changed.\n'
+          'Cannot be combined with $_packagesArg.\n',
+      hide: true,
+    );
+    argParser.addFlag(
+      _packagesForBranchArg,
+      negatable: false,
+      help:
+          'This runs on all packages changed in the last commit on main '
+          '(or master), and behaves like --run-on-changed-packages on '
+          'any other branch.\n\n'
+          'Cannot be combined with $_packagesArg.\n\n'
+          'This is intended for use in CI.\n',
+      hide: true,
+    );
+    argParser.addMultiOption(
+      _filterPackagesArg,
+      help:
+          'Filters any selected packages to only those included in this '
+          'list. This is intended for use in CI with flags such as '
+          '--$_packagesForBranchArg.\n\n'
+          'Entries can be package names or YAML files that contain a list '
+          'of package names.',
+      defaultsTo: <String>[],
+      hide: true,
+    );
+    argParser.addFlag(
+      _currentPackageArg,
+      negatable: false,
+      help:
+          'Set the target package(s) based on the current working directory.\n'
+          '- If the current working directory is (or is inside) a package, '
+          'that package will be targeted.\n'
+          '- If the current working directory is the root of a federated '
+          'plugin group, that group will be targeted.\n'
+          'Cannot be combined with $_packagesArg.\n',
+    );
+    argParser.addOption(
+      _baseShaArg,
+      help:
+          'The base sha used to determine git diff. \n'
+          'This is useful when $_runOnChangedPackagesArg is specified.\n'
+          'If not specified, merge-base is used as base sha.',
+    );
+    argParser.addOption(
+      _baseBranchArg,
+      help:
+          'The base branch whose merge base is used as the base SHA if '
+          '--$_baseShaArg is not provided. \n'
+          'If not specified, "main" is used as the base branch.',
+    );
+    argParser.addFlag(
+      _logTimingArg,
+      help:
+          'Logs timing information.\n\n'
+          'Currently only logs per-package timing for multi-package commands, '
+          'but more information may be added in the future.',
+    );
   }
 
   // Package selection.
@@ -219,8 +245,10 @@ abstract class PackageCommand extends Command<void> {
       printError('$packagesPath is not a valid Git repository.');
       throw ToolExit(2);
     }
-    gitDir =
-        await GitDir.fromExisting(packagesDir.path, allowSubdirectory: true);
+    gitDir = await GitDir.fromExisting(
+      packagesDir.path,
+      allowSubdirectory: true,
+    );
     _gitDir = gitDir;
     return gitDir;
   }
@@ -287,7 +315,8 @@ abstract class PackageCommand extends Command<void> {
     }
     if (shardIndex < 0 || shardCount <= shardIndex) {
       usageException(
-          '$_shardIndexArg must be in the half-open range [0..$shardCount[');
+        '$_shardIndexArg must be in the half-open range [0..$shardCount[',
+      );
     }
     _shardIndex = shardIndex;
     _shardCount = shardCount;
@@ -311,23 +340,29 @@ abstract class PackageCommand extends Command<void> {
   ///
   /// By default, packages excluded via --exclude will not be in the stream, but
   /// they can be included by passing false for [filterExcluded].
-  Stream<PackageEnumerationEntry> getTargetPackages(
-      {bool filterExcluded = true}) async* {
+  Stream<PackageEnumerationEntry> getTargetPackages({
+    bool filterExcluded = true,
+  }) async* {
     // To avoid assuming consistency of `Directory.list` across command
     // invocations, we collect and sort the package folders before sharding.
     // This is considered an implementation detail which is why the API still
     // uses streams.
-    final List<PackageEnumerationEntry> allPackages =
-        await _getAllPackages().toList();
-    allPackages.sort((PackageEnumerationEntry p1, PackageEnumerationEntry p2) =>
-        p1.package.path.compareTo(p2.package.path));
-    final int shardSize = allPackages.length ~/ shardCount +
+    final List<PackageEnumerationEntry> allPackages = await _getAllPackages()
+        .toList();
+    allPackages.sort(
+      (PackageEnumerationEntry p1, PackageEnumerationEntry p2) =>
+          p1.package.path.compareTo(p2.package.path),
+    );
+    final int shardSize =
+        allPackages.length ~/ shardCount +
         (allPackages.length % shardCount == 0 ? 0 : 1);
     final int start = min(shardIndex * shardSize, allPackages.length);
     final int end = min(start + shardSize, allPackages.length);
 
-    for (final PackageEnumerationEntry package
-        in allPackages.sublist(start, end)) {
+    for (final PackageEnumerationEntry package in allPackages.sublist(
+      start,
+      end,
+    )) {
       if (!(filterExcluded && package.excluded)) {
         yield package;
       }
@@ -358,7 +393,7 @@ abstract class PackageCommand extends Command<void> {
   ///    is a sibling of the packages directory. This is used for a small number
   ///    of packages in the flutter/packages repository.
   Stream<PackageEnumerationEntry> _getAllPackages() async* {
-    final Set<String> packageSelectionFlags = <String>{
+    final packageSelectionFlags = <String>{
       _packagesArg,
       _runOnChangedPackagesArg,
       _runOnDirtyPackagesArg,
@@ -369,9 +404,11 @@ abstract class PackageCommand extends Command<void> {
             .where((String flag) => argResults!.wasParsed(flag))
             .length >
         1) {
-      printError('Only one of the package selection arguments '
-          '(${packageSelectionFlags.join(", ")}) '
-          'can be provided.');
+      printError(
+        'Only one of the package selection arguments '
+        '(${packageSelectionFlags.join(", ")}) '
+        'can be provided.',
+      );
       throw ToolExit(exitInvalidArguments);
     }
 
@@ -379,12 +416,13 @@ abstract class PackageCommand extends Command<void> {
     // rather than allowing package groups for federated plugins. Any cases
     // where the set of packages is determined programatically based on repo
     // state should use exact matching.
-    final bool allowGroupMatching = !(getBoolArg(_exactMatchOnlyArg) ||
-        argResults!.wasParsed(_runOnChangedPackagesArg) ||
-        argResults!.wasParsed(_runOnDirtyPackagesArg) ||
-        argResults!.wasParsed(_packagesForBranchArg));
+    final bool allowGroupMatching =
+        !(getBoolArg(_exactMatchOnlyArg) ||
+            argResults!.wasParsed(_runOnChangedPackagesArg) ||
+            argResults!.wasParsed(_runOnDirtyPackagesArg) ||
+            argResults!.wasParsed(_packagesForBranchArg));
 
-    Set<String> packages = Set<String>.from(getStringListArg(_packagesArg));
+    var packages = Set<String>.from(getStringListArg(_packagesArg));
 
     final GitVersionFinder? changedFileFinder;
     if (getBoolArg(_runOnChangedPackagesArg)) {
@@ -392,8 +430,10 @@ abstract class PackageCommand extends Command<void> {
     } else if (getBoolArg(_packagesForBranchArg)) {
       final String? branch = await _getBranch();
       if (branch == null) {
-        printError('Unable to determine branch; --$_packagesForBranchArg can '
-            'only be used in a git repository.');
+        printError(
+          'Unable to determine branch; --$_packagesForBranchArg can '
+          'only be used in a git repository.',
+        );
         throw ToolExit(exitInvalidArguments);
       } else {
         // Configure the change finder the correct mode for the branch.
@@ -405,7 +445,8 @@ abstract class PackageCommand extends Command<void> {
           lastCommitOnly = true;
         } else if (await _isCheckoutFromBranch('main')) {
           print(
-              '--$_packagesForBranchArg: running on a commit from default branch.');
+            '--$_packagesForBranchArg: running on a commit from default branch.',
+          );
           lastCommitOnly = true;
         } else {
           print('--$_packagesForBranchArg: running on branch "$branch".');
@@ -413,7 +454,8 @@ abstract class PackageCommand extends Command<void> {
         }
         if (lastCommitOnly) {
           print(
-              '--$_packagesForBranchArg: using parent commit as the diff base.');
+            '--$_packagesForBranchArg: using parent commit as the diff base.',
+          );
           changedFileFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD~');
         } else {
           changedFileFinder = await retrieveVersionFinder();
@@ -425,25 +467,28 @@ abstract class PackageCommand extends Command<void> {
 
     if (changedFileFinder != null) {
       final String baseSha = await changedFileFinder.getBaseSha();
-      final List<String> changedFiles =
-          await changedFileFinder.getChangedFiles();
+      final List<String> changedFiles = await changedFileFinder
+          .getChangedFiles();
       if (_changesRequireFullTest(changedFiles)) {
-        print('Running for all packages, since a file has changed that could '
-            'affect the entire repository.');
+        print(
+          'Running for all packages, since a file has changed that could '
+          'affect the entire repository.',
+        );
       } else {
         print(
-            'Running for all packages that have diffs relative to "$baseSha"\n');
+          'Running for all packages that have diffs relative to "$baseSha"\n',
+        );
         packages = _getChangedPackageNames(changedFiles);
       }
     } else if (getBoolArg(_runOnDirtyPackagesArg)) {
-      final GitVersionFinder gitVersionFinder =
-          GitVersionFinder(await gitDir, baseSha: 'HEAD');
+      final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD');
       print('Running for all packages that have uncommitted changes\n');
       // _changesRequireFullTest is deliberately not used here, as this flag is
       // intended for use in CI to re-test packages changed by
       // 'make-deps-path-based'.
       packages = _getChangedPackageNames(
-          await gitVersionFinder.getChangedFiles(includeUncommitted: true));
+        await gitVersionFinder.getChangedFiles(includeUncommitted: true),
+      );
       // For the same reason, empty is not treated as "all packages" as it is
       // for other flags.
       if (packages.isEmpty) {
@@ -452,8 +497,10 @@ abstract class PackageCommand extends Command<void> {
     } else if (getBoolArg(_currentPackageArg)) {
       final String? currentPackageName = _getCurrentDirectoryPackageName();
       if (currentPackageName == null) {
-        printError('Unable to determine packages; --$_currentPackageArg can '
-            'only be used within a repository package or package group.');
+        printError(
+          'Unable to determine packages; --$_currentPackageArg can '
+          'only be used within a repository package or package group.',
+        );
         throw ToolExit(exitInvalidArguments);
       }
       packages = <String>{currentPackageName};
@@ -461,14 +508,17 @@ abstract class PackageCommand extends Command<void> {
 
     final Set<String> excludedPackageNames = getExcludedPackageNames();
     final bool hasFilter = argResults?.wasParsed(_filterPackagesArg) ?? false;
-    final Set<String>? excludeAllButPackageNames =
-        hasFilter ? getYamlListArg(_filterPackagesArg) : null;
+    final Set<String>? excludeAllButPackageNames = hasFilter
+        ? getYamlListArg(_filterPackagesArg)
+        : null;
     if (excludeAllButPackageNames != null &&
         excludeAllButPackageNames.isNotEmpty) {
       final List<String> sortedList = excludeAllButPackageNames.toList()
         ..sort();
-      print('--$_filterPackagesArg is excluding packages that are not '
-          'included in: ${sortedList.join(',')}');
+      print(
+        '--$_filterPackagesArg is excluding packages that are not '
+        'included in: ${sortedList.join(',')}',
+      );
     }
     // Returns true if a package that could be identified by any of
     // `possibleNames` should be excluded.
@@ -483,13 +533,21 @@ abstract class PackageCommand extends Command<void> {
     await for (final RepositoryPackage package in _everyTopLevelPackage()) {
       if (packages.isEmpty ||
           packages
-              .intersection(_possiblePackageIdentifiers(package,
-                  allowGroup: allowGroupMatching))
+              .intersection(
+                _possiblePackageIdentifiers(
+                  package,
+                  allowGroup: allowGroupMatching,
+                ),
+              )
               .isNotEmpty) {
         // Exclusion is always human input, so groups should always be allowed
         // unless they have been specifically forbidden.
-        final bool excluded = isExcluded(_possiblePackageIdentifiers(package,
-            allowGroup: !getBoolArg(_exactMatchOnlyArg)));
+        final bool excluded = isExcluded(
+          _possiblePackageIdentifiers(
+            package,
+            allowGroup: !getBoolArg(_exactMatchOnlyArg),
+          ),
+        );
         yield PackageEnumerationEntry(package, excluded: excluded);
       }
     }
@@ -504,20 +562,22 @@ abstract class PackageCommand extends Command<void> {
   /// - Every package that is a direct child of a non-package subdirectory of
   ///   one of those directories (to cover federated plugin groups).
   Stream<RepositoryPackage> _everyTopLevelPackage() async* {
-    for (final Directory dir in <Directory>[
+    for (final dir in <Directory>[
       packagesDir,
       if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
     ]) {
-      await for (final FileSystemEntity entity
-          in dir.list(followLinks: false)) {
+      await for (final FileSystemEntity entity in dir.list(
+        followLinks: false,
+      )) {
         // A top-level Dart package is a standard package.
         if (isPackage(entity)) {
           yield RepositoryPackage(entity as Directory);
         } else if (entity is Directory) {
           // Look for Dart packages under this top-level directory; this is the
           // standard structure for federated plugins.
-          await for (final FileSystemEntity subdir
-              in entity.list(followLinks: false)) {
+          await for (final FileSystemEntity subdir in entity.list(
+            followLinks: false,
+          )) {
             if (isPackage(subdir)) {
               yield RepositoryPackage(subdir as Directory);
             }
@@ -541,8 +601,10 @@ abstract class PackageCommand extends Command<void> {
       final io.Directory parentDir = package.directory.parent;
       return <String>{
         packageName,
-        path.relative(package.path,
-            from: parentDir.parent.path), // fully specified
+        path.relative(
+          package.path,
+          from: parentDir.parent.path,
+        ), // fully specified
         if (allowGroup) path.basename(parentDir.path), // group name
       };
     } else {
@@ -558,15 +620,19 @@ abstract class PackageCommand extends Command<void> {
   ///
   /// Subpackages are guaranteed to be after the containing package in the
   /// stream.
-  Stream<PackageEnumerationEntry> getTargetPackagesAndSubpackages(
-      {bool filterExcluded = true}) async* {
-    await for (final PackageEnumerationEntry package
-        in getTargetPackages(filterExcluded: filterExcluded)) {
+  Stream<PackageEnumerationEntry> getTargetPackagesAndSubpackages({
+    bool filterExcluded = true,
+  }) async* {
+    await for (final PackageEnumerationEntry package in getTargetPackages(
+      filterExcluded: filterExcluded,
+    )) {
       yield package;
-      yield* Stream<PackageEnumerationEntry>.fromIterable(package.package
-          .getSubpackages()
-          .map((RepositoryPackage subPackage) =>
-              PackageEnumerationEntry(subPackage, excluded: package.excluded)));
+      yield* Stream<PackageEnumerationEntry>.fromIterable(
+        package.package.getSubpackages().map(
+          (RepositoryPackage subPackage) =>
+              PackageEnumerationEntry(subPackage, excluded: package.excluded),
+        ),
+      );
     }
   }
 
@@ -574,7 +640,8 @@ abstract class PackageCommand extends Command<void> {
   /// involved in this command execution.
   Stream<File> getFiles() {
     return getTargetPackages().asyncExpand<File>(
-        (PackageEnumerationEntry entry) => getFilesForPackage(entry.package));
+      (PackageEnumerationEntry entry) => getFilesForPackage(entry.package),
+    );
   }
 
   /// Returns the files contained, recursively, within [package].
@@ -590,11 +657,15 @@ abstract class PackageCommand extends Command<void> {
   /// Throws tool exit if [gitDir] nor root directory is a git directory.
   Future<GitVersionFinder> retrieveVersionFinder() async {
     final String? baseSha = getNullableStringArg(_baseShaArg);
-    final String? baseBranch =
-        baseSha == null ? getNullableStringArg(_baseBranchArg) : null;
+    final String? baseBranch = baseSha == null
+        ? getNullableStringArg(_baseBranchArg)
+        : null;
 
-    final GitVersionFinder gitVersionFinder = GitVersionFinder(await gitDir,
-        baseSha: baseSha, baseBranch: baseBranch);
+    final gitVersionFinder = GitVersionFinder(
+      await gitDir,
+      baseSha: baseSha,
+      baseBranch: baseBranch,
+    );
     return gitVersionFinder;
   }
 
@@ -607,7 +678,7 @@ abstract class PackageCommand extends Command<void> {
   //
   // The paths must use POSIX separators (e.g., as provided by git output).
   Set<String> _getChangedPackageNames(List<String> changedFiles) {
-    final Set<String> packages = <String>{};
+    final packages = <String>{};
 
     // A helper function that returns true if candidatePackageName looks like an
     // implementation package of a plugin called pluginName. Used to determine
@@ -619,19 +690,22 @@ abstract class PackageCommand extends Command<void> {
           candidatePackageName.startsWith('${parentName}_');
     }
 
-    for (final String path in changedFiles) {
+    for (final path in changedFiles) {
       final List<String> pathComponents = p.posix.split(path);
-      final int packagesIndex =
-          pathComponents.indexWhere((String element) => element == 'packages');
+      final int packagesIndex = pathComponents.indexWhere(
+        (String element) => element == 'packages',
+      );
       if (packagesIndex != -1) {
         // Find the name of the directory directly under packages. This is
         // either the name of the package, or a plugin group directory for
         // a federated plugin.
         final String topLevelName = pathComponents[packagesIndex + 1];
-        String packageName = topLevelName;
+        var packageName = topLevelName;
         if (packagesIndex + 2 < pathComponents.length &&
             isFederatedPackage(
-                pathComponents[packagesIndex + 2], topLevelName)) {
+              pathComponents[packagesIndex + 2],
+              topLevelName,
+            )) {
           // This looks like a federated package; use the full specifier if
           // the name would be ambiguous (i.e., for the app-facing package).
           packageName = pathComponents[packagesIndex + 2];
@@ -652,7 +726,7 @@ abstract class PackageCommand extends Command<void> {
   }
 
   String? _getCurrentDirectoryPackageName() {
-    final Set<Directory> absolutePackagesDirs = <Directory>{
+    final absolutePackagesDirs = <Directory>{
       packagesDir.absolute,
       thirdPartyPackagesDir.absolute,
     };
@@ -663,8 +737,9 @@ abstract class PackageCommand extends Command<void> {
     // Ensure that the current directory is within one of the top-level packages
     // directories.
     if (isATopLevelPackagesDir(currentDir) ||
-        !absolutePackagesDirs
-            .any((Directory d) => currentDir.path.startsWith(d.path))) {
+        !absolutePackagesDirs.any(
+          (Directory d) => currentDir.path.startsWith(d.path),
+        )) {
       return null;
     }
     // If the current directory is a direct subdirectory of a packages
@@ -680,7 +755,7 @@ abstract class PackageCommand extends Command<void> {
       }
     }
     // ... and then check whether it has an enclosing package.
-    final RepositoryPackage package = RepositoryPackage(currentDir);
+    final package = RepositoryPackage(currentDir);
     final RepositoryPackage? enclosingPackage = package.getEnclosingPackage();
     final RepositoryPackage rootPackage = enclosingPackage ?? package;
     final String name = rootPackage.directory.basename;
@@ -700,15 +775,18 @@ abstract class PackageCommand extends Command<void> {
   Future<bool> _isCheckoutFromBranch(String branchName) async {
     // The target branch may not exist locally; try some common remote names for
     // the branch as well.
-    final List<String> candidateBranchNames = <String>[
+    final candidateBranchNames = <String>[
       branchName,
       'origin/$branchName',
       'upstream/$branchName',
     ];
-    for (final String branch in candidateBranchNames) {
-      final io.ProcessResult result = await (await gitDir).runCommand(
-          <String>['merge-base', '--is-ancestor', 'HEAD', branch],
-          throwOnError: false);
+    for (final branch in candidateBranchNames) {
+      final io.ProcessResult result = await (await gitDir).runCommand(<String>[
+        'merge-base',
+        '--is-ancestor',
+        'HEAD',
+        branch,
+      ], throwOnError: false);
       if (result.exitCode == 0) {
         return true;
       } else if (result.exitCode == 1) {
@@ -724,8 +802,9 @@ abstract class PackageCommand extends Command<void> {
 
   Future<String?> _getBranch() async {
     final io.ProcessResult branchResult = await (await gitDir).runCommand(
-        <String>['rev-parse', '--abbrev-ref', 'HEAD'],
-        throwOnError: false);
+      <String>['rev-parse', '--abbrev-ref', 'HEAD'],
+      throwOnError: false,
+    );
     if (branchResult.exitCode != 0) {
       return null;
     }
@@ -735,12 +814,12 @@ abstract class PackageCommand extends Command<void> {
   // Returns true if one or more files changed that have the potential to affect
   // any packages (e.g., CI script changes).
   bool _changesRequireFullTest(List<String> changedFiles) {
-    const List<String> specialFiles = <String>[
+    const specialFiles = <String>[
       '.ci.yaml', // LUCI config.
       '.clang-format', // ObjC and C/C++ formatting options.
       'analysis_options.yaml', // Dart analysis settings.
     ];
-    const List<String> specialDirectories = <String>[
+    const specialDirectories = <String>[
       '.ci/', // Support files for CI.
       'script/', // This tool.
     ];
@@ -748,8 +827,10 @@ abstract class PackageCommand extends Command<void> {
     // check below is done via string prefixing.
     assert(specialDirectories.every((String dir) => dir.endsWith('/')));
 
-    return changedFiles.any((String path) =>
-        specialFiles.contains(path) ||
-        specialDirectories.any((String dir) => path.startsWith(dir)));
+    return changedFiles.any(
+      (String path) =>
+          specialFiles.contains(path) ||
+          specialDirectories.any((String dir) => path.startsWith(dir)),
+    );
   }
 }

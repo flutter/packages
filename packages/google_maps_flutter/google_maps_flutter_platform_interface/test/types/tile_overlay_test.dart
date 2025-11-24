@@ -17,22 +17,22 @@ void main() {
 
   group('tile overlay id tests', () {
     test('equality', () async {
-      const TileOverlayId id1 = TileOverlayId('1');
-      const TileOverlayId id2 = TileOverlayId('1');
-      const TileOverlayId id3 = TileOverlayId('2');
+      const id1 = TileOverlayId('1');
+      const id2 = TileOverlayId('1');
+      const id3 = TileOverlayId('2');
       expect(id1, id2);
       expect(id1, isNot(id3));
     });
 
     test('toString', () async {
-      const TileOverlayId id1 = TileOverlayId('1');
+      const id1 = TileOverlayId('1');
       expect(id1.toString(), 'TileOverlayId(1)');
     });
   });
 
   group('tile overlay tests', () {
     test('toJson returns correct format', () async {
-      const TileOverlay tileOverlay = TileOverlay(
+      const tileOverlay = TileOverlay(
         tileOverlayId: TileOverlayId('id'),
         fadeIn: false,
         transparency: 0.1,
@@ -70,7 +70,7 @@ void main() {
 
     test('equality', () async {
       final TileProvider tileProvider = _TestTileProvider();
-      final TileOverlay tileOverlay1 = TileOverlay(
+      final tileOverlay1 = TileOverlay(
         tileOverlayId: const TileOverlayId('id1'),
         fadeIn: false,
         tileProvider: tileProvider,
@@ -79,7 +79,7 @@ void main() {
         visible: false,
         tileSize: 128,
       );
-      final TileOverlay tileOverlaySameValues = TileOverlay(
+      final tileOverlaySameValues = TileOverlay(
         tileOverlayId: const TileOverlayId('id1'),
         fadeIn: false,
         tileProvider: tileProvider,
@@ -88,7 +88,7 @@ void main() {
         visible: false,
         tileSize: 128,
       );
-      final TileOverlay tileOverlayDifferentId = TileOverlay(
+      final tileOverlayDifferentId = TileOverlay(
         tileOverlayId: const TileOverlayId('id2'),
         fadeIn: false,
         tileProvider: tileProvider,
@@ -97,7 +97,7 @@ void main() {
         visible: false,
         tileSize: 128,
       );
-      const TileOverlay tileOverlayDifferentProvider = TileOverlay(
+      const tileOverlayDifferentProvider = TileOverlay(
         tileOverlayId: TileOverlayId('id1'),
         fadeIn: false,
         transparency: 0.1,
@@ -113,7 +113,7 @@ void main() {
     test('clone', () async {
       final TileProvider tileProvider = _TestTileProvider();
       // Set non-default values for every parameter.
-      final TileOverlay tileOverlay = TileOverlay(
+      final tileOverlay = TileOverlay(
         tileOverlayId: const TileOverlayId('id1'),
         fadeIn: false,
         tileProvider: tileProvider,
@@ -127,8 +127,8 @@ void main() {
 
     test('hashCode', () async {
       final TileProvider tileProvider = _TestTileProvider();
-      const TileOverlayId id = TileOverlayId('id1');
-      final TileOverlay tileOverlay = TileOverlay(
+      const id = TileOverlayId('id1');
+      final tileOverlay = TileOverlay(
         tileOverlayId: id,
         fadeIn: false,
         tileProvider: tileProvider,

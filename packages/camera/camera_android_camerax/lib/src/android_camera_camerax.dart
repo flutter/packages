@@ -299,18 +299,18 @@ class AndroidCameraCameraX extends CameraPlatform {
   Future<List<CameraDescription>> availableCameras() async {
     proxy.setUpGenericsProxy();
 
-    final List<CameraDescription> cameraDescriptions = <CameraDescription>[];
+    final cameraDescriptions = <CameraDescription>[];
 
     processCameraProvider ??= await proxy.getInstanceProcessCameraProvider();
     final List<CameraInfo> cameraInfos =
         (await processCameraProvider!.getAvailableCameraInfos()).cast();
 
     CameraLensDirection? cameraLensDirection;
-    int cameraCount = 0;
+    var cameraCount = 0;
     int? cameraSensorOrientation;
     String? cameraName;
 
-    for (final CameraInfo cameraInfo in cameraInfos) {
+    for (final cameraInfo in cameraInfos) {
       // Determine the lens direction by filtering the CameraInfo
       // TODO(gmackall): replace this with call to CameraInfo.getLensFacing when changes containing that method are available
       if ((await proxy
@@ -507,8 +507,8 @@ class AndroidCameraCameraX extends CameraPlatform {
     // support these by default.
     const ExposureMode exposureMode = ExposureMode.auto;
     const FocusMode focusMode = FocusMode.auto;
-    const bool exposurePointSupported = true;
-    const bool focusPointSupported = true;
+    const exposurePointSupported = true;
+    const focusPointSupported = true;
 
     cameraEventStreamController.add(
       CameraInitializedEvent(
@@ -842,7 +842,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     final Camera2CameraControl camera2Control = proxy.fromCamera2CameraControl(
       cameraControl: cameraControl,
     );
-    final bool lockExposureMode = mode == ExposureMode.locked;
+    final lockExposureMode = mode == ExposureMode.locked;
 
     final CaptureRequestOptions captureRequestOptions = proxy
         .newCaptureRequestOptions(
@@ -955,7 +955,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     );
 
     // Unbind all use cases and rebind to new CameraSelector
-    final List<UseCase> useCases = <UseCase>[videoCapture!];
+    final useCases = <UseCase>[videoCapture!];
     if (!_previewIsPaused) {
       useCases.add(preview!);
     }
@@ -1138,14 +1138,14 @@ class AndroidCameraCameraX extends CameraPlatform {
       final Camera2CameraInfo camera2CameraInfo = proxy.fromCamera2CameraInfo(
         cameraInfo: cameraInfo!,
       );
-      final InfoSupportedHardwareLevel cameraInfoSupportedHardwareLevel =
+      final cameraInfoSupportedHardwareLevel =
           (await camera2CameraInfo.getCameraCharacteristic(
                 proxy.infoSupportedHardwareLevelCameraCharacteristics(),
               ))!
               as InfoSupportedHardwareLevel;
 
       // Handle limited level device restrictions:
-      final bool cameraSupportsConcurrentImageCapture =
+      final cameraSupportsConcurrentImageCapture =
           cameraInfoSupportedHardwareLevel != InfoSupportedHardwareLevel.legacy;
       if (!cameraSupportsConcurrentImageCapture) {
         // Concurrent preview + video recording + image capture is not supported
@@ -1155,7 +1155,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
 
       // Handle level 3 device restrictions:
-      final bool cameraSupportsHardwareLevel3 =
+      final cameraSupportsHardwareLevel3 =
           cameraInfoSupportedHardwareLevel == InfoSupportedHardwareLevel.level3;
       if (!cameraSupportsHardwareLevel3 || streamCallback == null) {
         // Concurrent preview + video recording + image streaming is not supported
@@ -1245,7 +1245,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     await _unbindUseCaseFromLifecycle(videoCapture!);
-    final XFile videoFile = XFile(videoOutputPath!);
+    final videoFile = XFile(videoOutputPath!);
     cameraEventStreamController.add(
       VideoRecordedEvent(cameraId, videoFile, /* duration */ null),
     );
@@ -1337,11 +1337,10 @@ class AndroidCameraCameraX extends CameraPlatform {
     }
 
     // Create and set Analyzer that can read image data for image streaming.
-    final WeakReference<AndroidCameraCameraX> weakThis =
-        WeakReference<AndroidCameraCameraX>(this);
+    final weakThis = WeakReference<AndroidCameraCameraX>(this);
     Future<void> analyze(ImageProxy imageProxy) async {
       final List<PlaneProxy> planes = await imageProxy.getPlanes();
-      final List<CameraImagePlane> cameraImagePlanes = <CameraImagePlane>[];
+      final cameraImagePlanes = <CameraImagePlane>[];
 
       // Determine image planes.
       if (_imageAnalysisOutputImageFormat ==
@@ -1365,7 +1364,7 @@ class AndroidCameraCameraX extends CameraPlatform {
           ),
         );
       } else {
-        for (final PlaneProxy plane in planes) {
+        for (final plane in planes) {
           cameraImagePlanes.add(
             CameraImagePlane(
               bytes: plane.buffer,
@@ -1396,7 +1395,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
 
       // Send out CameraImageData.
-      final CameraImageData cameraImageData = CameraImageData(
+      final cameraImageData = CameraImageData(
         format: cameraImageFormat,
         planes: cameraImagePlanes,
         height: imageProxy.height,
@@ -1487,8 +1486,7 @@ class AndroidCameraCameraX extends CameraPlatform {
   ///  * Send a [CameraErrorEvent] if the [CameraState] indicates that the
   ///    camera is in error state.
   Observer<CameraState> _createCameraClosingObserver(int cameraId) {
-    final WeakReference<AndroidCameraCameraX> weakThis =
-        WeakReference<AndroidCameraCameraX>(this);
+    final weakThis = WeakReference<AndroidCameraCameraX>(this);
 
     // Callback method used to implement the behavior described above:
     void onChanged(CameraState state) {
@@ -1780,8 +1778,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       // Add new metering point with specified meteringMode, which may involve
       // replacing a metering point with the same specified meteringMode from
       // the current focus and metering action.
-      List<(MeteringPoint, MeteringMode)> newMeteringPointInfos =
-          <(MeteringPoint, MeteringMode)>[];
+      var newMeteringPointInfos = <(MeteringPoint, MeteringMode)>[];
 
       if (currentFocusMeteringAction != null) {
         final Iterable<(MeteringPoint, MeteringMode)> originalMeteringPoints =
