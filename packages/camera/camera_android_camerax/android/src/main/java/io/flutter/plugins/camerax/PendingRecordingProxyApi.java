@@ -46,6 +46,7 @@ class PendingRecordingProxyApi extends PigeonApiPendingRecording {
       return pigeonInstance.withAudioEnabled(initialMuted);
     }
 
+    // By default, the recording will not contain audio.
     return pigeonInstance;
   }
 
