@@ -47,7 +47,7 @@ void main() {
     String? appBuildGradleDependencies,
     bool androidOnly = false,
   }) {
-    final RepositoryPackage package = RepositoryPackage(
+    final package = RepositoryPackage(
         outputDirectory.childDirectory(allPackagesProjectName));
 
     // Android
@@ -256,10 +256,10 @@ project 'Runner', {
       // Make a fake legacy source with all the necessary files, replacing one
       // of them.
       final Directory legacyDir = testRoot.childDirectory('legacy');
-      final RepositoryPackage legacySource =
+      final legacySource =
           RepositoryPackage(legacyDir.childDirectory(allPackagesProjectName));
       writeFakeFlutterCreateOutput(legacyDir, androidOnly: true);
-      const String legacyAppBuildGradleContents = 'Fake legacy content';
+      const legacyAppBuildGradleContents = 'Fake legacy content';
       final File legacyGradleFile = legacySource
           .platformDirectory(FlutterPlatform.android)
           .childFile('build.gradle');
@@ -288,7 +288,7 @@ project 'Runner', {
       // Make a fake legacy source with all the necessary files, but not
       // including the extra file.
       final Directory legacyDir = testRoot.childDirectory('legacy');
-      final RepositoryPackage legacySource =
+      final legacySource =
           RepositoryPackage(legacyDir.childDirectory(allPackagesProjectName));
       writeFakeFlutterCreateOutput(legacyDir, androidOnly: true);
 
@@ -306,10 +306,10 @@ project 'Runner', {
       // Make a fake legacy source with all the necessary files, replacing one
       // of them.
       final Directory legacyDir = testRoot.childDirectory('legacy');
-      final RepositoryPackage legacySource =
+      final legacySource =
           RepositoryPackage(legacyDir.childDirectory(allPackagesProjectName));
       writeFakeFlutterCreateOutput(legacyDir, androidOnly: true);
-      const String legacyAppBuildGradleContents = '''
+      const legacyAppBuildGradleContents = '''
 # This is the legacy file
 android {
     compileSdk flutter.compileSdkVersion
@@ -344,7 +344,7 @@ android {
     });
 
     test('pubspec preserves existing Dart SDK version', () async {
-      const String existingSdkConstraint = '>=1.0.0 <99.0.0';
+      const existingSdkConstraint = '>=1.0.0 <99.0.0';
       writeFakeFlutterCreateOutput(testRoot,
           dartSdkConstraint: existingSdkConstraint);
       createFakePlugin('plugina', packagesDir);
@@ -352,7 +352,7 @@ android {
       await runCapturingPrint(runner, <String>['create-all-packages-app']);
       final Pubspec generatedPubspec = command.app.parsePubspec();
 
-      const String dartSdkKey = 'sdk';
+      const dartSdkKey = 'sdk';
       expect(generatedPubspec.environment[dartSdkKey].toString(),
           existingSdkConstraint);
     });

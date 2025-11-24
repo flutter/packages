@@ -22,7 +22,7 @@ void main() {
     test('reports true when configured on Windows', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew.bat']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isWindows: true),
@@ -34,7 +34,7 @@ void main() {
     test('reports true when configured on non-Windows', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isMacOS: true),
@@ -46,7 +46,7 @@ void main() {
     test('reports false when not configured on Windows', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/foo']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isWindows: true),
@@ -58,7 +58,7 @@ void main() {
     test('reports true when configured on non-Windows', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/foo']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isMacOS: true),
@@ -72,7 +72,7 @@ void main() {
     test('runs without arguments', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isMacOS: true),
@@ -99,7 +99,7 @@ void main() {
     test('runs with arguments', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isMacOS: true),
@@ -131,7 +131,7 @@ void main() {
     test('runs with the correct wrapper on Windows', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew.bat']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isWindows: true),
@@ -158,7 +158,7 @@ void main() {
     test('returns error codes', () async {
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           extraFiles: <String>['android/gradlew.bat']);
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         plugin,
         processRunner: processRunner,
         platform: MockPlatform(isWindows: true),

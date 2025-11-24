@@ -84,7 +84,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     final Set<String> excluded = getExcludedPackageNames();
     if (excluded.isNotEmpty) {
       print('Exluding the following plugins from the combined build:');
-      for (final String plugin in excluded) {
+      for (final plugin in excluded) {
         print('  $plugin');
       }
       print('');
@@ -182,7 +182,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       throw ToolExit(_exitMissingFile);
     }
 
-    final StringBuffer output = StringBuffer();
+    final output = StringBuffer();
     for (final String line in file.readAsLinesSync()) {
       List<String>? replacementLines;
       for (final MapEntry<String, List<String>> replacement
@@ -235,12 +235,12 @@ dependencies {}
 ''');
     }
 
-    final String lifecycleDependency = gradleFileIsKotlin
+    final lifecycleDependency = gradleFileIsKotlin
         ? '    implementation("androidx.lifecycle:lifecycle-runtime:2.2.0-rc01")'
         : "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'";
 
     // Desugaring is required for interactive_media_ads.
-    final String desugaringDependency = gradleFileIsKotlin
+    final desugaringDependency = gradleFileIsKotlin
         ? '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")'
         : "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'";
 
@@ -290,7 +290,7 @@ dependencies {}
     // specific language features via SDK version, so using a different one
     // can cause compilation failures.
     final Pubspec originalPubspec = app.parsePubspec();
-    const String dartSdkKey = 'sdk';
+    const dartSdkKey = 'sdk';
     final VersionConstraint dartSdkConstraint =
         originalPubspec.environment[dartSdkKey] ??
             VersionConstraint.compatibleWith(
@@ -299,7 +299,7 @@ dependencies {}
 
     final Map<String, PathDependency> pluginDeps =
         await _getValidPathDependencies();
-    final Pubspec pubspec = Pubspec(
+    final pubspec = Pubspec(
       allPackagesProjectName,
       description: 'Flutter app containing all 1st party plugins.',
       version: Version.parse('1.0.0+1'),
@@ -332,7 +332,7 @@ dependencies {}
   }
 
   Future<Map<String, PathDependency>> _getValidPathDependencies() async {
-    final Map<String, PathDependency> pathDependencies =
+    final pathDependencies =
         <String, PathDependency>{};
 
     await for (final PackageEnumerationEntry entry in getTargetPackages()) {
@@ -368,13 +368,13 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
   }
 
   String _pubspecMapString(Map<String, Object?> values) {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
 
     for (final MapEntry<String, Object?> entry in values.entries) {
       buffer.writeln();
       final Object? entryValue = entry.value;
       if (entryValue is VersionConstraint) {
-        String value = entryValue.toString();
+        var value = entryValue.toString();
         // Range constraints require quoting.
         if (value.startsWith('>') || value.startsWith('<')) {
           value = "'$value'";

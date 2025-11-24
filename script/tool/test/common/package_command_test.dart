@@ -25,7 +25,7 @@ void main() {
   late Directory thirdPartyPackagesDir;
 
   SamplePackageCommand configureCommand({bool includeSubpackages = false}) {
-    final SamplePackageCommand command = SamplePackageCommand(
+    final command = SamplePackageCommand(
       packagesDir,
       processRunner: processRunner,
       platform: mockPlatform,
@@ -317,7 +317,7 @@ packages/plugin1/plugin1/plugin1.dart
     test('returns subpackages after the enclosing package', () async {
       final SamplePackageCommand localCommand =
           configureCommand(includeSubpackages: true);
-      final CommandRunner<void> localRunner =
+      final localRunner =
           CommandRunner<void>('common_command', 'subpackage testing');
       localRunner.addCommand(localCommand);
 
@@ -477,7 +477,7 @@ packages/plugin1/plugin1/plugin1.dart
       });
 
       test('runs only app-facing package of a federated plugin', () async {
-        const String pluginName = 'foo';
+        const pluginName = 'foo';
         final Directory groupDir = packagesDir.childDirectory(pluginName);
         final RepositoryPackage package =
             createFakePlugin(pluginName, groupDir);
@@ -1245,7 +1245,7 @@ packages/b_package/lib/src/foo.dart
 
   group('sharding', () {
     test('distributes evenly when evenly divisible', () async {
-      final List<List<RepositoryPackage>> expectedShards =
+      final expectedShards =
           <List<RepositoryPackage>>[
         <RepositoryPackage>[
           createFakePackage('package1', packagesDir),
@@ -1264,9 +1264,9 @@ packages/b_package/lib/src/foo.dart
         ],
       ];
 
-      for (int i = 0; i < expectedShards.length; ++i) {
+      for (var i = 0; i < expectedShards.length; ++i) {
         final SamplePackageCommand localCommand = configureCommand();
-        final CommandRunner<void> localRunner =
+        final localRunner =
             CommandRunner<void>('common_command', 'Shard testing');
         localRunner.addCommand(localCommand);
 
@@ -1285,7 +1285,7 @@ packages/b_package/lib/src/foo.dart
 
     test('distributes as evenly as possible when not evenly divisible',
         () async {
-      final List<List<RepositoryPackage>> expectedShards =
+      final expectedShards =
           <List<RepositoryPackage>>[
         <RepositoryPackage>[
           createFakePackage('package1', packagesDir),
@@ -1303,9 +1303,9 @@ packages/b_package/lib/src/foo.dart
         ],
       ];
 
-      for (int i = 0; i < expectedShards.length; ++i) {
+      for (var i = 0; i < expectedShards.length; ++i) {
         final SamplePackageCommand localCommand = configureCommand();
-        final CommandRunner<void> localRunner =
+        final localRunner =
             CommandRunner<void>('common_command', 'Shard testing');
         localRunner.addCommand(localCommand);
 
@@ -1331,7 +1331,7 @@ packages/b_package/lib/src/foo.dart
     // excluding some plugins from the later step shouldn't change what's tested
     // in each shard, as it may no longer align with what was built.
     test('counts excluded plugins when sharding', () async {
-      final List<List<RepositoryPackage>> expectedShards =
+      final expectedShards =
           <List<RepositoryPackage>>[
         <RepositoryPackage>[
           createFakePackage('package1', packagesDir),
@@ -1351,9 +1351,9 @@ packages/b_package/lib/src/foo.dart
       createFakePackage('package8', packagesDir);
       createFakePackage('package9', packagesDir);
 
-      for (int i = 0; i < expectedShards.length; ++i) {
+      for (var i = 0; i < expectedShards.length; ++i) {
         final SamplePackageCommand localCommand = configureCommand();
-        final CommandRunner<void> localRunner =
+        final localRunner =
             CommandRunner<void>('common_command', 'Shard testing');
         localRunner.addCommand(localCommand);
 

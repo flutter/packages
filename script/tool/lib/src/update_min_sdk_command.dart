@@ -61,14 +61,14 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final Pubspec pubspec = package.parsePubspec();
 
-    const String environmentKey = 'environment';
-    const String dartSdkKey = 'sdk';
-    const String flutterSdkKey = 'flutter';
+    const environmentKey = 'environment';
+    const dartSdkKey = 'sdk';
+    const flutterSdkKey = 'flutter';
 
     final VersionRange? dartRange = _sdkRange(pubspec, dartSdkKey);
     final VersionRange? flutterRange = _sdkRange(pubspec, flutterSdkKey);
 
-    final YamlEditor editablePubspec =
+    final editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
     if (dartRange != null &&
         (dartRange.min ?? Version.none) < _dartMinVersion) {

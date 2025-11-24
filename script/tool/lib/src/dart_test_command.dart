@@ -85,7 +85,7 @@ class DartTestCommand extends PackageLoopingCommand {
     // federated plugin implementations) on web, since there's no reason to
     // expect them to work.
     final bool webPlatform = platform != null && platform != 'vm';
-    final bool explicitVMPlatform = platform == 'vm';
+    final explicitVMPlatform = platform == 'vm';
     final bool isWebOnlyPluginImplementation = pluginSupportsPlatform(
             platformWeb, package,
             requiredMode: PlatformSupport.inline) &&
@@ -187,7 +187,7 @@ class DartTestCommand extends PackageLoopingCommand {
     if (!testConfig.existsSync()) {
       return null;
     }
-    final RegExp testOnRegex = RegExp(r'^test_on:\s*([a-z].*[a-z])\s*$');
+    final testOnRegex = RegExp(r'^test_on:\s*([a-z].*[a-z])\s*$');
     for (final String line in testConfig.readAsLinesSync()) {
       final RegExpMatch? match = testOnRegex.firstMatch(line);
       if (match != null) {

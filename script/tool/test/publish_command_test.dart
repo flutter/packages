@@ -48,7 +48,7 @@ void main() {
     platform.environment['HOME'] = '/home';
 
     mockHttpResponses = <String, Map<String, dynamic>>{};
-    final MockClient mockClient = MockClient((http.Request request) async {
+    final mockClient = MockClient((http.Request request) async {
       final String packageName =
           request.url.pathSegments.last.replaceAll('.json', '');
       final Map<String, dynamic>? response = mockHttpResponses[packageName];
@@ -336,7 +336,7 @@ void main() {
     test('creates credential file from envirnoment variable if necessary',
         () async {
       createFakePlugin('foo', packagesDir, examples: <String>[]);
-      const String credentials = 'some credential';
+      const credentials = 'some credential';
       platform.environment['PUB_CREDENTIALS'] = credentials;
 
       await runCapturingPrint(commandRunner, <String>[
@@ -405,7 +405,7 @@ void main() {
     });
 
     test('can publish non-flutter package', () async {
-      const String packageName = 'a_package';
+      const packageName = 'a_package';
       createFakePackage(packageName, packagesDir);
 
       final List<String> output =
@@ -426,7 +426,7 @@ void main() {
     });
 
     test('skips publish with --tag-for-auto-publish', () async {
-      const String packageName = 'a_package';
+      const packageName = 'a_package';
       createFakePackage(packageName, packagesDir);
 
       final List<String> output =

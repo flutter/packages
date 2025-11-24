@@ -169,7 +169,7 @@ class FormatCommand extends PackageLoopingCommand {
 
     print('\n\n');
 
-    final String stdout = modifiedFiles.stdout as String;
+    final stdout = modifiedFiles.stdout as String;
     if (stdout.isEmpty) {
       print('All files formatted correctly.');
       return false;
@@ -328,7 +328,7 @@ class FormatCommand extends PackageLoopingCommand {
     final Iterable<String> dartFiles =
         _getPathsWithExtensions(files, <String>{'.dart'});
     if (dartFiles.isNotEmpty) {
-      final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
+      final packagesToGet = <RepositoryPackage>[
         package,
         ...package.getSubpackages(includeExamples: false)
       ];
@@ -336,7 +336,7 @@ class FormatCommand extends PackageLoopingCommand {
       // since it can change the behavior of the Dart formatter. This must be
       // done for every sub-package to avoid inconsistent results if
       // sub-packages have different language versions than the main package.
-      for (final RepositoryPackage p in packagesToGet) {
+      for (final p in packagesToGet) {
         if (!_resolvedLanguageVersionIsUpToDate(p)) {
           if (!await runPubGet(p, processRunner, platform)) {
             printError('Unable to fetch dependencies.');
@@ -386,8 +386,8 @@ class FormatCommand extends PackageLoopingCommand {
     // In the event that code ownership moves to someone who does not hold the
     // same views as the original owner, the pragma can be removed and the file
     // auto-formatted.
-    const String handFormattedExtension = '.dart';
-    const String handFormattedPragma = '// This file is hand-formatted.';
+    const handFormattedExtension = '.dart';
+    const handFormattedPragma = '// This file is hand-formatted.';
 
     return files
         .where((File file) {
@@ -452,7 +452,7 @@ class FormatCommand extends PackageLoopingCommand {
   Future<bool> _hasDependency(String command) async {
     // Some versions of Java accept both -version and --version, but some only
     // accept -version.
-    final String versionFlag = command == 'java' ? '-version' : '--version';
+    final versionFlag = command == 'java' ? '-version' : '--version';
     try {
       final io.ProcessResult result =
           await processRunner.run(command, <String>[versionFlag]);
@@ -506,7 +506,7 @@ class FormatCommand extends PackageLoopingCommand {
     // Run the command in batches.
     final List<List<String>> batches =
         _partitionFileList(files, maxStringLength: batchMaxTotalLength);
-    for (final List<String> batch in batches) {
+    for (final batch in batches) {
       batch.sort(); // For ease of testing.
       final int exitCode = await processRunner.runAndStream(
           command, <String>[...arguments, ...batch],
@@ -523,9 +523,9 @@ class FormatCommand extends PackageLoopingCommand {
   /// the command itself) is no longer than [maxStringLength].
   List<List<String>> _partitionFileList(Iterable<String> files,
       {required int maxStringLength}) {
-    final List<List<String>> batches = <List<String>>[<String>[]];
-    int currentBatchTotalLength = 0;
-    for (final String file in files) {
+    final batches = <List<String>>[<String>[]];
+    var currentBatchTotalLength = 0;
+    for (final file in files) {
       final int length = file.length + 1 /* for the space */;
       if (currentBatchTotalLength + length > maxStringLength) {
         // Start a new batch.
@@ -562,7 +562,7 @@ class FormatCommand extends PackageLoopingCommand {
     };
     final String packageName = pubspec.name;
 
-    final Map<Object, Object?> configJson =
+    final configJson =
         jsonDecode(configFile.readAsStringSync()) as Map<Object, Object?>;
     final Map<Object, Object?>? packageInfo =
         (configJson['packages'] as List<Object?>?)

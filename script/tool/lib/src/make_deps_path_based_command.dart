@@ -108,9 +108,9 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   }
 
   Map<String, RepositoryPackage> _findLocalPackages(Set<String> packageNames) {
-    final Map<String, RepositoryPackage> targets =
+    final targets =
         <String, RepositoryPackage>{};
-    for (final String packageName in packageNames) {
+    for (final packageName in packageNames) {
       final Directory topLevelCandidate =
           packagesDir.childDirectory(packageName);
       // If packages/<packageName>/ exists, then either that directory is the
@@ -180,7 +180,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
 
     // Determine the dependencies to be overridden.
-    final Pubspec pubspec = Pubspec.parse(pubspecContents);
+    final pubspec = Pubspec.parse(pubspecContents);
     final Iterable<String> combinedDependencies = <String>[
       // Filter out any dependencies with version constraint that wouldn't allow
       // the target if published, and anything that is already path-based.
@@ -210,17 +210,17 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         .split(
             path.relative(package.directory.absolute.path, from: repoRootPath))
         .length;
-    final List<String> relativeBasePathComponents =
+    final relativeBasePathComponents =
         List<String>.filled(packageDepth, '..');
 
     // Add the overrides.
-    final YamlEditor editablePubspec = YamlEditor(pubspecContents);
+    final editablePubspec = YamlEditor(pubspecContents);
     final YamlNode root = editablePubspec.parseAt(<String>[]);
-    const String dependencyOverridesKey = 'dependency_overrides';
+    const dependencyOverridesKey = 'dependency_overrides';
 
     // Add in any existing overrides, then sort the combined list to avoid
     // sort_pub_dependencies lint violations.
-    final YamlMap? existingOverrides =
+    final existingOverrides =
         (root as YamlMap)[dependencyOverridesKey] as YamlMap?;
     final List<String> allDependencyOverrides = <String>{
       ...existingOverrides?.keys.cast<String>() ?? <String>[],
@@ -235,8 +235,8 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     // failures.
     // This uses string concatenation rather than YamlMap because the latter
     // doesn't guarantee any particular output order for its entries.
-    final List<String> newOverrideLines = <String>[];
-    for (final String packageName in allDependencyOverrides) {
+    final newOverrideLines = <String>[];
+    for (final packageName in allDependencyOverrides) {
       final String overrideValue;
       if (packagesToOverride.contains(packageName)) {
         // Create a new override.
@@ -258,10 +258,10 @@ class MakeDepsPathBasedCommand extends PackageCommand {
     }
     // Create an empty section as a placeholder to replace.
     editablePubspec.update(<String>[dependencyOverridesKey], YamlMap());
-    String newContent = editablePubspec.toString();
+    var newContent = editablePubspec.toString();
 
     // Add the warning if it's not already there.
-    final String warningComment =
+    final warningComment =
         newContent.contains(_dependencyOverrideWarningComment)
             ? ''
             : '$_dependencyOverrideWarningComment\n';
@@ -307,7 +307,7 @@ ${newOverrideLines.join('\n')}
     final String baseSha = await gitVersionFinder.getBaseSha();
     print('Finding changed packages relative to "$baseSha"...');
 
-    final Set<String> changedPackages = <String>{};
+    final changedPackages = <String>{};
     for (final String changedPath in await gitVersionFinder.getChangedFiles()) {
       // Git output always uses Posix paths.
       final List<String> allComponents = p.posix.split(changedPath);
@@ -320,7 +320,7 @@ ${newOverrideLines.join('\n')}
         print('  Skipping $changedPath; not in packages directory.');
         continue;
       }
-      final RepositoryPackage package =
+      final package =
           RepositoryPackage(packagesDir.fileSystem.file(changedPath).parent);
       // Ignored deleted packages, as they won't be published.
       if (!package.pubspecFile.existsSync()) {

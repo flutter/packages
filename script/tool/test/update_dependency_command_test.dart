@@ -27,7 +27,7 @@ void main() {
     final GitDir gitDir;
     (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
         configureBaseCommandMocks();
-    final UpdateDependencyCommand command = UpdateDependencyCommand(
+    final command = UpdateDependencyCommand(
       packagesDir,
       processRunner: processRunner,
       gitDir: gitDir,
@@ -248,7 +248,7 @@ dev_dependencies:
           createFakePackage('a_package', packagesDir, examples: <String>[]);
       addDependency(package, 'target_package');
 
-      const String providedConstraint = '>=1.6.0 <3.0.0';
+      const providedConstraint = '>=1.6.0 <3.0.0';
       await runCapturingPrint(runner, <String>[
         'update-dependency',
         '--pub-package',
@@ -306,7 +306,7 @@ dev_dependencies:
           createFakePackage('a_package', packagesDir, examples: <String>[]);
       addDependency(package, 'target_package');
 
-      const Map<String, dynamic> targetPackagePubResponse = <String, dynamic>{
+      const targetPackagePubResponse = <String, dynamic>{
         'name': 'a',
         'versions': <String>[
           '0.0.1',
@@ -338,7 +338,7 @@ dev_dependencies:
           createFakePackage('a_package', packagesDir, examples: <String>[]);
       addDependency(package, 'target_package', version: '1.0.0');
 
-      const Map<String, dynamic> targetPackagePubResponse = <String, dynamic>{
+      const targetPackagePubResponse = <String, dynamic>{
         'name': 'a',
         'versions': <String>[
           '0.0.1',
@@ -607,27 +607,27 @@ dev_dependencies:
   });
 
   group('Android dependencies', () {
-    final List<String> invalidGradleAgpVersionsFormat = <String>[
+    final invalidGradleAgpVersionsFormat = <String>[
       '81',
       '811.1',
       '8.123',
       '8.12.12'
     ];
 
-    const String invalidGradleAgpVersionError = '''
+    const invalidGradleAgpVersionError = '''
 A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
             1. The first number must have one or two digits
             2. The second number must have one or two digits
             3. If present, the third number must have a single digit''';
 
-    const String invalidKgpVersionError = '''
+    const invalidKgpVersionError = '''
 A version with a valid format (3 numbers separated by 2 periods) must be provided.
             1. The first number must have one digit
             2. The second number must have one digit
             3. The third number must have one or two digits''';
 
     group('gradle', () {
-      for (final String gradleVersion in invalidGradleAgpVersionsFormat) {
+      for (final gradleVersion in invalidGradleAgpVersionsFormat) {
         test('throws because gradleVersion: $gradleVersion is invalid',
             () async {
           Error? commandError;
@@ -722,7 +722,7 @@ How is it even possible that I didn't specify a Gradle distribution?
             'fake_plugin', packagesDir, extraFiles: <String>[
           'example/android/app/gradle/wrapper/gradle-wrapper.properties'
         ]);
-        const String newGradleVersion = '8.8.8';
+        const newGradleVersion = '8.8.8';
 
         final File gradleWrapperPropertiesFile = package.directory
             .childDirectory('example')
@@ -765,7 +765,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
             'fake_plugin', packagesDir, extraFiles: <String>[
           'example/android/gradle/wrapper/gradle-wrapper.properties'
         ]);
-        const String newGradleVersion = '9.9';
+        const newGradleVersion = '9.9';
 
         final File gradleWrapperPropertiesFile = package.directory
             .childDirectory('example')
@@ -809,7 +809,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
           'example/android/gradle/wrapper/gradle-wrapper.properties',
           'example/android/app/gradle/wrapper/gradle-wrapper.properties'
         ]);
-        const String newGradleVersion = '9.9';
+        const newGradleVersion = '9.9';
 
         final File gradleWrapperPropertiesFile = package.directory
             .childDirectory('example')
@@ -877,7 +877,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
         ], extraFiles: <String>[
           'example/example_2/android/app/gradle/wrapper/gradle-wrapper.properties'
         ]);
-        const String newGradleVersion = '8.8.8';
+        const newGradleVersion = '8.8.8';
 
         final File gradleWrapperPropertiesFile = package.directory
             .childDirectory('example')
@@ -916,7 +916,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
       });
     });
     group('agp', () {
-      for (final String agpVersion in invalidGradleAgpVersionsFormat) {
+      for (final agpVersion in invalidGradleAgpVersionsFormat) {
         test('throws because agpVersion: $agpVersion is invalid', () async {
           Error? commandError;
           final List<String> output = await runCapturingPrint(runner, <String>[
@@ -966,7 +966,7 @@ distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.1-all.zip
         final RepositoryPackage package = createFakePlugin(
             'fake_plugin', packagesDir,
             extraFiles: <String>['example/android/settings.gradle']);
-        const String newAgpVersion = '9.9';
+        const newAgpVersion = '9.9';
 
         final File gradleSettingsFile = package.directory
             .childDirectory('example')
@@ -1008,7 +1008,7 @@ plugins {
             'fake_plugin', packagesDir,
             examples: <String>['example_1', 'example_2'],
             extraFiles: <String>['example/example_2/android/settings.gradle']);
-        const String newAgpVersion = '9.9';
+        const newAgpVersion = '9.9';
 
         final File gradleSettingsFile = package.directory
             .childDirectory('example')
@@ -1046,7 +1046,7 @@ plugins {
       });
     });
     group('kgp', () {
-      final List<String> invalidKgpVersionsFormat = <String>[
+      final invalidKgpVersionsFormat = <String>[
         '81',
         '81.1',
         '8.123',
@@ -1054,7 +1054,7 @@ plugins {
         '8.12.1',
       ];
 
-      for (final String kgpVersion in invalidKgpVersionsFormat) {
+      for (final kgpVersion in invalidKgpVersionsFormat) {
         test('throws because kgpVersion: $kgpVersion is invalid', () async {
           Error? commandError;
           final List<String> output = await runCapturingPrint(runner, <String>[
@@ -1106,7 +1106,7 @@ plugins {
         final RepositoryPackage package = createFakePlugin(
             'fake_plugin', packagesDir,
             extraFiles: <String>['example/android/settings.gradle']);
-        const String newKgpVersion = '2.2.20';
+        const newKgpVersion = '2.2.20';
 
         final File gradleSettingsFile = package.directory
             .childDirectory('example')
@@ -1149,7 +1149,7 @@ plugins {
             'fake_plugin', packagesDir,
             examples: <String>['example_1', 'example_2'],
             extraFiles: <String>['example/example_2/android/settings.gradle']);
-        const String newKgpVersion = '2.2.20';
+        const newKgpVersion = '2.2.20';
 
         final File gradleSettingsFile = package.directory
             .childDirectory('example')

@@ -58,9 +58,9 @@ void runAllTests(MockPlatform platform) {
   }
 
   test('succeeds when nothing has changed', () async {
-    const String filename = 'main.dart';
+    const filename = 'main.dart';
 
-    const String readme = '''
+    const readme = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -68,7 +68,7 @@ Example:
 A B C
 ```
 ''';
-    const String source = '''
+    const source = '''
 FAIL
 // #docregion SomeSection
 A B C
@@ -116,9 +116,9 @@ FAIL
   });
 
   test('updates files', () async {
-    const String filename = 'main.dart';
+    const filename = 'main.dart';
 
-    const String before = '''
+    const before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -127,7 +127,7 @@ X Y Z
 ```
 ''';
 
-    const String source = '''
+    const source = '''
 FAIL
 // #docregion SomeSection
 A B C
@@ -135,7 +135,7 @@ A B C
 FAIL
 ''';
 
-    const String after = '''
+    const after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -183,9 +183,9 @@ FAIL
 
   test('does not fail if READMEs are not changed with --fail-on-change',
       () async {
-    const String filename = 'main.dart';
+    const filename = 'main.dart';
 
-    const String readme = '''
+    const readme = '''
 Example:
 
 <?code-excerpt "$filename (aa)"?>
@@ -198,7 +198,7 @@ B
 ```
 ''';
 
-    const String source = '''
+    const source = '''
 // #docregion aa
 A
 // #enddocregion aa
@@ -217,9 +217,9 @@ B
   });
 
   test('indents the plaster', () async {
-    const String filename = 'main.dart';
+    const filename = 'main.dart';
 
-    const String before = '''
+    const before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -227,7 +227,7 @@ Example:
 ```
 ''';
 
-    const String source = '''
+    const source = '''
 // #docregion SomeSection
 A
   // #enddocregion SomeSection
@@ -236,7 +236,7 @@ B
 // #enddocregion SomeSection
 ''';
 
-    const String after = '''
+    const after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -252,9 +252,9 @@ B
   });
 
   test('does not unindent blocks if plaster will not unindent', () async {
-    const String filename = 'main.dart';
+    const filename = 'main.dart';
 
-    const String before = '''
+    const before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -262,7 +262,7 @@ Example:
 ```
 ''';
 
-    const String source = '''
+    const source = '''
 // #docregion SomeSection
   A
 // #enddocregion SomeSection
@@ -271,7 +271,7 @@ Example:
 // #enddocregion SomeSection
 ''';
 
-    const String after = '''
+    const after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -287,9 +287,9 @@ Example:
   });
 
   test('unindents blocks', () async {
-    const String filename = 'main.dart';
+    const filename = 'main.dart';
 
-    const String before = '''
+    const before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -297,7 +297,7 @@ Example:
 ```
 ''';
 
-    const String source = '''
+    const source = '''
   // #docregion SomeSection
   A
   // #enddocregion SomeSection
@@ -306,7 +306,7 @@ Example:
     // #enddocregion SomeSection
 ''';
 
-    const String after = '''
+    const after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -322,9 +322,9 @@ A
   });
 
   test('unindents blocks and plaster', () async {
-    const String filename = 'main.dart';
+    const filename = 'main.dart';
 
-    const String before = '''
+    const before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -332,7 +332,7 @@ Example:
 ```
 ''';
 
-    const String source = '''
+    const source = '''
   // #docregion SomeSection
   A
     // #enddocregion SomeSection
@@ -341,7 +341,7 @@ Example:
     // #enddocregion SomeSection
 ''';
 
-    const String after = '''
+    const after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -484,7 +484,7 @@ FAIL
   });
 
   group('File type tests', () {
-    const List<Map<String, String>> testCases = <Map<String, String>>[
+    const testCases = <Map<String, String>>[
       <String, String>{'filename': 'main.cc', 'language': 'c++'},
       <String, String>{'filename': 'main.cpp', 'language': 'c++'},
       <String, String>{'filename': 'main.dart'},
@@ -521,7 +521,7 @@ FAIL
         final String prefix = testCase['prefix'] ?? '// ';
         final String suffix = testCase['suffix'] ?? '';
 
-        final String before = '''
+        final before = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -530,7 +530,7 @@ X Y Z
 ```
 ''';
 
-        final String source = '''
+        final source = '''
 FAIL
 $prefix#docregion SomeSection$suffix
 A B C
@@ -538,7 +538,7 @@ $prefix#enddocregion SomeSection$suffix
 FAIL
 ''';
 
-        final String after = '''
+        final after = '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>

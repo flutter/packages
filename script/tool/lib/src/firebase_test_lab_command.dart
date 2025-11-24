@@ -130,7 +130,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final List<PackageResult> results = <PackageResult>[];
+    final results = <PackageResult>[];
     for (final RepositoryPackage example in package.getExamples()) {
       results.add(await _runForExample(example, package: package));
     }
@@ -187,7 +187,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
     }
 
     // Ensures that gradle wrapper exists
-    final GradleProject project = GradleProject(example,
+    final project = GradleProject(example,
         processRunner: processRunner, platform: platform);
     if (!await _ensureGradleWrapperExists(example, project)) {
       return PackageResult.fail(<String>['Unable to build example apk']);
@@ -199,11 +199,11 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       return PackageResult.fail(<String>['Unable to assemble androidTest']);
     }
 
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     // Used within the loop to ensure a unique GCS output location for each
     // test file's run.
-    int resultsCounter = 0;
+    var resultsCounter = 0;
     for (final File test in _findIntegrationTestFiles(example)) {
       final String testName =
           getRelativePosixPath(test, from: package.directory);
@@ -215,7 +215,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       }
       final String buildId = getStringArg('build-id');
       final String testRunId = getStringArg('test-run-id');
-      final String resultsDir =
+      final resultsDir =
           'plugins_android_test/${package.displayName}/$buildId/$testRunId/'
           '${example.directory.basename}/${resultsCounter++}/';
 
@@ -224,9 +224,9 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
       // entire shard for a flake in any one test is extremely slow. This should
       // be removed once the root cause of the flake is understood.
       // See https://github.com/flutter/flutter/issues/95063
-      const int maxRetries = 2;
-      bool passing = false;
-      for (int i = 1; i <= maxRetries && !passing; ++i) {
+      const maxRetries = 2;
+      var passing = false;
+      for (var i = 1; i <= maxRetries && !passing; ++i) {
         if (i > 1) {
           logWarning('$testName failed on attempt ${i - 1}. Retrying...');
         }
@@ -280,7 +280,7 @@ class FirebaseTestLabCommand extends PackageLoopingCommand {
     File test, {
     required String resultsDir,
   }) async {
-    final List<String> args = <String>[
+    final args = <String>[
       'firebase',
       'test',
       'android',

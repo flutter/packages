@@ -148,7 +148,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     final bool isPlugin = isFlutterPlugin(package);
     final Iterable<_PlatformDetails> requestedPlatforms = _platforms.entries
@@ -170,7 +170,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
     }
 
     if (buildPlatforms.isEmpty) {
-      final String unsupported = requestedPlatforms.length == 1
+      final unsupported = requestedPlatforms.length == 1
           ? '${requestedPlatforms.first.label} is not supported'
           : 'None of [${platformDisplayList(requestedPlatforms)}] are supported';
       return PackageResult.skip('$unsupported by this plugin');
@@ -192,7 +192,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
     final bool? swiftPackageManagerOverride =
         isPlugin ? _swiftPackageManagerFeatureConfig : null;
 
-    bool builtSomething = false;
+    var builtSomething = false;
     for (final RepositoryPackage example in package.getExamples()) {
       // Rather than changing global config state, enable SwiftPM via a
       // temporary package-level override.
@@ -206,7 +206,7 @@ class BuildExamplesCommand extends PackageLoopingCommand {
       final String packageName =
           getRelativePosixPath(example.directory, from: packagesDir);
 
-      for (final _PlatformDetails platform in buildPlatforms) {
+      for (final platform in buildPlatforms) {
         // Repo policy is that a plugin must have examples configured for all
         // supported platforms. For packages, just log and skip any requested
         // platform that a package doesn't have set up.

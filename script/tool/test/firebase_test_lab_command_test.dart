@@ -27,7 +27,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final FirebaseTestLabCommand command = FirebaseTestLabCommand(
+      final command = FirebaseTestLabCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -58,7 +58,7 @@ public class MainActivityTest {
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['auth'])
       ];
 
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -91,7 +91,7 @@ public class MainActivityTest {
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['config']),
       ];
 
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -117,7 +117,7 @@ public class MainActivityTest {
     });
 
     test('only runs gcloud configuration once', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin1 =
           createFakePlugin('plugin1', packagesDir, extraFiles: <String>[
@@ -213,7 +213,7 @@ public class MainActivityTest {
     });
 
     test('runs integration tests', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -287,8 +287,8 @@ public class MainActivityTest {
     });
 
     test('runs for all examples', () async {
-      const List<String> examples = <String>['example1', 'example2'];
-      const String javaTestFileExampleRelativePath =
+      const examples = <String>['example1', 'example2'];
+      const javaTestFileExampleRelativePath =
           'android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
           examples: examples,
@@ -299,7 +299,7 @@ public class MainActivityTest {
               'example/$example/$javaTestFileExampleRelativePath',
             ],
           ]);
-      for (final String example in examples) {
+      for (final example in examples) {
         writeJavaTestFile(
             plugin, 'example/$example/$javaTestFileExampleRelativePath');
       }
@@ -353,7 +353,7 @@ public class MainActivityTest {
     });
 
     test('fails if a test fails twice', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -401,7 +401,7 @@ public class MainActivityTest {
 
     test('passes with warning if a test fails once, then passes on retry',
         () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -498,7 +498,7 @@ public class MainActivityTest {
     });
 
     test('fails for packages with no integration test files', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -535,7 +535,7 @@ public class MainActivityTest {
     });
 
     test('fails for packages with no integration_test runner', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -578,7 +578,7 @@ public class MainActivityTest {
     });
 
     test('supports kotlin implementation of integration_test runner', () async {
-      const String kotlinTestFileRelativePath =
+      const kotlinTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.kt';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -648,7 +648,7 @@ class MainActivityTest {
     });
 
     test('builds if gradlew is missing', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -704,7 +704,7 @@ class MainActivityTest {
     });
 
     test('fails if building to generate gradlew fails', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -740,7 +740,7 @@ class MainActivityTest {
     });
 
     test('fails if assembleAndroidTest fails', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -783,7 +783,7 @@ class MainActivityTest {
     });
 
     test('fails if assembleDebug fails', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -829,7 +829,7 @@ class MainActivityTest {
     });
 
     test('experimental flag', () async {
-      const String javaTestFileRelativePath =
+      const javaTestFileRelativePath =
           'example/android/app/src/androidTest/MainActivityTest.java';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -884,7 +884,7 @@ class MainActivityTest {
     });
 
     group('file filtering', () {
-      const List<String> files = <String>[
+      const files = <String>[
         'pubspec.yaml',
         'foo.dart',
         'foo.java',
@@ -895,7 +895,7 @@ class MainActivityTest {
         'foo.cpp',
         'foo.h',
       ];
-      for (final String file in files) {
+      for (final file in files) {
         test('runs command for changes to $file', () async {
           createFakePackage('package_a', packagesDir);
 

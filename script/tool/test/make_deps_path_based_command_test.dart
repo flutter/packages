@@ -26,7 +26,7 @@ void main() {
         .childDirectory('third_party')
         .childDirectory('packages');
 
-    final MakeDepsPathBasedCommand command =
+    final command =
         MakeDepsPathBasedCommand(packagesDir, gitDir: gitDir);
 
     runner = CommandRunner<void>(
@@ -531,7 +531,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     });
 
     test('includes bugfix version changes as targets', () async {
-      const String newVersion = '1.0.1';
+      const newVersion = '1.0.1';
       final RepositoryPackage package =
           createFakePackage('foo', packagesDir, version: newVersion);
 
@@ -565,7 +565,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     });
 
     test('includes minor version changes to 1.0+ as targets', () async {
-      const String newVersion = '1.1.0';
+      const newVersion = '1.1.0';
       final RepositoryPackage package =
           createFakePackage('foo', packagesDir, version: newVersion);
 
@@ -599,7 +599,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     });
 
     test('does not include major version changes as targets', () async {
-      const String newVersion = '2.0.0';
+      const newVersion = '2.0.0';
       final RepositoryPackage package =
           createFakePackage('foo', packagesDir, version: newVersion);
 
@@ -633,7 +633,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     });
 
     test('does not include minor version changes to 0.x as targets', () async {
-      const String newVersion = '0.8.0';
+      const newVersion = '0.8.0';
       final RepositoryPackage package =
           createFakePackage('foo', packagesDir, version: newVersion);
 
@@ -667,7 +667,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     });
 
     test('does not update references with an older major version', () async {
-      const String newVersion = '2.0.1';
+      const newVersion = '2.0.1';
       final RepositoryPackage targetPackage =
           createFakePackage('foo', packagesDir, version: newVersion);
       final RepositoryPackage referencingPackage =
@@ -709,7 +709,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
     });
 
     test('does update references with a matching version range', () async {
-      const String newVersion = '2.0.1';
+      const newVersion = '2.0.1';
       final RepositoryPackage targetPackage =
           createFakePackage('foo', packagesDir, version: newVersion);
       final RepositoryPackage referencingPackage =
@@ -753,7 +753,7 @@ ${overrides.map((String dep) => '  $dep:\n    path: $path').join('\n')}
 
     test('skips anything outside of the packages directory', () async {
       final Directory toolDir = packagesDir.parent.childDirectory('tool');
-      const String newVersion = '1.1.0';
+      const newVersion = '1.1.0';
       final RepositoryPackage package = createFakePackage(
           'flutter_plugin_tools', toolDir,
           version: newVersion);

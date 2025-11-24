@@ -54,15 +54,15 @@ Future<PackageChangeState> checkPackageChangeState(
   required String relativePackagePath,
   GitVersionFinder? git,
 }) async {
-  final String packagePrefix = relativePackagePath.endsWith('/')
+  final packagePrefix = relativePackagePath.endsWith('/')
       ? relativePackagePath
       : '$relativePackagePath/';
 
-  bool hasChanges = false;
-  bool hasChangelogChange = false;
-  bool needsVersionChange = false;
-  bool needsChangelogChange = false;
-  for (final String path in changedPaths) {
+  var hasChanges = false;
+  var hasChangelogChange = false;
+  var needsVersionChange = false;
+  var needsChangelogChange = false;
+  for (final path in changedPaths) {
     // Only consider files within the package.
     if (!path.startsWith(packagePrefix)) {
       continue;
@@ -164,7 +164,7 @@ bool _isUnpublishedExampleChange(
   // Most packages have an example/lib/main.dart (or occasionally
   // example/main.dart), so check for that. The other naming variations aren't
   // currently used.
-  const String mainName = 'main.dart';
+  const mainName = 'main.dart';
   final bool hasExampleCode =
       exampleDirectory.childDirectory('lib').childFile(mainName).existsSync() ||
           exampleDirectory.childFile(mainName).existsSync();
@@ -239,11 +239,11 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
     return false;
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-  final RegExp changeLine = RegExp(r'^[+-] ');
-  final RegExp testDependencyLine =
+  final changeLine = RegExp(r'^[+-] ');
+  final testDependencyLine =
       RegExp(r'^[+-]\s*(?:androidT|t)estImplementation(?:\s|\()');
-  bool foundTestDependencyChange = false;
-  for (final String line in diff) {
+  var foundTestDependencyChange = false;
+  for (final line in diff) {
     if (!changeLine.hasMatch(line) ||
         line.startsWith('--- ') ||
         line.startsWith('+++ ')) {
@@ -270,11 +270,11 @@ Future<bool> _isDartImplementationCommentChange(List<String> pathComponents,
     return false;
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-  final RegExp changeLine = RegExp(r'^[+-] ');
-  final RegExp whitespaceLine = RegExp(r'^[+-]\s*$');
-  final RegExp nonDocCommentLine = RegExp(r'^[+-]\s*//\s');
-  bool foundIgnoredChange = false;
-  for (final String line in diff) {
+  final changeLine = RegExp(r'^[+-] ');
+  final whitespaceLine = RegExp(r'^[+-]\s*$');
+  final nonDocCommentLine = RegExp(r'^[+-]\s*//\s');
+  var foundIgnoredChange = false;
+  for (final line in diff) {
     if (!changeLine.hasMatch(line) ||
         line.startsWith('--- ') ||
         line.startsWith('+++ ')) {

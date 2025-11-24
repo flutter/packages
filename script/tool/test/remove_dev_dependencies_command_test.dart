@@ -19,7 +19,7 @@ void main() {
     (:packagesDir, processRunner: _, gitProcessRunner: _, :gitDir) =
         configureBaseCommandMocks();
 
-    final RemoveDevDependenciesCommand command = RemoveDevDependenciesCommand(
+    final command = RemoveDevDependenciesCommand(
       packagesDir,
       gitDir: gitDir,
     );

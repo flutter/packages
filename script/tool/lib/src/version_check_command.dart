@@ -61,7 +61,7 @@ Map<Version, NextVersionType> getAllowedNextVersions(
   Version version, {
   required Version newVersion,
 }) {
-  final Map<Version, NextVersionType> allowedNextVersions =
+  final allowedNextVersions =
       <Version, NextVersionType>{
     version.nextMajor: NextVersionType.BREAKING_MAJOR,
     version.nextMinor: NextVersionType.MINOR,
@@ -69,14 +69,14 @@ Map<Version, NextVersionType> getAllowedNextVersions(
   };
 
   if (version.major < 1 && newVersion.major < 1) {
-    int nextBuildNumber = -1;
+    var nextBuildNumber = -1;
     if (version.build.isEmpty) {
       nextBuildNumber = 1;
     } else {
-      final int currentBuildNumber = version.build.first as int;
+      final currentBuildNumber = version.build.first as int;
       nextBuildNumber = currentBuildNumber + 1;
     }
-    final Version nextBuildVersion = Version(
+    final nextBuildVersion = Version(
       version.major,
       version.minor,
       version.patch,
@@ -198,7 +198,7 @@ class VersionCheckCommand extends PackageLoopingCommand {
       return PackageResult.fail(<String>['No pubspec.yaml version.']);
     }
 
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     bool versionChanged;
     final _CurrentVersionState versionState =
@@ -390,13 +390,13 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     String? versionString = firstLineWithText?.split(' ').last;
     String? leadingMarkdown = firstLineWithText?.split(' ').first;
 
-    final String badNextErrorMessage = '${indentation}When bumping the version '
+    final badNextErrorMessage = '${indentation}When bumping the version '
         'for release, the NEXT section should be incorporated into the new '
         "version's release notes.";
 
     // Skip validation for the special NEXT version that's used to accumulate
     // changes that don't warrant publishing on their own.
-    final bool hasNextSection = versionString == 'NEXT';
+    final hasNextSection = versionString == 'NEXT';
     if (hasNextSection) {
       // NEXT should not be present in a commit that increases the version.
       if (pubspecVersionState == _CurrentVersionState.validIncrease ||
@@ -420,7 +420,7 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       }
     }
 
-    final bool validLeadingMarkdown = leadingMarkdown == '##';
+    final validLeadingMarkdown = leadingMarkdown == '##';
     if (versionString == null || !validLeadingMarkdown) {
       printError('${indentation}Unable to find a version in CHANGELOG.md');
       print('${indentation}The current version should be on a line starting '
@@ -448,7 +448,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
 
     // If NEXT wasn't the first section, it should not exist at all.
     if (!hasNextSection) {
-      final RegExp nextRegex = RegExp(r'^#+\s*NEXT\s*$');
+      final nextRegex = RegExp(r'^#+\s*NEXT\s*$');
       if (lines.any((String line) => nextRegex.hasMatch(line))) {
         printError(badNextErrorMessage);
         return false;
@@ -547,8 +547,8 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       return null;
     }
 
-    bool missingVersionChange = false;
-    bool missingChangelogChange = false;
+    var missingVersionChange = false;
+    var missingChangelogChange = false;
     if (state.needsVersionChange) {
       if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
         logWarning('Ignoring lack of version change due to the '

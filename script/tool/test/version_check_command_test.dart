@@ -23,8 +23,8 @@ void testAllowedVersion(
   bool allowed = true,
   NextVersionType? nextVersionType,
 }) {
-  final Version main = Version.parse(mainVersion);
-  final Version head = Version.parse(headVersion);
+  final main = Version.parse(mainVersion);
+  final head = Version.parse(headVersion);
   final Map<Version, NextVersionType> allowedVersions =
       getAllowedNextVersions(main, newVersion: head);
   if (allowed) {
@@ -38,7 +38,7 @@ void testAllowedVersion(
 }
 
 void main() {
-  const String indentation = '  ';
+  const indentation = '  ';
   group('VersionCheckCommand', () {
     late MockPlatform mockPlatform;
     late Directory packagesDir;
@@ -58,12 +58,12 @@ void main() {
       // Default to simulating the plugin never having been published.
       mockHttpStatus = 404;
       mockHttpResponse = null;
-      final MockClient mockClient = MockClient((http.Request request) async {
+      final mockClient = MockClient((http.Request request) async {
         return http.Response(json.encode(mockHttpResponse),
             mockHttpResponse == null ? mockHttpStatus : 200);
       });
 
-      final VersionCheckCommand command = VersionCheckCommand(packagesDir,
+      final command = VersionCheckCommand(packagesDir,
           processRunner: processRunner,
           platform: mockPlatform,
           gitDir: gitDir,
@@ -358,10 +358,10 @@ void main() {
 
     test('Allow empty lines in front of the first version in CHANGELOG',
         () async {
-      const String version = '1.0.1';
+      const version = '1.0.1';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
-      const String changelog = '''
+      const changelog = '''
 
 ## $version
 * Some changes.
@@ -380,7 +380,7 @@ void main() {
     test('Throws if versions in changelog and pubspec do not match', () async {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.1');
-      const String changelog = '''
+      const changelog = '''
 ## 1.0.2
 * Some changes.
 ''';
@@ -402,11 +402,11 @@ void main() {
     });
 
     test('Success if CHANGELOG and pubspec versions match', () async {
-      const String version = '1.0.1';
+      const version = '1.0.1';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
 
-      const String changelog = '''
+      const changelog = '''
 ## $version
 * Some changes.
 ''';
@@ -427,14 +427,14 @@ void main() {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-      const String changelog = '''
+      const changelog = '''
 ## 1.0.1
 * Some changes.
 ## 1.0.0
 * Some other changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      bool hasError = false;
+      var hasError = false;
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main', '--against-pub'],
           errorHandler: (Error e) {
@@ -453,11 +453,11 @@ void main() {
 
     test('Allow NEXT as a placeholder for gathering CHANGELOG entries',
         () async {
-      const String version = '1.0.0';
+      const version = '1.0.0';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
 
-      const String changelog = '''
+      const changelog = '''
 ## NEXT
 * Some changes that won't be published until the next time there's a release.
 ## $version
@@ -481,11 +481,11 @@ void main() {
     });
 
     test('Fail if NEXT appears after a version', () async {
-      const String version = '1.0.1';
+      const version = '1.0.1';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
 
-      const String changelog = '''
+      const changelog = '''
 ## $version
 * Some changes.
 ## NEXT
@@ -494,7 +494,7 @@ void main() {
 * Some other changes.
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
-      bool hasError = false;
+      var hasError = false;
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main', '--against-pub'],
           errorHandler: (Error e) {
@@ -514,7 +514,7 @@ void main() {
 
     test('Fail if NEXT is left in the CHANGELOG when adding a version bump',
         () async {
-      const String version = '1.0.1';
+      const version = '1.0.1';
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: version);
       gitProcessRunner.mockProcessesForExecutable['git-show'] =
@@ -522,7 +522,7 @@ void main() {
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
-      const String changelog = '''
+      const changelog = '''
 ## NEXT
 * Some changes that should have been folded in 1.0.1.
 ## $version
@@ -532,7 +532,7 @@ void main() {
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
 
-      bool hasError = false;
+      var hasError = false;
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main'],
           errorHandler: (Error e) {
@@ -560,7 +560,7 @@ void main() {
         FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
       ];
 
-      const String changelog = '''
+      const changelog = '''
 ## NEXT
 * Some changes that should be listed as part of 1.0.1.
 ## 1.0.0
@@ -568,7 +568,7 @@ void main() {
 ''';
       plugin.changelogFile.writeAsStringSync(changelog);
 
-      bool hasError = false;
+      var hasError = false;
       final List<String> output = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main'],
           errorHandler: (Error e) {
@@ -590,7 +590,7 @@ void main() {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-      const String changelog = '''
+      const changelog = '''
 ## NEXT
 * Some changes that should be listed as part of 1.0.1.
 ## 1.0.0
@@ -619,7 +619,7 @@ void main() {
       final RepositoryPackage plugin =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String changelog = '''
+      const changelog = '''
 ## NEXT
 * Some changes that should be listed in the next release.
 ## 1.0.0
@@ -642,7 +642,7 @@ void main() {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-      const String changelog = '''
+      const changelog = '''
 # 1.0.0
 * Some changes for a later release.
 ## 0.9.0
@@ -680,7 +680,7 @@ void main() {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-      const String changelog = '''
+      const changelog = '''
 ## NEXT
 * Some changes for a later release.
 # 1.0.0
@@ -716,7 +716,7 @@ void main() {
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-      const String changelog = '''
+      const changelog = '''
 ## Alpha
 * Some changes.
 ''';
@@ -761,7 +761,7 @@ void main() {
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -792,7 +792,7 @@ void main() {
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -831,7 +831,7 @@ packages/plugin/lib/plugin.dart
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.1');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.1
 * Some changes.
 ''';
@@ -864,7 +864,7 @@ packages/plugin/pubspec.yaml
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -896,7 +896,7 @@ tool/plugin/lib/plugin.dart
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -934,7 +934,7 @@ packages/plugin/CHANGELOG.md
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -970,7 +970,7 @@ packages/plugin/pubspec.yaml
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1007,7 +1007,7 @@ packages/plugin/example/lib/foo.dart
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1040,7 +1040,7 @@ packages/plugin/CHANGELOG.md
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1076,7 +1076,7 @@ packages/another_plugin/CHANGELOG.md
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1114,7 +1114,7 @@ packages/plugin/example/lib/foo.dart
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1155,7 +1155,7 @@ packages/plugin/android/build.gradle
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1190,7 +1190,7 @@ packages/plugin/run_tests.sh
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1227,7 +1227,7 @@ packages/plugin/lib/plugin.dart
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, version: '1.0.0');
 
-        const String changelog = '''
+        const changelog = '''
 ## 1.0.0
 * Some changes.
 ''';
@@ -1301,7 +1301,7 @@ packages/plugin/lib/plugin.dart
 
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
 
-      bool hasError = false;
+      var hasError = false;
       final List<String> result = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main', '--against-pub'],
           errorHandler: (Error e) {
@@ -1327,7 +1327,7 @@ ${indentation}Allowed versions: {1.0.0: NextVersionType.BREAKING_MAJOR, 0.1.0: N
       mockHttpStatus = 400;
 
       createFakePlugin('plugin', packagesDir, version: '2.0.0');
-      bool hasError = false;
+      var hasError = false;
       final List<String> result = await runCapturingPrint(
           runner, <String>['version-check', '--base-sha=main', '--against-pub'],
           errorHandler: (Error e) {

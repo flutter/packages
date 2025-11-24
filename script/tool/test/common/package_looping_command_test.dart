@@ -367,7 +367,7 @@ skip/b
           ]));
       expect(command.checkedPackages, isNot(contains(excluded.path)));
       expect(examples.length, 2);
-      for (final RepositoryPackage example in examples) {
+      for (final example in examples) {
         expect(command.checkedPackages, isNot(contains(example.path)));
       }
       expect(command.checkedPackages, isNot(contains(subpackage.path)));
@@ -394,7 +394,7 @@ skip/b
           ]));
       expect(command.checkedPackages, isNot(contains(excluded.path)));
       expect(examples.length, 2);
-      for (final RepositoryPackage example in examples) {
+      for (final example in examples) {
         expect(command.checkedPackages, isNot(contains(example.path)));
       }
     });
@@ -470,7 +470,7 @@ skip/b
       final TestPackageLoopingCommand command = createTestCommand();
       final List<String> output = await runCommand(command);
 
-      const String separator =
+      const separator =
           '============================================================';
       expect(
           output,
@@ -504,7 +504,7 @@ skip/b
       final List<String> output =
           await runCommand(command, arguments: <String>['--log-timing']);
 
-      const String separator =
+      const separator =
           '============================================================';
       expect(
           output,
@@ -658,7 +658,7 @@ skip/b
       expect(output, isEmpty);
 
       // None of the output should be colorized when captured.
-      const String separator =
+      const separator =
           '============================================================';
       expect(
           command.capturedOutput,

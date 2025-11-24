@@ -22,7 +22,7 @@ void main() {
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
 
-    final RepoPackageInfoCheckCommand command = RepoPackageInfoCheckCommand(
+    final command = RepoPackageInfoCheckCommand(
       packagesDir,
       gitDir: gitDir,
     );
@@ -76,7 +76,7 @@ ${subpaths.map((String subpath) => 'packages/$subpath/** @someone').join('\n')}
   }
 
   test('passes for correct coverage', () async {
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
@@ -96,9 +96,9 @@ ${readmeTableEntry('a_package')}
 
   test('passes for federated plugins with only app-facing package listed',
       () async {
-    const String pluginName = 'foo';
+    const pluginName = 'foo';
     final Directory pluginDir = packagesDir.childDirectory(pluginName);
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePlugin(pluginName, pluginDir),
       createFakePlugin('${pluginName}_platform_interface', pluginDir),
       createFakePlugin('${pluginName}_android', pluginDir),
@@ -120,7 +120,7 @@ ${readmeTableEntry(pluginName)}
   });
 
   test('fails for unexpected README table entry', () async {
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
@@ -146,7 +146,7 @@ ${readmeTableEntry('another_package')}
   });
 
   test('fails for missing README table entry', () async {
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
       createFakePackage('another_package', packagesDir),
     ];
@@ -175,13 +175,13 @@ ${readmeTableEntry('another_package')}
   });
 
   test('fails for unexpected format in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry = '| [$packageName](./packages/$packageName/) | '
         'Some random text | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -213,14 +213,14 @@ $entry
   });
 
   test('fails for incorrect source link in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    const String incorrectPackageName = 'a_pakage';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const incorrectPackageName = 'a_pakage';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry =
+    final entry =
         '| [$packageName](./packages/$incorrectPackageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -253,14 +253,14 @@ $entry
   });
 
   test('fails for incorrect packages/* link in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    const String incorrectPackageName = 'a_pakage';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const incorrectPackageName = 'a_pakage';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$incorrectPackageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -292,14 +292,14 @@ $entry
   });
 
   test('fails for incorrect labels/* link in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     final String incorrectTag = Uri.encodeComponent('p: a_pakage');
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -331,14 +331,14 @@ $entry
   });
 
   test('fails for incorrect packages/* anchor in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
-    const String incorrectPackageName = 'a_pakage';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const incorrectPackageName = 'a_pakage';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$incorrectPackageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -370,14 +370,14 @@ $entry
   });
 
   test('fails for incorrect tag query anchor in README table entry', () async {
-    const String packageName = 'a_package';
+    const packageName = 'a_package';
     final String encodedTag = Uri.encodeComponent('p: $packageName');
     final String incorrectTag = Uri.encodeComponent('p: a_pakage');
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
-    final String entry = '| [$packageName](./packages/$packageName/) | '
+    final entry = '| [$packageName](./packages/$packageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '
@@ -409,8 +409,8 @@ $entry
   });
 
   test('fails for missing CODEOWNER', () async {
-    const String packageName = 'a_package';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const packageName = 'a_package';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 
@@ -438,8 +438,8 @@ ${readmeTableEntry(packageName)}
   });
 
   test('fails for missing auto-labeler entry', () async {
-    const String packageName = 'a_package';
-    final List<RepositoryPackage> packages = <RepositoryPackage>[
+    const packageName = 'a_package';
+    final packages = <RepositoryPackage>[
       createFakePackage('a_package', packagesDir),
     ];
 

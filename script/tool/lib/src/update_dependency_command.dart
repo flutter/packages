@@ -98,7 +98,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    const Set<String> targetFlags = <String>{
+    const targetFlags = <String>{
       _pubPackageFlag,
       _androidDependency
     };
@@ -146,9 +146,9 @@ ${response.httpResponse.body}
       } else if (_targetAndroidDependency == _AndroidDependencyType.gradle ||
           _targetAndroidDependency ==
               _AndroidDependencyType.androidGradlePlugin) {
-        final RegExp validGradleAGPVersionPattern =
+        final validGradleAGPVersionPattern =
             RegExp(r'^\d{1,2}\.\d{1,2}(?:\.\d)?$');
-        final bool isValidGradleAGPVersion =
+        final isValidGradleAGPVersion =
             validGradleAGPVersionPattern.stringMatch(version) == version;
         if (!isValidGradleAGPVersion) {
           printError('''
@@ -160,8 +160,8 @@ A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) mus
         }
       } else if (_targetAndroidDependency ==
           _AndroidDependencyType.kotlinGradlePlugin) {
-        final RegExp validKgpVersionPattern = RegExp(r'^\d\.\d\.\d{1,2}$');
-        final bool isValidKgpVersion =
+        final validKgpVersionPattern = RegExp(r'^\d\.\d\.\d{1,2}$');
+        final isValidKgpVersion =
             validKgpVersionPattern.stringMatch(version) == version;
         if (!isValidKgpVersion) {
           printError('''
@@ -175,8 +175,8 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
               _AndroidDependencyType.compileSdk ||
           _targetAndroidDependency ==
               _AndroidDependencyType.compileSdkForExamples) {
-        final RegExp validSdkVersion = RegExp(r'^\d{1,2}$');
-        final bool isValidSdkVersion =
+        final validSdkVersion = RegExp(r'^\d{1,2}$');
+        final isValidSdkVersion =
             validSdkVersion.stringMatch(version) == version;
         if (!isValidSdkVersion) {
           printError(
@@ -225,11 +225,11 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
     }
 
     // Determine the target version constraint.
-    final String sectionKey = dependencyInfo.type == _PubDependencyType.dev
+    final sectionKey = dependencyInfo.type == _PubDependencyType.dev
         ? 'dev_dependencies'
         : 'dependencies';
     final String versionString;
-    final VersionConstraint parsedConstraint =
+    final parsedConstraint =
         VersionConstraint.parse(_targetVersion);
     // If the provided string was a constraint, or if it's a specific
     // version but the package has a pinned dependency, use it as-is.
@@ -248,7 +248,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
     if (versionString == dependencyInfo.constraintString) {
       return PackageResult.skip('Already depends on $versionString');
     }
-    final YamlEditor editablePubspec =
+    final editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(
       <String>[sectionKey, dependency],
@@ -295,8 +295,8 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
   Future<PackageResult> _runForAndroidDependencyOnExamples(
       RepositoryPackage package) async {
     final Iterable<RepositoryPackage> packageExamples = package.getExamples();
-    bool updateRanForExamples = false;
-    for (final RepositoryPackage example in packageExamples) {
+    var updateRanForExamples = false;
+    for (final example in packageExamples) {
       if (!example.platformDirectory(FlutterPlatform.android).existsSync()) {
         continue;
       }
@@ -304,7 +304,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
       updateRanForExamples = true;
       final Directory androidDirectory =
           example.platformDirectory(FlutterPlatform.android);
-      final List<File> filesToUpdate = <File>[];
+      final filesToUpdate = <File>[];
       final RegExp dependencyVersionPattern;
       final String newDependencyVersionEntry;
 
@@ -368,7 +368,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
         throw ToolExit(_exitIncorrectTargetDependency);
       }
 
-      for (final File fileToUpdate in filesToUpdate) {
+      for (final fileToUpdate in filesToUpdate) {
         final String oldFileToUpdateContents = fileToUpdate.readAsStringSync();
 
         if (!dependencyVersionPattern.hasMatch(oldFileToUpdateContents)) {
@@ -406,7 +406,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
         .childFile('build.gradle');
     final String buildConfigurationContents =
         buildConfigurationFile.readAsStringSync();
-    final RegExp validCompileSdkVersion =
+    final validCompileSdkVersion =
         RegExp(r'(compileSdk|compileSdkVersion) \d{1,2}');
 
     if (!validCompileSdkVersion.hasMatch(buildConfigurationContents)) {
@@ -487,7 +487,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
     }
 
     print('${indentation}Updating Pigeon files...');
-    for (final File input in inputs) {
+    for (final input in inputs) {
       final String relativePath =
           getRelativePosixPath(input, from: package.directory);
       final io.ProcessResult pigeonResult = await processRunner.run(

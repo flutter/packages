@@ -26,7 +26,7 @@ void main() {
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
 
-      final FetchDepsCommand command = FetchDepsCommand(
+      final command = FetchDepsCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -244,7 +244,7 @@ void main() {
       });
 
       test('runs on all examples', () async {
-        final List<String> examples = <String>['example1', 'example2'];
+        final examples = <String>['example1', 'example2'];
         final RepositoryPackage plugin = createFakePlugin(
             'plugin1', packagesDir,
             examples: examples,
@@ -422,7 +422,7 @@ void main() {
 
     group('ios', () {
       test('runs on all examples', () async {
-        final List<String> examples = <String>['example1', 'example2'];
+        final examples = <String>['example1', 'example2'];
         final RepositoryPackage plugin = createFakePlugin(
             'plugin1', packagesDir,
             examples: examples,
@@ -535,7 +535,7 @@ void main() {
 
     group('macos', () {
       test('runs on all examples', () async {
-        final List<String> examples = <String>['example1', 'example2'];
+        final examples = <String>['example1', 'example2'];
         final RepositoryPackage plugin = createFakePlugin(
             'plugin1', packagesDir,
             examples: examples,

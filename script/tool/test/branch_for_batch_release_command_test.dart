@@ -58,7 +58,7 @@ version: 1.0.0
     return package;
   }
 
-  const List<ProcessCall> expectedGitCallsForABFiles = <ProcessCall>[
+  const expectedGitCallsForABFiles = <ProcessCall>[
     ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
     ProcessCall(
         'git-rm',
@@ -78,7 +78,7 @@ version: 1.0.0
         <String>['-m', '[a_package] Prepare for batch release'], null),
     ProcessCall('git-push', <String>['origin', 'release-branch'], null),
   ];
-  const List<ProcessCall> expectedGitCallsForAFiles = <ProcessCall>[
+  const expectedGitCallsForAFiles = <ProcessCall>[
     ProcessCall('git-checkout', <String>['-b', 'release-branch'], null),
     ProcessCall('git-rm',
         <String>['/packages/a_package/pending_changelogs/a.yaml'], null),
@@ -99,7 +99,7 @@ version: 1.0.0
     final GitDir gitDir;
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
-    final BranchForBatchReleaseCommand command = BranchForBatchReleaseCommand(
+    final command = BranchForBatchReleaseCommand(
       packagesDir,
       processRunner: processRunner,
       gitDir: gitDir,

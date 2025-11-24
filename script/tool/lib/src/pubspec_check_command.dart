@@ -197,7 +197,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       final List<String> repositoryErrors =
           _checkForRepositoryLinkErrors(pubspec, package: package);
       if (repositoryErrors.isNotEmpty) {
-        for (final String error in repositoryErrors) {
+        for (final error in repositoryErrors) {
           printError('$indentation$error');
         }
         passing = false;
@@ -244,8 +244,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
 
   bool _checkSectionOrder(
       List<String> pubspecLines, List<String> sectionOrder) {
-    int previousSectionIndex = 0;
-    for (final String line in pubspecLines) {
+    var previousSectionIndex = 0;
+    for (final line in pubspecLines) {
       final int index = sectionOrder.indexOf(line);
       if (index == -1) {
         continue;
@@ -262,7 +262,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     Pubspec pubspec, {
     required RepositoryPackage package,
   }) {
-    final List<String> errorMessages = <String>[];
+    final errorMessages = <String>[];
     if (pubspec.repository == null) {
       errorMessages.add('Missing "repository"');
     } else {
@@ -345,7 +345,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     }
 
     // Validates topic names according to https://dart.dev/tools/pub/pubspec#topics
-    final RegExp expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
+    final expectedTopicFormat = RegExp(r'^[a-z](?:-?[a-z0-9]+)*$');
     final Iterable<String> invalidTopics = topics.where((String topic) =>
         !expectedTopicFormat.hasMatch(topic) ||
         topic.length < 2 ||
@@ -368,8 +368,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     required RepositoryPackage package,
   }) {
     if (_isImplementationPackage(package)) {
-      final YamlMap pluginSection = pubspec.flutter!['plugin'] as YamlMap;
-      final String? implements = pluginSection['implements'] as String?;
+      final pluginSection = pubspec.flutter!['plugin'] as YamlMap;
+      final implements = pluginSection['implements'] as String?;
       final String expectedImplements = package.directory.parent.basename;
       if (implements == null) {
         return 'Missing "implements: $expectedImplements" in "plugin" section.';
@@ -389,8 +389,8 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     Pubspec pubspec, {
     required RepositoryPackage package,
   }) {
-    final YamlMap pluginSection = pubspec.flutter!['plugin'] as YamlMap;
-    final YamlMap? platforms = pluginSection['platforms'] as YamlMap?;
+    final pluginSection = pubspec.flutter!['plugin'] as YamlMap;
+    final platforms = pluginSection['platforms'] as YamlMap?;
     if (platforms == null) {
       logWarning('Does not implement any platforms');
       return null;
@@ -398,10 +398,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     final String packageName = package.directory.basename;
 
     // Validate that the default_package entries look correct (e.g., no typos).
-    final Set<String> defaultPackages = <String>{};
+    final defaultPackages = <String>{};
     for (final MapEntry<Object?, Object?> platformEntry in platforms.entries) {
-      final YamlMap platformDetails = platformEntry.value! as YamlMap;
-      final String? defaultPackage =
+      final platformDetails = platformEntry.value! as YamlMap;
+      final defaultPackage =
           platformDetails['default_package'] as String?;
       if (defaultPackage != null) {
         defaultPackages.add(defaultPackage);
@@ -437,7 +437,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     // anything else is. (This is done instead of listing known implementation
     // suffixes to allow for non-standard suffixes; e.g., to put several
     // platforms in one package for code-sharing purposes.)
-    const Set<String> nonImplementationSuffixes = <String>{
+    const nonImplementationSuffixes = <String>{
       '', // App-facing package.
       '_platform_interface', // Platform interface package.
     };
@@ -528,10 +528,10 @@ class PubspecCheckCommand extends PackageLoopingCommand {
   // Validates the dependencies for a package, returning an error string if
   // there are any that aren't allowed.
   String? _checkDependencies(Pubspec pubspec) {
-    final Set<String> badDependencies = <String>{};
-    final Set<String> misplacedDevDependencies = <String>{};
+    final badDependencies = <String>{};
+    final misplacedDevDependencies = <String>{};
     // Shipped dependencies.
-    for (final Map<String, Dependency> dependencies
+    for (final dependencies
         in <Map<String, Dependency>>[
       pubspec.dependencies,
       pubspec.devDependencies
@@ -544,7 +544,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     }
 
     // Ensure that dev-only dependencies aren't in `dependencies`.
-    const Set<String> devOnlyDependencies = <String>{
+    const devOnlyDependencies = <String>{
       'build_runner',
       'integration_test',
       'flutter_test',
@@ -565,7 +565,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
       });
     }
 
-    final List<String> errors = <String>[
+    final errors = <String>[
       if (badDependencies.isNotEmpty)
         '''
 The following unexpected non-local dependencies were found:

@@ -22,7 +22,7 @@ void main() {
         configureBaseCommandMocks();
     root = packagesDir.parent;
 
-    final DependabotCheckCommand command = DependabotCheckCommand(
+    final command = DependabotCheckCommand(
       packagesDir,
       gitDir: gitDir,
     );

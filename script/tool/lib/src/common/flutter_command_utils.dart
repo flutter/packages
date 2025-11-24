@@ -21,7 +21,7 @@ Future<bool> runConfigOnlyBuild(
   bool buildDebug = false,
   List<String> extraArgs = const <String>[],
 }) async {
-  final String flutterCommand = platform.isWindows ? 'flutter.bat' : 'flutter';
+  final flutterCommand = platform.isWindows ? 'flutter.bat' : 'flutter';
 
   final String target = switch (targetPlatform) {
     FlutterPlatform.android => 'apk',

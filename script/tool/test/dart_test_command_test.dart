@@ -27,7 +27,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final DartTestCommand command = DartTestCommand(
+      final command = DartTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -736,7 +736,7 @@ packages/package_a/foo.dart
             ]));
       });
 
-      const List<String> files = <String>[
+      const files = <String>[
         'foo.java',
         'foo.kt',
         'foo.m',
@@ -746,7 +746,7 @@ packages/package_a/foo.dart
         'foo.cpp',
         'foo.h',
       ];
-      for (final String file in files) {
+      for (final file in files) {
         test('skips command for changes to non-Dart source $file', () async {
           createFakePackage('package_a', packagesDir);
 

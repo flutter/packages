@@ -24,7 +24,7 @@ void main() {
     final GitDir gitDir;
     (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
-    final ReadmeCheckCommand command = ReadmeCheckCommand(
+    final command = ReadmeCheckCommand(
       packagesDir,
       processRunner: processRunner,
       platform: mockPlatform,
@@ -96,7 +96,7 @@ void main() {
   test('does not inculde non-example subpackages', () async {
     final RepositoryPackage package =
         createFakePackage('a_package', packagesDir);
-    const String subpackageName = 'special_test';
+    const subpackageName = 'special_test';
     final RepositoryPackage miscSubpackage =
         createFakePackage(subpackageName, package.directory);
     miscSubpackage.readmeFile.deleteSync();
@@ -361,7 +361,7 @@ samples, guidance on mobile development, and a full API reference.
     test(
         'does not check support table for anything other than app-facing plugin packages',
         () async {
-      const String federatedPluginName = 'a_federated_plugin';
+      const federatedPluginName = 'a_federated_plugin';
       final Directory federatedDir =
           packagesDir.childDirectory(federatedPluginName);
       // A non-plugin package.

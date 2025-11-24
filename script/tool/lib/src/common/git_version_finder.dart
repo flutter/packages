@@ -39,7 +39,7 @@ class GitVersionFinder {
       baseSha,
       if (!includeUncommitted) 'HEAD'
     ]);
-    final String changedFilesStdout = changedFilesCommand.stdout.toString();
+    final changedFilesStdout = changedFilesCommand.stdout.toString();
     if (changedFilesStdout.isEmpty) {
       return <String>[];
     }
@@ -60,7 +60,7 @@ class GitVersionFinder {
       if (!includeUncommitted) 'HEAD',
       if (targetPath != null) ...<String>['--', targetPath],
     ]);
-    final String diffStdout = diffCommand.stdout.toString();
+    final diffStdout = diffCommand.stdout.toString();
     if (diffStdout.isEmpty) {
       return <String>[];
     }
@@ -82,12 +82,12 @@ class GitVersionFinder {
     } on io.ProcessException {
       return null;
     }
-    final String fileContent = gitShow.stdout as String;
+    final fileContent = gitShow.stdout as String;
     if (fileContent.trim().isEmpty) {
       return null;
     }
-    final YamlMap fileYaml = loadYaml(fileContent) as YamlMap;
-    final String? versionString = fileYaml['version'] as String?;
+    final fileYaml = loadYaml(fileContent) as YamlMap;
+    final versionString = fileYaml['version'] as String?;
     return versionString == null ? null : Version.parse(versionString);
   }
 

@@ -60,7 +60,7 @@ class Xcode {
           configuration ?? 'Debug',
         );
       }
-      final List<String> args = <String>[
+      final args = <String>[
         _xcodeBuildCommand,
         ...actions,
         ...<String>['-workspace', workspace],
@@ -74,7 +74,7 @@ class Xcode {
         if (disabledSandboxEntitlementFile != null)
           'CODE_SIGN_ENTITLEMENTS=${disabledSandboxEntitlementFile.path}',
       ];
-      final String completeTestCommand = '$_xcRunCommand ${args.join(' ')}';
+      final completeTestCommand = '$_xcRunCommand ${args.join(' ')}';
       if (log) {
         print(completeTestCommand);
       }
@@ -145,7 +145,7 @@ class Xcode {
   /// Returns the newest available simulator (highest OS version, with ties
   /// broken in favor of newest device), if any.
   Future<String?> findBestAvailableIphoneSimulator() async {
-    final List<String> findSimulatorsArguments = <String>[
+    final findSimulatorsArguments = <String>[
       'simctl',
       'list',
       'devices',
@@ -153,7 +153,7 @@ class Xcode {
       'available',
       '--json',
     ];
-    final String findSimulatorCompleteCommand =
+    final findSimulatorCompleteCommand =
         '$_xcRunCommand ${findSimulatorsArguments.join(' ')}';
     if (log) {
       print('Looking for available simulators...');
@@ -169,7 +169,7 @@ class Xcode {
       }
       return null;
     }
-    final Map<String, dynamic> simulatorListJson =
+    final simulatorListJson =
         jsonDecode(findSimulatorsResult.stdout as String)
             as Map<String, dynamic>;
     final List<Map<String, dynamic>> runtimes =
@@ -189,7 +189,7 @@ class Xcode {
       if ((runtimeMap['name'] as String?)?.contains('iOS') != true) {
         continue;
       }
-      final String? runtimeID = runtimeMap['identifier'] as String?;
+      final runtimeID = runtimeMap['identifier'] as String?;
       if (runtimeID == null) {
         continue;
       }
@@ -225,7 +225,7 @@ class Xcode {
     Directory macOSDirectory,
     String configuration,
   ) {
-    final String entitlementDefaultFileName =
+    final entitlementDefaultFileName =
         configuration == 'Release' ? 'Release' : 'DebugProfile';
 
     final File entitlementFile = macOSDirectory

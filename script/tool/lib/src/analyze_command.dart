@@ -95,7 +95,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
   bool _hasUnexpectedAnalysisOptions(RepositoryPackage package) {
     final List<FileSystemEntity> files =
         package.directory.listSync(recursive: true, followLinks: false);
-    for (final FileSystemEntity file in files) {
+    for (final file in files) {
       if (file.basename != 'analysis_options.yaml' &&
           file.basename != '.analysis_options') {
         continue;
@@ -155,14 +155,14 @@ class AnalyzeCommand extends PackageLoopingCommand {
     _allowedCustomAnalysisDirectories = getYamlListArg(_customAnalysisFlag);
 
     // Use the Dart SDK override if one was passed in.
-    final String? dartSdk = argResults![_analysisSdk] as String?;
+    final dartSdk = argResults![_analysisSdk] as String?;
     _dartBinaryPath =
         dartSdk == null ? 'dart' : path.join(dartSdk, 'bin', 'dart');
   }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final Map<String, PackageResult> subResults = <String, PackageResult>{};
+    final subResults = <String, PackageResult>{};
     if (getBoolArg(_dartFlag)) {
       _printSectionHeading('Running dart analyze.');
       subResults['Dart'] = await _runDartAnalysisForPackage(package);
@@ -208,11 +208,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return subResults.values.first;
     }
     // Otherwise, aggregate the messages, with the least positive status.
-    final Map<String, PackageResult> failedResults =
+    final failedResults =
         Map<String, PackageResult>.of(subResults)
           ..removeWhere((String key, PackageResult value) =>
               value.state != RunState.failed);
-    final Map<String, PackageResult> skippedResults =
+    final skippedResults =
         Map<String, PackageResult>.of(subResults)
           ..removeWhere((String key, PackageResult value) =>
               value.state != RunState.skipped);
@@ -265,11 +265,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
     // analyzing. `example` packages can be skipped since 'flutter pub get'
     // automatically runs `pub get` in examples as part of handling the parent
     // directory.
-    final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
+    final packagesToGet = <RepositoryPackage>[
       package,
       if (!libOnly) ...package.getSubpackages(),
     ];
-    for (final RepositoryPackage packageToGet in packagesToGet) {
+    for (final packageToGet in packagesToGet) {
       if (packageToGet.directory.basename != 'example' ||
           !RepositoryPackage(packageToGet.directory.parent)
               .pubspecFile
@@ -279,7 +279,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
             // Re-run, capturing output, to see if the failure was a resolver
             // failure. (This is slightly inefficient, but this should be a
             // very rare case.)
-            const String resolverFailureMessage = 'version solving failed';
+            const resolverFailureMessage = 'version solving failed';
             final io.ProcessResult result = await processRunner.run(
                 flutterCommand, <String>['pub', 'get'],
                 workingDir: packageToGet.directory);
@@ -324,7 +324,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
-      final GradleProject project = GradleProject(example,
+      final project = GradleProject(example,
           processRunner: processRunner, platform: platform);
 
       if (!project.isConfigured()) {
@@ -360,7 +360,7 @@ class AnalyzeCommand extends PackageLoopingCommand {
     FlutterPlatform targetPlatform, {
     List<String> extraFlags = const <String>[],
   }) async {
-    final String platformString =
+    final platformString =
         targetPlatform == FlutterPlatform.ios ? 'iOS' : 'macOS';
     if (!pluginSupportsPlatform(targetPlatform.name, package,
         requiredMode: PlatformSupport.inline)) {
@@ -368,8 +368,8 @@ class AnalyzeCommand extends PackageLoopingCommand {
           'Package does not contain native $platformString plugin code');
     }
 
-    final Xcode xcode = Xcode(processRunner: processRunner, log: true);
-    final List<String> errors = <String>[];
+    final xcode = Xcode(processRunner: processRunner, log: true);
+    final errors = <String>[];
     for (final RepositoryPackage example in package.getExamples()) {
       // See https://github.com/flutter/flutter/issues/172427 for discussion of
       // why this is currently necessary.

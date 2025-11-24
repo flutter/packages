@@ -174,7 +174,7 @@ class LicenseCheckCommand extends PackageCommand {
     final Map<_LicenseFailureType, List<File>> codeFileFailures =
         await _checkCodeLicenses(codeFiles);
 
-    bool passed = true;
+    var passed = true;
 
     print('\n=======================================\n');
 
@@ -182,7 +182,7 @@ class LicenseCheckCommand extends PackageCommand {
       passed = false;
       printError(
           'The following LICENSE files do not follow the expected format:');
-      for (final File file in licenseFileFailures) {
+      for (final file in licenseFileFailures) {
         printError('  ${_repoRelativePath(file)}');
       }
       printError('Please ensure that they use the exact format used in this '
@@ -237,19 +237,19 @@ class LicenseCheckCommand extends PackageCommand {
   /// validation.
   Future<Map<_LicenseFailureType, List<File>>> _checkCodeLicenses(
       Iterable<File> codeFiles) async {
-    final List<File> incorrectFirstPartyFiles = <File>[];
-    final List<File> unrecognizedThirdPartyFiles = <File>[];
+    final incorrectFirstPartyFiles = <File>[];
+    final unrecognizedThirdPartyFiles = <File>[];
 
     // Most code file types in the repository use '//' comments.
     final String defaultFirstPartyLicenseBlock = _generateLicenseBlock('// ');
     // A few file types have a different comment structure.
-    final Map<String, String> firstPartyLicenseBlockByExtension =
+    final firstPartyLicenseBlockByExtension =
         <String, String>{
       '.sh': _generateLicenseBlock('# '),
       '.html': _generateLicenseBlock('', prefix: '<!-- ', suffix: ' -->'),
     };
 
-    for (final File file in codeFiles) {
+    for (final file in codeFiles) {
       print('Checking ${_repoRelativePath(file)}');
       // Some third-party directories have code that doesn't annotate each file,
       // so for those check the LICENSE file instead. This is done even though
@@ -303,9 +303,9 @@ class LicenseCheckCommand extends PackageCommand {
 
   /// Checks all provided LICENSE [files], returning any that fail validation.
   Future<List<File>> _checkLicenseFiles(Iterable<File> files) async {
-    final List<File> incorrectLicenseFiles = <File>[];
+    final incorrectLicenseFiles = <File>[];
 
-    for (final File file in files) {
+    for (final file in files) {
       print('Checking ${_repoRelativePath(file)}');
       // On Windows, git may auto-convert line endings on checkout; this should
       // still pass since they will be converted back on commit.
@@ -358,12 +358,12 @@ class LicenseCheckCommand extends PackageCommand {
 
   // Returns the directories containing mapped submodules, if any.
   Future<Iterable<Directory>> _getSubmoduleDirectories() async {
-    final List<Directory> submodulePaths = <Directory>[];
+    final submodulePaths = <Directory>[];
     final Directory repoRoot =
         packagesDir.fileSystem.directory((await gitDir).path);
     final File submoduleSpec = repoRoot.childFile('.gitmodules');
     if (submoduleSpec.existsSync()) {
-      final RegExp pathLine = RegExp(r'path\s*=\s*(.*)');
+      final pathLine = RegExp(r'path\s*=\s*(.*)');
       for (final String line in submoduleSpec.readAsLinesSync()) {
         final RegExpMatch? match = pathLine.firstMatch(line);
         if (match != null) {

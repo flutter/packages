@@ -129,7 +129,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
 
     // Uses basename to match _changedPackageFiles.
     final String basePackageName = package.directory.parent.basename;
-    final String platformInterfacePackageName =
+    final platformInterfacePackageName =
         '$basePackageName$_platformInterfaceSuffix';
     final List<String> changedPlatformInterfaceFiles =
         _changedDartFiles[platformInterfacePackageName] ?? <String>[];
@@ -168,7 +168,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
     // change to another file accidentally included), while not setting too
     // high a bar for detecting mass changes. This can be tuned if there are
     // issues with false positives or false negatives.
-    const int massChangePluginThreshold = 3;
+    const massChangePluginThreshold = 3;
     if (_changedPlugins.length >= massChangePluginThreshold) {
       logWarning('Ignoring potentially dangerous change, as this appears '
           'to be a mass change.');
@@ -193,7 +193,7 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
       // If the package was deleted, nothing will be published.
       return false;
     }
-    final Pubspec pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
+    final pubspec = Pubspec.parse(pubspecFile.readAsStringSync());
     if (pubspec.publishTo == 'none') {
       return false;
     }
@@ -211,13 +211,13 @@ class FederationSafetyCheckCommand extends PackageLoopingCommand {
   Future<bool> _changeIsCommentOnly(
       GitVersionFinder git, String repoPath) async {
     final List<String> diff = await git.getDiffContents(targetPath: repoPath);
-    final RegExp changeLine = RegExp(r'^[+-]');
+    final changeLine = RegExp(r'^[+-]');
     // This will not catch /**/-style comments, but false negatives are fine
     // (and in practice, we almost never use that comment style in Dart code).
-    final RegExp commentLine = RegExp(r'^[+-]\s*//');
-    final RegExp blankLine = RegExp(r'^[+-]\s*$');
-    bool foundComment = false;
-    for (final String line in diff) {
+    final commentLine = RegExp(r'^[+-]\s*//');
+    final blankLine = RegExp(r'^[+-]\s*$');
+    var foundComment = false;
+    for (final line in diff) {
       if (!changeLine.hasMatch(line) ||
           line.startsWith('--- ') ||
           line.startsWith('+++ ')) {

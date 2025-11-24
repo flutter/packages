@@ -92,7 +92,7 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
         '${getRelativePosixPath(readme, from: mainPackage.directory)}...');
 
     final List<String> readmeLines = readme.readAsLinesSync();
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     final String? blockValidationError =
         _validateCodeBlocks(readmeLines, mainPackage: mainPackage);
@@ -107,7 +107,7 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     // checks.
     if (!isExample) {
       final Pubspec pubspec = mainPackage.parsePubspec();
-      final bool isPlugin = pubspec.flutter?['plugin'] != null;
+      final isPlugin = pubspec.flutter?['plugin'] != null;
       if (isPlugin && (!mainPackage.isFederated || mainPackage.isAppFacing)) {
         final String? error = _validateSupportedPlatforms(readmeLines, pubspec);
         if (error != null) {
@@ -124,12 +124,12 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     List<String> readmeLines, {
     required RepositoryPackage mainPackage,
   }) {
-    final RegExp codeBlockDelimiterPattern = RegExp(r'^\s*```\s*([^ ]*)\s*');
-    const String excerptTagStart = '<?code-excerpt ';
-    final List<int> missingLanguageLines = <int>[];
-    final List<int> missingExcerptLines = <int>[];
-    bool inBlock = false;
-    for (int i = 0; i < readmeLines.length; ++i) {
+    final codeBlockDelimiterPattern = RegExp(r'^\s*```\s*([^ ]*)\s*');
+    const excerptTagStart = '<?code-excerpt ';
+    final missingLanguageLines = <int>[];
+    final missingExcerptLines = <int>[];
+    var inBlock = false;
+    for (var i = 0; i < readmeLines.length; ++i) {
       final RegExpMatch? match =
           codeBlockDelimiterPattern.firstMatch(readmeLines[i]);
       if (match == null) {
@@ -161,7 +161,7 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     String? errorSummary;
 
     if (missingLanguageLines.isNotEmpty) {
-      for (final int lineNumber in missingLanguageLines) {
+      for (final lineNumber in missingLanguageLines) {
         printError('${indentation}Code block at line $lineNumber is missing '
             'a language identifier.');
       }
@@ -173,7 +173,7 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     }
 
     if (missingExcerptLines.isNotEmpty) {
-      for (final int lineNumber in missingExcerptLines) {
+      for (final lineNumber in missingExcerptLines) {
         printError('${indentation}Dart code block at line $lineNumber is not '
             'managed by code-excerpt.');
       }
@@ -215,13 +215,13 @@ class ReadmeCheckCommand extends PackageLoopingCommand {
     }
 
     // Validate that the supported OS lists match.
-    final YamlMap pluginSection = pubspec.flutter!['plugin'] as YamlMap;
+    final pluginSection = pubspec.flutter!['plugin'] as YamlMap;
     final dynamic platformsEntry = pluginSection['platforms'];
     if (platformsEntry == null) {
       logWarning('Plugin not support any platforms');
       return null;
     }
-    final YamlMap platformSupportMaps = platformsEntry as YamlMap;
+    final platformSupportMaps = platformsEntry as YamlMap;
     final Set<String> actuallySupportedPlatform =
         platformSupportMaps.keys.toSet().cast<String>();
     final Iterable<String> documentedPlatforms = readmeLines[osLineNumber]
@@ -272,7 +272,7 @@ ${indentation * 2}Please use standard capitalizations: ${sortedListString(expect
     required RepositoryPackage mainPackage,
     required bool isExample,
   }) {
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     if (_containsTemplateFlutterBoilerplate(readmeLines)) {
       printError('${indentation}The boilerplate section about getting started '

@@ -35,7 +35,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final DriveExamplesCommand command = DriveExamplesCommand(
+      final command = DriveExamplesCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -56,22 +56,22 @@ void main() {
       bool hasAndroidDevice = true,
       bool includeBanner = false,
     }) {
-      const String updateBanner = '''
+      const updateBanner = '''
 ╔════════════════════════════════════════════════════════════════════════════╗
 ║ A new version of Flutter is available!                                     ║
 ║                                                                            ║
 ║ To update to the latest version, run "flutter upgrade".                    ║
 ╚════════════════════════════════════════════════════════════════════════════╝
 ''';
-      final List<String> devices = <String>[
+      final devices = <String>[
         if (hasIOSDevice) '{"id": "$_fakeIOSDevice", "targetPlatform": "ios"}',
         if (hasAndroidDevice)
           '{"id": "$_fakeAndroidDevice", "targetPlatform": "android-x64"}',
       ];
-      final String output =
+      final output =
           '''${includeBanner ? updateBanner : ''}[${devices.join(',')}]''';
 
-      final MockProcess mockDevicesProcess =
+      final mockDevicesProcess =
           MockProcess(stdout: output, stdoutEncoding: utf8);
       processRunner
               .mockProcessesForExecutable[getFlutterCommand(mockPlatform)] =
@@ -409,7 +409,7 @@ void main() {
         },
       );
 
-      final FakeAsync fakeAsync = FakeAsync();
+      final fakeAsync = FakeAsync();
       processRunner.mockProcessesForExecutable['flutter']!
           .addAll(<FakeProcessInfo>[
         FakeProcessInfo(
@@ -422,7 +422,7 @@ void main() {
 
       final Directory pluginExampleDirectory = getExampleDir(plugin);
 
-      List<String> output = <String>[];
+      var output = <String>[];
       fakeAsync.run((_) {
         () async {
           output = await runCapturingPrint(
@@ -1717,7 +1717,7 @@ void main() {
     });
 
     group('file filtering', () {
-      const List<String> files = <String>[
+      const files = <String>[
         'pubspec.yaml',
         'foo.dart',
         'foo.java',
@@ -1728,7 +1728,7 @@ void main() {
         'foo.cpp',
         'foo.h',
       ];
-      for (final String file in files) {
+      for (final file in files) {
         test('runs command for changes to $file', () async {
           createFakePackage('package_a', packagesDir);
 

@@ -56,7 +56,7 @@ void main(List<String> args) {
     io.exit(1);
   }
 
-  final CommandRunner<void> commandRunner = CommandRunner<void>(
+  final commandRunner = CommandRunner<void>(
       'dart pub global run flutter_plugin_tools',
       'Productivity utils for hosting multiple plugins within one repository.')
     ..addCommand(AnalyzeCommand(packagesDir))
@@ -91,7 +91,7 @@ void main(List<String> args) {
     ..addCommand(BranchForBatchReleaseCommand(packagesDir));
 
   commandRunner.run(args).catchError((Object e) {
-    final ToolExit toolExit = e as ToolExit;
+    final toolExit = e as ToolExit;
     int exitCode = toolExit.exitCode;
     // This should never happen; this check is here to guarantee that a ToolExit
     // never accidentally has code 0 thus causing CI to pass.

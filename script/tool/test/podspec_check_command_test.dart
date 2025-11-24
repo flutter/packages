@@ -30,7 +30,7 @@ void _writeFakePodspec(
   final File file = plugin.directory
       .childDirectory(platform)
       .childFile('$pluginName.podspec');
-  final String swiftWorkaround = includeSwiftWorkaround
+  final swiftWorkaround = includeSwiftWorkaround
       ? '''
   s.${scopeSwiftWorkaround ? 'ios.' : ''}xcconfig = {
      'LIBRARY_SEARCH_PATHS' => '\$(TOOLCHAIN_DIR)/usr/lib/swift/\$(PLATFORM_NAME)/ \$(SDKROOT)/usr/lib/swift',
@@ -38,7 +38,7 @@ void _writeFakePodspec(
   }
 '''
       : '';
-  final String privacyManifest = includePrivacyManifest
+  final privacyManifest = includePrivacyManifest
       ? '''
   s.resource_bundles = {'$pluginName' => ['Resources/PrivacyInfo.xcprivacy']}
 '''
@@ -85,7 +85,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final PodspecCheckCommand command = PodspecCheckCommand(
+      final command = PodspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,

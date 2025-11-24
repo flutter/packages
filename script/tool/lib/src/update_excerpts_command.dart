@@ -47,8 +47,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final List<File> changedFiles = <File>[];
-    final List<String> errors = <String>[];
+    final changedFiles = <File>[];
+    final errors = <String>[];
     final List<File> markdownFiles = package.directory
         .listSync(recursive: true)
         .where((FileSystemEntity entity) {
@@ -58,7 +58,7 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         })
         .cast<File>()
         .toList();
-    for (final File file in markdownFiles) {
+    for (final file in markdownFiles) {
       final _UpdateResult result = _updateExcerptsIn(file);
       if (result.snippetCount > 0) {
         final String displayPath =
@@ -108,16 +108,16 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   );
 
   _UpdateResult _updateExcerptsIn(File file) {
-    bool detectedChange = false;
-    int snippetCount = 0;
-    final List<String> errors = <String>[];
+    var detectedChange = false;
+    var snippetCount = 0;
+    final errors = <String>[];
     Directory pathBase = file.parent;
-    final StringBuffer output = StringBuffer();
-    final StringBuffer existingBlock = StringBuffer();
+    final output = StringBuffer();
+    final existingBlock = StringBuffer();
     String? language;
     String? excerpt;
     _ExcerptParseMode mode = _ExcerptParseMode.normal;
-    int lineNumber = 0;
+    var lineNumber = 0;
     for (final String line in file.readAsLinesSync()) {
       lineNumber += 1;
       switch (mode) {
@@ -221,14 +221,14 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
 
   String _extractExcerpt(File excerptSourceFile, String section,
       String plasterInside, String language, List<String> errors) {
-    final List<String> buffer = <String>[];
-    bool extracting = false;
-    int lineNumber = 0;
-    int maxLength = 0;
-    bool found = false;
-    String prefix = '';
-    String suffix = '';
-    String padding = '';
+    final buffer = <String>[];
+    var extracting = false;
+    var lineNumber = 0;
+    var maxLength = 0;
+    var found = false;
+    var prefix = '';
+    var suffix = '';
+    var padding = '';
     switch (language) {
       case 'cc':
       case 'c++':
@@ -254,9 +254,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       case 'sh':
         prefix = '# ';
     }
-    final String startRegionMarker = '$prefix#docregion $section$suffix';
-    final String endRegionMarker = '$prefix#enddocregion $section$suffix';
-    final String plaster = '$prefix$padding$plasterInside$padding$suffix';
+    final startRegionMarker = '$prefix#docregion $section$suffix';
+    final endRegionMarker = '$prefix#enddocregion $section$suffix';
+    final plaster = '$prefix$padding$plasterInside$padding$suffix';
     int? indentation;
     for (final String excerptLine in excerptSourceFile.readAsLinesSync()) {
       final String trimmedLine = excerptLine.trimLeft();
@@ -303,15 +303,15 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       errors.add('${excerptSourceFile.path}: region "$section" is empty');
       return '';
     }
-    int indent = maxLength;
-    for (final String line in buffer) {
+    var indent = maxLength;
+    for (final line in buffer) {
       if (indent == 0) {
         break;
       }
       if (line.isEmpty) {
         continue;
       }
-      for (int index = 0; index < line.length; index += 1) {
+      for (var index = 0; index < line.length; index += 1) {
         if (line[index] != ' ') {
           if (index < indent) {
             indent = index;
@@ -319,8 +319,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         }
       }
     }
-    final StringBuffer excerpt = StringBuffer();
-    for (final String line in buffer) {
+    final excerpt = StringBuffer();
+    for (final line in buffer) {
       if (line.isEmpty) {
         excerpt.writeln();
       } else {

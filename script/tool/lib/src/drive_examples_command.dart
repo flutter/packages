@@ -82,7 +82,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    final List<String> platformSwitches = <String>[
+    final platformSwitches = <String>[
       platformAndroid,
       platformIOS,
       platformLinux,
@@ -168,7 +168,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       final Iterable<String> requestedPlatforms = _targetDeviceFlags.keys;
       final Iterable<String> unsupportedPlatforms = requestedPlatforms.where(
           (String platform) => !pluginSupportsPlatform(platform, package));
-      for (final String platform in unsupportedPlatforms) {
+      for (final platform in unsupportedPlatforms) {
         print('Skipping unsupported platform $platform...');
       }
       if (unsupportedPlatforms.length == requestedPlatforms.length) {
@@ -177,10 +177,10 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       }
     }
 
-    int examplesFound = 0;
-    int supportedExamplesFound = 0;
-    bool testsRan = false;
-    final List<String> errors = <String>[];
+    var examplesFound = 0;
+    var supportedExamplesFound = 0;
+    var testsRan = false;
+    final errors = <String>[];
     for (final RepositoryPackage example in package.getExamples()) {
       ++examplesFound;
       final String exampleName =
@@ -234,7 +234,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
           chromedriver = await processRunner
               .start('chromedriver', <String>['--port=$_chromeDriverPort']);
         }
-        for (final File driver in drivers) {
+        for (final driver in drivers) {
           final List<File> failingTargets = await _driveTests(
             example,
             driver,
@@ -242,7 +242,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             deviceFlags: deviceFlags,
             exampleName: exampleName,
           );
-          for (final File failingTarget in failingTargets) {
+          for (final failingTarget in failingTargets) {
             errors.add(
                 getRelativePosixPath(failingTarget, from: package.directory));
           }
@@ -279,7 +279,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   /// Returns the device flags for the intersection of the requested platforms
   /// and the platforms supported by [example].
   List<String> _deviceFlagsForExample(RepositoryPackage example) {
-    final List<String> deviceFlags = <String>[];
+    final deviceFlags = <String>[];
     for (final MapEntry<String, List<String>> entry
         in _targetDeviceFlags.entries) {
       final String platform = entry.key;
@@ -295,7 +295,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   }
 
   Future<List<String>> _getDevicesForPlatform(String platform) async {
-    final List<String> deviceIds = <String>[];
+    final deviceIds = <String>[];
 
     final ProcessResult result = await processRunner.run(
         flutterCommand, <String>['devices', '--machine'],
@@ -304,7 +304,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
       return deviceIds;
     }
 
-    String output = result.stdout as String;
+    var output = result.stdout as String;
     // --machine doesn't currently prevent the tool from printing banners;
     // see https://github.com/flutter/flutter/issues/86055. This workaround
     // can be removed once that is fixed.
@@ -312,11 +312,11 @@ class DriveExamplesCommand extends PackageLoopingCommand {
 
     final List<Map<String, dynamic>> devices =
         (jsonDecode(output) as List<dynamic>).cast<Map<String, dynamic>>();
-    for (final Map<String, dynamic> deviceInfo in devices) {
+    for (final deviceInfo in devices) {
       final String targetPlatform =
           (deviceInfo['targetPlatform'] as String?) ?? '';
       if (targetPlatform.startsWith(platform)) {
-        final String? deviceId = deviceInfo['id'] as String?;
+        final deviceId = deviceInfo['id'] as String?;
         if (deviceId != null) {
           deviceIds.add(deviceId);
         }
@@ -326,7 +326,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   }
 
   Future<List<File>> _getDrivers(RepositoryPackage example) async {
-    final List<File> drivers = <File>[];
+    final drivers = <File>[];
 
     final Directory driverDir = example.directory.childDirectory('test_driver');
     if (driverDir.existsSync()) {
@@ -340,7 +340,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   }
 
   Future<List<File>> _getIntegrationTests(RepositoryPackage example) async {
-    final List<File> tests = <File>[];
+    final tests = <File>[];
     final Directory integrationTestDir =
         example.directory.childDirectory('integration_test');
 
@@ -362,7 +362,7 @@ class DriveExamplesCommand extends PackageLoopingCommand {
   bool _validateIntegrationTest(File testFile) {
     final List<String> lines = testFile.readAsLinesSync();
 
-    final RegExp badTestPattern = RegExp(r'\s*test\(');
+    final badTestPattern = RegExp(r'\s*test\(');
     if (lines.any((String line) => line.startsWith(badTestPattern))) {
       final String filename = testFile.basename;
       printError(
@@ -390,16 +390,16 @@ class DriveExamplesCommand extends PackageLoopingCommand {
     required List<String> deviceFlags,
     required String exampleName,
   }) async {
-    final List<File> failures = <File>[];
+    final failures = <File>[];
 
     final String enableExperiment = getStringArg(kEnableExperiment);
-    final String screenshotBasename =
+    final screenshotBasename =
         '${exampleName.replaceAll(platform.pathSeparator, '_')}-drive';
     final Directory? screenshotDirectory =
         ciLogsDirectory(platform, driver.fileSystem)
             ?.childDirectory(screenshotBasename);
 
-    for (final File target in targets) {
+    for (final target in targets) {
       final int exitCode = await processRunner.runAndStream(
           flutterCommand,
           <String>[
@@ -451,10 +451,10 @@ class DriveExamplesCommand extends PackageLoopingCommand {
             .map((File f) => getRelativePosixPath(f, from: example.directory))
         : <String>['integration_test'];
 
-    bool passed = true;
-    for (final String target in individualRunTargets) {
-      final Timer timeoutTimer = Timer(const Duration(minutes: 10), () async {
-        final String screenshotBasename =
+    var passed = true;
+    for (final target in individualRunTargets) {
+      final timeoutTimer = Timer(const Duration(minutes: 10), () async {
+        final screenshotBasename =
             'test-timeout-screenshot_${target.replaceAll(platform.pathSeparator, '_')}.png';
         printWarning(
             'Test is taking a long time, taking screenshot $screenshotBasename...');

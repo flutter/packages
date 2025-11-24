@@ -52,7 +52,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
       return PackageResult.skip('No android/ directory.');
     }
 
-    const String exampleDirName = 'example';
+    const exampleDirName = 'example';
     final bool isExample = package.directory.basename == exampleDirName ||
         package.directory.parent.basename == exampleDirName;
     if (!_validateBuildGradles(package, isExample: isExample)) {
@@ -69,7 +69,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
-    bool succeeded = true;
+    var succeeded = true;
     if (isExample) {
       if (!_validateExampleTopLevelBuildGradle(package, topLevelGradleFile)) {
         succeeded = false;
@@ -125,7 +125,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
-    bool succeeded = true;
+    var succeeded = true;
     if (!_validateNamespace(package, contents, isExample: false)) {
       succeeded = false;
     }
@@ -171,14 +171,14 @@ class GradleCheckCommand extends PackageLoopingCommand {
   bool _validateArtifactHubUsage(
       RepositoryPackage example, List<String> gradleLines) {
     // Gradle variable name used to hold environment variable string.
-    const String keyVariable = 'artifactRepoKey';
-    final RegExp keyPresentRegex =
+    const keyVariable = 'artifactRepoKey';
+    final keyPresentRegex =
         RegExp('$keyVariable' r"\s+=\s+'ARTIFACT_HUB_REPOSITORY'");
-    final RegExp documentationPresentRegex = RegExp(
+    final documentationPresentRegex = RegExp(
         r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure');
-    final RegExp keyReadRegex =
+    final keyReadRegex =
         RegExp(r'if.*System\.getenv.*\.containsKey.*' '$keyVariable');
-    final RegExp keyUsedRegex =
+    final keyUsedRegex =
         RegExp(r'maven.*url.*System\.getenv\(' '$keyVariable');
 
     final bool keyPresent =
@@ -208,7 +208,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
     final List<String> lines = contents.split('\n');
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
-    bool succeeded = true;
+    var succeeded = true;
     if (!_validateArtifactHubSettingsUsage(package, lines)) {
       succeeded = false;
     }
@@ -232,9 +232,9 @@ plugins {
   /// Required in root gradle file.
   bool _validateArtifactHubSettingsUsage(
       RepositoryPackage example, List<String> gradleLines) {
-    final RegExp documentationPresentRegex = RegExp(
+    final documentationPresentRegex = RegExp(
         r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure');
-    final RegExp artifactRegistryPluginApplyRegex = RegExp(
+    final artifactRegistryPluginApplyRegex = RegExp(
         r'id.*com\.google\.cloud\.artifactregistry\.gradle-plugin.*version.*\b\d+\.\d+\.\d+\b');
 
     final bool documentationPresent = gradleLines
@@ -270,7 +270,7 @@ plugins {
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
-    bool succeeded = true;
+    var succeeded = true;
     if (!_validateJavacLintConfig(package, lines)) {
       succeeded = false;
     }
@@ -293,7 +293,7 @@ plugins {
 
     // This is tracked as a variable rather than a sequence of &&s so that all
     // failures are reported at once, not just the first one.
-    bool succeeded = true;
+    var succeeded = true;
     if (!_validateNamespace(package, contents, isExample: true)) {
       succeeded = false;
     }
@@ -307,13 +307,13 @@ plugins {
     // Regex to validate that the following namespace definition
     // is found (where the single quotes can be single or double):
     //  - namespace = 'dev.flutter.foo'
-    final RegExp nameSpaceRegex =
+    final nameSpaceRegex =
         RegExp('^\\s*namespace\\s+=\\s*[\'"](.*?)[\'"]', multiLine: true);
     final RegExpMatch? nameSpaceRegexMatch =
         nameSpaceRegex.firstMatch(gradleContents);
 
     if (nameSpaceRegexMatch == null) {
-      const String errorMessage = '''
+      const errorMessage = '''
 build.gradle must set a "namespace":
 
     android {
@@ -341,14 +341,14 @@ https://developer.android.com/build/publish-library/prep-lib-release#choose-name
   /// Prints an error and returns false if validation fails.
   bool _validateNamespaceMatchesManifest(RepositoryPackage package,
       {required bool isExample, required String namespace}) {
-    final RegExp manifestPackageRegex = RegExp(r'package\s*=\s*"(.*?)"');
+    final manifestPackageRegex = RegExp(r'package\s*=\s*"(.*?)"');
     final String manifestContents =
         _getMainAndroidManifest(package, isExample: isExample)
             .readAsStringSync();
     final RegExpMatch? packageMatch =
         manifestPackageRegex.firstMatch(manifestContents);
     if (packageMatch != null && namespace != packageMatch.group(1)) {
-      final String errorMessage = '''
+      final errorMessage = '''
 build.gradle "namespace" must match the "package" attribute in AndroidManifest.xml, if one is present.
   build.gradle namespace: "$namespace"
   AndroidMastifest.xml package: "${packageMatch.group(1)}"
@@ -378,7 +378,7 @@ build.gradle "namespace" must match the "package" attribute in AndroidManifest.x
             line.contains('targetCompatibility = JavaVersion.VERSION_') &&
             !_isCommented(line));
     if (!hasLanguageVersion && !hasCompabilityVersions) {
-      const String javaErrorMessage = '''
+      const javaErrorMessage = '''
 build.gradle(.kts) must set an explicit Java compatibility version.
 
 This can be done either via "sourceCompatibility"/"targetCompatibility":
@@ -418,15 +418,15 @@ for more details.''';
     // Either does not set kotlinOptions or does and uses non-string based syntax.
     if (hasKotlinOptions && !kotlinOptionsUsesJavaVersion) {
       // Bad lines contains the first 4 lines including the kotlinOptions section.
-      String badLines = '';
+      var badLines = '';
       final int startIndex =
           gradleLines.indexOf(gradleLines.firstWhere(isKotlinOptions));
-      for (int i = startIndex;
+      for (var i = startIndex;
           i < math.min(startIndex + 4, gradleLines.length);
           i++) {
         badLines += '${gradleLines[i]}\n';
       }
-      final String kotlinErrorMessage = '''
+      final kotlinErrorMessage = '''
 If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
   Good:
     android {
@@ -446,12 +446,12 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
   }
 
   bool _validateJavaKotlinCompileOptionsAlignment(List<String> gradleLines) {
-    final List<String> javaVersions = <String>[];
+    final javaVersions = <String>[];
     // Some java versions have the format VERSION_1_8 but we dont need to handle those
     // because they are below the minimum.
-    final RegExp javaVersionMatcher =
+    final javaVersionMatcher =
         RegExp(r'JavaVersion.VERSION_(?<javaVersion>\d+)');
-    for (final String line in gradleLines) {
+    for (final line in gradleLines) {
       final RegExpMatch? match = javaVersionMatcher.firstMatch(line);
       if (!_isCommented(line) && match != null) {
         final String? foundVersion = match.namedGroup('javaVersion');
@@ -463,7 +463,7 @@ If build.gradle(.kts) sets jvmTarget then it must use JavaVersion syntax.
     if (javaVersions.isNotEmpty) {
       final int version = int.parse(javaVersions.first);
       if (!javaVersions.every((String element) => element == '$version')) {
-        const String javaVersionAlignmentError = '''
+        const javaVersionAlignmentError = '''
 If build.gradle(.kts) uses JavaVersion.* versions must be the same.
 ''';
         printError(
@@ -472,7 +472,7 @@ If build.gradle(.kts) uses JavaVersion.* versions must be the same.
       }
 
       if (version < _minimumJavaVersion) {
-        final String minimumJavaVersionError = '''
+        final minimumJavaVersionError = '''
 build.gradle(.kts) uses "JavaVersion.VERSION_$version".
 Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimumJavaVersion".
 ''';
@@ -513,14 +513,14 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
 
   bool _validateCompileSdkUsage(
       RepositoryPackage package, List<String> gradleLines) {
-    final RegExp linePattern = RegExp(r'^\s*compileSdk.*\s+=');
-    final RegExp legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
+    final linePattern = RegExp(r'^\s*compileSdk.*\s+=');
+    final legacySettingPattern = RegExp(r'^\s*compileSdkVersion');
     final String? compileSdkLine = gradleLines
         .firstWhereOrNull((String line) => linePattern.hasMatch(line));
 
     if (compileSdkLine == null) {
       // Equals regex not found check for method pattern.
-      final RegExp compileSpacePattern = RegExp(r'^\s*compileSdk');
+      final compileSpacePattern = RegExp(r'^\s*compileSdk');
       final String? methodAssignmentLine = gradleLines.firstWhereOrNull(
           (String line) => compileSpacePattern.hasMatch(line));
       if (methodAssignmentLine == null) {
@@ -560,13 +560,13 @@ Which is below the minimum required. Use at least "JavaVersion.VERSION_$_minimum
       }
     } else {
       // Extract compileSdkVersion and check if it is higher than flutter.compileSdkVersion.
-      final RegExp numericVersionPattern = RegExp(r'=\s*(\d+)');
+      final numericVersionPattern = RegExp(r'=\s*(\d+)');
       final RegExpMatch? versionMatch =
           numericVersionPattern.firstMatch(compileSdkLine);
 
       if (versionMatch != null) {
         final int compileSdkVersion = int.parse(versionMatch.group(1)!);
-        const int minCompileSdkVersion = 36;
+        const minCompileSdkVersion = 36;
 
         if (compileSdkVersion < minCompileSdkVersion) {
           printError(
@@ -633,14 +633,14 @@ gradle.projectsEvaluated {
   /// least a minimum value, if it is set at all.
   bool _validateKotlinVersion(
       RepositoryPackage example, List<String> gradleLines) {
-    final RegExp kotlinVersionRegex =
+    final kotlinVersionRegex =
         RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
     RegExpMatch? match;
     if (gradleLines.any((String line) {
       match = kotlinVersionRegex.firstMatch(line);
       return match != null;
     })) {
-      final Version version = Version.parse(match!.group(1)!);
+      final version = Version.parse(match!.group(1)!);
       if (version < minKotlinVersion) {
         printError('build.gradle sets "ext.kotlin_version" to "$version". The '
             'minimum Kotlin version that can be specified is '

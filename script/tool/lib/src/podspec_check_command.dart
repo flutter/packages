@@ -61,14 +61,14 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     final List<File> podspecs = await _podspecsToLint(package);
     if (podspecs.isEmpty) {
       return PackageResult.skip('No podspecs.');
     }
 
-    for (final File podspec in podspecs) {
+    for (final podspec in podspecs) {
       if (!await _lintPodspec(podspec)) {
         errors.add(podspec.basename);
       }
@@ -76,9 +76,9 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 
     if (await _hasIOSSwiftCode(package)) {
       print('iOS Swift code found, checking for search paths settings...');
-      for (final File podspec in podspecs) {
+      for (final podspec in podspecs) {
         if (_isPodspecMissingSearchPaths(podspec)) {
-          const String workaroundBlock = r'''
+          const workaroundBlock = r'''
   s.xcconfig = {
     'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
@@ -153,7 +153,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 
   Future<ProcessResult> _runPodLint(String podspecPath,
       {required bool libraryLint}) async {
-    final List<String> arguments = <String>[
+    final arguments = <String>[
       'lib',
       'lint',
       podspecPath,
@@ -220,7 +220,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     // This errs on the side of being too strict, to minimize the chance of
     // accidental incorrect configuration. If we ever need more flexibility
     // due to a false negative we can adjust this as necessary.
-    final RegExp workaround = RegExp(r'''
+    final workaround = RegExp(r'''
 \s*s\.(?:ios\.)?xcconfig = {[^}]*
 \s*'LIBRARY_SEARCH_PATHS' => '\$\(TOOLCHAIN_DIR\)/usr/lib/swift/\$\(PLATFORM_NAME\)/ \$\(SDKROOT\)/usr/lib/swift',
 \s*'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',[^}]*
@@ -230,7 +230,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 
   /// Returns true if [podspec] specifies a .xcprivacy file.
   bool _hasPrivacyManifest(File podspec) {
-    final RegExp manifestBundling = RegExp(r'''
+    final manifestBundling = RegExp(r'''
 \.(?:ios\.)?resource_bundles\s*=\s*{[^}]*PrivacyInfo.xcprivacy''',
         dotAll: true);
     return manifestBundling.hasMatch(podspec.readAsStringSync());

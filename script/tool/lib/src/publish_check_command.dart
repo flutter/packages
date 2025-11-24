@@ -111,7 +111,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<void> handleCapturedOutput(List<String> output) async {
-    final Map<String, dynamic> machineOutput = <String, dynamic>{
+    final machineOutput = <String, dynamic>{
       _statusKey: _statusStringForResult(_overallResult),
       _humanMessageKey: output,
     };
@@ -162,12 +162,12 @@ class PublishCheckCommand extends PackageLoopingCommand {
       workingDirectory: package.directory,
     );
 
-    final StringBuffer outputBuffer = StringBuffer();
+    final outputBuffer = StringBuffer();
 
-    final Completer<void> stdOutCompleter = Completer<void>();
+    final stdOutCompleter = Completer<void>();
     process.stdout.listen(
       (List<int> event) {
-        final String output = String.fromCharCodes(event);
+        final output = String.fromCharCodes(event);
         if (output.isNotEmpty) {
           print(output);
           outputBuffer.write(output);
@@ -176,10 +176,10 @@ class PublishCheckCommand extends PackageLoopingCommand {
       onDone: () => stdOutCompleter.complete(),
     );
 
-    final Completer<void> stdInCompleter = Completer<void>();
+    final stdInCompleter = Completer<void>();
     process.stderr.listen(
       (List<int> event) {
-        final String output = String.fromCharCodes(event);
+        final output = String.fromCharCodes(event);
         if (output.isNotEmpty) {
           // The final result is always printed on stderr, whether success or
           // failure.
@@ -202,7 +202,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
     await stdOutCompleter.future;
     await stdInCompleter.future;
 
-    final String output = outputBuffer.toString();
+    final output = outputBuffer.toString();
     return output.contains('Package has 1 warning') &&
         output.contains(
             'Packages with an SDK constraint on a pre-release of the Dart SDK should themselves be published as a pre-release version.');
@@ -313,7 +313,7 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
   }
 
   void _printImportantStatusMessage(String message, {required bool isError}) {
-    final String statusMessage = '${isError ? 'ERROR' : 'SUCCESS'}: $message';
+    final statusMessage = '${isError ? 'ERROR' : 'SUCCESS'}: $message';
     if (getBoolArg(_machineFlag)) {
       print(statusMessage);
     } else {

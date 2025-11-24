@@ -46,7 +46,7 @@ class DependabotCheckCommand extends PackageLoopingCommand {
   Future<void> initializeRun() async {
     _repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
-    final YamlMap config = loadYaml(_repoRoot
+    final config = loadYaml(_repoRoot
         .childFile(getStringArg(_configPathFlag))
         .readAsStringSync()) as YamlMap;
     final dynamic entries = config['updates'];
@@ -54,9 +54,9 @@ class DependabotCheckCommand extends PackageLoopingCommand {
       return;
     }
 
-    const String typeKey = 'package-ecosystem';
-    const String dirKey = 'directory';
-    const String dirsKey = 'directories';
+    const typeKey = 'package-ecosystem';
+    const dirKey = 'directory';
+    const dirsKey = 'directories';
     final Iterable<YamlMap> gradleEntries = entries
         .cast<YamlMap>()
         .where((YamlMap entry) => entry[typeKey] == 'gradle');
@@ -75,8 +75,8 @@ class DependabotCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    bool skipped = true;
-    final List<String> errors = <String>[];
+    var skipped = true;
+    final errors = <String>[];
 
     final _GradleCoverageResult gradleResult =
         _validateDependabotGradleCoverage(package);
@@ -110,14 +110,14 @@ class DependabotCheckCommand extends PackageLoopingCommand {
     final Directory appDir = androidDir.childDirectory('app');
     if (appDir.existsSync()) {
       // It's an app, so only check for the app directory to be covered.
-      final String dependabotPath =
+      final dependabotPath =
           '/${getRelativePosixPath(appDir, from: _repoRoot)}';
       return _gradleDirs.contains(dependabotPath)
           ? _GradleCoverageResult(RunState.succeeded)
           : _GradleCoverageResult(RunState.failed, missingPath: dependabotPath);
     } else if (androidDir.existsSync()) {
       // It's a library, so only check for the android directory to be covered.
-      final String dependabotPath =
+      final dependabotPath =
           '/${getRelativePosixPath(androidDir, from: _repoRoot)}';
       return _gradleDirs.contains(dependabotPath)
           ? _GradleCoverageResult(RunState.succeeded)

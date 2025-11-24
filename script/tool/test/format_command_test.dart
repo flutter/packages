@@ -99,7 +99,7 @@ void main() {
     const int padding = 99 -
         1 - // the path separator after the padding
         10; // the file name
-    const int filenameBase = 10000;
+    const filenameBase = 10000;
 
     final p.Context path = analyzeCommand.path;
     return <String>[
@@ -110,7 +110,7 @@ void main() {
 
   group('dart format', () {
     test('formats .dart files', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'lib/a.dart',
         'lib/src/b.dart',
         'lib/src/c.dart',
@@ -134,12 +134,12 @@ void main() {
     });
 
     test('does not format .dart files with pragma', () async {
-      const List<String> formattedFiles = <String>[
+      const formattedFiles = <String>[
         'lib/a.dart',
         'lib/src/b.dart',
         'lib/src/c.dart',
       ];
-      const String unformattedFile = 'lib/src/d.dart';
+      const unformattedFile = 'lib/src/d.dart';
       final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
           extraFiles: <String>[
             ...formattedFiles,
@@ -165,7 +165,7 @@ void main() {
     });
 
     test('fails if dart format fails', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'lib/a.dart',
         'lib/src/b.dart',
         'lib/src/c.dart',
@@ -192,7 +192,7 @@ void main() {
     });
 
     test('skips dart if --no-dart flag is provided', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'lib/a.dart',
       ];
       final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
@@ -204,7 +204,7 @@ void main() {
     });
 
     test('runs pub get if it has not been run', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'lib/a.dart',
         'lib/src/b.dart',
         'lib/src/c.dart',
@@ -232,7 +232,7 @@ void main() {
     });
 
     test('runs pub get in subpackages if it has not been run', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'lib/a.dart',
         'lib/src/b.dart',
         'lib/src/c.dart',
@@ -267,7 +267,7 @@ void main() {
     });
 
     test('runs pub get if the resolved language version is stale', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'lib/a.dart',
         'lib/src/b.dart',
         'lib/src/c.dart',
@@ -297,7 +297,7 @@ void main() {
   });
 
   test('formats .java files', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
       'android/src/main/java/io/flutter/plugins/a_plugin/b.java',
     ];
@@ -327,7 +327,7 @@ void main() {
   });
 
   test('fails with a clear message if Java is not in the path', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
       'android/src/main/java/io/flutter/plugins/a_plugin/b.java',
     ];
@@ -355,7 +355,7 @@ void main() {
   });
 
   test('fails if Java formatter fails', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
       'android/src/main/java/io/flutter/plugins/a_plugin/b.java',
     ];
@@ -383,7 +383,7 @@ void main() {
   });
 
   test('honors --java-path flag', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
       'android/src/main/java/io/flutter/plugins/a_plugin/b.java',
     ];
@@ -414,7 +414,7 @@ void main() {
   });
 
   test('skips Java if --no-java flag is provided', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java',
     ];
     final RepositoryPackage plugin =
@@ -426,7 +426,7 @@ void main() {
   });
 
   test('formats c-ish files', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'ios/Classes/Foo.h',
       'ios/Classes/Foo.m',
       'linux/foo_plugin.cc',
@@ -460,7 +460,7 @@ void main() {
 
   test('fails with a clear message if clang-format is not in the path',
       () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'linux/foo_plugin.cc',
       'macos/Classes/Foo.h',
     ];
@@ -486,7 +486,7 @@ void main() {
   });
 
   test('falls back to working clang-format in the path', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'linux/foo_plugin.cc',
       'macos/Classes/Foo.h',
     ];
@@ -527,7 +527,7 @@ void main() {
   });
 
   test('honors --clang-format-path flag', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'windows/foo_plugin.cpp',
     ];
     final RepositoryPackage plugin = createFakePlugin(
@@ -557,7 +557,7 @@ void main() {
   });
 
   test('fails if clang-format fails', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'linux/foo_plugin.cc',
       'macos/Classes/Foo.h',
     ];
@@ -587,7 +587,7 @@ void main() {
   });
 
   test('skips clang-format if --no-clang-format flag is provided', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'linux/foo_plugin.cc',
     ];
     final RepositoryPackage plugin =
@@ -600,7 +600,7 @@ void main() {
 
   group('kotlin-format', () {
     test('formats .kt files', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
         'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
       ];
@@ -629,7 +629,7 @@ void main() {
     });
 
     test('fails if Kotlin formatter fails', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
         'android/src/main/kotlin/io/flutter/plugins/a_plugin/b.kt',
       ];
@@ -657,7 +657,7 @@ void main() {
     });
 
     test('skips Kotlin if --no-kotlin flag is provided', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'android/src/main/kotlin/io/flutter/plugins/a_plugin/a.kt',
       ];
       final RepositoryPackage plugin =
@@ -673,7 +673,7 @@ void main() {
     test('formats Swift if --swift flag is provided', () async {
       mockPlatform.isMacOS = false;
 
-      const List<String> files = <String>[
+      const files = <String>[
         'macos/foo.swift',
       ];
       final RepositoryPackage plugin = createFakePlugin(
@@ -717,7 +717,7 @@ void main() {
     test('skips Swift if --no-swift flag is provided', () async {
       mockPlatform.isMacOS = true;
 
-      const List<String> files = <String>[
+      const files = <String>[
         'macos/foo.swift',
       ];
       final RepositoryPackage plugin = createFakePlugin(
@@ -733,7 +733,7 @@ void main() {
     });
 
     test('fails if swift-format lint finds issues', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'macos/foo.swift',
       ];
       final RepositoryPackage plugin =
@@ -766,7 +766,7 @@ void main() {
     });
 
     test('fails if swift-format lint fails', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'macos/foo.swift',
       ];
       final RepositoryPackage plugin =
@@ -799,7 +799,7 @@ void main() {
     });
 
     test('fails if swift-format fails', () async {
-      const List<String> files = <String>[
+      const files = <String>[
         'macos/foo.swift',
       ];
       final RepositoryPackage plugin =
@@ -828,16 +828,16 @@ void main() {
   });
 
   test('skips known non-repo files', () async {
-    const List<String> skipFiles = <String>[
+    const skipFiles = <String>[
       '/example/build/SomeFramework.framework/Headers/SomeFramework.h',
       '/example/Pods/APod.framework/Headers/APod.h',
       '.dart_tool/internals/foo.cc',
       '.dart_tool/internals/Bar.java',
       '.dart_tool/internals/baz.dart',
     ];
-    const List<String> clangFiles = <String>['ios/Classes/Foo.h'];
-    const List<String> dartFiles = <String>['lib/a.dart'];
-    const List<String> javaFiles = <String>[
+    const clangFiles = <String>['ios/Classes/Foo.h'];
+    const dartFiles = <String>['lib/a.dart'];
+    const javaFiles = <String>[
       'android/src/main/java/io/flutter/plugins/a_plugin/a.java'
     ];
     final RepositoryPackage plugin = createFakePlugin(
@@ -882,7 +882,7 @@ void main() {
   });
 
   test('skips GeneratedPluginRegistrant.swift', () async {
-    const String sourceFile = 'macos/Classes/Foo.swift';
+    const sourceFile = 'macos/Classes/Foo.swift';
     final RepositoryPackage plugin = createFakePlugin(
       'a_plugin',
       packagesDir,
@@ -925,7 +925,7 @@ void main() {
   });
 
   test('fails if files are changed with --fail-on-change', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'linux/foo_plugin.cc',
       'macos/Classes/Foo.h',
     ];
@@ -933,7 +933,7 @@ void main() {
         createFakePlugin('a_plugin', packagesDir, extraFiles: files);
     fakePubGet(plugin);
 
-    const String changedFilePath = 'packages/a_plugin/linux/foo_plugin.cc';
+    const changedFilePath = 'packages/a_plugin/linux/foo_plugin.cc';
     processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
       FakeProcessInfo(
           MockProcess(stdout: changedFilePath), <String>['ls-files']),
@@ -979,7 +979,7 @@ void main() {
   });
 
   test('fails if git ls-files fails', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'linux/foo_plugin.cc',
       'macos/Classes/Foo.h',
     ];
@@ -1006,7 +1006,7 @@ void main() {
   });
 
   test('reports git diff failures', () async {
-    const List<String> files = <String>[
+    const files = <String>[
       'linux/foo_plugin.cc',
       'macos/Classes/Foo.h',
     ];
@@ -1014,7 +1014,7 @@ void main() {
         createFakePlugin('a_plugin', packagesDir, extraFiles: files);
     fakePubGet(plugin);
 
-    const String changedFilePath = 'packages/a_plugin/linux/foo_plugin.cc';
+    const changedFilePath = 'packages/a_plugin/linux/foo_plugin.cc';
     processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
       FakeProcessInfo(
           MockProcess(stdout: changedFilePath), <String>['ls-files']),
@@ -1041,7 +1041,7 @@ void main() {
   test('Batches moderately long file lists on Windows', () async {
     mockPlatform.isWindows = true;
 
-    const String pluginName = 'a_plugin';
+    const pluginName = 'a_plugin';
     // -1 since the command itself takes some length.
     const int batchSize = (windowsCommandLineMax ~/ 100) - 1;
 
@@ -1079,7 +1079,7 @@ void main() {
   // other platforms--isn't being used on all platforms, as that would make
   // formatting slower on Linux and macOS.
   test('Does not batch moderately long file lists on non-Windows', () async {
-    const String pluginName = 'a_plugin';
+    const pluginName = 'a_plugin';
     // -1 since the command itself takes some length.
     const int batchSize = (windowsCommandLineMax ~/ 100) - 1;
 
@@ -1100,7 +1100,7 @@ void main() {
   });
 
   test('Batches extremely long file lists on non-Windows', () async {
-    const String pluginName = 'a_plugin';
+    const pluginName = 'a_plugin';
     // -1 since the command itself takes some length.
     const int batchSize = (nonWindowsCommandLineMax ~/ 100) - 1;
 

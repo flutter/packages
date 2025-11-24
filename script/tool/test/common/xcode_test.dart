@@ -24,11 +24,11 @@ void main() {
 
   group('findBestAvailableIphoneSimulator', () {
     test('finds the newest device', () async {
-      const String expectedDeviceId = '1E76A0FD-38AC-4537-A989-EA639D7D012A';
+      const expectedDeviceId = '1E76A0FD-38AC-4537-A989-EA639D7D012A';
       // Note: This uses `dynamic` deliberately, and should not be updated to
       // Object, in order to ensure that the code correctly handles this return
       // type from JSON decoding.
-      final Map<String, dynamic> devices = <String, dynamic>{
+      final devices = <String, dynamic>{
         'runtimes': <Map<String, dynamic>>[
           <String, dynamic>{
             'bundlePath':
@@ -106,7 +106,7 @@ void main() {
       // Note: This uses `dynamic` deliberately, and should not be updated to
       // Object, in order to ensure that the code correctly handles this return
       // type from JSON decoding.
-      final Map<String, dynamic> devices = <String, dynamic>{
+      final devices = <String, dynamic>{
         'runtimes': <Map<String, dynamic>>[
           <String, dynamic>{
             'bundlePath':
@@ -293,7 +293,7 @@ void main() {
 
   group('projectHasTarget', () {
     test('returns true when present', () async {
-      const String stdout = '''
+      const stdout = '''
 {
   "project" : {
     "configurations" : [
@@ -335,7 +335,7 @@ void main() {
     });
 
     test('returns false when not present', () async {
-      const String stdout = '''
+      const stdout = '''
 {
   "project" : {
     "configurations" : [

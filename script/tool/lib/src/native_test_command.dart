@@ -179,7 +179,7 @@ this command.
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final List<String> testPlatforms = <String>[];
+    final testPlatforms = <String>[];
     for (final String platform in _requestedPlatforms) {
       if (!pluginSupportsPlatform(platform, package,
           requiredMode: PlatformSupport.inline)) {
@@ -197,15 +197,15 @@ this command.
       return PackageResult.skip('Nothing to test for target platform(s).');
     }
 
-    final _TestMode mode = _TestMode(
+    final mode = _TestMode(
       unit: getBoolArg(_unitTestFlag),
       integration: getBoolArg(_integrationTestFlag),
     );
 
-    bool ranTests = false;
-    bool failed = false;
-    final List<String> failureMessages = <String>[];
-    for (final String platform in testPlatforms) {
+    var ranTests = false;
+    var failed = false;
+    final failureMessages = <String>[];
+    for (final platform in testPlatforms) {
       final _PlatformDetails platformInfo = _platforms[platform]!;
       print('Running tests for ${platformInfo.label}...');
       print('----------------------------------------');
@@ -302,15 +302,15 @@ this command.
     final Iterable<RepositoryPackage> examples = plugin.getExamples();
     final String pluginName = plugin.directory.basename;
 
-    bool ranUnitTests = false;
-    bool ranAnyTests = false;
-    bool failed = false;
-    bool hasMisconfiguredIntegrationTest = false;
+    var ranUnitTests = false;
+    var ranAnyTests = false;
+    var failed = false;
+    var hasMisconfiguredIntegrationTest = false;
     // Iterate through all examples (in the rare case that there is more than
     // one example); running any tests found for each one. Requirements on what
     // tests are present are enforced at the overall package level, not a per-
     // example level. E.g., it's fine for only one example to have unit tests.
-    for (final RepositoryPackage example in examples) {
+    for (final example in examples) {
       final bool hasUnitTests = exampleHasUnitTests(example);
       final Map<File, _JavaTestInfo> candidateIntegrationTestFiles =
           findIntegrationTestFiles(example);
@@ -333,7 +333,7 @@ this command.
       final String exampleName = example.displayName;
       _printRunningExampleTestsMessage(example, 'Android');
 
-      final GradleProject project = GradleProject(
+      final project = GradleProject(
         example,
         processRunner: processRunner,
         platform: platform,
@@ -354,11 +354,11 @@ this command.
 
       if (runUnitTests) {
         print('Running unit tests...');
-        const String taskName = 'testDebugUnitTest';
+        const taskName = 'testDebugUnitTest';
         // Target the unit tests in the app and plugin specifically, to avoid
         // transitively running tests in dependencies. If unit tests have
         // already run in an earlier example, only run any app-level unit tests.
-        final List<String> pluginTestTask = <String>[
+        final pluginTestTask = <String>[
           if (!ranUnitTests) '$pluginName:$taskName'
         ];
         final int exitCode = await project.runCommand('app:$taskName',
@@ -388,7 +388,7 @@ this command.
           // tests directly, but there doesn't seem to be a way to filter based
           // on annotation contents, so the DartIntegrationTest annotation was
           // created as a proxy for that.
-          const String filter =
+          const filter =
               'notAnnotation=io.flutter.plugins.DartIntegrationTest';
 
           print('Running integration tests...');
@@ -396,7 +396,7 @@ this command.
           // without a specific target (see
           // https://github.com/flutter/flutter/pull/154476) to ensure it can
           // run on any architecture emulator.
-          const List<String> abis = <String>[
+          const abis = <String>[
             'android-arm',
             'android-arm64',
             'android-x64',
@@ -460,16 +460,16 @@ this command.
     List<String> extraFlags = const <String>[],
   }) async {
     String? testTarget;
-    const String unitTestTarget = 'RunnerTests';
+    const unitTestTarget = 'RunnerTests';
     if (mode.unitOnly) {
       testTarget = unitTestTarget;
     } else if (mode.integrationOnly) {
       testTarget = 'RunnerUITests';
     }
-    final String targetPlatformString =
+    final targetPlatformString =
         targetPlatform == FlutterPlatform.ios ? 'iOS' : 'macOS';
 
-    bool ranUnitTests = false;
+    var ranUnitTests = false;
     // Assume skipped until at least one test has run.
     RunState overallResult = RunState.skipped;
     for (final RepositoryPackage example in plugin.getExamples()) {
@@ -478,7 +478,7 @@ this command.
       // If running a specific target, check that. Otherwise, check if there
       // are unit tests, since having no unit tests for a plugin is fatal
       // (by repo policy) even if there are integration tests.
-      bool exampleHasUnitTests = false;
+      var exampleHasUnitTests = false;
       final String? targetToCheck =
           testTarget ?? (mode.unit ? unitTestTarget : null);
       final Directory xcodeProject = example
@@ -534,7 +534,7 @@ this command.
       );
 
       // The exit code from 'xcodebuild test' when there are no tests.
-      const int xcodebuildNoTestExitCode = 66;
+      const xcodebuildNoTestExitCode = 66;
       switch (exitCode) {
         case xcodebuildNoTestExitCode:
           _printNoExampleTestsMessage(example, targetPlatformString);
@@ -623,12 +623,12 @@ this command.
     String buildMode, {
     required bool Function(File) isTestBinary,
   }) async {
-    final List<File> testBinaries = <File>[];
-    bool hasMissingBuild = false;
-    bool buildFailed = false;
+    final testBinaries = <File>[];
+    var hasMissingBuild = false;
+    var buildFailed = false;
     String? arch;
-    const String x64DirName = 'x64';
-    const String arm64DirName = 'arm64';
+    const x64DirName = 'x64';
+    const arm64DirName = 'arm64';
     if (platform.isWindows) {
       arch = _abi == Abi.windowsX64 ? x64DirName : arm64DirName;
     } else if (platform.isLinux) {
@@ -637,7 +637,7 @@ this command.
       arch = 'x64';
     }
     for (final RepositoryPackage example in plugin.getExamples()) {
-      CMakeProject project = CMakeProject(example.directory,
+      var project = CMakeProject(example.directory,
           buildMode: buildMode,
           processRunner: processRunner,
           platform: platform,
@@ -706,7 +706,7 @@ this command.
     }
 
     if (testBinaries.isEmpty) {
-      final String binaryExtension = platform.isWindows ? '.exe' : '';
+      final binaryExtension = platform.isWindows ? '.exe' : '';
       printError(
           'No test binaries found. At least one *_test(s)$binaryExtension '
           'binary should be built by the example(s)');
@@ -714,8 +714,8 @@ this command.
           error: 'No $platformName unit tests found');
     }
 
-    bool passing = true;
-    for (final File test in testBinaries) {
+    var passing = true;
+    for (final test in testBinaries) {
       print('Running ${test.basename}...');
       final int exitCode =
           await processRunner.runAndStream(test.path, <String>[]);

@@ -168,12 +168,12 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       return _ChangelogUpdateOutcome.failed;
     }
 
-    final String newHeader = '## $version';
-    final RegExp listItemPattern = RegExp(r'^(\s*[-*])');
+    final newHeader = '## $version';
+    final listItemPattern = RegExp(r'^(\s*[-*])');
 
-    final StringBuffer newChangelog = StringBuffer();
+    final newChangelog = StringBuffer();
     _ChangelogUpdateState state = _ChangelogUpdateState.findingFirstSection;
-    bool updatedExistingSection = false;
+    var updatedExistingSection = false;
 
     for (final String line in package.changelogFile.readAsLinesSync()) {
       switch (state) {
@@ -270,7 +270,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     final Version newVersion = _nextVersion(currentVersion, adjustedType);
 
     // Write the new version to the pubspec.
-    final YamlEditor editablePubspec =
+    final editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(<String>['version'], newVersion.toString());
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
@@ -285,7 +285,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       case _VersionIncrementType.bugfix:
         return version.nextPatch;
       case _VersionIncrementType.build:
-        final int buildNumber =
+        final buildNumber =
             version.build.isEmpty ? 0 : version.build.first as int;
         return Version(version.major, version.minor, version.patch,
             build: '${buildNumber + 1}');

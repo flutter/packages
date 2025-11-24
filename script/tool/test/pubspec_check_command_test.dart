@@ -33,16 +33,16 @@ String _headerSection(
   String? description,
 }) {
   final String repositoryPath = repositoryPackagesDirRelativePath ?? name;
-  final List<String> repoLinkPathComponents = <String>[
+  final repoLinkPathComponents = <String>[
     repository,
     'tree',
     repositoryBranch,
     'packages',
     repositoryPath,
   ];
-  final String repoLink =
+  final repoLink =
       'https://github.com/${repoLinkPathComponents.join('/')}';
-  final String issueTrackerLink = 'https://github.com/flutter/flutter/issues?'
+  final issueTrackerLink = 'https://github.com/flutter/flutter/issues?'
       'q=is%3Aissue+is%3Aopen+label%3A%22p%3A+$name%22';
   description ??= 'A test package for validating that the pubspec.yaml '
       'follows repo best practices.';
@@ -75,7 +75,7 @@ String _flutterSection({
   Map<String, Map<String, String>> pluginPlatformDetails =
       const <String, Map<String, String>>{},
 }) {
-  String pluginEntry = '''
+  var pluginEntry = '''
   plugin:
 ${implementedPackage == null ? '' : '    implements: $implementedPackage'}
     platforms:
@@ -145,7 +145,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final PubspecCheckCommand command = PubspecCheckCommand(
+      final command = PubspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -516,7 +516,7 @@ ${_devDependenciesSection()}
       final RepositoryPackage plugin =
           createFakePlugin('plugin', packagesDir, examples: <String>[]);
 
-      const String description = 'This description is too long. It just goes '
+      const description = 'This description is too long. It just goes '
           'on and on and on and on and on. pub.dev will down-score it because '
           'there is just too much here. Someone shoul really cut this down to just '
           'the core description so that search results are more useful and the '
@@ -1764,7 +1764,7 @@ ${_topicsSection()}
       });
 
       group('dev dependencies', () {
-        const List<String> packages = <String>[
+        const packages = <String>[
           'build_runner',
           'integration_test',
           'flutter_test',
@@ -1773,14 +1773,14 @@ ${_topicsSection()}
           'pigeon',
           'test',
         ];
-        for (final String dependency in packages) {
+        for (final dependency in packages) {
           test('fails when $dependency is used in non dev dependency',
               () async {
             final RepositoryPackage package = createFakePackage(
                 'a_package', packagesDir,
                 examples: <String>[]);
 
-            final String version =
+            final version =
                 dependency == 'integration_test' || dependency == 'flutter_test'
                     ? '{ sdk: flutter }'
                     : '1.0.0';
@@ -1859,7 +1859,7 @@ ${_topicsSection()}
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final PubspecCheckCommand command = PubspecCheckCommand(
+      final command = PubspecCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,

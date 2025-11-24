@@ -27,7 +27,7 @@ void main() {
     late CommandRunner<void> runner;
 
     CommandRunner<void> configureRunner({MockClient? httpClient}) {
-      final PublishCheckCommand publishCheckCommand = PublishCheckCommand(
+      final publishCheckCommand = PublishCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -209,7 +209,7 @@ void main() {
     test('pass on prerelease if --allow-pre-release flag is on', () async {
       createFakePlugin('d', packagesDir);
 
-      final MockProcess process = MockProcess(
+      final process = MockProcess(
           exitCode: 1,
           stdout: 'Package has 1 warning.\n'
               'Packages with an SDK constraint on a pre-release of the Dart '
@@ -228,7 +228,7 @@ void main() {
     test('fail on prerelease if --allow-pre-release flag is off', () async {
       createFakePlugin('d', packagesDir);
 
-      final MockProcess process = MockProcess(
+      final process = MockProcess(
           exitCode: 1,
           stdout: 'Package has 1 warning.\n'
               'Packages with an SDK constraint on a pre-release of the Dart '
@@ -276,7 +276,7 @@ void main() {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '0.1.0');
 
-      final MockClient mockClient = MockClient((http.Request request) async {
+      final mockClient = MockClient((http.Request request) async {
         if (request.url.pathSegments.last == 'a_package.json') {
           return http.Response(
               json.encode(<String, dynamic>{
@@ -343,7 +343,7 @@ void main() {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '0.1.0');
 
-      final MockClient mockClient = MockClient((http.Request request) async {
+      final mockClient = MockClient((http.Request request) async {
         if (request.url.pathSegments.last == 'a_package.json') {
           return http.Response(
               json.encode(<String, dynamic>{
@@ -502,7 +502,7 @@ void main() {
     test(
         '--machine: Log JSON with status:no-publish and correct human message, if there are no packages need to be published. ',
         () async {
-      const Map<String, dynamic> httpResponseA = <String, dynamic>{
+      const httpResponseA = <String, dynamic>{
         'name': 'a',
         'versions': <String>[
           '0.0.1',
@@ -510,7 +510,7 @@ void main() {
         ],
       };
 
-      const Map<String, dynamic> httpResponseB = <String, dynamic>{
+      const httpResponseB = <String, dynamic>{
         'name': 'b',
         'versions': <String>[
           '0.0.1',
@@ -519,7 +519,7 @@ void main() {
         ],
       };
 
-      final MockClient mockClient = MockClient((http.Request request) async {
+      final mockClient = MockClient((http.Request request) async {
         if (request.url.pathSegments.last == 'no_publish_a.json') {
           return http.Response(json.encode(httpResponseA), 200);
         } else if (request.url.pathSegments.last == 'no_publish_b.json') {
@@ -562,7 +562,7 @@ void main() {
     test(
         '--machine: Log JSON with status:needs-publish and correct human message, if there is at least 1 plugin needs to be published.',
         () async {
-      const Map<String, dynamic> httpResponseA = <String, dynamic>{
+      const httpResponseA = <String, dynamic>{
         'name': 'a',
         'versions': <String>[
           '0.0.1',
@@ -570,7 +570,7 @@ void main() {
         ],
       };
 
-      const Map<String, dynamic> httpResponseB = <String, dynamic>{
+      const httpResponseB = <String, dynamic>{
         'name': 'b',
         'versions': <String>[
           '0.0.1',
@@ -578,7 +578,7 @@ void main() {
         ],
       };
 
-      final MockClient mockClient = MockClient((http.Request request) async {
+      final mockClient = MockClient((http.Request request) async {
         if (request.url.pathSegments.last == 'no_publish_a.json') {
           return http.Response(json.encode(httpResponseA), 200);
         } else if (request.url.pathSegments.last == 'no_publish_b.json') {
@@ -621,7 +621,7 @@ void main() {
     test(
         '--machine: Log correct JSON, if there is at least 1 plugin contains error.',
         () async {
-      const Map<String, dynamic> httpResponseA = <String, dynamic>{
+      const httpResponseA = <String, dynamic>{
         'name': 'a',
         'versions': <String>[
           '0.0.1',
@@ -629,7 +629,7 @@ void main() {
         ],
       };
 
-      const Map<String, dynamic> httpResponseB = <String, dynamic>{
+      const httpResponseB = <String, dynamic>{
         'name': 'b',
         'versions': <String>[
           '0.0.1',
@@ -637,7 +637,7 @@ void main() {
         ],
       };
 
-      final MockClient mockClient = MockClient((http.Request request) async {
+      final mockClient = MockClient((http.Request request) async {
         print('url ${request.url}');
         print(request.url.pathSegments.last);
         if (request.url.pathSegments.last == 'no_publish_a.json') {
@@ -656,7 +656,7 @@ void main() {
 
       await plugin.pubspecFile.writeAsString('bad-yaml');
 
-      bool hasError = false;
+      var hasError = false;
       final List<String> output = await runCapturingPrint(
           runner, <String>['publish-check', '--machine'],
           errorHandler: (Error error) {

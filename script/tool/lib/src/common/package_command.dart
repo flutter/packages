@@ -358,7 +358,7 @@ abstract class PackageCommand extends Command<void> {
   ///    is a sibling of the packages directory. This is used for a small number
   ///    of packages in the flutter/packages repository.
   Stream<PackageEnumerationEntry> _getAllPackages() async* {
-    final Set<String> packageSelectionFlags = <String>{
+    final packageSelectionFlags = <String>{
       _packagesArg,
       _runOnChangedPackagesArg,
       _runOnDirtyPackagesArg,
@@ -384,7 +384,7 @@ abstract class PackageCommand extends Command<void> {
         argResults!.wasParsed(_runOnDirtyPackagesArg) ||
         argResults!.wasParsed(_packagesForBranchArg));
 
-    Set<String> packages = Set<String>.from(getStringListArg(_packagesArg));
+    var packages = Set<String>.from(getStringListArg(_packagesArg));
 
     final GitVersionFinder? changedFileFinder;
     if (getBoolArg(_runOnChangedPackagesArg)) {
@@ -436,7 +436,7 @@ abstract class PackageCommand extends Command<void> {
         packages = _getChangedPackageNames(changedFiles);
       }
     } else if (getBoolArg(_runOnDirtyPackagesArg)) {
-      final GitVersionFinder gitVersionFinder =
+      final gitVersionFinder =
           GitVersionFinder(await gitDir, baseSha: 'HEAD');
       print('Running for all packages that have uncommitted changes\n');
       // _changesRequireFullTest is deliberately not used here, as this flag is
@@ -504,7 +504,7 @@ abstract class PackageCommand extends Command<void> {
   /// - Every package that is a direct child of a non-package subdirectory of
   ///   one of those directories (to cover federated plugin groups).
   Stream<RepositoryPackage> _everyTopLevelPackage() async* {
-    for (final Directory dir in <Directory>[
+    for (final dir in <Directory>[
       packagesDir,
       if (thirdPartyPackagesDir.existsSync()) thirdPartyPackagesDir,
     ]) {
@@ -593,7 +593,7 @@ abstract class PackageCommand extends Command<void> {
     final String? baseBranch =
         baseSha == null ? getNullableStringArg(_baseBranchArg) : null;
 
-    final GitVersionFinder gitVersionFinder = GitVersionFinder(await gitDir,
+    final gitVersionFinder = GitVersionFinder(await gitDir,
         baseSha: baseSha, baseBranch: baseBranch);
     return gitVersionFinder;
   }
@@ -607,7 +607,7 @@ abstract class PackageCommand extends Command<void> {
   //
   // The paths must use POSIX separators (e.g., as provided by git output).
   Set<String> _getChangedPackageNames(List<String> changedFiles) {
-    final Set<String> packages = <String>{};
+    final packages = <String>{};
 
     // A helper function that returns true if candidatePackageName looks like an
     // implementation package of a plugin called pluginName. Used to determine
@@ -619,7 +619,7 @@ abstract class PackageCommand extends Command<void> {
           candidatePackageName.startsWith('${parentName}_');
     }
 
-    for (final String path in changedFiles) {
+    for (final path in changedFiles) {
       final List<String> pathComponents = p.posix.split(path);
       final int packagesIndex =
           pathComponents.indexWhere((String element) => element == 'packages');
@@ -628,7 +628,7 @@ abstract class PackageCommand extends Command<void> {
         // either the name of the package, or a plugin group directory for
         // a federated plugin.
         final String topLevelName = pathComponents[packagesIndex + 1];
-        String packageName = topLevelName;
+        var packageName = topLevelName;
         if (packagesIndex + 2 < pathComponents.length &&
             isFederatedPackage(
                 pathComponents[packagesIndex + 2], topLevelName)) {
@@ -652,7 +652,7 @@ abstract class PackageCommand extends Command<void> {
   }
 
   String? _getCurrentDirectoryPackageName() {
-    final Set<Directory> absolutePackagesDirs = <Directory>{
+    final absolutePackagesDirs = <Directory>{
       packagesDir.absolute,
       thirdPartyPackagesDir.absolute,
     };
@@ -680,7 +680,7 @@ abstract class PackageCommand extends Command<void> {
       }
     }
     // ... and then check whether it has an enclosing package.
-    final RepositoryPackage package = RepositoryPackage(currentDir);
+    final package = RepositoryPackage(currentDir);
     final RepositoryPackage? enclosingPackage = package.getEnclosingPackage();
     final RepositoryPackage rootPackage = enclosingPackage ?? package;
     final String name = rootPackage.directory.basename;
@@ -700,12 +700,12 @@ abstract class PackageCommand extends Command<void> {
   Future<bool> _isCheckoutFromBranch(String branchName) async {
     // The target branch may not exist locally; try some common remote names for
     // the branch as well.
-    final List<String> candidateBranchNames = <String>[
+    final candidateBranchNames = <String>[
       branchName,
       'origin/$branchName',
       'upstream/$branchName',
     ];
-    for (final String branch in candidateBranchNames) {
+    for (final branch in candidateBranchNames) {
       final io.ProcessResult result = await (await gitDir).runCommand(
           <String>['merge-base', '--is-ancestor', 'HEAD', branch],
           throwOnError: false);
@@ -735,12 +735,12 @@ abstract class PackageCommand extends Command<void> {
   // Returns true if one or more files changed that have the potential to affect
   // any packages (e.g., CI script changes).
   bool _changesRequireFullTest(List<String> changedFiles) {
-    const List<String> specialFiles = <String>[
+    const specialFiles = <String>[
       '.ci.yaml', // LUCI config.
       '.clang-format', // ObjC and C/C++ formatting options.
       'analysis_options.yaml', // Dart analysis settings.
     ];
-    const List<String> specialDirectories = <String>[
+    const specialDirectories = <String>[
       '.ci/', // Support files for CI.
       'script/', // This tool.
     ];

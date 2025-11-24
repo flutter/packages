@@ -181,7 +181,7 @@ class PublishCommand extends PackageLoopingCommand {
           .where((String file) => file.trim().endsWith('pubspec.yaml'))
           .toList();
 
-      for (final String pubspecPath in changedPubspecs) {
+      for (final pubspecPath in changedPubspecs) {
         // git outputs a relativa, Posix-style path.
         final File pubspecFile = childFileWithSubcomponents(
             packagesDir.fileSystem.directory((await gitDir).path),
@@ -228,7 +228,7 @@ class PublishCommand extends PackageLoopingCommand {
       }
     }
 
-    final String action = tagOnly ? 'Tagged' : 'Published';
+    final action = tagOnly ? 'Tagged' : 'Published';
     print('\n$action ${package.directory.basename} successfully!');
     return PackageResult.success();
   }
@@ -357,7 +357,7 @@ Safe to ignore if the package is deleted in this commit.
       return false;
     }
 
-    final String statusOutput = statusResult.stdout as String;
+    final statusOutput = statusResult.stdout as String;
     if (statusOutput.isNotEmpty) {
       printError(
           "There are files in the package directory that haven't been saved in git. Refusing to publish these files:\n\n"
@@ -435,10 +435,10 @@ Safe to ignore if the package is deleted in this commit.
 
   String _getTag(RepositoryPackage package) {
     final File pubspecFile = package.pubspecFile;
-    final YamlMap pubspecYaml =
+    final pubspecYaml =
         loadYaml(pubspecFile.readAsStringSync()) as YamlMap;
-    final String name = pubspecYaml['name'] as String;
-    final String version = pubspecYaml['version'] as String;
+    final name = pubspecYaml['name'] as String;
+    final version = pubspecYaml['version'] as String;
     // We should have failed to publish if these were unset.
     assert(name.isNotEmpty && version.isNotEmpty);
     return _tagFormat

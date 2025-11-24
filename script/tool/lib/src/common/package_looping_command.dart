@@ -258,8 +258,8 @@ abstract class PackageLoopingCommand extends PackageCommand {
   Future<void> run() async {
     bool succeeded;
     if (captureOutput) {
-      final List<String> output = <String>[];
-      final ZoneSpecification logSwitchSpecification = ZoneSpecification(
+      final output = <String>[];
+      final logSwitchSpecification = ZoneSpecification(
           print: (Zone self, ZoneDelegate parent, Zone zone, String message) {
         output.add(message);
       });
@@ -288,7 +288,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
         ? null
         : getDartSdkForFlutterSdk(minFlutterVersion);
 
-    final DateTime runStart = DateTime.now();
+    final runStart = DateTime.now();
 
     // Populate the list of changed files for subclasses to use.
     final GitVersionFinder gitVersionFinder = await retrieveVersionFinder();
@@ -308,10 +308,10 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final List<PackageEnumerationEntry> targetPackages =
         await getPackagesToProcess().toList();
 
-    final Map<PackageEnumerationEntry, PackageResult> results =
+    final results =
         <PackageEnumerationEntry, PackageResult>{};
-    for (final PackageEnumerationEntry entry in targetPackages) {
-      final DateTime packageStart = DateTime.now();
+    for (final entry in targetPackages) {
+      final packageStart = DateTime.now();
       _currentPackageEntry = entry;
       _printPackageHeading(entry, startTime: runStart);
 
@@ -415,7 +415,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
   void _printPackageHeading(PackageEnumerationEntry entry,
       {required DateTime startTime}) {
     final String packageDisplayName = entry.package.displayName;
-    String heading = entry.excluded
+    var heading = entry.excluded
         ? 'Not running for $packageDisplayName; excluded'
         : 'Running for $packageDisplayName';
 
@@ -460,9 +460,9 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final int runWarningCount =
         _packagesWithWarnings.length - skippedWarningCount;
 
-    final String runWarningSummary =
+    final runWarningSummary =
         runWarningCount > 0 ? ' ($runWarningCount with warnings)' : '';
-    final String skippedWarningSummary =
+    final skippedWarningSummary =
         runWarningCount > 0 ? ' ($skippedWarningCount with warnings)' : '';
     print('------------------------------------------------------------');
     if (hasLongOutput) {
@@ -484,7 +484,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
       List<PackageEnumerationEntry> packageEnumeration,
       {required Set<PackageEnumerationEntry> skipped}) {
     print('Run overview:');
-    for (final PackageEnumerationEntry entry in packageEnumeration) {
+    for (final entry in packageEnumeration) {
       final bool hadWarning = _packagesWithWarnings.contains(entry);
       Styles style;
       String summary;
@@ -513,13 +513,13 @@ abstract class PackageLoopingCommand extends PackageCommand {
   /// Prints a summary of all of the failures from [results].
   void _printFailureSummary(List<PackageEnumerationEntry> packageEnumeration,
       Map<PackageEnumerationEntry, PackageResult> results) {
-    const String indentation = '  ';
+    const indentation = '  ';
     _printError(failureListHeader);
-    for (final PackageEnumerationEntry entry in packageEnumeration) {
+    for (final entry in packageEnumeration) {
       final PackageResult result = results[entry]!;
       if (result.state == RunState.failed) {
         final String errorIndentation = indentation * 2;
-        String errorDetails = '';
+        var errorDetails = '';
         if (result.details.isNotEmpty) {
           errorDetails =
               ':\n$errorIndentation${result.details.join('\n$errorIndentation')}';

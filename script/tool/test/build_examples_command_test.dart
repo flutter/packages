@@ -26,7 +26,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final BuildExamplesCommand command = BuildExamplesCommand(
+      final command = BuildExamplesCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -853,7 +853,7 @@ void main() {
       pluginExampleConfigFile
           .writeAsStringSync('buildFlags:\n  global:\n     - "test argument"');
 
-      final List<String> output = <String>[
+      final output = <String>[
         ...await runCapturingPrint(
             runner, <String>['build-examples', '--linux']),
         ...await runCapturingPrint(
@@ -883,7 +883,7 @@ void main() {
     });
 
     group('file filtering', () {
-      const List<String> files = <String>[
+      const files = <String>[
         'pubspec.yaml',
         'foo.dart',
         'foo.java',
@@ -894,7 +894,7 @@ void main() {
         'foo.cpp',
         'foo.h',
       ];
-      for (final String file in files) {
+      for (final file in files) {
         test('runs command for changes to $file', () async {
           createFakePackage('package_a', packagesDir);
 

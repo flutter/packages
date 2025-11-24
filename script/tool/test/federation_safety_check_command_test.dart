@@ -25,7 +25,7 @@ void main() {
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
 
-    final FederationSafetyCheckCommand command = FederationSafetyCheckCommand(
+    final command = FederationSafetyCheckCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -187,7 +187,7 @@ void main() {
     final RepositoryPackage platformInterface =
         createFakePlugin('foo_platform_interface', pluginGroupDir);
 
-    const String appFacingChanges = '''
+    const appFacingChanges = '''
 diff --git a/packages/foo/foo/lib/foo.dart b/packages/foo/foo/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo/lib/foo.dart
@@ -271,7 +271,7 @@ dependency_overrides:
     addFakeTempPubspecOverrides(appFacing.getExamples().first);
     addFakeTempPubspecOverrides(implementation.getExamples().first);
 
-    const String appFacingChanges = '''
+    const appFacingChanges = '''
 diff --git a/packages/foo/foo/lib/foo.dart b/packages/foo/foo/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo/lib/foo.dart
@@ -412,7 +412,7 @@ index abc123..def456 100644
       platformInterface.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
 
-    const String platformInterfaceChanges = '''
+    const platformInterfaceChanges = '''
 diff --git a/packages/foo/foo_platform_interface/lib/foo.dart b/packages/foo/foo_platform_interface/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_platform_interface/lib/foo.dart
@@ -426,7 +426,7 @@ index abc123..def456 100644
    e,
  }
 ''';
-    const String implementationChanges = '''
+    const implementationChanges = '''
 diff --git a/packages/foo/foo_bar/lib/foo.dart b/packages/foo/foo_bar/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_bar/lib/foo.dart
@@ -481,7 +481,7 @@ index abc123..def456 100644
       platformInterface.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
 
-    const String platformInterfaceChanges = '''
+    const platformInterfaceChanges = '''
 diff --git a/packages/foo/foo_platform_interface/lib/foo.dart b/packages/foo/foo_platform_interface/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_platform_interface/lib/foo.dart
@@ -496,7 +496,7 @@ index abc123..def456 100644
      some code;
    }
 ''';
-    const String implementationChanges = '''
+    const implementationChanges = '''
 diff --git a/packages/foo/foo_bar/lib/foo.dart b/packages/foo/foo_bar/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_bar/lib/foo.dart

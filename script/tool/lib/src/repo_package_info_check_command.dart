@@ -55,7 +55,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     _repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
     // Extract all of the README.md table entries.
-    final RegExp namePattern = RegExp(r'\[(.*?)\]\(');
+    final namePattern = RegExp(r'\[(.*?)\]\(');
     for (final String line
         in _repoRoot.childFile('README.md').readAsLinesSync()) {
       // Find all the table entries, skipping the header.
@@ -85,7 +85,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
 
     // Extract all of the CODEOWNERS package entries.
-    final RegExp packageOwnershipPattern =
+    final packageOwnershipPattern =
         RegExp(r'^((?:third_party/)?packages/(?:[^/]*/)?([^/]*))/\*\*');
     for (final String line
         in _repoRoot.childFile('CODEOWNERS').readAsLinesSync()) {
@@ -105,7 +105,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     // Extract all of the lebeler.yml package entries.
     // Validate the match rules rather than the label itself, as the labels
     // don't always correspond 1:1 to packages and package names.
-    final RegExp packageGlobPattern =
+    final packageGlobPattern =
         RegExp(r'^\s*-\s*(?:third_party/)?packages/([^*]*)/');
     for (final String line in _repoRoot
         .childDirectory('.github')
@@ -123,7 +123,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final String packageName = package.directory.basename;
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     // All packages should have an owner.
     // Platform interface packages are considered to be owned by the app-facing
@@ -160,7 +160,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   }
 
   List<String> _validateRootReadme(RepositoryPackage package) {
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     // For federated plugins, only the app-facing package is listed.
     if (package.isFederated && !package.isAppFacing) {
@@ -174,7 +174,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       errors.add('Missing repo root README.md table entry');
     } else {
       // Extract the two parts of a "[label](link)" .md link.
-      final RegExp mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
+      final mdLinkPattern = RegExp(r'^\[(.*)\]\((.*)\)$');
       // Possible link targets.
       for (final String cell in cells) {
         final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
@@ -194,15 +194,15 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           // - The package name (optionally with any underscores escaped)
           // - An image with a name-based link
           // - An image with a tag-based link
-          final RegExp packageLink =
+          final packageLink =
               RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
                   '$packageName'
                   r'(?:\.svg)?\)$');
-          final RegExp issueTagLink = RegExp(
+          final issueTagLink = RegExp(
               r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
               '$encodedIssueTag'
               r'\?label=\)$');
-          final RegExp prTagLink = RegExp(
+          final prTagLink = RegExp(
               r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
               '$encodedPRTag'
               r'\?label=\)$');
@@ -220,11 +220,11 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           // - a relative link to the in-repo package
           // - a pub.dev link to the package
           // - a github label link to the package's label
-          final RegExp pubDevLink =
+          final pubDevLink =
               RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
-          final RegExp gitHubIssueLink = RegExp(
+          final gitHubIssueLink = RegExp(
               '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$');
-          final RegExp gitHubPRLink = RegExp(
+          final gitHubPRLink = RegExp(
               '^https://github.com/flutter/packages/labels/$encodedPRTag\$');
           if (!(target == './packages/$packageName/' ||
               target == './third_party/packages/$packageName/' ||
@@ -265,7 +265,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
 
   List<String> _checkCiConfigEntries(YamlMap config,
       {required Map<String, Object?> syntax, String configPrefix = ''}) {
-    final List<String> errors = <String>[];
+    final errors = <String>[];
     for (final MapEntry<Object?, Object?> entry in config.entries) {
       if (!syntax.containsKey(entry.key)) {
         printError(

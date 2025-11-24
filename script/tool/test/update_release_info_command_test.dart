@@ -22,7 +22,7 @@ void main() {
     (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks();
 
-    final UpdateReleaseInfoCommand command = UpdateReleaseInfoCommand(
+    final command = UpdateReleaseInfoCommand(
       packagesDir,
       gitDir: gitDir,
     );
@@ -89,7 +89,7 @@ void main() {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## 1.0.0
 
 * Previous changes.
@@ -104,7 +104,7 @@ void main() {
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## NEXT
 
 * A change.
@@ -124,7 +124,7 @@ $originalChangelog''';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## NEXT
 
 * Already-pending changes.
@@ -143,7 +143,7 @@ $originalChangelog''';
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## NEXT
 
 * A change.
@@ -163,7 +163,7 @@ $originalChangelog''';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## 1.0.0
 
 * Previous changes.
@@ -178,7 +178,7 @@ $originalChangelog''';
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## 1.0.1
 
 * A change.
@@ -198,7 +198,7 @@ $originalChangelog''';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## NEXT
 
 * Already-pending changes.
@@ -217,7 +217,7 @@ $originalChangelog''';
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## 1.0.1
 
 * A change.
@@ -237,7 +237,7 @@ $originalChangelog''';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## 1.0.0
 
 * Previous changes.
@@ -252,7 +252,7 @@ $originalChangelog''';
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## 1.0.1
 
 * First change.
@@ -268,7 +268,7 @@ $originalChangelog''';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## 1.0.0
 
 * Previous changes.
@@ -283,7 +283,7 @@ $originalChangelog''';
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## 1.0.1
 
 * First change.
@@ -298,7 +298,7 @@ $originalChangelog''';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 # 1.0.0
 
 * A version with the wrong heading format.
@@ -313,7 +313,7 @@ $originalChangelog''';
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## NEXT
 
 * A change.
@@ -329,7 +329,7 @@ $originalChangelog''';
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## NEXT
 
  - Already-pending changes.
@@ -348,7 +348,7 @@ $originalChangelog''';
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
-      const String expectedChangeLog = '''
+      const expectedChangeLog = '''
 ## NEXT
 
  - A change.
@@ -445,7 +445,7 @@ packages/a_package/example/integration_test/another_test.dart
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir, version: '1.0.0');
 
-      const String originalChangelog = '''
+      const originalChangelog = '''
 ## NEXT
 
 Some free-form text that isn't a list.

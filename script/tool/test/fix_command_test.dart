@@ -23,7 +23,7 @@ void main() {
     final GitDir gitDir;
     (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
-    final FixCommand command = FixCommand(
+    final command = FixCommand(
       packagesDir,
       processRunner: processRunner,
       platform: mockPlatform,

@@ -67,7 +67,7 @@ const String _archDirArm64 = 'arm64';
 
 void _createFakeCMakeCache(
     RepositoryPackage plugin, Platform platform, String? archDir) {
-  final CMakeProject project = CMakeProject(getExampleDir(plugin),
+  final project = CMakeProject(getExampleDir(plugin),
       platform: platform, buildMode: 'Release', arch: archDir);
   final File cache = project.buildDirectory.childFile('CMakeCache.txt');
   cache.createSync(recursive: true);
@@ -77,7 +77,7 @@ void _createFakeCMakeCache(
 // TODO(stuartmorgan): Rework these tests to use a mock Xcode instead of
 // doing all the process mocking and validation.
 void main() {
-  const String kDestination = '--ios-destination';
+  const kDestination = '--ios-destination';
 
   group('test native_test_command on Posix', () {
     late MockPlatform mockPlatform;
@@ -94,7 +94,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final NativeTestCommand command = NativeTestCommand(
+      final command = NativeTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -109,7 +109,7 @@ void main() {
     // Returns a FakeProcessInfo to provide for "xcrun xcodebuild -list" for a
     // project that contains [targets].
     FakeProcessInfo getMockXcodebuildListProcess(List<String> targets) {
-      final Map<String, dynamic> projects = <String, dynamic>{
+      final projects = <String, dynamic>{
         'project': <String, dynamic>{
           'targets': targets,
         }
@@ -382,7 +382,7 @@ void main() {
       });
 
       group('file filtering', () {
-        const List<String> files = <String>[
+        const files = <String>[
           'pubspec.yaml',
           'foo.dart',
           'foo.java',
@@ -393,7 +393,7 @@ void main() {
           'foo.cpp',
           'foo.h',
         ];
-        for (final String file in files) {
+        for (final file in files) {
           test('runs command for changes to $file', () async {
             createFakePackage('package_a', packagesDir);
 
@@ -674,7 +674,7 @@ packages/package_a/CHANGELOG.md
       test(
           'ignores Java integration test files using (or defining) DartIntegrationTest',
           () async {
-        const String dartTestDriverRelativePath =
+        const dartTestDriverRelativePath =
             'android/app/src/androidTest/java/io/flutter/plugins/plugin/FlutterActivityTest.java';
         final RepositoryPackage plugin = createFakePlugin(
           'plugin',
@@ -717,7 +717,7 @@ public class FlutterActivityTest {
       test(
           'fails for Java integration tests Using FlutterTestRunner without @DartIntegrationTest',
           () async {
-        const String dartTestDriverRelativePath =
+        const dartTestDriverRelativePath =
             'android/app/src/androidTest/java/io/flutter/plugins/plugin/FlutterActivityTest.java';
         final RepositoryPackage plugin = createFakePlugin(
           'plugin',
@@ -1160,7 +1160,7 @@ public class FlutterActivityTest {
 
     group('Linux', () {
       test('builds and runs unit tests', () async {
-        const String testBinaryRelativePath =
+        const testBinaryRelativePath =
             'build/linux/x64/release/bar/plugin_test';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -1196,9 +1196,9 @@ public class FlutterActivityTest {
       });
 
       test('only runs release unit tests', () async {
-        const String debugTestBinaryRelativePath =
+        const debugTestBinaryRelativePath =
             'build/linux/x64/debug/bar/plugin_test';
-        const String releaseTestBinaryRelativePath =
+        const releaseTestBinaryRelativePath =
             'build/linux/x64/release/bar/plugin_test';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -1294,7 +1294,7 @@ public class FlutterActivityTest {
       });
 
       test('fails if a unit test fails', () async {
-        const String testBinaryRelativePath =
+        const testBinaryRelativePath =
             'build/linux/x64/release/bar/plugin_test';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -1997,7 +1997,7 @@ public class FlutterActivityTest {
 
     group('Windows x64', () {
       setUp(() {
-        final NativeTestCommand command = NativeTestCommand(packagesDir,
+        final command = NativeTestCommand(packagesDir,
             processRunner: processRunner,
             platform: mockPlatform,
             gitDir: gitDir,
@@ -2009,9 +2009,9 @@ public class FlutterActivityTest {
       });
 
       test('runs unit tests', () async {
-        const String x64TestBinaryRelativePath =
+        const x64TestBinaryRelativePath =
             'build/windows/x64/Debug/bar/plugin_test.exe';
-        const String arm64TestBinaryRelativePath =
+        const arm64TestBinaryRelativePath =
             'build/windows/arm64/Debug/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -2048,7 +2048,7 @@ public class FlutterActivityTest {
       });
 
       test('runs unit tests with legacy build output', () async {
-        const String testBinaryRelativePath =
+        const testBinaryRelativePath =
             'build/windows/Debug/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -2084,9 +2084,9 @@ public class FlutterActivityTest {
       });
 
       test('only runs debug unit tests', () async {
-        const String debugTestBinaryRelativePath =
+        const debugTestBinaryRelativePath =
             'build/windows/x64/Debug/bar/plugin_test.exe';
-        const String releaseTestBinaryRelativePath =
+        const releaseTestBinaryRelativePath =
             'build/windows/x64/Release/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -2124,9 +2124,9 @@ public class FlutterActivityTest {
       });
 
       test('only runs debug unit tests with legacy build output', () async {
-        const String debugTestBinaryRelativePath =
+        const debugTestBinaryRelativePath =
             'build/windows/Debug/bar/plugin_test.exe';
-        const String releaseTestBinaryRelativePath =
+        const releaseTestBinaryRelativePath =
             'build/windows/Release/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -2222,7 +2222,7 @@ public class FlutterActivityTest {
       });
 
       test('fails if a unit test fails', () async {
-        const String testBinaryRelativePath =
+        const testBinaryRelativePath =
             'build/windows/x64/Debug/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -2268,7 +2268,7 @@ public class FlutterActivityTest {
 
     group('Windows arm64', () {
       setUp(() {
-        final NativeTestCommand command = NativeTestCommand(packagesDir,
+        final command = NativeTestCommand(packagesDir,
             processRunner: processRunner,
             platform: mockPlatform,
             gitDir: gitDir,
@@ -2280,9 +2280,9 @@ public class FlutterActivityTest {
       });
 
       test('runs unit tests', () async {
-        const String x64TestBinaryRelativePath =
+        const x64TestBinaryRelativePath =
             'build/windows/x64/Debug/bar/plugin_test.exe';
-        const String arm64TestBinaryRelativePath =
+        const arm64TestBinaryRelativePath =
             'build/windows/arm64/Debug/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -2319,7 +2319,7 @@ public class FlutterActivityTest {
       });
 
       test('falls back to x64 unit tests if arm64 is not built', () async {
-        const String x64TestBinaryRelativePath =
+        const x64TestBinaryRelativePath =
             'build/windows/x64/Debug/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[
@@ -2355,9 +2355,9 @@ public class FlutterActivityTest {
       });
 
       test('only runs debug unit tests', () async {
-        const String debugTestBinaryRelativePath =
+        const debugTestBinaryRelativePath =
             'build/windows/arm64/Debug/bar/plugin_test.exe';
-        const String releaseTestBinaryRelativePath =
+        const releaseTestBinaryRelativePath =
             'build/windows/arm64/Release/bar/plugin_test.exe';
         final RepositoryPackage plugin =
             createFakePlugin('plugin', packagesDir, extraFiles: <String>[

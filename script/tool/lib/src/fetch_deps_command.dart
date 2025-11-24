@@ -109,8 +109,8 @@ class FetchDepsCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    bool fetchedDeps = false;
-    final List<String> skips = <String>[];
+    var fetchedDeps = false;
+    final skips = <String>[];
     if (getBoolArg(_dartFlag)) {
       final bool filterPlatforms =
           getBoolArg(_supportingTargetPlatformsOnlyFlag);
@@ -127,7 +127,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
       }
     }
 
-    final List<String> errors = <String>[];
+    final errors = <String>[];
     for (final FlutterPlatform platform in _targetPlatforms) {
       final PackageResult result;
       switch (platform) {
@@ -177,7 +177,7 @@ class FetchDepsCommand extends PackageLoopingCommand {
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
-      final GradleProject gradleProject = GradleProject(example,
+      final gradleProject = GradleProject(example,
           processRunner: processRunner, platform: platform);
 
       if (!gradleProject.isConfigured()) {
@@ -230,11 +230,11 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _fetchDartPackages(RepositoryPackage package) async {
-    final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
+    final packagesToGet = <RepositoryPackage>[
       package,
       ...package.getSubpackages(includeExamples: false)
     ];
-    for (final RepositoryPackage p in packagesToGet) {
+    for (final p in packagesToGet) {
       if (!await runPubGet(p, processRunner, platform)) {
         return false;
       }

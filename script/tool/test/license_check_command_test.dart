@@ -29,7 +29,7 @@ void main() {
           configureBaseCommandMocks(platform: platform);
       root = packagesDir.parent;
 
-      final LicenseCheckCommand command = LicenseCheckCommand(
+      final command = LicenseCheckCommand(
         packagesDir,
         platform: platform,
         gitDir: gitDir,
@@ -57,11 +57,11 @@ void main() {
       ],
       bool useCrlf = false,
     }) {
-      final List<String> lines = <String>['$prefix$comment$copyright'];
-      for (final String line in license) {
+      final lines = <String>['$prefix$comment$copyright'];
+      for (final line in license) {
         lines.add('$comment$line');
       }
-      final String newline = useCrlf ? '\r\n' : '\n';
+      final newline = useCrlf ? '\r\n' : '\n';
       file.writeAsStringSync(lines.join(newline) + suffix + newline);
     }
 
@@ -82,7 +82,7 @@ void main() {
     }
 
     test('looks at only expected extensions', () async {
-      final Map<String, bool> extensions = <String, bool>{
+      final extensions = <String, bool>{
         'c': true,
         'cc': true,
         'cpp': true,
@@ -101,7 +101,7 @@ void main() {
         'yaml': false,
       };
 
-      const String filenameBase = 'a_file';
+      const filenameBase = 'a_file';
       for (final String fileExtension in extensions.keys) {
         root.childFile('$filenameBase.$fileExtension').createSync();
       }
@@ -121,7 +121,7 @@ void main() {
     });
 
     test('ignore list overrides extension matches', () async {
-      final List<String> ignoredFiles = <String>[
+      final ignoredFiles = <String>[
         // Ignored base names.
         'flutter_export_environment.sh',
         'GeneratedPluginRegistrant.java',
@@ -136,7 +136,7 @@ void main() {
         'resource.h',
       ];
 
-      for (final String name in ignoredFiles) {
+      for (final name in ignoredFiles) {
         root.childFile(name).createSync();
       }
       mockGitFilesListWithAllFiles(root);
@@ -144,13 +144,13 @@ void main() {
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
 
-      for (final String name in ignoredFiles) {
+      for (final name in ignoredFiles) {
         expect(output, isNot(contains('Checking $name')));
       }
     });
 
     test('ignores submodules', () async {
-      const String submoduleName = 'a_submodule';
+      const submoduleName = 'a_submodule';
 
       final File submoduleSpec = root.childFile('.gitmodules');
       submoduleSpec.writeAsStringSync('''
@@ -159,19 +159,19 @@ void main() {
   url = https://github.com/foo/$submoduleName
 ''');
 
-      const List<String> submoduleFiles = <String>[
+      const submoduleFiles = <String>[
         '$submoduleName/foo.dart',
         '$submoduleName/a/b/bar.dart',
         '$submoduleName/LICENSE',
       ];
-      for (final String filePath in submoduleFiles) {
+      for (final filePath in submoduleFiles) {
         root.childFile(filePath).createSync(recursive: true);
       }
 
       final List<String> output =
           await runCapturingPrint(runner, <String>['license-check']);
 
-      for (final String filePath in submoduleFiles) {
+      for (final filePath in submoduleFiles) {
         expect(output, isNot(contains('Checking $filePath')));
       }
     });

@@ -42,7 +42,7 @@ class CustomTestCommand extends PackageLoopingCommand {
         getRelativePosixPath(script, from: package.directory);
     final File legacyScript = package.directory.childFile(_legacyScriptName);
     String? customSkipReason;
-    bool ranTests = false;
+    var ranTests = false;
 
     // Run the custom Dart script if presest.
     if (script.existsSync()) {

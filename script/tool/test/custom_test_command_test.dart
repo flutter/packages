@@ -24,7 +24,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final CustomTestCommand analyzeCommand = CustomTestCommand(
+      final analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -223,7 +223,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final CustomTestCommand analyzeCommand = CustomTestCommand(
+      final analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,

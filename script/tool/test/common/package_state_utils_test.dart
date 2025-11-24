@@ -22,7 +22,7 @@ void main() {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_package/lib/plugin.dart',
       ];
 
@@ -39,7 +39,7 @@ void main() {
       final RepositoryPackage package =
           createFakePackage('a_package', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_package/lib/plugin.dart',
       ];
 
@@ -58,7 +58,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/CHANGELOG.md',
         // Dev-facing docs.
         'packages/a_plugin/CONTRIBUTING.md',
@@ -105,7 +105,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/lib/foo/tool/tool_thing.dart',
       ];
 
@@ -123,7 +123,7 @@ void main() {
           'a_plugin', packagesDir,
           extraFiles: <String>['example/lib/main.dart']);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/example/lib/main.dart',
       ];
 
@@ -141,7 +141,7 @@ void main() {
           'a_plugin', packagesDir,
           extraFiles: <String>['example/main.dart']);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/example/main.dart',
       ];
 
@@ -158,7 +158,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/example/README.md',
       ];
 
@@ -176,7 +176,7 @@ void main() {
           'a_plugin', packagesDir,
           extraFiles: <String>['example/example.md']);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/example/example.md',
       ];
 
@@ -196,7 +196,7 @@ void main() {
           'a_plugin', packagesDir,
           extraFiles: <String>['example/example.md']);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/example/lib/main.dart',
         'packages/a_plugin/example/main.dart',
         'packages/a_plugin/example/README.md',
@@ -218,7 +218,7 @@ void main() {
           'a_plugin', packagesDir,
           extraFiles: <String>['example/lib/main.dart']);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/example/README.md',
       ];
 
@@ -239,7 +239,7 @@ void main() {
           'a_plugin_android', packagesDir.childDirectory('a_plugin'),
           extraFiles: <String>['example/lib/main.dart']);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/a_plugin_android/example/README.md',
       ];
 
@@ -258,7 +258,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/android/build.gradle',
       ];
 
@@ -287,7 +287,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/android/build.gradle',
       ];
 
@@ -316,7 +316,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/android/build.gradle',
       ];
 
@@ -347,7 +347,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/android/build.gradle',
       ];
 
@@ -378,7 +378,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/lib/a_plugin.dart',
       ];
 
@@ -405,7 +405,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/lib/a_plugin.dart',
       ];
 
@@ -432,7 +432,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/lib/a_plugin.dart',
       ];
 
@@ -462,7 +462,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/android/build.gradle',
       ];
 
@@ -481,7 +481,7 @@ void main() {
       final RepositoryPackage package =
           createFakePlugin('a_plugin', packagesDir);
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_plugin/android/build.gradle',
       ];
 

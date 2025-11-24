@@ -104,7 +104,7 @@ class ProcessRunner {
 
   String _getErrorString(String executable, List<String> args,
       {Directory? workingDir}) {
-    final String workdir = workingDir == null ? '' : ' in ${workingDir.path}';
+    final workdir = workingDir == null ? '' : ' in ${workingDir.path}';
     return 'ERROR: Unable to execute "$executable ${args.join(' ')}"$workdir.';
   }
 }

@@ -76,7 +76,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    final Pubspec pubspec =
+    final pubspec =
         Pubspec.parse(package.pubspecFile.readAsStringSync());
     if (pubspec.version == null || pubspec.version!.major < 1) {
       printError(
@@ -142,9 +142,9 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   _ReleaseInfo _getReleaseInfo(
       List<_PendingChangelogEntry> pendingChangelogEntries,
       Version oldVersion) {
-    final List<String> changelogs = <String>[];
+    final changelogs = <String>[];
     int versionIndex = _VersionChange.skip.index;
-    for (final _PendingChangelogEntry entry in pendingChangelogEntries) {
+    for (final entry in pendingChangelogEntries) {
       changelogs.add(entry.changelog);
       versionIndex = math.min(versionIndex, entry.version.index);
     }
@@ -192,25 +192,25 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }
 
   void _updatePubspec(RepositoryPackage package, Version newVersion) {
-    final YamlEditor editablePubspec =
+    final editablePubspec =
         YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(<String>['version'], newVersion.toString());
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
   }
 
   void _updateChangelog(RepositoryPackage package, _ReleaseInfo releaseInfo) {
-    final String newHeader = '## ${releaseInfo.newVersion}';
+    final newHeader = '## ${releaseInfo.newVersion}';
     final List<String> newEntries = releaseInfo.changelogs;
 
     String oldChangelogContent = package.changelogFile.readAsStringSync();
-    final StringBuffer newChangelog = StringBuffer();
+    final newChangelog = StringBuffer();
 
     // If the changelog starts with ## NEXT, replace it with the new version
     // and append the new entries.
-    final RegExp nextSection = RegExp(r'^\s*## NEXT[ \t]*(\r?\n)*');
+    final nextSection = RegExp(r'^\s*## NEXT[ \t]*(\r?\n)*');
     final Match? match = nextSection.firstMatch(oldChangelogContent);
     if (match != null) {
-      final String replacement = '$newHeader\n\n${newEntries.join('\n')}\n';
+      final replacement = '$newHeader\n\n${newEntries.join('\n')}\n';
       oldChangelogContent =
           oldChangelogContent.replaceRange(match.start, match.end, replacement);
       newChangelog.write(oldChangelogContent);
@@ -329,7 +329,7 @@ class _PendingChangelogEntry {
     }
     final String changelog = changelogYaml.trim();
 
-    final String? versionString = yaml['version'] as String?;
+    final versionString = yaml['version'] as String?;
     if (versionString == null) {
       throw const FormatException('Missing "version" key.');
     }

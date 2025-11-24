@@ -143,7 +143,7 @@ RepositoryPackage createFakePackage(
   String? directoryName,
   String? publishTo,
 }) {
-  final RepositoryPackage package =
+  final package =
       RepositoryPackage(parentDirectory.childDirectory(directoryName ?? name));
   package.directory.createSync(recursive: true);
 
@@ -175,7 +175,7 @@ RepositoryPackage createFakePackage(
         dartConstraint: dartConstraint);
   } else if (examples.isNotEmpty) {
     final Directory examplesDirectory = getExampleDir(package)..createSync();
-    for (final String exampleName in examples) {
+    for (final exampleName in examples) {
       createFakePackage(exampleName, examplesDirectory,
           examples: <String>[],
           includeCommonFiles: false,
@@ -187,7 +187,7 @@ RepositoryPackage createFakePackage(
   }
 
   final p.Context posixContext = p.posix;
-  for (final String file in extraFiles) {
+  for (final file in extraFiles) {
     childFileWithSubcomponents(package.directory, posixContext.split(file))
         .createSync(recursive: true);
   }
@@ -214,14 +214,14 @@ void createFakePubspec(
 }) {
   isPlugin |= platformSupport.isNotEmpty;
 
-  String environmentSection = '''
+  var environmentSection = '''
 environment:
   sdk: "$dartConstraint"
 ''';
-  String dependenciesSection = '''
+  var dependenciesSection = '''
 dependencies:
 ''';
-  String pluginSection = '';
+  var pluginSection = '';
 
   // Add Flutter-specific entries if requested.
   if (isFlutter) {
@@ -250,10 +250,10 @@ flutter:
   // Default to a fake server to avoid ever accidentally publishing something
   // from a test. Does not use 'none' since that changes the behavior of some
   // commands.
-  final String publishToSection =
+  final publishToSection =
       'publish_to: ${publishTo ?? 'http://no_pub_server.com'}';
 
-  final String yaml = '''
+  final yaml = '''
 name: $name
 ${(version != null) ? 'version: $version' : ''}
 $publishToSection
@@ -271,7 +271,7 @@ $pluginSection
 
 String _pluginPlatformSection(
     String platform, PlatformDetails support, String packageName) {
-  String entry = '';
+  var entry = '';
   // Build the main plugin entry.
   if (support.type == PlatformSupport.federated) {
     entry = '''
@@ -279,7 +279,7 @@ String _pluginPlatformSection(
         default_package: ${packageName}_$platform
 ''';
   } else {
-    final List<String> lines = <String>[
+    final lines = <String>[
       '      $platform:',
     ];
     switch (platform) {
@@ -292,7 +292,7 @@ String _pluginPlatformSection(
       case platformMacOS:
       case platformWindows:
         if (support.hasNativeCode) {
-          final String className =
+          final className =
               platform == platformIOS ? 'FLTFakePlugin' : 'FakePlugin';
           lines.add('        pluginClass: $className');
         }
@@ -322,8 +322,8 @@ Future<List<String>> runCapturingPrint(
   void Function(Error error)? errorHandler,
   void Function(Exception error)? exceptionHandler,
 }) async {
-  final List<String> prints = <String>[];
-  final ZoneSpecification spec = ZoneSpecification(
+  final prints = <String>[];
+  final spec = ZoneSpecification(
     print: (_, __, ___, String message) {
       prints.add(message);
     },
@@ -425,7 +425,7 @@ class RecordingProcessRunner extends ProcessRunner {
         await process?.stderr.transform(stderrEncoding.decoder).toList();
     final String stderr = processStderr?.join() ?? '';
 
-    final io.ProcessResult result = process == null
+    final result = process == null
         ? io.ProcessResult(1, 0, '', '')
         : io.ProcessResult(process.pid, await process.exitCode, stdout, stderr);
 
@@ -492,7 +492,7 @@ class ProcessCall {
 
   @override
   String toString() {
-    final List<String> command = <String>[executable, ...args];
+    final command = <String>[executable, ...args];
     return '"${command.join(' ')}" in $workingDir';
   }
 }

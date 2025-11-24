@@ -117,7 +117,7 @@ class RepositoryPackage {
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
-    const String flutterDependency = 'flutter';
+    const flutterDependency = 'flutter';
     final Pubspec pubspec = parsePubspec();
     return pubspec.dependencies.containsKey(flutterDependency) ||
         pubspec.devDependencies.containsKey(flutterDependency);

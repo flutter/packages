@@ -25,7 +25,7 @@ void main() {
     final GitDir gitDir;
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
-    final AnalyzeCommand analyzeCommand = AnalyzeCommand(
+    final analyzeCommand = AnalyzeCommand(
       packagesDir,
       processRunner: processRunner,
       gitDir: gitDir,
@@ -437,7 +437,7 @@ void main() {
     test('skips if requested if "pub get" fails in the resolver', () async {
       final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
 
-      final FakeProcessInfo failingPubGet = FakeProcessInfo(
+      final failingPubGet = FakeProcessInfo(
           MockProcess(
               exitCode: 1,
               stderr: 'So, because foo depends on both thing_one ^1.0.0 and '
@@ -594,7 +594,7 @@ packages/package_a/foo.dart
             ]));
       });
 
-      const List<String> files = <String>[
+      const files = <String>[
         'foo.java',
         'foo.kt',
         'foo.m',
@@ -604,7 +604,7 @@ packages/package_a/foo.dart
         'foo.cpp',
         'foo.h',
       ];
-      for (final String file in files) {
+      for (final file in files) {
         test('skips command for changes to non-Dart source $file', () async {
           createFakePackage('package_a', packagesDir);
 
@@ -695,7 +695,7 @@ packages/package_a/CHANGELOG.md
     });
 
     test('runs on all examples', () async {
-      final List<String> examples = <String>['example1', 'example2'];
+      final examples = <String>['example1', 'example2'];
       final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir,
           examples: examples,
           extraFiles: <String>[
@@ -869,11 +869,11 @@ packages/package_a/CHANGELOG.md
     });
 
     group('file filtering', () {
-      const List<String> files = <String>[
+      const files = <String>[
         'foo.java',
         'foo.kt',
       ];
-      for (final String file in files) {
+      for (final file in files) {
         test('runs command for changes to $file', () async {
           createFakePackage('package_a', packagesDir);
 
@@ -1469,14 +1469,14 @@ packages/package_a/lib/foo.dart
     });
 
     group('file filtering', () {
-      const List<String> files = <String>[
+      const files = <String>[
         'foo.m',
         'foo.swift',
         'foo.cc',
         'foo.cpp',
         'foo.h',
       ];
-      for (final String file in files) {
+      for (final file in files) {
         test('runs command for changes to $file', () async {
           createFakePackage('package_a', packagesDir);
 

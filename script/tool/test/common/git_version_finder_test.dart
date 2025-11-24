@@ -14,7 +14,7 @@ void main() {
   late List<List<String>?> gitDirCommands;
   late String gitDiffResponse;
   late MockGitDir gitDir;
-  String mergeBaseResponse = '';
+  var mergeBaseResponse = '';
 
   setUp(() {
     gitDirCommands = <List<String>?>[];
@@ -22,7 +22,7 @@ void main() {
     gitDir = MockGitDir();
     when(gitDir.runCommand(any, throwOnError: anyNamed('throwOnError')))
         .thenAnswer((Invocation invocation) {
-      final List<String> arguments =
+      final arguments =
           invocation.positionalArguments[0]! as List<String>;
       gitDirCommands.add(arguments);
       String? gitStdOut;
@@ -37,7 +37,7 @@ void main() {
   });
 
   test('No git diff should result no files changed', () async {
-    final GitVersionFinder finder =
+    final finder =
         GitVersionFinder(gitDir, baseSha: 'some base sha');
     final List<String> changedFiles = await finder.getChangedFiles();
 
@@ -49,7 +49,7 @@ void main() {
 file1/file1.cc
 file2/file2.cc
 ''';
-    final GitVersionFinder finder =
+    final finder =
         GitVersionFinder(gitDir, baseSha: 'some base sha');
     final List<String> changedFiles = await finder.getChangedFiles();
 
@@ -63,7 +63,7 @@ file1/pubspec.yaml
 file2/file2.cc
 ''';
 
-    final GitVersionFinder finder = GitVersionFinder(gitDir);
+    final finder = GitVersionFinder(gitDir);
     await finder.getChangedFiles();
     verify(gitDir.runCommand(
         <String>['merge-base', '--fork-point', 'main', 'HEAD'],
@@ -79,7 +79,7 @@ file1/pubspec.yaml
 file2/file2.cc
 ''';
 
-    final GitVersionFinder finder =
+    final finder =
         GitVersionFinder(gitDir, baseBranch: 'upstream/main');
     await finder.getChangedFiles();
     verify(gitDir.runCommand(
@@ -90,12 +90,12 @@ file2/file2.cc
   });
 
   test('use correct base sha if specified', () async {
-    const String customBaseSha = 'aklsjdcaskf12312';
+    const customBaseSha = 'aklsjdcaskf12312';
     gitDiffResponse = '''
 file1/pubspec.yaml
 file2/file2.cc
 ''';
-    final GitVersionFinder finder =
+    final finder =
         GitVersionFinder(gitDir, baseSha: customBaseSha);
     await finder.getChangedFiles();
     verify(gitDir
@@ -103,12 +103,12 @@ file2/file2.cc
   });
 
   test('include uncommitted files if requested', () async {
-    const String customBaseSha = 'aklsjdcaskf12312';
+    const customBaseSha = 'aklsjdcaskf12312';
     gitDiffResponse = '''
 file1/pubspec.yaml
 file2/file2.cc
 ''';
-    final GitVersionFinder finder =
+    final finder =
         GitVersionFinder(gitDir, baseSha: customBaseSha);
     await finder.getChangedFiles(includeUncommitted: true);
     // The call should not have HEAD as a final argument like the default diff.
