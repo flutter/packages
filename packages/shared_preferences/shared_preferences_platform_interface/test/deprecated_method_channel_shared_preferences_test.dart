@@ -72,8 +72,8 @@ void main() {
               final allowList = arguments['allowList'] as List<dynamic>?;
               if (allowList != null) {
                 allowSet = <String>{};
-                for (final dynamic key in allowList) {
-                  allowSet.add(key as String);
+                for (final Object? key in allowList) {
+                  allowSet.add(key! as String);
                 }
               }
               return testData.getAllWithParameters(
@@ -104,8 +104,8 @@ void main() {
               final allowList = arguments['allowList'] as List<dynamic>?;
               if (allowList != null) {
                 allowSet = <String>{};
-                for (final dynamic key in allowList) {
-                  allowSet.add(key as String);
+                for (final Object? key in allowList) {
+                  allowSet.add(key! as String);
                 }
               }
               return testData.clearWithParameters(

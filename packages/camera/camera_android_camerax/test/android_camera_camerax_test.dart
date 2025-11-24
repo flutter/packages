@@ -4418,14 +4418,14 @@ void main() {
       expect(camera.cameraInfo, equals(mockCameraInfo));
       expect(camera.cameraControl, equals(mockCameraControl));
       verify(mockLiveCameraState.removeObservers());
-      for (final dynamic observer in verify(
+      for (final Object? observer in verify(
         newMockLiveCameraState.observe(captureAny),
       ).captured) {
         expect(
           await testCameraClosingObserver(
             camera,
             flutterSurfaceTextureId,
-            observer as Observer<dynamic>,
+            observer! as Observer<dynamic>,
           ),
           isTrue,
         );
