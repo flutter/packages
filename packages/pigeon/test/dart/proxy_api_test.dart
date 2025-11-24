@@ -510,7 +510,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            r"const String pigeonVar_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
+            r"const pigeonVar_channelName = 'dev.flutter.pigeon.test_package.Api.pigeon_defaultConstructor';",
           ),
         );
         expect(
@@ -522,7 +522,7 @@ void main() {
         expect(
           collapsedCode,
           contains(
-            '() async { final List<Object?>? pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;',
+            '() async { final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;',
           ),
         );
       });
