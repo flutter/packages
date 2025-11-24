@@ -129,6 +129,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
         continue;
       }
 
+      // Skip anything checked out inside of .dart_tool/.
+      if (file.path.contains('/.dart_tool/')) {
+        continue;
+      }
+
       final bool allowed = _allowedCustomAnalysisDirectories.any(
         (String directory) =>
             directory.isNotEmpty &&
