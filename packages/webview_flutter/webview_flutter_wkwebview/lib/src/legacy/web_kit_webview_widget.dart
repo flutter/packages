@@ -242,9 +242,11 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
     if (params.backgroundColor != null) {
       unawaited(webView.setOpaque(false));
-      unawaited(webView.setBackgroundColor(Colors.transparent.value));
+      unawaited(webView.setBackgroundColor(Colors.transparent.toARGB32()));
       unawaited(
-        webView.scrollView.setBackgroundColor(params.backgroundColor?.value),
+        webView.scrollView.setBackgroundColor(
+          params.backgroundColor?.toARGB32(),
+        ),
       );
     }
 

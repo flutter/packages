@@ -1,3 +1,7 @@
+## 26.1.2
+
+* [kotlin] Fixes compilation error with unbounded type parameter for InstanceManager.
+
 ## 26.1.1
 
 * Updates supported `analyzer` versions to 8.x or 9.x.

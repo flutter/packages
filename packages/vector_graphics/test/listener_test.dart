@@ -108,7 +108,7 @@ void main() {
     final FlutterVectorGraphicsListener listener =
         FlutterVectorGraphicsListener(pictureFactory: factory);
     listener.onPaintObject(
-      color: const ui.Color(0xff000000).value,
+      color: const ui.Color(0xff000000).toARGB32(),
       strokeCap: null,
       strokeJoin: null,
       blendMode: BlendMode.srcIn.index,

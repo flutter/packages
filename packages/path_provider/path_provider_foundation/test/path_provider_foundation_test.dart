@@ -4,15 +4,18 @@
 
 import 'dart:io';
 
-import 'package:flutter/src/services/binary_messenger.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider_foundation/messages.g.dart';
-import 'package:path_provider_foundation/path_provider_foundation.dart';
+import 'package:objective_c/src/objective_c_bindings_generated.dart';
+import 'package:path_provider_foundation/src/ffi_bindings.g.dart';
+import 'package:path_provider_foundation/src/path_provider_foundation_real.dart';
+
+// Most tests are in integration_test rather than here, because anything that
+// needs to create Objective-C objects has to run in the real runtime.
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
   group('PathProviderFoundation', () {
-    late FakePathProviderApi api;
     // These unit tests use the actual filesystem, since an injectable
     // filesystem would add a runtime dependency to the package, so everything
     // is contained to a temporary directory.
@@ -20,156 +23,22 @@ void main() {
 
     setUp(() async {
       testRoot = Directory.systemTemp.createTempSync();
-      api = FakePathProviderApi();
     });
 
     tearDown(() {
       testRoot.deleteSync(recursive: true);
     });
 
-    test('getTemporaryPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
-      final String temporaryPath = p.join(testRoot.path, 'temporary', 'path');
-      api.directoryResult = temporaryPath;
-
-      final String? path = await pathProvider.getTemporaryPath();
-
-      expect(api.passedDirectoryType, DirectoryType.temp);
-      expect(path, temporaryPath);
-    });
-
-    test('getApplicationSupportPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
-      final String applicationSupportPath = p.join(
-        testRoot.path,
-        'application',
-        'support',
-        'path',
-      );
-      api.directoryResult = applicationSupportPath;
-
-      final String? path = await pathProvider.getApplicationSupportPath();
-
-      expect(api.passedDirectoryType, DirectoryType.applicationSupport);
-      expect(path, applicationSupportPath);
-    });
-
-    test(
-      'getApplicationSupportPath creates the directory if necessary',
-      () async {
-        final PathProviderFoundation pathProvider = PathProviderFoundation(
-          pathProviderApi: api,
-        );
-        final String applicationSupportPath = p.join(
-          testRoot.path,
-          'application',
-          'support',
-          'path',
-        );
-        api.directoryResult = applicationSupportPath;
-
-        final String? path = await pathProvider.getApplicationSupportPath();
-
-        expect(Directory(path!).existsSync(), isTrue);
-      },
-    );
-
-    test('getLibraryPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
-      final String libraryPath = p.join(testRoot.path, 'library', 'path');
-      api.directoryResult = libraryPath;
-
-      final String? path = await pathProvider.getLibraryPath();
-
-      expect(api.passedDirectoryType, DirectoryType.library);
-      expect(path, libraryPath);
-    });
-
-    test('getApplicationDocumentsPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
-      final String applicationDocumentsPath = p.join(
-        testRoot.path,
-        'application',
-        'documents',
-        'path',
-      );
-      api.directoryResult = applicationDocumentsPath;
-
-      final String? path = await pathProvider.getApplicationDocumentsPath();
-
-      expect(api.passedDirectoryType, DirectoryType.applicationDocuments);
-      expect(path, applicationDocumentsPath);
-    });
-
-    test('getApplicationCachePath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
-      final String applicationCachePath = p.join(
-        testRoot.path,
-        'application',
-        'cache',
-        'path',
-      );
-      api.directoryResult = applicationCachePath;
-
-      final String? path = await pathProvider.getApplicationCachePath();
-
-      expect(api.passedDirectoryType, DirectoryType.applicationCache);
-      expect(path, applicationCachePath);
-    });
-
-    test(
-      'getApplicationCachePath creates the directory if necessary',
-      () async {
-        final PathProviderFoundation pathProvider = PathProviderFoundation(
-          pathProviderApi: api,
-        );
-        final String applicationCachePath = p.join(
-          testRoot.path,
-          'application',
-          'cache',
-          'path',
-        );
-        api.directoryResult = applicationCachePath;
-
-        final String? path = await pathProvider.getApplicationCachePath();
-
-        expect(Directory(path!).existsSync(), isTrue);
-      },
-    );
-
-    test('getDownloadsPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-      );
-      final String downloadsPath = p.join(testRoot.path, 'downloads', 'path');
-      api.directoryResult = downloadsPath;
-
-      final String? result = await pathProvider.getDownloadsPath();
-
-      expect(api.passedDirectoryType, DirectoryType.downloads);
-      expect(result, downloadsPath);
-    });
-
     test('getExternalCachePaths throws', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
+        ffiLib: FakeFoundationFFI(),
       );
       expect(pathProvider.getExternalCachePaths(), throwsA(isUnsupportedError));
     });
 
     test('getExternalStoragePath throws', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
+        ffiLib: FakeFoundationFFI(),
       );
       expect(
         pathProvider.getExternalStoragePath(),
@@ -179,7 +48,7 @@ void main() {
 
     test('getExternalStoragePaths throws', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
+        ffiLib: FakeFoundationFFI(),
       );
       expect(
         pathProvider.getExternalStoragePaths(),
@@ -187,28 +56,10 @@ void main() {
       );
     });
 
-    test('getContainerPath', () async {
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-        platform: FakePlatformProvider(isIOS: true),
-      );
-      const String appGroupIdentifier = 'group.example.test';
-
-      final String containerPath = p.join(testRoot.path, 'container', 'path');
-      api.containerResult = containerPath;
-
-      final String? result = await pathProvider.getContainerPath(
-        appGroupIdentifier: appGroupIdentifier,
-      );
-
-      expect(api.passedAppGroupIdentifier, appGroupIdentifier);
-      expect(result, containerPath);
-    });
-
     test('getContainerPath throws on macOS', () async {
       final PathProviderFoundation pathProvider = PathProviderFoundation(
-        pathProviderApi: api,
-        platform: FakePlatformProvider(isIOS: false),
+        platform: FakePlatformProvider(isMacOS: true),
+        ffiLib: FakeFoundationFFI(),
       );
       expect(
         pathProvider.getContainerPath(appGroupIdentifier: 'group.example.test'),
@@ -218,37 +69,24 @@ void main() {
   });
 }
 
-/// Fake implementation of PathProviderPlatformProvider that returns iOS is true
+/// Fake implementation of PathProviderPlatformProvider.
 class FakePlatformProvider implements PathProviderPlatformProvider {
-  FakePlatformProvider({required this.isIOS});
+  FakePlatformProvider({this.isIOS = false, this.isMacOS = false});
   @override
   bool isIOS;
+
+  @override
+  bool isMacOS;
 }
 
-class FakePathProviderApi implements PathProviderApi {
-  String? directoryResult;
-  String? containerResult;
-
-  DirectoryType? passedDirectoryType;
-  String? passedAppGroupIdentifier;
-
-  @override
-  Future<String?> getDirectoryPath(DirectoryType type) async {
-    passedDirectoryType = type;
-    return directoryResult;
-  }
-
-  @override
-  Future<String?> getContainerPath(String appGroupIdentifier) async {
-    passedAppGroupIdentifier = appGroupIdentifier;
-    return containerResult;
-  }
-
+class FakeFoundationFFI implements FoundationFFI {
   @override
   // ignore: non_constant_identifier_names
-  BinaryMessenger? get pigeonVar_binaryMessenger => null;
-
-  @override
-  // ignore: non_constant_identifier_names
-  String get pigeonVar_messageChannelSuffix => '';
+  NSArray NSSearchPathForDirectoriesInDomains(
+    NSSearchPathDirectory directory,
+    int domainMask,
+    bool expandTilde,
+  ) {
+    throw UnimplementedError();
+  }
 }
