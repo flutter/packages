@@ -30,16 +30,15 @@ extension type MarkerClustererOptions<T>._(JSObject _) implements JSObject {
   }) => MarkerClustererOptions<T>._js(
     map: map as JSAny?,
     markers: markers?.cast<JSAny>().toJS ?? JSArray<JSAny>(),
-    onClusterClick:
-        onClusterClick != null
-            ? ((JSAny event, MarkerClustererCluster<T> cluster, JSAny map) =>
-                    onClusterClick(
-                      event as gmaps.MapMouseEvent,
-                      cluster,
-                      map as gmaps.Map,
-                    ))
-                .toJS
-            : null,
+    onClusterClick: onClusterClick != null
+        ? ((JSAny event, MarkerClustererCluster<T> cluster, JSAny map) =>
+                  onClusterClick(
+                    event as gmaps.MapMouseEvent,
+                    cluster,
+                    map as gmaps.Map,
+                  ))
+              .toJS
+        : null,
   );
 
   external factory MarkerClustererOptions._js({

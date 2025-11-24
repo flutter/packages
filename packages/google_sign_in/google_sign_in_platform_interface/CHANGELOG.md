@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 3.1.0
 
 * Adds a `clearAuthorizationToken` method to remove an access token from the

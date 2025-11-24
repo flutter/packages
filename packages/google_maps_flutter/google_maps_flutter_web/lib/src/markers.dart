@@ -61,10 +61,9 @@ abstract class MarkersController<T extends Object, O>
         final web.HTMLElement content =
             infoWindowOptions.content! as web.HTMLElement;
 
-        content.onclick =
-            (JSAny? _) {
-              _onInfoWindowTap(marker.markerId);
-            }.toJS;
+        content.onclick = (JSAny? _) {
+          _onInfoWindowTap(marker.markerId);
+        }.toJS;
       }
     }
 

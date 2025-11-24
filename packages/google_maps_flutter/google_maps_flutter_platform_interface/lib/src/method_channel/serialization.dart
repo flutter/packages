@@ -130,7 +130,9 @@ Object serializeHeatmapGradient(HeatmapGradient gradient) {
   _addIfNonNull(
     json,
     _heatmapGradientColorsKey,
-    gradient.colors.map((HeatmapGradientColor e) => e.color.value).toList(),
+    gradient.colors
+        .map((HeatmapGradientColor e) => e.color.toARGB32())
+        .toList(),
   );
   _addIfNonNull(
     json,
@@ -149,11 +151,10 @@ HeatmapGradient? deserializeHeatmapGradient(Object? json) {
   }
   assert(json is Map);
   final Map<String, Object?> map = (json as Map<Object?, Object?>).cast();
-  final List<Color> colors =
-      (map[_heatmapGradientColorsKey]! as List<Object?>)
-          .whereType<int>()
-          .map((int e) => Color(e))
-          .toList();
+  final List<Color> colors = (map[_heatmapGradientColorsKey]! as List<Object?>)
+      .whereType<int>()
+      .map((int e) => Color(e))
+      .toList();
   final List<double> startPoints =
       (map[_heatmapGradientStartPointsKey]! as List<Object?>)
           .whereType<double>()

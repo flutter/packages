@@ -37,11 +37,10 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
 
     _objectIdsToRemove = previousObjectIds.difference(currentObjectIds);
 
-    _objectsToAdd =
-        currentObjectIds
-            .difference(previousObjectIds)
-            .map(idToCurrentObject)
-            .toSet();
+    _objectsToAdd = currentObjectIds
+        .difference(previousObjectIds)
+        .map(idToCurrentObject)
+        .toSet();
 
     // Returns `true` if [current] is not equals to previous one with the
     // same id.
@@ -50,12 +49,11 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
       return current != previous;
     }
 
-    _objectsToChange =
-        currentObjectIds
-            .intersection(previousObjectIds)
-            .map(idToCurrentObject)
-            .where(hasChanged)
-            .toSet();
+    _objectsToChange = currentObjectIds
+        .intersection(previousObjectIds)
+        .map(idToCurrentObject)
+        .where(hasChanged)
+        .toSet();
   }
 
   /// The name of the objects being updated, for use in serialization.

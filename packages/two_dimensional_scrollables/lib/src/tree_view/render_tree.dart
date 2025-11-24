@@ -210,15 +210,11 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     while (currentIndex <= lastIndex && currentPosition < _targetRowPixel) {
       _Span? span = _rowMetrics.remove(currentIndex);
       assert(needsDelegateRebuild || span != null);
-      final TreeRow configuration =
-          needsDelegateRebuild
-              ? delegate.buildRow(
-                TreeVicinity(
-                  depth: _rowDepths[currentIndex]!,
-                  row: currentIndex,
-                ),
-              )
-              : span!.configuration;
+      final TreeRow configuration = needsDelegateRebuild
+          ? delegate.buildRow(
+              TreeVicinity(depth: _rowDepths[currentIndex]!, row: currentIndex),
+            )
+          : span!.configuration;
       span ??= _Span();
       final double extent = configuration.extent.calculateExtent(
         TreeRowExtentDelegate(
@@ -250,12 +246,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final double leadingOffset = startOfRow;
       _Span? span = _rowMetrics.remove(row);
       assert(needsDelegateRebuild || span != null);
-      final TreeRow configuration =
-          needsDelegateRebuild
-              ? delegate.buildRow(
-                TreeVicinity(depth: _rowDepths[row]!, row: row),
-              )
-              : span!.configuration;
+      final TreeRow configuration = needsDelegateRebuild
+          ? delegate.buildRow(TreeVicinity(depth: _rowDepths[row]!, row: row))
+          : span!.configuration;
       span ??= _Span();
       final double extent = configuration.extent.calculateExtent(
         TreeRowExtentDelegate(
@@ -450,8 +443,8 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     // We are animating.
     // Separate animating segments to clip for any overlap.
     int leadingIndex = _firstRow!;
-    final List<int> animationIndices =
-        _animationLeadingIndices.keys.toList()..sort();
+    final List<int> animationIndices = _animationLeadingIndices.keys.toList()
+      ..sort();
     final List<_PaintSegment> paintSegments = <_PaintSegment>[];
     while (animationIndices.isNotEmpty) {
       final int trailingIndex = animationIndices.removeAt(0);
@@ -548,10 +541,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
       final TreeRow configuration = rowSpan.configuration;
       if (configuration.backgroundDecoration != null ||
           configuration.foregroundDecoration != null) {
-        final RenderBox child =
-            getChildFor(
-              TreeVicinity(depth: _rowDepths[currentRow]!, row: currentRow),
-            )!;
+        final RenderBox child = getChildFor(
+          TreeVicinity(depth: _rowDepths[currentRow]!, row: currentRow),
+        )!;
 
         Rect getRowRect(bool consumePadding) {
           final TwoDimensionalViewportParentData parentData = parentDataOf(
@@ -597,8 +589,9 @@ class RenderTreeViewport extends RenderTwoDimensionalViewport {
     });
     // Child nodes.
     for (int row = leadingRow; row <= trailingRow; row++) {
-      final RenderBox child =
-          getChildFor(TreeVicinity(depth: _rowDepths[row]!, row: row))!;
+      final RenderBox child = getChildFor(
+        TreeVicinity(depth: _rowDepths[row]!, row: row),
+      )!;
       final TwoDimensionalViewportParentData rowParentData = parentDataOf(
         child,
       );

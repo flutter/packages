@@ -128,10 +128,12 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width =
-            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height =
-            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        final double? width = jsonMap.containsKey('width')
+            ? jsonMap['width'] as double
+            : null;
+        final double? height = jsonMap.containsKey('height')
+            ? jsonMap['height'] as double
+            : null;
         return AssetMapBitmap(
           jsonMap['assetName'] as String,
           bitmapScaling: mapBitmapScalingFromString(
@@ -154,10 +156,12 @@ abstract class BitmapDescriptor {
         assert(jsonMap['imagePixelRatio'] is double);
         assert(!jsonMap.containsKey('width') || jsonMap['width'] is double);
         assert(!jsonMap.containsKey('height') || jsonMap['height'] is double);
-        final double? width =
-            jsonMap.containsKey('width') ? jsonMap['width'] as double : null;
-        final double? height =
-            jsonMap.containsKey('height') ? jsonMap['height'] as double : null;
+        final double? width = jsonMap.containsKey('width')
+            ? jsonMap['width'] as double
+            : null;
+        final double? height = jsonMap.containsKey('height')
+            ? jsonMap['height'] as double
+            : null;
         return BytesMapBitmap(
           jsonMap['byteData'] as Uint8List,
           bitmapScaling: mapBitmapScalingFromString(
@@ -391,10 +395,9 @@ class DefaultMarker extends BitmapDescriptor {
   final num? hue;
 
   @override
-  Object toJson() =>
-      (hue == null)
-          ? const <Object>[BitmapDescriptor._defaultMarker]
-          : <Object>[BitmapDescriptor._defaultMarker, hue!];
+  Object toJson() => (hue == null)
+      ? const <Object>[BitmapDescriptor._defaultMarker]
+      : <Object>[BitmapDescriptor._defaultMarker, hue!];
 }
 
 /// A BitmapDescriptor using an array of bytes that must be encoded
@@ -1104,8 +1107,9 @@ class PinConfig extends BitmapDescriptor {
   Object toJson() => <Object>[
     type,
     <String, Object?>{
-      if (backgroundColor != null) 'backgroundColor': backgroundColor?.value,
-      if (borderColor != null) 'borderColor': borderColor?.value,
+      if (backgroundColor != null)
+        'backgroundColor': backgroundColor?.toARGB32(),
+      if (borderColor != null) 'borderColor': borderColor?.toARGB32(),
       if (glyph != null) 'glyph': glyph?.toJson(),
     },
   ];
@@ -1128,7 +1132,7 @@ class CircleGlyph extends AdvancedMarkerGlyph {
   @override
   Object toJson() => <Object>[
     'circleGlyph',
-    <String, Object>{'color': color.value},
+    <String, Object>{'color': color.toARGB32()},
   ];
 }
 
@@ -1172,7 +1176,7 @@ class TextGlyph extends AdvancedMarkerGlyph {
       'textGlyph',
       <String, Object>{
         'text': text,
-        if (textColor != null) 'textColor': textColor!.value,
+        if (textColor != null) 'textColor': textColor!.toARGB32(),
       },
     ];
   }

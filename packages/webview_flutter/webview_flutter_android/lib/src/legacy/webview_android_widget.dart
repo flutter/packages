@@ -451,7 +451,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
     final Color? backgroundColor = creationParams.backgroundColor;
     if (backgroundColor != null) {
-      webView.setBackgroundColor(backgroundColor.value);
+      webView.setBackgroundColor(backgroundColor.toARGB32());
     }
 
     addJavascriptChannels(creationParams.javascriptChannelNames);
@@ -572,7 +572,7 @@ class WebViewAndroidJavaScriptChannel
   WebViewAndroidJavaScriptChannel({
     required super.channelName,
     required this.javascriptChannelRegistry,
-  }) : super(
+  }) : super.pigeon_new(
          postMessage: withWeakReferenceTo(javascriptChannelRegistry, (
            WeakReference<JavascriptChannelRegistry> weakReference,
          ) {

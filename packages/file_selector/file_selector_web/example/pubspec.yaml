@@ -2,8 +2,8 @@ name: file_selector_web_integration_tests
 publish_to: none
 
 environment:
-  sdk: ^3.7.0
-  flutter: ">=3.29.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   file_selector_platform_interface: ^2.6.0

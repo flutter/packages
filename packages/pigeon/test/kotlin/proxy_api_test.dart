@@ -1070,6 +1070,36 @@ void main() {
           );
         },
       );
+
+      test('InstanceManager.getInstance specifies nonnull type', () {
+        final Root root = Root(
+          apis: <Api>[
+            AstProxyApi(
+              name: 'Api',
+              constructors: <Constructor>[],
+              fields: <ApiField>[],
+              methods: <Method>[],
+            ),
+          ],
+          classes: <Class>[],
+          enums: <Enum>[],
+        );
+        final StringBuffer sink = StringBuffer();
+        const KotlinGenerator generator = KotlinGenerator();
+        generator.generate(
+          const InternalKotlinOptions(kotlinOut: ''),
+          root,
+          sink,
+          dartPackageName: DEFAULT_PACKAGE_NAME,
+        );
+        final String code = sink.toString();
+        final String collapsedCode = _collapseNewlineAndIndentation(code);
+
+        expect(
+          collapsedCode,
+          contains('fun <T : Any> getInstance(identifier: Long): T?'),
+        );
+      });
     });
   });
 }

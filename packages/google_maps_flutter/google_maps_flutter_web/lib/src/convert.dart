@@ -193,11 +193,10 @@ List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
                           _isJsonMapStyle(value as Map<String, Object?>)) {
                         List<MapStyler> stylers = <MapStyler>[];
                         if (value['stylers'] != null) {
-                          stylers =
-                              (value['stylers']! as List<Object?>)
-                                  .whereType<Map<String, Object?>>()
-                                  .map(MapStyler.fromJson)
-                                  .toList();
+                          stylers = (value['stylers']! as List<Object?>)
+                              .whereType<Map<String, Object?>>()
+                              .map(MapStyler.fromJson)
+                              .toList();
                         }
                         return gmaps.MapTypeStyle()
                           ..elementType = value['elementType'] as String?
@@ -270,9 +269,8 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 
   // Add an outer wrapper to the contents of the infowindow, we need it to listen
   // to click events...
-  final web.HTMLElement container =
-      createDivElement()
-        ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
+  final web.HTMLElement container = createDivElement()
+    ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
     final web.HTMLHeadingElement title =
@@ -282,8 +280,8 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
-    final web.HTMLElement snippet =
-        createDivElement()..className = 'infowindow-snippet';
+    final web.HTMLElement snippet = createDivElement()
+      ..className = 'infowindow-snippet';
 
     // Firefox and Safari don't support Trusted Types yet.
     // See https://developer.mozilla.org/en-US/docs/Web/API/TrustedTypePolicyFactory#browser_compatibility
@@ -291,10 +289,9 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
       _gmapsTrustedTypePolicy ??= web.window.trustedTypes.createPolicy(
         'google_maps_flutter_sanitize',
         web.TrustedTypePolicyOptions(
-          createHTML:
-              (String html) {
-                return sanitizeHtml(html).toJS;
-              }.toJS,
+          createHTML: (String html) {
+            return sanitizeHtml(html).toJS;
+          }.toJS,
         ),
       );
 
@@ -458,16 +455,13 @@ Future<web.Node?> _advancedMarkerIconFromPinConfig(
   required bool isVisible,
   required double rotation,
 }) async {
-  final gmaps.PinElementOptions options =
-      gmaps.PinElementOptions()
-        ..background =
-            config.backgroundColor != null
-                ? _getCssColor(config.backgroundColor!)
-                : null
-        ..borderColor =
-            config.borderColor != null
-                ? _getCssColor(config.borderColor!)
-                : null;
+  final gmaps.PinElementOptions options = gmaps.PinElementOptions()
+    ..background = config.backgroundColor != null
+        ? _getCssColor(config.backgroundColor!)
+        : null
+    ..borderColor = config.borderColor != null
+        ? _getCssColor(config.borderColor!)
+        : null;
 
   final AdvancedMarkerGlyph? glyph = config.glyph;
   switch (glyph) {
@@ -546,9 +540,8 @@ Future<web.Node?> _advancedMarkerIconFromAssetImage(
   assert(iconConfig.length >= 2);
   // iconConfig[2] contains the DPIs of the screen, but that information is
   // already encoded in the iconConfig[1]
-  final web.HTMLImageElement icon =
-      web.HTMLImageElement()
-        ..src = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
+  final web.HTMLImageElement icon = web.HTMLImageElement()
+    ..src = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
 
   final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
   _setIconStyle(icon: icon, size: size, opacity: opacity, isVisible: isVisible);
@@ -575,8 +568,8 @@ Future<web.Node?> _advancedMarkerIconFromBytes(
   // See https://github.com/dart-lang/web/issues/180
   blob = web.Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
-  final web.HTMLImageElement icon =
-      web.HTMLImageElement()..src = web.URL.createObjectURL(blob as JSObject);
+  final web.HTMLImageElement icon = web.HTMLImageElement()
+    ..src = web.URL.createObjectURL(blob as JSObject);
 
   final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
   _setIconStyle(size: size, icon: icon, opacity: opacity, isVisible: isVisible);
@@ -680,9 +673,8 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
     // already encoded in the iconConfig[1]
-    icon =
-        gmaps.Icon()
-          ..url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
+    icon = gmaps.Icon()
+      ..url = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
 
     final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
     if (size != null) {
@@ -744,18 +736,17 @@ Future<O> _markerOptionsFromMarker<T, O>(
           ..gmpDraggable = marker.draggable;
     return options as O;
   } else {
-    final gmaps.MarkerOptions options =
-        gmaps.MarkerOptions()
-          ..position = gmaps.LatLng(
-            marker.position.latitude,
-            marker.position.longitude,
-          )
-          ..icon = await _gmIconFromBitmapDescriptor(marker.icon, marker.anchor)
-          ..title = sanitizeHtml(marker.infoWindow.title ?? '')
-          ..zIndex = marker.zIndex
-          ..visible = marker.visible
-          ..opacity = marker.alpha
-          ..draggable = marker.draggable;
+    final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+      ..position = gmaps.LatLng(
+        marker.position.latitude,
+        marker.position.longitude,
+      )
+      ..icon = await _gmIconFromBitmapDescriptor(marker.icon, marker.anchor)
+      ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+      ..zIndex = marker.zIndex
+      ..visible = marker.visible
+      ..opacity = marker.alpha
+      ..draggable = marker.draggable;
 
     // TODO(ditman): Compute anchor properly, otherwise infowindows attach to the wrong spot.
     // Flat and Rotation are not supported directly on the web.
@@ -782,18 +773,17 @@ MarkerId getMarkerId(Object marker) {
 }
 
 gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
-  final gmaps.CircleOptions circleOptions =
-      gmaps.CircleOptions()
-        ..strokeColor = _getCssColor(circle.strokeColor)
-        ..strokeOpacity = _getCssOpacity(circle.strokeColor)
-        ..strokeWeight = circle.strokeWidth
-        ..fillColor = _getCssColor(circle.fillColor)
-        ..fillOpacity = _getCssOpacity(circle.fillColor)
-        ..center = gmaps.LatLng(circle.center.latitude, circle.center.longitude)
-        ..radius = circle.radius
-        ..visible = circle.visible
-        ..zIndex = circle.zIndex
-        ..clickable = circle.consumeTapEvents;
+  final gmaps.CircleOptions circleOptions = gmaps.CircleOptions()
+    ..strokeColor = _getCssColor(circle.strokeColor)
+    ..strokeOpacity = _getCssOpacity(circle.strokeColor)
+    ..strokeWeight = circle.strokeWidth
+    ..fillColor = _getCssColor(circle.fillColor)
+    ..fillOpacity = _getCssOpacity(circle.fillColor)
+    ..center = gmaps.LatLng(circle.center.latitude, circle.center.longitude)
+    ..radius = circle.radius
+    ..visible = circle.visible
+    ..zIndex = circle.zIndex
+    ..clickable = circle.consumeTapEvents;
   return circleOptions;
 }
 
@@ -803,28 +793,22 @@ visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
   );
   final visualization.HeatmapLayerOptions heatmapOptions =
       visualization.HeatmapLayerOptions()
-        ..data =
-            heatmap.data
-                .map(
-                  (WeightedLatLng e) =>
-                      visualization.WeightedLocation()
-                        ..location = gmaps.LatLng(
-                          e.point.latitude,
-                          e.point.longitude,
-                        )
-                        ..weight = e.weight,
-                )
-                .toList()
-                .toJS
+        ..data = heatmap.data
+            .map(
+              (WeightedLatLng e) => visualization.WeightedLocation()
+                ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
+                ..weight = e.weight,
+            )
+            .toList()
+            .toJS
         ..dissipating = heatmap.dissipating
-        ..gradient =
-            gradientColors == null
-                ? null
-                : <Color>[
-                  // Web needs a first color with 0 alpha
-                  gradientColors.first.withAlpha(0),
-                  ...gradientColors,
-                ].map(_getCssColorWithAlpha).toList()
+        ..gradient = gradientColors == null
+            ? null
+            : <Color>[
+                // Web needs a first color with 0 alpha
+                gradientColors.first.withAlpha(0),
+                ...gradientColors,
+              ].map(_getCssColorWithAlpha).toList()
         ..maxIntensity = heatmap.maxIntensity
         ..opacity = heatmap.opacity
         ..radius = heatmap.radius.radius;
@@ -836,8 +820,9 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
   Polygon polygon,
 ) {
   // Convert all points to GmLatLng
-  final List<gmaps.LatLng> path =
-      polygon.points.map(_latLngToGmLatLng).toList();
+  final List<gmaps.LatLng> path = polygon.points
+      .map(_latLngToGmLatLng)
+      .toList();
 
   final bool isClockwisePolygon = _isPolygonClockwise(path);
 
@@ -916,8 +901,9 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
   gmaps.Map googleMap,
   Polyline polyline,
 ) {
-  final List<gmaps.LatLng> paths =
-      polyline.points.map(_latLngToGmLatLng).toList();
+  final List<gmaps.LatLng> paths = polyline.points
+      .map(_latLngToGmLatLng)
+      .toList();
 
   return gmaps.PolylineOptions()
     ..path = paths.toJS
@@ -982,8 +968,9 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       gmaps.LatLng? focusLatLng;
       final double zoomDelta = json[1] as double? ?? 0;
       // Web only supports integer changes...
-      final int newZoomDelta =
-          zoomDelta < 0 ? zoomDelta.floor() : zoomDelta.ceil();
+      final int newZoomDelta = zoomDelta < 0
+          ? zoomDelta.floor()
+          : zoomDelta.ceil();
       if (json.length == 3) {
         final List<Object?> latLng = asJsonList(json[2]);
         // With focus
@@ -1028,10 +1015,9 @@ String urlFromMapBitmap(MapBitmap mapBitmap) {
     (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
       assetMapBitmap.assetName,
     ),
-    _ =>
-      throw UnimplementedError(
-        'Only BytesMapBitmap and AssetMapBitmap are supported.',
-      ),
+    _ => throw UnimplementedError(
+      'Only BytesMapBitmap and AssetMapBitmap are supported.',
+    ),
   };
 }
 

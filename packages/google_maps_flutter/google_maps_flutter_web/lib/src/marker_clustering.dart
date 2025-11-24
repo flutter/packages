@@ -138,8 +138,9 @@ class ClusterManagersController<T extends Object> extends GeometryController {
     final LatLngBounds bounds = gmLatLngBoundsToLatLngBounds(
       markerClustererCluster.bounds!,
     );
-    final List<MarkerId> markerIds =
-        markerClustererCluster.markers.map<MarkerId>(getMarkerId).toList();
+    final List<MarkerId> markerIds = markerClustererCluster.markers
+        .map<MarkerId>(getMarkerId)
+        .toList();
 
     return Cluster(
       clusterManagerId,

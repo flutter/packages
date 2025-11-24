@@ -41,8 +41,9 @@ class GoogleMapController {
 
     // Check if all markers are of the same type. Mixing marker types is not
     // allowed.
-    final Set<Type> markerTypes =
-        _markers.map((Marker e) => e.runtimeType).toSet();
+    final Set<Type> markerTypes = _markers
+        .map((Marker e) => e.runtimeType)
+        .toSet();
     if (markerTypes.isNotEmpty) {
       assert(markerTypes.length == 1, 'All markers must be of the same type.');
 
@@ -98,11 +99,10 @@ class GoogleMapController {
     // Register the view factory that will hold the `_div` that holds the map in the DOM.
     // The `_div` needs to be created outside of the ViewFactory (and cached!) so we can
     // use it to create the [gmaps.Map] in the `init()` method of this class.
-    _div =
-        createDivElement()
-          ..id = _getViewType(mapId)
-          ..style.width = '100%'
-          ..style.height = '100%';
+    _div = createDivElement()
+      ..id = _getViewType(mapId)
+      ..style.width = '100%'
+      ..style.height = '100%';
 
     ui_web.platformViewRegistry.registerViewFactory(
       _getViewType(mapId),
