@@ -8,6 +8,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +53,6 @@ public class PendingRecordingTest {
     final PigeonApiPendingRecording api =
         new TestProxyApiRegistrar().getPigeonApiPendingRecording();
     final PendingRecording instance = mock(PendingRecording.class);
-    final PendingRecording newInstance = mock(PendingRecording.class);
 
     try (MockedStatic<ContextCompat> mockedContextCompat =
         Mockito.mockStatic(ContextCompat.class)) {
@@ -63,10 +63,10 @@ public class PendingRecordingTest {
                       any(Context.class), eq(Manifest.permission.RECORD_AUDIO)))
           .thenAnswer((Answer<Integer>) invocation -> PackageManager.PERMISSION_DENIED);
 
-      when(instance.withAudioEnabled(true)).thenReturn(newInstance);
+      when(instance.withAudioEnabled(true)).thenReturn(instance);
 
-      assertEquals(api.withAudioEnabled(instance, false), newInstance);
-      verify(instance).withAudioEnabled(true);
+      assertEquals(api.withAudioEnabled(instance, true), instance);
+      verify(instance, never()).withAudioEnabled(true);
     }
   }
 
