@@ -42,7 +42,7 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final value = readValue(buffer) as int?;
+        final int? value = readValue(buffer) as int?;
         return value == null ? null : MessageRequestState.values[value];
       case 130:
         return MessageSearchRequest.decode(readValue(buffer)!);
@@ -81,7 +81,8 @@ abstract class TestHostApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.initialize$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -111,7 +112,8 @@ abstract class TestHostApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -129,7 +131,8 @@ abstract class TestHostApi {
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null.',
               );
               final List<Object?> args = (message as List<Object?>?)!;
-              final arg_request = (args[0] as MessageSearchRequest?);
+              final MessageSearchRequest? arg_request =
+                  (args[0] as MessageSearchRequest?);
               assert(
                 arg_request != null,
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageApi.search was null, expected non-null MessageSearchRequest.',
@@ -173,7 +176,8 @@ abstract class TestNestedApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -191,7 +195,7 @@ abstract class TestNestedApi {
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search was null.',
               );
               final List<Object?> args = (message as List<Object?>?)!;
-              final arg_nested = (args[0] as MessageNested?);
+              final MessageNested? arg_nested = (args[0] as MessageNested?);
               assert(
                 arg_nested != null,
                 'Argument for dev.flutter.pigeon.pigeon_integration_tests.MessageNestedApi.search was null, expected non-null MessageNested.',

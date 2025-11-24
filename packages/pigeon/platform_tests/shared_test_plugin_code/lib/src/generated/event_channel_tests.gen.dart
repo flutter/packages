@@ -526,10 +526,10 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final value = readValue(buffer) as int?;
+        final int? value = readValue(buffer) as int?;
         return value == null ? null : EventEnum.values[value];
       case 130:
-        final value = readValue(buffer) as int?;
+        final int? value = readValue(buffer) as int?;
         return value == null ? null : AnotherEventEnum.values[value];
       case 131:
         return EventAllNullableTypes.decode(readValue(buffer)!);
@@ -561,7 +561,7 @@ Stream<int> streamInts({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final streamIntsChannel = EventChannel(
+  final EventChannel streamIntsChannel = EventChannel(
     'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamInts$instanceName',
     pigeonMethodCodec,
   );
@@ -574,7 +574,7 @@ Stream<PlatformEvent> streamEvents({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final streamEventsChannel = EventChannel(
+  final EventChannel streamEventsChannel = EventChannel(
     'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamEvents$instanceName',
     pigeonMethodCodec,
   );
@@ -587,7 +587,7 @@ Stream<int> streamConsistentNumbers({String instanceName = ''}) {
   if (instanceName.isNotEmpty) {
     instanceName = '.$instanceName';
   }
-  final streamConsistentNumbersChannel = EventChannel(
+  final EventChannel streamConsistentNumbersChannel = EventChannel(
     'dev.flutter.pigeon.pigeon_integration_tests.EventChannelMethods.streamConsistentNumbers$instanceName',
     pigeonMethodCodec,
   );

@@ -173,7 +173,7 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final value = readValue(buffer) as int?;
+        final int? value = readValue(buffer) as int?;
         return value == null ? null : NullFieldsSearchReplyType.values[value];
       case 130:
         return NullFieldsSearchRequest.decode(readValue(buffer)!);
@@ -203,17 +203,19 @@ class NullFieldsHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<NullFieldsSearchReply> search(NullFieldsSearchRequest nested) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsHostApi.search$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[nested],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -247,7 +249,8 @@ abstract class NullFieldsFlutterApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -261,7 +264,8 @@ abstract class NullFieldsFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_request = (args[0] as NullFieldsSearchRequest?);
+          final NullFieldsSearchRequest? arg_request =
+              (args[0] as NullFieldsSearchRequest?);
           assert(
             arg_request != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.NullFieldsFlutterApi.search was null, expected non-null NullFieldsSearchRequest.',

@@ -72,17 +72,19 @@ class PrimitiveHostApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<int> anInt(int value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -102,17 +104,19 @@ class PrimitiveHostApi {
   }
 
   Future<bool> aBool(bool value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -132,17 +136,19 @@ class PrimitiveHostApi {
   }
 
   Future<String> aString(String value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -162,17 +168,19 @@ class PrimitiveHostApi {
   }
 
   Future<double> aDouble(double value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -192,17 +200,19 @@ class PrimitiveHostApi {
   }
 
   Future<Map<Object?, Object?>> aMap(Map<Object?, Object?> value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -222,17 +232,19 @@ class PrimitiveHostApi {
   }
 
   Future<List<Object?>> aList(List<Object?> value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -252,17 +264,19 @@ class PrimitiveHostApi {
   }
 
   Future<Int32List> anInt32List(Int32List value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt32List$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -282,17 +296,19 @@ class PrimitiveHostApi {
   }
 
   Future<List<bool?>> aBoolList(List<bool?> value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBoolList$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -312,17 +328,19 @@ class PrimitiveHostApi {
   }
 
   Future<Map<String?, int?>> aStringIntMap(Map<String?, int?> value) async {
-    final pigeonVar_channelName =
+    final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aStringIntMap$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[value],
     );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
     } else if (pigeonVar_replyList.length > 1) {
@@ -373,7 +391,8 @@ abstract class PrimitiveFlutterApi {
         ? '.$messageChannelSuffix'
         : '';
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -387,7 +406,7 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_value = (args[0] as int?);
+          final int? arg_value = (args[0] as int?);
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt was null, expected non-null int.',
@@ -406,7 +425,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -420,7 +440,7 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_value = (args[0] as bool?);
+          final bool? arg_value = (args[0] as bool?);
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBool was null, expected non-null bool.',
@@ -439,7 +459,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -453,7 +474,7 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_value = (args[0] as String?);
+          final String? arg_value = (args[0] as String?);
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aString was null, expected non-null String.',
@@ -472,7 +493,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -486,7 +508,7 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_value = (args[0] as double?);
+          final double? arg_value = (args[0] as double?);
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aDouble was null, expected non-null double.',
@@ -505,7 +527,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -519,7 +542,8 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_value = (args[0] as Map<Object?, Object?>?);
+          final Map<Object?, Object?>? arg_value =
+              (args[0] as Map<Object?, Object?>?);
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aMap was null, expected non-null Map<Object?, Object?>.',
@@ -538,7 +562,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -552,7 +577,7 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_value = (args[0] as List<Object?>?);
+          final List<Object?>? arg_value = (args[0] as List<Object?>?);
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aList was null, expected non-null List<Object?>.',
@@ -571,7 +596,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -585,7 +611,7 @@ abstract class PrimitiveFlutterApi {
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null.',
           );
           final List<Object?> args = (message as List<Object?>?)!;
-          final arg_value = (args[0] as Int32List?);
+          final Int32List? arg_value = (args[0] as Int32List?);
           assert(
             arg_value != null,
             'Argument for dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.anInt32List was null, expected non-null Int32List.',
@@ -604,7 +630,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aBoolList$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
@@ -638,7 +665,8 @@ abstract class PrimitiveFlutterApi {
       }
     }
     {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
+      final BasicMessageChannel<Object?>
+      pigeonVar_channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.pigeon_integration_tests.PrimitiveFlutterApi.aStringIntMap$messageChannelSuffix',
         pigeonChannelCodec,
         binaryMessenger: binaryMessenger,
