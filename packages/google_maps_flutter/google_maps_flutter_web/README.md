@@ -40,20 +40,6 @@ circles or legacy markers on a map), include it like this:
 </script>
 ```
 
-If your app uses Advanced Markers, include `marker` library like this:
-```html
-<script
-  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=marker">
-</script>
-```
-
-### Advanced Markers vs. Legacy Markers
-
-The Google Maps SDK provides Advanced Markers, which replace the older legacy markers. Advanced Markers offer improved performance, richer customization (including scalable pins, custom HTML-like content, and styling options), and better behavior on vector maps such as collision management and altitude control. Legacy Marker APIs are deprecated, and new features will only be available through the Advanced Marker system. 
-
-For full details, see Google's official documentation:
-https://developers.google.com/maps/documentation/javascript/advanced-markers/overview
-
 To request multiple libraries, separate them with commas:
 
 ```html
@@ -63,6 +49,20 @@ To request multiple libraries, separate them with commas:
 ```
 
 Now you should be able to use the Google Maps plugin normally.
+
+## Advanced Markers
+
+The Google Maps SDK provides Advanced Markers, which replace the older legacy markers. Advanced Markers offer improved performance, richer customization (including scalable pins, custom HTML-like content, and styling options), and better behavior on vector maps such as collision management and altitude control. Legacy Marker APIs are deprecated, and new features will only be available through the Advanced Marker system. 
+
+If your app uses Advanced Markers, include `marker` library like this:
+```html
+<script
+  src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=marker">
+</script>
+```
+
+For full details, see Google's official documentation:
+https://developers.google.com/maps/documentation/javascript/advanced-markers/overview
 
 ## Marker clustering
 
