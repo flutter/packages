@@ -1,6 +1,11 @@
 ## 0.6.0
 
-* Adds Advanced markers support.
+* **BREAKING CHANGES**: Adds type constraints to generic type parameters:
+  * `ClusterManagersController<T>` now requires `T extends Object`
+  * `MarkersController<T, O>` now requires `T extends Object`
+* Adds support for Google Maps JavaScript API Advanced Markers (`AdvancedMarker`), including new `AdvancedMarkerController` and `AdvancedMarkersController` classes, support for `PinConfig` with customizable background, border, and glyph, and custom marker content via `BitmapDescriptor` (including `AssetMapBitmap`, `BytesMapBitmap`, and `PinConfig`). Advanced markers require the `marker` library - add `&libraries=marker` to your Google Maps API script URL in `web/index.html`.
+* Adds `isAdvancedMarkersAvailable()` method to check if advanced markers are supported.
+* Refactors marker architecture to support both legacy `Marker` and new `AdvancedMarker` types through unified controller interfaces.
 
 ## 0.5.14+3
 
