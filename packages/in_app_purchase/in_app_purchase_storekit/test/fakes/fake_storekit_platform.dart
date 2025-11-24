@@ -159,12 +159,12 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
 
   @override
   Future<void> addPayment(Map<String?, Object?> paymentMap) async {
-    final String id = paymentMap['productIdentifier']! as String;
-    final int quantity = paymentMap['quantity']! as int;
+    final id = paymentMap['productIdentifier']! as String;
+    final quantity = paymentMap['quantity']! as int;
 
     // Keep the received paymentDiscount parameter when testing payment with discount.
     if (paymentMap['applicationUsername']! == 'userWithDiscount') {
-      final Map<Object?, Object?>? discountArgument =
+      final discountArgument =
           paymentMap['paymentDiscount'] as Map<Object?, Object?>?;
       if (discountArgument != null) {
         discountReceived = discountArgument.cast<String, Object?>();
@@ -272,17 +272,17 @@ class FakeStoreKitPlatform implements InAppPurchaseAPI {
     if (queryProductException != null) {
       throw queryProductException!;
     }
-    final List<String?> productIDS = productIdentifiers;
-    final List<String> invalidFound = <String>[];
-    final List<SKProductWrapper> products = <SKProductWrapper>[];
-    for (final String? productID in productIDS) {
+    final productIDS = productIdentifiers;
+    final invalidFound = <String>[];
+    final products = <SKProductWrapper>[];
+    for (final productID in productIDS) {
       if (!validProductIDs.contains(productID)) {
         invalidFound.add(productID!);
       } else {
         products.add(validProducts[productID]!);
       }
     }
-    final SkProductResponseWrapper response = SkProductResponseWrapper(
+    final response = SkProductResponseWrapper(
       products: products,
       invalidProductIdentifiers: invalidFound,
     );
@@ -362,7 +362,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     validProductIDs = <String>{'123', '456'};
     validProducts = <String, SK2Product>{};
     for (final String validID in validProductIDs) {
-      final SK2Product product = SK2Product(
+      final product = SK2Product(
         id: validID,
         displayName: 'test_product',
         displayPrice: '0.99',
@@ -402,15 +402,15 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     if (queryProductException != null) {
       throw queryProductException!;
     }
-    final List<String?> productIDS = identifiers;
-    final List<SK2Product> products = <SK2Product>[];
-    for (final String? productID in productIDS) {
+    final productIDS = identifiers;
+    final products = <SK2Product>[];
+    for (final productID in productIDS) {
       if (validProductIDs.contains(productID)) {
         products.add(validProducts[productID]!);
       }
     }
-    final List<SK2ProductMessage> result = <SK2ProductMessage>[];
-    for (final SK2Product p in products) {
+    final result = <SK2ProductMessage>[];
+    for (final p in products) {
       result.add(p.convertToPigeon());
     }
 

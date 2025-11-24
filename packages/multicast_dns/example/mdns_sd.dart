@@ -21,7 +21,7 @@ For example:
 
   final bool verbose = args.contains('--verbose') || args.contains('-v');
   final String name = args.last;
-  final MDnsClient client = MDnsClient();
+  final client = MDnsClient();
   await client.start();
 
   await for (final PtrResourceRecord ptr in client.lookup<PtrResourceRecord>(
