@@ -8,7 +8,7 @@ import 'package:video_player/video_player.dart';
 
 void main() {
   test('Parses SubRip file', () {
-    final SubRipCaptionFile parsedFile = SubRipCaptionFile(_validSubRip);
+    final parsedFile = SubRipCaptionFile(_validSubRip);
 
     expect(parsedFile.captions.length, 4);
 

@@ -45,8 +45,8 @@ void main() {
   /// after the [callback] is executed.
   void withTempFile(String filename, void Function(File) callback) {
     final Directory dir = Directory.systemTemp.createTempSync();
-    final String path = '${dir.path}/$filename';
-    final File file = File(path);
+    final path = '${dir.path}/$filename';
+    final file = File(path);
     file.createSync();
     try {
       callback(file);
@@ -177,7 +177,7 @@ void main() {
   });
 
   test('simple parse api', () {
-    const String code = '''
+    const code = '''
 class Input1 {
   String? input;
 }
@@ -243,7 +243,7 @@ abstract class Api1 {
   });
 
   test('invalid datatype', () {
-    const String source = '''
+    const source = '''
 class InvalidDatatype {
   dynamic something;
 }
@@ -260,7 +260,7 @@ abstract class Api {
   });
 
   test('Only allow one api annotation', () {
-    const String source = '''
+    const source = '''
 @HostApi()
 @FlutterApi()
 abstract class Api {
@@ -278,7 +278,7 @@ abstract class Api {
   });
 
   test('Only allow one api annotation plus @ConfigurePigeon', () {
-    const String source = '''
+    const source = '''
 @ConfigurePigeon(InternalPigeonOptions(
   dartOut: 'stdout',
   javaOut: 'stdout',
@@ -295,7 +295,7 @@ abstract class Api {
   });
 
   test('enum in classes', () {
-    const String code = '''
+    const code = '''
 enum Enum1 {
   one,
   two,
@@ -321,7 +321,7 @@ abstract class Api {
   });
 
   test('two methods', () {
-    const String code = '''
+    const code = '''
 class Input1 {
   String? input;
 }
@@ -345,7 +345,7 @@ abstract class ApiTwoMethods {
   });
 
   test('nested', () {
-    const String code = '''
+    const code = '''
 class Input1 {
   String? input;
 }
@@ -371,7 +371,7 @@ abstract class Api {
   });
 
   test('flutter api', () {
-    const String code = '''
+    const code = '''
 class Input1 {
   String? input;
 }
@@ -393,7 +393,7 @@ abstract class AFlutterApi {
   });
 
   test('void host api', () {
-    const String code = '''
+    const code = '''
 class Input1 {
   String? input;
 }
@@ -412,7 +412,7 @@ abstract class VoidApi {
   });
 
   test('void arg host api', () {
-    const String code = '''
+    const code = '''
 class Output1 {
   String? output;
 }
@@ -435,7 +435,7 @@ abstract class VoidArgApi {
   });
 
   test('mockDartClass', () {
-    const String code = '''
+    const code = '''
 class Output1 {
   String? output;
 }
@@ -455,7 +455,7 @@ abstract class ApiWithMockDartClass {
   });
 
   test('only visible from nesting', () {
-    const String code = '''
+    const code = '''
 class OnlyVisibleFromNesting {
   String? foo;
 }
@@ -489,13 +489,13 @@ abstract class NestorApi {
   });
 
   test('Dart generator copyright flag', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       copyrightHeader: './copyright_header.txt',
       dartOut: '',
     );
-    final DartGeneratorAdapter dartGeneratorAdapter = DartGeneratorAdapter();
-    final StringBuffer buffer = StringBuffer();
+    final dartGeneratorAdapter = DartGeneratorAdapter();
+    final buffer = StringBuffer();
     dartGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -506,13 +506,13 @@ abstract class NestorApi {
   });
 
   test('Java generator copyright flag', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       javaOut: 'Foo.java',
       copyrightHeader: './copyright_header.txt',
     );
-    final JavaGeneratorAdapter javaGeneratorAdapter = JavaGeneratorAdapter();
-    final StringBuffer buffer = StringBuffer();
+    final javaGeneratorAdapter = JavaGeneratorAdapter();
+    final buffer = StringBuffer();
     javaGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -523,15 +523,14 @@ abstract class NestorApi {
   });
 
   test('Objc header generator copyright flag', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       copyrightHeader: './copyright_header.txt',
       objcHeaderOut: '',
       objcSourceOut: '',
     );
-    final ObjcGeneratorAdapter objcHeaderGeneratorAdapter =
-        ObjcGeneratorAdapter();
-    final StringBuffer buffer = StringBuffer();
+    final objcHeaderGeneratorAdapter = ObjcGeneratorAdapter();
+    final buffer = StringBuffer();
     objcHeaderGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -542,15 +541,14 @@ abstract class NestorApi {
   });
 
   test('Objc source generator copyright flag', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       copyrightHeader: './copyright_header.txt',
       objcHeaderOut: '',
       objcSourceOut: '',
     );
-    final ObjcGeneratorAdapter objcSourceGeneratorAdapter =
-        ObjcGeneratorAdapter();
-    final StringBuffer buffer = StringBuffer();
+    final objcSourceGeneratorAdapter = ObjcGeneratorAdapter();
+    final buffer = StringBuffer();
     objcSourceGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -561,13 +559,13 @@ abstract class NestorApi {
   });
 
   test('Swift generator copyright flag', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       swiftOut: 'Foo.swift',
       copyrightHeader: './copyright_header.txt',
     );
-    final SwiftGeneratorAdapter swiftGeneratorAdapter = SwiftGeneratorAdapter();
-    final StringBuffer buffer = StringBuffer();
+    final swiftGeneratorAdapter = SwiftGeneratorAdapter();
+    final buffer = StringBuffer();
     swiftGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -578,14 +576,14 @@ abstract class NestorApi {
   });
 
   test('C++ header generator copyright flag', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       cppSourceOut: '',
       cppHeaderOut: 'Foo.h',
       copyrightHeader: './copyright_header.txt',
     );
-    final CppGeneratorAdapter cppHeaderGeneratorAdapter = CppGeneratorAdapter();
-    final StringBuffer buffer = StringBuffer();
+    final cppHeaderGeneratorAdapter = CppGeneratorAdapter();
+    final buffer = StringBuffer();
     cppHeaderGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -596,16 +594,16 @@ abstract class NestorApi {
   });
 
   test('C++ source generator copyright flag', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       copyrightHeader: './copyright_header.txt',
       cppHeaderOut: '',
       cppSourceOut: '',
     );
-    final CppGeneratorAdapter cppSourceGeneratorAdapter = CppGeneratorAdapter(
+    final cppSourceGeneratorAdapter = CppGeneratorAdapter(
       fileTypeList: <FileType>[FileType.source],
     );
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     cppSourceGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -616,7 +614,7 @@ abstract class NestorApi {
   });
 
   test('nested enum', () {
-    const String code = '''
+    const code = '''
 enum NestedEnum { one, two }
 
 class NestedEnum1 {
@@ -645,7 +643,7 @@ abstract class NestedEnumApi {
   });
 
   test('test circular references', () {
-    const String code = '''
+    const code = '''
 class Foo {
   Bar? bar;
 }
@@ -670,14 +668,14 @@ abstract class NotificationsHostApi {
   });
 
   test('test compilation error', () {
-    const String code = 'Hello\n';
+    const code = 'Hello\n';
     final ParseResults results = parseSource(code);
     expect(results.errors.length, greaterThanOrEqualTo(1));
     expect(results.errors[0].lineNumber, 1);
   });
 
   test('test method in data class error', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? x;
   int? foo() { return x; }
@@ -695,7 +693,7 @@ abstract class Api {
   });
 
   test('test field initialization', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? x = 123;
 }
@@ -712,7 +710,7 @@ abstract class Api {
   });
 
   test('test field in api error', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? x;
 }
@@ -730,7 +728,7 @@ abstract class Api {
   });
 
   test('constructor in data class', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? x;
   Foo({this.x});
@@ -746,7 +744,7 @@ abstract class Api {
   });
 
   test('constructor body in data class', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? x;
   Foo({this.x}) { print('hi'); }
@@ -764,7 +762,7 @@ abstract class Api {
   });
 
   test('constructor body in data class', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? x;
   Foo() : x = 0;
@@ -782,7 +780,7 @@ abstract class Api {
   });
 
   test('constructor in api class', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? x;
 }
@@ -800,20 +798,20 @@ abstract class Api {
   });
 
   test('test invalid import', () {
-    const String code = "import 'foo.dart';\n";
+    const code = "import 'foo.dart';\n";
     final ParseResults results = parseSource(code);
     expect(results.errors.length, greaterThanOrEqualTo(1));
     expect(results.errors[0].lineNumber, 1);
   });
 
   test('test valid import', () {
-    const String code = "import 'package:pigeon/pigeon.dart';\n";
+    const code = "import 'package:pigeon/pigeon.dart';\n";
     final ParseResults parseResults = parseSource(code);
     expect(parseResults.errors.length, 0);
   });
 
   test('error with static field', () {
-    const String code = '''
+    const code = '''
 class WithStaticField {
   static int? x;
   int? y;
@@ -831,7 +829,7 @@ abstract class WithStaticFieldApi {
   });
 
   test('parse generics', () {
-    const String code = '''
+    const code = '''
 class Foo {
   List<int?>? list;
 }
@@ -849,7 +847,7 @@ abstract class Api {
   });
 
   test('parse recursive generics', () {
-    const String code = '''
+    const code = '''
 class Foo {
   List<List<int?>?>? list;
 }
@@ -868,7 +866,7 @@ abstract class Api {
   });
 
   test('enums argument host', () {
-    const String code = '''
+    const code = '''
 enum Foo {
   one,
   two,
@@ -884,7 +882,7 @@ abstract class Api {
   });
 
   test('enums argument flutter', () {
-    const String code = '''
+    const code = '''
 
 enum Foo {
   one,
@@ -901,7 +899,7 @@ abstract class Api {
   });
 
   test('enums list argument', () {
-    const String code = '''
+    const code = '''
 enum Foo { one, two }
 
 @HostApi()
@@ -914,7 +912,7 @@ abstract class Api {
   });
 
   test('enums map argument key', () {
-    const String code = '''
+    const code = '''
 enum Foo { one, two }
 
 @HostApi()
@@ -927,7 +925,7 @@ abstract class Api {
   });
 
   test('enums map argument value', () {
-    const String code = '''
+    const code = '''
 enum Foo { one, two }
 
 @HostApi()
@@ -940,7 +938,7 @@ abstract class Api {
   });
 
   test('enums return value', () {
-    const String code = '''
+    const code = '''
 
 enum Foo {
   one,
@@ -957,7 +955,7 @@ abstract class Api {
   });
 
   test('return type generics', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   List<double?> doit();
@@ -982,7 +980,7 @@ abstract class Api {
   });
 
   test('argument generics', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   void doit(int x, List<double?> value);
@@ -1018,7 +1016,7 @@ abstract class Api {
   });
 
   test('map generics', () {
-    const String code = '''
+    const code = '''
 class Foo {
   Map<String?, int?> map;
 }
@@ -1036,7 +1034,7 @@ abstract class Api {
   });
 
   test('two parameters', () {
-    const String code = '''
+    const code = '''
 class Input {
   String? input;
 }
@@ -1054,7 +1052,7 @@ abstract class Api {
   });
 
   test('no type name argument', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   void method(x);
@@ -1070,7 +1068,7 @@ abstract class Api {
   });
 
   test('custom objc selector', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   @ObjCSelector('subtractValue:by:')
@@ -1088,7 +1086,7 @@ abstract class Api {
   });
 
   test('custom objc invalid selector', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   @ObjCSelector('subtractValue:by:error:')
@@ -1105,7 +1103,7 @@ abstract class Api {
   });
 
   test('custom objc no parameters', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   @ObjCSelector('foobar')
@@ -1120,7 +1118,7 @@ abstract class Api {
   });
 
   test('custom swift valid function signature', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   @SwiftFunction('subtractValue(_:by:)')
@@ -1138,7 +1136,7 @@ abstract class Api {
   });
 
   test('custom swift invalid function signature', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   @SwiftFunction('subtractValue(_:by:error:)')
@@ -1155,7 +1153,7 @@ abstract class Api {
   });
 
   test('custom swift function signature no parameters', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   @SwiftFunction('foobar()')
@@ -1170,15 +1168,14 @@ abstract class Api {
   });
 
   test('dart test has copyright', () {
-    final Root root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    const PigeonOptions options = PigeonOptions(
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    const options = PigeonOptions(
       copyrightHeader: './copyright_header.txt',
       dartTestOut: 'stdout',
       dartOut: 'stdout',
     );
-    final DartTestGeneratorAdapter dartTestGeneratorAdapter =
-        DartTestGeneratorAdapter();
-    final StringBuffer buffer = StringBuffer();
+    final dartTestGeneratorAdapter = DartTestGeneratorAdapter();
+    final buffer = StringBuffer();
     dartTestGeneratorAdapter.generate(
       buffer,
       InternalPigeonOptions.fromPigeonOptions(options),
@@ -1189,7 +1186,7 @@ abstract class Api {
   });
 
   test('only class reference is type argument for return value', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? foo;
 }
@@ -1206,7 +1203,7 @@ abstract class Api {
   });
 
   test('only class reference is type argument for argument', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? foo;
 }
@@ -1223,7 +1220,7 @@ abstract class Api {
   });
 
   test('recurse into type parameters', () {
-    const String code = '''
+    const code = '''
 class Foo {
   int? foo;
   List<Bar?> bars;
@@ -1256,7 +1253,7 @@ abstract class Api {
   });
 
   test('undeclared class in argument type argument', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   void storeAll(List<Foo?> foos);
@@ -1269,7 +1266,7 @@ abstract class Api {
   });
 
   test('Object type argument', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   void storeAll(List<Object?> foos);
@@ -1280,7 +1277,7 @@ abstract class Api {
   });
 
   test('Export unreferenced enums', () {
-    const String code = '''
+    const code = '''
 enum MessageKey {
   title,
   subtitle,
@@ -1303,7 +1300,7 @@ abstract class HostApiBridge {
   });
 
   test('@ConfigurePigeon JavaOptions.copyrightHeader', () {
-    const String code = '''
+    const code = '''
 @ConfigurePigeon(InternalPigeonOptions(
   javaOptions: JavaOptions(copyrightHeader: <String>['A', 'Header']),
 ))
@@ -1318,7 +1315,7 @@ class Message {
   });
 
   test('@ConfigurePigeon DartOptions.copyrightHeader', () {
-    const String code = '''
+    const code = '''
 @ConfigurePigeon(PigeonOptions(
   dartOptions: DartOptions(copyrightHeader: <String>['A', 'Header']),
 ))
@@ -1333,7 +1330,7 @@ class Message {
   });
 
   test('@ConfigurePigeon ObjcOptions.copyrightHeader', () {
-    const String code = '''
+    const code = '''
 @ConfigurePigeon(PigeonOptions(
   objcOptions: ObjcOptions(copyrightHeader: <String>['A', 'Header']),
 ))
@@ -1348,7 +1345,7 @@ class Message {
   });
 
   test('@ConfigurePigeon ObjcOptions.headerIncludePath', () {
-    const String code = '''
+    const code = '''
 @ConfigurePigeon(PigeonOptions(
   objcOptions: ObjcOptions(headerIncludePath: 'Header.path'),
 ))
@@ -1363,7 +1360,7 @@ class Message {
   });
 
   test('@ConfigurePigeon CppOptions.headerIncludePath', () {
-    const String code = '''
+    const code = '''
 @ConfigurePigeon(PigeonOptions(
   cppOptions: CppOptions(headerIncludePath: 'Header.path'),
 ))
@@ -1378,7 +1375,7 @@ class Message {
   });
 
   test('return nullable', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   int? calc();
@@ -1391,7 +1388,7 @@ abstract class Api {
   });
 
   test('nullable parameters', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   void calc(int? value);
@@ -1406,7 +1403,7 @@ abstract class Api {
   });
 
   test('task queue specified', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
@@ -1423,7 +1420,7 @@ abstract class Api {
   });
 
   test('task queue unspecified', () {
-    const String code = '''
+    const code = '''
 @HostApi()
 abstract class Api {
   int? calc();
@@ -1439,7 +1436,7 @@ abstract class Api {
   });
 
   test('unsupported task queue on FlutterApi', () {
-    const String code = '''
+    const code = '''
 @FlutterApi()
 abstract class Api {
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)
@@ -1456,11 +1453,9 @@ abstract class Api {
   });
 
   test('generator validation', () async {
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGeneratorAdapter generator = _ValidatorGeneratorAdapter(
-        stdout,
-      );
+      final generator = _ValidatorGeneratorAdapter(stdout);
       final int result = await Pigeon.run(
         <String>['--input', input.path],
         adapters: <GeneratorAdapter>[generator],
@@ -1473,11 +1468,9 @@ abstract class Api {
   });
 
   test('generator validation skipped', () async {
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGeneratorAdapter generator = _ValidatorGeneratorAdapter(
-        null,
-      );
+      final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.run(
         <String>['--input', input.path, '--dart_out', 'foo.dart'],
         adapters: <GeneratorAdapter>[generator],
@@ -1490,11 +1483,9 @@ abstract class Api {
   });
 
   test('run with PigeonOptions', () async {
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
     withTempFile('foo.dart', (File input) async {
-      final _ValidatorGeneratorAdapter generator = _ValidatorGeneratorAdapter(
-        null,
-      );
+      final generator = _ValidatorGeneratorAdapter(null);
       final int result = await Pigeon.runWithOptions(
         PigeonOptions(input: input.path, dartOut: 'foo.dart'),
         adapters: <GeneratorAdapter>[generator],
@@ -1507,7 +1498,7 @@ abstract class Api {
   });
 
   test('unsupported non-positional parameters on FlutterApi', () {
-    const String code = '''
+    const code = '''
 @FlutterApi()
 abstract class Api {
   int? calc({int? anInt});
@@ -1523,7 +1514,7 @@ abstract class Api {
   });
 
   test('unsupported optional parameters on FlutterApi', () {
-    const String code = '''
+    const code = '''
 @FlutterApi()
 abstract class Api {
   int? calc([int? anInt]);
@@ -1539,7 +1530,7 @@ abstract class Api {
   });
 
   test('simple parse ProxyApi', () {
-    const String code = '''
+    const code = '''
 @ProxyApi()
 abstract class MyClass {
   MyClass();
@@ -1553,7 +1544,7 @@ abstract class MyClass {
     final Root root = parseResult.root;
     expect(root.apis.length, equals(1));
 
-    final AstProxyApi proxyApi = root.apis.single as AstProxyApi;
+    final proxyApi = root.apis.single as AstProxyApi;
     expect(proxyApi.name, equals('MyClass'));
     expect(proxyApi.constructors.single.name, equals(''));
     expect(proxyApi.methods.length, equals(2));
@@ -1569,7 +1560,7 @@ abstract class MyClass {
 
   group('ProxyApi validation', () {
     test('error with using data class', () {
-      const String code = '''
+      const code = '''
 class DataClass {
   late int input;
 }
@@ -1588,7 +1579,7 @@ abstract class MyClass {
     });
 
     test('super class must be proxy api', () {
-      const String code = '''
+      const code = '''
 class DataClass {
   late int input;
 }
@@ -1607,7 +1598,7 @@ abstract class MyClass extends DataClass {
     });
 
     test('interface must be proxy api', () {
-      const String code = '''
+      const code = '''
 class DataClass {
   late int input;
 }
@@ -1626,7 +1617,7 @@ abstract class MyClass implements DataClass {
     });
 
     test('unattached fields can not be inherited', () {
-      const String code = '''
+      const code = '''
 @ProxyApi()
 abstract class MyClass extends MyOtherClass { }
 
@@ -1648,7 +1639,7 @@ abstract class MyOtherClass {
     test(
       'api is not used as an attached field while having an unattached field',
       () {
-        const String code = '''
+        const code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1674,7 +1665,7 @@ abstract class MyOtherClass {
     test(
       'api is not used as an attached field while having a required Flutter method',
       () {
-        const String code = '''
+        const code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1698,7 +1689,7 @@ abstract class MyOtherClass {
     );
 
     test('interfaces can only have callback methods', () {
-      const String code = '''
+      const code = '''
 @ProxyApi()
 abstract class MyClass implements MyOtherClass {
 }
@@ -1719,7 +1710,7 @@ abstract class MyOtherClass {
     });
 
     test('attached fields must be a ProxyApi', () {
-      const String code = '''
+      const code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1735,7 +1726,7 @@ abstract class MyClass {
     });
 
     test('attached fields must not be nullable', () {
-      const String code = '''
+      const code = '''
 @ProxyApi()
 abstract class MyClass {
   @attached
@@ -1751,7 +1742,7 @@ abstract class MyClass {
     });
 
     test('callback methods with non-null return types must be non-null', () {
-      const String code = '''
+      const code = '''
 @ProxyApi()
 abstract class MyClass {
   late String Function()? aCallbackMethod;
@@ -1770,7 +1761,7 @@ abstract class MyClass {
 
   group('event channel validation', () {
     test('methods cannot contain parameters', () {
-      const String code = '''
+      const code = '''
 @EventChannelApi()
 abstract class EventChannelApi {
   int streamInts(int event);
@@ -1789,7 +1780,7 @@ abstract class EventChannelApi {
 
   group('sealed inheritance validation', () {
     test('super class must be sealed', () {
-      const String code = '''
+      const code = '''
 class DataClass {}
 class ChildClass extends DataClass {
   ChildClass(this.input);
@@ -1810,7 +1801,7 @@ abstract class events {
     });
 
     test('super class must be sealed', () {
-      const String code = '''
+      const code = '''
 sealed class DataClass {
   DataClass(this.input);
   int input;

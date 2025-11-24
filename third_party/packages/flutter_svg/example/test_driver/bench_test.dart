@@ -20,7 +20,7 @@ Future<void> main() async {
         timeout: const Duration(seconds: 15),
       );
     });
-    final TimelineSummary summary = TimelineSummary.summarize(timeline);
+    final summary = TimelineSummary.summarize(timeline);
     await summary.writeTimelineToFile('bench', pretty: true);
   } finally {
     await driver.close();

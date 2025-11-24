@@ -280,7 +280,7 @@ class _WebViewState extends State<WebView> {
       context: context,
       onWebViewPlatformCreated:
           (WebViewPlatformController? webViewPlatformController) {
-            final WebViewController controller = WebViewController(
+            final controller = WebViewController(
               widget,
               webViewPlatformController!,
               _javascriptChannelRegistry,
@@ -627,7 +627,7 @@ class WebViewController {
     bool? hasNavigationDelegate;
     bool? hasProgressTracking;
     bool? debuggingEnabled;
-    WebSetting<String?> userAgent = const WebSetting<String?>.absent();
+    var userAgent = const WebSetting<String?>.absent();
     bool? zoomEnabled;
     if (currentValue.javascriptMode != newValue.javascriptMode) {
       javascriptMode = newValue.javascriptMode;

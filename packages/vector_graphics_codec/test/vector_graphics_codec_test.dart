@@ -35,7 +35,7 @@ void bufferContains(VectorGraphicsBuffer buffer, List<int> expectedBytes) {
 
 void main() {
   test('Messages begin with a magic number and version', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
 
     bufferContains(buffer, <int>[98, 45, 136, 0, 1]);
   });
@@ -67,7 +67,7 @@ void main() {
   });
 
   test('Messages without an incompatible version cannot be decoded', () {
-    final Uint8List bytes = Uint8List(6);
+    final bytes = Uint8List(6);
     bytes[0] = 98;
     bytes[1] = 45;
     bytes[2] = 136;
@@ -89,8 +89,8 @@ void main() {
   });
 
   test('Basic message encode and decode with filled path', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
     final int paintId = codec.writeFill(buffer, 23, 0);
     final int pathId = codec.writePath(
       buffer,
@@ -128,8 +128,8 @@ void main() {
   });
 
   test('Basic message encode and decode with shaded path', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
     final int shaderId = codec.writeLinearGradient(
       buffer,
       fromX: 0,
@@ -210,8 +210,8 @@ void main() {
   });
 
   test('Basic message encode and decode with stroked vertex', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
     final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
     codec.writeDrawVertices(
       buffer,
@@ -243,8 +243,8 @@ void main() {
   });
 
   test('Basic message encode and decode with stroked vertex and indexes', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
     final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
     codec.writeDrawVertices(
       buffer,
@@ -276,8 +276,8 @@ void main() {
   });
 
   test('Can encode opacity/save/restore layers', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
     final int paintId = codec.writeFill(buffer, 0xAA000000, 0);
 
     codec.writeSaveLayer(buffer, paintId);
@@ -302,8 +302,8 @@ void main() {
   });
 
   test('Can encode a radial gradient', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int shaderId = codec.writeRadialGradient(
       buffer,
@@ -337,8 +337,8 @@ void main() {
   });
 
   test('Can encode a radial gradient (no matrix)', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int shaderId = codec.writeRadialGradient(
       buffer,
@@ -372,8 +372,8 @@ void main() {
   });
 
   test('Can encode a linear gradient', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int shaderId = codec.writeLinearGradient(
       buffer,
@@ -403,8 +403,8 @@ void main() {
   });
 
   test('Can encode clips', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
     final int pathId = codec.writePath(
       buffer,
       Uint8List.fromList(<int>[
@@ -434,16 +434,16 @@ void main() {
   });
 
   test('Can encode masks', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
     codec.writeMask(buffer);
     codec.decode(buffer.done(), listener);
     expect(listener.commands, <OnMask>[const OnMask()]);
   });
 
   test('Encodes a size', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     codec.writeSize(buffer, 20, 30);
     codec.decode(buffer.done(), listener);
@@ -452,15 +452,15 @@ void main() {
   });
 
   test('Only supports a single size', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
 
     codec.writeSize(buffer, 20, 30);
     expect(() => codec.writeSize(buffer, 1, 1), throwsStateError);
   });
 
   test('Encodes text', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
     final int textId = codec.writeTextConfig(
@@ -495,8 +495,8 @@ void main() {
   });
 
   test('Encodes text with null font family', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
     final int textId = codec.writeTextConfig(
@@ -531,8 +531,8 @@ void main() {
   });
 
   test('Encodes empty text', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int paintId = codec.writeFill(buffer, 0xFFAABBAA, 0);
     final int textId = codec.writeTextConfig(
@@ -567,8 +567,8 @@ void main() {
   });
 
   test('Encodes text position', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     codec.writeTextPosition(buffer, 1, 2, 3, 4, true, mat4);
 
@@ -588,8 +588,8 @@ void main() {
   });
 
   test('Encodes image data without transform', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int id = codec.writeImage(
       buffer,
@@ -619,8 +619,8 @@ void main() {
   });
 
   test('Encodes image data with transform', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int id = codec.writeImage(
       buffer,
@@ -650,7 +650,7 @@ void main() {
   });
 
   test('Encodes image data with various formats', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
 
     for (final int format in ImageFormatTypes.values) {
       expect(
@@ -665,8 +665,8 @@ void main() {
   });
 
   test('Basic message encode and decode with shaded path and image', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int imageId = codec.writeImage(
       buffer,
@@ -803,8 +803,8 @@ void main() {
   });
 
   test('Basic message encode and decode with half precision path', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final TestListener listener = TestListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = TestListener();
 
     final int fillId = codec.writeFill(buffer, 23, 0);
     final int strokeId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
@@ -1738,7 +1738,7 @@ bool _listEquals<E>(List<E>? left, List<E>? right) {
   if (left.length != right.length) {
     return false;
   }
-  for (int i = 0; i < left.length; i++) {
+  for (var i = 0; i < left.length; i++) {
     if (left[i] != right[i]) {
       return false;
     }

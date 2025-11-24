@@ -277,7 +277,7 @@ void main() {
 
       expect(gradient.toJson(), <String, Object?>{
         'colors': colors
-            .map((HeatmapGradientColor e) => e.color.value)
+            .map((HeatmapGradientColor e) => e.color.toARGB32())
             .toList(),
         'startPoints': colors
             .map((HeatmapGradientColor e) => e.startPoint)

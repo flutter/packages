@@ -28,8 +28,8 @@ RegExp patternToRegExp(
   List<String> parameters, {
   required bool caseSensitive,
 }) {
-  final StringBuffer buffer = StringBuffer('^');
-  int start = 0;
+  final buffer = StringBuffer('^');
+  var start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
     if (match.start > start) {
       buffer.write(RegExp.escape(pattern.substring(start, match.start)));
@@ -78,8 +78,8 @@ String _escapeGroup(String group, [String? name]) {
 /// 2. Call [patternToPath] with the `pathParameters` from the first step and
 ///    the original `pattern` used for generating the [RegExp].
 String patternToPath(String pattern, Map<String, String> pathParameters) {
-  final StringBuffer buffer = StringBuffer();
-  int start = 0;
+  final buffer = StringBuffer();
+  var start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
     if (match.start > start) {
       buffer.write(pattern.substring(start, match.start));
@@ -139,7 +139,7 @@ String canonicalUri(String loc) {
   if (loc.isEmpty) {
     throw GoException('Location cannot be empty.');
   }
-  String canon = Uri.parse(loc).toString();
+  var canon = Uri.parse(loc).toString();
   canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
   final Uri uri = Uri.parse(canon);
 
@@ -176,7 +176,7 @@ String? fullPathForRoute(
   String parentFullpath,
   List<RouteBase> routes,
 ) {
-  for (final RouteBase route in routes) {
+  for (final route in routes) {
     final String fullPath = (route is GoRoute)
         ? concatenatePaths(parentFullpath, route.path)
         : parentFullpath;
