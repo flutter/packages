@@ -22,22 +22,21 @@ import 'ads_manager_test.mocks.dart';
 void main() {
   group('IOSAdsManager', () {
     test('destroy', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final mockAdsManager = MockIMAAdsManager();
+      final adsManager = IOSAdsManager(mockAdsManager);
       adsManager.destroy();
 
       verify(mockAdsManager.destroy());
     });
 
     test('init', () async {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+      final mockAdsManager = MockIMAAdsManager();
 
-      final MockIMAAdsRenderingSettings mockAdsRenderingSettings =
-          MockIMAAdsRenderingSettings();
+      final mockAdsRenderingSettings = MockIMAAdsRenderingSettings();
 
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final adsManager = IOSAdsManager(mockAdsManager);
 
-      final IOSAdsRenderingSettings settings = IOSAdsRenderingSettings(
+      final settings = IOSAdsRenderingSettings(
         IOSAdsRenderingSettingsCreationParams(
           bitrate: 1000,
           enablePreloading: false,
@@ -66,51 +65,51 @@ void main() {
     });
 
     test('start', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final mockAdsManager = MockIMAAdsManager();
+      final adsManager = IOSAdsManager(mockAdsManager);
       adsManager.start(AdsManagerStartParams());
 
       verify(mockAdsManager.start());
     });
 
     test('discardAdBreak', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final mockAdsManager = MockIMAAdsManager();
+      final adsManager = IOSAdsManager(mockAdsManager);
       adsManager.discardAdBreak();
 
       verify(mockAdsManager.discardAdBreak());
     });
 
     test('pause', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final mockAdsManager = MockIMAAdsManager();
+      final adsManager = IOSAdsManager(mockAdsManager);
       adsManager.pause();
 
       verify(mockAdsManager.pause());
     });
 
     test('skip', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final mockAdsManager = MockIMAAdsManager();
+      final adsManager = IOSAdsManager(mockAdsManager);
       adsManager.skip();
 
       verify(mockAdsManager.skip());
     });
 
     test('resume', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final mockAdsManager = MockIMAAdsManager();
+      final adsManager = IOSAdsManager(mockAdsManager);
       adsManager.resume();
 
       verify(mockAdsManager.resume());
     });
 
     test('setAdsManagerDelegate', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final mockAdsManager = MockIMAAdsManager();
+      final adsManager = IOSAdsManager(mockAdsManager);
 
       late final ima.IMAAdsManagerDelegate delegate;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsManagerDelegate:
             ({
               required void Function(
@@ -159,11 +158,11 @@ void main() {
     });
 
     test('adCuePoints', () {
-      final MockIMAAdsManager mockAdsManager = MockIMAAdsManager();
+      final mockAdsManager = MockIMAAdsManager();
 
-      final List<double> cuePoints = <double>[1.0];
+      final cuePoints = <double>[1.0];
       when(mockAdsManager.adCuePoints).thenReturn(cuePoints);
-      final IOSAdsManager adsManager = IOSAdsManager(mockAdsManager);
+      final adsManager = IOSAdsManager(mockAdsManager);
 
       expect(adsManager.adCuePoints, <Duration>[const Duration(seconds: 1)]);
     });

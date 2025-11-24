@@ -197,13 +197,13 @@ mixin _GoRouteMixin on RouteBaseConfig {
   // construct path bits using parent bits
   // if there are any queryParam objects, add in the `queryParam` bits
   String get _locationArgs {
-    final Map<String, String> pathParameters = Map<String, String>.fromEntries(
+    final pathParameters = Map<String, String>.fromEntries(
       _pathParams.map((String pathParameter) {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
 
-        final StringBuffer valueBuffer = StringBuffer();
+        final valueBuffer = StringBuffer();
 
         valueBuffer.write(r'${Uri.encodeComponent(');
         valueBuffer.write(_encodeFor(pathParameter));
@@ -232,7 +232,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
       );
 
   String get _fromStateConstructor {
-    final StringBuffer buffer = StringBuffer('=>');
+    final buffer = StringBuffer('=>');
     if (_ctor.isConst &&
         _ctorParams.isEmpty &&
         _ctorQueryParams.isEmpty &&
@@ -241,7 +241,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
     }
 
     buffer.writeln('$_className(');
-    for (final FormalParameterElement param in <FormalParameterElement>[
+    for (final param in <FormalParameterElement>[
       ..._ctorParams,
       ..._ctorQueryParams,
       if (_extraParam != null) _extraParam!,
@@ -314,12 +314,12 @@ mixin _GoRouteMixin on RouteBaseConfig {
       return '';
     }
 
-    final StringBuffer buffer = StringBuffer('queryParams: {\n');
+    final buffer = StringBuffer('queryParams: {\n');
 
     for (final FormalParameterElement param in _ctorQueryParams) {
       final String parameterName = param.displayName;
 
-      final List<String> conditions = <String>[];
+      final conditions = <String>[];
       if (param.hasDefaultValue) {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
@@ -330,7 +330,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
       } else if (param.type.isNullableType) {
         conditions.add('$selfFieldName.$parameterName != null');
       }
-      String line = '';
+      var line = '';
       if (conditions.isNotEmpty) {
         line = 'if (${conditions.join(' && ')}) ';
       }
@@ -384,9 +384,9 @@ mixin _GoRouteMixin on RouteBaseConfig {
   /// Returns code representing the constant maps that contain the `enum` to
   /// [String] mapping for each referenced enum.
   Iterable<String> _enumDeclarations() {
-    final Set<InterfaceType> enumParamTypes = <InterfaceType>{};
+    final enumParamTypes = <InterfaceType>{};
 
-    for (final FormalParameterElement ctorParam in <FormalParameterElement>[
+    for (final ctorParam in <FormalParameterElement>[
       ..._ctorParams,
       ..._ctorQueryParams,
     ]) {
@@ -441,7 +441,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   final String? parentNavigatorKey;
 
   String get _rawJoinedPath {
-    final List<String> pathSegments = <String>[];
+    final pathSegments = <String>[];
 
     RouteBaseConfig? config = this;
     while (config != null) {
@@ -598,11 +598,7 @@ abstract class RouteBaseConfig {
     ConstantReader reader,
     InterfaceElement2 element,
   ) {
-    final RouteBaseConfig definition = RouteBaseConfig._fromAnnotation(
-      reader,
-      element,
-      null,
-    );
+    final definition = RouteBaseConfig._fromAnnotation(reader, element, null);
 
     if (element != definition.routeDataClass) {
       throw InvalidGenerationSourceError(
@@ -622,7 +618,7 @@ abstract class RouteBaseConfig {
     bool isAncestorRelative = false,
   }) {
     assert(!reader.isNull, 'reader should not be null');
-    final InterfaceType type = reader.objectValue.type! as InterfaceType;
+    final type = reader.objectValue.type! as InterfaceType;
     final String typeName = type.element.displayName;
 
     if (isAncestorRelative && typeName == 'TypedGoRoute') {
@@ -850,7 +846,7 @@ abstract class RouteBaseConfig {
   );
 
   Iterable<String> _generateMembers() sync* {
-    final List<String> items = <String>[_rootDefinition()];
+    final items = <String>[_rootDefinition()];
 
     for (final RouteBaseConfig def in _flatten()) {
       items.addAll(def.classDeclarations());
@@ -893,7 +889,7 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
   String get _extensionName => '\$${_className}Extension';
 
   String _invokesRouteConstructor() {
-    final String routesBit = _children.isEmpty
+    final routesBit = _children.isEmpty
         ? ''
         : '''
 ${_generateChildrenGetterName(routeDataClassName)}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
@@ -939,7 +935,7 @@ String _enumMapConst(InterfaceType type) {
 
   final String enumName = type.element.displayName;
 
-  final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
+  final buffer = StringBuffer('const ${enumMapName(type)} = {');
 
   // ignore: experimental_member_use
   for (final FieldElement2 enumField in type.element3.fields2.where(

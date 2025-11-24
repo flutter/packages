@@ -54,8 +54,7 @@ final class AndroidAdsRenderingSettingsCreationParams
 base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
   /// Constructs an [AndroidAdsRenderingSettings].
   AndroidAdsRenderingSettings(super.params) : super.implementation() {
-    final Completer<ima.AdsRenderingSettings> nativeSettingsCompleter =
-        Completer<ima.AdsRenderingSettings>();
+    final nativeSettingsCompleter = Completer<ima.AdsRenderingSettings>();
     nativeSettings = nativeSettingsCompleter.future;
 
     _androidParams._proxy

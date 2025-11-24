@@ -148,7 +148,7 @@ class LocalAuthAndroid extends LocalAuthPlatform {
     Iterable<AuthMessages> messagesList,
   ) {
     AndroidAuthMessages? messages;
-    for (final AuthMessages entry in messagesList) {
+    for (final entry in messagesList) {
       if (entry is AndroidAuthMessages) {
         messages = entry;
       }
