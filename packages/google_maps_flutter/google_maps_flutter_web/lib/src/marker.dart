@@ -184,7 +184,7 @@ class LegacyMarkerController
     if (_marker == null) {
       throw StateError('Cannot `showInfoWindow` on a `remove`d Marker.');
     }
-    
+
     if (_infoWindow != null) {
       _infoWindow.open(_marker!.map, _marker);
       _infoWindowShown = true;

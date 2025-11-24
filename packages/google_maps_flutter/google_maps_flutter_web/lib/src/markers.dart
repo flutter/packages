@@ -15,7 +15,7 @@ part of '../google_maps_flutter_web.dart';
 /// * [T] - The marker type (e.g., [gmaps.Marker] or [gmaps.AdvancedMarkerElement])
 /// * [O] - The options type used to configure the marker
 ///   (e.g., [gmaps.MarkerOptions] or [gmaps.AdvancedMarkerElementOptions])
-/// 
+///
 /// [T] must extend [JSObject]. It's not specified in code because our mocking
 /// framework does not support mocking JSObjects.
 abstract class MarkersController<T extends Object, O>
