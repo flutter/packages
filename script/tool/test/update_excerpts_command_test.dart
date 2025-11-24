@@ -22,31 +22,33 @@ void runAllTests(MockPlatform platform) {
     (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
         configureBaseCommandMocks(platform: platform);
     runner = CommandRunner<void>('', '')
-      ..addCommand(UpdateExcerptsCommand(
-        packagesDir,
-        platform: platform,
-        processRunner: processRunner,
-        gitDir: gitDir,
-      ));
+      ..addCommand(
+        UpdateExcerptsCommand(
+          packagesDir,
+          platform: platform,
+          processRunner: processRunner,
+          gitDir: gitDir,
+        ),
+      );
   });
 
-  Future<void> testInjection(
-      {required String before,
-      required String source,
-      required String after,
-      required String filename,
-      bool failOnChange = false}) async {
-    final RepositoryPackage package =
-        createFakePackage('a_package', packagesDir);
+  Future<void> testInjection({
+    required String before,
+    required String source,
+    required String after,
+    required String filename,
+    bool failOnChange = false,
+  }) async {
+    final RepositoryPackage package = createFakePackage(
+      'a_package',
+      packagesDir,
+    );
     package.readmeFile.writeAsStringSync(before);
     package.directory.childFile(filename).writeAsStringSync(source);
     Object? errorObject;
     final List<String> output = await runCapturingPrint(
       runner,
-      <String>[
-        'update-excerpts',
-        if (failOnChange) '--fail-on-change',
-      ],
+      <String>['update-excerpts', if (failOnChange) '--fail-on-change'],
       errorHandler: (Object error) {
         errorObject = error;
       },
@@ -60,7 +62,8 @@ void runAllTests(MockPlatform platform) {
   test('succeeds when nothing has changed', () async {
     const filename = 'main.dart';
 
-    const readme = '''
+    const readme =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -76,12 +79,18 @@ A B C
 FAIL
 ''';
     await testInjection(
-        before: readme, source: source, after: readme, filename: filename);
+      before: readme,
+      source: source,
+      after: readme,
+      filename: filename,
+    );
   });
 
   test('fails if example injection fails', () async {
-    final RepositoryPackage package =
-        createFakePackage('a_package', packagesDir);
+    final RepositoryPackage package = createFakePackage(
+      'a_package',
+      packagesDir,
+    );
     package.readmeFile.writeAsStringSync('''
 Example:
 
@@ -100,9 +109,12 @@ FAIL
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['update-excerpts'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
@@ -110,7 +122,8 @@ FAIL
       containsAllInOrder(<Matcher>[
         contains('Injecting excerpts failed:'),
         contains(
-            'main.dart: did not find a "// #docregion UnknownSection" pragma'),
+          'main.dart: did not find a "// #docregion UnknownSection" pragma',
+        ),
       ]),
     );
   });
@@ -118,7 +131,8 @@ FAIL
   test('updates files', () async {
     const filename = 'main.dart';
 
-    const before = '''
+    const before =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -135,7 +149,8 @@ A B C
 FAIL
 ''';
 
-    const after = '''
+    const after =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -145,12 +160,18 @@ A B C
 ''';
 
     await testInjection(
-        before: before, source: source, after: after, filename: filename);
+      before: before,
+      source: source,
+      after: after,
+      filename: filename,
+    );
   });
 
   test('fails if READMEs are changed with --fail-on-change', () async {
-    final RepositoryPackage package =
-        createFakePackage('a_package', packagesDir);
+    final RepositoryPackage package = createFakePackage(
+      'a_package',
+      packagesDir,
+    );
     package.readmeFile.writeAsStringSync('''
 Example:
 
@@ -169,10 +190,12 @@ FAIL
 
     Error? commandError;
     final List<String> output = await runCapturingPrint(
-        runner, <String>['update-excerpts', '--fail-on-change'],
-        errorHandler: (Error e) {
-      commandError = e;
-    });
+      runner,
+      <String>['update-excerpts', '--fail-on-change'],
+      errorHandler: (Error e) {
+        commandError = e;
+      },
+    );
 
     expect(commandError, isA<ToolExit>());
     expect(
@@ -181,11 +204,13 @@ FAIL
     );
   });
 
-  test('does not fail if READMEs are not changed with --fail-on-change',
-      () async {
-    const filename = 'main.dart';
+  test(
+    'does not fail if READMEs are not changed with --fail-on-change',
+    () async {
+      const filename = 'main.dart';
 
-    const readme = '''
+      const readme =
+          '''
 Example:
 
 <?code-excerpt "$filename (aa)"?>
@@ -198,7 +223,7 @@ B
 ```
 ''';
 
-    const source = '''
+      const source = '''
 // #docregion aa
 A
 // #enddocregion aa
@@ -207,19 +232,21 @@ B
 // #enddocregion bb
 ''';
 
-    await testInjection(
-      before: readme,
-      source: source,
-      after: readme,
-      filename: filename,
-      failOnChange: true,
-    );
-  });
+      await testInjection(
+        before: readme,
+        source: source,
+        after: readme,
+        filename: filename,
+        failOnChange: true,
+      );
+    },
+  );
 
   test('indents the plaster', () async {
     const filename = 'main.dart';
 
-    const before = '''
+    const before =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -236,7 +263,8 @@ B
 // #enddocregion SomeSection
 ''';
 
-    const after = '''
+    const after =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -248,13 +276,18 @@ B
 ''';
 
     await testInjection(
-        before: before, source: source, after: after, filename: filename);
+      before: before,
+      source: source,
+      after: after,
+      filename: filename,
+    );
   });
 
   test('does not unindent blocks if plaster will not unindent', () async {
     const filename = 'main.dart';
 
-    const before = '''
+    const before =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -271,7 +304,8 @@ Example:
 // #enddocregion SomeSection
 ''';
 
-    const after = '''
+    const after =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -283,13 +317,18 @@ Example:
 ''';
 
     await testInjection(
-        before: before, source: source, after: after, filename: filename);
+      before: before,
+      source: source,
+      after: after,
+      filename: filename,
+    );
   });
 
   test('unindents blocks', () async {
     const filename = 'main.dart';
 
-    const before = '''
+    const before =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -306,7 +345,8 @@ Example:
     // #enddocregion SomeSection
 ''';
 
-    const after = '''
+    const after =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -318,13 +358,18 @@ A
 ''';
 
     await testInjection(
-        before: before, source: source, after: after, filename: filename);
+      before: before,
+      source: source,
+      after: after,
+      filename: filename,
+    );
   });
 
   test('unindents blocks and plaster', () async {
     const filename = 'main.dart';
 
-    const before = '''
+    const before =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -341,7 +386,8 @@ Example:
     // #enddocregion SomeSection
 ''';
 
-    const after = '''
+    const after =
+        '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -353,12 +399,18 @@ A
 ''';
 
     await testInjection(
-        before: before, source: source, after: after, filename: filename);
+      before: before,
+      source: source,
+      after: after,
+      filename: filename,
+    );
   });
 
   test('relative path bases', () async {
-    final RepositoryPackage package =
-        createFakePackage('a_package', packagesDir);
+    final RepositoryPackage package = createFakePackage(
+      'a_package',
+      packagesDir,
+    );
     package.readmeFile.writeAsStringSync('''
 <?code-excerpt "main.dart (a)"?>
 ```dart
@@ -454,8 +506,10 @@ Y
   });
 
   test('logs snippets checked', () async {
-    final RepositoryPackage package =
-        createFakePackage('a_package', packagesDir);
+    final RepositoryPackage package = createFakePackage(
+      'a_package',
+      packagesDir,
+    );
     package.readmeFile.writeAsStringSync('''
 Example:
 
@@ -472,8 +526,9 @@ A B C
 FAIL
 ''');
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['update-excerpts']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'update-excerpts',
+    ]);
 
     expect(
       output,
@@ -497,17 +552,17 @@ FAIL
       <String, String>{
         'filename': 'main.css',
         'prefix': '/* ',
-        'suffix': ' */'
+        'suffix': ' */',
       },
       <String, String>{
         'filename': 'main.html',
         'prefix': '<!--',
-        'suffix': '-->'
+        'suffix': '-->',
       },
       <String, String>{
         'filename': 'main.xml',
         'prefix': '<!--',
-        'suffix': '-->'
+        'suffix': '-->',
       },
       <String, String>{'filename': 'main.yaml', 'prefix': '# '},
       <String, String>{'filename': 'main.sh', 'prefix': '# '},
@@ -521,7 +576,8 @@ FAIL
         final String prefix = testCase['prefix'] ?? '// ';
         final String suffix = testCase['suffix'] ?? '';
 
-        final before = '''
+        final before =
+            '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -530,7 +586,8 @@ X Y Z
 ```
 ''';
 
-        final source = '''
+        final source =
+            '''
 FAIL
 $prefix#docregion SomeSection$suffix
 A B C
@@ -538,7 +595,8 @@ $prefix#enddocregion SomeSection$suffix
 FAIL
 ''';
 
-        final after = '''
+        final after =
+            '''
 Example:
 
 <?code-excerpt "$filename (SomeSection)"?>
@@ -548,7 +606,11 @@ A B C
 ''';
 
         await testInjection(
-            before: before, source: source, after: after, filename: filename);
+          before: before,
+          source: source,
+          after: after,
+          filename: filename,
+        );
       });
     }
 

@@ -86,8 +86,10 @@ Future<PackageChangeState> checkPackageChangeState(
         continue;
       }
 
-      final bool isUnpublishedExampleChange =
-          _isUnpublishedExampleChange(components, package);
+      final bool isUnpublishedExampleChange = _isUnpublishedExampleChange(
+        components,
+        package,
+      );
 
       // Since examples of federated plugin implementations are only intended
       // for testing purposes, any unpublished example change in one of them is
@@ -105,20 +107,21 @@ Future<PackageChangeState> checkPackageChangeState(
 
       // Most changes that aren't developer-only need version changes.
       if (
-          // One of a few special files example will be shown on pub.dev, but
-          // for anything else in the example, publishing isn't necessary (even
-          // if it is relevant to mention in the CHANGELOG for the future).
-          !isUnpublishedExampleChange) {
+      // One of a few special files example will be shown on pub.dev, but
+      // for anything else in the example, publishing isn't necessary (even
+      // if it is relevant to mention in the CHANGELOG for the future).
+      !isUnpublishedExampleChange) {
         needsVersionChange = true;
       }
     }
   }
 
   return PackageChangeState(
-      hasChanges: hasChanges,
-      hasChangelogChange: hasChangelogChange,
-      needsChangelogChange: needsChangelogChange,
-      needsVersionChange: needsVersionChange);
+    hasChanges: hasChanges,
+    hasChangelogChange: hasChangelogChange,
+    needsChangelogChange: needsChangelogChange,
+    needsVersionChange: needsVersionChange,
+  );
 }
 
 bool _isTestChange(List<String> pathComponents) {
@@ -139,7 +142,9 @@ bool _isTestChange(List<String> pathComponents) {
 // This is not exhastive; it currently only handles variations we actually have
 // in our repositories.
 bool _isUnpublishedExampleChange(
-    List<String> pathComponents, RepositoryPackage package) {
+  List<String> pathComponents,
+  RepositoryPackage package,
+) {
   if (pathComponents.first != 'example') {
     return false;
   }
@@ -148,14 +153,15 @@ bool _isUnpublishedExampleChange(
     return false;
   }
 
-  final Directory exampleDirectory =
-      package.directory.childDirectory('example');
+  final Directory exampleDirectory = package.directory.childDirectory(
+    'example',
+  );
 
   // Check for example.md/EXAMPLE.md first, as that has priority. If it's
   // present, any other example file is unpublished.
   final bool hasExampleMd =
       exampleDirectory.childFile('example.md').existsSync() ||
-          exampleDirectory.childFile('EXAMPLE.md').existsSync();
+      exampleDirectory.childFile('EXAMPLE.md').existsSync();
   if (hasExampleMd) {
     return !(exampleComponents.length == 1 &&
         exampleComponents.first.toLowerCase() == 'example.md');
@@ -167,7 +173,7 @@ bool _isUnpublishedExampleChange(
   const mainName = 'main.dart';
   final bool hasExampleCode =
       exampleDirectory.childDirectory('lib').childFile(mainName).existsSync() ||
-          exampleDirectory.childFile(mainName).existsSync();
+      exampleDirectory.childFile(mainName).existsSync();
   if (hasExampleCode) {
     // If there is an example main, only that example file is published.
     return !((exampleComponents.length == 1 &&
@@ -183,8 +189,11 @@ bool _isUnpublishedExampleChange(
 }
 
 // True if the change is only relevant to people working on the package.
-Future<bool> _isDevChange(List<String> pathComponents,
-    {GitVersionFinder? git, String? repoPath}) async {
+Future<bool> _isDevChange(
+  List<String> pathComponents, {
+  GitVersionFinder? git,
+  String? repoPath,
+}) async {
   return _isTestChange(pathComponents) ||
       // The top-level "tool" directory is for non-client-facing utility
       // code, such as test scripts.
@@ -203,14 +212,20 @@ Future<bool> _isDevChange(List<String> pathComponents,
       // Example build files are very unlikely to be interesting to clients.
       _isExampleBuildFile(pathComponents) ||
       // Test-only gradle depenedencies don't affect clients.
-      await _isGradleTestDependencyChange(pathComponents,
-          git: git, repoPath: repoPath) ||
+      await _isGradleTestDependencyChange(
+        pathComponents,
+        git: git,
+        repoPath: repoPath,
+      ) ||
       // Implementation comments don't affect clients.
       // This check is currently Dart-only since that's the only place
       // this has come up in practice; it could be generalized to other
       // languages if needed.
-      await _isDartImplementationCommentChange(pathComponents,
-          git: git, repoPath: repoPath);
+      await _isDartImplementationCommentChange(
+        pathComponents,
+        git: git,
+        repoPath: repoPath,
+      );
 }
 
 bool _isExampleBuildFile(List<String> pathComponents) {
@@ -230,8 +245,11 @@ bool _isExampleBuildFile(List<String> pathComponents) {
       pathComponents.contains('pubspec.yaml');
 }
 
-Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
-    {GitVersionFinder? git, String? repoPath}) async {
+Future<bool> _isGradleTestDependencyChange(
+  List<String> pathComponents, {
+  GitVersionFinder? git,
+  String? repoPath,
+}) async {
   if (git == null) {
     return false;
   }
@@ -240,8 +258,9 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
   }
   final List<String> diff = await git.getDiffContents(targetPath: repoPath);
   final changeLine = RegExp(r'^[+-] ');
-  final testDependencyLine =
-      RegExp(r'^[+-]\s*(?:androidT|t)estImplementation(?:\s|\()');
+  final testDependencyLine = RegExp(
+    r'^[+-]\s*(?:androidT|t)estImplementation(?:\s|\()',
+  );
   var foundTestDependencyChange = false;
   for (final line in diff) {
     if (!changeLine.hasMatch(line) ||
@@ -261,8 +280,11 @@ Future<bool> _isGradleTestDependencyChange(List<String> pathComponents,
 
 // Returns true if the given file is a Dart file whose only changes are
 // implementation comments (i.e., not doc comments).
-Future<bool> _isDartImplementationCommentChange(List<String> pathComponents,
-    {GitVersionFinder? git, String? repoPath}) async {
+Future<bool> _isDartImplementationCommentChange(
+  List<String> pathComponents, {
+  GitVersionFinder? git,
+  String? repoPath,
+}) async {
   if (git == null) {
     return false;
   }

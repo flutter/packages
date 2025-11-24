@@ -20,8 +20,11 @@ void main() {
 
   group('isConfigured', () {
     test('reports true when configured on Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/gradlew.bat']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/gradlew.bat'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -32,8 +35,11 @@ void main() {
     });
 
     test('reports true when configured on non-Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/gradlew']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/gradlew'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -44,8 +50,11 @@ void main() {
     });
 
     test('reports false when not configured on Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/foo']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/foo'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -56,8 +65,11 @@ void main() {
     });
 
     test('reports true when configured on non-Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/foo']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/foo'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -70,8 +82,11 @@ void main() {
 
   group('runCommand', () {
     test('runs without arguments', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/gradlew']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/gradlew'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -82,23 +97,26 @@ void main() {
 
       expect(exitCode, 0);
       expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                plugin
-                    .platformDirectory(FlutterPlatform.android)
-                    .childFile('gradlew')
-                    .path,
-                const <String>[
-                  'foo',
-                ],
-                plugin.platformDirectory(FlutterPlatform.android).path),
-          ]));
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+            plugin
+                .platformDirectory(FlutterPlatform.android)
+                .childFile('gradlew')
+                .path,
+            const <String>['foo'],
+            plugin.platformDirectory(FlutterPlatform.android).path,
+          ),
+        ]),
+      );
     });
 
     test('runs with arguments', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/gradlew']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/gradlew'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -112,25 +130,26 @@ void main() {
 
       expect(exitCode, 0);
       expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                plugin
-                    .platformDirectory(FlutterPlatform.android)
-                    .childFile('gradlew')
-                    .path,
-                const <String>[
-                  'foo',
-                  '--bar',
-                  '--baz',
-                ],
-                plugin.platformDirectory(FlutterPlatform.android).path),
-          ]));
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+            plugin
+                .platformDirectory(FlutterPlatform.android)
+                .childFile('gradlew')
+                .path,
+            const <String>['foo', '--bar', '--baz'],
+            plugin.platformDirectory(FlutterPlatform.android).path,
+          ),
+        ]),
+      );
     });
 
     test('runs with the correct wrapper on Windows', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/gradlew.bat']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/gradlew.bat'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -141,23 +160,26 @@ void main() {
 
       expect(exitCode, 0);
       expect(
-          processRunner.recordedCalls,
-          orderedEquals(<ProcessCall>[
-            ProcessCall(
-                plugin
-                    .platformDirectory(FlutterPlatform.android)
-                    .childFile('gradlew.bat')
-                    .path,
-                const <String>[
-                  'foo',
-                ],
-                plugin.platformDirectory(FlutterPlatform.android).path),
-          ]));
+        processRunner.recordedCalls,
+        orderedEquals(<ProcessCall>[
+          ProcessCall(
+            plugin
+                .platformDirectory(FlutterPlatform.android)
+                .childFile('gradlew.bat')
+                .path,
+            const <String>['foo'],
+            plugin.platformDirectory(FlutterPlatform.android).path,
+          ),
+        ]),
+      );
     });
 
     test('returns error codes', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin', packagesDir,
-          extraFiles: <String>['android/gradlew.bat']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'plugin',
+        packagesDir,
+        extraFiles: <String>['android/gradlew.bat'],
+      );
       final project = GradleProject(
         plugin,
         processRunner: processRunner,
@@ -165,9 +187,7 @@ void main() {
       );
 
       processRunner.mockProcessesForExecutable[project.gradleWrapper.path] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-      ];
+          <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
 
       final int exitCode = await project.runCommand('foo');
 

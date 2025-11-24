@@ -33,14 +33,15 @@ Future<bool> runConfigOnlyBuild(
   };
 
   final int exitCode = await processRunner.runAndStream(
-      flutterCommand,
-      <String>[
-        'build',
-        target,
-        if (buildDebug) '--debug',
-        '--config-only',
-        ...extraArgs,
-      ],
-      workingDir: package.directory);
+    flutterCommand,
+    <String>[
+      'build',
+      target,
+      if (buildDebug) '--debug',
+      '--config-only',
+      ...extraArgs,
+    ],
+    workingDir: package.directory,
+  );
   return exitCode == 0;
 }

@@ -28,7 +28,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   }) {
     argParser.addFlag(
       _failOnChangeFlag,
-      help: 'Fail if the command does anything. '
+      help:
+          'Fail if the command does anything. '
           '(Used in CI to ensure excerpts are up to date.)',
     );
   }
@@ -39,7 +40,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   final String name = 'update-excerpts';
 
   @override
-  final String description = 'Updates code excerpts in .md files, based '
+  final String description =
+      'Updates code excerpts in .md files, based '
       'on code from code files, via <?code-excerpt?> pragmas.';
 
   @override
@@ -61,10 +63,14 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
     for (final file in markdownFiles) {
       final _UpdateResult result = _updateExcerptsIn(file);
       if (result.snippetCount > 0) {
-        final String displayPath =
-            getRelativePosixPath(file, from: package.directory);
-        print('${indentation}Checked ${result.snippetCount} snippet(s) in '
-            '$displayPath.');
+        final String displayPath = getRelativePosixPath(
+          file,
+          from: package.directory,
+        );
+        print(
+          '${indentation}Checked ${result.snippetCount} snippet(s) in '
+          '$displayPath.',
+        );
       }
       if (result.changed) {
         changedFiles.add(file);
@@ -101,8 +107,9 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
   }
 
   static const String _pragma = '<?code-excerpt';
-  static final RegExp _basePattern =
-      RegExp(r'^ *<\?code-excerpt path-base="([^"]+)"\?>$');
+  static final RegExp _basePattern = RegExp(
+    r'^ *<\?code-excerpt path-base="([^"]+)"\?>$',
+  );
   static final RegExp _injectPattern = RegExp(
     r'^ *<\?code-excerpt "(?<path>[^ ]+) \((?<section>[^)]+)\)"(?: plaster="(?<plaster>[^"]*)")?\?>$',
   );
@@ -125,14 +132,16 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           if (line.contains(_pragma)) {
             RegExpMatch? match = _basePattern.firstMatch(line);
             if (match != null) {
-              pathBase =
-                  file.parent.childDirectory(path.normalize(match.group(1)!));
+              pathBase = file.parent.childDirectory(
+                path.normalize(match.group(1)!),
+              );
             } else {
               match = _injectPattern.firstMatch(line);
               if (match != null) {
                 snippetCount++;
-                final String excerptPath =
-                    path.normalize(match.namedGroup('path')!);
+                final String excerptPath = path.normalize(
+                  match.namedGroup('path')!,
+                );
                 final File excerptSourceFile = pathBase.childFile(excerptPath);
                 final String extension = path.extension(excerptSourceFile.path);
                 switch (extension) {
@@ -154,15 +163,22 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
                 final String plaster = match.namedGroup('plaster') ?? '···';
                 if (!excerptSourceFile.existsSync()) {
                   errors.add(
-                      '${file.path}:$lineNumber: specified file "$excerptPath" (resolved to "${excerptSourceFile.path}") does not exist');
+                    '${file.path}:$lineNumber: specified file "$excerptPath" (resolved to "${excerptSourceFile.path}") does not exist',
+                  );
                 } else {
                   excerpt = _extractExcerpt(
-                      excerptSourceFile, section, plaster, language, errors);
+                    excerptSourceFile,
+                    section,
+                    plaster,
+                    language,
+                    errors,
+                  );
                 }
                 mode = _ExcerptParseMode.pragma;
               } else {
                 errors.add(
-                    '${file.path}:$lineNumber: $_pragma?> pragma does not match expected syntax or is not alone on the line');
+                  '${file.path}:$lineNumber: $_pragma?> pragma does not match expected syntax or is not alone on the line',
+                );
               }
             }
           }
@@ -170,12 +186,14 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         case _ExcerptParseMode.pragma:
           if (!line.startsWith('```')) {
             errors.add(
-                '${file.path}:$lineNumber: expected code block but did not find one');
+              '${file.path}:$lineNumber: expected code block but did not find one',
+            );
             mode = _ExcerptParseMode.normal;
           } else {
             if (line.startsWith('``` ')) {
               errors.add(
-                  '${file.path}:$lineNumber: code block was followed by a space character instead of the language (expected "$language")');
+                '${file.path}:$lineNumber: code block was followed by a space character instead of the language (expected "$language")',
+              );
               mode = _ExcerptParseMode.injecting;
             } else if (line != '```$language' &&
                 line != '```rfwtxt' &&
@@ -183,7 +201,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
               // We special-case rfwtxt and json because the rfw package extracts such sections from Dart files.
               // If we get more special cases we should think about a more general solution.
               errors.add(
-                  '${file.path}:$lineNumber: code block has wrong language');
+                '${file.path}:$lineNumber: code block has wrong language',
+              );
             }
             mode = _ExcerptParseMode.injecting;
           }
@@ -212,15 +231,21 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
           file.writeAsStringSync(output.toString());
         } catch (e) {
           errors.add(
-              '${file.path}: failed to update file (${e.runtimeType}: $e)');
+            '${file.path}: failed to update file (${e.runtimeType}: $e)',
+          );
         }
       }
     }
     return _UpdateResult(detectedChange, snippetCount, errors);
   }
 
-  String _extractExcerpt(File excerptSourceFile, String section,
-      String plasterInside, String language, List<String> errors) {
+  String _extractExcerpt(
+    File excerptSourceFile,
+    String section,
+    String plasterInside,
+    String language,
+    List<String> errors,
+  ) {
     final buffer = <String>[];
     var extracting = false;
     var lineNumber = 0;
@@ -268,7 +293,8 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
         } else {
           if (trimmedLine == startRegionMarker) {
             errors.add(
-                '${excerptSourceFile.path}:$lineNumber: saw "$startRegionMarker" pragma while already in a "$section" doc region');
+              '${excerptSourceFile.path}:$lineNumber: saw "$startRegionMarker" pragma while already in a "$section" doc region',
+            );
           }
           if (excerptLine.length > maxLength) {
             maxLength = excerptLine.length;
@@ -291,12 +317,14 @@ class UpdateExcerptsCommand extends PackageLoopingCommand {
       }
     }
     if (extracting) {
-      errors
-          .add('${excerptSourceFile.path}: missing "$endRegionMarker" pragma');
+      errors.add(
+        '${excerptSourceFile.path}: missing "$endRegionMarker" pragma',
+      );
     }
     if (!found) {
       errors.add(
-          '${excerptSourceFile.path}: did not find a "$startRegionMarker" pragma');
+        '${excerptSourceFile.path}: did not find a "$startRegionMarker" pragma',
+      );
       return '';
     }
     if (buffer.isEmpty) {

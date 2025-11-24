@@ -15,16 +15,14 @@ import 'common/repository_package.dart';
 /// clients of the library, but not for development of the library.
 class RemoveDevDependenciesCommand extends PackageLoopingCommand {
   /// Creates a publish metadata updater command instance.
-  RemoveDevDependenciesCommand(
-    super.packagesDir, {
-    super.gitDir,
-  });
+  RemoveDevDependenciesCommand(super.packagesDir, {super.gitDir});
 
   @override
   final String name = 'remove-dev-dependencies';
 
   @override
-  final String description = 'Removes any dev_dependencies section from a '
+  final String description =
+      'Removes any dev_dependencies section from a '
       'package, to allow more legacy testing.';
 
   @override

@@ -38,15 +38,19 @@ bool pluginSupportsPlatform(
   RepositoryPackage plugin, {
   PlatformSupport? requiredMode,
 }) {
-  assert(platform == platformIOS ||
-      platform == platformAndroid ||
-      platform == platformWeb ||
-      platform == platformMacOS ||
-      platform == platformWindows ||
-      platform == platformLinux);
+  assert(
+    platform == platformIOS ||
+        platform == platformAndroid ||
+        platform == platformWeb ||
+        platform == platformMacOS ||
+        platform == platformWindows ||
+        platform == platformLinux,
+  );
 
-  final YamlMap? platformEntry =
-      _readPlatformPubspecSectionForPlugin(platform, plugin);
+  final YamlMap? platformEntry = _readPlatformPubspecSectionForPlugin(
+    platform,
+    plugin,
+  );
   if (platformEntry == null) {
     return false;
   }
@@ -70,8 +74,10 @@ bool pluginHasNativeCodeForPlatform(String platform, RepositoryPackage plugin) {
     // Web plugins are always Dart-only.
     return false;
   }
-  final YamlMap? platformEntry =
-      _readPlatformPubspecSectionForPlugin(platform, plugin);
+  final YamlMap? platformEntry = _readPlatformPubspecSectionForPlugin(
+    platform,
+    plugin,
+  );
   if (platformEntry == null) {
     return false;
   }
@@ -89,8 +95,10 @@ bool pluginHasNativeCodeForPlatform(String platform, RepositoryPackage plugin) {
 ///
 /// A null enabled state clears the package-local override, defaulting to whatever the
 /// global state is.
-void setSwiftPackageManagerState(RepositoryPackage package,
-    {required bool? enabled}) {
+void setSwiftPackageManagerState(
+  RepositoryPackage package, {
+  required bool? enabled,
+}) {
   const swiftPMFlag = 'enable-swift-package-manager';
   const flutterKey = 'flutter';
   const flutterPath = <String>[flutterKey];
@@ -109,8 +117,9 @@ void setSwiftPackageManagerState(RepositoryPackage package,
       editablePubspec.remove(configPath);
       // The entire flutter: section may also only have been added for the
       // config, in which case it should be removed as well.
-      final flutterMap = editablePubspec.parseAt(flutterPath,
-          orElse: () => YamlMap()) as YamlMap;
+      final flutterMap =
+          editablePubspec.parseAt(flutterPath, orElse: () => YamlMap())
+              as YamlMap;
       if (flutterMap.isEmpty) {
         editablePubspec.remove(flutterPath);
       }
@@ -142,7 +151,9 @@ void setSwiftPackageManagerState(RepositoryPackage package,
 /// section from [plugin]'s pubspec.yaml, or null if either it is not present,
 /// or the pubspec couldn't be read.
 YamlMap? _readPlatformPubspecSectionForPlugin(
-    String platform, RepositoryPackage plugin) {
+  String platform,
+  RepositoryPackage plugin,
+) {
   final YamlMap? pluginSection = _readPluginPubspecSection(plugin);
   if (pluginSection == null) {
     return null;

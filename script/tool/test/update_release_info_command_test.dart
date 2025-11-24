@@ -22,38 +22,37 @@ void main() {
     (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks();
 
-    final command = UpdateReleaseInfoCommand(
-      packagesDir,
-      gitDir: gitDir,
-    );
+    final command = UpdateReleaseInfoCommand(packagesDir, gitDir: gitDir);
     runner = CommandRunner<void>(
-        'update_release_info_command', 'Test for update_release_info_command');
+      'update_release_info_command',
+      'Test for update_release_info_command',
+    );
     runner.addCommand(command);
   });
 
   group('flags', () {
     test('fails if --changelog is missing', () async {
       Error? commandError;
-      await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=next',
-      ], errorHandler: (Error e) {
-        commandError = e;
-      });
+      await runCapturingPrint(
+        runner,
+        <String>['update-release-info', '--version=next'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --changelog is blank', () async {
       Exception? commandError;
-      await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=next',
-        '--changelog',
-        '',
-      ], exceptionHandler: (Exception e) {
-        commandError = e;
-      });
+      await runCapturingPrint(
+        runner,
+        <String>['update-release-info', '--version=next', '--changelog', ''],
+        exceptionHandler: (Exception e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<UsageException>());
     });
@@ -61,24 +60,30 @@ void main() {
     test('fails if --version is missing', () async {
       Error? commandError;
       await runCapturingPrint(
-          runner, <String>['update-release-info', '--changelog', 'A change.'],
-          errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['update-release-info', '--changelog', 'A change.'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ArgumentError>());
     });
 
     test('fails if --version is an unknown value', () async {
       Exception? commandError;
-      await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=foo',
-        '--changelog',
-        'A change.',
-      ], exceptionHandler: (Exception e) {
-        commandError = e;
-      });
+      await runCapturingPrint(
+        runner,
+        <String>[
+          'update-release-info',
+          '--version=foo',
+          '--changelog',
+          'A change.',
+        ],
+        exceptionHandler: (Exception e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<UsageException>());
     });
@@ -86,8 +91,11 @@ void main() {
 
   group('changelog', () {
     test('adds new NEXT section', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 ## 1.0.0
@@ -100,7 +108,7 @@ void main() {
         'update-release-info',
         '--version=next',
         '--changelog',
-        'A change.'
+        'A change.',
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
@@ -113,16 +121,17 @@ $originalChangelog''';
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('  Added a NEXT section.'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('  Added a NEXT section.')]),
       );
       expect(newChangelog, expectedChangeLog);
     });
 
     test('adds to existing NEXT section', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 ## NEXT
@@ -139,7 +148,7 @@ $originalChangelog''';
         'update-release-info',
         '--version=next',
         '--changelog',
-        'A change.'
+        'A change.',
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
@@ -154,14 +163,19 @@ $originalChangelog''';
 * Old changes.
 ''';
 
-      expect(output,
-          containsAllInOrder(<Matcher>[contains('  Updated NEXT section.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('  Updated NEXT section.')]),
+      );
       expect(newChangelog, expectedChangeLog);
     });
 
     test('adds new version section', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 ## 1.0.0
@@ -174,7 +188,7 @@ $originalChangelog''';
         'update-release-info',
         '--version=bugfix',
         '--changelog',
-        'A change.'
+        'A change.',
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
@@ -187,16 +201,17 @@ $originalChangelog''';
 
       expect(
         output,
-        containsAllInOrder(<Matcher>[
-          contains('  Added a 1.0.1 section.'),
-        ]),
+        containsAllInOrder(<Matcher>[contains('  Added a 1.0.1 section.')]),
       );
       expect(newChangelog, expectedChangeLog);
     });
 
     test('converts existing NEXT section to version section', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 ## NEXT
@@ -213,7 +228,7 @@ $originalChangelog''';
         'update-release-info',
         '--version=bugfix',
         '--changelog',
-        'A change.'
+        'A change.',
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
@@ -228,14 +243,19 @@ $originalChangelog''';
 * Old changes.
 ''';
 
-      expect(output,
-          containsAllInOrder(<Matcher>[contains('  Updated NEXT section.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('  Updated NEXT section.')]),
+      );
       expect(newChangelog, expectedChangeLog);
     });
 
     test('treats multiple lines as multiple list items', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 ## 1.0.0
@@ -248,7 +268,7 @@ $originalChangelog''';
         'update-release-info',
         '--version=bugfix',
         '--changelog',
-        'First change.\nSecond change.'
+        'First change.\nSecond change.',
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
@@ -263,27 +283,31 @@ $originalChangelog''';
       expect(newChangelog, expectedChangeLog);
     });
 
-    test('adds a period to any lines missing it, and removes whitespace',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+    test(
+      'adds a period to any lines missing it, and removes whitespace',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '1.0.0',
+        );
 
-      const originalChangelog = '''
+        const originalChangelog = '''
 ## 1.0.0
 
 * Previous changes.
 ''';
-      package.changelogFile.writeAsStringSync(originalChangelog);
+        package.changelogFile.writeAsStringSync(originalChangelog);
 
-      await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=bugfix',
-        '--changelog',
-        'First change  \nSecond change'
-      ]);
+        await runCapturingPrint(runner, <String>[
+          'update-release-info',
+          '--version=bugfix',
+          '--changelog',
+          'First change  \nSecond change',
+        ]);
 
-      final String newChangelog = package.changelogFile.readAsStringSync();
-      const expectedChangeLog = '''
+        final String newChangelog = package.changelogFile.readAsStringSync();
+        const expectedChangeLog = '''
 ## 1.0.1
 
 * First change.
@@ -291,12 +315,16 @@ $originalChangelog''';
 
 $originalChangelog''';
 
-      expect(newChangelog, expectedChangeLog);
-    });
+        expect(newChangelog, expectedChangeLog);
+      },
+    );
 
     test('handles non-standard changelog format', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 # 1.0.0
@@ -309,7 +337,7 @@ $originalChangelog''';
         'update-release-info',
         '--version=next',
         '--changelog',
-        'A change.'
+        'A change.',
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
@@ -320,14 +348,19 @@ $originalChangelog''';
 
 $originalChangelog''';
 
-      expect(output,
-          containsAllInOrder(<Matcher>[contains('  Added a NEXT section.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('  Added a NEXT section.')]),
+      );
       expect(newChangelog, expectedChangeLog);
     });
 
     test('adds to existing NEXT section using - list style', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 ## NEXT
@@ -344,7 +377,7 @@ $originalChangelog''';
         'update-release-info',
         '--version=next',
         '--changelog',
-        'A change.'
+        'A change.',
       ]);
 
       final String newChangelog = package.changelogFile.readAsStringSync();
@@ -359,20 +392,29 @@ $originalChangelog''';
  - Previous changes.
 ''';
 
-      expect(output,
-          containsAllInOrder(<Matcher>[contains('  Updated NEXT section.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('  Updated NEXT section.')]),
+      );
       expect(newChangelog, expectedChangeLog);
     });
 
     test('skips for "minimal" when there are no changes at all', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.1');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.1',
+      );
       gitProcessRunner.mockProcessesForExecutable['git-diff'] =
           <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '''
+            FakeProcessInfo(
+              MockProcess(
+                stdout: '''
 packages/different_package/lib/foo.dart
-''')),
-      ];
+''',
+              ),
+            ),
+          ];
       final String originalChangelog = package.changelogFile.readAsStringSync();
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -386,23 +428,31 @@ packages/different_package/lib/foo.dart
       expect(version, '1.0.1');
       expect(package.changelogFile.readAsStringSync(), originalChangelog);
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('No changes to package'),
-            contains('Skipped 1 package')
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No changes to package'),
+          contains('Skipped 1 package'),
+        ]),
+      );
     });
 
     test('skips for "minimal" when there are only test changes', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.1');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.1',
+      );
       gitProcessRunner.mockProcessesForExecutable['git-diff'] =
           <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '''
+            FakeProcessInfo(
+              MockProcess(
+                stdout: '''
 packages/a_package/test/a_test.dart
 packages/a_package/example/integration_test/another_test.dart
-''')),
-      ];
+''',
+              ),
+            ),
+          ];
       final String originalChangelog = package.changelogFile.readAsStringSync();
 
       final List<String> output = await runCapturingPrint(runner, <String>[
@@ -416,34 +466,44 @@ packages/a_package/example/integration_test/another_test.dart
       expect(version, '1.0.1');
       expect(package.changelogFile.readAsStringSync(), originalChangelog);
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('No non-exempt changes to package'),
-            contains('Skipped 1 package')
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('No non-exempt changes to package'),
+          contains('Skipped 1 package'),
+        ]),
+      );
     });
 
     test('fails if CHANGELOG.md is missing', () async {
       createFakePackage('a_package', packagesDir, includeCommonFiles: false);
 
       Error? commandError;
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=minor',
-        '--changelog',
-        'A change.',
-      ], errorHandler: (Error e) {
-        commandError = e;
-      });
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>[
+          'update-release-info',
+          '--version=minor',
+          '--changelog',
+          'A change.',
+        ],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
-      expect(output,
-          containsAllInOrder(<Matcher>[contains('  Missing CHANGELOG.md.')]));
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('  Missing CHANGELOG.md.')]),
+      );
     });
 
     test('fails if CHANGELOG.md has unexpected NEXT block format', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       const originalChangelog = '''
 ## NEXT
@@ -457,83 +517,108 @@ Some free-form text that isn't a list.
       package.changelogFile.writeAsStringSync(originalChangelog);
 
       Error? commandError;
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=minor',
-        '--changelog',
-        'A change.',
-      ], errorHandler: (Error e) {
-        commandError = e;
-      });
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>[
+          'update-release-info',
+          '--version=minor',
+          '--changelog',
+          'A change.',
+        ],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('  Existing NEXT section has unrecognized format.')
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('  Existing NEXT section has unrecognized format.'),
+        ]),
+      );
     });
   });
 
   group('pubspec', () {
     test('does not change for --next', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.0');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.0',
+      );
 
       await runCapturingPrint(runner, <String>[
         'update-release-info',
         '--version=next',
         '--changelog',
-        'A change.'
+        'A change.',
       ]);
 
       final String version = package.parsePubspec().version?.toString() ?? '';
       expect(version, '1.0.0');
     });
 
-    test('updates bugfix version for pre-1.0 without existing build number',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '0.1.0');
+    test(
+      'updates bugfix version for pre-1.0 without existing build number',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '0.1.0',
+        );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=bugfix',
-        '--changelog',
-        'A change.',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-release-info',
+          '--version=bugfix',
+          '--changelog',
+          'A change.',
+        ]);
 
-      final String version = package.parsePubspec().version?.toString() ?? '';
-      expect(version, '0.1.0+1');
-      expect(
+        final String version = package.parsePubspec().version?.toString() ?? '';
+        expect(version, '0.1.0+1');
+        expect(
           output,
-          containsAllInOrder(
-              <Matcher>[contains('  Incremented version to 0.1.0+1')]));
-    });
+          containsAllInOrder(<Matcher>[
+            contains('  Incremented version to 0.1.0+1'),
+          ]),
+        );
+      },
+    );
 
-    test('updates bugfix version for pre-1.0 with existing build number',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '0.1.0+2');
+    test(
+      'updates bugfix version for pre-1.0 with existing build number',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '0.1.0+2',
+        );
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=bugfix',
-        '--changelog',
-        'A change.',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-release-info',
+          '--version=bugfix',
+          '--changelog',
+          'A change.',
+        ]);
 
-      final String version = package.parsePubspec().version?.toString() ?? '';
-      expect(version, '0.1.0+3');
-      expect(
+        final String version = package.parsePubspec().version?.toString() ?? '';
+        expect(version, '0.1.0+3');
+        expect(
           output,
-          containsAllInOrder(
-              <Matcher>[contains('  Incremented version to 0.1.0+3')]));
-    });
+          containsAllInOrder(<Matcher>[
+            contains('  Incremented version to 0.1.0+3'),
+          ]),
+        );
+      },
+    );
 
     test('updates bugfix version for post-1.0', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.1');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.1',
+      );
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'update-release-info',
@@ -545,14 +630,19 @@ Some free-form text that isn't a list.
       final String version = package.parsePubspec().version?.toString() ?? '';
       expect(version, '1.0.2');
       expect(
-          output,
-          containsAllInOrder(
-              <Matcher>[contains('  Incremented version to 1.0.2')]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('  Incremented version to 1.0.2'),
+        ]),
+      );
     });
 
     test('updates minor version for pre-1.0', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '0.1.0+2');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '0.1.0+2',
+      );
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'update-release-info',
@@ -564,14 +654,19 @@ Some free-form text that isn't a list.
       final String version = package.parsePubspec().version?.toString() ?? '';
       expect(version, '0.1.1');
       expect(
-          output,
-          containsAllInOrder(
-              <Matcher>[contains('  Incremented version to 0.1.1')]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('  Incremented version to 0.1.1'),
+        ]),
+      );
     });
 
     test('updates minor version for post-1.0', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.1');
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        version: '1.0.1',
+      );
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'update-release-info',
@@ -583,77 +678,105 @@ Some free-form text that isn't a list.
       final String version = package.parsePubspec().version?.toString() ?? '';
       expect(version, '1.1.0');
       expect(
-          output,
-          containsAllInOrder(
-              <Matcher>[contains('  Incremented version to 1.1.0')]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('  Incremented version to 1.1.0'),
+        ]),
+      );
     });
 
-    test('updates bugfix version for "minimal" with publish-worthy changes',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.1');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '''
+    test(
+      'updates bugfix version for "minimal" with publish-worthy changes',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '1.0.1',
+        );
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 packages/a_package/lib/plugin.dart
-''')),
-      ];
+''',
+                ),
+              ),
+            ];
 
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=minimal',
-        '--changelog',
-        'A change.',
-      ]);
+        final List<String> output = await runCapturingPrint(runner, <String>[
+          'update-release-info',
+          '--version=minimal',
+          '--changelog',
+          'A change.',
+        ]);
 
-      final String version = package.parsePubspec().version?.toString() ?? '';
-      expect(version, '1.0.2');
-      expect(
+        final String version = package.parsePubspec().version?.toString() ?? '';
+        expect(version, '1.0.2');
+        expect(
           output,
-          containsAllInOrder(
-              <Matcher>[contains('  Incremented version to 1.0.2')]));
-    });
+          containsAllInOrder(<Matcher>[
+            contains('  Incremented version to 1.0.2'),
+          ]),
+        );
+      },
+    );
 
-    test('no version change for "minimal" with non-publish-worthy changes',
-        () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, version: '1.0.1');
-      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '''
+    test(
+      'no version change for "minimal" with non-publish-worthy changes',
+      () async {
+        final RepositoryPackage package = createFakePackage(
+          'a_package',
+          packagesDir,
+          version: '1.0.1',
+        );
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 packages/a_package/test/plugin_test.dart
-''')),
-      ];
+''',
+                ),
+              ),
+            ];
 
-      await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=minimal',
-        '--changelog',
-        'A change.',
-      ]);
+        await runCapturingPrint(runner, <String>[
+          'update-release-info',
+          '--version=minimal',
+          '--changelog',
+          'A change.',
+        ]);
 
-      final String version = package.parsePubspec().version?.toString() ?? '';
-      expect(version, '1.0.1');
-    });
+        final String version = package.parsePubspec().version?.toString() ?? '';
+        expect(version, '1.0.1');
+      },
+    );
 
     test('fails if there is no version in pubspec', () async {
       createFakePackage('a_package', packagesDir, version: null);
 
       Error? commandError;
-      final List<String> output = await runCapturingPrint(runner, <String>[
-        'update-release-info',
-        '--version=minor',
-        '--changelog',
-        'A change.',
-      ], errorHandler: (Error e) {
-        commandError = e;
-      });
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>[
+          'update-release-info',
+          '--version=minor',
+          '--changelog',
+          'A change.',
+        ],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(
-              <Matcher>[contains('Could not determine current version.')]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Could not determine current version.'),
+        ]),
+      );
     });
   });
 }

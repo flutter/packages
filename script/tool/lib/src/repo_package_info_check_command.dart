@@ -15,7 +15,7 @@ const int _exitUnknownPackageEntry = 4;
 
 const Map<String, Object?> _validCiConfigSyntax = <String, Object?>{
   'release': <String, Object?>{
-    'batch': <bool>{true, false}
+    'batch': <bool>{true, false},
   },
 };
 
@@ -68,8 +68,10 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
             .where((String s) => s.isNotEmpty)
             .toList();
         // Extract the name, removing any markdown escaping.
-        final String? name =
-            namePattern.firstMatch(cells[0])?.group(1)?.replaceAll(r'\_', '_');
+        final String? name = namePattern
+            .firstMatch(cells[0])
+            ?.group(1)
+            ?.replaceAll(r'\_', '_');
         if (name == null) {
           printError('Unexpected README table line:\n  $line');
           throw ToolExit(_exitBadTableEntry);
@@ -85,8 +87,9 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
 
     // Extract all of the CODEOWNERS package entries.
-    final packageOwnershipPattern =
-        RegExp(r'^((?:third_party/)?packages/(?:[^/]*/)?([^/]*))/\*\*');
+    final packageOwnershipPattern = RegExp(
+      r'^((?:third_party/)?packages/(?:[^/]*/)?([^/]*))/\*\*',
+    );
     for (final String line
         in _repoRoot.childFile('CODEOWNERS').readAsLinesSync()) {
       final RegExpMatch? match = packageOwnershipPattern.firstMatch(line);
@@ -105,12 +108,14 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     // Extract all of the lebeler.yml package entries.
     // Validate the match rules rather than the label itself, as the labels
     // don't always correspond 1:1 to packages and package names.
-    final packageGlobPattern =
-        RegExp(r'^\s*-\s*(?:third_party/)?packages/([^*]*)/');
-    for (final String line in _repoRoot
-        .childDirectory('.github')
-        .childFile('labeler.yml')
-        .readAsLinesSync()) {
+    final packageGlobPattern = RegExp(
+      r'^\s*-\s*(?:third_party/)?packages/([^*]*)/',
+    );
+    for (final String line
+        in _repoRoot
+            .childDirectory('.github')
+            .childFile('labeler.yml')
+            .readAsLinesSync()) {
       final RegExpMatch? match = packageGlobPattern.firstMatch(line);
       if (match == null) {
         continue;
@@ -146,7 +151,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     // The content of ci_config.yaml must be valid if there is one.
     if (package.ciConfigFile.existsSync()) {
       errors.addAll(
-          _validateCiConfig(package.ciConfigFile, mainPackage: package));
+        _validateCiConfig(package.ciConfigFile, mainPackage: package),
+      );
     }
 
     // All published packages should have a README.md entry.
@@ -180,13 +186,16 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         final RegExpMatch? match = mdLinkPattern.firstMatch(cell);
         if (match == null) {
           printError(
-              '${indentation}Invalid repo root README.md table entry: "$cell"');
+            '${indentation}Invalid repo root README.md table entry: "$cell"',
+          );
           errors.add('Invalid root README.md table entry');
         } else {
-          final String encodedIssueTag =
-              Uri.encodeComponent(_issueTagForPackage(packageName));
-          final String encodedPRTag =
-              Uri.encodeComponent(_prTagForPackage(packageName));
+          final String encodedIssueTag = Uri.encodeComponent(
+            _issueTagForPackage(packageName),
+          );
+          final String encodedPRTag = Uri.encodeComponent(
+            _prTagForPackage(packageName),
+          );
           final String anchor = match.group(1)!;
           final String target = match.group(2)!;
 
@@ -194,24 +203,29 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           // - The package name (optionally with any underscores escaped)
           // - An image with a name-based link
           // - An image with a tag-based link
-          final packageLink = RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
-              '$packageName'
-              r'(?:\.svg)?\)$');
+          final packageLink = RegExp(
+            r'^!\[.*\]\(https://img.shields.io/pub/.*/'
+            '$packageName'
+            r'(?:\.svg)?\)$',
+          );
           final issueTagLink = RegExp(
-              r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
-              '$encodedIssueTag'
-              r'\?label=\)$');
+            r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
+            '$encodedIssueTag'
+            r'\?label=\)$',
+          );
           final prTagLink = RegExp(
-              r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
-              '$encodedPRTag'
-              r'\?label=\)$');
+            r'^!\[.*\]\(https://img.shields.io/github/issues-pr/flutter/packages/'
+            '$encodedPRTag'
+            r'\?label=\)$',
+          );
           if (!(anchor == packageName ||
               anchor == packageName.replaceAll('_', r'\_') ||
               packageLink.hasMatch(anchor) ||
               issueTagLink.hasMatch(anchor) ||
               prTagLink.hasMatch(anchor))) {
             printError(
-                '${indentation}Incorrect anchor in root README.md table: "$anchor"');
+              '${indentation}Incorrect anchor in root README.md table: "$anchor"',
+            );
             errors.add('Incorrect anchor in root README.md table');
           }
 
@@ -219,19 +233,23 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           // - a relative link to the in-repo package
           // - a pub.dev link to the package
           // - a github label link to the package's label
-          final pubDevLink =
-              RegExp('^https://pub.dev/packages/$packageName(?:/score)?\$');
+          final pubDevLink = RegExp(
+            '^https://pub.dev/packages/$packageName(?:/score)?\$',
+          );
           final gitHubIssueLink = RegExp(
-              '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$');
+            '^https://github.com/flutter/flutter/labels/$encodedIssueTag\$',
+          );
           final gitHubPRLink = RegExp(
-              '^https://github.com/flutter/packages/labels/$encodedPRTag\$');
+            '^https://github.com/flutter/packages/labels/$encodedPRTag\$',
+          );
           if (!(target == './packages/$packageName/' ||
               target == './third_party/packages/$packageName/' ||
               pubDevLink.hasMatch(target) ||
               gitHubIssueLink.hasMatch(target) ||
               gitHubPRLink.hasMatch(target))) {
             printError(
-                '${indentation}Incorrect link in root README.md table: "$target"');
+              '${indentation}Incorrect link in root README.md table: "$target"',
+            );
             errors.add('Incorrect link in root README.md table');
           }
         }
@@ -240,10 +258,14 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     return errors;
   }
 
-  List<String> _validateCiConfig(File ciConfig,
-      {required RepositoryPackage mainPackage}) {
-    print('${indentation}Checking '
-        '${getRelativePosixPath(ciConfig, from: mainPackage.directory)}...');
+  List<String> _validateCiConfig(
+    File ciConfig, {
+    required RepositoryPackage mainPackage,
+  }) {
+    print(
+      '${indentation}Checking '
+      '${getRelativePosixPath(ciConfig, from: mainPackage.directory)}...',
+    );
     final YamlMap config;
     try {
       final Object? yaml = loadYaml(ciConfig.readAsStringSync());
@@ -254,7 +276,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       config = yaml;
     } on YamlException catch (e) {
       printError(
-          '${indentation}Invalid YAML in ${getRelativePosixPath(ciConfig, from: mainPackage.directory)}:');
+        '${indentation}Invalid YAML in ${getRelativePosixPath(ciConfig, from: mainPackage.directory)}:',
+      );
       printError(e.toString());
       return <String>['Invalid YAML'];
     }
@@ -262,15 +285,20 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     return _checkCiConfigEntries(config, syntax: _validCiConfigSyntax);
   }
 
-  List<String> _checkCiConfigEntries(YamlMap config,
-      {required Map<String, Object?> syntax, String configPrefix = ''}) {
+  List<String> _checkCiConfigEntries(
+    YamlMap config, {
+    required Map<String, Object?> syntax,
+    String configPrefix = '',
+  }) {
     final errors = <String>[];
     for (final MapEntry<Object?, Object?> entry in config.entries) {
       if (!syntax.containsKey(entry.key)) {
         printError(
-            '${indentation}Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}, the possible keys are ${syntax.keys.toList()}');
+          '${indentation}Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}, the possible keys are ${syntax.keys.toList()}',
+        );
         errors.add(
-            'Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}');
+          'Unknown key `${entry.key}` in config${_formatConfigPrefix(configPrefix)}',
+        );
       } else {
         final Object syntaxValue = syntax[entry.key]!;
         configPrefix = configPrefix.isEmpty
@@ -279,19 +307,27 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         if (syntaxValue is Set) {
           if (!syntaxValue.contains(entry.value)) {
             printError(
-                '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the possible values are ${syntaxValue.toList()}');
+              '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the possible values are ${syntaxValue.toList()}',
+            );
             errors.add(
-                'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
+              'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}',
+            );
           }
         } else if (entry.value is! YamlMap) {
           printError(
-              '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the value must be a map');
+            '${indentation}Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}, the value must be a map',
+          );
           errors.add(
-              'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}');
+            'Invalid value `${entry.value}` for key${_formatConfigPrefix(configPrefix)}',
+          );
         } else {
-          errors.addAll(_checkCiConfigEntries(entry.value! as YamlMap,
+          errors.addAll(
+            _checkCiConfigEntries(
+              entry.value! as YamlMap,
               syntax: syntaxValue as Map<String, Object?>,
-              configPrefix: configPrefix));
+              configPrefix: configPrefix,
+            ),
+          );
         }
       }
     }

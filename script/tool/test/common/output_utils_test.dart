@@ -22,28 +22,36 @@ void main() {
       const message = 'a message';
 
       expect(
-          colorizeString(message, Styles.MAGENTA), '\x1B[35m$message\x1B[0m');
+        colorizeString(message, Styles.MAGENTA),
+        '\x1B[35m$message\x1B[0m',
+      );
     });
 
     test('printSuccess is green', () async {
       const message = 'a message';
 
-      expect(await _capturePrint(() => printSuccess(message)),
-          '\x1B[32m$message\x1B[0m');
+      expect(
+        await _capturePrint(() => printSuccess(message)),
+        '\x1B[32m$message\x1B[0m',
+      );
     });
 
     test('printWarning is yellow', () async {
       const message = 'a message';
 
-      expect(await _capturePrint(() => printWarning(message)),
-          '\x1B[33m$message\x1B[0m');
+      expect(
+        await _capturePrint(() => printWarning(message)),
+        '\x1B[33m$message\x1B[0m',
+      );
     });
 
     test('printError is red', () async {
       const message = 'a message';
 
-      expect(await _capturePrint(() => printError(message)),
-          '\x1B[31m$message\x1B[0m');
+      expect(
+        await _capturePrint(() => printError(message)),
+        '\x1B[31m$message\x1B[0m',
+      );
     });
   });
 

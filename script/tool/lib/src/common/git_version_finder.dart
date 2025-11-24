@@ -12,10 +12,12 @@ import 'package:yaml/yaml.dart';
 class GitVersionFinder {
   /// Constructor
   GitVersionFinder(this.baseGitDir, {String? baseSha, String? baseBranch})
-      : assert(baseSha == null || baseBranch == null,
-            'At most one of baseSha and baseBranch can be provided'),
-        _baseSha = baseSha,
-        _baseBranch = baseBranch ?? 'main';
+    : assert(
+        baseSha == null || baseBranch == null,
+        'At most one of baseSha and baseBranch can be provided',
+      ),
+      _baseSha = baseSha,
+      _baseBranch = baseBranch ?? 'main';
 
   /// The top level directory of the git repo.
   ///
@@ -29,16 +31,13 @@ class GitVersionFinder {
   final String _baseBranch;
 
   /// Get a list of all the changed files.
-  Future<List<String>> getChangedFiles(
-      {bool includeUncommitted = false}) async {
+  Future<List<String>> getChangedFiles({
+    bool includeUncommitted = false,
+  }) async {
     final String baseSha = await getBaseSha();
-    final io.ProcessResult changedFilesCommand = await baseGitDir
-        .runCommand(<String>[
-      'diff',
-      '--name-only',
-      baseSha,
-      if (!includeUncommitted) 'HEAD'
-    ]);
+    final io.ProcessResult changedFilesCommand = await baseGitDir.runCommand(
+      <String>['diff', '--name-only', baseSha, if (!includeUncommitted) 'HEAD'],
+    );
     final changedFilesStdout = changedFilesCommand.stdout.toString();
     if (changedFilesStdout.isEmpty) {
       return <String>[];
@@ -71,14 +70,18 @@ class GitVersionFinder {
 
   /// Get the package version specified in the pubspec file in `pubspecPath` and
   /// at the revision of `gitRef` (defaulting to the base if not provided).
-  Future<Version?> getPackageVersion(String pubspecPath,
-      {String? gitRef}) async {
+  Future<Version?> getPackageVersion(
+    String pubspecPath, {
+    String? gitRef,
+  }) async {
     final String ref = gitRef ?? (await getBaseSha());
 
     io.ProcessResult gitShow;
     try {
-      gitShow =
-          await baseGitDir.runCommand(<String>['show', '$ref:$pubspecPath']);
+      gitShow = await baseGitDir.runCommand(<String>[
+        'show',
+        '$ref:$pubspecPath',
+      ]);
     } on io.ProcessException {
       return null;
     }
@@ -99,13 +102,17 @@ class GitVersionFinder {
     }
 
     io.ProcessResult baseShaFromMergeBase = await baseGitDir.runCommand(
-        <String>['merge-base', '--fork-point', _baseBranch, 'HEAD'],
-        throwOnError: false);
+      <String>['merge-base', '--fork-point', _baseBranch, 'HEAD'],
+      throwOnError: false,
+    );
     final String stdout = (baseShaFromMergeBase.stdout as String? ?? '').trim();
     final String stderr = (baseShaFromMergeBase.stderr as String? ?? '').trim();
     if (stderr.isNotEmpty || stdout.isEmpty) {
-      baseShaFromMergeBase = await baseGitDir
-          .runCommand(<String>['merge-base', _baseBranch, 'HEAD']);
+      baseShaFromMergeBase = await baseGitDir.runCommand(<String>[
+        'merge-base',
+        _baseBranch,
+        'HEAD',
+      ]);
     }
     baseSha = (baseShaFromMergeBase.stdout as String).trim();
     _baseSha = baseSha;

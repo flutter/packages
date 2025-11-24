@@ -15,13 +15,12 @@ const int _exitUnknownVersion = 3;
 /// A command to update the minimum Flutter and Dart SDKs of packages.
 class UpdateMinSdkCommand extends PackageLoopingCommand {
   /// Creates a publish metadata updater command instance.
-  UpdateMinSdkCommand(
-    super.packagesDir, {
-    super.gitDir,
-  }) {
-    argParser.addOption(_flutterMinFlag,
-        mandatory: true,
-        help: 'The minimum version of Flutter to set SDK constraints to.');
+  UpdateMinSdkCommand(super.packagesDir, {super.gitDir}) {
+    argParser.addOption(
+      _flutterMinFlag,
+      mandatory: true,
+      help: 'The minimum version of Flutter to set SDK constraints to.',
+    );
   }
 
   static const String _flutterMinFlag = 'flutter-min';
@@ -33,7 +32,8 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
   final String name = 'update-min-sdk';
 
   @override
-  final String description = 'Updates the Flutter and Dart SDK minimums '
+  final String description =
+      'Updates the Flutter and Dart SDK minimums '
       'in pubspec.yaml to match the given Flutter version.';
 
   @override
@@ -48,10 +48,12 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
     _flutterMinVersion = Version.parse(getStringArg(_flutterMinFlag));
     final Version? dartMinVersion = getDartSdkForFlutterSdk(_flutterMinVersion);
     if (dartMinVersion == null) {
-      printError('Dart SDK version for Flutter SDK version '
-          '$_flutterMinVersion is unknown. '
-          'Please update the map for getDartSdkForFlutterSdk with the '
-          'corresponding Dart version.');
+      printError(
+        'Dart SDK version for Flutter SDK version '
+        '$_flutterMinVersion is unknown. '
+        'Please update the map for getDartSdkForFlutterSdk with the '
+        'corresponding Dart version.',
+      );
       throw ToolExit(_exitUnknownVersion);
     }
     _dartMinVersion = dartMinVersion;
@@ -71,14 +73,18 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
     final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
     if (dartRange != null &&
         (dartRange.min ?? Version.none) < _dartMinVersion) {
-      editablePubspec
-          .update(<String>[environmentKey, dartSdkKey], '^$_dartMinVersion');
+      editablePubspec.update(<String>[
+        environmentKey,
+        dartSdkKey,
+      ], '^$_dartMinVersion');
       print('${indentation}Updating Dart minimum to $_dartMinVersion');
     }
     if (flutterRange != null &&
         (flutterRange.min ?? Version.none) < _flutterMinVersion) {
-      editablePubspec.update(<String>[environmentKey, flutterSdkKey],
-          VersionRange(min: _flutterMinVersion, includeMin: true).toString());
+      editablePubspec.update(<String>[
+        environmentKey,
+        flutterSdkKey,
+      ], VersionRange(min: _flutterMinVersion, includeMin: true).toString());
       print('${indentation}Updating Flutter minimum to $_flutterMinVersion');
     }
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());

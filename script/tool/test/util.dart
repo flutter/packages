@@ -35,8 +35,9 @@ String getFlutterCommand(Platform platform) =>
 /// Creates a packages directory at an arbitrary location in the given
 /// filesystem.
 Directory createPackagesDirectory(FileSystem fileSystem) {
-  final Directory packagesDir =
-      fileSystem.currentDirectory.childDirectory('packages');
+  final Directory packagesDir = fileSystem.currentDirectory.childDirectory(
+    'packages',
+  );
   packagesDir.createSync();
   return packagesDir;
 }
@@ -143,18 +144,21 @@ RepositoryPackage createFakePackage(
   String? directoryName,
   String? publishTo,
 }) {
-  final package =
-      RepositoryPackage(parentDirectory.childDirectory(directoryName ?? name));
+  final package = RepositoryPackage(
+    parentDirectory.childDirectory(directoryName ?? name),
+  );
   package.directory.createSync(recursive: true);
 
   package.libDirectory.createSync();
-  createFakePubspec(package,
-      name: name,
-      isFlutter: isFlutter,
-      version: version,
-      flutterConstraint: flutterConstraint,
-      dartConstraint: dartConstraint,
-      publishTo: publishTo);
+  createFakePubspec(
+    package,
+    name: name,
+    isFlutter: isFlutter,
+    version: version,
+    flutterConstraint: flutterConstraint,
+    dartConstraint: dartConstraint,
+    publishTo: publishTo,
+  );
   if (includeCommonFiles) {
     package.changelogFile.writeAsStringSync('''
 ## $version
@@ -165,31 +169,39 @@ RepositoryPackage createFakePackage(
   }
 
   if (examples.length == 1) {
-    createFakePackage('${name}_example', package.directory,
-        directoryName: examples.first,
+    createFakePackage(
+      '${name}_example',
+      package.directory,
+      directoryName: examples.first,
+      examples: <String>[],
+      includeCommonFiles: false,
+      isFlutter: isFlutter,
+      publishTo: 'none',
+      flutterConstraint: flutterConstraint,
+      dartConstraint: dartConstraint,
+    );
+  } else if (examples.isNotEmpty) {
+    final Directory examplesDirectory = getExampleDir(package)..createSync();
+    for (final exampleName in examples) {
+      createFakePackage(
+        exampleName,
+        examplesDirectory,
         examples: <String>[],
         includeCommonFiles: false,
         isFlutter: isFlutter,
         publishTo: 'none',
         flutterConstraint: flutterConstraint,
-        dartConstraint: dartConstraint);
-  } else if (examples.isNotEmpty) {
-    final Directory examplesDirectory = getExampleDir(package)..createSync();
-    for (final exampleName in examples) {
-      createFakePackage(exampleName, examplesDirectory,
-          examples: <String>[],
-          includeCommonFiles: false,
-          isFlutter: isFlutter,
-          publishTo: 'none',
-          flutterConstraint: flutterConstraint,
-          dartConstraint: dartConstraint);
+        dartConstraint: dartConstraint,
+      );
     }
   }
 
   final p.Context posixContext = p.posix;
   for (final file in extraFiles) {
-    childFileWithSubcomponents(package.directory, posixContext.split(file))
-        .createSync(recursive: true);
+    childFileWithSubcomponents(
+      package.directory,
+      posixContext.split(file),
+    ).createSync(recursive: true);
   }
 
   return package;
@@ -214,7 +226,8 @@ void createFakePubspec(
 }) {
   isPlugin |= platformSupport.isNotEmpty;
 
-  var environmentSection = '''
+  var environmentSection =
+      '''
 environment:
   sdk: "$dartConstraint"
 ''';
@@ -225,7 +238,8 @@ dependencies:
 
   // Add Flutter-specific entries if requested.
   if (isFlutter) {
-    environmentSection += '''
+    environmentSection +=
+        '''
   flutter: "$flutterConstraint"
 ''';
     dependenciesSection += '''
@@ -241,8 +255,11 @@ flutter:
 ''';
       for (final MapEntry<String, PlatformDetails> platform
           in platformSupport.entries) {
-        pluginSection +=
-            _pluginPlatformSection(platform.key, platform.value, name);
+        pluginSection += _pluginPlatformSection(
+          platform.key,
+          platform.value,
+          name,
+        );
       }
     }
   }
@@ -253,7 +270,8 @@ flutter:
   final publishToSection =
       'publish_to: ${publishTo ?? 'http://no_pub_server.com'}';
 
-  final yaml = '''
+  final yaml =
+      '''
 name: $name
 ${(version != null) ? 'version: $version' : ''}
 $publishToSection
@@ -270,18 +288,20 @@ $pluginSection
 }
 
 String _pluginPlatformSection(
-    String platform, PlatformDetails support, String packageName) {
+  String platform,
+  PlatformDetails support,
+  String packageName,
+) {
   var entry = '';
   // Build the main plugin entry.
   if (support.type == PlatformSupport.federated) {
-    entry = '''
+    entry =
+        '''
       $platform:
         default_package: ${packageName}_$platform
 ''';
   } else {
-    final lines = <String>[
-      '      $platform:',
-    ];
+    final lines = <String>['      $platform:'];
     switch (platform) {
       case platformAndroid:
         lines.add('        package: io.flutter.plugins.fake');
@@ -292,8 +312,9 @@ String _pluginPlatformSection(
       case platformMacOS:
       case platformWindows:
         if (support.hasNativeCode) {
-          final className =
-              platform == platformIOS ? 'FLTFakePlugin' : 'FakePlugin';
+          final className = platform == platformIOS
+              ? 'FLTFakePlugin'
+              : 'FakePlugin';
           lines.add('        pluginClass: $className');
         }
         if (support.hasDartCode) {
@@ -349,8 +370,11 @@ Future<List<String>> runCapturingPrint(
 
 /// Information about a process to return from [RecordingProcessRunner].
 class FakeProcessInfo {
-  const FakeProcessInfo(this.process,
-      [this.expectedInitialArgs = const <String>[], this.runCallback]);
+  const FakeProcessInfo(
+    this.process, [
+    this.expectedInitialArgs = const <String>[],
+    this.runCallback,
+  ]);
 
   /// The process to return.
   final io.Process process;
@@ -395,8 +419,9 @@ class RecordingProcessRunner extends ProcessRunner {
   }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
     final io.Process? processToReturn = _runFakeProcess(executable, args);
-    final int exitCode =
-        processToReturn == null ? 0 : await processToReturn.exitCode;
+    final int exitCode = processToReturn == null
+        ? 0
+        : await processToReturn.exitCode;
     if (exitOnError && (exitCode != 0)) {
       throw io.ProcessException(executable, args);
     }
@@ -418,11 +443,13 @@ class RecordingProcessRunner extends ProcessRunner {
     recordedCalls.add(ProcessCall(executable, args, workingDir?.path));
 
     final io.Process? process = _runFakeProcess(executable, args);
-    final List<String>? processStdout =
-        await process?.stdout.transform(stdoutEncoding.decoder).toList();
+    final List<String>? processStdout = await process?.stdout
+        .transform(stdoutEncoding.decoder)
+        .toList();
     final String stdout = processStdout?.join() ?? '';
-    final List<String>? processStderr =
-        await process?.stderr.transform(stderrEncoding.decoder).toList();
+    final List<String>? processStderr = await process?.stderr
+        .transform(stderrEncoding.decoder)
+        .toList();
     final String stderr = processStderr?.join() ?? '';
 
     final result = process == null
@@ -437,11 +464,15 @@ class RecordingProcessRunner extends ProcessRunner {
   }
 
   @override
-  Future<io.Process> start(String executable, List<String> args,
-      {Directory? workingDirectory}) async {
+  Future<io.Process> start(
+    String executable,
+    List<String> args, {
+    Directory? workingDirectory,
+  }) async {
     recordedCalls.add(ProcessCall(executable, args, workingDirectory?.path));
     return Future<io.Process>.value(
-        _runFakeProcess(executable, args) ?? MockProcess());
+      _runFakeProcess(executable, args) ?? MockProcess(),
+    );
   }
 
   /// Returns the fake process for the given executable and args after running
@@ -452,11 +483,15 @@ class RecordingProcessRunner extends ProcessRunner {
     if (fakes.isNotEmpty) {
       final FakeProcessInfo fake = fakes.removeAt(0);
       if (args.length < fake.expectedInitialArgs.length ||
-          !listsEqual(args.sublist(0, fake.expectedInitialArgs.length),
-              fake.expectedInitialArgs)) {
-        throw StateError('Next fake process for $executable expects arguments '
-            '[${fake.expectedInitialArgs.join(', ')}] but was called with '
-            'arguments [${args.join(', ')}]');
+          !listsEqual(
+            args.sublist(0, fake.expectedInitialArgs.length),
+            fake.expectedInitialArgs,
+          )) {
+        throw StateError(
+          'Next fake process for $executable expects arguments '
+          '[${fake.expectedInitialArgs.join(', ')}] but was called with '
+          'arguments [${args.join(', ')}]',
+        );
       }
       fake.runCallback?.call();
       return fake.process;
@@ -510,15 +545,17 @@ class ProcessCall {
   RecordingProcessRunner processRunner,
   RecordingProcessRunner gitProcessRunner,
   GitDir gitDir,
-}) configureBaseCommandMocks({
+})
+configureBaseCommandMocks({
   Platform? platform,
   RecordingProcessRunner? customProcessRunner,
   RecordingProcessRunner? customGitProcessRunner,
 }) {
   final FileSystem fileSystem = MemoryFileSystem(
-      style: (platform?.isWindows ?? false)
-          ? FileSystemStyle.windows
-          : FileSystemStyle.posix);
+    style: (platform?.isWindows ?? false)
+        ? FileSystemStyle.windows
+        : FileSystemStyle.posix,
+  );
   final Directory packagesDir = createPackagesDirectory(fileSystem);
 
   final RecordingProcessRunner processRunner =

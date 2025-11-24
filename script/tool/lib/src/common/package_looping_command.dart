@@ -51,7 +51,7 @@ class PackageResult {
 
   /// A run that was skipped as explained in [reason].
   PackageResult.skip(String reason)
-      : this._(RunState.skipped, <String>[reason]);
+    : this._(RunState.skipped, <String>[reason]);
 
   /// A run that was excluded by the command invocation.
   PackageResult.exclude() : this._(RunState.excluded);
@@ -61,7 +61,7 @@ class PackageResult {
   /// If [errors] are provided, they will be listed in the summary, otherwise
   /// the summary will simply show that the package failed.
   PackageResult.fail([List<String> errors = const <String>[]])
-      : this._(RunState.failed, errors);
+    : this._(RunState.failed, errors);
 
   const PackageResult._(this.state, [this.details = const <String>[]]);
 
@@ -90,7 +90,8 @@ abstract class PackageLoopingCommand extends PackageCommand {
   }) {
     argParser.addOption(
       _skipByFlutterVersionArg,
-      help: 'Skip any packages that require a Flutter version newer than '
+      help:
+          'Skip any packages that require a Flutter version newer than '
           'the provided version, or a Dart version newer than the '
           'corresponding Dart version.',
     );
@@ -142,12 +143,14 @@ abstract class PackageLoopingCommand extends PackageCommand {
         await for (final PackageEnumerationEntry packageEntry
             in getTargetPackages(filterExcluded: false)) {
           yield packageEntry;
-          yield* Stream<PackageEnumerationEntry>.fromIterable(packageEntry
-              .package
-              .getExamples()
-              .map((RepositoryPackage package) => PackageEnumerationEntry(
-                  package,
-                  excluded: packageEntry.excluded)));
+          yield* Stream<PackageEnumerationEntry>.fromIterable(
+            packageEntry.package.getExamples().map(
+              (RepositoryPackage package) => PackageEnumerationEntry(
+                package,
+                excluded: packageEntry.excluded,
+              ),
+            ),
+          );
         }
       case PackageLoopingType.includeAllSubpackages:
         yield* getTargetPackagesAndSubpackages(filterExcluded: false);
@@ -260,11 +263,14 @@ abstract class PackageLoopingCommand extends PackageCommand {
     if (captureOutput) {
       final output = <String>[];
       final logSwitchSpecification = ZoneSpecification(
-          print: (Zone self, ZoneDelegate parent, Zone zone, String message) {
-        output.add(message);
-      });
-      succeeded = await runZoned<Future<bool>>(_runInternal,
-          zoneSpecification: logSwitchSpecification);
+        print: (Zone self, ZoneDelegate parent, Zone zone, String message) {
+          output.add(message);
+        },
+      );
+      succeeded = await runZoned<Future<bool>>(
+        _runInternal,
+        zoneSpecification: logSwitchSpecification,
+      );
       await handleCapturedOutput(output);
     } else {
       succeeded = await _runInternal();
@@ -298,8 +304,9 @@ abstract class PackageLoopingCommand extends PackageCommand {
     // Check whether the command needs to run.
     if (changedFiles.isNotEmpty && changedFiles.every(shouldIgnoreFile)) {
       _printColorized(
-          'SKIPPING ALL PACKAGES: No changed files affect this command',
-          Styles.DARK_GRAY);
+        'SKIPPING ALL PACKAGES: No changed files affect this command',
+        Styles.DARK_GRAY,
+      );
       return true;
     }
 
@@ -323,17 +330,21 @@ abstract class PackageLoopingCommand extends PackageCommand {
 
       PackageResult result;
       try {
-        result = await _runForPackageIfSupported(entry.package,
-            minFlutterVersion: minFlutterVersion,
-            minDartVersion: minDartVersion);
+        result = await _runForPackageIfSupported(
+          entry.package,
+          minFlutterVersion: minFlutterVersion,
+          minDartVersion: minDartVersion,
+        );
       } catch (e, stack) {
         printError(e.toString());
         printError(stack.toString());
         result = PackageResult.fail(<String>['Unhandled exception']);
       }
       if (result.state == RunState.skipped) {
-        _printColorized('${indentation}SKIPPING: ${result.details.first}',
-            Styles.DARK_GRAY);
+        _printColorized(
+          '${indentation}SKIPPING: ${result.details.first}',
+          Styles.DARK_GRAY,
+        );
       }
       results[entry] = result;
 
@@ -342,9 +353,10 @@ abstract class PackageLoopingCommand extends PackageCommand {
       if (shouldLogTiming && hasLongOutput) {
         final Duration elapsedTime = DateTime.now().difference(packageStart);
         _printColorized(
-            '\n[${entry.package.displayName} completed in '
-            '${elapsedTime.inMinutes}m ${elapsedTime.inSeconds % 60}s]',
-            Styles.DARK_GRAY);
+          '\n[${entry.package.displayName} completed in '
+          '${elapsedTime.inMinutes}m ${elapsedTime.inSeconds % 60}s]',
+          Styles.DARK_GRAY,
+        );
       }
     }
     _currentPackageEntry = null;
@@ -353,8 +365,9 @@ abstract class PackageLoopingCommand extends PackageCommand {
 
     print('\n');
     // If there were any errors reported, summarize them and exit.
-    if (results.values
-        .any((PackageResult result) => result.state == RunState.failed)) {
+    if (results.values.any(
+      (PackageResult result) => result.state == RunState.failed,
+    )) {
       _printFailureSummary(targetPackages, results);
       return false;
     }
@@ -382,7 +395,8 @@ abstract class PackageLoopingCommand extends PackageCommand {
       if (flutterConstraint != null &&
           !flutterConstraint.allows(minFlutterVersion)) {
         return PackageResult.skip(
-            'Does not support Flutter $minFlutterVersion');
+          'Does not support Flutter $minFlutterVersion',
+        );
       }
     }
 
@@ -411,8 +425,10 @@ abstract class PackageLoopingCommand extends PackageCommand {
   /// Something is always printed to make it easier to distinguish between
   /// a command running for a package and producing no output, and a command
   /// not having been run for a package.
-  void _printPackageHeading(PackageEnumerationEntry entry,
-      {required DateTime startTime}) {
+  void _printPackageHeading(
+    PackageEnumerationEntry entry, {
+    required DateTime startTime,
+  }) {
     final String packageDisplayName = entry.package.displayName;
     var heading = entry.excluded
         ? 'Not running for $packageDisplayName; excluded'
@@ -421,12 +437,14 @@ abstract class PackageLoopingCommand extends PackageCommand {
     if (shouldLogTiming) {
       final Duration relativeTime = DateTime.now().difference(startTime);
       final String timeString = _formatDurationAsRelativeTime(relativeTime);
-      heading =
-          hasLongOutput ? '$heading [@$timeString]' : '[$timeString] $heading';
+      heading = hasLongOutput
+          ? '$heading [@$timeString]'
+          : '[$timeString] $heading';
     }
 
     if (hasLongOutput) {
-      heading = '''
+      heading =
+          '''
 
 ============================================================
 || $heading
@@ -439,15 +457,21 @@ abstract class PackageLoopingCommand extends PackageCommand {
   }
 
   /// Prints a summary of packges run, packages skipped, and warnings.
-  void _printRunSummary(List<PackageEnumerationEntry> packages,
-      Map<PackageEnumerationEntry, PackageResult> results) {
+  void _printRunSummary(
+    List<PackageEnumerationEntry> packages,
+    Map<PackageEnumerationEntry, PackageResult> results,
+  ) {
     final Set<PackageEnumerationEntry> skippedPackages = results.entries
-        .where((MapEntry<PackageEnumerationEntry, PackageResult> entry) =>
-            entry.value.state == RunState.skipped)
-        .map((MapEntry<PackageEnumerationEntry, PackageResult> entry) =>
-            entry.key)
+        .where(
+          (MapEntry<PackageEnumerationEntry, PackageResult> entry) =>
+              entry.value.state == RunState.skipped,
+        )
+        .map(
+          (MapEntry<PackageEnumerationEntry, PackageResult> entry) => entry.key,
+        )
         .toSet();
-    final int skipCount = skippedPackages.length +
+    final int skipCount =
+        skippedPackages.length +
         packages
             .where((PackageEnumerationEntry package) => package.excluded)
             .length;
@@ -459,16 +483,19 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final int runWarningCount =
         _packagesWithWarnings.length - skippedWarningCount;
 
-    final runWarningSummary =
-        runWarningCount > 0 ? ' ($runWarningCount with warnings)' : '';
-    final skippedWarningSummary =
-        runWarningCount > 0 ? ' ($skippedWarningCount with warnings)' : '';
+    final runWarningSummary = runWarningCount > 0
+        ? ' ($runWarningCount with warnings)'
+        : '';
+    final skippedWarningSummary = runWarningCount > 0
+        ? ' ($skippedWarningCount with warnings)'
+        : '';
     print('------------------------------------------------------------');
     if (hasLongOutput) {
       _printPerPackageRunOverview(packages, skipped: skippedPackages);
     }
     print(
-        'Ran for ${packages.length - skipCount} package(s)$runWarningSummary');
+      'Ran for ${packages.length - skipCount} package(s)$runWarningSummary',
+    );
     if (skipCount > 0) {
       print('Skipped $skipCount package(s)$skippedWarningSummary');
     }
@@ -480,8 +507,9 @@ abstract class PackageLoopingCommand extends PackageCommand {
   /// Prints a one-line-per-package overview of the run results for each
   /// package.
   void _printPerPackageRunOverview(
-      List<PackageEnumerationEntry> packageEnumeration,
-      {required Set<PackageEnumerationEntry> skipped}) {
+    List<PackageEnumerationEntry> packageEnumeration, {
+    required Set<PackageEnumerationEntry> skipped,
+  }) {
     print('Run overview:');
     for (final entry in packageEnumeration) {
       final bool hadWarning = _packagesWithWarnings.contains(entry);
@@ -510,8 +538,10 @@ abstract class PackageLoopingCommand extends PackageCommand {
   }
 
   /// Prints a summary of all of the failures from [results].
-  void _printFailureSummary(List<PackageEnumerationEntry> packageEnumeration,
-      Map<PackageEnumerationEntry, PackageResult> results) {
+  void _printFailureSummary(
+    List<PackageEnumerationEntry> packageEnumeration,
+    Map<PackageEnumerationEntry, PackageResult> results,
+  ) {
     const indentation = '  ';
     _printError(failureListHeader);
     for (final entry in packageEnumeration) {
