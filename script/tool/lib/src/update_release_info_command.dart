@@ -270,8 +270,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     final Version newVersion = _nextVersion(currentVersion, adjustedType);
 
     // Write the new version to the pubspec.
-    final editablePubspec =
-        YamlEditor(package.pubspecFile.readAsStringSync());
+    final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(<String>['version'], newVersion.toString());
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
 

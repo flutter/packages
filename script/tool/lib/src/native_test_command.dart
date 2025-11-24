@@ -388,8 +388,7 @@ this command.
           // tests directly, but there doesn't seem to be a way to filter based
           // on annotation contents, so the DartIntegrationTest annotation was
           // created as a proxy for that.
-          const filter =
-              'notAnnotation=io.flutter.plugins.DartIntegrationTest';
+          const filter = 'notAnnotation=io.flutter.plugins.DartIntegrationTest';
 
           print('Running integration tests...');
           // Explicitly request all ABIs, as Flutter would if being called

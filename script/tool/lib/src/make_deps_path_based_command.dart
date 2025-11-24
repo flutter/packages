@@ -108,8 +108,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
   }
 
   Map<String, RepositoryPackage> _findLocalPackages(Set<String> packageNames) {
-    final targets =
-        <String, RepositoryPackage>{};
+    final targets = <String, RepositoryPackage>{};
     for (final packageName in packageNames) {
       final Directory topLevelCandidate =
           packagesDir.childDirectory(packageName);
@@ -210,8 +209,7 @@ class MakeDepsPathBasedCommand extends PackageCommand {
         .split(
             path.relative(package.directory.absolute.path, from: repoRootPath))
         .length;
-    final relativeBasePathComponents =
-        List<String>.filled(packageDepth, '..');
+    final relativeBasePathComponents = List<String>.filled(packageDepth, '..');
 
     // Add the overrides.
     final editablePubspec = YamlEditor(pubspecContents);

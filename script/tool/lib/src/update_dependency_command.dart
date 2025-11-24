@@ -98,10 +98,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
 
   @override
   Future<void> initializeRun() async {
-    const targetFlags = <String>{
-      _pubPackageFlag,
-      _androidDependency
-    };
+    const targetFlags = <String>{_pubPackageFlag, _androidDependency};
     final Set<String> passedTargetFlags =
         targetFlags.where((String flag) => argResults![flag] != null).toSet();
     if (passedTargetFlags.length != 1) {
@@ -229,8 +226,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
         ? 'dev_dependencies'
         : 'dependencies';
     final String versionString;
-    final parsedConstraint =
-        VersionConstraint.parse(_targetVersion);
+    final parsedConstraint = VersionConstraint.parse(_targetVersion);
     // If the provided string was a constraint, or if it's a specific
     // version but the package has a pinned dependency, use it as-is.
     if (dependencyInfo.pinned ||
@@ -248,8 +244,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
     if (versionString == dependencyInfo.constraintString) {
       return PackageResult.skip('Already depends on $versionString');
     }
-    final editablePubspec =
-        YamlEditor(package.pubspecFile.readAsStringSync());
+    final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(
       <String>[sectionKey, dependency],
       versionString,

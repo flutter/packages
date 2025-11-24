@@ -169,9 +169,8 @@ class Xcode {
       }
       return null;
     }
-    final simulatorListJson =
-        jsonDecode(findSimulatorsResult.stdout as String)
-            as Map<String, dynamic>;
+    final simulatorListJson = jsonDecode(findSimulatorsResult.stdout as String)
+        as Map<String, dynamic>;
     final List<Map<String, dynamic>> runtimes =
         (simulatorListJson['runtimes'] as List<dynamic>)
             .cast<Map<String, dynamic>>();

@@ -25,11 +25,8 @@ void main() {
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
 
-    final command = FederationSafetyCheckCommand(
-        packagesDir,
-        processRunner: processRunner,
-        platform: mockPlatform,
-        gitDir: gitDir);
+    final command = FederationSafetyCheckCommand(packagesDir,
+        processRunner: processRunner, platform: mockPlatform, gitDir: gitDir);
 
     runner = CommandRunner<void>('federation_safety_check_command',
         'Test for $FederationSafetyCheckCommand');

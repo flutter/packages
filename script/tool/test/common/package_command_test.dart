@@ -1245,8 +1245,7 @@ packages/b_package/lib/src/foo.dart
 
   group('sharding', () {
     test('distributes evenly when evenly divisible', () async {
-      final expectedShards =
-          <List<RepositoryPackage>>[
+      final expectedShards = <List<RepositoryPackage>>[
         <RepositoryPackage>[
           createFakePackage('package1', packagesDir),
           createFakePackage('package2', packagesDir),
@@ -1285,8 +1284,7 @@ packages/b_package/lib/src/foo.dart
 
     test('distributes as evenly as possible when not evenly divisible',
         () async {
-      final expectedShards =
-          <List<RepositoryPackage>>[
+      final expectedShards = <List<RepositoryPackage>>[
         <RepositoryPackage>[
           createFakePackage('package1', packagesDir),
           createFakePackage('package2', packagesDir),
@@ -1331,8 +1329,7 @@ packages/b_package/lib/src/foo.dart
     // excluding some plugins from the later step shouldn't change what's tested
     // in each shard, as it may no longer align with what was built.
     test('counts excluded plugins when sharding', () async {
-      final expectedShards =
-          <List<RepositoryPackage>>[
+      final expectedShards = <List<RepositoryPackage>>[
         <RepositoryPackage>[
           createFakePackage('package1', packagesDir),
           createFakePackage('package2', packagesDir),

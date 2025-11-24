@@ -208,14 +208,12 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return subResults.values.first;
     }
     // Otherwise, aggregate the messages, with the least positive status.
-    final failedResults =
-        Map<String, PackageResult>.of(subResults)
-          ..removeWhere((String key, PackageResult value) =>
-              value.state != RunState.failed);
-    final skippedResults =
-        Map<String, PackageResult>.of(subResults)
-          ..removeWhere((String key, PackageResult value) =>
-              value.state != RunState.skipped);
+    final failedResults = Map<String, PackageResult>.of(subResults)
+      ..removeWhere(
+          (String key, PackageResult value) => value.state != RunState.failed);
+    final skippedResults = Map<String, PackageResult>.of(subResults)
+      ..removeWhere(
+          (String key, PackageResult value) => value.state != RunState.skipped);
     // If anything failed, collect all the failure messages, prefixed by type.
     if (failedResults.isNotEmpty) {
       return PackageResult.fail(<String>[

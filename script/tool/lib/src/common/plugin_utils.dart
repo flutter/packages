@@ -96,8 +96,7 @@ void setSwiftPackageManagerState(RepositoryPackage package,
   const flutterPath = <String>[flutterKey];
   const configPath = <String>[flutterKey, 'config'];
 
-  final editablePubspec =
-      YamlEditor(package.pubspecFile.readAsStringSync());
+  final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
   final configMap =
       editablePubspec.parseAt(configPath, orElse: () => YamlMap()) as YamlMap;
   if (enabled == null) {

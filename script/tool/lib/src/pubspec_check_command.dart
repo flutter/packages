@@ -401,8 +401,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     final defaultPackages = <String>{};
     for (final MapEntry<Object?, Object?> platformEntry in platforms.entries) {
       final platformDetails = platformEntry.value! as YamlMap;
-      final defaultPackage =
-          platformDetails['default_package'] as String?;
+      final defaultPackage = platformDetails['default_package'] as String?;
       if (defaultPackage != null) {
         defaultPackages.add(defaultPackage);
         if (!defaultPackage.startsWith('${packageName}_')) {
@@ -531,8 +530,7 @@ class PubspecCheckCommand extends PackageLoopingCommand {
     final badDependencies = <String>{};
     final misplacedDevDependencies = <String>{};
     // Shipped dependencies.
-    for (final dependencies
-        in <Map<String, Dependency>>[
+    for (final dependencies in <Map<String, Dependency>>[
       pubspec.dependencies,
       pubspec.devDependencies
     ]) {

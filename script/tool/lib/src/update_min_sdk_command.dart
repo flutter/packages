@@ -68,8 +68,7 @@ class UpdateMinSdkCommand extends PackageLoopingCommand {
     final VersionRange? dartRange = _sdkRange(pubspec, dartSdkKey);
     final VersionRange? flutterRange = _sdkRange(pubspec, flutterSdkKey);
 
-    final editablePubspec =
-        YamlEditor(package.pubspecFile.readAsStringSync());
+    final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
     if (dartRange != null &&
         (dartRange.min ?? Version.none) < _dartMinVersion) {
       editablePubspec

@@ -435,8 +435,7 @@ Safe to ignore if the package is deleted in this commit.
 
   String _getTag(RepositoryPackage package) {
     final File pubspecFile = package.pubspecFile;
-    final pubspecYaml =
-        loadYaml(pubspecFile.readAsStringSync()) as YamlMap;
+    final pubspecYaml = loadYaml(pubspecFile.readAsStringSync()) as YamlMap;
     final name = pubspecYaml['name'] as String;
     final version = pubspecYaml['version'] as String;
     // We should have failed to publish if these were unset.

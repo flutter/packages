@@ -37,12 +37,10 @@ class RemoveDevDependenciesCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     var changed = false;
-    final editablePubspec =
-        YamlEditor(package.pubspecFile.readAsStringSync());
+    final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
     const devDependenciesKey = 'dev_dependencies';
     final YamlNode root = editablePubspec.parseAt(<String>[]);
-    final devDependencies =
-        (root as YamlMap)[devDependenciesKey] as YamlMap?;
+    final devDependencies = (root as YamlMap)[devDependenciesKey] as YamlMap?;
     if (devDependencies != null) {
       changed = true;
       print('${indentation}Removed dev_dependencies');

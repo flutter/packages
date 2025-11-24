@@ -243,8 +243,7 @@ class LicenseCheckCommand extends PackageCommand {
     // Most code file types in the repository use '//' comments.
     final String defaultFirstPartyLicenseBlock = _generateLicenseBlock('// ');
     // A few file types have a different comment structure.
-    final firstPartyLicenseBlockByExtension =
-        <String, String>{
+    final firstPartyLicenseBlockByExtension = <String, String>{
       '.sh': _generateLicenseBlock('# '),
       '.html': _generateLicenseBlock('', prefix: '<!-- ', suffix: ' -->'),
     };

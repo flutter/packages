@@ -76,8 +76,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
       return;
     }
 
-    final pubspec =
-        Pubspec.parse(package.pubspecFile.readAsStringSync());
+    final pubspec = Pubspec.parse(package.pubspecFile.readAsStringSync());
     if (pubspec.version == null || pubspec.version!.major < 1) {
       printError(
           'This script only supports packages with version >= 1.0.0. Current version: ${pubspec.version}.');
@@ -192,8 +191,7 @@ class BranchForBatchReleaseCommand extends PackageCommand {
   }
 
   void _updatePubspec(RepositoryPackage package, Version newVersion) {
-    final editablePubspec =
-        YamlEditor(package.pubspecFile.readAsStringSync());
+    final editablePubspec = YamlEditor(package.pubspecFile.readAsStringSync());
     editablePubspec.update(<String>['version'], newVersion.toString());
     package.pubspecFile.writeAsStringSync(editablePubspec.toString());
   }

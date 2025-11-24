@@ -194,10 +194,9 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
           // - The package name (optionally with any underscores escaped)
           // - An image with a name-based link
           // - An image with a tag-based link
-          final packageLink =
-              RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
-                  '$packageName'
-                  r'(?:\.svg)?\)$');
+          final packageLink = RegExp(r'^!\[.*\]\(https://img.shields.io/pub/.*/'
+              '$packageName'
+              r'(?:\.svg)?\)$');
           final issueTagLink = RegExp(
               r'^!\[.*\]\(https://img.shields.io/github/issues/flutter/flutter/'
               '$encodedIssueTag'

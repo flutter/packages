@@ -220,8 +220,7 @@ $entry
       createFakePackage('a_package', packagesDir),
     ];
 
-    final entry =
-        '| [$packageName](./packages/$incorrectPackageName/) | '
+    final entry = '| [$packageName](./packages/$incorrectPackageName/) | '
         '[![pub package](https://img.shields.io/pub/v/$packageName.svg)](https://pub.dev/packages/$packageName) | '
         '[![pub points](https://img.shields.io/pub/points/$packageName)](https://pub.dev/packages/$packageName/score) | '
         '[![popularity](https://img.shields.io/pub/popularity/$packageName)](https://pub.dev/packages/$packageName/score) | '

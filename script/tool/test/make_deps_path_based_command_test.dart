@@ -26,8 +26,7 @@ void main() {
         .childDirectory('third_party')
         .childDirectory('packages');
 
-    final command =
-        MakeDepsPathBasedCommand(packagesDir, gitDir: gitDir);
+    final command = MakeDepsPathBasedCommand(packagesDir, gitDir: gitDir);
 
     runner = CommandRunner<void>(
         'make-deps-path-based_command', 'Test for $MakeDepsPathBasedCommand');

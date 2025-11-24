@@ -332,8 +332,7 @@ dependencies {}
   }
 
   Future<Map<String, PathDependency>> _getValidPathDependencies() async {
-    final pathDependencies =
-        <String, PathDependency>{};
+    final pathDependencies = <String, PathDependency>{};
 
     await for (final PackageEnumerationEntry entry in getTargetPackages()) {
       final RepositoryPackage package = entry.package;

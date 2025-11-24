@@ -61,8 +61,7 @@ Map<Version, NextVersionType> getAllowedNextVersions(
   Version version, {
   required Version newVersion,
 }) {
-  final allowedNextVersions =
-      <Version, NextVersionType>{
+  final allowedNextVersions = <Version, NextVersionType>{
     version.nextMajor: NextVersionType.BREAKING_MAJOR,
     version.nextMinor: NextVersionType.MINOR,
     version.nextPatch: NextVersionType.PATCH,

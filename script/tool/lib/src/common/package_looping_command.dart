@@ -308,8 +308,7 @@ abstract class PackageLoopingCommand extends PackageCommand {
     final List<PackageEnumerationEntry> targetPackages =
         await getPackagesToProcess().toList();
 
-    final results =
-        <PackageEnumerationEntry, PackageResult>{};
+    final results = <PackageEnumerationEntry, PackageResult>{};
     for (final entry in targetPackages) {
       final packageStart = DateTime.now();
       _currentPackageEntry = entry;

@@ -20,8 +20,7 @@ void main() {
       mockPlatform = MockPlatform();
       (:packagesDir, processRunner: _, gitProcessRunner: _, gitDir: _) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final command =
-          ListCommand(packagesDir, platform: mockPlatform);
+      final command = ListCommand(packagesDir, platform: mockPlatform);
 
       runner = CommandRunner<void>('list_test', 'Test for $ListCommand');
       runner.addCommand(command);

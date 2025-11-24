@@ -436,8 +436,7 @@ abstract class PackageCommand extends Command<void> {
         packages = _getChangedPackageNames(changedFiles);
       }
     } else if (getBoolArg(_runOnDirtyPackagesArg)) {
-      final gitVersionFinder =
-          GitVersionFinder(await gitDir, baseSha: 'HEAD');
+      final gitVersionFinder = GitVersionFinder(await gitDir, baseSha: 'HEAD');
       print('Running for all packages that have uncommitted changes\n');
       // _changesRequireFullTest is deliberately not used here, as this flag is
       // intended for use in CI to re-test packages changed by

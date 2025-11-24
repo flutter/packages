@@ -178,8 +178,7 @@ class GradleCheckCommand extends PackageLoopingCommand {
         r'github\.com.*flutter.*blob.*Plugins-and-Packages-repository-structure.*gradle-structure');
     final keyReadRegex =
         RegExp(r'if.*System\.getenv.*\.containsKey.*' '$keyVariable');
-    final keyUsedRegex =
-        RegExp(r'maven.*url.*System\.getenv\(' '$keyVariable');
+    final keyUsedRegex = RegExp(r'maven.*url.*System\.getenv\(' '$keyVariable');
 
     final bool keyPresent =
         gradleLines.any((String line) => keyPresentRegex.hasMatch(line));
@@ -633,8 +632,7 @@ gradle.projectsEvaluated {
   /// least a minimum value, if it is set at all.
   bool _validateKotlinVersion(
       RepositoryPackage example, List<String> gradleLines) {
-    final kotlinVersionRegex =
-        RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
+    final kotlinVersionRegex = RegExp(r"ext\.kotlin_version\s*=\s*'([\d.]+)'");
     RegExpMatch? match;
     if (gradleLines.any((String line) {
       match = kotlinVersionRegex.firstMatch(line);
