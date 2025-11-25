@@ -443,8 +443,11 @@ void main() {
       expect(toChange.length, 1);
       final PlatformCircle firstChanged = toChange.first;
       expect(firstChanged.consumeTapEvents, object2new.consumeTapEvents);
-      expect(firstChanged.fillColor, object2new.fillColor.value);
-      expect(firstChanged.strokeColor, object2new.strokeColor.value);
+      expect(firstChanged.fillColor.argbValue, object2new.fillColor.toARGB32());
+      expect(
+        firstChanged.strokeColor.argbValue,
+        object2new.strokeColor.toARGB32(),
+      );
       expect(firstChanged.visible, object2new.visible);
       expect(firstChanged.strokeWidth, object2new.strokeWidth);
       expect(firstChanged.zIndex, object2new.zIndex.toDouble());
@@ -458,8 +461,8 @@ void main() {
       expect(toAdd.length, 1);
       final PlatformCircle firstAdded = toAdd.first;
       expect(firstAdded.consumeTapEvents, object3.consumeTapEvents);
-      expect(firstAdded.fillColor, object3.fillColor.value);
-      expect(firstAdded.strokeColor, object3.strokeColor.value);
+      expect(firstAdded.fillColor.argbValue, object3.fillColor.toARGB32());
+      expect(firstAdded.strokeColor.argbValue, object3.strokeColor.toARGB32());
       expect(firstAdded.visible, object3.visible);
       expect(firstAdded.strokeWidth, object3.strokeWidth);
       expect(firstAdded.zIndex, object3.zIndex.toDouble());
@@ -618,7 +621,7 @@ void main() {
     void expectPolygon(PlatformPolygon actual, Polygon expected) {
       expect(actual.polygonId, expected.polygonId.value);
       expect(actual.consumesTapEvents, expected.consumeTapEvents);
-      expect(actual.fillColor, expected.fillColor.value);
+      expect(actual.fillColor.argbValue, expected.fillColor.toARGB32());
       expect(actual.geodesic, expected.geodesic);
       expect(actual.points.length, expected.points.length);
       for (final (int i, PlatformLatLng? point) in actual.points.indexed) {
@@ -634,7 +637,7 @@ void main() {
         }
       }
       expect(actual.visible, expected.visible);
-      expect(actual.strokeColor, expected.strokeColor.value);
+      expect(actual.strokeColor.argbValue, expected.strokeColor.toARGB32());
       expect(actual.strokeWidth, expected.strokeWidth);
       expect(actual.zIndex, expected.zIndex);
     }
@@ -686,7 +689,7 @@ void main() {
     void expectPolyline(PlatformPolyline actual, Polyline expected) {
       expect(actual.polylineId, expected.polylineId.value);
       expect(actual.consumesTapEvents, expected.consumeTapEvents);
-      expect(actual.color, expected.color.value);
+      expect(actual.color.argbValue, expected.color.toARGB32());
       expect(actual.geodesic, expected.geodesic);
       expect(
         actual.jointType,
@@ -1443,9 +1446,9 @@ void main() {
     expect(widget, isA<AndroidView>());
   });
 
-  testWidgets('cloudMapId is passed', (WidgetTester tester) async {
+  testWidgets('mapId is passed', (WidgetTester tester) async {
     const cloudMapId = '000000000000000'; // Dummy map ID.
-    final passedCloudMapIdCompleter = Completer<String>();
+    final passedMapIdCompleter = Completer<String>();
 
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(SystemChannels.platform_views, (
@@ -1463,9 +1466,9 @@ void main() {
                       as PlatformMapViewCreationParams?;
               if (creationParams != null) {
                 final String? passedMapId =
-                    creationParams.mapConfiguration.cloudMapId;
+                    creationParams.mapConfiguration.mapId;
                 if (passedMapId != null) {
-                  passedCloudMapIdCompleter.complete(passedMapId);
+                  passedMapIdCompleter.complete(passedMapId);
                 }
               }
             }
@@ -1483,14 +1486,14 @@ void main() {
           initialCameraPosition: CameraPosition(target: LatLng(0, 0), zoom: 1),
           textDirection: TextDirection.ltr,
         ),
-        mapConfiguration: const MapConfiguration(cloudMapId: cloudMapId),
+        mapConfiguration: const MapConfiguration(mapId: cloudMapId),
       ),
     );
 
     expect(
-      await passedCloudMapIdCompleter.future,
+      await passedMapIdCompleter.future,
       cloudMapId,
-      reason: 'Should pass cloudMapId on PlatformView creation message',
+      reason: 'Should pass mapId in PlatformView creation message',
     );
   });
 }
