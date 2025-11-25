@@ -115,7 +115,7 @@ class GoogleFontsVariant {
     final String weightPrefix =
         _fontWeightToFilenameWeightParts[fontWeight] ??
         _fontWeightToFilenameWeightParts[FontWeight.w400]!;
-    final String italicSuffix = fontStyle == FontStyle.italic ? 'Italic' : '';
+    final italicSuffix = fontStyle == FontStyle.italic ? 'Italic' : '';
     if (weightPrefix == 'Regular') {
       return italicSuffix == '' ? weightPrefix : italicSuffix;
     }

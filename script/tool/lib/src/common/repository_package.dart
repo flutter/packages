@@ -107,8 +107,9 @@ class RepositoryPackage {
     return platformDirectory(platform).existsSync();
   }
 
-  late final Pubspec _parsedPubspec =
-      Pubspec.parse(pubspecFile.readAsStringSync());
+  late final Pubspec _parsedPubspec = Pubspec.parse(
+    pubspecFile.readAsStringSync(),
+  );
 
   /// Returns the parsed [pubspecFile].
   ///
@@ -117,7 +118,7 @@ class RepositoryPackage {
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
-    const String flutterDependency = 'flutter';
+    const flutterDependency = 'flutter';
     final Pubspec pubspec = parsePubspec();
     return pubspec.dependencies.containsKey(flutterDependency) ||
         pubspec.devDependencies.containsKey(flutterDependency);
@@ -158,9 +159,9 @@ class RepositoryPackage {
       return false;
     }
     // Check whether this is one of the enclosing package's examples.
-    return enclosingPackage
-        .getExamples()
-        .any((RepositoryPackage p) => p.path == path);
+    return enclosingPackage.getExamples().any(
+      (RepositoryPackage p) => p.path == path,
+    );
   }
 
   /// Returns the Flutter example packages contained in the package, if any.
@@ -179,8 +180,9 @@ class RepositoryPackage {
         .listSync()
         .where((FileSystemEntity entity) => isPackage(entity))
         // isPackage guarantees that the cast to Directory is safe.
-        .map((FileSystemEntity entity) =>
-            RepositoryPackage(entity as Directory));
+        .map(
+          (FileSystemEntity entity) => RepositoryPackage(entity as Directory),
+        );
   }
 
   /// Returns the package that this package is a part of, if any.
@@ -203,11 +205,15 @@ class RepositoryPackage {
     return directory
         .listSync(recursive: true, followLinks: false)
         .where(isPackage)
-        .map((FileSystemEntity directory) =>
-            // isPackage guarantees that this cast is valid.
-            RepositoryPackage(directory as Directory))
-        .where((RepositoryPackage p) =>
-            includeExamples || (p.directory.basename != 'example'));
+        .map(
+          (FileSystemEntity directory) =>
+              // isPackage guarantees that this cast is valid.
+              RepositoryPackage(directory as Directory),
+        )
+        .where(
+          (RepositoryPackage p) =>
+              includeExamples || (p.directory.basename != 'example'),
+        );
   }
 
   /// Returns true if the package is not marked as "publish_to: none".

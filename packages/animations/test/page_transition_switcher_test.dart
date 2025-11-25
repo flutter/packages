@@ -8,9 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('transitions in a new child.', (WidgetTester tester) async {
-    final UniqueKey containerOne = UniqueKey();
-    final UniqueKey containerTwo = UniqueKey();
-    final UniqueKey containerThree = UniqueKey();
+    final containerOne = UniqueKey();
+    final containerTwo = UniqueKey();
+    final containerThree = UniqueKey();
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
@@ -87,9 +87,9 @@ void main() {
   testWidgets('transitions in a new child in reverse.', (
     WidgetTester tester,
   ) async {
-    final UniqueKey containerOne = UniqueKey();
-    final UniqueKey containerTwo = UniqueKey();
-    final UniqueKey containerThree = UniqueKey();
+    final containerOne = UniqueKey();
+    final containerTwo = UniqueKey();
+    final containerThree = UniqueKey();
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
@@ -167,9 +167,9 @@ void main() {
   });
 
   testWidgets('switch from forward to reverse', (WidgetTester tester) async {
-    final UniqueKey containerOne = UniqueKey();
-    final UniqueKey containerTwo = UniqueKey();
-    final UniqueKey containerThree = UniqueKey();
+    final containerOne = UniqueKey();
+    final containerTwo = UniqueKey();
+    final containerThree = UniqueKey();
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
@@ -239,9 +239,9 @@ void main() {
   });
 
   testWidgets('switch from reverse to forward.', (WidgetTester tester) async {
-    final UniqueKey containerOne = UniqueKey();
-    final UniqueKey containerTwo = UniqueKey();
-    final UniqueKey containerThree = UniqueKey();
+    final containerOne = UniqueKey();
+    final containerTwo = UniqueKey();
+    final containerThree = UniqueKey();
     await tester.pumpWidget(
       PageTransitionSwitcher(
         duration: const Duration(milliseconds: 100),
@@ -458,9 +458,9 @@ void main() {
   testWidgets("doesn't reset state of the children in transitions.", (
     WidgetTester tester,
   ) async {
-    final UniqueKey statefulOne = UniqueKey();
-    final UniqueKey statefulTwo = UniqueKey();
-    final UniqueKey statefulThree = UniqueKey();
+    final statefulOne = UniqueKey();
+    final statefulTwo = UniqueKey();
+    final statefulThree = UniqueKey();
 
     StatefulTestWidgetState.generation = 0;
 
@@ -555,9 +555,9 @@ void main() {
   testWidgets(
     'updates previous child transitions if the transitionBuilder changes.',
     (WidgetTester tester) async {
-      final UniqueKey containerOne = UniqueKey();
-      final UniqueKey containerTwo = UniqueKey();
-      final UniqueKey containerThree = UniqueKey();
+      final containerOne = UniqueKey();
+      final containerTwo = UniqueKey();
+      final containerThree = UniqueKey();
 
       // Insert three unique children so that we have some previous children.
       await tester.pumpWidget(
@@ -687,8 +687,8 @@ Widget _transitionBuilder(
 
 Map<Key, double> _getSecondaryAnimation(List<Key> keys, WidgetTester tester) {
   expect(find.byType(FadeTransition), findsNWidgets(keys.length));
-  final Map<Key, double> result = <Key, double>{};
-  for (final Key key in keys) {
+  final result = <Key, double>{};
+  for (final key in keys) {
     final FadeTransition transition = tester.firstWidget(
       find.ancestor(of: find.byKey(key), matching: find.byType(FadeTransition)),
     );
@@ -699,8 +699,8 @@ Map<Key, double> _getSecondaryAnimation(List<Key> keys, WidgetTester tester) {
 
 Map<Key, double> _getPrimaryAnimation(List<Key> keys, WidgetTester tester) {
   expect(find.byType(ScaleTransition), findsNWidgets(keys.length));
-  final Map<Key, double> result = <Key, double>{};
-  for (final Key key in keys) {
+  final result = <Key, double>{};
+  for (final key in keys) {
     final ScaleTransition transition = tester.firstWidget(
       find.ancestor(
         of: find.byKey(key),

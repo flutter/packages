@@ -107,8 +107,7 @@ if (WebViewPlatform.instance is WebKitWebViewPlatform) {
   params = const PlatformWebViewControllerCreationParams();
 }
 
-final WebViewController controller =
-    WebViewController.fromPlatformCreationParams(params);
+final controller = WebViewController.fromPlatformCreationParams(params);
 // ···
 if (controller.platform is AndroidWebViewController) {
   AndroidWebViewController.enableDebugging(true);
