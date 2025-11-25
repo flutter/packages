@@ -1,6 +1,6 @@
 ## 0.6.24+4
 
-* Allows for video recording without audio when permission RECORD_AUDIO is denied
+* Allows for video recording without audio when permission RECORD_AUDIO is denied.
 
 ## 0.6.24+3
 
