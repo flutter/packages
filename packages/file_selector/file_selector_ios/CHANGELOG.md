@@ -1,7 +1,11 @@
-## 0.5.3+4
+## 0.5.3+5
 
 * Improves compatibility with `UIScene`.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 0.5.3+4
+
+* Updates to Pigeon 26.
 
 ## 0.5.3+3
 

@@ -31,30 +31,36 @@ class CustomTestCommand extends PackageLoopingCommand {
   List<String> get aliases => <String>['test-custom'];
 
   @override
-  final String description = 'Runs package-specific custom tests defined in '
+  final String description =
+      'Runs package-specific custom tests defined in '
       "a package's custom test script.\n\n"
       'This command requires "dart" to be in your path.';
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final File script = package.customTestScript;
-    final String relativeScriptPath =
-        getRelativePosixPath(script, from: package.directory);
+    final String relativeScriptPath = getRelativePosixPath(
+      script,
+      from: package.directory,
+    );
     final File legacyScript = package.directory.childFile(_legacyScriptName);
     String? customSkipReason;
-    bool ranTests = false;
+    var ranTests = false;
 
     // Run the custom Dart script if presest.
     if (script.existsSync()) {
       // Ensure that dependencies are available.
       if (!await runPubGet(package, processRunner, platform)) {
-        return PackageResult.fail(
-            <String>['Unable to get script dependencies']);
+        return PackageResult.fail(<String>[
+          'Unable to get script dependencies',
+        ]);
       }
 
       final int testExitCode = await processRunner.runAndStream(
-          'dart', <String>['run', relativeScriptPath],
-          workingDir: package.directory);
+        'dart',
+        <String>['run', relativeScriptPath],
+        workingDir: package.directory,
+      );
       if (testExitCode != 0) {
         return PackageResult.fail();
       }
@@ -64,12 +70,15 @@ class CustomTestCommand extends PackageLoopingCommand {
     // Run the legacy script if present.
     if (legacyScript.existsSync()) {
       if (platform.isWindows) {
-        customSkipReason = '$_legacyScriptName is not supported on Windows. '
+        customSkipReason =
+            '$_legacyScriptName is not supported on Windows. '
             'Please migrate to $relativeScriptPath.';
       } else {
         final int exitCode = await processRunner.runAndStream(
-            legacyScript.path, <String>[],
-            workingDir: package.directory);
+          legacyScript.path,
+          <String>[],
+          workingDir: package.directory,
+        );
         if (exitCode != 0) {
           return PackageResult.fail();
         }
@@ -79,7 +88,8 @@ class CustomTestCommand extends PackageLoopingCommand {
 
     if (!ranTests) {
       return PackageResult.skip(
-          customSkipReason ?? 'No $relativeScriptPath file');
+        customSkipReason ?? 'No $relativeScriptPath file',
+      );
     }
 
     return PackageResult.success();

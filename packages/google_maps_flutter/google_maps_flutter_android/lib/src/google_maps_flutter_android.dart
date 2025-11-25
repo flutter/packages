@@ -332,10 +332,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     final Set<TileOverlay> previousSet = currentTileOverlays != null
         ? currentTileOverlays.values.toSet()
         : <TileOverlay>{};
-    final _TileOverlayUpdates updates = _TileOverlayUpdates.from(
-      previousSet,
-      newTileOverlays,
-    );
+    final updates = _TileOverlayUpdates.from(previousSet, newTileOverlays);
     _tileOverlays[mapId] = keyTileOverlayId(newTileOverlays);
     return _hostApi(mapId).updateTileOverlays(
       updates.tileOverlaysToAdd
@@ -565,39 +562,38 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       'On Android width must be set when position is set for ground overlays.',
     );
 
-    final PlatformMapViewCreationParams creationParams =
-        PlatformMapViewCreationParams(
-          initialCameraPosition: _platformCameraPositionFromCameraPosition(
-            widgetConfiguration.initialCameraPosition,
-          ),
-          mapConfiguration: mapConfiguration,
-          initialMarkers: mapObjects.markers
-              .map(_platformMarkerFromMarker)
-              .toList(),
-          initialPolygons: mapObjects.polygons
-              .map(_platformPolygonFromPolygon)
-              .toList(),
-          initialPolylines: mapObjects.polylines
-              .map(_platformPolylineFromPolyline)
-              .toList(),
-          initialCircles: mapObjects.circles
-              .map(_platformCircleFromCircle)
-              .toList(),
-          initialHeatmaps: mapObjects.heatmaps
-              .map(_platformHeatmapFromHeatmap)
-              .toList(),
-          initialTileOverlays: mapObjects.tileOverlays
-              .map(_platformTileOverlayFromTileOverlay)
-              .toList(),
-          initialClusterManagers: mapObjects.clusterManagers
-              .map(_platformClusterManagerFromClusterManager)
-              .toList(),
-          initialGroundOverlays: mapObjects.groundOverlays
-              .map(_platformGroundOverlayFromGroundOverlay)
-              .toList(),
-        );
+    final creationParams = PlatformMapViewCreationParams(
+      initialCameraPosition: _platformCameraPositionFromCameraPosition(
+        widgetConfiguration.initialCameraPosition,
+      ),
+      mapConfiguration: mapConfiguration,
+      initialMarkers: mapObjects.markers
+          .map(_platformMarkerFromMarker)
+          .toList(),
+      initialPolygons: mapObjects.polygons
+          .map(_platformPolygonFromPolygon)
+          .toList(),
+      initialPolylines: mapObjects.polylines
+          .map(_platformPolylineFromPolyline)
+          .toList(),
+      initialCircles: mapObjects.circles
+          .map(_platformCircleFromCircle)
+          .toList(),
+      initialHeatmaps: mapObjects.heatmaps
+          .map(_platformHeatmapFromHeatmap)
+          .toList(),
+      initialTileOverlays: mapObjects.tileOverlays
+          .map(_platformTileOverlayFromTileOverlay)
+          .toList(),
+      initialClusterManagers: mapObjects.clusterManagers
+          .map(_platformClusterManagerFromClusterManager)
+          .toList(),
+      initialGroundOverlays: mapObjects.groundOverlays
+          .map(_platformGroundOverlayFromGroundOverlay)
+          .toList(),
+    );
 
-    const String viewType = 'plugins.flutter.dev/google_maps_android';
+    const viewType = 'plugins.flutter.dev/google_maps_android';
     if (useAndroidViewSurface) {
       return PlatformViewLink(
         viewType: viewType,
@@ -1386,7 +1382,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
   // to support this legacy API that relied on cross-package magic strings.
   final List<double>? padding = (options['padding'] as List<Object?>?)
       ?.cast<double>();
-  final int? mapType = options['mapType'] as int?;
+  final mapType = options['mapType'] as int?;
   return PlatformMapConfiguration(
     compassEnabled: options['compassEnabled'] as bool?,
     cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBoundsJson(

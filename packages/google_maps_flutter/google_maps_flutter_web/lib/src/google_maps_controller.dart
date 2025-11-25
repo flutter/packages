@@ -605,12 +605,11 @@ class GoogleMapController {
 
   /// Updates the set of [TileOverlay]s.
   void updateTileOverlays(Set<TileOverlay> newOverlays) {
-    final MapsObjectUpdates<TileOverlay> updates =
-        MapsObjectUpdates<TileOverlay>.from(
-          _tileOverlays,
-          newOverlays,
-          objectName: 'tileOverlay',
-        );
+    final updates = MapsObjectUpdates<TileOverlay>.from(
+      _tileOverlays,
+      newOverlays,
+      objectName: 'tileOverlay',
+    );
     assert(
       _tileOverlaysController != null,
       'Cannot update tile overlays after dispose().',

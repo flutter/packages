@@ -22,27 +22,27 @@ class FLTCamMediaSettingsAVWrapper {
   /// - Parameter captureDevice: The capture device.
   /// - Throws: An error if the device could not be locked for configuration.
   /// - Returns: A Bool indicating whether the device was successfully locked for configuration.
-  func lockDevice(_ captureDevice: FLTCaptureDevice) throws {
+  func lockDevice(_ captureDevice: CaptureDevice) throws {
     return try captureDevice.lockForConfiguration()
   }
 
   /// Release exclusive control over device hardware properties.
   /// - Parameter captureDevice: The capture device.
-  func unlockDevice(_ captureDevice: FLTCaptureDevice) {
+  func unlockDevice(_ captureDevice: CaptureDevice) {
     captureDevice.unlockForConfiguration()
   }
 
   /// When paired with commitConfiguration, allows a client to batch multiple configuration
   /// operations on a running session into atomic updates.
   /// - Parameter videoCaptureSession: The video capture session.
-  func beginConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  func beginConfiguration(for videoCaptureSession: CaptureSession) {
     videoCaptureSession.beginConfiguration()
   }
 
   /// When preceded by beginConfiguration, allows a client to batch multiple configuration
   /// operations on a running session into atomic updates.
   /// - Parameter videoCaptureSession: The video capture session.
-  func commitConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  func commitConfiguration(for videoCaptureSession: CaptureSession) {
     videoCaptureSession.commitConfiguration()
   }
 
@@ -50,7 +50,7 @@ class FLTCamMediaSettingsAVWrapper {
   /// - Parameters:
   ///   - duration: The frame duration.
   ///   - captureDevice: The capture device
-  func setMinFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  func setMinFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     captureDevice.activeVideoMinFrameDuration = duration
   }
 
@@ -58,7 +58,7 @@ class FLTCamMediaSettingsAVWrapper {
   /// - Parameters:
   ///   - duration: The frame duration.
   ///   - captureDevice: The capture device
-  func setMaxFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  func setMaxFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     captureDevice.activeVideoMaxFrameDuration = duration
   }
 

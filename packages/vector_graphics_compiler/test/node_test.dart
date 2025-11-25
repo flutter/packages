@@ -9,7 +9,7 @@ import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 void main() {
   test('TextPosition uses computed transform', () {
-    final TextPositionNode node = TextPositionNode(
+    final node = TextPositionNode(
       SvgAttributes.forTest(
         x: DoubleOrPercentage.fromString('5'),
         y: DoubleOrPercentage.fromString('3'),
@@ -32,12 +32,12 @@ void main() {
   });
 
   test('TextNode returns null for Paint if stroke and fill are missing', () {
-    final TextNode node = TextNode('text', SvgAttributes.empty);
+    final node = TextNode('text', SvgAttributes.empty);
     expect(node.computePaint(Rect.largest, AffineMatrix.identity), null);
   });
 
   test('PathNode returns null for Paint if stroke and fill are missing', () {
-    final PathNode node = PathNode(Path(), SvgAttributes.empty);
+    final node = PathNode(Path(), SvgAttributes.empty);
     expect(node.computePaint(Rect.largest, AffineMatrix.identity), null);
   });
 }
