@@ -242,7 +242,7 @@ class VideoSizeConstraint {
   // TODO(dit): package:web has a class for this. Use it instead of toJson.
   /// Converts the current instance to a Map.
   Object toJson() {
-    final Map<String, dynamic> json = <String, dynamic>{};
+    final json = <String, dynamic>{};
 
     if (ideal != null) {
       json['ideal'] = ideal;

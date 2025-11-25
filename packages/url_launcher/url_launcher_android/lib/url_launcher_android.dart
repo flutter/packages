@@ -77,7 +77,7 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
   @override
   Future<bool> launchUrl(String url, LaunchOptions options) async {
     final bool inApp;
-    bool requireNonBrowser = false;
+    var requireNonBrowser = false;
     switch (options.mode) {
       case PreferredLaunchMode.inAppWebView:
       case PreferredLaunchMode.inAppBrowserView:

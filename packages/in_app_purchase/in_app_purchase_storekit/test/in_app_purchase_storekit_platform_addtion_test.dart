@@ -12,7 +12,7 @@ import 'fakes/fake_storekit_platform.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+  final fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
     setInAppPurchaseHostApis(api: fakeStoreKitPlatform);
