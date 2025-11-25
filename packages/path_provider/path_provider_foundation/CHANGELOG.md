@@ -1,5 +1,11 @@
+## 2.5.1
+
+* Requires `objective_c` 9.2.0, to resolve an issue with production builds.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 2.5.0
 
+* **Retracted** due to an issue with production builds.
 * Replaces Flutter-plugin-based implementation with direct FFI calls to
   Foundation.
 
