@@ -68,7 +68,7 @@ Future<void> runBenchmarks(
   final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the parsed value of [benchmarkPath] to ensure the
   // benchmark app is reloaded with the proper configuration.
-  final String newUri = Uri.parse(benchmarkPath)
+  final newUri = Uri.parse(benchmarkPath)
       .replace(
         scheme: currentUri.scheme,
         host: currentUri.host,
@@ -94,7 +94,7 @@ Future<void> _runBenchmark(String? benchmarkName) async {
   await runZoned<Future<void>>(
     () async {
       final Recorder recorder = recorderFactory();
-      final Runner runner = recorder.isTracingEnabled && !_client.isInManualMode
+      final runner = recorder.isTracingEnabled && !_client.isInManualMode
           ? Runner(
               recorder: recorder,
               setUpAllDidRun: () =>
@@ -168,7 +168,7 @@ void _fallbackToManual(String error) {
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  final HTMLBodyElement body = document.body! as HTMLBodyElement;
+  final body = document.body! as HTMLBodyElement;
 
   body.innerHTMLString = '<h2>${profile.name}</h2>';
 
@@ -238,7 +238,7 @@ class TimeseriesVisualization {
 
     final double barWidth = _screenWidth / _stats.samples.length;
     double xOffset = 0;
-    for (int i = 0; i < _stats.samples.length; i++) {
+    for (var i = 0; i < _stats.samples.length; i++) {
       final AnnotatedSample sample = _stats.samples[i];
 
       if (sample.isWarmUpValue) {
@@ -415,8 +415,8 @@ class LocalBenchmarkServerClient {
     required String mimeType,
     String? sendData,
   }) {
-    final Completer<XMLHttpRequest> completer = Completer<XMLHttpRequest>();
-    final XMLHttpRequest xhr = XMLHttpRequest();
+    final completer = Completer<XMLHttpRequest>();
+    final xhr = XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.overrideMimeType(mimeType);
     xhr.onLoad.listen((ProgressEvent e) {

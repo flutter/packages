@@ -13,7 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 Future<GoRouter> createGoRouter(WidgetTester tester) async {
-  final GoRouter goRouter = GoRouter(
+  final goRouter = GoRouter(
     initialLocation: '/',
     routes: <GoRoute>[
       GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),
@@ -178,7 +178,7 @@ Future<GoRouter> createRouter(
   bool overridePlatformDefaultLocation = false,
   List<NavigatorObserver>? observers,
 }) async {
-  final GoRouter goRouter = GoRouter(
+  final goRouter = GoRouter(
     routes: routes,
     redirect: redirect,
     extraCodec: extraCodec,
@@ -217,7 +217,7 @@ Future<GoRouter> createRouterWithRoutingConfig(
   bool requestFocus = true,
   bool overridePlatformDefaultLocation = false,
 }) async {
-  final GoRouter goRouter = GoRouter.routingConfig(
+  final goRouter = GoRouter.routingConfig(
     routingConfig: config,
     initialLocation: initialLocation,
     onException: onException,

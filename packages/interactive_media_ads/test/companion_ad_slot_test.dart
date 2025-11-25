@@ -13,7 +13,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('buildWidget', (WidgetTester tester) async {
-    final TestCompanionAdSlot slot = TestCompanionAdSlot(
+    final slot = TestCompanionAdSlot(
       PlatformCompanionAdSlotCreationParams(size: CompanionAdSlotSize.fluid()),
       onBuildWidget: (_) => Container(),
     );

@@ -12,10 +12,8 @@ void main() {
     testWidgets(
       'SharedAxisPageTransitionsBuilder builds a SharedAxisTransition',
       (WidgetTester tester) async {
-        final AnimationController animation = AnimationController(
-          vsync: const TestVSync(),
-        );
-        final AnimationController secondaryAnimation = AnimationController(
+        final animation = AnimationController(vsync: const TestVSync());
+        final secondaryAnimation = AnimationController(
           vsync: const TestVSync(),
         );
 
@@ -38,9 +36,9 @@ void main() {
     testWidgets('SharedAxisTransition runs forward', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -160,9 +158,9 @@ void main() {
     testWidgets('SharedAxisTransition runs in reverse', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -285,9 +283,9 @@ void main() {
     testWidgets('SharedAxisTransition does not jump when interrupted', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -414,9 +412,9 @@ void main() {
     testWidgets('State is not lost when transitioning', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -502,9 +500,9 @@ void main() {
     });
 
     testWidgets('default fill color', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       // The default fill color should be derived from ThemeData.canvasColor.
       final Color defaultFillColor = ThemeData().canvasColor;
@@ -547,9 +545,9 @@ void main() {
     });
 
     testWidgets('custom fill color', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -590,11 +588,11 @@ void main() {
     });
 
     testWidgets('should keep state', (WidgetTester tester) async {
-      final AnimationController animation = AnimationController(
+      final animation = AnimationController(
         vsync: const TestVSync(),
         duration: const Duration(milliseconds: 300),
       );
-      final AnimationController secondaryAnimation = AnimationController(
+      final secondaryAnimation = AnimationController(
         vsync: const TestVSync(),
         duration: const Duration(milliseconds: 300),
       );
@@ -662,10 +660,8 @@ void main() {
     testWidgets(
       'SharedAxisPageTransitionsBuilder builds a SharedAxisTransition',
       (WidgetTester tester) async {
-        final AnimationController animation = AnimationController(
-          vsync: const TestVSync(),
-        );
-        final AnimationController secondaryAnimation = AnimationController(
+        final animation = AnimationController(vsync: const TestVSync());
+        final secondaryAnimation = AnimationController(
           vsync: const TestVSync(),
         );
 
@@ -688,9 +684,9 @@ void main() {
     testWidgets('SharedAxisTransition runs forward', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -810,9 +806,9 @@ void main() {
     testWidgets('SharedAxisTransition runs in reverse', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -935,9 +931,9 @@ void main() {
     testWidgets('SharedAxisTransition does not jump when interrupted', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1064,9 +1060,9 @@ void main() {
     testWidgets('State is not lost when transitioning', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1152,9 +1148,9 @@ void main() {
     });
 
     testWidgets('default fill color', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       // The default fill color should be derived from ThemeData.canvasColor.
       final Color defaultFillColor = ThemeData().canvasColor;
@@ -1197,9 +1193,9 @@ void main() {
     });
 
     testWidgets('custom fill color', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1240,11 +1236,11 @@ void main() {
     });
 
     testWidgets('should keep state', (WidgetTester tester) async {
-      final AnimationController animation = AnimationController(
+      final animation = AnimationController(
         vsync: const TestVSync(),
         duration: const Duration(milliseconds: 300),
       );
-      final AnimationController secondaryAnimation = AnimationController(
+      final secondaryAnimation = AnimationController(
         vsync: const TestVSync(),
         duration: const Duration(milliseconds: 300),
       );
@@ -1312,10 +1308,8 @@ void main() {
     testWidgets(
       'SharedAxisPageTransitionsBuilder builds a SharedAxisTransition',
       (WidgetTester tester) async {
-        final AnimationController animation = AnimationController(
-          vsync: const TestVSync(),
-        );
-        final AnimationController secondaryAnimation = AnimationController(
+        final animation = AnimationController(vsync: const TestVSync());
+        final secondaryAnimation = AnimationController(
           vsync: const TestVSync(),
         );
 
@@ -1338,9 +1332,9 @@ void main() {
     testWidgets('SharedAxisTransition runs forward', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1415,9 +1409,9 @@ void main() {
     testWidgets('SharedAxisTransition runs in reverse', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1497,9 +1491,9 @@ void main() {
     testWidgets('SharedAxisTransition does not jump when interrupted', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1569,9 +1563,9 @@ void main() {
     testWidgets('SharedAxisTransition properly disposes animation', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1604,9 +1598,9 @@ void main() {
     testWidgets('State is not lost when transitioning', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1692,9 +1686,9 @@ void main() {
     });
 
     testWidgets('default fill color', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       // The default fill color should be derived from ThemeData.canvasColor.
       final Color defaultFillColor = ThemeData().canvasColor;
@@ -1737,9 +1731,9 @@ void main() {
     });
 
     testWidgets('custom fill color', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navigator = GlobalKey<NavigatorState>();
-      const String bottomRoute = '/';
-      const String topRoute = '/a';
+      final navigator = GlobalKey<NavigatorState>();
+      const bottomRoute = '/';
+      const topRoute = '/a';
 
       await tester.pumpWidget(
         _TestWidget(
@@ -1780,11 +1774,11 @@ void main() {
     });
 
     testWidgets('should keep state', (WidgetTester tester) async {
-      final AnimationController animation = AnimationController(
+      final animation = AnimationController(
         vsync: const TestVSync(),
         duration: const Duration(milliseconds: 300),
       );
-      final AnimationController secondaryAnimation = AnimationController(
+      final secondaryAnimation = AnimationController(
         vsync: const TestVSync(),
         duration: const Duration(milliseconds: 300),
       );
@@ -1855,7 +1849,7 @@ double _getOpacity(String key, WidgetTester tester) {
     matching: find.byType(FadeTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final FadeTransition transition = widget as FadeTransition;
+    final transition = widget as FadeTransition;
     return a * transition.opacity.value;
   });
 }
@@ -1876,7 +1870,7 @@ double _getTranslationOffset(
         double a,
         Widget widget,
       ) {
-        final Transform transition = widget as Transform;
+        final transition = widget as Transform;
         final Vector3 translation = transition.transform.getTranslation();
         return a + translation.x;
       });
@@ -1885,7 +1879,7 @@ double _getTranslationOffset(
         double a,
         Widget widget,
       ) {
-        final Transform transition = widget as Transform;
+        final transition = widget as Transform;
         final Vector3 translation = transition.transform.getTranslation();
         return a + translation.y;
       });
@@ -1904,7 +1898,7 @@ double _getScale(String key, WidgetTester tester) {
     matching: find.byType(ScaleTransition),
   );
   return tester.widgetList(finder).fold<double>(1.0, (double a, Widget widget) {
-    final ScaleTransition transition = widget as ScaleTransition;
+    final transition = widget as ScaleTransition;
     return a * transition.scale.value;
   });
 }

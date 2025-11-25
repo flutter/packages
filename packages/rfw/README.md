@@ -491,8 +491,8 @@ not identify a list):
 'Foo': (BuildContext context, DataSource source) {
   final int length = source.length(<Object>['text']);
   if (length > 0) {
-    final StringBuffer text = StringBuffer();
-    for (int index = 0; index < length; index += 1) {
+    final text = StringBuffer();
+    for (var index = 0; index < length; index += 1) {
       text.write(source.v<String>(<Object>['text', index]));
     }
     return Text(text.toString(), textDirection: TextDirection.ltr);

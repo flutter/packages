@@ -73,7 +73,7 @@ class HttpRequestFactory {
     Map<String, String>? requestHeaders,
     Uint8List? sendData,
   }) async {
-    final Map<String, String> headers = <String, String>{
+    final headers = <String, String>{
       if (mimeType != null) 'content-type': mimeType,
       ...?requestHeaders,
     };
