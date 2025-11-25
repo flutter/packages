@@ -1,6 +1,6 @@
 ## 2.5.1
 
-* Reverts to plugin-based implmeentation temporarily.
+* Reverts to plugin-based implmentation while FFI issues are investigated.
 
 ## 2.5.0
 
