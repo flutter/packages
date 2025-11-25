@@ -1,5 +1,10 @@
+## 2.5.1
+
+* Reverts to plugin-based implementation while FFI issues are investigated.
+
 ## 2.5.0
 
+* **Retracted** due to production build issues.
 * Replaces Flutter-plugin-based implementation with direct FFI calls to
   Foundation.
 
