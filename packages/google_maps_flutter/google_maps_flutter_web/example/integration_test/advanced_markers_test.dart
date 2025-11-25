@@ -52,7 +52,7 @@ void main() {
     });
 
     testWidgets('addMarkers', (WidgetTester tester) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(markerId: const MarkerId('1')),
         AdvancedMarker(markerId: const MarkerId('2')),
       };
@@ -69,7 +69,7 @@ void main() {
       gmaps.AdvancedMarkerElement? marker;
       gmaps.LatLngLiteral? position;
 
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(markerId: const MarkerId('1')),
       };
       await controller.addMarkers(markers);
@@ -85,7 +85,7 @@ void main() {
       expect(position.lng, equals(0));
 
       // Update the marker with draggable and position.
-      final Set<AdvancedMarker> updatedMarkers = <AdvancedMarker>{
+      final updatedMarkers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           draggable: true,
@@ -111,7 +111,7 @@ void main() {
         gmaps.AdvancedMarkerElement? marker;
         gmaps.LatLngLiteral? position;
 
-        final Set<AdvancedMarker> markers = <AdvancedMarker>{
+        final markers = <AdvancedMarker>{
           AdvancedMarker(
             markerId: const MarkerId('1'),
             position: const LatLng(42, 54),
@@ -129,7 +129,7 @@ void main() {
         expect(position.lng, equals(54));
 
         // Update the marker without position.
-        final Set<AdvancedMarker> updatedMarkers = <AdvancedMarker>{
+        final updatedMarkers = <AdvancedMarker>{
           AdvancedMarker(markerId: const MarkerId('1'), draggable: true),
         };
         await controller.changeMarkers(updatedMarkers);
@@ -147,7 +147,7 @@ void main() {
     );
 
     testWidgets('removeMarkers', (WidgetTester tester) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(markerId: const MarkerId('1')),
         AdvancedMarker(markerId: const MarkerId('2')),
         AdvancedMarker(markerId: const MarkerId('3')),
@@ -158,7 +158,7 @@ void main() {
       expect(controller.markers.length, 3);
 
       // Remove some markers.
-      final Set<MarkerId> markerIdsToRemove = <MarkerId>{
+      final markerIdsToRemove = <MarkerId>{
         const MarkerId('1'),
         const MarkerId('3'),
       };
@@ -172,7 +172,7 @@ void main() {
     });
 
     testWidgets('InfoWindow show/hide', (WidgetTester tester) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           infoWindow: const InfoWindow(title: 'Title', snippet: 'Snippet'),
@@ -195,7 +195,7 @@ void main() {
     testWidgets('only single InfoWindow is visible', (
       WidgetTester tester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           infoWindow: const InfoWindow(title: 'Title', snippet: 'Snippet'),
@@ -224,7 +224,7 @@ void main() {
     testWidgets('markers with custom asset icon work', (
       WidgetTester tester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: AssetMapBitmap('assets/red_square.png', imagePixelRatio: 1.0),
@@ -234,7 +234,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLImageElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLImageElement?;
       expect(icon, isNotNull);
@@ -250,7 +250,7 @@ void main() {
     testWidgets('markers with custom asset icon and pixel ratio work', (
       WidgetTester tester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: AssetMapBitmap('assets/red_square.png', imagePixelRatio: 2.0),
@@ -260,7 +260,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLImageElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLImageElement?;
       expect(icon, isNotNull);
@@ -277,7 +277,7 @@ void main() {
     testWidgets('markers with custom asset icon with width and height work', (
       WidgetTester tester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: AssetMapBitmap(
@@ -292,7 +292,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLImageElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLImageElement?;
       expect(icon, isNotNull);
@@ -309,7 +309,7 @@ void main() {
     testWidgets('markers with missing asset icon should not set size', (
       WidgetTester tester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: AssetMapBitmap(
@@ -322,7 +322,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLImageElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLImageElement?;
       expect(icon, isNotNull);
@@ -339,7 +339,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: BytesMapBitmap(
@@ -352,7 +352,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLImageElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLImageElement?;
       expect(icon, isNotNull);
@@ -380,7 +380,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: BytesMapBitmap(bytes, imagePixelRatio: 1),
@@ -390,7 +390,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLImageElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLImageElement?;
       expect(icon, isNotNull);
@@ -406,7 +406,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: BytesMapBitmap(bytes, width: 20, height: 30),
@@ -416,7 +416,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLImageElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLImageElement?;
       expect(icon, isNotNull);
@@ -427,7 +427,7 @@ void main() {
     testWidgets('markers created with text glyph work', (
       WidgetTester widgetTester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: BitmapDescriptor.pinConfig(
@@ -440,7 +440,7 @@ void main() {
       await controller.addMarkers(markers);
       expect(controller.markers.length, 1);
 
-      final HTMLDivElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLDivElement?;
       expect(icon, isNotNull);
@@ -450,8 +450,8 @@ void main() {
       // the public API.
       dom.Element? paragraphElement;
       final NodeList paragraphs = icon!.querySelectorAll('p');
-      for (int i = 0; i < paragraphs.length; i++) {
-        final dom.Element? paragraph = paragraphs.item(i) as dom.Element?;
+      for (var i = 0; i < paragraphs.length; i++) {
+        final paragraph = paragraphs.item(i) as dom.Element?;
         if (paragraph?.innerHTML.toString() == 'Hey') {
           paragraphElement = paragraph;
           break;
@@ -465,7 +465,7 @@ void main() {
     testWidgets('markers created with bitmap glyph work', (
       WidgetTester widgetTester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           icon: BitmapDescriptor.pinConfig(
@@ -483,7 +483,7 @@ void main() {
       await controller.addMarkers(markers);
       expect(controller.markers.length, 1);
 
-      final HTMLDivElement? icon =
+      final icon =
           controller.markers[const MarkerId('1')]?.marker?.content
               as HTMLDivElement?;
       expect(icon, isNotNull);
@@ -493,8 +493,8 @@ void main() {
       // the public API.
       HTMLImageElement? imgElement;
       final NodeList imgElements = icon!.querySelectorAll('img');
-      for (int i = 0; i < imgElements.length; i++) {
-        final dom.Element? img = imgElements.item(i) as dom.Element?;
+      for (var i = 0; i < imgElements.length; i++) {
+        final img = imgElements.item(i) as dom.Element?;
         final String src = (img! as HTMLImageElement).src;
         if (src.endsWith('assets/red_square.png')) {
           imgElement = img as HTMLImageElement;
@@ -509,7 +509,7 @@ void main() {
     testWidgets('InfoWindow snippet can have links', (
       WidgetTester tester,
     ) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           infoWindow: const InfoWindow(
@@ -522,7 +522,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLElement? content =
+      final content =
           controller.markers[const MarkerId('1')]?.infoWindow?.content
               as HTMLElement?;
       expect(content, isNotNull);
@@ -538,7 +538,7 @@ void main() {
     });
 
     testWidgets('InfoWindow content is clickable', (WidgetTester tester) async {
-      final Set<AdvancedMarker> markers = <AdvancedMarker>{
+      final markers = <AdvancedMarker>{
         AdvancedMarker(
           markerId: const MarkerId('1'),
           infoWindow: const InfoWindow(
@@ -551,7 +551,7 @@ void main() {
       await controller.addMarkers(markers);
 
       expect(controller.markers.length, 1);
-      final HTMLElement? content =
+      final content =
           controller.markers[const MarkerId('1')]?.infoWindow?.content
               as HTMLElement?;
 

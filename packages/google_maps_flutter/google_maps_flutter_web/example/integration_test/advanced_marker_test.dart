@@ -102,10 +102,10 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final AdvancedMarkerController controller = AdvancedMarkerController(
+      final controller = AdvancedMarkerController(
         marker: marker,
       );
-      final gmaps.AdvancedMarkerElementOptions options =
+      final options =
           gmaps.AdvancedMarkerElementOptions()
             ..collisionBehavior =
                 gmaps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
@@ -132,7 +132,7 @@ void main() {
     testWidgets('infoWindow null, showInfoWindow.', (
       WidgetTester tester,
     ) async {
-      final AdvancedMarkerController controller = AdvancedMarkerController(
+      final controller = AdvancedMarkerController(
         marker: marker,
       );
 
@@ -142,10 +142,10 @@ void main() {
     });
 
     testWidgets('showInfoWindow', (WidgetTester tester) async {
-      final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.Map map = gmaps.Map(createDivElement());
+      final infoWindow = gmaps.InfoWindow();
+      final map = gmaps.Map(createDivElement());
       marker.map = map;
-      final AdvancedMarkerController controller = AdvancedMarkerController(
+      final controller = AdvancedMarkerController(
         marker: marker,
         infoWindow: infoWindow,
       );
@@ -157,10 +157,10 @@ void main() {
     });
 
     testWidgets('hideInfoWindow', (WidgetTester tester) async {
-      final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-      final gmaps.Map map = gmaps.Map(createDivElement());
+      final infoWindow = gmaps.InfoWindow();
+      final map = gmaps.Map(createDivElement());
       marker.map = map;
-      final AdvancedMarkerController controller = AdvancedMarkerController(
+      final controller = AdvancedMarkerController(
         marker: marker,
         infoWindow: infoWindow,
       );
@@ -175,8 +175,8 @@ void main() {
       late AdvancedMarkerController controller;
 
       setUp(() {
-        final gmaps.InfoWindow infoWindow = gmaps.InfoWindow();
-        final gmaps.Map map = gmaps.Map(createDivElement());
+        final infoWindow = gmaps.InfoWindow();
+        final map = gmaps.Map(createDivElement());
         marker.map = map;
         controller = AdvancedMarkerController(
           marker: marker,
@@ -193,7 +193,7 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final gmaps.AdvancedMarkerElementOptions options =
+        final options =
             gmaps.AdvancedMarkerElementOptions()..gmpDraggable = true;
 
         controller.remove();
