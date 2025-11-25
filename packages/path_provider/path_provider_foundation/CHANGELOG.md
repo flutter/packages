@@ -1,8 +1,3 @@
-## 2.5.0
-
-* Replaces Flutter-plugin-based implementation with direct FFI calls to
-  Foundation.
-
 ## 2.4.4
 
 * Updates to Pigeon 26.

@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
     String? containerDirectory;
     String? cacheDirectory;
     final PathProviderPlatform provider = PathProviderPlatform.instance;
-    final providerFoundation = PathProviderFoundation();
+    final PathProviderFoundation providerFoundation = PathProviderFoundation();
 
     try {
       tempDirectory = await provider.getTemporaryPath();
