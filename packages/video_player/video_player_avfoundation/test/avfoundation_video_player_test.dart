@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -24,14 +25,19 @@ void main() {
     MockAVFoundationVideoPlayerApi,
     MockVideoPlayerInstanceApi,
   )
-  setUpMockPlayer({required int playerId}) {
+  setUpMockPlayer({required int playerId, int? textureId}) {
     final pluginApi = MockAVFoundationVideoPlayerApi();
     final instanceApi = MockVideoPlayerInstanceApi();
     final player = AVFoundationVideoPlayer(
       pluginApi: pluginApi,
-      playerProvider: (_) => instanceApi,
+      playerApiProvider: (_) => instanceApi,
     );
-    player.ensureApiInitialized(playerId);
+    player.ensurePlayerInitialized(
+      playerId,
+      textureId == null
+          ? const VideoPlayerPlatformViewState()
+          : VideoPlayerTextureViewState(textureId: textureId),
+    );
     return (player, pluginApi, instanceApi);
   }
 
@@ -48,6 +54,7 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       await player.init();
 
@@ -61,11 +68,11 @@ void main() {
         MockVideoPlayerInstanceApi playerApi,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       await player.dispose(1);
 
       verify(playerApi.dispose());
-      expect(player.playerViewStates, isEmpty);
     });
 
     test('create with asset', () async {
@@ -75,12 +82,11 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       const newPlayerId = 2;
-      const textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
-        (_) async =>
-            TexturePlayerIds(playerId: newPlayerId, textureId: textureId),
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102),
       );
 
       const asset = 'someAsset';
@@ -103,8 +109,8 @@ void main() {
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(
-        player.playerViewStates[newPlayerId],
-        const VideoPlayerTextureViewState(textureId: textureId),
+        player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
+        isA<Texture>(),
       );
     });
 
@@ -117,6 +123,7 @@ void main() {
           _,
         ) = setUpMockPlayer(
           playerId: 1,
+          textureId: 101,
         );
 
         const asset = 'someAsset';
@@ -143,12 +150,11 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       const newPlayerId = 2;
-      const textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
-        (_) async =>
-            TexturePlayerIds(playerId: newPlayerId, textureId: textureId),
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102),
       );
 
       const uri = 'https://example.com';
@@ -168,8 +174,8 @@ void main() {
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(
-        player.playerViewStates[newPlayerId],
-        const VideoPlayerTextureViewState(textureId: textureId),
+        player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
+        isA<Texture>(),
       );
     });
 
@@ -180,10 +186,11 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       when(
         api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 100));
+      ).thenAnswer((_) async => TexturePlayerIds(playerId: 2, textureId: 102));
 
       const headers = <String, String>{'Authorization': 'Bearer token'};
       await player.create(
@@ -207,12 +214,11 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       const newPlayerId = 2;
-      const textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
-        (_) async =>
-            TexturePlayerIds(playerId: newPlayerId, textureId: textureId),
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102),
       );
 
       const fileUri = 'file:///foo/bar';
@@ -226,8 +232,8 @@ void main() {
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(
-        player.playerViewStates[newPlayerId],
-        const VideoPlayerTextureViewState(textureId: textureId),
+        player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
+        isA<Texture>(),
       );
     });
 
@@ -238,12 +244,11 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       const newPlayerId = 2;
-      const textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
-        (_) async =>
-            TexturePlayerIds(playerId: newPlayerId, textureId: textureId),
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102),
       );
 
       const asset = 'someAsset';
@@ -268,8 +273,8 @@ void main() {
       expect(creationOptions.uri, assetUrl);
       expect(playerId, newPlayerId);
       expect(
-        player.playerViewStates[newPlayerId],
-        const VideoPlayerTextureViewState(textureId: textureId),
+        player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
+        isA<Texture>(),
       );
     });
 
@@ -280,12 +285,11 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       const newPlayerId = 2;
-      const textureId = 100;
       when(api.createForTextureView(any)).thenAnswer(
-        (_) async =>
-            TexturePlayerIds(playerId: newPlayerId, textureId: textureId),
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102),
       );
 
       const uri = 'https://example.com';
@@ -308,8 +312,8 @@ void main() {
       expect(creationOptions.httpHeaders, <String, String>{});
       expect(playerId, newPlayerId);
       expect(
-        player.playerViewStates[newPlayerId],
-        const VideoPlayerTextureViewState(textureId: textureId),
+        player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
+        isA<Texture>(),
       );
     });
 
@@ -320,10 +324,11 @@ void main() {
         _,
       ) = setUpMockPlayer(
         playerId: 1,
+        textureId: 101,
       );
       const newPlayerId = 2;
       when(api.createForTextureView(any)).thenAnswer(
-        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 102),
       );
 
       const headers = <String, String>{'Authorization': 'Bearer token'};
@@ -376,8 +381,8 @@ void main() {
       expect(creationOptions.uri, fileUri);
       expect(playerId, newPlayerId);
       expect(
-        player.playerViewStates[newPlayerId],
-        const VideoPlayerTextureViewState(textureId: textureId),
+        player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
+        isA<Texture>(),
       );
     });
 
@@ -404,8 +409,8 @@ void main() {
 
       expect(playerId, newPlayerId);
       expect(
-        player.playerViewStates[newPlayerId],
-        const VideoPlayerPlatformViewState(),
+        player.buildViewWithOptions(VideoViewOptions(playerId: playerId!)),
+        isA<IgnorePointer>(),
       );
     });
 
@@ -539,14 +544,15 @@ void main() {
     });
 
     test('videoEventsFor', () async {
+      const playerId = 1;
       final (
         AVFoundationVideoPlayer player,
         MockAVFoundationVideoPlayerApi api,
         _,
       ) = setUpMockPlayer(
-        playerId: 1,
+        playerId: playerId,
       );
-      const mockChannel = 'flutter.io/videoPlayer/videoEvents123';
+      const mockChannel = 'flutter.dev/videoPlayer/videoEvents$playerId';
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
           .setMockMessageHandler(mockChannel, (ByteData? message) async {
             final MethodCall methodCall = const StandardMethodCodec()
@@ -653,7 +659,7 @@ void main() {
             }
           });
       expect(
-        player.videoEventsFor(123),
+        player.videoEventsFor(playerId),
         emitsInOrder(<dynamic>[
           VideoEvent(
             eventType: VideoEventType.initialized,
