@@ -2091,23 +2091,22 @@ void main() {
   test(
     'createCamera and initializeCamera sets targetFps as expected',
     () async {
-      final AndroidCameraCameraX camera = AndroidCameraCameraX();
+      final camera = AndroidCameraCameraX();
       const CameraLensDirection testLensDirection = CameraLensDirection.back;
-      const int testSensorOrientation = 90;
-      const CameraDescription testCameraDescription = CameraDescription(
+      const testSensorOrientation = 90;
+      const testCameraDescription = CameraDescription(
         name: 'cameraName',
         lensDirection: testLensDirection,
         sensorOrientation: testSensorOrientation,
       );
-      const int fastTargetFps = 60;
-      const int testCameraId = 12;
-      final MockCamera mockCamera = MockCamera();
+      const fastTargetFps = 60;
+      const testCameraId = 12;
+      final mockCamera = MockCamera();
 
       // Mock/Detached objects for (typically attached) objects created by
       // createCamera.
-      final MockProcessCameraProvider mockProcessCameraProvider =
-          MockProcessCameraProvider();
-      final MockCameraInfo mockCameraInfo = MockCameraInfo();
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraInfo = MockCameraInfo();
 
       when(
         mockProcessCameraProvider.bindToLifecycle(any, any),
@@ -2137,9 +2136,10 @@ void main() {
               int? targetRotation,
             }) {
               targetPreviewFpsRange = targetFpsRange;
-              final MockPreview mockPreview = MockPreview();
-              final ResolutionInfo testResolutionInfo =
-                  ResolutionInfo.pigeon_detached(resolution: MockCameraSize());
+              final mockPreview = MockPreview();
+              final testResolutionInfo = ResolutionInfo.pigeon_detached(
+                resolution: MockCameraSize(),
+              );
               when(
                 mockPreview.getResolutionInfo(),
               ).thenAnswer((_) async => testResolutionInfo);
