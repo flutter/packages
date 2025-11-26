@@ -1006,7 +1006,7 @@ class WebKitJavaScriptChannelParams extends JavaScriptChannelParams {
 class WebKitWebViewWidgetCreationParams
     extends PlatformWebViewWidgetCreationParams {
   /// Constructs a [WebKitWebViewWidgetCreationParams].
-  WebKitWebViewWidgetCreationParams({
+  const WebKitWebViewWidgetCreationParams({
     super.key,
     required super.controller,
     super.layoutDirection,

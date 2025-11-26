@@ -104,7 +104,7 @@ Future<void> main() async {
           ({
             required WKWebViewConfiguration initialConfiguration,
             void Function(
-              NSObject pigeon_instance,
+              NSObject pigeonInstance,
               String? keyPath,
               NSObject? object,
               Map<KeyValueChangeKey, Object?>? change,
@@ -121,7 +121,7 @@ Future<void> main() async {
           ({
             required WKWebViewConfiguration initialConfiguration,
             void Function(
-              NSObject pigeon_instance,
+              NSObject pigeonInstance,
               String? keyPath,
               NSObject? object,
               Map<KeyValueChangeKey, Object?>? change,
