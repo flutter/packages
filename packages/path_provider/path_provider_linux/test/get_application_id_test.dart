@@ -53,7 +53,7 @@ void main() {
   test('returns value if g_application_get_application_id returns a value', () {
     fakeGio.libraryIsPresent = true;
     fakeGio.application = 1;
-    const String id = 'foo';
+    const id = 'foo';
     final Pointer<Utf8> idPtr = id.toNativeUtf8();
     fakeGio.applicationId = idPtr;
     expect(getApplicationId(), id);

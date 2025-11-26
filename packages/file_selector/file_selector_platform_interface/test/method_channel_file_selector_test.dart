@@ -11,9 +11,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('$MethodChannelFileSelector()', () {
-    final MethodChannelFileSelector plugin = MethodChannelFileSelector();
+    final plugin = MethodChannelFileSelector();
 
-    final List<MethodCall> log = <MethodCall>[];
+    final log = <MethodCall>[];
 
     setUp(() {
       TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
@@ -29,14 +29,14 @@ void main() {
 
     group('#openFile', () {
       test('passes the accepted type groups correctly', () async {
-        const XTypeGroup group = XTypeGroup(
+        const group = XTypeGroup(
           label: 'text',
           extensions: <String>['txt'],
           mimeTypes: <String>['text/plain'],
           uniformTypeIdentifiers: <String>['public.text'],
         );
 
-        const XTypeGroup groupTwo = XTypeGroup(
+        const groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],
@@ -93,14 +93,14 @@ void main() {
     });
     group('#openFiles', () {
       test('passes the accepted type groups correctly', () async {
-        const XTypeGroup group = XTypeGroup(
+        const group = XTypeGroup(
           label: 'text',
           extensions: <String>['txt'],
           mimeTypes: <String>['text/plain'],
           uniformTypeIdentifiers: <String>['public.text'],
         );
 
-        const XTypeGroup groupTwo = XTypeGroup(
+        const groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],
@@ -158,14 +158,14 @@ void main() {
 
     group('#getSavePath', () {
       test('passes the accepted type groups correctly', () async {
-        const XTypeGroup group = XTypeGroup(
+        const group = XTypeGroup(
           label: 'text',
           extensions: <String>['txt'],
           mimeTypes: <String>['text/plain'],
           uniformTypeIdentifiers: <String>['public.text'],
         );
 
-        const XTypeGroup groupTwo = XTypeGroup(
+        const groupTwo = XTypeGroup(
           label: 'image',
           extensions: <String>['jpg'],
           mimeTypes: <String>['image/jpg'],

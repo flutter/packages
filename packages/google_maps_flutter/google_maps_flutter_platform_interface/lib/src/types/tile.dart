@@ -25,7 +25,7 @@ class Tile {
 
   /// Converts this object to JSON.
   Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
+    final json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
       if (value != null) {

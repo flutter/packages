@@ -30,7 +30,7 @@ class AppStorePurchaseDetails extends PurchaseDetails {
     SKPaymentTransactionWrapper transaction,
     String base64EncodedReceipt,
   ) {
-    final AppStorePurchaseDetails purchaseDetails = AppStorePurchaseDetails(
+    final purchaseDetails = AppStorePurchaseDetails(
       productID: transaction.payment.productIdentifier,
       purchaseID: transaction.transactionIdentifier,
       skPaymentTransaction: transaction,
