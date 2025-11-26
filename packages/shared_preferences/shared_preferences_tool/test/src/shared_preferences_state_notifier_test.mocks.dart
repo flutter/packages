@@ -41,12 +41,14 @@ class MockSharedPreferencesToolEval extends _i1.Mock
   fetchAllKeys() =>
       (super.noSuchMethod(
             Invocation.method(#fetchAllKeys, []),
-            returnValue: _i2.Future<
-              ({List<String> asyncKeys, List<String> legacyKeys})
-            >.value((asyncKeys: <String>[], legacyKeys: <String>[])),
-            returnValueForMissingStub: _i2.Future<
-              ({List<String> asyncKeys, List<String> legacyKeys})
-            >.value((asyncKeys: <String>[], legacyKeys: <String>[])),
+            returnValue:
+                _i2.Future<
+                  ({List<String> asyncKeys, List<String> legacyKeys})
+                >.value((asyncKeys: <String>[], legacyKeys: <String>[])),
+            returnValueForMissingStub:
+                _i2.Future<
+                  ({List<String> asyncKeys, List<String> legacyKeys})
+                >.value((asyncKeys: <String>[], legacyKeys: <String>[])),
           )
           as _i2.Future<({List<String> asyncKeys, List<String> legacyKeys})>);
 

@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 #import "GoogleMapCircleController.h"
-#import "FLTGoogleMapJSONConversions.h"
+#import "GoogleMapCircleController_Test.h"
+
+#import "FGMConversionUtils.h"
 
 @interface FLTGoogleMapCircleController ()
 
@@ -22,8 +24,9 @@
                                      radius:circle.radius];
     _mapView = mapView;
     _circle.userData = @[ circle.circleId ];
-    // TODO(stuartmorgan: Refactor to avoid this call to an instance method in init.
-    [self updateFromPlatformCircle:circle];
+    [FLTGoogleMapCircleController updateCircle:_circle
+                            fromPlatformCircle:circle
+                                   withMapView:mapView];
   }
   return self;
 }
@@ -32,41 +35,25 @@
   self.circle.map = nil;
 }
 
-- (void)setConsumeTapEvents:(BOOL)consumes {
-  self.circle.tappable = consumes;
-}
-- (void)setVisible:(BOOL)visible {
-  self.circle.map = visible ? self.mapView : nil;
-}
-- (void)setZIndex:(int)zIndex {
-  self.circle.zIndex = zIndex;
-}
-- (void)setCenter:(CLLocationCoordinate2D)center {
-  self.circle.position = center;
-}
-- (void)setRadius:(CLLocationDistance)radius {
-  self.circle.radius = radius;
-}
-
-- (void)setStrokeColor:(UIColor *)color {
-  self.circle.strokeColor = color;
-}
-- (void)setStrokeWidth:(CGFloat)width {
-  self.circle.strokeWidth = width;
-}
-- (void)setFillColor:(UIColor *)color {
-  self.circle.fillColor = color;
-}
-
 - (void)updateFromPlatformCircle:(FGMPlatformCircle *)platformCircle {
-  [self setConsumeTapEvents:platformCircle.consumeTapEvents];
-  [self setVisible:platformCircle.visible];
-  [self setZIndex:platformCircle.zIndex];
-  [self setCenter:FGMGetCoordinateForPigeonLatLng(platformCircle.center)];
-  [self setRadius:platformCircle.radius];
-  [self setStrokeColor:FGMGetColorForRGBA(platformCircle.strokeColor)];
-  [self setStrokeWidth:platformCircle.strokeWidth];
-  [self setFillColor:FGMGetColorForRGBA(platformCircle.fillColor)];
+  [FLTGoogleMapCircleController updateCircle:self.circle
+                          fromPlatformCircle:platformCircle
+                                 withMapView:self.mapView];
+}
+
++ (void)updateCircle:(GMSCircle *)circle
+    fromPlatformCircle:(FGMPlatformCircle *)platformCircle
+           withMapView:(GMSMapView *)mapView {
+  circle.tappable = platformCircle.consumeTapEvents;
+  circle.zIndex = platformCircle.zIndex;
+  circle.position = FGMGetCoordinateForPigeonLatLng(platformCircle.center);
+  circle.radius = platformCircle.radius;
+  circle.strokeColor = FGMGetColorForPigeonColor(platformCircle.strokeColor);
+  circle.strokeWidth = platformCircle.strokeWidth;
+  circle.fillColor = FGMGetColorForPigeonColor(platformCircle.fillColor);
+
+  // This must be done last, to avoid visual flickers of default property values.
+  circle.map = platformCircle.visible ? mapView : nil;
 }
 
 @end

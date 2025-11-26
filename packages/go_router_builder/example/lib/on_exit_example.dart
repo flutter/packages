@@ -41,20 +41,19 @@ class SubRoute extends GoRouteData with $SubRoute {
   Future<bool> onExit(BuildContext context, GoRouterState state) async {
     final bool? confirmed = await showDialog<bool>(
       context: context,
-      builder:
-          (_) => AlertDialog(
-            content: const Text('Are you sure to leave this page?'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Confirm'),
-              ),
-            ],
+      builder: (_) => AlertDialog(
+        content: const Text('Are you sure to leave this page?'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
           ),
+          ElevatedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
     );
     return confirmed ?? false;
   }

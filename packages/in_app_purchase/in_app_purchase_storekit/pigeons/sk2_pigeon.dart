@@ -8,7 +8,7 @@ import 'package:pigeon/pigeon.dart';
   PigeonOptions(
     dartOut: 'lib/src/sk2_pigeon.g.dart',
     swiftOut:
-        'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/sk2_pigeon.g.swift',
+        'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/StoreKit2Messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

@@ -188,13 +188,13 @@ T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
     return null;
   }
 
-  final ParsedLibraryResult parsedLibrary =
+  final parsedLibrary =
       // ignore: experimental_member_use
       session.getParsedLibraryByElement2(element.library2)
           as ParsedLibraryResult;
   final FragmentDeclarationResult? declaration = parsedLibrary
-  // ignore: experimental_member_use
-  .getFragmentDeclaration(element.firstFragment);
+      // ignore: experimental_member_use
+      .getFragmentDeclaration(element.firstFragment);
   final AstNode? node = declaration?.node;
 
   return node is T ? node : null;
@@ -240,8 +240,9 @@ String _stateValueAccess(
   }
 
   late String access;
-  final String suffix =
-      !element.type.isNullableType && !element.hasDefaultValue ? '!' : '';
+  final suffix = !element.type.isNullableType && !element.hasDefaultValue
+      ? '!'
+      : '';
   if (pathParameters.contains(element.displayName)) {
     access = 'pathParameters[${escapeDartString(element.displayName)}]$suffix';
   } else {
@@ -419,7 +420,7 @@ class _TypeHelperExtensionType extends _TypeHelper {
       throw NullableDefaultValueError(parameterElement);
     }
 
-    final String stateValue =
+    final stateValue =
         'state.${_stateValueAccess(parameterElement, pathParameters)}';
     final String castType;
     if (paramType.isNullableType || parameterElement.hasDefaultValue) {
@@ -594,8 +595,8 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
           (parameterElement.type as ParameterizedType).typeArguments.first;
 
       // get a type converter for values in iterable
-      String entriesTypeDecoder = '(e) => e';
-      String convertToNotNull = '';
+      var entriesTypeDecoder = '(e) => e';
+      var convertToNotNull = '';
 
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType) &&
@@ -612,8 +613,8 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
       }
 
       // get correct type for iterable
-      String iterableCaster = '';
-      String fallBack = '';
+      var iterableCaster = '';
+      var fallBack = '';
       if (const TypeChecker.typeNamed(
         List,
         inSdk: true,
@@ -645,12 +646,12 @@ state.uri.queryParametersAll[${escapeDartString(parameterElement.displayName.keb
 
   @override
   String _encode(String fieldName, DartType type, String? customEncoder) {
-    final String nullAwareAccess = type.isNullableType ? '?' : '';
+    final nullAwareAccess = type.isNullableType ? '?' : '';
     if (type is ParameterizedType) {
       final DartType iterableType = type.typeArguments.first;
 
       // get a type encoder for values in iterable
-      String entriesTypeEncoder = '';
+      var entriesTypeEncoder = '';
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType)) {
           entriesTypeEncoder = '''
@@ -737,11 +738,10 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
   }
 
   String _helperNameN(DartType paramType, int index) {
-    final String mainType = index == 0 ? 'String' : 'Object?';
-    final String mainDecoder =
-        index == 0
-            ? 'jsonDecode(json$index) as Map<String, dynamic>'
-            : 'json$index as Map<String, dynamic>';
+    final mainType = index == 0 ? 'String' : 'Object?';
+    final mainDecoder = index == 0
+        ? 'jsonDecode(json$index) as Map<String, dynamic>'
+        : 'json$index as Map<String, dynamic>';
     if (_isNestedTemplate(paramType as InterfaceType)) {
       return '''
 ($mainType json$index) {
@@ -794,7 +794,7 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
       return false;
     }
 
-    final FunctionType functionType = secondParam.type as FunctionType;
+    final functionType = secondParam.type as FunctionType;
     // ignore: experimental_member_use
     if (functionType.formalParameters.length != 1 ||
         functionType.returnType.getDisplayString() !=
@@ -834,11 +834,11 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           'state.uri.queryParameters, '
           '${helperName(paramType)})';
     }
-    final String nullableSuffix =
+    final nullableSuffix =
         paramType.isNullableType ||
-                (paramType.isEnum && !paramType.isNullableType)
-            ? '!'
-            : '';
+            (paramType.isEnum && !paramType.isNullableType)
+        ? '!'
+        : '';
 
     final String decode = _fieldWithEncoder(
       'state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''}',

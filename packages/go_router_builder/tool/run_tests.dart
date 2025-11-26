@@ -19,19 +19,18 @@ import 'package:test/test.dart';
 const GoRouterGenerator generator = GoRouterGenerator();
 
 Future<void> main() async {
-  final dart_style.DartFormatter formatter = dart_style.DartFormatter(
+  final formatter = dart_style.DartFormatter(
     languageVersion: await _packageVersion(),
   );
-  final Directory dir = Directory('test_inputs');
-  final List<File> testFiles =
-      dir
-          .listSync()
-          .whereType<File>()
-          .where((File f) => f.path.endsWith('.dart'))
-          .toList();
-  for (final File file in testFiles) {
+  final dir = Directory('test_inputs');
+  final List<File> testFiles = dir
+      .listSync()
+      .whereType<File>()
+      .where((File f) => f.path.endsWith('.dart'))
+      .toList();
+  for (final file in testFiles) {
     final String fileName = file.path.split('/').last;
-    final File expectFile = File(p.join('${file.path}.expect'));
+    final expectFile = File(p.join('${file.path}.expect'));
     if (!expectFile.existsSync()) {
       throw Exception(
         'A text input must have a .expect file. '
@@ -42,17 +41,17 @@ Future<void> main() async {
     test('verify $fileName', () async {
       // Normalize path separators for cross-platform compatibility
       final String path = file.path.replaceAll(r'\', '/');
-      final String targetLibraryAssetId = '__test__|$path';
+      final targetLibraryAssetId = '__test__|$path';
       final LibraryElement2 element = await resolveSources<LibraryElement2>(
         <String, String>{targetLibraryAssetId: file.readAsStringSync()},
         (Resolver resolver) async {
-          final AssetId assetId = AssetId.parse(targetLibraryAssetId);
+          final assetId = AssetId.parse(targetLibraryAssetId);
           return resolver.libraryFor(assetId);
         },
         readAllSourcesFromFilesystem: true,
       );
-      final LibraryReader reader = LibraryReader(element);
-      final Set<String> results = <String>{};
+      final reader = LibraryReader(element);
+      final results = <String>{};
       try {
         generator.generateForAnnotation(reader, results, <String>{});
       } on InvalidGenerationSourceError catch (e) {

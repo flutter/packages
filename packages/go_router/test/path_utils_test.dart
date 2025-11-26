@@ -7,8 +7,8 @@ import 'package:go_router/src/path_utils.dart';
 
 void main() {
   test('patternToRegExp without path parameter', () async {
-    const String pattern = '/settings/detail';
-    final List<String> pathParameter = <String>[];
+    const pattern = '/settings/detail';
+    final pathParameter = <String>[];
     final RegExp regex = patternToRegExp(
       pattern,
       pathParameter,
@@ -24,8 +24,8 @@ void main() {
   });
 
   test('patternToRegExp with path parameter', () async {
-    const String pattern = '/user/:id/book/:bookId';
-    final List<String> pathParameter = <String>[];
+    const pattern = '/user/:id/book/:bookId';
+    final pathParameter = <String>[];
     final RegExp regex = patternToRegExp(
       pattern,
       pathParameter,
@@ -52,15 +52,15 @@ void main() {
   });
 
   test('patternToPath without path parameter', () async {
-    const String pattern = '/settings/detail';
-    final List<String> pathParameter = <String>[];
+    const pattern = '/settings/detail';
+    final pathParameter = <String>[];
     final RegExp regex = patternToRegExp(
       pattern,
       pathParameter,
       caseSensitive: true,
     );
 
-    const String url = '/settings/detail';
+    const url = '/settings/detail';
     final RegExpMatch? match = regex.firstMatch(url);
     expect(match, isNotNull);
 
@@ -74,15 +74,15 @@ void main() {
   });
 
   test('patternToPath with path parameter', () async {
-    const String pattern = '/user/:id/book/:bookId';
-    final List<String> pathParameter = <String>[];
+    const pattern = '/user/:id/book/:bookId';
+    final pathParameter = <String>[];
     final RegExp regex = patternToRegExp(
       pattern,
       pathParameter,
       caseSensitive: true,
     );
 
-    const String url = '/user/123/book/456';
+    const url = '/user/123/book/456';
     final RegExpMatch? match = regex.firstMatch(url);
     expect(match, isNotNull);
 
@@ -111,8 +111,10 @@ void main() {
 
   test('concatenateUris', () {
     void verify(String pathA, String pathB, String expected) {
-      final String result =
-          concatenateUris(Uri.parse(pathA), Uri.parse(pathB)).toString();
+      final result = concatenateUris(
+        Uri.parse(pathA),
+        Uri.parse(pathB),
+      ).toString();
       expect(result, expected);
     }
 

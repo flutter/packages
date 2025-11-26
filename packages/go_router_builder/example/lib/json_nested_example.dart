@@ -58,10 +58,9 @@ class HomeScreen extends StatelessWidget {
         for (final JsonExample json in jsonData)
           ListTile(
             title: Text(json.name),
-            onTap:
-                () => JsonRoute(
-                  JsonExampleNested<JsonExample>(child: json),
-                ).go(context),
+            onTap: () => JsonRoute(
+              JsonExampleNested<JsonExample>(child: json),
+            ).go(context),
           ),
       ],
     ),

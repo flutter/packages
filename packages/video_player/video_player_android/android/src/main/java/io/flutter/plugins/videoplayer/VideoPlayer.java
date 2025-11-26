@@ -52,7 +52,11 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     void onDispose();
   }
 
+ // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
+  // Error thrown for this-escape warning on JDK 21+ due to https://bugs.openjdk.org/browse/JDK-8015831.
+  // Keeping behavior as-is and addressing the warning could cause a regression: https://github.com/flutter/packages/pull/10193
+  @SuppressWarnings("this-escape")
   public VideoPlayer(
       @NonNull VideoPlayerCallbacks events,
       @NonNull MediaItem mediaItem,

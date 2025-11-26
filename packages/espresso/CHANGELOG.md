@@ -1,3 +1,12 @@
+## 0.4.0+20
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 0.4.0+19
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Bumps `com.squareup.okhttp3:okhttp` from 5.3.0 to 5.3.1.
+
 ## 0.4.0+18
 
 *  Bumps `com.squareup.okhttp3:okhttp` from 5.1.0 to 5.3.0.
