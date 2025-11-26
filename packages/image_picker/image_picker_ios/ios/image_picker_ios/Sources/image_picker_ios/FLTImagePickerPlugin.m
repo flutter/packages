@@ -28,15 +28,22 @@
 @end
 
 /**
- * a callback function what the PickerViewController remove from window.
+ * A callback function that is invoked when the PickerViewController is removed from the window.
+ * This callback is used to handle cleanup operations and notify the plugin when the picker
+ * interface has been dismissed, either through user interaction or programmatically.
  */
 typedef void (^FLTImagePickerRemoveCallback)(void);
 
 /**
- * Add the view to the PickerViewController's view, observing its window to observe the window of
- * PickerViewController. This is to prevent PickerViewController from being removed from the screen
- * without receiving callback information under other circumstances, such as being interactively
- * dismissed before PickerViewController has fully popped up.
+ * A UIView subclass that monitors the removal of a PickerViewController from the window hierarchy.
+ * 
+ * This observer view is added to the PickerViewController's view and monitors changes to its window
+ * property. When the PickerViewController is removed from the screen (either through user dismissal
+ * or programmatic dismissal), this view detects the change and triggers the associated callback.
+ * 
+ * This mechanism ensures that the plugin receives notification when the picker is dismissed under
+ * various circumstances, including interactive dismissal gestures that occur before the
+ * PickerViewController has fully appeared on screen.
  */
 @interface FLTImagePickerRemoveObserverView : UIView
 
@@ -195,6 +202,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   FLTImagePickerRemoveObserverView *removeObserverView =
       [[FLTImagePickerRemoveObserverView alloc] initWithRemoveCallback:^{
         __strong typeof(weakSelf) strongSelf = weakSelf;
+        // Add a small delay to ensure delegate methods have a chance to run first
+        // This prevents the observer from firing during normal selection flow
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)),
                        dispatch_get_main_queue(), ^{
                          if (strongSelf && strongSelf.callContext == context &&

@@ -762,28 +762,40 @@
 - (void)testUIImagePickerImmediateCloseReturnsEmptyArray {
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
 
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  // Mock camera access to avoid permission dialogs and device-specific logic.
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  OCMStub(ClassMethod([mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+      .andReturn(YES);
+  OCMStub(ClassMethod([mockUIImagePicker isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]))
+      .andReturn(YES);
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusAuthorized);
+
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
-  FLTImagePickerMethodCallContext *context = [[FLTImagePickerMethodCallContext alloc]
-      initWithResult:^void(NSArray<NSString *> *paths, FlutterError *error) {
-        if (paths == nil || paths.count == 0) {
-          XCTAssertNil(error);
-          [resultExpectation fulfill];
-        }
-      }];
-  context.includeImages = YES;
-  context.maxSize = [[FLTMaxSize alloc] init];
-  context.maxItemCount = 1;
-  context.requestFullMetadata = NO;
+  FLTSourceSpecification *source = [FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                                 camera:FLTSourceCameraRear];
+  [plugin pickImageWithSource:source
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:NO
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error) {
+                     XCTAssertNil(result);
+                     XCTAssertNil(error);
+                     [resultExpectation fulfill];
+                   }];
 
-  plugin.callContext = context;
-
-  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
-  UIView *controllerView = controller.view;
-
-  UIView *observerView = [[UIView alloc] init];
-  [controllerView addSubview:observerView];
-
+  // The `pickImage` call will attach the observer. Now, simulate dismissal.
+  // This needs to happen on the next run loop to ensure the observer is attached.
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIWindow *testWindow = [[UIWindow alloc] init];
+    [testWindow addSubview:controller.view];
+    [controller.view removeFromSuperview];
+  });
   void (^removeCallback)(void) = ^{
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
       if (plugin && plugin.callContext == context && !plugin.isProcessingSelection) {
