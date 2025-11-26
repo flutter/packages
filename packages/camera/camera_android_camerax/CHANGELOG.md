@@ -1,6 +1,6 @@
 ## 0.6.25
 
-* Use `MediaSettings::fps` for camera preview, image streaming, and video recording.
+* Adds support for `MediaSettings.fps` for camera preview, image streaming, and video recording.
 
 ## 0.6.24+4
 
