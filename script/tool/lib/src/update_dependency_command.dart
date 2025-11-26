@@ -112,22 +112,23 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
 
     // Setup for updating pub dependency.
     _targetPubPackage = getNullableStringArg(_pubPackageFlag);
-    if (_targetPubPackage != null) {
+    final String? targetPubPackage = _targetPubPackage;
+    if (targetPubPackage != null) {
       final String? version = getNullableStringArg(_versionFlag);
       if (version == null) {
         final PubVersionFinderResponse response = await _pubVersionFinder
-            .getPackageVersion(packageName: _targetPubPackage!);
+            .getPackageVersion(packageName: targetPubPackage);
         switch (response.result) {
           case PubVersionFinderResult.success:
             _targetVersion = response.versions.first.toString();
           case PubVersionFinderResult.fail:
             printError('''
-Error fetching $_targetPubPackage version from pub: ${response.httpResponse.statusCode}:
+Error fetching $targetPubPackage version from pub: ${response.httpResponse.statusCode}:
 ${response.httpResponse.body}
 ''');
             throw ToolExit(_exitNoTargetVersion);
           case PubVersionFinderResult.noPackageFound:
-            printError('$_targetPubPackage does not exist on pub');
+            printError('$targetPubPackage does not exist on pub');
             throw ToolExit(_exitNoTargetVersion);
         }
       } else {
@@ -203,8 +204,9 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    if (_targetPubPackage != null) {
-      return _runForPubDependency(package, _targetPubPackage!);
+    final String? targetPubPackage = _targetPubPackage;
+    if (targetPubPackage != null) {
+      return _runForPubDependency(package, targetPubPackage);
     }
     if (_targetAndroidDependency != null) {
       return _runForAndroidDependency(package);
