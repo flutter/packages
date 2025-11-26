@@ -270,7 +270,7 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
 
   'DropdownButton': (BuildContext context, DataSource source) {
     final int length = source.length(['items']);
-    final List<DropdownMenuItem<Object>> dropdownMenuItems = List<DropdownMenuItem<Object>>.generate(
+    final dropdownMenuItems = List<DropdownMenuItem<Object>>.generate(
       length,
       (int index) => DropdownMenuItem<Object>(
         onTap: source.voidHandler(['items', index, 'onTap']),
@@ -508,10 +508,10 @@ Map<String, LocalWidgetBuilder> get _materialWidgetsDefinitions => <String, Loca
 
   'Slider': (BuildContext context, DataSource source) {
     // not implemented: overlayColor, mouseCursor, semanticFormatterCallback, focusNode, autofocus
-    final min = source.v<double>(['min']) ?? 0.0;
-    final value = source.v<double>(['value']) ?? min;
-    final labelText = source.v<String>(['label']);
-    final label = labelText != null ? '$labelText: ${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
+    final double min = source.v<double>(['min']) ?? 0.0;
+    final double value = source.v<double>(['value']) ?? min;
+    final String? labelText = source.v<String>(['label']);
+    final String label = labelText != null ? '$labelText: ${value.toStringAsFixed(2)}' : value.toStringAsFixed(2);
     return Slider(
       value: value,
       secondaryTrackValue: source.v<double>(['secondaryTrackValue']),

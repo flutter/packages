@@ -29,7 +29,7 @@ linter:
     - always_declare_return_types
     - always_put_control_body_on_new_line
     # - always_put_required_named_parameters_first # we prefer having parameters in the same order as fields https://github.com/flutter/flutter/issues/10219
-    - always_specify_types
+    # - always_specify_types # conflicts with omit_obvious_local_variable_types
     # - always_use_package_imports # we do this commonly
     - annotate_overrides
     # - avoid_annotating_with_dynamic # conflicts with always_specify_types
@@ -128,7 +128,8 @@ linter:
     - noop_primitive_operations
     - null_check_on_nullable_type_parameter
     - null_closures
-    # - omit_local_variable_types # opposite of always_specify_types
+    # - omit_local_variable_types # conflicts with specify_nonobvious_local_variable_types
+    - omit_obvious_local_variable_types
     # - one_member_abstracts # too many false positives
     - only_throw_errors # this does get disabled in a few places where we have legacy code that uses strings et al
     - overridden_fields
@@ -187,10 +188,12 @@ linter:
     - sort_constructors_first
     - sort_pub_dependencies # DIFFERENT FROM FLUTTER/FLUTTER: Flutter's use case for not sorting does not apply to this repository.
     - sort_unnamed_constructors_first
+    - specify_nonobvious_local_variable_types
+    - specify_nonobvious_property_types
     - test_types_in_equals
     - throw_in_finally
     - tighten_type_of_initializing_formals
-    # - type_annotate_public_apis # subset of always_specify_types
+    - type_annotate_public_apis
     - type_init_formals
     - type_literal_in_constant_pattern
     - unawaited_futures # DIFFERENT FROM FLUTTER/FLUTTER: It's disabled there for "too many false positives"; that's not an issue here, and missing awaits have caused production issues in plugins.

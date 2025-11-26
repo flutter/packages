@@ -583,15 +583,15 @@ public class ConvertTest {
 
     final Gradient result = Convert.toGradient(data);
 
-    Assert.assertEquals(3, result.mColors.length);
-    Assert.assertEquals(color1, result.mColors[0]);
-    Assert.assertEquals(color2, result.mColors[1]);
-    Assert.assertEquals(color3, result.mColors[2]);
-    Assert.assertEquals(3, result.mStartPoints.length);
-    Assert.assertEquals(startPoint1, result.mStartPoints[0], 0);
-    Assert.assertEquals(startPoint2, result.mStartPoints[1], 0);
-    Assert.assertEquals(startPoint3, result.mStartPoints[2], 0);
-    Assert.assertEquals(colorMapSize, result.mColorMapSize);
+    Assert.assertEquals(3, result.getColors().length);
+    Assert.assertEquals(color1, result.getColors()[0]);
+    Assert.assertEquals(color2, result.getColors()[1]);
+    Assert.assertEquals(color3, result.getColors()[2]);
+    Assert.assertEquals(3, result.getStartPoints().length);
+    Assert.assertEquals(startPoint1, result.getStartPoints()[0], 0);
+    Assert.assertEquals(startPoint2, result.getStartPoints()[1], 0);
+    Assert.assertEquals(startPoint3, result.getStartPoints()[2], 0);
+    Assert.assertEquals(colorMapSize, result.getColorMapSize());
   }
 
   @Test()
@@ -642,15 +642,15 @@ public class ConvertTest {
     Assert.assertEquals(point.x, builder.getWeightedData().get(0).getPoint().x, 0);
     Assert.assertEquals(point.y, builder.getWeightedData().get(0).getPoint().y, 0);
     Assert.assertEquals(intensity, builder.getWeightedData().get(0).getIntensity(), 0);
-    Assert.assertEquals(3, builder.getGradient().mColors.length);
-    Assert.assertEquals(color1, builder.getGradient().mColors[0]);
-    Assert.assertEquals(color2, builder.getGradient().mColors[1]);
-    Assert.assertEquals(color3, builder.getGradient().mColors[2]);
-    Assert.assertEquals(3, builder.getGradient().mStartPoints.length);
-    Assert.assertEquals(startPoint1, builder.getGradient().mStartPoints[0], 0);
-    Assert.assertEquals(startPoint2, builder.getGradient().mStartPoints[1], 0);
-    Assert.assertEquals(startPoint3, builder.getGradient().mStartPoints[2], 0);
-    Assert.assertEquals(colorMapSize, builder.getGradient().mColorMapSize);
+    Assert.assertEquals(3, builder.getGradient().getColors().length);
+    Assert.assertEquals(color1, builder.getGradient().getColors()[0]);
+    Assert.assertEquals(color2, builder.getGradient().getColors()[1]);
+    Assert.assertEquals(color3, builder.getGradient().getColors()[2]);
+    Assert.assertEquals(3, builder.getGradient().getStartPoints().length);
+    Assert.assertEquals(startPoint1, builder.getGradient().getStartPoints()[0], 0);
+    Assert.assertEquals(startPoint2, builder.getGradient().getStartPoints()[1], 0);
+    Assert.assertEquals(startPoint3, builder.getGradient().getStartPoints()[2], 0);
+    Assert.assertEquals(colorMapSize, builder.getGradient().getColorMapSize());
     Assert.assertEquals(maxIntensity, builder.getMaxIntensity(), 0);
     Assert.assertEquals(opacity, builder.getOpacity(), 0);
     Assert.assertEquals(radius, builder.getRadius());
