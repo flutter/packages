@@ -63,6 +63,28 @@ public class PendingRecordingTest {
                       any(Context.class), eq(Manifest.permission.RECORD_AUDIO)))
           .thenAnswer((Answer<Integer>) invocation -> PackageManager.PERMISSION_DENIED);
 
+      when(instance.withAudioEnabled(false)).thenReturn(instance);
+
+      assertEquals(api.withAudioEnabled(instance, false), instance);
+      verify(instance, never()).withAudioEnabled(false);
+    }
+  }
+
+  @Test
+  public void withAudioEnabled_doesNotEnableAudioWhenNotRequestedAndPermissionNotGranted() {
+    final PigeonApiPendingRecording api =
+        new TestProxyApiRegistrar().getPigeonApiPendingRecording();
+    final PendingRecording instance = mock(PendingRecording.class);
+
+    try (MockedStatic<ContextCompat> mockedContextCompat =
+        Mockito.mockStatic(ContextCompat.class)) {
+      mockedContextCompat
+          .when(
+              () ->
+                  ContextCompat.checkSelfPermission(
+                      any(Context.class), eq(Manifest.permission.RECORD_AUDIO)))
+          .thenAnswer((Answer<Integer>) invocation -> PackageManager.PERMISSION_DENIED);
+
       when(instance.withAudioEnabled(true)).thenReturn(instance);
 
       assertEquals(api.withAudioEnabled(instance, true), instance);
