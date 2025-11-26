@@ -21,13 +21,7 @@ import 'webview_android_widget.dart';
 /// communicate with the platform code.
 class AndroidWebView implements WebViewPlatform {
   /// Constructs an [AndroidWebView].
-  AndroidWebView({@visibleForTesting PigeonInstanceManager? instanceManager})
-    : instanceManager = instanceManager ?? PigeonInstanceManager.instance;
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  @protected
-  final PigeonInstanceManager instanceManager;
+  AndroidWebView();
 
   @override
   Widget build({
@@ -63,7 +57,9 @@ class AndroidWebView implements WebViewPlatform {
             gestureRecognizers: gestureRecognizers,
             layoutDirection:
                 Directionality.maybeOf(context) ?? TextDirection.rtl,
-            creationParams: instanceManager.getIdentifier(controller.webView),
+            creationParams: PigeonInstanceManager.instance.getIdentifier(
+              controller.webView,
+            ),
             creationParamsCodec: const StandardMessageCodec(),
           ),
         );

@@ -1009,7 +1009,6 @@ void main() {
           acceptTypes: const <String>['png'],
           filenameHint: 'filenameHint',
           mode: android_webview.FileChooserMode.open,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
 
@@ -1136,9 +1135,7 @@ void main() {
             },
       );
 
-      final testView = android_webview.View.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final testView = android_webview.View.pigeon_detached();
       var showCustomViewCalled = false;
       var hideCustomViewCalled = false;
 
@@ -1155,9 +1152,7 @@ void main() {
       onShowCustomViewHandle(
         mockWebChromeClient,
         testView,
-        android_webview.CustomViewCallback.pigeon_detached(
-          pigeon_instanceManager: testInstanceManager,
-        ),
+        android_webview.CustomViewCallback.pigeon_detached(),
       );
 
       expect(showCustomViewCalled, true);
@@ -1215,7 +1210,6 @@ void main() {
         android_webview.WebChromeClient.pigeon_detached(
           onJsConfirm: (_, __, ___, ____) async => false,
           onShowFileChooser: (_, __, ___) async => <String>[],
-          pigeon_instanceManager: testInstanceManager,
         ),
         mockPermissionRequest,
       );
@@ -1276,7 +1270,6 @@ void main() {
           android_webview.WebChromeClient.pigeon_detached(
             onJsConfirm: (_, __, ___, ____) async => false,
             onShowFileChooser: (_, __, ___) async => <String>[],
-            pigeon_instanceManager: testInstanceManager,
           ),
           mockPermissionRequest,
         );
@@ -1511,7 +1504,6 @@ void main() {
           message: 'Debug message',
           level: android_webview.ConsoleMessageLevel.debug,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1521,7 +1513,6 @@ void main() {
           message: 'Error message',
           level: android_webview.ConsoleMessageLevel.error,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1531,7 +1522,6 @@ void main() {
           message: 'Log message',
           level: android_webview.ConsoleMessageLevel.log,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1541,7 +1531,6 @@ void main() {
           message: 'Tip message',
           level: android_webview.ConsoleMessageLevel.tip,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1551,7 +1540,6 @@ void main() {
           message: 'Warning message',
           level: android_webview.ConsoleMessageLevel.warning,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       onConsoleMessageCallback(
@@ -1561,7 +1549,6 @@ void main() {
           message: 'Unknown message',
           level: android_webview.ConsoleMessageLevel.unknown,
           sourceId: 'source',
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
 
@@ -1815,11 +1802,7 @@ void main() {
       );
       when(mockWebView.getScrollPosition()).thenAnswer(
         (_) => Future<android_webview.WebViewPoint>.value(
-          android_webview.WebViewPoint.pigeon_detached(
-            x: 4,
-            y: 2,
-            pigeon_instanceManager: testInstanceManager,
-          ),
+          android_webview.WebViewPoint.pigeon_detached(x: 4, y: 2),
         ),
       );
 
@@ -2031,18 +2014,14 @@ void main() {
   test('webViewIdentifier', () {
     final mockWebView = MockWebView();
 
-    final instanceManager = android_webview.PigeonInstanceManager(
-      onWeakReferenceRemoved: (_) {},
-    );
-    instanceManager.addHostCreatedInstance(mockWebView, 0);
-
-    when(mockWebView.pigeon_instanceManager).thenReturn(instanceManager);
+    final int identifier = android_webview.PigeonInstanceManager.instance
+        .addDartCreatedInstance(mockWebView);
 
     final AndroidWebViewController controller = createControllerWithMocks(
       mockWebView: mockWebView,
     );
 
-    expect(controller.webViewIdentifier, 0);
+    expect(controller.webViewIdentifier, identifier);
   });
 
   test('isWebViewFeatureSupported', () async {
@@ -2096,16 +2075,12 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      instanceManager.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
       final webViewWidget = AndroidWebViewWidget(
         AndroidWebViewWidgetCreationParams(
           key: const Key('test_web_view'),
           controller: controller,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2127,10 +2102,7 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      instanceManager.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2150,7 +2122,6 @@ void main() {
           key: const Key('test_web_view'),
           controller: controller,
           platformViewsServiceProxy: mockPlatformViewsService,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2181,10 +2152,7 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      instanceManager.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2205,7 +2173,6 @@ void main() {
           controller: controller,
           platformViewsServiceProxy: mockPlatformViewsService,
           displayWithHybridComposition: true,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2241,10 +2208,7 @@ void main() {
       onShowCustomViewCallback;
 
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      instanceManager.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         createWebChromeClient:
@@ -2290,7 +2254,6 @@ void main() {
           key: const Key('test_web_view'),
           controller: controller,
           platformViewsServiceProxy: mockPlatformViewsService,
-          instanceManager: instanceManager,
         ),
       );
 
@@ -2303,14 +2266,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // ignore: invalid_use_of_protected_member
-      when(mockWebView.pigeon_instanceManager).thenReturn(instanceManager);
-
       onShowCustomViewCallback!(
         MockWebChromeClient(),
         mockWebView,
         android_webview.CustomViewCallback.pigeon_detached(
-          pigeon_instanceManager: instanceManager,
         ),
       );
       await tester.pumpAndSettle();
@@ -2322,10 +2281,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      instanceManager.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2347,7 +2303,6 @@ void main() {
               AndroidWebViewWidgetCreationParams(
                 controller: createControllerWithMocks(mockWebView: mockWebView),
                 platformViewsServiceProxy: mockPlatformViewsService,
-                instanceManager: instanceManager,
               ),
             ).build(context);
           },
@@ -2373,7 +2328,6 @@ void main() {
               AndroidWebViewWidgetCreationParams(
                 controller: createControllerWithMocks(mockWebView: mockWebView),
                 platformViewsServiceProxy: mockPlatformViewsService,
-                instanceManager: instanceManager,
               ),
             ).build(context);
           },
@@ -2397,10 +2351,7 @@ void main() {
       'PlatformView does not rebuild when creation params stay the same',
       (WidgetTester tester) async {
         final android_webview.WebView mockWebView = MockWebView();
-        final instanceManager = android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
-        instanceManager.addDartCreatedInstance(mockWebView);
+        android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
         final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2426,7 +2377,6 @@ void main() {
                 AndroidWebViewWidgetCreationParams(
                   controller: controller,
                   platformViewsServiceProxy: mockPlatformViewsService,
-                  instanceManager: instanceManager,
                 ),
               ).build(context);
             },
@@ -2452,7 +2402,6 @@ void main() {
                 AndroidWebViewWidgetCreationParams(
                   controller: controller,
                   platformViewsServiceProxy: mockPlatformViewsService,
-                  instanceManager: instanceManager,
                 ),
               ).build(context);
             },
@@ -2479,10 +2428,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      instanceManager.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
@@ -2492,7 +2438,6 @@ void main() {
         key: const Key('test_custom_view'),
         customView: mockWebView,
         controller: controller,
-        instanceManager: instanceManager,
       );
 
       await tester.pumpWidget(
@@ -2509,10 +2454,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      final instanceManager = android_webview.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      instanceManager.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
@@ -2535,7 +2477,6 @@ void main() {
         controller: controller,
         customView: mockWebView,
         platformViewsServiceProxy: mockPlatformViewsService,
-        instanceManager: instanceManager,
       );
 
       await tester.pumpWidget(
@@ -2559,12 +2500,6 @@ void main() {
   });
 }
 
-/// Creates a PigeonInstanceManager that doesn't make a call to Java when an
-/// object is garbage collected. Also, `PigeonInstanceManager.instance` makes
-/// a call to Java, so this InstanceManager is used to prevent that.
-final android_webview.PigeonInstanceManager testInstanceManager =
-    android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-
 class TestWebViewClient extends android_webview.WebViewClient {
   TestWebViewClient({
     super.onPageStarted,
@@ -2583,11 +2518,7 @@ class TestWebViewClient extends android_webview.WebViewClient {
     super.onReceivedLoginRequest,
     super.onReceivedSslError,
     super.onScaleChanged,
-  }) : super.pigeon_detached(
-         pigeon_instanceManager: android_webview.PigeonInstanceManager(
-           onWeakReferenceRemoved: (_) {},
-         ),
-       );
+  }) : super.pigeon_detached();
 }
 
 class TestWebChromeClient extends android_webview.WebChromeClient {
@@ -2603,18 +2534,10 @@ class TestWebChromeClient extends android_webview.WebChromeClient {
     super.onJsAlert,
     required super.onJsConfirm,
     super.onJsPrompt,
-  }) : super.pigeon_detached(
-         pigeon_instanceManager: android_webview.PigeonInstanceManager(
-           onWeakReferenceRemoved: (_) {},
-         ),
-       );
+  }) : super.pigeon_detached();
 }
 
 class TestDownloadListener extends android_webview.DownloadListener {
   TestDownloadListener({required super.onDownloadStart})
-    : super.pigeon_detached(
-        pigeon_instanceManager: android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        ),
-      );
+    : super.pigeon_detached();
 }

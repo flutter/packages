@@ -86,12 +86,8 @@ void main() {
           hasGesture: true,
           method: 'GET',
           requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-          pigeon_instanceManager: TestInstanceManager(),
         ),
-        android_webview.WebResourceResponse.pigeon_detached(
-          statusCode: 401,
-          pigeon_instanceManager: TestInstanceManager(),
-        ),
+        android_webview.WebResourceResponse.pigeon_detached(statusCode: 401),
       );
 
       expect(callbackError.response?.statusCode, 401);
@@ -117,12 +113,10 @@ void main() {
           hasGesture: true,
           method: 'GET',
           requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-          pigeon_instanceManager: TestInstanceManager(),
         ),
         android_webview.WebResourceError.pigeon_detached(
           errorCode: WebViewClientConstants.errorFileNotFound,
           description: 'Page not found.',
-          pigeon_instanceManager: TestInstanceManager(),
         ),
       );
 
@@ -157,7 +151,6 @@ void main() {
             hasGesture: true,
             method: 'GET',
             requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -192,7 +185,6 @@ void main() {
             hasGesture: true,
             method: 'GET',
             requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -227,7 +219,6 @@ void main() {
             hasGesture: true,
             method: 'GET',
             requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -258,7 +249,6 @@ void main() {
             hasGesture: true,
             method: 'GET',
             requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -297,7 +287,6 @@ void main() {
             hasGesture: true,
             method: 'GET',
             requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -340,7 +329,6 @@ void main() {
             hasGesture: true,
             method: 'GET',
             requestHeaders: const <String, String>{'X-Mock': 'mocking'},
-            pigeon_instanceManager: TestInstanceManager(),
           ),
         );
 
@@ -630,9 +618,7 @@ void main() {
       CapturingWebViewClient.lastCreatedDelegate.onReceivedHttpAuthRequest!(
         CapturingWebViewClient(),
         TestWebView(),
-        android_webview.HttpAuthHandler.pigeon_detached(
-          pigeon_instanceManager: TestInstanceManager(),
-        ),
+        android_webview.HttpAuthHandler.pigeon_detached(),
         expectedHost,
         expectedRealm,
       );
@@ -764,11 +750,7 @@ class CapturingWebViewClient extends android_webview.WebViewClient {
     super.onReceivedLoginRequest,
     super.onReceivedSslError,
     super.onScaleChanged,
-  }) : super.pigeon_detached(
-         pigeon_instanceManager: android_webview.PigeonInstanceManager(
-           onWeakReferenceRemoved: (_) {},
-         ),
-       ) {
+  }) : super.pigeon_detached() {
     lastCreatedDelegate = this;
   }
 
@@ -798,11 +780,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
     super.onJsAlert,
     required super.onJsConfirm,
     super.onJsPrompt,
-  }) : super.pigeon_detached(
-         pigeon_instanceManager: android_webview.PigeonInstanceManager(
-           onWeakReferenceRemoved: (_) {},
-         ),
-       ) {
+  }) : super.pigeon_detached() {
     lastCreatedDelegate = this;
   }
 
@@ -816,11 +794,7 @@ class CapturingWebChromeClient extends android_webview.WebChromeClient {
 // Records the last created instance of itself.
 class CapturingDownloadListener extends android_webview.DownloadListener {
   CapturingDownloadListener({required super.onDownloadStart})
-    : super.pigeon_detached(
-        pigeon_instanceManager: android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        ),
-      ) {
+    : super.pigeon_detached() {
     lastCreatedListener = this;
   }
 
@@ -831,14 +805,5 @@ class CapturingDownloadListener extends android_webview.DownloadListener {
 }
 
 class TestWebView extends android_webview.WebView {
-  TestWebView()
-    : super.pigeon_detached(
-        pigeon_instanceManager: android_webview.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        ),
-      );
-}
-
-class TestInstanceManager extends android_webview.PigeonInstanceManager {
-  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
+  TestWebView() : super.pigeon_detached();
 }

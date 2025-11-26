@@ -208,8 +208,6 @@ class AndroidWebViewController extends PlatformWebViewController {
           AndroidCustomViewWidget.private(
             controller: webViewController,
             customView: view,
-            // ignore: invalid_use_of_protected_member
-            instanceManager: view.pigeon_instanceManager,
           ),
           () => callback.onCustomViewHidden(),
         );
@@ -429,8 +427,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   ///
   /// See Java method `WebViewFlutterPlugin.getWebView`.
   int get webViewIdentifier =>
-      // ignore: invalid_use_of_protected_member
-      _webView.pigeon_instanceManager.getIdentifier(_webView)!;
+      android_webview.PigeonInstanceManager.instance.getIdentifier(_webView)!;
 
   @override
   Future<void> loadFile(String absoluteFilePath) {
@@ -1098,18 +1095,15 @@ class AndroidWebViewWidgetCreationParams
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting android_webview.PigeonInstanceManager? instanceManager,
     @visibleForTesting
     this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
-  }) : instanceManager =
-           instanceManager ?? android_webview.PigeonInstanceManager.instance;
+  });
 
   /// Constructs a [WebKitWebViewWidgetCreationParams] using a
   /// [PlatformWebViewWidgetCreationParams].
   AndroidWebViewWidgetCreationParams.fromPlatformWebViewWidgetCreationParams(
     PlatformWebViewWidgetCreationParams params, {
     bool displayWithHybridComposition = false,
-    @visibleForTesting android_webview.PigeonInstanceManager? instanceManager,
     @visibleForTesting
     PlatformViewsServiceProxy platformViewsServiceProxy =
         const PlatformViewsServiceProxy(),
@@ -1119,17 +1113,8 @@ class AndroidWebViewWidgetCreationParams
          layoutDirection: params.layoutDirection,
          gestureRecognizers: params.gestureRecognizers,
          displayWithHybridComposition: displayWithHybridComposition,
-         instanceManager: instanceManager,
          platformViewsServiceProxy: platformViewsServiceProxy,
        );
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  ///
-  /// This field is exposed for testing purposes only and should not be used
-  /// outside of tests.
-  @visibleForTesting
-  final android_webview.PigeonInstanceManager instanceManager;
 
   /// Proxy that provides access to the platform views service.
   ///
@@ -1156,7 +1141,6 @@ class AndroidWebViewWidgetCreationParams
     layoutDirection,
     displayWithHybridComposition,
     platformViewsServiceProxy,
-    instanceManager,
   );
 
   @override
@@ -1165,8 +1149,7 @@ class AndroidWebViewWidgetCreationParams
         controller == other.controller &&
         layoutDirection == other.layoutDirection &&
         displayWithHybridComposition == other.displayWithHybridComposition &&
-        platformViewsServiceProxy == other.platformViewsServiceProxy &&
-        instanceManager == other.instanceManager;
+        platformViewsServiceProxy == other.platformViewsServiceProxy;
   }
 }
 
@@ -1213,7 +1196,6 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
             platformViewsServiceProxy: _androidParams.platformViewsServiceProxy,
             view: (_androidParams.controller as AndroidWebViewController)
                 ._webView,
-            instanceManager: _androidParams.instanceManager,
             layoutDirection: _androidParams.layoutDirection,
           )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
@@ -1269,11 +1251,9 @@ class AndroidCustomViewWidget extends StatelessWidget {
     super.key,
     required this.controller,
     required this.customView,
-    @visibleForTesting android_webview.PigeonInstanceManager? instanceManager,
     @visibleForTesting
     this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
-  }) : instanceManager =
-           instanceManager ?? android_webview.PigeonInstanceManager.instance;
+  });
 
   /// The reference to the Android native view that should be shown.
   final android_webview.View customView;
@@ -1281,14 +1261,6 @@ class AndroidCustomViewWidget extends StatelessWidget {
   /// The [PlatformWebViewController] that allows controlling the native web
   /// view.
   final PlatformWebViewController controller;
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  ///
-  /// This field is exposed for testing purposes only and should not be used
-  /// outside of tests.
-  @visibleForTesting
-  final android_webview.PigeonInstanceManager instanceManager;
 
   /// Proxy that provides access to the platform views service.
   ///
@@ -1316,7 +1288,6 @@ class AndroidCustomViewWidget extends StatelessWidget {
             displayWithHybridComposition: false,
             platformViewsServiceProxy: platformViewsServiceProxy,
             view: customView,
-            instanceManager: instanceManager,
           )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();
@@ -1330,10 +1301,10 @@ AndroidViewController _initAndroidView(
   required bool displayWithHybridComposition,
   required PlatformViewsServiceProxy platformViewsServiceProxy,
   required android_webview.View view,
-  required android_webview.PigeonInstanceManager instanceManager,
   TextDirection layoutDirection = TextDirection.ltr,
 }) {
-  final int identifier = instanceManager.getIdentifier(view)!;
+  final int identifier = android_webview.PigeonInstanceManager.instance
+      .getIdentifier(view)!;
 
   if (displayWithHybridComposition) {
     return platformViewsServiceProxy.initExpensiveAndroidView(
