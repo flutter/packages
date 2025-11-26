@@ -1,3 +1,7 @@
+## 0.6.24+4
+
+* Allows for video recording without audio when permission RECORD_AUDIO is denied.
+
 ## 0.6.24+3
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
