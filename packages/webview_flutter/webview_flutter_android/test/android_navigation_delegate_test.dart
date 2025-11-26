@@ -8,7 +8,6 @@ import 'dart:typed_data';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webview;
 import 'package:webview_flutter_android/src/android_webkit_constants.dart';
@@ -729,13 +728,19 @@ void main() {
 }
 
 AndroidNavigationDelegateCreationParams _buildCreationParams() {
+  android_webview.PigeonOverrides.webViewClient_new =
+      CapturingWebViewClient.new;
+  android_webview.PigeonOverrides.webChromeClient_new =
+      CapturingWebChromeClient.new;
+  android_webview.PigeonOverrides.downloadListener_new =
+      CapturingDownloadListener.new;
   return AndroidNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
     const PlatformNavigationDelegateCreationParams(),
-    androidWebViewProxy: const AndroidWebViewProxy(
-      newWebChromeClient: CapturingWebChromeClient.new,
-      newWebViewClient: CapturingWebViewClient.new,
-      newDownloadListener: CapturingDownloadListener.new,
-    ),
+    // androidWebViewProxy: const AndroidWebViewProxy(
+    //   newWebChromeClient: CapturingWebChromeClient.new,
+    //   newWebViewClient: CapturingWebViewClient.new,
+    //   newDownloadListener: CapturingDownloadListener.new,
+    // ),
   );
 }
 
