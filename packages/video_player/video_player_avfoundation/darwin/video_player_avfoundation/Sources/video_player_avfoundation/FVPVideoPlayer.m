@@ -437,7 +437,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // First, try to get tracks from media selection (for HLS streams)
   AVMediaSelectionGroup *audioGroup =
       [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
-  if (audioGroup && audioGroup.options.count > 0) {
+  if (audioGroup.options.count > 0) {
     // Cache the options array for later use in selectAudioTrack
     _cachedAudioSelectionOptions = audioGroup.options;
 
