@@ -58,8 +58,7 @@ abstract class MarkersController<T extends Object, O>
       // we make one...
       if (infoWindowOptions.content != null &&
           infoWindowOptions.content is web.HTMLElement) {
-        final web.HTMLElement content =
-            infoWindowOptions.content! as web.HTMLElement;
+        final content = infoWindowOptions.content! as web.HTMLElement;
 
         content.onclick = (JSAny? _) {
           _onInfoWindowTap(marker.markerId);
@@ -233,7 +232,7 @@ class LegacyMarkersController
     gmaps.MarkerOptions markerOptions,
     gmaps.InfoWindow? gmInfoWindow,
   ) async {
-    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
+    final gmMarker = gmaps.Marker(markerOptions);
     gmMarker.set('markerId', marker.markerId.value.toJS);
 
     if (marker.clusterManagerId != null) {
@@ -286,9 +285,7 @@ class AdvancedMarkersController
   ) async {
     assert(marker is AdvancedMarker, 'Marker must be an AdvancedMarker.');
 
-    final gmaps.AdvancedMarkerElement gmMarker = gmaps.AdvancedMarkerElement(
-      markerOptions,
-    );
+    final gmMarker = gmaps.AdvancedMarkerElement(markerOptions);
     gmMarker.setAttribute('id', marker.markerId.value);
 
     if (marker.clusterManagerId != null) {

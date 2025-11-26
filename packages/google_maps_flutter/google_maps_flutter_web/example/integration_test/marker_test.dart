@@ -102,9 +102,7 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final controller = LegacyMarkerController(
-        marker: marker,
-      );
+      final controller = LegacyMarkerController(marker: marker);
       final options = gmaps.MarkerOptions()
         ..draggable = true
         ..position = gmaps.LatLng(42, 54);
@@ -121,9 +119,7 @@ void main() {
     testWidgets('infoWindow null, showInfoWindow.', (
       WidgetTester tester,
     ) async {
-      final controller = LegacyMarkerController(
-        marker: marker,
-      );
+      final controller = LegacyMarkerController(marker: marker);
 
       controller.showInfoWindow();
 

@@ -40,8 +40,7 @@ class TileOverlayController {
       return null;
     }
 
-    final web.HTMLImageElement img =
-        ownerDocument!.createElement('img') as web.HTMLImageElement;
+    final img = ownerDocument!.createElement('img') as web.HTMLImageElement;
     img.width = img.height = logicalTileSize;
     img.hidden = true.toJS;
     img.setAttribute('decoding', 'async');

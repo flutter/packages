@@ -273,10 +273,9 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final web.HTMLHeadingElement title =
-        (web.document.createElement('h3') as web.HTMLHeadingElement)
-          ..className = 'infowindow-title'
-          ..innerText = markerTitle;
+    final title = (web.document.createElement('h3') as web.HTMLHeadingElement)
+      ..className = 'infowindow-title'
+      ..innerText = markerTitle;
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
@@ -366,7 +365,7 @@ void _setIconAnchor({
 
 // Sets the size of the Google Maps icon.
 void _setIconSize({required gmaps.Size size, required gmaps.Icon icon}) {
-  final gmaps.Size gmapsSize = gmaps.Size(size.width, size.height);
+  final gmapsSize = gmaps.Size(size.width, size.height);
   icon.size = gmapsSize;
   icon.scaledSize = gmapsSize;
 }
@@ -422,7 +421,7 @@ Future<gmaps.Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
 ///
 /// This method attempts to fetch the image size for a given [url].
 Future<Size?> _fetchBitmapSize(String url) async {
-  final web.HTMLImageElement image = web.HTMLImageElement()..src = url;
+  final image = web.HTMLImageElement()..src = url;
 
   // Wait for the onLoad or onError event.
   await Future.any(<Future<web.Event>>[
@@ -455,7 +454,7 @@ Future<web.Node?> _advancedMarkerIconFromPinConfig(
   required bool isVisible,
   required double rotation,
 }) async {
-  final gmaps.PinElementOptions options = gmaps.PinElementOptions()
+  final options = gmaps.PinElementOptions()
     ..background = config.backgroundColor != null
         ? _getCssColor(config.backgroundColor!)
         : null
@@ -468,7 +467,7 @@ Future<web.Node?> _advancedMarkerIconFromPinConfig(
     case final CircleGlyph circleGlyph:
       options.glyphColor = _getCssColor(circleGlyph.color);
     case final TextGlyph textGlyph:
-      final web.HTMLParagraphElement element = web.HTMLParagraphElement();
+      final element = web.HTMLParagraphElement();
       element.text = textGlyph.text;
       if (textGlyph.textColor != null) {
         element.style.color = _getCssColor(textGlyph.textColor!);
@@ -489,7 +488,7 @@ Future<web.Node?> _advancedMarkerIconFromPinConfig(
       break;
   }
 
-  final gmaps.PinElement pinElement = gmaps.PinElement(options);
+  final pinElement = gmaps.PinElement(options);
   final web.HTMLElement htmlElement = pinElement.element;
   htmlElement.style
     ..visibility = isVisible ? 'visible' : 'hidden'
@@ -508,7 +507,7 @@ Future<web.Node?> _advancedMarkerIconFromMapBitmap(
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
       bytesMapBitmap.byteData.hashCode,
       () {
-        final web.Blob blob = web.Blob(
+        final blob = web.Blob(
           <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
         );
         return web.URL.createObjectURL(blob as JSObject);
@@ -520,7 +519,7 @@ Future<web.Node?> _advancedMarkerIconFromMapBitmap(
     _ => throw UnimplementedError(),
   };
 
-  final web.HTMLImageElement icon = web.HTMLImageElement()..src = url;
+  final icon = web.HTMLImageElement()..src = url;
 
   final gmaps.Size? size = switch (bitmap.bitmapScaling) {
     MapBitmapScaling.auto => await _getBitmapSize(bitmap, url),
@@ -540,7 +539,7 @@ Future<web.Node?> _advancedMarkerIconFromAssetImage(
   assert(iconConfig.length >= 2);
   // iconConfig[2] contains the DPIs of the screen, but that information is
   // already encoded in the iconConfig[1]
-  final web.HTMLImageElement icon = web.HTMLImageElement()
+  final icon = web.HTMLImageElement()
     ..src = ui_web.assetManager.getAssetUrl(iconConfig[1]! as String);
 
   final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 3);
@@ -555,7 +554,7 @@ Future<web.Node?> _advancedMarkerIconFromBytes(
   required double rotation,
 }) async {
   // Grab the bytes, and put them into a blob.
-  final List<int> bytes = iconConfig[1]! as List<int>;
+  final bytes = iconConfig[1]! as List<int>;
   // Create a Blob from bytes, but let the browser figure out the encoding.
   final web.Blob blob;
 
@@ -568,7 +567,7 @@ Future<web.Node?> _advancedMarkerIconFromBytes(
   // See https://github.com/dart-lang/web/issues/180
   blob = web.Blob(<JSUint8Array>[(bytes as Uint8List).toJS].toJS);
 
-  final web.HTMLImageElement icon = web.HTMLImageElement()
+  final icon = web.HTMLImageElement()
     ..src = web.URL.createObjectURL(blob as JSObject);
 
   final gmaps.Size? size = _gmSizeFromIconConfig(iconConfig, 2);
@@ -604,7 +603,7 @@ Future<web.Node?> _advancedMarkerIconFromBitmapDescriptor(
 
   // The following code is for the deprecated BitmapDescriptor.fromBytes
   // and BitmapDescriptor.fromAssetImage.
-  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+  final iconConfig = bitmapDescriptor.toJson() as List<Object?>;
   if (iconConfig[0] == 'fromAssetImage') {
     return _advancedMarkerIconFromAssetImage(
       iconConfig,
@@ -638,7 +637,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
         () {
           // TODO(ditman): Improve this conversion
           // See https://github.com/dart-lang/web/issues/180
-          final web.Blob blob = web.Blob(
+          final blob = web.Blob(
             <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
           );
           return web.URL.createObjectURL(blob as JSObject);
@@ -716,27 +715,26 @@ Future<O> _markerOptionsFromMarker<T, O>(
   T? currentMarker,
 ) async {
   if (marker is AdvancedMarker) {
-    final gmaps.AdvancedMarkerElementOptions options =
-        gmaps.AdvancedMarkerElementOptions()
-          ..collisionBehavior = _markerCollisionBehaviorToGmCollisionBehavior(
-            marker.collisionBehavior,
-          )
-          ..content = await _advancedMarkerIconFromBitmapDescriptor(
-            marker.icon,
-            opacity: marker.alpha,
-            isVisible: marker.visible,
-            rotation: marker.rotation,
-          )
-          ..position = gmaps.LatLng(
-            marker.position.latitude,
-            marker.position.longitude,
-          )
-          ..title = sanitizeHtml(marker.infoWindow.title ?? '')
-          ..zIndex = marker.zIndex
-          ..gmpDraggable = marker.draggable;
+    final options = gmaps.AdvancedMarkerElementOptions()
+      ..collisionBehavior = _markerCollisionBehaviorToGmCollisionBehavior(
+        marker.collisionBehavior,
+      )
+      ..content = await _advancedMarkerIconFromBitmapDescriptor(
+        marker.icon,
+        opacity: marker.alpha,
+        isVisible: marker.visible,
+        rotation: marker.rotation,
+      )
+      ..position = gmaps.LatLng(
+        marker.position.latitude,
+        marker.position.longitude,
+      )
+      ..title = sanitizeHtml(marker.infoWindow.title ?? '')
+      ..zIndex = marker.zIndex
+      ..gmpDraggable = marker.draggable;
     return options as O;
   } else {
-    final gmaps.MarkerOptions options = gmaps.MarkerOptions()
+    final options = gmaps.MarkerOptions()
       ..position = gmaps.LatLng(
         marker.position.latitude,
         marker.position.longitude,
@@ -757,13 +755,12 @@ Future<O> _markerOptionsFromMarker<T, O>(
 
 /// Gets marker Id from a [marker] object.
 MarkerId getMarkerId(Object marker) {
-  final JSObject object = marker as JSObject;
+  final object = marker as JSObject;
   if (object.isA<gmaps.Marker>()) {
-    final gmaps.MVCObject mapObject = marker as gmaps.MVCObject;
+    final mapObject = marker as gmaps.MVCObject;
     return MarkerId((mapObject.get('markerId')! as JSString).toDart);
   } else if (object.isA<gmaps.AdvancedMarkerElement>()) {
-    final gmaps.AdvancedMarkerElement element =
-        marker as gmaps.AdvancedMarkerElement;
+    final element = marker as gmaps.AdvancedMarkerElement;
     return MarkerId(element.id);
   } else {
     throw ArgumentError(
@@ -1005,7 +1002,7 @@ String urlFromMapBitmap(MapBitmap mapBitmap) {
     (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
       bytesMapBitmap.byteData.hashCode,
       () {
-        final web.Blob blob = web.Blob(
+        final blob = web.Blob(
           <JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS,
         );
         return web.URL.createObjectURL(blob as JSObject);

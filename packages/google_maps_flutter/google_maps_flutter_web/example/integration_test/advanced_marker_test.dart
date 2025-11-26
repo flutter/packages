@@ -102,15 +102,12 @@ void main() {
     });
 
     testWidgets('update', (WidgetTester tester) async {
-      final controller = AdvancedMarkerController(
-        marker: marker,
-      );
-      final options =
-          gmaps.AdvancedMarkerElementOptions()
-            ..collisionBehavior =
-                gmaps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
-            ..gmpDraggable = true
-            ..position = gmaps.LatLng(42, 54);
+      final controller = AdvancedMarkerController(marker: marker);
+      final options = gmaps.AdvancedMarkerElementOptions()
+        ..collisionBehavior =
+            gmaps.CollisionBehavior.OPTIONAL_AND_HIDES_LOWER_PRIORITY
+        ..gmpDraggable = true
+        ..position = gmaps.LatLng(42, 54);
 
       expect(marker.collisionBehavior, gmaps.CollisionBehavior.REQUIRED);
       expect(marker.gmpDraggable, isFalse);
@@ -132,9 +129,7 @@ void main() {
     testWidgets('infoWindow null, showInfoWindow.', (
       WidgetTester tester,
     ) async {
-      final controller = AdvancedMarkerController(
-        marker: marker,
-      );
+      final controller = AdvancedMarkerController(marker: marker);
 
       controller.showInfoWindow();
 
@@ -193,8 +188,8 @@ void main() {
       testWidgets('cannot call update after remove', (
         WidgetTester tester,
       ) async {
-        final options =
-            gmaps.AdvancedMarkerElementOptions()..gmpDraggable = true;
+        final options = gmaps.AdvancedMarkerElementOptions()
+          ..gmpDraggable = true;
 
         controller.remove();
 
