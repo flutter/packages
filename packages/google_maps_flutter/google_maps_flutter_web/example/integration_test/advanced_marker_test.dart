@@ -205,7 +205,7 @@ void main() {
 
         expect(() {
           controller.showInfoWindow();
-        }, throwsAssertionError);
+        }, throwsStateError);
       });
 
       testWidgets('cannot call hideInfoWindow after remove', (
