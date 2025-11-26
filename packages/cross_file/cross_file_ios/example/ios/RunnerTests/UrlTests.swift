@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import Flutter
 import XCTest
 
@@ -14,7 +13,7 @@ class URLTests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiURL(registrar)
 
     let instance = TestURL()
-    let value = try? api.pigeonDelegate.path(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.path(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.pathCalled)
     XCTAssertEqual(value, instance.path())
@@ -28,10 +27,13 @@ class URLTests: XCTestCase {
     let options = [.minimalBookmark]
     let keys = [.isDirectoryKey]
     let relativeTo = TestURL
-    let value = try? api.pigeonDelegate.bookmarkData(pigeonApi: api, pigeonInstance: instance, options: options, keys: keys, relativeTo: relativeTo)
+    let value = try? api.pigeonDelegate.bookmarkData(
+      pigeonApi: api, pigeonInstance: instance, options: options, keys: keys, relativeTo: relativeTo
+    )
 
     XCTAssertEqual(instance.bookmarkDataArgs, [options, keys, relativeTo])
-    XCTAssertEqual(value, instance.bookmarkData(options: options, keys: keys, relativeTo: relativeTo))
+    XCTAssertEqual(
+      value, instance.bookmarkData(options: options, keys: keys, relativeTo: relativeTo))
   }
 
   func testStartAccessingSecurityScopedResource() {
@@ -39,7 +41,8 @@ class URLTests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiURL(registrar)
 
     let instance = TestURL()
-    let value = try? api.pigeonDelegate.startAccessingSecurityScopedResource(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.startAccessingSecurityScopedResource(
+      pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.startAccessingSecurityScopedResourceCalled)
     XCTAssertEqual(value, instance.startAccessingSecurityScopedResource())
@@ -50,7 +53,8 @@ class URLTests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiURL(registrar)
 
     let instance = TestURL()
-    try? api.pigeonDelegate.stopAccessingSecurityScopedResource(pigeonApi: api, pigeonInstance: instance )
+    try? api.pigeonDelegate.stopAccessingSecurityScopedResource(
+      pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.stopAccessingSecurityScopedResourceCalled)
   }
@@ -61,7 +65,6 @@ class TestURL: URL {
   var bookmarkDataArgs: [AnyHashable?]? = nil
   var startAccessingSecurityScopedResourceCalled = false
   var stopAccessingSecurityScopedResourceCalled = false
-
 
   override func path() {
     pathCalled = true

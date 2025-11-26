@@ -8,12 +8,7 @@ import android.content.ContentResolver
 import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class ContentResolverTest {
@@ -28,5 +23,4 @@ class ContentResolverTest {
 
     assertEquals(value, api.openInputStream(instance, uri))
   }
-
 }

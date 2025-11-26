@@ -4,16 +4,11 @@
 
 package dev.flutter.packages.cross_file_android.proxies
 
-import java.io.InputStream
 import dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse
+import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class InputStreamTest {
@@ -37,7 +32,6 @@ class InputStreamTest {
     val value = byteArrayOf(0xA1.toByte())
     whenever(instance.readAllBytes()).thenReturn(value)
 
-    assertEquals(value, api.readAllBytes(instance ))
+    assertEquals(value, api.readAllBytes(instance))
   }
-
 }

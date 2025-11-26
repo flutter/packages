@@ -8,30 +8,40 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class FileManagerProxyAPIDelegate : PigeonApiDelegateFileManager {
+class FileManagerProxyAPIDelegate: PigeonApiDelegateFileManager {
   func defaultManager(pigeonApi: PigeonApiFileManager) -> FileManager {
     return FileManager.default
   }
 
-  func fileExists(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool {
+  func fileExists(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String)
+    throws -> Bool
+  {
     return pigeonInstance.fileExists(atPath: atPath)
   }
-  
-  func isReadableFile(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Bool {
+
+  func isReadableFile(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String)
+    throws -> Bool
+  {
     return pigeonInstance.isReadableFile(atPath: atPath)
   }
 
-  func fileModificationDate(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Int64? {
-    let attributes: NSDictionary = try pigeonInstance.attributesOfItem(atPath: atPath) as NSDictionary
+  func fileModificationDate(
+    pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String
+  ) throws -> Int64? {
+    let attributes: NSDictionary =
+      try pigeonInstance.attributesOfItem(atPath: atPath) as NSDictionary
     if let date = attributes.fileModificationDate() {
       return Int64(date.timeIntervalSince1970 * 1000)
     }
-    
+
     return nil
   }
 
-  func fileSize(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws -> Int64? {
-    let attributes: NSDictionary = try pigeonInstance.attributesOfItem(atPath: atPath) as NSDictionary
+  func fileSize(pigeonApi: PigeonApiFileManager, pigeonInstance: FileManager, atPath: String) throws
+    -> Int64?
+  {
+    let attributes: NSDictionary =
+      try pigeonInstance.attributesOfItem(atPath: atPath) as NSDictionary
     return Int64(attributes.fileSize())
   }
 

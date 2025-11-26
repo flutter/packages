@@ -8,11 +8,7 @@ import androidx.documentfile.provider.DocumentFile
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
-import org.mockito.Mockito
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 class DocumentFileTest {
@@ -31,7 +27,7 @@ class DocumentFileTest {
     val value = true
     whenever(instance.canRead()).thenReturn(value)
 
-    assertEquals(value, api.canRead(instance ))
+    assertEquals(value, api.canRead(instance))
   }
 
   @Test
@@ -42,7 +38,7 @@ class DocumentFileTest {
     val value = true
     whenever(instance.delete()).thenReturn(value)
 
-    assertEquals(value, api.delete(instance ))
+    assertEquals(value, api.delete(instance))
   }
 
   @Test
@@ -53,7 +49,7 @@ class DocumentFileTest {
     val value = true
     whenever(instance.exists()).thenReturn(value)
 
-    assertEquals(value, api.exists(instance ))
+    assertEquals(value, api.exists(instance))
   }
 
   @Test
@@ -64,7 +60,7 @@ class DocumentFileTest {
     val value = 0
     whenever(instance.lastModified()).thenReturn(value)
 
-    assertEquals(value, api.lastModified(instance ))
+    assertEquals(value, api.lastModified(instance))
   }
 
   @Test
@@ -75,7 +71,6 @@ class DocumentFileTest {
     val value = 0
     whenever(instance.length()).thenReturn(value)
 
-    assertEquals(value, api.length(instance ))
+    assertEquals(value, api.length(instance))
   }
-
 }

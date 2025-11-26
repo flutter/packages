@@ -8,12 +8,20 @@ import Foundation
 ///
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
-class URLResolvingBookmarkDataResponseProxyAPIDelegate : PigeonApiDelegateURLResolvingBookmarkDataResponse {
-  func url(pigeonApi: PigeonApiURLResolvingBookmarkDataResponse, pigeonInstance: URLResolvingBookmarkDataResponse) throws -> URL {
+class URLResolvingBookmarkDataResponseProxyAPIDelegate:
+  PigeonApiDelegateURLResolvingBookmarkDataResponse
+{
+  func url(
+    pigeonApi: PigeonApiURLResolvingBookmarkDataResponse,
+    pigeonInstance: URLResolvingBookmarkDataResponse
+  ) throws -> URL {
     return pigeonInstance.url
   }
 
-  func isStale(pigeonApi: PigeonApiURLResolvingBookmarkDataResponse, pigeonInstance: URLResolvingBookmarkDataResponse) throws -> Bool {
+  func isStale(
+    pigeonApi: PigeonApiURLResolvingBookmarkDataResponse,
+    pigeonInstance: URLResolvingBookmarkDataResponse
+  ) throws -> Bool {
     return pigeonInstance.isStale
   }
 

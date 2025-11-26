@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-
 import Flutter
 import XCTest
 
@@ -22,7 +21,7 @@ class FileHandleTests: XCTestCase {
     let api = registrar.apiDelegate.pigeonApiFileHandle(registrar)
 
     let instance = TestFileHandle()
-    let value = try? api.pigeonDelegate.readToEnd(pigeonApi: api, pigeonInstance: instance )
+    let value = try? api.pigeonDelegate.readToEnd(pigeonApi: api, pigeonInstance: instance)
 
     XCTAssertTrue(instance.readToEndCalled)
     XCTAssertEqual(value, instance.readToEnd())
@@ -31,7 +30,6 @@ class FileHandleTests: XCTestCase {
 }
 class TestFileHandle: FileHandle {
   var readToEndCalled = false
-
 
   override func readToEnd() {
     readToEndCalled = true

@@ -11,10 +11,11 @@ import dev.flutter.packages.cross_file_android.ProxyApiRegistrar
 /**
  * ProxyApi implementation for [DocumentFile].
  *
- * This class may handle instantiating native object instances that are attached to a Dart
- * instance or handle method calls on the associated native class or an instance of that class.
+ * This class may handle instantiating native object instances that are attached to a Dart instance
+ * or handle method calls on the associated native class or an instance of that class.
  */
-class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : PigeonApiDocumentFile(pigeonRegistrar) {
+class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
+    PigeonApiDocumentFile(pigeonRegistrar) {
   override fun fromSingleUri(path: String): DocumentFile {
     // Only returns null on platforms below Android 19.
     return DocumentFile.fromSingleUri(pigeonRegistrar.context, path.toUri())!!
@@ -39,5 +40,4 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) : Pi
   override fun length(pigeon_instance: DocumentFile): Long {
     return pigeon_instance.length()
   }
-
 }
