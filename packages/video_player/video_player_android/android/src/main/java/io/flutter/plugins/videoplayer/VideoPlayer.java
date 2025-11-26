@@ -7,7 +7,6 @@ package io.flutter.plugins.videoplayer;
 import static androidx.media3.common.Player.REPEAT_MODE_ALL;
 import static androidx.media3.common.Player.REPEAT_MODE_OFF;
 
-import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.media3.common.AudioAttributes;
@@ -181,48 +180,41 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   @Override
   public void selectAudioTrack(long groupIndex, long trackIndex) {
     if (trackSelector == null) {
-      Log.w("VideoPlayer", "Cannot select audio track: track selector is null");
-      return;
+      throw new IllegalStateException("Cannot select audio track: track selector is null");
     }
 
     // Get current tracks
     Tracks tracks = exoPlayer.getCurrentTracks();
 
     if (groupIndex < 0 || groupIndex >= tracks.getGroups().size()) {
-      Log.w(
-          "VideoPlayer",
+      throw new IllegalArgumentException(
           "Cannot select audio track: groupIndex "
               + groupIndex
               + " is out of bounds (available groups: "
               + tracks.getGroups().size()
               + ")");
-      return;
     }
 
     Tracks.Group group = tracks.getGroups().get((int) groupIndex);
 
     // Verify it's an audio track
     if (group.getType() != C.TRACK_TYPE_AUDIO) {
-      Log.w(
-          "VideoPlayer",
+      throw new IllegalArgumentException(
           "Cannot select audio track: group at index "
               + groupIndex
               + " is not an audio track (type: "
               + group.getType()
               + ")");
-      return;
     }
 
     // Verify the track index is valid
     if (trackIndex < 0 || (int) trackIndex >= group.length) {
-      Log.w(
-          "VideoPlayer",
+      throw new IllegalArgumentException(
           "Cannot select audio track: trackIndex "
               + trackIndex
               + " is out of bounds (available tracks in group: "
               + group.length
               + ")");
-      return;
     }
 
     // Get the track group and create a selection override
