@@ -1,3 +1,9 @@
+## 0.4.6+3
+
+* Fixes consumable products not being repurchasable after the first purchase in StoreKit2.
+* Ensures `finish()` always completes even when the transaction is not found in the transaction history.
+* Improves transaction lookup to also check `Transaction.unfinished` for consumables.
+
 ## 0.4.6+2
 
 * Updates to Pigeon 26.

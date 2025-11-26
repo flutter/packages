@@ -263,10 +263,24 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// Wrapper method around StoreKit2's finish() method https://developer.apple.com/documentation/storekit/transaction/3749694-finish
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
-      let transaction = try await fetchTransaction(by: UInt64(id))
-      if let transaction = transaction {
-        await transaction.finish()
-        completion(.success(Void()))
+      do {
+        let transaction = try await fetchTransaction(by: UInt64(id))
+        if let transaction = transaction {
+          await transaction.finish()
+          completion(.success(Void()))
+        } else {
+          // Transaction not found - this can happen for consumables that have
+          // already been finished or are no longer in the transaction history.
+          // We still return success as the transaction is effectively complete.
+          completion(.success(Void()))
+        }
+      } catch {
+        completion(
+          .failure(
+            PigeonError(
+              code: "storekit2_finish_transaction_failed",
+              message: "Failed to finish transaction: \(error.localizedDescription)",
+              details: "Transaction ID: \(id)")))
       }
     }
   }
@@ -362,8 +376,11 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     return transactions
   }
 
-  /// Helper function to fetch specific transaction
+  /// Helper function to fetch specific transaction by ID.
+  /// First checks Transaction.all, then falls back to unfinished transactions
+  /// to ensure consumable transactions can be found and finished.
   func fetchTransaction(by id: UInt64) async throws -> Transaction? {
+    // First, try to find in Transaction.all
     for await result in Transaction.all {
       switch result {
       case .verified(let transaction):
@@ -374,6 +391,21 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         continue
       }
     }
+    
+    // If not found in Transaction.all, check unfinished transactions
+    // This is important for consumables that may have been purchased
+    // but not yet iterated through Transaction.all
+    for await result in Transaction.unfinished {
+      switch result {
+      case .verified(let transaction):
+        if transaction.id == id {
+          return transaction
+        }
+      case .unverified:
+        continue
+      }
+    }
+    
     return nil
   }
 }

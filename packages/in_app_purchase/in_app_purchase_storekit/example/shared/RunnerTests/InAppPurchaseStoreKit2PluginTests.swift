@@ -415,6 +415,67 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [finishExpectation], timeout: 5)
   }
 
+  func testFinishNonExistentTransactionSucceeds() async throws {
+    // Test that finishing a non-existent transaction returns success
+    // This is important for consumables that may have already been finished
+    // or are no longer in the transaction history
+    let finishExpectation = self.expectation(description: "Finishing non-existent transaction should succeed")
+
+    plugin.finish(id: 999999) { result in
+      switch result {
+      case .success():
+        finishExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Finish should NOT fail for non-existent transaction. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [finishExpectation], timeout: 5)
+  }
+
+  func testConsumableCanBeRepurchasedAfterFinish() async throws {
+    // Test that a consumable can be purchased again after finishing
+    let firstPurchaseExpectation = self.expectation(description: "First purchase should succeed")
+    let finishExpectation = self.expectation(description: "Finishing purchase should succeed")
+    let secondPurchaseExpectation = self.expectation(description: "Second purchase should succeed")
+
+    // First purchase
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        firstPurchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("First purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [firstPurchaseExpectation], timeout: 5)
+
+    // Finish the transaction
+    plugin.finish(id: 0) { result in
+      switch result {
+      case .success():
+        finishExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Finish should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [finishExpectation], timeout: 5)
+
+    // Second purchase - this should also succeed
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        secondPurchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Second purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [secondPurchaseExpectation], timeout: 5)
+  }
+
   @available(iOS 18.0, macOS 15.0, *)
   func testIsWinBackOfferEligibleEligible() async throws {
     let purchaseExpectation = self.expectation(description: "Purchase should succeed")
