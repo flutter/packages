@@ -170,11 +170,12 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   func decidePolicyForNavigationAction(
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     navigationAction navigationActionArg: WKNavigationAction,
-    completion: @escaping (
-      Result<
-        webview_flutter_wkwebview.NavigationActionPolicy, webview_flutter_wkwebview.PigeonError
-      >
-    ) -> Void
+    completion:
+      @escaping (
+        Result<
+          webview_flutter_wkwebview.NavigationActionPolicy, webview_flutter_wkwebview.PigeonError
+        >
+      ) -> Void
   ) {
     decidePolicyForNavigationActionArgs = [webViewArg, navigationActionArg]
     completion(.success(.allow))
@@ -183,11 +184,12 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   func decidePolicyForNavigationResponse(
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     navigationResponse navigationResponseArg: WKNavigationResponse,
-    completion: @escaping (
-      Result<
-        webview_flutter_wkwebview.NavigationResponsePolicy, webview_flutter_wkwebview.PigeonError
-      >
-    ) -> Void
+    completion:
+      @escaping (
+        Result<
+          webview_flutter_wkwebview.NavigationResponsePolicy, webview_flutter_wkwebview.PigeonError
+        >
+      ) -> Void
   ) {
     decidePolicyForNavigationResponseArgs = [webViewArg, navigationResponseArg]
     completion(.success(.cancel))
@@ -219,12 +221,13 @@ class TestNavigationDelegateApi: PigeonApiProtocolWKNavigationDelegate {
   func didReceiveAuthenticationChallenge(
     pigeonInstance pigeonInstanceArg: WKNavigationDelegate, webView webViewArg: WKWebView,
     challenge challengeArg: URLAuthenticationChallenge,
-    completion: @escaping (
-      Result<
-        webview_flutter_wkwebview.AuthenticationChallengeResponse,
-        webview_flutter_wkwebview.PigeonError
-      >
-    ) -> Void
+    completion:
+      @escaping (
+        Result<
+          webview_flutter_wkwebview.AuthenticationChallengeResponse,
+          webview_flutter_wkwebview.PigeonError
+        >
+      ) -> Void
   ) {
     didReceiveAuthenticationChallengeArgs = [webViewArg, challengeArg]
     completion(
@@ -241,7 +244,8 @@ class TestWebView: WKWebView {
   }
 }
 
-class TestURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender, @unchecked
+class TestURLAuthenticationChallengeSender: NSObject, URLAuthenticationChallengeSender,
+  @unchecked
   Sendable
 {
   func use(_ credential: URLCredential, for challenge: URLAuthenticationChallenge) {

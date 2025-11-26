@@ -233,7 +233,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   #if compiler(>=6.0)
     public func webView(
       _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
-      completionHandler: @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?)
+      completionHandler:
+        @escaping @MainActor (URLSession.AuthChallengeDisposition, URLCredential?)
         ->
         Void
     ) {
@@ -256,7 +257,8 @@ public class NavigationDelegateImpl: NSObject, WKNavigationDelegate {
   #else
     public func webView(
       _ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge,
-      completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) ->
+      completionHandler:
+        @escaping (URLSession.AuthChallengeDisposition, URLCredential?) ->
         Void
     ) {
       registrar.dispatchOnMainThread { onFailure in
