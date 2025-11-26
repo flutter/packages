@@ -33,22 +33,20 @@ void main() {
   });
   group('Section', () {
     test('Map', () {
-      final String output = parse(
-        '{{#section}}_{{var}}_{{/section}}',
-      ).renderString(<String, Map<String, String>>{
-        'section': <String, String>{'var': 'bob'},
-      });
+      final String output = parse('{{#section}}_{{var}}_{{/section}}')
+          .renderString(<String, Map<String, String>>{
+            'section': <String, String>{'var': 'bob'},
+          });
       expect(output, equals('_bob_'));
     });
     test('List', () {
-      final String output = parse(
-        '{{#section}}_{{var}}_{{/section}}',
-      ).renderString(<String, List<Map<String, String>>>{
-        'section': <Map<String, String>>[
-          <String, String>{'var': 'bob'},
-          <String, String>{'var': 'jim'},
-        ],
-      });
+      final String output = parse('{{#section}}_{{var}}_{{/section}}')
+          .renderString(<String, List<Map<String, String>>>{
+            'section': <Map<String, String>>[
+              <String, String>{'var': 'bob'},
+              <String, String>{'var': 'jim'},
+            ],
+          });
       expect(output, equals('_bob__jim_'));
     });
     test('Empty List', () {
@@ -90,17 +88,18 @@ void main() {
     });
 
     test('Nested', () {
-      final String output = parse(
-        '{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}',
-      ).renderString(<String, Map<String, Object>>{
-        'section': <String, Object>{
-          'var': 'bob',
-          'nested': <Map<String, String>>[
-            <String, String>{'nestedvar': 'jim'},
-            <String, String>{'nestedvar': 'sally'},
-          ],
-        },
-      });
+      final String output =
+          parse(
+            '{{#section}}.{{var}}.{{#nested}}_{{nestedvar}}_{{/nested}}.{{/section}}',
+          ).renderString(<String, Map<String, Object>>{
+            'section': <String, Object>{
+              'var': 'bob',
+              'nested': <Map<String, String>>[
+                <String, String>{'nestedvar': 'jim'},
+                <String, String>{'nestedvar': 'sally'},
+              ],
+            },
+          });
       expect(output, equals('.bob._jim__sally_.'));
     });
 
@@ -265,12 +264,12 @@ void main() {
     });
 
     test('Empty source', () {
-      final Template t = Template('');
+      final t = Template('');
       expect(t.renderString(<dynamic, dynamic>{}), equals(''));
     });
 
     test('Template name', () {
-      final Template t = Template('', name: 'foo');
+      final t = Template('', name: 'foo');
       expect(t.name, equals('foo'));
     });
 
@@ -281,22 +280,20 @@ void main() {
 
   group('Inverse Section', () {
     test('Map', () {
-      final String output = parse(
-        '{{^section}}_{{var}}_{{/section}}',
-      ).renderString(<String, Map<String, String>>{
-        'section': <String, String>{'var': 'bob'},
-      });
+      final String output = parse('{{^section}}_{{var}}_{{/section}}')
+          .renderString(<String, Map<String, String>>{
+            'section': <String, String>{'var': 'bob'},
+          });
       expect(output, equals(''));
     });
     test('List', () {
-      final String output = parse(
-        '{{^section}}_{{var}}_{{/section}}',
-      ).renderString(<String, List<Map<String, String>>>{
-        'section': <Map<String, String>>[
-          <String, String>{'var': 'bob'},
-          <String, String>{'var': 'jim'},
-        ],
-      });
+      final String output = parse('{{^section}}_{{var}}_{{/section}}')
+          .renderString(<String, List<Map<String, String>>>{
+            'section': <Map<String, String>>[
+              <String, String>{'var': 'bob'},
+              <String, String>{'var': 'jim'},
+            ],
+          });
       expect(output, equals(''));
     });
     test('Empty List', () {
@@ -397,7 +394,7 @@ void main() {
 
   group('Invalid format', () {
     test('Mismatched tag', () {
-      const String source = '{{#section}}_{{var}}_{{/notsection}}';
+      const source = '{{#section}}_{{var}}_{{/notsection}}';
       final Exception? ex = renderFail(source, <String, Map<String, String>>{
         'section': <String, String>{'var': 'bob'},
       });
@@ -405,7 +402,7 @@ void main() {
     });
 
     test('Unexpected EOF', () {
-      const String source = '{{#section}}_{{var}}_{{/section';
+      const source = '{{#section}}_{{var}}_{{/section';
       final Exception? ex = renderFail(source, <String, Map<String, String>>{
         'section': <String, String>{'var': 'bob'},
       });
@@ -413,7 +410,7 @@ void main() {
     });
 
     test('Bad tag name, open section', () {
-      const String source = r'{{#section$%$^%}}_{{var}}_{{/section}}';
+      const source = r'{{#section$%$^%}}_{{var}}_{{/section}}';
       final Exception? ex = renderFail(source, <String, Map<String, String>>{
         'section': <String, String>{'var': 'bob'},
       });
@@ -421,7 +418,7 @@ void main() {
     });
 
     test('Bad tag name, close section', () {
-      const String source = r'{{#section}}_{{var}}_{{/section$%$^%}}';
+      const source = r'{{#section}}_{{var}}_{{/section$%$^%}}';
       final Exception? ex = renderFail(source, <String, Map<String, String>>{
         'section': <String, String>{'var': 'bob'},
       });
@@ -429,7 +426,7 @@ void main() {
     });
 
     test('Bad tag name, variable', () {
-      const String source = r'{{#section}}_{{var$%$^%}}_{{/section}}';
+      const source = r'{{#section}}_{{var$%$^%}}_{{/section}}';
       final Exception? ex = renderFail(source, <String, Map<String, String>>{
         'section': <String, String>{'var': 'bob'},
       });
@@ -437,7 +434,7 @@ void main() {
     });
 
     test('Missing variable', () {
-      const String source = r'{{#section}}_{{var}}_{{/section}}';
+      const source = r'{{#section}}_{{var}}_{{/section}}';
       final Exception? ex = renderFail(source, <String, Map<dynamic, dynamic>>{
         'section': <dynamic, dynamic>{},
       });
@@ -446,7 +443,7 @@ void main() {
 
     // Null variables shouldn't be a problem.
     test('Null variable', () {
-      final Template t = Template('{{#section}}_{{var}}_{{/section}}');
+      final t = Template('{{#section}}_{{var}}_{{/section}}');
       final String output = t.renderString(<String, Map<String, void>>{
         'section': <String, void>{'var': null},
       });
@@ -454,7 +451,7 @@ void main() {
     });
 
     test('Unclosed section', () {
-      const String source = r'{{#section}}foo';
+      const source = r'{{#section}}foo';
       final Exception? ex = renderFail(source, <String, Map<dynamic, dynamic>>{
         'section': <dynamic, dynamic>{},
       });
@@ -464,32 +461,35 @@ void main() {
 
   group('Lenient', () {
     test('Odd section name', () {
-      final String output = parse(
-        r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}',
-        lenient: true,
-      ).renderString(<String, Map<String, String>>{
-        r'section$%$^%': <String, String>{'var': 'bob'},
-      });
+      final String output =
+          parse(
+            r'{{#section$%$^%}}_{{var}}_{{/section$%$^%}}',
+            lenient: true,
+          ).renderString(<String, Map<String, String>>{
+            r'section$%$^%': <String, String>{'var': 'bob'},
+          });
       expect(output, equals('_bob_'));
     });
 
     test('Odd variable name', () {
-      final String output = parse(
-        r'{{#section}}_{{var$%$^%}}_{{/section}}',
-        lenient: true,
-      ).renderString(<String, Map<String, String>>{
-        'section': <String, String>{r'var$%$^%': 'bob'},
-      });
+      final String output =
+          parse(
+            r'{{#section}}_{{var$%$^%}}_{{/section}}',
+            lenient: true,
+          ).renderString(<String, Map<String, String>>{
+            'section': <String, String>{r'var$%$^%': 'bob'},
+          });
       expect(output, equals('_bob_'));
     });
 
     test('Null variable', () {
-      final String output = parse(
-        r'{{#section}}_{{var}}_{{/section}}',
-        lenient: true,
-      ).renderString(<String, Map<String, void>>{
-        'section': <String, void>{'var': null},
-      });
+      final String output =
+          parse(
+            r'{{#section}}_{{var}}_{{/section}}',
+            lenient: true,
+          ).renderString(<String, Map<String, void>>{
+            'section': <String, void>{'var': null},
+          });
       expect(output, equals('__'));
     });
 
@@ -531,7 +531,7 @@ void main() {
       String renderTemplate, {
       bool lenient = false,
     }) {
-      final Map<String, Template> templates = <String, Template>{};
+      final templates = <String, Template>{};
       Template? resolver(String name) => templates[name];
       for (final String k in sources.keys) {
         templates[k] = Template(
@@ -555,7 +555,7 @@ void main() {
     });
 
     test('missing partial strict', () {
-      bool threw = false;
+      var threw = false;
       try {
         partialTest(
           <String, Object>{'foo': 'bar'},
@@ -668,60 +668,58 @@ void main() {
     // TODO(stuartmorgan): Fix and re-enable this test, which was skipped when
     //  the package was first imported.
     test('inverted sections truthy', () {
-      const String template = '<{{^lambda}}{{static}}{{/lambda}}>';
-      final Map<String, Object> values = <String, Object>{
+      const template = '<{{^lambda}}{{static}}{{/lambda}}>';
+      final values = <String, Object>{
         'lambda': (_) => false,
         'static': 'static',
       };
-      const String output = '<>';
+      const output = '<>';
       expect(parse(template).renderString(values), equals(output));
     }, skip: 'skip test');
 
     test("seth's use case", () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, Object> values = <String, Object>{
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, Object>{
         'markdown': (LambdaContext ctx) => ctx.renderString().toLowerCase(),
         'content': 'OI YOU!',
       };
-      const String output = '<oi you!>';
+      const output = '<oi you!>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('Lambda v2', () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, Object> values = <String, Object>{
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, Object>{
         'markdown': (LambdaContext ctx) => ctx.source,
         'content': 'OI YOU!',
       };
-      const String output = '<{{content}}>';
+      const output = '<{{content}}>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('Lambda v2...', () {
-      const String template =
-          '<{{#markdown}}dsfsf dsfsdf dfsdfsd{{/markdown}}>';
-      final Map<String, dynamic Function(dynamic ctx)> values =
-          <String, dynamic Function(dynamic ctx)>{
-            // ignore: avoid_dynamic_calls
-            'markdown': (dynamic ctx) => ctx.source,
-          };
-      const String output = '<dsfsf dsfsdf dfsdfsd>';
+      const template = '<{{#markdown}}dsfsf dsfsdf dfsdfsd{{/markdown}}>';
+      final values = <String, dynamic Function(dynamic ctx)>{
+        // ignore: avoid_dynamic_calls
+        'markdown': (dynamic ctx) => ctx.source,
+      };
+      const output = '<dsfsf dsfsdf dfsdfsd>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('Alternate Delimiters', () {
       // A lambda's return value should parse with the default delimiters.
 
-      const String template = '{{= | | =}}\nHello, (|&lambda|)!';
+      const template = '{{= | | =}}\nHello, (|&lambda|)!';
 
       //function() { return "|planet| => {{planet}}" }
-      final Map<String, Object> values = <String, Object>{
+      final values = <String, Object>{
         'planet': 'world',
-        'lambda':
-            (LambdaContext ctx) => ctx.renderSource('|planet| => {{planet}}'),
+        'lambda': (LambdaContext ctx) =>
+            ctx.renderSource('|planet| => {{planet}}'),
       };
 
-      const String output = 'Hello, (|planet| => world)!';
+      const output = 'Hello, (|planet| => world)!';
 
       expect(parse(template).renderString(values), equals(output));
     });
@@ -729,10 +727,10 @@ void main() {
     test('Alternate Delimiters 2', () {
       // Lambdas used for sections should parse with the current delimiters.
 
-      const String template = '{{= | | =}}<|#lambda|-|/lambda|>';
+      const template = '{{= | | =}}<|#lambda|-|/lambda|>';
 
       //function() { return "|planet| => {{planet}}" }
-      final Map<String, Object> values = <String, Object>{
+      final values = <String, Object>{
         'planet': 'Earth',
         'lambda': (LambdaContext ctx) {
           final String txt = ctx.source;
@@ -740,13 +738,13 @@ void main() {
         },
       };
 
-      const String output = '<-{{planet}} => Earth->';
+      const output = '<-{{planet}} => Earth->';
 
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext.lookup', () {
-      final Template t = Template('{{ foo }}');
+      final t = Template('{{ foo }}');
       final String s = t.renderString(<String, Object>{
         'foo': (LambdaContext lc) => lc.lookup('bar'),
         'bar': 'jim',
@@ -755,7 +753,7 @@ void main() {
     });
 
     test('LambdaContext.lookup closed', () {
-      final Template t = Template('{{ foo }}');
+      final t = Template('{{ foo }}');
       LambdaContext? lc2;
       t.renderString(<String, Object>{
         'foo': (LambdaContext lc) => lc2 = lc,
@@ -808,7 +806,7 @@ void main() {
 
   group('Template with custom delimiters', () {
     test('Basic', () {
-      final Template t = Template('(<%text%>)', delimiters: '<% %>');
+      final t = Template('(<%text%>)', delimiters: '<% %>');
       final String val = t.renderString(<String, String>{'text': 'Hey!'});
       expect(val, equals('(Hey!)'));
     });
@@ -816,80 +814,73 @@ void main() {
 
   group('Lambda context', () {
     test('LambdaContext write', () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, Null Function(LambdaContext ctx)> values =
-          <String, Null Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              ctx.write('foo');
-            },
-          };
-      const String output = '<foo>';
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, Null Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          ctx.write('foo');
+        },
+      };
+      const output = '<foo>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext render', () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, Object> values = <String, Object>{
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, Object>{
         'content': 'bar',
         'markdown': (LambdaContext ctx) {
           ctx.render();
         },
       };
-      const String output = '<bar>';
+      const output = '<bar>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext render with value', () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, Null Function(LambdaContext ctx)> values =
-          <String, Null Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              ctx.render(value: <String, String>{'content': 'oi!'});
-            },
-          };
-      const String output = '<oi!>';
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, Null Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          ctx.render(value: <String, String>{'content': 'oi!'});
+        },
+      };
+      const output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext renderString with value', () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, String Function(LambdaContext ctx)> values =
-          <String, String Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              return ctx.renderString(
-                value: <String, String>{'content': 'oi!'},
-              );
-            },
-          };
-      const String output = '<oi!>';
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, String Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          return ctx.renderString(value: <String, String>{'content': 'oi!'});
+        },
+      };
+      const output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext write and return', () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, String Function(LambdaContext ctx)> values =
-          <String, String Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              ctx.write('foo');
-              return 'bar';
-            },
-          };
-      const String output = '<foobar>';
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, String Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          ctx.write('foo');
+          return 'bar';
+        },
+      };
+      const output = '<foobar>';
       expect(parse(template).renderString(values), equals(output));
     });
 
     test('LambdaContext renderSource with value', () {
-      const String template = '<{{#markdown}}{{content}}{{/markdown}}>';
-      final Map<String, String Function(LambdaContext ctx)> values =
-          <String, String Function(LambdaContext ctx)>{
-            'markdown': (LambdaContext ctx) {
-              return ctx.renderSource(
-                ctx.source,
-                value: <String, String>{'content': 'oi!'},
-              );
-            },
-          };
-      const String output = '<oi!>';
+      const template = '<{{#markdown}}{{content}}{{/markdown}}>';
+      final values = <String, String Function(LambdaContext ctx)>{
+        'markdown': (LambdaContext ctx) {
+          return ctx.renderSource(
+            ctx.source,
+            value: <String, String>{'content': 'oi!'},
+          );
+        },
+      };
+      const output = '<oi!>';
       expect(parse(template).renderString(values), equals(output));
     });
   });

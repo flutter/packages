@@ -41,17 +41,16 @@ const List<String> _kContextIgnoreKeys = <String>[
 class GoogleBenchmarkParser {
   /// Given a Google benchmark json output, parse its content into a list of [MetricPoint].
   static Future<List<MetricPoint>> parse(String jsonFileName) async {
-    final Map<String, dynamic> jsonResult =
+    final jsonResult =
         jsonDecode(File(jsonFileName).readAsStringSync())
             as Map<String, dynamic>;
 
-    final Map<String, dynamic> rawContext =
-        jsonResult['context'] as Map<String, dynamic>;
+    final rawContext = jsonResult['context'] as Map<String, dynamic>;
     final Map<String, String> context = rawContext.map<String, String>(
       (String k, dynamic v) => MapEntry<String, String>(k, v.toString()),
     )..removeWhere((String k, String v) => _kContextIgnoreKeys.contains(k));
 
-    final List<MetricPoint> points = <MetricPoint>[];
+    final points = <MetricPoint>[];
     for (final dynamic item in jsonResult['benchmarks'] as List<dynamic>) {
       _parseAnItem(item as Map<String, dynamic>, points, context);
     }
@@ -64,8 +63,8 @@ void _parseAnItem(
   List<MetricPoint> points,
   Map<String, String> context,
 ) {
-  final String name = item[kNameKey] as String;
-  final Map<String, String> timeUnitMap = <String, String>{
+  final name = item[kNameKey] as String;
+  final timeUnitMap = <String, String>{
     if (item.containsKey(_kTimeUnitKey))
       kUnitKey: item[_kTimeUnitKey] as String,
   };
@@ -82,8 +81,9 @@ void _parseAnItem(
         rethrow;
       }
 
-      final double? value =
-          rawValue is int ? rawValue.toDouble() : rawValue as double?;
+      final double? value = rawValue is int
+          ? rawValue.toDouble()
+          : rawValue as double?;
       points.add(
         MetricPoint(
           value,

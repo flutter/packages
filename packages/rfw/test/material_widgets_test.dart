@@ -22,15 +22,14 @@ import 'utils.dart';
 const bool kIsJS = kIsWeb && !kIsWasm;
 
 void main() {
-  const LibraryName coreName = LibraryName(<String>['core']);
-  const LibraryName materialName = LibraryName(<String>['material']);
-  const LibraryName testName = LibraryName(<String>['test']);
+  const coreName = LibraryName(<String>['core']);
+  const materialName = LibraryName(<String>['material']);
+  const testName = LibraryName(<String>['test']);
 
   Runtime setupRuntime() {
-    final Runtime runtime =
-        Runtime()
-          ..update(coreName, createCoreWidgets())
-          ..update(materialName, createMaterialWidgets());
+    final runtime = Runtime()
+      ..update(coreName, createCoreWidgets())
+      ..update(materialName, createMaterialWidgets());
     addTearDown(runtime.dispose);
     return runtime;
   }
@@ -44,8 +43,8 @@ void main() {
 
   testWidgets('Material widgets', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
@@ -259,8 +258,8 @@ void main() {
 
   testWidgets('Implement ButtonBar properties', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
@@ -343,8 +342,8 @@ void main() {
     WidgetTester tester,
   ) async {
     final Runtime runtime = setupRuntime();
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
@@ -409,8 +408,8 @@ void main() {
 
   testWidgets('Implement OverflowBar properties', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
@@ -490,8 +489,8 @@ void main() {
 
   testWidgets('Implement InkResponse properties', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
@@ -573,8 +572,8 @@ void main() {
 
   testWidgets('Implement Material properties', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),
@@ -656,8 +655,8 @@ void main() {
 
   testWidgets('Slider properties', (WidgetTester tester) async {
     final Runtime runtime = setupRuntime();
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         theme: ThemeData(useMaterial3: false),

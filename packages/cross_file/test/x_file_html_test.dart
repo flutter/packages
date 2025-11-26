@@ -20,13 +20,13 @@ final html.File textFile = html.File(
   'hello.txt',
 );
 final String textFileUrl =
-// TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
-// ignore: unnecessary_cast
-html.URL.createObjectURL(textFile as JSObject);
+    // TODO(kevmoo): drop ignore when pkg:web constraint excludes v0.3
+    // ignore: unnecessary_cast
+    html.URL.createObjectURL(textFile as JSObject);
 
 void main() {
   group('Create with an objectUrl', () {
-    final XFile file = XFile(textFileUrl);
+    final file = XFile(textFileUrl);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -46,7 +46,7 @@ void main() {
   });
 
   group('Create from data', () {
-    final XFile file = XFile.fromData(bytes);
+    final file = XFile.fromData(bytes);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -63,15 +63,34 @@ void main() {
     test('Stream can be sliced', () async {
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
+
+    test('Prefers local bytes over path if both are provided', () async {
+      const text = 'Hello World';
+      const path = 'test/x_file_html_test.dart';
+
+      final file = XFile.fromData(
+        utf8.encode(text),
+        path: path,
+        name: 'x_file_html_test.dart',
+        length: text.length,
+        mimeType: 'text/plain',
+        lastModified: DateTime.now(),
+      );
+
+      expect(file.path, isNot(equals(path)));
+      expect(file.path.startsWith('blob:'), isTrue);
+      expect(await file.readAsString(), equals(text));
+    });
   });
 
   group('Blob backend', () {
-    final XFile file = XFile(textFileUrl);
+    final file = XFile(textFileUrl);
 
     test('Stores data as a Blob', () async {
       // Read the blob from its path 'natively'
-      final html.Response response =
-          await html.window.fetch(file.path.toJS).toDart;
+      final html.Response response = await html.window
+          .fetch(file.path.toJS)
+          .toDart;
 
       final JSAny arrayBuffer = await response.arrayBuffer().toDart;
       final ByteBuffer data = (arrayBuffer as JSArrayBuffer).toDart;
@@ -88,11 +107,11 @@ void main() {
   });
 
   group('saveTo(..)', () {
-    const String crossFileDomElementId = '__x_file_dom_element';
+    const crossFileDomElementId = '__x_file_dom_element';
 
     group('CrossFile saveTo(..)', () {
       test('creates a DOM container', () async {
-        final XFile file = XFile.fromData(bytes);
+        final file = XFile.fromData(bytes);
 
         await file.saveTo('');
 
@@ -104,15 +123,16 @@ void main() {
       });
 
       test('create anchor element', () async {
-        final XFile file = XFile.fromData(bytes, name: textFile.name);
+        final file = XFile.fromData(bytes, name: textFile.name);
 
         await file.saveTo('path');
 
-        final html.Element container =
-            html.document.querySelector('#$crossFileDomElementId')!;
+        final html.Element container = html.document.querySelector(
+          '#$crossFileDomElementId',
+        )!;
 
         late html.HTMLAnchorElement element;
-        for (int i = 0; i < container.childNodes.length; i++) {
+        for (var i = 0; i < container.childNodes.length; i++) {
           final html.Element test = container.children.item(i)!;
           if (test.tagName == 'A') {
             element = test as html.HTMLAnchorElement;
@@ -126,20 +146,20 @@ void main() {
       });
 
       test('anchor element is clicked', () async {
-        final html.HTMLAnchorElement mockAnchor =
+        final mockAnchor =
             html.document.createElement('a') as html.HTMLAnchorElement;
 
-        final CrossFileTestOverrides overrides = CrossFileTestOverrides(
+        final overrides = CrossFileTestOverrides(
           createAnchorElement: (_, __) => mockAnchor,
         );
 
-        final XFile file = XFile.fromData(
+        final file = XFile.fromData(
           bytes,
           name: textFile.name,
           overrides: overrides,
         );
 
-        bool clicked = false;
+        var clicked = false;
         mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
 
         await file.saveTo('path');

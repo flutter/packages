@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 #import "FLTGoogleMapTileOverlayController.h"
-#import "FLTGoogleMapJSONConversions.h"
+#import "FLTGoogleMapTileOverlayController_Test.h"
+
+#import "FGMConversionUtils.h"
 
 @interface FLTGoogleMapTileOverlayController ()
 
@@ -21,8 +23,9 @@
   if (self) {
     _layer = tileLayer;
     _mapView = mapView;
-    // TODO(stuartmorgan: Refactor to avoid this call to an instance method in init.
-    [self updateFromPlatformTileOverlay:tileOverlay];
+    [FLTGoogleMapTileOverlayController updateTileLayer:tileLayer
+                               fromPlatformTileOverlay:tileOverlay
+                                           withMapView:mapView];
   }
   return self;
 }
@@ -35,33 +38,22 @@
   [self.layer clearTileCache];
 }
 
-- (void)setFadeIn:(BOOL)fadeIn {
-  self.layer.fadeIn = fadeIn;
-}
-
-- (void)setTransparency:(float)transparency {
-  float opacity = 1.0 - transparency;
-  self.layer.opacity = opacity;
-}
-
-- (void)setVisible:(BOOL)visible {
-  self.layer.map = visible ? self.mapView : nil;
-}
-
-- (void)setZIndex:(int)zIndex {
-  self.layer.zIndex = zIndex;
-}
-
-- (void)setTileSize:(NSInteger)tileSize {
-  self.layer.tileSize = tileSize;
-}
-
 - (void)updateFromPlatformTileOverlay:(FGMPlatformTileOverlay *)overlay {
-  [self setVisible:overlay.visible];
-  [self setTransparency:overlay.transparency];
-  [self setZIndex:(int)overlay.zIndex];
-  [self setFadeIn:overlay.fadeIn];
-  [self setTileSize:overlay.tileSize];
+  [FLTGoogleMapTileOverlayController updateTileLayer:self.layer
+                             fromPlatformTileOverlay:overlay
+                                         withMapView:self.mapView];
+}
+
++ (void)updateTileLayer:(GMSTileLayer *)tileLayer
+    fromPlatformTileOverlay:(FGMPlatformTileOverlay *)platformOverlay
+                withMapView:(GMSMapView *)mapView {
+  tileLayer.opacity = 1.0 - platformOverlay.transparency;
+  tileLayer.zIndex = (int)platformOverlay.zIndex;
+  tileLayer.fadeIn = platformOverlay.fadeIn;
+  tileLayer.tileSize = platformOverlay.tileSize;
+
+  // This must be done last, to avoid visual flickers of default property values.
+  tileLayer.map = platformOverlay.visible ? mapView : nil;
 }
 
 @end

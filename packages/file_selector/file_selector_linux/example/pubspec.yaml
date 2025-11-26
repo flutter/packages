@@ -4,13 +4,13 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.7.0
-  flutter: ">=3.29.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   file_selector_linux:
     path: ../
-  file_selector_platform_interface: ^2.6.0
+  file_selector_platform_interface: ^2.7.0
   flutter:
     sdk: flutter
 

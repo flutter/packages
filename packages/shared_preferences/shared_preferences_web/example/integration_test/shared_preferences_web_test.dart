@@ -33,7 +33,7 @@ void main() {
       );
     });
 
-    const Map<String, Object> flutterTestValues = <String, Object>{
+    const flutterTestValues = <String, Object>{
       'flutter.String': 'hello world',
       'flutter.Bool': true,
       'flutter.Int': 42,
@@ -41,7 +41,7 @@ void main() {
       'flutter.StringList': <String>['foo', 'bar'],
     };
 
-    const Map<String, Object> prefixTestValues = <String, Object>{
+    const prefixTestValues = <String, Object>{
       'prefix.String': 'hello world',
       'prefix.Bool': true,
       'prefix.Int': 42,
@@ -49,7 +49,7 @@ void main() {
       'prefix.StringList': <String>['foo', 'bar'],
     };
 
-    const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    const nonPrefixTestValues = <String, Object>{
       'String': 'hello world',
       'Bool': true,
       'Int': 42,
@@ -57,7 +57,7 @@ void main() {
       'StringList': <String>['foo', 'bar'],
     };
 
-    final Map<String, Object> allTestValues = <String, Object>{};
+    final allTestValues = <String, Object>{};
 
     allTestValues.addAll(flutterTestValues);
     allTestValues.addAll(prefixTestValues);
@@ -168,18 +168,18 @@ void main() {
       });
 
       testWidgets('remove', (WidgetTester _) async {
-        const String key = 'flutter.String';
+        const key = 'flutter.String';
         await preferences.remove(key);
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values[key], isNull);
       });
 
       testWidgets('get all with prefix', (WidgetTester _) async {
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('prefix.');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('prefix.');
         expect(values['prefix.String'], allTestValues['prefix.String']);
         expect(values['prefix.Bool'], allTestValues['prefix.Bool']);
         expect(values['prefix.Int'], allTestValues['prefix.Int']);
@@ -189,8 +189,8 @@ void main() {
 
       testWidgets('getAllWithNoPrefix', (WidgetTester _) async {
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], allTestValues['String']);
         expect(values['Bool'], allTestValues['Bool']);
         expect(values['Int'], allTestValues['Int']);
@@ -210,8 +210,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('prefix.');
         Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('prefix.');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('prefix.');
         expect(values['prefix.String'], null);
         expect(values['prefix.Bool'], null);
         expect(values['prefix.Int'], null);
@@ -233,8 +233,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('');
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], null);
         expect(values['Bool'], null);
         expect(values['Int'], null);
@@ -254,7 +254,7 @@ void main() {
       });
 
       testWidgets('remove', (WidgetTester _) async {
-        const String key = 'flutter.String';
+        const key = 'flutter.String';
         await preferences.remove(key);
         final Map<String, Object> values = await preferences
             .getAllWithParameters(
@@ -392,9 +392,9 @@ void main() {
     });
 
     testWidgets('simultaneous writes', (WidgetTester _) async {
-      final List<Future<bool>> writes = <Future<bool>>[];
-      const int writeCount = 100;
-      for (int i = 1; i <= writeCount; i++) {
+      final writes = <Future<bool>>[];
+      const writeCount = 100;
+      for (var i = 1; i <= writeCount; i++) {
         writes.add(preferences.setValue('Int', 'Int', i));
       }
       final List<bool> result = await Future.wait(writes, eagerError: true);
@@ -408,9 +408,9 @@ void main() {
     });
 
     testWidgets('returns all valid JSON data', (WidgetTester _) async {
-      const String value = 'value';
-      const String invalidJsonDataKey = 'invalidJsonData';
-      const String validJsonDataKey = 'validJsonData';
+      const value = 'value';
+      const invalidJsonDataKey = 'invalidJsonData';
+      const validJsonDataKey = 'validJsonData';
       html.window.localStorage.setItem(invalidJsonDataKey, value);
       html.window.localStorage.setItem(validJsonDataKey, '"$value"');
 
@@ -425,20 +425,19 @@ void main() {
   });
 
   group('shared_preferences_async', () {
-    const SharedPreferencesWebOptions emptyOptions =
-        SharedPreferencesWebOptions();
+    const emptyOptions = SharedPreferencesWebOptions();
 
-    const String stringKey = 'testString';
-    const String boolKey = 'testBool';
-    const String intKey = 'testInt';
-    const String doubleKey = 'testDouble';
-    const String listKey = 'testList';
+    const stringKey = 'testString';
+    const boolKey = 'testBool';
+    const intKey = 'testInt';
+    const doubleKey = 'testDouble';
+    const listKey = 'testList';
 
-    const String testString = 'hello world';
-    const bool testBool = true;
-    const int testInt = 42;
-    const double testDouble = 3.14159;
-    const List<String> testList = <String>['foo', 'bar'];
+    const testString = 'hello world';
+    const testBool = true;
+    const testInt = 42;
+    const testDouble = 3.14159;
+    const testList = <String>['foo', 'bar'];
 
     Future<SharedPreferencesAsyncPlatform> getPreferences() async {
       final SharedPreferencesAsyncPlatform preferences =
@@ -500,9 +499,9 @@ void main() {
     testWidgets('returns null when reading invalid JSON value', (
       WidgetTester _,
     ) async {
-      const String value = 'value';
-      const String invalidJsonDataKey = 'invalidJsonData';
-      const String validJsonDataKey = 'validJsonData';
+      const value = 'value';
+      const invalidJsonDataKey = 'invalidJsonData';
+      const validJsonDataKey = 'validJsonData';
       final SharedPreferencesAsyncPlatform preferences = await getPreferences();
 
       html.window.localStorage.setItem(invalidJsonDataKey, value);

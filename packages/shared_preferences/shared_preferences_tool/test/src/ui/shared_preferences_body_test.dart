@@ -24,8 +24,7 @@ void main() {
     testWidgets('should show keys and data panels', (
       WidgetTester tester,
     ) async {
-      final MockSharedPreferencesStateNotifier notifier =
-          MockSharedPreferencesStateNotifier();
+      final notifier = MockSharedPreferencesStateNotifier();
       when(notifier.value).thenReturn(const SharedPreferencesState());
 
       await tester.pumpWidget(

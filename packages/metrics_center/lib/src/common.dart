@@ -52,15 +52,7 @@ abstract class MetricDestination {
 /// credentials json. It's currently the case for Chrmoium LUCI bots.
 AuthClient authClientFromAccessToken(String token, List<String> scopes) {
   final DateTime anHourLater = DateTime.now().add(const Duration(hours: 1));
-  final AccessToken accessToken = AccessToken(
-    'Bearer',
-    token,
-    anHourLater.toUtc(),
-  );
-  final AccessCredentials accessCredentials = AccessCredentials(
-    accessToken,
-    null,
-    scopes,
-  );
+  final accessToken = AccessToken('Bearer', token, anHourLater.toUtc());
+  final accessCredentials = AccessCredentials(accessToken, null, scopes);
   return authenticatedClient(Client(), accessCredentials);
 }

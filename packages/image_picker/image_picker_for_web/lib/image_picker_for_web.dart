@@ -61,11 +61,11 @@ class ImagePickerPlugin extends ImagePickerPlatform {
     return files.isEmpty
         ? null
         : _imageResizer.resizeImageIfNeeded(
-          files.first,
-          options.maxWidth,
-          options.maxHeight,
-          options.imageQuality,
-        );
+            files.first,
+            options.maxWidth,
+            options.maxHeight,
+            options.imageQuality,
+          );
   }
 
   /// Returns a [List<XFile>] with the images that were picked, if any.
@@ -254,47 +254,44 @@ class ImagePickerPlugin extends ImagePickerPlatform {
   /// Handles the OnChange event from a FileUploadInputElement object
   /// Returns a list of selected files.
   List<web.File>? _handleOnChangeEvent(web.Event event) {
-    final web.HTMLInputElement? input = event.target as web.HTMLInputElement?;
+    final input = event.target as web.HTMLInputElement?;
     return input == null ? null : _getFilesFromInput(input);
   }
 
   /// Monitors an <input type="file"> and returns the selected file(s).
   Future<List<XFile>> _getSelectedXFiles(web.HTMLInputElement input) {
-    final Completer<List<XFile>> completer = Completer<List<XFile>>();
+    final completer = Completer<List<XFile>>();
     // TODO(dit): Migrate all this to Streams (onChange, onError, onCancel) when onCancel is available.
     // See: https://github.com/dart-lang/web/issues/199
     // Observe the input until we can return something
-    input.onchange =
-        (web.Event event) {
-          final List<web.File>? files = _handleOnChangeEvent(event);
-          if (!completer.isCompleted && files != null) {
-            completer.complete(
-              files.map((web.File file) {
-                return XFile(
-                  web.URL.createObjectURL(file),
-                  name: file.name,
-                  length: file.size,
-                  lastModified: DateTime.fromMillisecondsSinceEpoch(
-                    file.lastModified,
-                  ),
-                  mimeType: file.type,
-                );
-              }).toList(),
+    input.onchange = (web.Event event) {
+      final List<web.File>? files = _handleOnChangeEvent(event);
+      if (!completer.isCompleted && files != null) {
+        completer.complete(
+          files.map((web.File file) {
+            return XFile(
+              web.URL.createObjectURL(file),
+              name: file.name,
+              length: file.size,
+              lastModified: DateTime.fromMillisecondsSinceEpoch(
+                file.lastModified,
+              ),
+              mimeType: file.type,
             );
-          }
-        }.toJS;
+          }).toList(),
+        );
+      }
+    }.toJS;
 
-    input.oncancel =
-        (web.Event _) {
-          completer.complete(<XFile>[]);
-        }.toJS;
+    input.oncancel = (web.Event _) {
+      completer.complete(<XFile>[]);
+    }.toJS;
 
-    input.onerror =
-        (web.Event event) {
-          if (!completer.isCompleted) {
-            completer.completeError(event);
-          }
-        }.toJS;
+    input.onerror = (web.Event event) {
+      if (!completer.isCompleted) {
+        completer.completeError(event);
+      }
+    }.toJS;
     // Note that we don't bother detaching from these streams, since the
     // "input" gets re-created in the DOM every time the user needs to
     // pick a file.
@@ -327,10 +324,9 @@ class ImagePickerPlugin extends ImagePickerPlatform {
       return _overrides!.createInputElement(accept, capture);
     }
 
-    final web.HTMLInputElement element =
-        web.HTMLInputElement()
-          ..type = 'file'
-          ..multiple = multiple;
+    final element = web.HTMLInputElement()
+      ..type = 'file'
+      ..multiple = multiple;
 
     if (accept != null) {
       element.accept = accept;

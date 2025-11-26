@@ -197,13 +197,13 @@ mixin _GoRouteMixin on RouteBaseConfig {
   // construct path bits using parent bits
   // if there are any queryParam objects, add in the `queryParam` bits
   String get _locationArgs {
-    final Map<String, String> pathParameters = Map<String, String>.fromEntries(
+    final pathParameters = Map<String, String>.fromEntries(
       _pathParams.map((String pathParameter) {
         // Enum types are encoded using a map, so we need a nullability check
         // here to ensure it matches Uri.encodeComponent nullability
         final DartType? type = _field(pathParameter)?.returnType;
 
-        final StringBuffer valueBuffer = StringBuffer();
+        final valueBuffer = StringBuffer();
 
         valueBuffer.write(r'${Uri.encodeComponent(');
         valueBuffer.write(_encodeFor(pathParameter));
@@ -232,7 +232,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
       );
 
   String get _fromStateConstructor {
-    final StringBuffer buffer = StringBuffer('=>');
+    final buffer = StringBuffer('=>');
     if (_ctor.isConst &&
         _ctorParams.isEmpty &&
         _ctorQueryParams.isEmpty &&
@@ -241,7 +241,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
     }
 
     buffer.writeln('$_className(');
-    for (final FormalParameterElement param in <FormalParameterElement>[
+    for (final param in <FormalParameterElement>[
       ..._ctorParams,
       ..._ctorQueryParams,
       if (_extraParam != null) _extraParam!,
@@ -314,12 +314,12 @@ mixin _GoRouteMixin on RouteBaseConfig {
       return '';
     }
 
-    final StringBuffer buffer = StringBuffer('queryParams: {\n');
+    final buffer = StringBuffer('queryParams: {\n');
 
     for (final FormalParameterElement param in _ctorQueryParams) {
       final String parameterName = param.displayName;
 
-      final List<String> conditions = <String>[];
+      final conditions = <String>[];
       if (param.hasDefaultValue) {
         if (param.type.isNullableType) {
           throw NullableDefaultValueError(param);
@@ -330,7 +330,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
       } else if (param.type.isNullableType) {
         conditions.add('$selfFieldName.$parameterName != null');
       }
-      String line = '';
+      var line = '';
       if (conditions.isNotEmpty) {
         line = 'if (${conditions.join(' && ')}) ';
       }
@@ -346,22 +346,22 @@ mixin _GoRouteMixin on RouteBaseConfig {
     return buffer.toString();
   }
 
-  late final List<FormalParameterElement> _ctorParams =
-      _ctor.formalParameters.where((FormalParameterElement element) {
+  late final List<FormalParameterElement> _ctorParams = _ctor.formalParameters
+      .where((FormalParameterElement element) {
         if (_pathParams.contains(element.displayName)) {
           return true;
         }
         return false;
-      }).toList();
+      })
+      .toList();
 
-  late final List<FormalParameterElement> _ctorQueryParams =
-      _ctor.formalParameters
-          .where(
-            (FormalParameterElement element) =>
-                !_pathParams.contains(element.displayName) &&
-                !element.isExtraField,
-          )
-          .toList();
+  late final List<FormalParameterElement> _ctorQueryParams = _ctor
+      .formalParameters
+      .where(
+        (FormalParameterElement element) =>
+            !_pathParams.contains(element.displayName) && !element.isExtraField,
+      )
+      .toList();
 
   ConstructorElement2 get _ctor {
     final ConstructorElement2? ctor = routeDataClass.unnamedConstructor2;
@@ -384,9 +384,9 @@ mixin _GoRouteMixin on RouteBaseConfig {
   /// Returns code representing the constant maps that contain the `enum` to
   /// [String] mapping for each referenced enum.
   Iterable<String> _enumDeclarations() {
-    final Set<InterfaceType> enumParamTypes = <InterfaceType>{};
+    final enumParamTypes = <InterfaceType>{};
 
-    for (final FormalParameterElement ctorParam in <FormalParameterElement>[
+    for (final ctorParam in <FormalParameterElement>[
       ..._ctorParams,
       ..._ctorQueryParams,
     ]) {
@@ -441,7 +441,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
   final String? parentNavigatorKey;
 
   String get _rawJoinedPath {
-    final List<String> pathSegments = <String>[];
+    final pathSegments = <String>[];
 
     RouteBaseConfig? config = this;
     while (config != null) {
@@ -598,11 +598,7 @@ abstract class RouteBaseConfig {
     ConstantReader reader,
     InterfaceElement2 element,
   ) {
-    final RouteBaseConfig definition = RouteBaseConfig._fromAnnotation(
-      reader,
-      element,
-      null,
-    );
+    final definition = RouteBaseConfig._fromAnnotation(reader, element, null);
 
     if (element != definition.routeDataClass) {
       throw InvalidGenerationSourceError(
@@ -622,7 +618,7 @@ abstract class RouteBaseConfig {
     bool isAncestorRelative = false,
   }) {
     assert(!reader.isNull, 'reader should not be null');
-    final InterfaceType type = reader.objectValue.type! as InterfaceType;
+    final type = reader.objectValue.type! as InterfaceType;
     final String typeName = type.element.displayName;
 
     if (isAncestorRelative && typeName == 'TypedGoRoute') {
@@ -800,44 +796,42 @@ abstract class RouteBaseConfig {
     InterfaceElement2 classElement, {
     required String parameterName,
   }) {
-    final String? fieldDisplayName =
-        classElement.fields2
-            .where((FieldElement2 element) {
-              if (!element.isStatic || element.displayName != parameterName) {
-                return false;
-              }
-              if (parameterName.toLowerCase().contains(
-                RegExp('navigatorKey | observers'),
-              )) {
-                final DartType type = element.type;
-                if (type is! ParameterizedType) {
-                  return false;
-                }
-                final List<DartType> typeArguments = type.typeArguments;
-                if (typeArguments.length != 1) {
-                  return false;
-                }
-                final DartType typeArgument = typeArguments.single;
-                if (withoutNullability(typeArgument.getDisplayString()) !=
-                    'NavigatorState') {
-                  return false;
-                }
-              }
-              return true;
-            })
-            .map<String>((FieldElement2 e) => e.displayName)
-            .firstOrNull;
+    final String? fieldDisplayName = classElement.fields2
+        .where((FieldElement2 element) {
+          if (!element.isStatic || element.displayName != parameterName) {
+            return false;
+          }
+          if (parameterName.toLowerCase().contains(
+            RegExp('navigatorKey | observers'),
+          )) {
+            final DartType type = element.type;
+            if (type is! ParameterizedType) {
+              return false;
+            }
+            final List<DartType> typeArguments = type.typeArguments;
+            if (typeArguments.length != 1) {
+              return false;
+            }
+            final DartType typeArgument = typeArguments.single;
+            if (withoutNullability(typeArgument.getDisplayString()) !=
+                'NavigatorState') {
+              return false;
+            }
+          }
+          return true;
+        })
+        .map<String>((FieldElement2 e) => e.displayName)
+        .firstOrNull;
 
     if (fieldDisplayName != null) {
       return '${classElement.displayName}.$fieldDisplayName';
     }
-    final String? methodDisplayName =
-        classElement.methods2
-            .where((MethodElement2 element) {
-              return element.isStatic && element.displayName == parameterName;
-            })
-            .map<String>((MethodElement2 e) => e.displayName)
-            .firstOrNull;
+    final String? methodDisplayName = classElement.methods2
+        .where((MethodElement2 element) {
+          return element.isStatic && element.displayName == parameterName;
+        })
+        .map<String>((MethodElement2 e) => e.displayName)
+        .firstOrNull;
 
     if (methodDisplayName != null) {
       return '${classElement.displayName}.$methodDisplayName';
@@ -852,7 +846,7 @@ abstract class RouteBaseConfig {
   );
 
   Iterable<String> _generateMembers() sync* {
-    final List<String> items = <String>[_rootDefinition()];
+    final items = <String>[_rootDefinition()];
 
     for (final RouteBaseConfig def in _flatten()) {
       items.addAll(def.classDeclarations());
@@ -883,7 +877,8 @@ abstract class RouteBaseConfig {
       r'$' + _className.substring(0, 1).toLowerCase() + _className.substring(1);
 
   /// Returns the `GoRoute` code for the annotated class.
-  String _rootDefinition() => '''
+  String _rootDefinition() =>
+      '''
 RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
 ''';
 
@@ -894,10 +889,9 @@ RouteBase get $_routeGetterName => ${_invokesRouteConstructor()};
   String get _extensionName => '\$${_className}Extension';
 
   String _invokesRouteConstructor() {
-    final String routesBit =
-        _children.isEmpty
-            ? ''
-            : '''
+    final routesBit = _children.isEmpty
+        ? ''
+        : '''
 ${_generateChildrenGetterName(routeDataClassName)}: [${_children.map((RouteBaseConfig e) => '${e._invokesRouteConstructor()},').join()}],
 ''';
 
@@ -910,13 +904,10 @@ $routeDataClassName.$dataConvertionFunctionName(
   PropertyAccessorElement2? _field(String name) =>
       routeDataClass.getGetter2(name);
 
-  List<ElementAnnotation>? _fieldMetadata(String name) =>
-      routeDataClass.fields2
-          .firstWhereOrNull(
-            (FieldElement2 element) => element.displayName == name,
-          )
-          ?.metadata2
-          .annotations;
+  List<ElementAnnotation>? _fieldMetadata(String name) => routeDataClass.fields2
+      .firstWhereOrNull((FieldElement2 element) => element.displayName == name)
+      ?.metadata2
+      .annotations;
 
   /// The name of `RouteData` subclass this configuration represents.
   @protected
@@ -944,7 +935,7 @@ String _enumMapConst(InterfaceType type) {
 
   final String enumName = type.element.displayName;
 
-  final StringBuffer buffer = StringBuffer('const ${enumMapName(type)} = {');
+  final buffer = StringBuffer('const ${enumMapName(type)} = {');
 
   // ignore: experimental_member_use
   for (final FieldElement2 enumField in type.element3.fields2.where(
@@ -968,7 +959,8 @@ const Map<String, String> helperNames = <String, String>{
   iterablesEqualHelperName: _iterableEqualsHelper,
 };
 
-const String _convertMapValueHelper = '''
+const String _convertMapValueHelper =
+    '''
 T? $convertMapValueHelperName<T>(
   String key,
   Map<String, String> map,
@@ -979,7 +971,8 @@ T? $convertMapValueHelperName<T>(
 }
 ''';
 
-const String _boolConverterHelper = '''
+const String _boolConverterHelper =
+    '''
 bool $boolConverterHelperName(String value) {
   switch (value) {
     case 'true':
@@ -992,13 +985,15 @@ bool $boolConverterHelperName(String value) {
 }
 ''';
 
-const String _enumConverterHelper = '''
+const String _enumConverterHelper =
+    '''
 extension<T extends Enum> on Map<T, String> {
   T? $enumExtensionHelperName(String? value) =>
       entries.where((element) => element.value == value).firstOrNull?.key;
 }''';
 
-const String _iterableEqualsHelper = '''
+const String _iterableEqualsHelper =
+    '''
 bool $iterablesEqualHelperName<T>(Iterable<T>? iterable1, Iterable<T>? iterable2) {
   if (identical(iterable1, iterable2)) return true;
   if (iterable1 == null || iterable2 == null) return false;

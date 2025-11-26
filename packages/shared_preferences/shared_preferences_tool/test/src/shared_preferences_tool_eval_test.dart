@@ -57,7 +57,7 @@ void main() {
       required String method,
       required Map<String, Object?> response,
     }) {
-      final StreamController<Event> eventStream = StreamController<Event>();
+      final eventStream = StreamController<Event>();
       vmService.onExtensionEvent = eventStream.stream;
       eval.onEval = () async {
         eventStream.add(
@@ -77,8 +77,8 @@ void main() {
     });
 
     test('should fetch all keys', () async {
-      final List<String> expectedAsyncKeys = <String>['key1', 'key2'];
-      const List<String> expectedLegacyKeys = <String>['key3', 'key4'];
+      final expectedAsyncKeys = <String>['key1', 'key2'];
+      const expectedLegacyKeys = <String>['key3', 'key4'];
       stubEvalMethod(
         eventKind: 'all_keys',
         method: 'requestAllKeys()',
@@ -95,8 +95,8 @@ void main() {
     });
 
     test('should fetch int value', () async {
-      const String key = 'testKey';
-      const int expectedValue = 42;
+      const key = 'testKey';
+      const expectedValue = 42;
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
@@ -113,8 +113,8 @@ void main() {
     });
 
     test('should fetch bool value', () async {
-      const String key = 'testKey';
-      const bool expectedValue = true;
+      const key = 'testKey';
+      const expectedValue = true;
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
@@ -131,8 +131,8 @@ void main() {
     });
 
     test('should fetch double value', () async {
-      const String key = 'testKey';
-      const double expectedValue = 11.1;
+      const key = 'testKey';
+      const expectedValue = 11.1;
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
@@ -149,8 +149,8 @@ void main() {
     });
 
     test('should fetch string value', () async {
-      const String key = 'testKey';
-      const String expectedValue = 'value';
+      const key = 'testKey';
+      const expectedValue = 'value';
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', false)",
@@ -167,8 +167,8 @@ void main() {
     });
 
     test('should fetch string list value', () async {
-      const String key = 'testKey';
-      const List<String> expectedValue = <String>['value1', 'value2'];
+      const key = 'testKey';
+      const expectedValue = <String>['value1', 'value2'];
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', true)",
@@ -188,7 +188,7 @@ void main() {
     });
 
     test('should throw error on unsupported value', () {
-      const String key = 'testKey';
+      const key = 'testKey';
       stubEvalMethod(
         eventKind: 'value',
         method: "requestValue('$key', true)",
@@ -202,8 +202,8 @@ void main() {
     });
 
     test('should change value', () async {
-      const String key = 'testKey';
-      const String method = "requestValueChange('$key', 'true', 'bool', false)";
+      const key = 'testKey';
+      const method = "requestValueChange('$key', 'true', 'bool', false)";
       stubEvalMethod(
         eventKind: 'change_value',
         method: method,
@@ -229,8 +229,8 @@ void main() {
     });
 
     test('should delete key', () async {
-      const String key = 'testKey';
-      const String method = "requestRemoveKey('$key', false)";
+      const key = 'testKey';
+      const method = "requestRemoveKey('$key', false)";
       stubEvalMethod(
         eventKind: 'remove',
         method: method,

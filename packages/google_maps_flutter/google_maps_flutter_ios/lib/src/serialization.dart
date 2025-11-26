@@ -5,7 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
-// These constants must match the corresponding constants in FLTGoogleMapJSONConversions.m
+// These constants must match the corresponding constants in FGMConversionUtils.m
 const String _heatmapIdKey = 'heatmapId';
 const String _heatmapDataKey = 'data';
 const String _heatmapGradientKey = 'gradient';
@@ -25,7 +25,7 @@ void _addIfNonNull(Map<String, Object?> map, String fieldName, Object? value) {
 
 /// Serialize [Heatmap]
 Object serializeHeatmap(Heatmap heatmap) {
-  final Map<String, Object> json = <String, Object>{};
+  final json = <String, Object>{};
 
   _addIfNonNull(json, _heatmapIdKey, heatmap.heatmapId.value);
   _addIfNonNull(
@@ -69,7 +69,7 @@ WeightedLatLng? deserializeWeightedLatLng(Object? json) {
     return null;
   }
   assert(json is List && json.length == 2);
-  final List<dynamic> list = json as List<dynamic>;
+  final list = json as List<dynamic>;
   final LatLng latLng = deserializeLatLng(list[0])!;
   return WeightedLatLng(latLng, weight: list[1] as double);
 }
@@ -85,18 +85,20 @@ LatLng? deserializeLatLng(Object? json) {
     return null;
   }
   assert(json is List && json.length == 2);
-  final List<Object?> list = json as List<Object?>;
+  final list = json as List<Object?>;
   return LatLng(list[0]! as double, list[1]! as double);
 }
 
 /// Serialize [HeatmapGradient]
 Object serializeHeatmapGradient(HeatmapGradient gradient) {
-  final Map<String, Object> json = <String, Object>{};
+  final json = <String, Object>{};
 
   _addIfNonNull(
     json,
     _heatmapGradientColorsKey,
-    gradient.colors.map((HeatmapGradientColor e) => e.color.value).toList(),
+    gradient.colors
+        .map((HeatmapGradientColor e) => e.color.toARGB32())
+        .toList(),
   );
   _addIfNonNull(
     json,
@@ -115,17 +117,16 @@ HeatmapGradient? deserializeHeatmapGradient(Object? json) {
   }
   assert(json is Map);
   final Map<String, Object?> map = (json as Map<Object?, Object?>).cast();
-  final List<Color> colors =
-      (map[_heatmapGradientColorsKey]! as List<Object?>)
-          .whereType<int>()
-          .map((int e) => Color(e))
-          .toList();
+  final List<Color> colors = (map[_heatmapGradientColorsKey]! as List<Object?>)
+      .whereType<int>()
+      .map((int e) => Color(e))
+      .toList();
   final List<double> startPoints =
       (map[_heatmapGradientStartPointsKey]! as List<Object?>)
           .whereType<double>()
           .toList();
-  final List<HeatmapGradientColor> gradientColors = <HeatmapGradientColor>[];
-  for (int i = 0; i < colors.length; i++) {
+  final gradientColors = <HeatmapGradientColor>[];
+  for (var i = 0; i < colors.length; i++) {
     gradientColors.add(HeatmapGradientColor(colors[i], startPoints[i]));
   }
   return HeatmapGradient(

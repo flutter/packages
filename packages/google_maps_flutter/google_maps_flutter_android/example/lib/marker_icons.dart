@@ -210,7 +210,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Marker _createAssetMarker(int index) {
-    final LatLng position = LatLng(
+    final position = LatLng(
       _kMapCenter.latitude - (index * 0.5),
       _kMapCenter.longitude - 1,
     );
@@ -223,7 +223,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   Marker _createBytesMarker(int index) {
-    final LatLng position = LatLng(
+    final position = LatLng(
       _kMapCenter.latitude - (index * 0.5),
       _kMapCenter.longitude + 1,
     );
@@ -236,8 +236,8 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
   }
 
   void _updateMarkers() {
-    final Set<Marker> markers = <Marker>{};
-    for (int i = 0; i < _markersAmountPerType; i++) {
+    final markers = <Marker>{};
+    for (var i = 0; i < _markersAmountPerType; i++) {
       if (_markerIconAsset != null) {
         markers.add(_createAssetMarker(i));
       }
@@ -299,7 +299,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
     final double? imagePixelRatio = _scalingEnabled ? devicePixelRatio : null;
 
     // Create canvasSize with physical marker size
-    final Size canvasSize = Size(
+    final canvasSize = Size(
       bitmapLogicalSize.width * (imagePixelRatio ?? 1.0),
       bitmapLogicalSize.height * (imagePixelRatio ?? 1.0),
     );
@@ -314,7 +314,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
         ? _getCurrentMarkerSize()
         : (null, null);
 
-    final BytesMapBitmap bitmap = BytesMapBitmap(
+    final bitmap = BytesMapBitmap(
       bytes.buffer.asUint8List(),
       imagePixelRatio: imagePixelRatio,
       width: width,
