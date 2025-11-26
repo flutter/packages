@@ -116,7 +116,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
       final String? version = getNullableStringArg(_versionFlag);
       if (version == null) {
         final PubVersionFinderResponse response = await _pubVersionFinder
-            .getPackageVersion(packageName: _targetPubPackage);
+            .getPackageVersion(packageName: _targetPubPackage!);
         switch (response.result) {
           case PubVersionFinderResult.success:
             _targetVersion = response.versions.first.toString();
@@ -204,7 +204,7 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     if (_targetPubPackage != null) {
-      return _runForPubDependency(package, _targetPubPackage);
+      return _runForPubDependency(package, _targetPubPackage!);
     }
     if (_targetAndroidDependency != null) {
       return _runForAndroidDependency(package);
