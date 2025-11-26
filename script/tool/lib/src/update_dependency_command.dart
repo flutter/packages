@@ -35,8 +35,8 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
     super.gitDir,
     http.Client? httpClient,
   }) : _pubVersionFinder = PubVersionFinder(
-         httpClient: httpClient ?? http.Client(),
-       ) {
+          httpClient: httpClient ?? http.Client(),
+        ) {
     argParser.addOption(_pubPackageFlag, help: 'A pub package to update.');
     argParser.addOption(
       _androidDependency,
@@ -63,8 +63,7 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
     );
     argParser.addOption(
       _versionFlag,
-      help:
-          'The version to update to.\n\n'
+      help: 'The version to update to.\n\n'
           '- For pub, defaults to the latest published version if not '
           'provided. This can be any constraint that pubspec.yaml allows; a '
           'specific version will be treated as the exact version for '
@@ -100,9 +99,8 @@ class UpdateDependencyCommand extends PackageLoopingCommand {
   @override
   Future<void> initializeRun() async {
     const targetFlags = <String>{_pubPackageFlag, _androidDependency};
-    final Set<String> passedTargetFlags = targetFlags
-        .where((String flag) => argResults![flag] != null)
-        .toSet();
+    final Set<String> passedTargetFlags =
+        targetFlags.where((String flag) => argResults![flag] != null).toSet();
     if (passedTargetFlags.length != 1) {
       printError(
         'Exactly one of the target flags must be provided: (${targetFlags.join(', ')})',
@@ -400,9 +398,9 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
         );
         final String newGradleWrapperPropertiesContents =
             oldFileToUpdateContents.replaceFirst(
-              dependencyVersionPattern,
-              newDependencyVersionEntry,
-            );
+          dependencyVersionPattern,
+          newDependencyVersionEntry,
+        );
 
         fileToUpdate.writeAsStringSync(newGradleWrapperPropertiesContents);
       }
@@ -428,8 +426,8 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
     final File buildConfigurationFile = package
         .platformDirectory(FlutterPlatform.android)
         .childFile('build.gradle');
-    final String buildConfigurationContents = buildConfigurationFile
-        .readAsStringSync();
+    final String buildConfigurationContents =
+        buildConfigurationFile.readAsStringSync();
     final validCompileSdkVersion = RegExp(
       r'(compileSdk|compileSdkVersion) \d{1,2}',
     );
@@ -488,8 +486,8 @@ A version with a valid format (3 numbers separated by 2 periods) must be provide
       return <File>[];
     }
     return pigeonsDir.listSync().whereType<File>().where(
-      (File file) => file.basename.endsWith('.dart'),
-    );
+          (File file) => file.basename.endsWith('.dart'),
+        );
   }
 
   /// Re-runs Pigeon generation for [package].
