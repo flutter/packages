@@ -54,12 +54,12 @@ class FileSelectorIOS extends FileSelectorPlatform {
   List<String> _allowedUtiListFromTypeGroups(List<XTypeGroup>? typeGroups) {
     // iOS requires a list of allowed types, so allowing all is expressed via
     // a root type rather than an empty list.
-    const List<String> allowAny = <String>['public.data'];
+    const allowAny = <String>['public.data'];
 
     if (typeGroups == null || typeGroups.isEmpty) {
       return allowAny;
     }
-    final List<String> allowedUTIs = <String>[];
+    final allowedUTIs = <String>[];
     for (final XTypeGroup typeGroup in typeGroups) {
       // If any group allows everything, no filtering should be done.
       if (typeGroup.allowsAny) {

@@ -42,7 +42,7 @@ class SharedPreferencesAsync {
   ///
   /// Ignores any keys whose values are types which are incompatible with shared_preferences.
   Future<Set<String>> getKeys({Set<String>? allowList}) async {
-    final GetPreferencesParameters parameters = GetPreferencesParameters(
+    final parameters = GetPreferencesParameters(
       filter: PreferencesFilters(allowList: allowList),
     );
     return _platform.getKeys(parameters, _options);
@@ -54,7 +54,7 @@ class SharedPreferencesAsync {
   ///
   /// Ignores any entries of types which are incompatible with shared_preferences.
   Future<Map<String, Object?>> getAll({Set<String>? allowList}) async {
-    final GetPreferencesParameters parameters = GetPreferencesParameters(
+    final parameters = GetPreferencesParameters(
       filter: PreferencesFilters(allowList: allowList),
     );
     return _platform.getPreferences(parameters, _options);
@@ -145,7 +145,7 @@ class SharedPreferencesAsync {
   ///
   /// It is highly recommended that an [allowList] be provided to this call.
   Future<void> clear({Set<String>? allowList}) {
-    final ClearPreferencesParameters parameters = ClearPreferencesParameters(
+    final parameters = ClearPreferencesParameters(
       filter: PreferencesFilters(allowList: allowList),
     );
     return _platform.clear(parameters, _options);
@@ -197,12 +197,11 @@ class SharedPreferencesWithCache {
     required SharedPreferencesWithCacheOptions cacheOptions,
     Map<String, Object?>? cache,
   }) async {
-    final SharedPreferencesWithCache preferences =
-        SharedPreferencesWithCache._create(
-          sharedPreferencesOptions: sharedPreferencesOptions,
-          cacheOptions: cacheOptions,
-          cache: cache,
-        );
+    final preferences = SharedPreferencesWithCache._create(
+      sharedPreferencesOptions: sharedPreferencesOptions,
+      cacheOptions: cacheOptions,
+      cache: cache,
+    );
 
     await preferences.reloadCache();
 

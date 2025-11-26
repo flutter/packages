@@ -558,7 +558,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   /// Display a row of toggle to select the camera (or a message if no camera is available).
   Widget _cameraTogglesRowWidget() {
-    final List<Widget> toggles = <Widget>[];
+    final toggles = <Widget>[];
 
     void onChanged(CameraDescription? description) {
       if (description == null) {
@@ -614,7 +614,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = controller!;
 
-    final Offset offset = Offset(
+    final offset = Offset(
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
@@ -633,7 +633,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   Future<void> _initializeCameraController(
     CameraDescription cameraDescription,
   ) async {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
       enableAudio: enableAudio,
@@ -985,7 +985,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    final VideoPlayerController vController = kIsWeb
+    final vController = kIsWeb
         ? VideoPlayerController.networkUrl(Uri.parse(videoFile!.path))
         : VideoPlayerController.file(File(videoFile!.path));
 

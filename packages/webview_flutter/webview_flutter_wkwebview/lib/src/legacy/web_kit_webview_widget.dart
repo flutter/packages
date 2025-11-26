@@ -220,7 +220,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
           NSObject object,
           Map<KeyValueChangeKey, Object?> change,
         ) {
-          final double progress = change[KeyValueChangeKey.newValue]! as double;
+          final progress = change[KeyValueChangeKey.newValue]! as double;
           weakReference.target?.onProgress((progress * 100).round());
         };
       }),
@@ -242,9 +242,11 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
 
     if (params.backgroundColor != null) {
       unawaited(webView.setOpaque(false));
-      unawaited(webView.setBackgroundColor(Colors.transparent.value));
+      unawaited(webView.setBackgroundColor(Colors.transparent.toARGB32()));
       unawaited(
-        webView.scrollView.setBackgroundColor(params.backgroundColor?.value),
+        webView.scrollView.setBackgroundColor(
+          params.backgroundColor?.toARGB32(),
+        ),
       );
     }
 
@@ -453,9 +455,9 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
                 );
             _scriptMessageHandlers[channelName] = handler;
 
-            final String wrapperSource =
+            final wrapperSource =
                 'window.$channelName = webkit.messageHandlers.$channelName;';
-            final WKUserScript wrapperScript = WKUserScript(
+            final wrapperScript = WKUserScript(
               source: wrapperSource,
               injectionTime: UserScriptInjectionTime.atDocumentStart,
               isForMainFrameOnly: false,
@@ -546,7 +548,7 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
   }
 
   Future<void> _disableZoom() async {
-    final WKUserScript userScript = WKUserScript(
+    final userScript = WKUserScript(
       source:
           "var meta = document.createElement('meta');\n"
           "meta.name = 'viewport';\n"
@@ -635,13 +637,13 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
     } else if (value is double && value.truncate() == value) {
       return value.truncate().toString();
     } else if (value is List) {
-      final List<String> stringValues = <String>[];
+      final stringValues = <String>[];
       for (final Object? listValue in value) {
         stringValues.add(_asObjectiveCString(listValue, inContainer: true));
       }
       return '(${stringValues.join(',')})';
     } else if (value is Map) {
-      final List<String> stringValues = <String>[];
+      final stringValues = <String>[];
       for (final MapEntry<Object?, Object?> entry in value.entries) {
         stringValues.add(
           '${_asObjectiveCString(entry.key, inContainer: true)} '

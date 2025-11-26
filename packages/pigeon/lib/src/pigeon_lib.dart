@@ -389,7 +389,7 @@ class PigeonOptions {
   /// Converts a [PigeonOptions] to a Map representation where:
   /// `x = PigeonOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{
+    final result = <String, Object>{
       if (input != null) 'input': input!,
       if (dartOut != null) 'dartOut': dartOut!,
       if (dartTestOut != null) 'dartTestOut': dartTestOut!,
@@ -450,23 +450,18 @@ class Pigeon {
   /// [sdkPath] for specifying the Dart SDK path for
   /// [AnalysisContextCollection].
   ParseResults parseFile(String inputPath, {String? sdkPath}) {
-    final List<String> includedPaths = <String>[
-      path.absolute(path.normalize(inputPath)),
-    ];
-    final AnalysisContextCollection collection = AnalysisContextCollection(
+    final includedPaths = <String>[path.absolute(path.normalize(inputPath))];
+    final collection = AnalysisContextCollection(
       includedPaths: includedPaths,
       sdkPath: sdkPath,
     );
 
-    final List<Error> compilationErrors = <Error>[];
-    final RootBuilder rootBuilder = RootBuilder(
-      File(inputPath).readAsStringSync(),
-    );
+    final compilationErrors = <Error>[];
+    final rootBuilder = RootBuilder(File(inputPath).readAsStringSync());
     for (final AnalysisContext context in collection.contexts) {
       for (final String path in context.contextRoot.analyzedFiles()) {
         final AnalysisSession session = context.currentSession;
-        final ParsedUnitResult result =
-            session.getParsedUnit(path) as ParsedUnitResult;
+        final result = session.getParsedUnit(path) as ParsedUnitResult;
         if (result.diagnostics.isEmpty) {
           final dart_ast.CompilationUnit unit = result.unit;
           unit.accept(rootBuilder);
@@ -626,7 +621,7 @@ ${_argParser.usage}''';
     // `configurePigeon` function.
     final ArgResults results = _argParser.parse(args);
 
-    final PigeonOptions opts = PigeonOptions(
+    final opts = PigeonOptions(
       input: results['input'] as String?,
       dartOut: results['dart_out'] as String?,
       dartTestOut: results['dart_test_out'] as String?,
@@ -731,7 +726,7 @@ ${_argParser.usage}''';
     parseResults =
         parseResults ?? pigeon.parseFile(options.input!, sdkPath: sdkPath);
 
-    final List<Error> errors = <Error>[];
+    final errors = <Error>[];
     errors.addAll(parseResults.errors);
 
     // Helper to clean up non-Stdout sinks.
@@ -750,7 +745,7 @@ ${_argParser.usage}''';
     final InternalPigeonOptions internalOptions =
         InternalPigeonOptions.fromPigeonOptions(options);
 
-    for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
+    for (final adapter in safeGeneratorAdapters) {
       final IOSink? sink = adapter.shouldGenerate(
         internalOptions,
         FileType.source,
@@ -780,7 +775,7 @@ ${_argParser.usage}''';
       return 1;
     }
 
-    for (final GeneratorAdapter adapter in safeGeneratorAdapters) {
+    for (final adapter in safeGeneratorAdapters) {
       for (final FileType fileType in adapter.fileTypeList) {
         final IOSink? sink = adapter.shouldGenerate(internalOptions, fileType);
         if (sink != null) {
@@ -796,7 +791,7 @@ ${_argParser.usage}''';
 
   /// Print a list of errors to stderr.
   static void printErrors(List<Error> errors) {
-    for (final Error err in errors) {
+    for (final err in errors) {
       if (err.filename != null) {
         if (err.lineNumber != null) {
           stderr.writeln(

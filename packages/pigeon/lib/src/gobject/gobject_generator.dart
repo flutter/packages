@@ -48,8 +48,7 @@ class GObjectOptions {
   /// Creates a [GObjectOptions] from a Map representation where:
   /// `x = GObjectOptions.fromMap(x.toMap())`.
   static GObjectOptions fromMap(Map<String, Object> map) {
-    final Iterable<dynamic>? copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return GObjectOptions(
       headerIncludePath: map['header'] as String?,
       module: map['module'] as String?,
@@ -61,7 +60,7 @@ class GObjectOptions {
   /// Converts a [GObjectOptions] to a Map representation where:
   /// `x = GObjectOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{
+    final result = <String, Object>{
       if (headerIncludePath != null) 'header': headerIncludePath!,
       if (module != null) 'module': module!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
@@ -215,8 +214,8 @@ class GObjectHeaderGenerator
     final String enumName = _getClassName(module, anEnum.name);
 
     indent.newln();
-    final List<String> enumValueCommentLines = <String>[];
-    for (int i = 0; i < anEnum.members.length; i++) {
+    final enumValueCommentLines = <String>[];
+    for (var i = 0; i < anEnum.members.length; i++) {
       final EnumMember member = anEnum.members[i];
       final String itemName = _getEnumValue(
         dartPackageName,
@@ -233,7 +232,7 @@ class GObjectHeaderGenerator
       ...anEnum.documentationComments,
     ], _docCommentSpec);
     indent.writeScoped('typedef enum {', '} $enumName;', () {
-      for (int i = 0; i < anEnum.members.length; i++) {
+      for (var i = 0; i < anEnum.members.length; i++) {
         final EnumMember member = anEnum.members[i];
         final String itemName = _getEnumValue(
           dartPackageName,
@@ -270,7 +269,7 @@ class GObjectHeaderGenerator
     _writeDeclareFinalType(indent, module, classDefinition.name);
 
     indent.newln();
-    final List<String> constructorArgs = <String>[];
+    final constructorArgs = <String>[];
     for (final NamedType field in classDefinition.fields) {
       final String fieldName = _getFieldName(field.name);
       final String type = _getType(module, field.type);
@@ -279,7 +278,7 @@ class GObjectHeaderGenerator
         constructorArgs.add('size_t ${fieldName}_length');
       }
     }
-    final List<String> constructorFieldCommentLines = <String>[];
+    final constructorFieldCommentLines = <String>[];
     for (final NamedType field in classDefinition.fields) {
       final String fieldName = _getFieldName(field.name);
       constructorFieldCommentLines.add('$fieldName: field in this object.');
@@ -320,7 +319,7 @@ class GObjectHeaderGenerator
         '',
         'Returns: the field value.',
       ], _docCommentSpec);
-      final List<String> getterArgs = <String>[
+      final getterArgs = <String>[
         '$className* object',
         if (_isNumericListType(field.type)) 'size_t* length',
       ];
@@ -362,7 +361,7 @@ class GObjectHeaderGenerator
       ], _docCommentSpec);
     }
 
-    for (final EnumeratedType customType in customTypes) {
+    for (final customType in customTypes) {
       final String customTypeId = _getCustomTypeId(module, customType);
       indent.writeln('extern const int $customTypeId;');
     }
@@ -413,7 +412,7 @@ class GObjectHeaderGenerator
       final String responseName = _getResponseName(api.name, method.name);
       final String responseClassName = _getClassName(module, responseName);
 
-      final List<String> asyncArgs = <String>['$className* api'];
+      final asyncArgs = <String>['$className* api'];
       for (final Parameter param in method.parameters) {
         final String paramName = _snakeCaseFromCamelCase(param.name);
         asyncArgs.add('${_getType(module, param.type)} $paramName');
@@ -427,7 +426,7 @@ class GObjectHeaderGenerator
         'gpointer user_data',
       ]);
       indent.newln();
-      final List<String> methodParameterCommentLines = <String>[];
+      final methodParameterCommentLines = <String>[];
       for (final Parameter param in method.parameters) {
         final String paramName = _snakeCaseFromCamelCase(param.name);
         methodParameterCommentLines.add(
@@ -453,7 +452,7 @@ class GObjectHeaderGenerator
         "void ${methodPrefix}_$methodName(${asyncArgs.join(', ')});",
       );
 
-      final List<String> finishArgs = <String>[
+      final finishArgs = <String>[
         '$className* api',
         'GAsyncResult* result',
         'GError** error',
@@ -561,7 +560,7 @@ class GObjectHeaderGenerator
         else
           'Returns: a return value.',
       ], _docCommentSpec);
-      final String returnType = _isNullablePrimitiveType(method.returnType)
+      final returnType = _isNullablePrimitiveType(method.returnType)
           ? '$primitiveType*'
           : primitiveType;
       indent.writeln(
@@ -654,7 +653,7 @@ class GObjectHeaderGenerator
 
     final String returnType = _getType(module, method.returnType);
     indent.newln();
-    final List<String> constructorArgs = <String>[
+    final constructorArgs = <String>[
       if (returnType != 'void') '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length',
     ];
@@ -701,7 +700,7 @@ class GObjectHeaderGenerator
         final String responseName = _getResponseName(api.name, method.name);
         final String responseClassName = _getClassName(module, responseName);
 
-        final List<String> methodArgs = <String>[];
+        final methodArgs = <String>[];
         for (final Parameter param in method.parameters) {
           final String name = _snakeCaseFromCamelCase(param.name);
           methodArgs.add('${_getType(module, param.type)} $name');
@@ -714,7 +713,7 @@ class GObjectHeaderGenerator
             '${className}ResponseHandle* response_handle',
           'gpointer user_data',
         ]);
-        final String returnType = method.isAsynchronous
+        final returnType = method.isAsynchronous
             ? 'void'
             : '$responseClassName*';
         indent.writeln("$returnType (*$methodName)(${methodArgs.join(', ')});");
@@ -735,7 +734,7 @@ class GObjectHeaderGenerator
     final String returnType = _getType(module, method.returnType);
 
     indent.newln();
-    final List<String> respondArgs = <String>[
+    final respondArgs = <String>[
       '${className}ResponseHandle* response_handle',
       if (returnType != 'void') '$returnType return_value',
       if (_isNumericListType(method.returnType)) 'size_t return_value_length',
@@ -755,7 +754,7 @@ class GObjectHeaderGenerator
     );
 
     indent.newln();
-    final List<String> respondErrorArgs = <String>[
+    final respondErrorArgs = <String>[
       '${className}ResponseHandle* response_handle',
       'const gchar* code',
       'const gchar* message',
@@ -855,7 +854,7 @@ class GObjectSourceGenerator
 
     indent.newln();
     _writeDispose(indent, module, classDefinition.name, () {
-      bool haveSelf = false;
+      var haveSelf = false;
       for (final NamedType field in classDefinition.fields) {
         final String fieldName = _getFieldName(field.name);
         final String? clear = _getClearFunction(field.type, 'self->$fieldName');
@@ -875,7 +874,7 @@ class GObjectSourceGenerator
     indent.newln();
     _writeClassInit(indent, module, classDefinition.name, () {});
 
-    final List<String> constructorArgs = <String>[];
+    final constructorArgs = <String>[];
     for (final NamedType field in classDefinition.fields) {
       final String fieldName = _getFieldName(field.name);
       constructorArgs.add('${_getType(module, field.type)} $fieldName');
@@ -946,7 +945,7 @@ class GObjectSourceGenerator
       final String returnType = _getType(module, field.type);
 
       indent.newln();
-      final List<String> getterArgs = <String>[
+      final getterArgs = <String>[
         '$className* self',
         if (_isNumericListType(field.type)) 'size_t* length',
       ];
@@ -986,8 +985,8 @@ class GObjectSourceGenerator
       'static $className* ${methodPrefix}_new_from_list(FlValue* values) {',
       '}',
       () {
-        final List<String> args = <String>[];
-        for (int i = 0; i < classDefinition.fields.length; i++) {
+        final args = <String>[];
+        for (var i = 0; i < classDefinition.fields.length; i++) {
           final NamedType field = classDefinition.fields[i];
           final String fieldName = _getFieldName(field.name);
           final String fieldType = _getType(module, field.type);
@@ -1076,12 +1075,12 @@ class GObjectSourceGenerator
     );
 
     indent.newln();
-    for (final EnumeratedType customType in customTypes) {
+    for (final customType in customTypes) {
       final String customTypeId = _getCustomTypeId(module, customType);
       indent.writeln('const int $customTypeId = ${customType.enumeration};');
     }
 
-    for (final EnumeratedType customType in customTypes) {
+    for (final customType in customTypes) {
       final String customTypeName = _getClassName(module, customType.name);
       final String snakeCustomTypeName = _snakeCaseFromCamelCase(
         customTypeName,
@@ -1089,7 +1088,7 @@ class GObjectSourceGenerator
       final String customTypeId = _getCustomTypeId(module, customType);
 
       indent.newln();
-      final String valueType = customType.type == CustomTypes.customClass
+      final valueType = customType.type == CustomTypes.customClass
           ? '$customTypeName*'
           : 'FlValue*';
       indent.writeScoped(
@@ -1129,7 +1128,7 @@ class GObjectSourceGenerator
               'switch (fl_value_get_custom_type(value)) {',
               '}',
               () {
-                for (final EnumeratedType customType in customTypes) {
+                for (final customType in customTypes) {
                   final String customTypeId = _getCustomTypeId(
                     module,
                     customType,
@@ -1170,7 +1169,7 @@ class GObjectSourceGenerator
       },
     );
 
-    for (final EnumeratedType customType in customTypes) {
+    for (final customType in customTypes) {
       final String customTypeName = _getClassName(module, customType.name);
       final String snakeCustomTypeName = _snakeCaseFromCamelCase(
         customTypeName,
@@ -1217,7 +1216,7 @@ class GObjectSourceGenerator
       '}',
       () {
         indent.writeScoped('switch (type) {', '}', () {
-          for (final EnumeratedType customType in customTypes) {
+          for (final customType in customTypes) {
             final String customTypeName = _getClassName(
               module,
               customType.name,
@@ -1456,7 +1455,7 @@ class GObjectSourceGenerator
         );
 
         indent.newln();
-        final String returnType = _isNullablePrimitiveType(method.returnType)
+        final returnType = _isNullablePrimitiveType(method.returnType)
             ? '$primitiveType*'
             : primitiveType;
         indent.writeScoped(
@@ -1515,7 +1514,7 @@ class GObjectSourceGenerator
         },
       );
 
-      final List<String> asyncArgs = <String>['$className* self'];
+      final asyncArgs = <String>['$className* self'];
       for (final Parameter param in method.parameters) {
         final String name = _snakeCaseFromCamelCase(param.name);
         asyncArgs.add('${_getType(module, param.type)} $name');
@@ -1571,7 +1570,7 @@ class GObjectSourceGenerator
         },
       );
 
-      final List<String> finishArgs = <String>[
+      final finishArgs = <String>[
         '$className* self',
         'GAsyncResult* result',
         'GError** error',
@@ -1695,7 +1694,7 @@ class GObjectSourceGenerator
 
       final String returnType = _getType(module, method.returnType);
       indent.newln();
-      final List<String> constructorArgs = <String>[
+      final constructorArgs = <String>[
         if (returnType != 'void') '$returnType return_value',
         if (_isNumericListType(method.returnType)) 'size_t return_value_length',
       ];
@@ -1793,8 +1792,8 @@ class GObjectSourceGenerator
           );
 
           indent.newln();
-          final List<String> methodArgs = <String>[];
-          for (int i = 0; i < method.parameters.length; i++) {
+          final methodArgs = <String>[];
+          for (var i = 0; i < method.parameters.length; i++) {
             final Parameter param = method.parameters[i];
             final String paramName = _snakeCaseFromCamelCase(param.name);
             final String paramType = _getType(module, param.type);
@@ -1839,7 +1838,7 @@ class GObjectSourceGenerator
             }
           }
           if (method.isAsynchronous) {
-            final List<String> vfuncArgs = <String>[];
+            final vfuncArgs = <String>[];
             vfuncArgs.addAll(methodArgs);
             vfuncArgs.addAll(<String>['handle', 'self->user_data']);
             indent.writeln(
@@ -1849,7 +1848,7 @@ class GObjectSourceGenerator
               "self->vtable->$methodName(${vfuncArgs.join(', ')});",
             );
           } else {
-            final List<String> vfuncArgs = <String>[];
+            final vfuncArgs = <String>[];
             vfuncArgs.addAll(methodArgs);
             vfuncArgs.add('self->user_data');
             indent.writeln(
@@ -1960,7 +1959,7 @@ class GObjectSourceGenerator
       );
 
       indent.newln();
-      final List<String> respondArgs = <String>[
+      final respondArgs = <String>[
         '${className}ResponseHandle* response_handle',
         if (returnType != 'void') '$returnType return_value',
         if (_isNumericListType(method.returnType)) 'size_t return_value_length',
@@ -1969,7 +1968,7 @@ class GObjectSourceGenerator
         "void ${methodPrefix}_respond_$methodName(${respondArgs.join(', ')}) {",
         '}',
         () {
-          final List<String> returnArgs = <String>[
+          final returnArgs = <String>[
             if (returnType != 'void') 'return_value',
             if (_isNumericListType(method.returnType)) 'return_value_length',
           ];
@@ -1990,7 +1989,7 @@ class GObjectSourceGenerator
       );
 
       indent.newln();
-      final List<String> respondErrorArgs = <String>[
+      final respondErrorArgs = <String>[
         '${className}ResponseHandle* response_handle',
         'const gchar* code',
         'const gchar* message',
@@ -2029,7 +2028,7 @@ String _getModule(
 
 // Returns the header guard defintion for [headerFileName].
 String _getGuardName(String? headerFileName) {
-  const String prefix = 'PIGEON_';
+  const prefix = 'PIGEON_';
   if (headerFileName != null) {
     return '$prefix${headerFileName.replaceAll('.', '_').toUpperCase()}_';
   } else {
@@ -2197,7 +2196,7 @@ String _getClassName(String module, String name) {
 
 // Returns the name to use for a class field with [name].
 String _getFieldName(String name) {
-  final List<String> reservedNames = <String>['type'];
+  final reservedNames = <String>['type'];
   if (reservedNames.contains(name)) {
     name += '_';
   }
@@ -2206,7 +2205,7 @@ String _getFieldName(String name) {
 
 // Returns the name to user for a class method with [name]
 String _getMethodName(String name) {
-  final List<String> reservedNames = <String>['new', 'get_type'];
+  final reservedNames = <String>['new', 'get_type'];
   if (reservedNames.contains(name)) {
     name += '_';
   }
@@ -2238,7 +2237,7 @@ String _getCustomTypeId(String module, EnumeratedType customType) {
 
   final String snakeCustomTypeName = _snakeCaseFromCamelCase(customTypeName);
 
-  final String customTypeId = '${snakeCustomTypeName}_type_id';
+  final customTypeId = '${snakeCustomTypeName}_type_id';
   return customTypeId;
 }
 
