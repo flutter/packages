@@ -55,8 +55,7 @@ void main() {
   });
 
   test('addRect', () {
-    final PathBuilder builder = PathBuilder()
-      ..addRect(const Rect.fromLTRB(10, 10, 20, 20));
+    final builder = PathBuilder()..addRect(const Rect.fromLTRB(10, 10, 20, 20));
 
     expect(
       builder.toPath().toFlutterString(),
@@ -70,7 +69,7 @@ void main() {
   });
 
   test('addOval', () {
-    final PathBuilder builder = PathBuilder()
+    final builder = PathBuilder()
       ..addOval(const Rect.fromLTRB(10, 10, 20, 20))
       ..addOval(const Rect.fromLTRB(50, 50, 80, 70));
     expect(
@@ -92,7 +91,7 @@ void main() {
   });
 
   test('addRRect', () {
-    final PathBuilder builder = PathBuilder()
+    final builder = PathBuilder()
       ..addRRect(const Rect.fromLTRB(20, 20, 60, 60), 5, 5);
     expect(
       builder.toPath().toFlutterString(),
@@ -111,7 +110,7 @@ void main() {
   });
 
   test('reset/no reset', () {
-    final PathBuilder builder = PathBuilder()..lineTo(10, 10);
+    final builder = PathBuilder()..lineTo(10, 10);
 
     final Path a = builder.toPath(reset: false);
     final Path b = builder.toPath();
@@ -124,11 +123,11 @@ void main() {
   });
 
   test('PathBuilder.fromPath', () {
-    final PathBuilder builder = PathBuilder()..lineTo(10, 10);
+    final builder = PathBuilder()..lineTo(10, 10);
 
     final Path a = builder.toPath();
 
-    final PathBuilder builderA = PathBuilder.fromPath(a);
+    final builderA = PathBuilder.fromPath(a);
     final Path b = builderA.toPath();
 
     expect(a, b);
@@ -209,7 +208,7 @@ void main() {
   });
 
   test('Compute path bounds with rect', () {
-    final PathBuilder builder = PathBuilder()
+    final builder = PathBuilder()
       ..addRect(const Rect.fromLTWH(5, 5, 95, 95))
       ..close();
     final Path path = builder.toPath();
@@ -218,7 +217,7 @@ void main() {
   });
 
   test('Compute path bounds with lines', () {
-    final PathBuilder builder = PathBuilder()
+    final builder = PathBuilder()
       ..moveTo(0, 0)
       ..lineTo(25, 0)
       ..lineTo(25, 25)
@@ -230,7 +229,7 @@ void main() {
   });
 
   test('Compute path bounds with cubics', () {
-    final PathBuilder builder = PathBuilder()
+    final builder = PathBuilder()
       ..moveTo(0, 0)
       ..cubicTo(10, 10, 20, 20, -10, -10)
       ..close();
@@ -240,25 +239,18 @@ void main() {
   });
 
   test('Compute cubic bounds where R and B are negative', () {
-    const Rect circle = Rect.fromCircle(-83.533, -122.753, 74.461);
+    const circle = Rect.fromCircle(-83.533, -122.753, 74.461);
     final Path path = PathBuilder().addOval(circle).toPath();
     expect(path.bounds(), circle);
   });
 
   test('Cubic length', () {
     // Value is very close to what Skia says for same input.
-    const CubicToCommand command = CubicToCommand(
-      1.0,
-      15.327,
-      15.326,
-      1.0,
-      33.0,
-      1.0,
-    );
+    const command = CubicToCommand(1.0, 15.327, 15.326, 1.0, 33.0, 1.0);
     expect(command.computeLength(Point.zero), 38.16245134493276);
 
     // Trivially describes a line.
-    const CubicToCommand command2 = CubicToCommand(0, 0, 0, 10, 0, 10);
+    const command2 = CubicToCommand(0, 0, 0, 10, 0, 10);
     expect(command2.computeLength(Point.zero), 10);
   });
 

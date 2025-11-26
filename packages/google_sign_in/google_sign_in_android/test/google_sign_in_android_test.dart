@@ -65,7 +65,7 @@ void main() {
 
   group('attemptLightweightAuthentication', () {
     test('passes explicit server client ID', () async {
-      const String serverClientId = 'aServerClient';
+      const serverClientId = 'aServerClient';
 
       await googleSignIn.init(
         const InitParameters(serverClientId: serverClientId),
@@ -78,13 +78,12 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final GetCredentialRequestParams hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
     test('passes JSON server client ID if not overridden', () async {
-      const String serverClientId = 'aServerClient';
+      const serverClientId = 'aServerClient';
       when(
         mockApi.getGoogleServicesJsonServerClientId(),
       ).thenAnswer((_) async => serverClientId);
@@ -100,13 +99,12 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final GetCredentialRequestParams hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
     test('passes nonce if provided', () async {
-      const String nonce = 'nonce';
+      const nonce = 'nonce';
 
       await googleSignIn.init(
         const InitParameters(nonce: nonce, serverClientId: 'id'),
@@ -118,8 +116,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final GetCredentialRequestParams hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.nonce, nonce);
     });
 
@@ -177,9 +174,9 @@ void main() {
           mockApi.getCredential(captureAny),
         ],
       );
-      final GetCredentialRequestParams firstParams =
+      final firstParams =
           verifications[0].captured[0] as GetCredentialRequestParams;
-      final GetCredentialRequestParams secondParams =
+      final secondParams =
           verifications[1].captured[0] as GetCredentialRequestParams;
       expect(firstParams.useButtonFlow, isFalse);
       expect(firstParams.googleIdOptionParams.filterToAuthorized, isTrue);
@@ -211,8 +208,7 @@ void main() {
           mockApi.getCredential(captureAny),
         );
         expect(verification.callCount, 1);
-        final GetCredentialRequestParams params =
-            verification.captured[0] as GetCredentialRequestParams;
+        final params = verification.captured[0] as GetCredentialRequestParams;
         expect(params.useButtonFlow, isFalse);
         expect(params.googleIdOptionParams.filterToAuthorized, isTrue);
         expect(params.googleIdOptionParams.autoSelectEnabled, isTrue);
@@ -222,7 +218,7 @@ void main() {
 
   group('authenticate', () {
     test('passes explicit server client ID', () async {
-      const String serverClientId = 'aServerClient';
+      const serverClientId = 'aServerClient';
 
       await googleSignIn.init(
         const InitParameters(serverClientId: serverClientId),
@@ -233,13 +229,12 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final GetCredentialRequestParams hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
     test('passes JSON server client ID if not overridden', () async {
-      const String serverClientId = 'aServerClient';
+      const serverClientId = 'aServerClient';
       when(
         mockApi.getGoogleServicesJsonServerClientId(),
       ).thenAnswer((_) async => serverClientId);
@@ -253,13 +248,12 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final GetCredentialRequestParams hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.serverClientId, serverClientId);
     });
 
     test('passes hosted domain if provided', () async {
-      const String hostedDomain = 'example.com';
+      const hostedDomain = 'example.com';
 
       await googleSignIn.init(const InitParameters(hostedDomain: hostedDomain));
       await googleSignIn.authenticate(const AuthenticateParameters());
@@ -267,13 +261,12 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final GetCredentialRequestParams hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.hostedDomain, hostedDomain);
     });
 
     test('passes nonce if provided', () async {
-      const String nonce = 'nonce';
+      const nonce = 'nonce';
 
       await googleSignIn.init(const InitParameters(nonce: nonce));
       await googleSignIn.authenticate(const AuthenticateParameters());
@@ -281,8 +274,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.getCredential(captureAny),
       );
-      final GetCredentialRequestParams hostParams =
-          verification.captured[0] as GetCredentialRequestParams;
+      final hostParams = verification.captured[0] as GetCredentialRequestParams;
       expect(hostParams.nonce, nonce);
     });
 
@@ -513,20 +505,19 @@ void main() {
   group('clientAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const AuthorizationRequestDetails defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test('passes expected values', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String userId = '12345';
-      const String userEmail = 'user@example.com';
-      const bool promptIfUnauthorized = false;
-      const String hostedDomain = 'example.com';
+      const scopes = <String>['a', 'b'];
+      const userId = '12345';
+      const userEmail = 'user@example.com';
+      const promptIfUnauthorized = false;
+      const hostedDomain = 'example.com';
 
       when(
         mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
@@ -554,7 +545,7 @@ void main() {
           promptIfUnauthorized: promptIfUnauthorized,
         ),
       );
-      final PlatformAuthorizationRequest hostParams =
+      final hostParams =
           verification.captured[0] as PlatformAuthorizationRequest;
       expect(hostParams.scopes, scopes);
       expect(hostParams.accountEmail, userEmail);
@@ -563,8 +554,8 @@ void main() {
     });
 
     test('passes true promptIfUnauthorized when requested', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const bool promptIfUnauthorized = true;
+      const scopes = <String>['a', 'b'];
+      const promptIfUnauthorized = true;
 
       when(
         mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
@@ -590,7 +581,7 @@ void main() {
     });
 
     test('passes success data to caller', () async {
-      const String accessToken = 'token';
+      const accessToken = 'token';
 
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
         (_) async => PlatformAuthorizationResult(
@@ -726,21 +717,20 @@ void main() {
   group('serverAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const AuthorizationRequestDetails defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test('serverAuthorizationTokensForScopes passes expected values', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String userId = '12345';
-      const String userEmail = 'user@example.com';
-      const bool promptIfUnauthorized = false;
-      const String hostedDomain = 'example.com';
-      const String serverClientId = 'serverClientId';
+      const scopes = <String>['a', 'b'];
+      const userId = '12345';
+      const userEmail = 'user@example.com';
+      const promptIfUnauthorized = false;
+      const hostedDomain = 'example.com';
+      const serverClientId = 'serverClientId';
 
       when(
         mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
@@ -771,7 +761,7 @@ void main() {
           promptIfUnauthorized: promptIfUnauthorized,
         ),
       );
-      final PlatformAuthorizationRequest hostParams =
+      final hostParams =
           verification.captured[0] as PlatformAuthorizationRequest;
       expect(hostParams.scopes, scopes);
       expect(hostParams.accountEmail, userEmail);
@@ -782,8 +772,8 @@ void main() {
     test(
       'serverAuthorizationTokensForScopes passes true promptIfUnauthorized when requested',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
-        const bool promptIfUnauthorized = true;
+        const scopes = <String>['a', 'b'];
+        const promptIfUnauthorized = true;
 
         when(
           mockApi.authorize(any, promptIfUnauthorized: promptIfUnauthorized),
@@ -812,8 +802,8 @@ void main() {
     test(
       'serverAuthorizationTokensForScopes passes success data to caller',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
-        const String authCode = 'code';
+        const scopes = <String>['a', 'b'];
+        const authCode = 'code';
 
         when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
           (_) async => PlatformAuthorizationResult(
@@ -962,8 +952,8 @@ void main() {
   group('disconnect', () {
     test('calls through with previously authorized accounts', () async {
       // Populate the cache of users.
-      const String userEmail = 'user@example.com';
-      const String aScope = 'grantedScope';
+      const userEmail = 'user@example.com';
+      const aScope = 'grantedScope';
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
         (_) async => PlatformAuthorizationResult(
           grantedScopes: <String>[aScope],
@@ -987,7 +977,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.revokeAccess(captureAny),
       );
-      final PlatformRevokeAccessRequest hostParams =
+      final hostParams =
           verification.captured[0] as PlatformRevokeAccessRequest;
       expect(hostParams.accountEmail, userEmail);
       expect(hostParams.scopes.first, aScope);
@@ -1015,7 +1005,7 @@ void main() {
         final VerificationResult verification = verify(
           mockApi.revokeAccess(captureAny),
         );
-        final PlatformRevokeAccessRequest hostParams =
+        final hostParams =
             verification.captured[0] as PlatformRevokeAccessRequest;
         expect(hostParams.accountEmail, _testUser.email);
         expect(hostParams.scopes.first, 'openid');
@@ -1024,8 +1014,8 @@ void main() {
 
     test('does not re-revoke for repeated disconnect', () async {
       // Populate the cache of users.
-      const String userEmail = 'user@example.com';
-      const String aScope = 'grantedScope';
+      const userEmail = 'user@example.com';
+      const aScope = 'grantedScope';
       when(mockApi.authorize(any, promptIfUnauthorized: false)).thenAnswer(
         (_) async => PlatformAuthorizationResult(
           grantedScopes: <String>[aScope],

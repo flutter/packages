@@ -107,9 +107,7 @@ class SharedPreferencesWindows extends SharedPreferencesStorePlatform {
     GetAllParameters parameters,
   ) async {
     final PreferencesFilter filter = parameters.filter;
-    final Map<String, Object> withPrefix = Map<String, Object>.from(
-      await _readPreferences(),
-    );
+    final withPrefix = Map<String, Object>.from(await _readPreferences());
     withPrefix.removeWhere(
       (String key, _) =>
           !(key.startsWith(filter.prefix) &&
@@ -295,7 +293,7 @@ base class SharedPreferencesAsyncWindows
   ) async {
     final SharedPreferencesWindowsOptions windowsOptions =
         SharedPreferencesWindowsOptions.fromSharedPreferencesOptions(options);
-    final Map<String, Object> prefs = Map<String, Object>.from(
+    final prefs = Map<String, Object>.from(
       await _readPreferences(windowsOptions.fileName),
     );
     prefs.removeWhere((String key, _) => !(allowList?.contains(key) ?? true));
@@ -354,7 +352,7 @@ Future<Map<String, Object>> _readFromFile(
   FileSystem fs = const LocalFileSystem(),
   PathProviderWindows? pathProvider,
 }) async {
-  Map<String, Object> preferences = <String, Object>{};
+  var preferences = <String, Object>{};
   final File? localDataFile = await _getLocalDataFile(
     fileName,
     fs: fs,

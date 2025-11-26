@@ -330,6 +330,10 @@ class ExampleTests: XCTestCase {
 
     wait(for: [called])
     XCTAssertNotNil(panelController.savePanel)
+    if let panel = panelController.savePanel {
+      // By default, "New Folder" button is visible for Save dialogs
+      XCTAssertTrue(panel.canCreateDirectories)
+    }
   }
 
   func testSaveWithArguments() throws {
@@ -362,6 +366,35 @@ class ExampleTests: XCTestCase {
       XCTAssertEqual(panel.directoryURL?.path, "/some/dir")
       XCTAssertEqual(panel.nameFieldStringValue, "a name")
       XCTAssertEqual(panel.prompt, "Save it!")
+    }
+  }
+
+  func testSaveNewFolderHidden() throws {
+    let panelController = TestPanelController()
+    let plugin = FileSelectorPlugin(
+      viewProvider: TestViewProvider(),
+      panelController: panelController)
+
+    let returnPath = "/foo/bar"
+    panelController.saveURL = URL(fileURLWithPath: returnPath)
+
+    let called = XCTestExpectation()
+    let options = SavePanelOptions(canCreateDirectories: false)
+
+    plugin.displaySavePanel(options: options) { result in
+      switch result {
+      case .success(let path):
+        XCTAssertEqual(path, returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
+      called.fulfill()
+    }
+
+    wait(for: [called])
+    XCTAssertNotNil(panelController.savePanel)
+    if let panel = panelController.savePanel {
+      XCTAssertFalse(panel.canCreateDirectories)
     }
   }
 
@@ -421,6 +454,8 @@ class ExampleTests: XCTestCase {
       // The Dart API only allows a single directory to be returned, so users shouldn't be allowed
       // to select multiple.
       XCTAssertFalse(panel.allowsMultipleSelection)
+      // By default, "New Folder" button is hidden for Choose Directory dialogs.
+      XCTAssertFalse(panel.canCreateDirectories)
     }
   }
 
@@ -482,6 +517,8 @@ class ExampleTests: XCTestCase {
       // For consistency across platforms, file selection is disabled.
       XCTAssertFalse(panel.canChooseFiles)
       XCTAssertTrue(panel.allowsMultipleSelection)
+      // By default, "New Folder" button is hidden for Choose Directory dialogs.
+      XCTAssertFalse(panel.canCreateDirectories)
     }
   }
 
@@ -509,5 +546,38 @@ class ExampleTests: XCTestCase {
 
     wait(for: [called])
     XCTAssertNotNil(panelController.openPanel)
+  }
+
+  func testGetDirectoryNewFolderVisible() throws {
+    let panelController = TestPanelController()
+    let plugin = FileSelectorPlugin(
+      viewProvider: TestViewProvider(),
+      panelController: panelController)
+
+    let returnPath = "/foo/bar"
+    panelController.openURLs = [URL(fileURLWithPath: returnPath)]
+
+    let called = XCTestExpectation()
+    let options = OpenPanelOptions(
+      allowsMultipleSelection: false,
+      canChooseDirectories: true,
+      canChooseFiles: false,
+      baseOptions: SavePanelOptions(canCreateDirectories: true))
+
+    plugin.displayOpenPanel(options: options) { result in
+      switch result {
+      case .success(let paths):
+        XCTAssertEqual(paths[0], returnPath)
+      case .failure(let error):
+        XCTFail("\(error)")
+      }
+      called.fulfill()
+    }
+
+    wait(for: [called])
+    XCTAssertNotNil(panelController.openPanel)
+    if let panel = panelController.openPanel {
+      XCTAssertTrue(panel.canCreateDirectories)
+    }
   }
 }

@@ -59,7 +59,7 @@ void main() {
 
   testWidgets('getContainerDirectory', (WidgetTester tester) async {
     if (Platform.isIOS) {
-      final PathProviderFoundation provider = PathProviderFoundation();
+      final provider = PathProviderFoundation();
       final String? result = await provider.getContainerPath(
         appGroupIdentifier: 'group.flutter.appGroupTest',
       );
@@ -77,8 +77,8 @@ void _verifySampleFile(String? directoryPath, String name) {
   if (directoryPath == null) {
     return;
   }
-  final Directory directory = Directory(directoryPath);
-  final File file = File('${directory.path}${Platform.pathSeparator}$name');
+  final directory = Directory(directoryPath);
+  final file = File('${directory.path}${Platform.pathSeparator}$name');
 
   if (file.existsSync()) {
     file.deleteSync();

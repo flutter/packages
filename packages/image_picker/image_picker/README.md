@@ -60,7 +60,7 @@ application. Since the data is never returned to the original call use the
 <?code-excerpt "readme_excerpts.dart (LostData)"?>
 ```dart
 Future<void> getLostData() async {
-  final ImagePicker picker = ImagePicker();
+  final picker = ImagePicker();
   final LostDataResponse response = await picker.retrieveLostData();
   if (response.isEmpty) {
     return;
@@ -164,7 +164,7 @@ add a filesystem access
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
 ```dart
-final ImagePicker picker = ImagePicker();
+final picker = ImagePicker();
 // Pick an image.
 final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 // Capture a photo.

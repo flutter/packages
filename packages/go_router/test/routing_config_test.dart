@@ -11,7 +11,7 @@ import 'test_helpers.dart';
 
 void main() {
   testWidgets('routing config works', (WidgetTester tester) async {
-    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+    final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, __) => const Text('home')),
@@ -31,7 +31,7 @@ void main() {
   testWidgets('routing config works after builder changes', (
     WidgetTester tester,
   ) async {
-    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+    final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, __) => const Text('home')),
@@ -54,7 +54,7 @@ void main() {
   testWidgets('routing config works after routing changes', (
     WidgetTester tester,
   ) async {
-    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+    final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, __) => const Text('home')),
@@ -86,7 +86,7 @@ void main() {
   testWidgets('routing config works after routing changes case 2', (
     WidgetTester tester,
   ) async {
-    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+    final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, __) => const Text('home')),
@@ -118,13 +118,10 @@ void main() {
   testWidgets('routing config works after routing changes case 3', (
     WidgetTester tester,
   ) async {
-    final GlobalKey<_StatefulTestState> key = GlobalKey<_StatefulTestState>(
-      debugLabel: 'testState',
-    );
-    final GlobalKey<NavigatorState> rootNavigatorKey =
-        GlobalKey<NavigatorState>(debugLabel: 'root');
+    final key = GlobalKey<_StatefulTestState>(debugLabel: 'testState');
+    final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
 
-    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+    final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
           GoRoute(
@@ -163,15 +160,11 @@ void main() {
     // TODO(tolo): Temporarily skipped due to a bug that causes test to faiL
     skip: true,
     (WidgetTester tester) async {
-      final GlobalKey<_StatefulTestState> key = GlobalKey<_StatefulTestState>(
-        debugLabel: 'testState',
-      );
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final key = GlobalKey<_StatefulTestState>(debugLabel: 'testState');
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
 
-      final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+      final config = ValueNotifier<RoutingConfig>(
         RoutingConfig(
           routes: <RouteBase>[
             ShellRoute(
@@ -217,7 +210,7 @@ void main() {
   testWidgets('routing config works with named route', (
     WidgetTester tester,
   ) async {
-    final ValueNotifier<RoutingConfig> config = ValueNotifier<RoutingConfig>(
+    final config = ValueNotifier<RoutingConfig>(
       RoutingConfig(
         routes: <RouteBase>[
           GoRoute(path: '/', builder: (_, __) => const Text('home')),

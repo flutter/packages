@@ -12,12 +12,7 @@ List<Node> parse(
   String? templateName,
   String delimiters,
 ) {
-  final Parser parser = Parser(
-    source,
-    templateName,
-    delimiters,
-    lenient: lenient,
-  );
+  final parser = Parser(source, templateName, delimiters, lenient: lenient);
   return parser.parse();
 }
 
@@ -172,12 +167,8 @@ class Parser {
     if (children.isEmpty || children.last is! TextNode) {
       children.add(TextNode(token.value, token.start, token.end));
     } else {
-      final TextNode last = children.removeLast() as TextNode;
-      final TextNode node = TextNode(
-        last.text + token.value,
-        last.start,
-        token.end,
-      );
+      final last = children.removeLast() as TextNode;
+      final node = TextNode(last.text + token.value, last.start, token.end);
       children.add(node);
     }
   }
@@ -262,7 +253,7 @@ class Parser {
         eofOk: true,
       );
 
-      const List<TagType> standaloneTypes = <TagType>[
+      const standaloneTypes = <TagType>[
         TagType.openSection,
         TagType.closeSection,
         TagType.openInverseSection,
@@ -348,7 +339,7 @@ class Parser {
     // Also check that they are valid token types.
     // TODOsplit up names here instead of during render.
     // Also check that they are valid token types.
-    final List<Token> list = <Token>[];
+    final list = <Token>[];
     for (
       Token? t = _peek();
       t != null && t.type != TokenType.closeDelimiter;
@@ -397,7 +388,7 @@ class Parser {
     switch (tag.type) {
       case TagType.openSection:
       case TagType.openInverseSection:
-        final bool inverse = tag.type == TagType.openInverseSection;
+        final inverse = tag.type == TagType.openInverseSection;
         node = SectionNode(
           tag.name,
           tag.start,
@@ -409,7 +400,7 @@ class Parser {
       case TagType.variable:
       case TagType.unescapedVariable:
       case TagType.tripleMustache:
-        final bool escape = tag.type == TagType.variable;
+        final escape = tag.type == TagType.variable;
         node = VariableNode(tag.name, tag.start, tag.end, escape: escape);
 
       case TagType.partial:

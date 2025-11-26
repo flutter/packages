@@ -47,7 +47,7 @@ class SvgTheme {
   /// Creates a [vg.SvgTheme] from this.
   vg.SvgTheme toVgTheme() {
     return vg.SvgTheme(
-      currentColor: vg.Color(currentColor.value),
+      currentColor: vg.Color(currentColor.toARGB32()),
       fontSize: fontSize,
       xHeight: xHeight,
     );
@@ -111,7 +111,7 @@ class _DelegateVgColorMapper extends vg.ColorMapper {
       attributeName,
       Color(color.value),
     );
-    return vg.Color(substituteColor.value);
+    return vg.Color(substituteColor.toARGB32());
   }
 }
 

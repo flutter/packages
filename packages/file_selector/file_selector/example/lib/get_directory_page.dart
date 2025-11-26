@@ -14,7 +14,7 @@ class GetDirectoryPage extends StatelessWidget {
   final bool _isIOS = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
   Future<void> _getDirectoryPath(BuildContext context) async {
-    const String confirmButtonText = 'Choose';
+    const confirmButtonText = 'Choose';
     final String? directoryPath = await getDirectoryPath(
       confirmButtonText: confirmButtonText,
     );

@@ -13,10 +13,10 @@ import 'wrapped_webview.dart';
 Future<void> main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  const String fakeUrl = 'about:blank';
+  const fakeUrl = 'about:blank';
 
   testWidgets('loadRequest', (WidgetTester tester) async {
-    final WebWebViewController controller = WebWebViewController(
+    final controller = WebWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
     await controller.loadRequest(LoadRequestParams(uri: Uri.parse(fakeUrl)));
@@ -29,14 +29,14 @@ Future<void> main() async {
     await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
-    final web.HTMLIFrameElement? element =
+    final element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(element!.src, fakeUrl);
   });
 
   testWidgets('loadHtmlString', (WidgetTester tester) async {
-    final WebWebViewController controller = WebWebViewController(
+    final controller = WebWebViewController(
       const PlatformWebViewControllerCreationParams(),
     );
     await controller.loadHtmlString(
@@ -51,7 +51,7 @@ Future<void> main() async {
     await tester.pump(const Duration(seconds: 1));
 
     // Assert an iFrame has been rendered to the DOM with the correct src attribute.
-    final web.HTMLIFrameElement? element =
+    final element =
         web.document.querySelector('iframe') as web.HTMLIFrameElement?;
     expect(element, isNotNull);
     expect(

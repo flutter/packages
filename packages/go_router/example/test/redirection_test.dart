@@ -13,9 +13,7 @@ void main() {
     expect(find.text('Login'), findsOneWidget);
 
     // Directly set the url to the home page.
-    Map<String, dynamic> testRouteInformation = <String, dynamic>{
-      'location': '/',
-    };
+    var testRouteInformation = <String, dynamic>{'location': '/'};
     ByteData message = const JSONMethodCodec().encodeMethodCall(
       MethodCall('pushRouteInformation', testRouteInformation),
     );

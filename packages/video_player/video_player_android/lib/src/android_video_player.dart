@@ -109,7 +109,7 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final CreationOptions pigeonCreationOptions = CreationOptions(
+    final pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: httpHeaders,
       userAgent: userAgent,
@@ -138,12 +138,12 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   String? _userAgentFromHeaders(Map<String, String> httpHeaders) {
     // TODO(stuartmorgan): HTTP headers are case-insensitive, so this should be
     //  adjusted to find any entry where the key has a case-insensitive match.
-    const String userAgentKey = 'User-Agent';
+    const userAgentKey = 'User-Agent';
     // TODO(stuartmorgan): Investigate removing this. The use of a hard-coded
     //  default agent dates back to the original ExoPlayer implementation of the
     //  plugin, but it's not clear why the default isn't null, which would let
     //  ExoPlayer use its own default value.
-    const String defaultUserAgent = 'ExoPlayer';
+    const defaultUserAgent = 'ExoPlayer';
     return httpHeaders[userAgentKey] ?? defaultUserAgent;
   }
 

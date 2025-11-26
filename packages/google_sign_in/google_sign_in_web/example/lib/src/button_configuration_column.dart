@@ -89,7 +89,7 @@ Widget renderWebButtonConfiguration(
   GSIButtonConfiguration? currentConfig, {
   OnWebConfigChangeFn? onChange,
 }) {
-  final ScrollController scrollController = ScrollController();
+  final scrollController = ScrollController();
   return Scrollbar(
     controller: scrollController,
     thumbVisibility: true,
