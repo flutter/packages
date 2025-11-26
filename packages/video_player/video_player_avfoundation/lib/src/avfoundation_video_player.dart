@@ -92,7 +92,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final CreationOptions pigeonCreationOptions = CreationOptions(
+    final pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: dataSource.httpHeaders,
     );
@@ -197,8 +197,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   Widget _buildPlatformView(int playerId) {
-    final PlatformVideoViewCreationParams creationParams =
-        PlatformVideoViewCreationParams(playerId: playerId);
+    final creationParams = PlatformVideoViewCreationParams(playerId: playerId);
 
     return IgnorePointer(
       // IgnorePointer so that GestureDetector can be used above the platform view.
@@ -268,7 +267,7 @@ class _PlayerInstance {
   }
 
   void _onStreamEvent(dynamic event) {
-    final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
+    final map = event as Map<dynamic, dynamic>;
     // The strings here must all match the strings in FVPEventBridge.m.
     _eventStreamController.add(switch (map['event']) {
       'initialized' => VideoEvent(
@@ -297,9 +296,9 @@ class _PlayerInstance {
   }
 
   DurationRange _toDurationRange(dynamic value) {
-    final List<dynamic> pair = value as List<dynamic>;
-    final int startMilliseconds = pair[0] as int;
-    final int durationMilliseconds = pair[1] as int;
+    final pair = value as List<dynamic>;
+    final startMilliseconds = pair[0] as int;
+    final durationMilliseconds = pair[1] as int;
     return DurationRange(
       Duration(milliseconds: startMilliseconds),
       Duration(milliseconds: startMilliseconds + durationMilliseconds),
