@@ -36,7 +36,6 @@ public class TextureExoPlayerEventListenerTest {
   @Rule public MockitoRule initRule = MockitoJUnit.rule();
 
   @Test
-  @Config(minSdk = 22)
   public void
       onPlaybackStateChangedReadySendInitialized_whenSurfaceProducerHandlesCropAndRotation() {
     TextureExoPlayerEventListener eventListener =
@@ -50,7 +49,6 @@ public class TextureExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 22)
   public void
       onPlaybackStateChangedReadySendInitializedWithRotationCorrectionAndWidthAndHeightSwap_whenSurfaceProducerDoesNotHandleCropAndRotation() {
     TextureExoPlayerEventListener eventListener =
@@ -68,7 +66,6 @@ public class TextureExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 22)
   public void
       onPlaybackStateChangedReadyInPortraitMode90DegreesDoesNotSwapWidthAndHeight_whenSurfaceProducerHandlesCropAndRotation() {
     TextureExoPlayerEventListener eventListener =
@@ -83,7 +80,6 @@ public class TextureExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 22)
   public void
       onPlaybackStateChangedReadyInPortraitMode90DegreesSwapWidthAndHeight_whenSurfaceProducerDoesNotHandleCropAndRotation() {
     TextureExoPlayerEventListener eventListener =
@@ -101,7 +97,6 @@ public class TextureExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 22)
   public void
       onPlaybackStateChangedReadyInPortraitMode270DegreesDoesNotSwapWidthAndHeight_whenSurfaceProducerHandlesCropAndRotation() {
     TextureExoPlayerEventListener eventListener =
@@ -115,7 +110,6 @@ public class TextureExoPlayerEventListenerTest {
   }
 
   @Test
-  @Config(minSdk = 22)
   public void
       onPlaybackStateChangedReadyInPortraitMode270DegreesDoesNotSwapWidthAndHeight_whenSurfaceProducerDoesNotHandleCropAndRotation() {
     TextureExoPlayerEventListener eventListener =
