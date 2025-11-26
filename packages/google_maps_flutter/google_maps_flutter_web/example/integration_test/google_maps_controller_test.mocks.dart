@@ -319,17 +319,16 @@ class MockPolylinesController extends _i1.Mock
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockMarkersController extends _i1.Mock
-    implements _i2.MarkersController<Object?, Object> {
+    implements _i2.MarkersController<Object, Object> {
   @override
-  Map<_i3.MarkerId, _i2.MarkerController<Object?, Object>> get markers =>
+  Map<_i3.MarkerId, _i2.MarkerController<Object, Object>> get markers =>
       (super.noSuchMethod(
             Invocation.getter(#markers),
-            returnValue:
-                <_i3.MarkerId, _i2.MarkerController<Object?, Object>>{},
+            returnValue: <_i3.MarkerId, _i2.MarkerController<Object, Object>>{},
             returnValueForMissingStub:
-                <_i3.MarkerId, _i2.MarkerController<Object?, Object>>{},
+                <_i3.MarkerId, _i2.MarkerController<Object, Object>>{},
           )
-          as Map<_i3.MarkerId, _i2.MarkerController<Object?, Object>>);
+          as Map<_i3.MarkerId, _i2.MarkerController<Object, Object>>);
 
   @override
   _i4.Map get googleMap =>
@@ -371,7 +370,7 @@ class MockMarkersController extends _i1.Mock
           as _i6.Future<void>);
 
   @override
-  _i6.Future<_i2.MarkerController<Object?, Object>> createMarkerController(
+  _i6.Future<_i2.MarkerController<Object, Object>> createMarkerController(
     _i3.Marker? marker,
     Object? markerOptions,
     _i4.InfoWindow? gmInfoWindow,
@@ -382,20 +381,19 @@ class MockMarkersController extends _i1.Mock
               markerOptions,
               gmInfoWindow,
             ]),
-            returnValue:
-                _i6.Future<_i2.MarkerController<Object?, Object>>.value(
-                  _FakeMarkerController_0<Object?, Object>(
-                    this,
-                    Invocation.method(#createMarkerController, [
-                      marker,
-                      markerOptions,
-                      gmInfoWindow,
-                    ]),
-                  ),
-                ),
+            returnValue: _i6.Future<_i2.MarkerController<Object, Object>>.value(
+              _FakeMarkerController_0<Object, Object>(
+                this,
+                Invocation.method(#createMarkerController, [
+                  marker,
+                  markerOptions,
+                  gmInfoWindow,
+                ]),
+              ),
+            ),
             returnValueForMissingStub:
-                _i6.Future<_i2.MarkerController<Object?, Object>>.value(
-                  _FakeMarkerController_0<Object?, Object>(
+                _i6.Future<_i2.MarkerController<Object, Object>>.value(
+                  _FakeMarkerController_0<Object, Object>(
                     this,
                     Invocation.method(#createMarkerController, [
                       marker,
@@ -405,7 +403,7 @@ class MockMarkersController extends _i1.Mock
                   ),
                 ),
           )
-          as _i6.Future<_i2.MarkerController<Object?, Object>>);
+          as _i6.Future<_i2.MarkerController<Object, Object>>);
 
   @override
   _i6.Future<void> changeMarkers(Set<_i3.Marker>? markersToChange) =>

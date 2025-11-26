@@ -35,7 +35,7 @@ gmaps.Map mapShim() => throw UnimplementedError();
   MockSpec<PolylinesController>(
     fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
-  MockSpec<MarkersController<Object?, Object>>(
+  MockSpec<MarkersController<Object, Object>>(
     fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
   MockSpec<TileOverlaysController>(
