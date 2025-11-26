@@ -45,7 +45,7 @@ void main() {
       AsyncState<SharedPreferencesData>? state, {
       bool editing = false,
     }) {
-      const String selectedKey = 'selectedTestKey';
+      const selectedKey = 'selectedTestKey';
       when(notifierMock.value).thenReturn(
         SharedPreferencesState(
           allKeys: const AsyncState<List<String>>.data(<String>[selectedKey]),
@@ -91,7 +91,7 @@ void main() {
     });
 
     testWidgets('should show string value', (WidgetTester tester) async {
-      const String value = 'testValue';
+      const value = 'testValue';
       stubDataState(const SharedPreferencesData.string(value: value));
       await pumpDataPanel(tester);
 
@@ -100,7 +100,7 @@ void main() {
     });
 
     testWidgets('should show int value', (WidgetTester tester) async {
-      const int value = 42;
+      const value = 42;
       stubDataState(const SharedPreferencesData.int(value: value));
       await pumpDataPanel(tester);
 
@@ -109,7 +109,7 @@ void main() {
     });
 
     testWidgets('should show double value', (WidgetTester tester) async {
-      const double value = 42.0;
+      const value = 42.0;
       stubDataState(const SharedPreferencesData.double(value: value));
       await pumpDataPanel(tester);
 
@@ -118,7 +118,7 @@ void main() {
     });
 
     testWidgets('should show boolean value', (WidgetTester tester) async {
-      const bool value = true;
+      const value = true;
       stubDataState(const SharedPreferencesData.bool(value: value));
       await pumpDataPanel(tester);
 
@@ -175,9 +175,7 @@ void main() {
     testWidgets('on removed confirmed should remove key', (
       WidgetTester tester,
     ) async {
-      const SharedPreferencesData value = SharedPreferencesData.string(
-        value: 'value',
-      );
+      const value = SharedPreferencesData.string(value: 'value');
       stubDataState(value);
       await pumpDataPanel(tester);
       await tester.tap(find.text('Remove'));
@@ -218,7 +216,7 @@ void main() {
     testWidgets('should show string editing state', (
       WidgetTester tester,
     ) async {
-      const String value = 'value';
+      const value = 'value';
       stubDataState(
         const SharedPreferencesData.string(value: value),
         editing: true,
@@ -232,7 +230,7 @@ void main() {
     });
 
     testWidgets('should show int editing state', (WidgetTester tester) async {
-      const int value = 42;
+      const value = 42;
       stubDataState(
         const SharedPreferencesData.int(value: value),
         editing: true,
@@ -252,7 +250,7 @@ void main() {
     testWidgets('should show double editing state', (
       WidgetTester tester,
     ) async {
-      const double value = 42.0;
+      const value = 42.0;
       stubDataState(
         const SharedPreferencesData.double(value: value),
         editing: true,
@@ -272,7 +270,7 @@ void main() {
     testWidgets('should show boolean editing state', (
       WidgetTester tester,
     ) async {
-      const bool value = true;
+      const value = true;
       stubDataState(
         const SharedPreferencesData.bool(value: value),
         editing: true,
@@ -334,7 +332,7 @@ void main() {
       );
       await pumpDataPanel(tester);
 
-      for (int i = 0; i < 3; i++) {
+      for (var i = 0; i < 3; i++) {
         await tester.tap(find.byIcon(Icons.add).at(i));
         await tester.pumpAndSettle();
         await tester.enterText(find.byType(TextField).at(i), '$i');

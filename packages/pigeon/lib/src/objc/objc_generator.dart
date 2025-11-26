@@ -68,8 +68,7 @@ class ObjcOptions {
   /// Creates a [ObjcOptions] from a Map representation where:
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   static ObjcOptions fromMap(Map<String, Object> map) {
-    final Iterable<dynamic>? copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return ObjcOptions(
       headerIncludePath: map['headerIncludePath'] as String?,
       prefix: map['prefix'] as String?,
@@ -82,7 +81,7 @@ class ObjcOptions {
   /// Converts a [ObjcOptions] to a Map representation where:
   /// `x = ObjcOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{
+    final result = <String, Object>{
       if (headerIncludePath != null) 'headerIncludePath': headerIncludePath!,
       if (prefix != null) 'prefix': prefix!,
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
@@ -449,7 +448,7 @@ class ObjcHeaderGenerator extends StructuredGenerator<InternalObjcOptions> {
         lastArgType = 'FlutterError *_Nullable *_Nonnull';
         lastArgName = 'error';
       }
-      final List<String> generatorComments = <String>[];
+      final generatorComments = <String>[];
       if (!func.returnType.isNullable &&
           !func.returnType.isVoid &&
           !func.isAsynchronous) {
@@ -657,19 +656,19 @@ class ObjcSourceGenerator extends StructuredGenerator<InternalObjcOptions> {
     );
     indent.write('+ ($className *)fromList:(NSArray<id> *)list ');
     indent.addScoped('{', '}', () {
-      const String resultName = 'pigeonResult';
+      const resultName = 'pigeonResult';
       indent.writeln('$className *$resultName = [[$className alloc] init];');
       enumerate(getFieldsInSerializationOrder(classDefinition), (
         int index,
         final NamedType field,
       ) {
-        final String valueGetter = 'GetNullableObjectAtIndex(list, $index)';
+        final valueGetter = 'GetNullableObjectAtIndex(list, $index)';
         final String? primitiveExtractionMethod = _nsnumberExtractionMethod(
           field.type,
         );
         final String ivarValueExpression;
         if (field.type.isEnum && !field.type.isNullable) {
-          final String varName =
+          final varName =
               'boxed${_enumName(field.type.baseName, prefix: generatorOptions.prefix)}';
           _writeEnumBoxToEnum(
             indent,
@@ -770,7 +769,7 @@ if (self.wrapped == nil) {
     String? prefix, {
     bool isOverflowClass = false,
   }) {
-    String readValue = '[self readValue]';
+    var readValue = '[self readValue]';
     if (isOverflowClass) {
       readValue = 'self.wrapped';
     }
@@ -785,7 +784,7 @@ if (self.wrapped == nil) {
         !isOverflowClass ? '{' : '',
         !isOverflowClass ? '}' : null,
         () {
-          String enumAsNumber = 'enumAsNumber';
+          var enumAsNumber = 'enumAsNumber';
           if (!isOverflowClass) {
             indent.writeln('NSNumber *$enumAsNumber = $readValue;');
             indent.write('return $enumAsNumber == nil ? nil : ');
@@ -809,16 +808,16 @@ if (self.wrapped == nil) {
     Indent indent, {
     required String dartPackageName,
   }) {
-    const String codecName = 'PigeonCodec';
+    const codecName = 'PigeonCodec';
     final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
       root,
       excludeSealedClasses: true,
     ).toList();
-    final String readerWriterName =
+    final readerWriterName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}ReaderWriter';
-    final String readerName =
+    final readerName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}Reader';
-    final String writerName =
+    final writerName =
         '${generatorOptions.prefix}${toUpperCamelCase(generatorOptions.fileSpecificClassNameComponent ?? '')}${codecName}Writer';
 
     if (root.requiresOverflowClass) {
@@ -837,7 +836,7 @@ if (self.wrapped == nil) {
     indent.write('- (nullable id)readValueOfType:(UInt8)type ');
     indent.addScoped('{', '}', () {
       indent.writeScoped('switch (type) {', '}', () {
-        for (final EnumeratedType customType in enumeratedTypes) {
+        for (final customType in enumeratedTypes) {
           if (customType.enumeration < maximumCodecFieldKey) {
             indent.write('case ${customType.enumeration}: ');
             _writeCodecDecode(
@@ -869,11 +868,11 @@ if (self.wrapped == nil) {
     indent.write('- (void)writeValue:(id)value ');
     indent.addScoped('{', '}', () {
       indent.write('');
-      for (final EnumeratedType customType in enumeratedTypes) {
-        final String encodeString = customType.type == CustomTypes.customClass
+      for (final customType in enumeratedTypes) {
+        final encodeString = customType.type == CustomTypes.customClass
             ? '[value toList]'
             : '(value == nil ? [NSNull null] : [NSNumber numberWithInteger:box.value])';
-        final String valueString = customType.enumeration < maximumCodecFieldKey
+        final valueString = customType.enumeration < maximumCodecFieldKey
             ? encodeString
             : '[wrap toList]';
         final String className = customType.type == CustomTypes.customClass
@@ -986,7 +985,7 @@ if (self.wrapped == nil) {
   }) {
     final String apiName = _className(generatorOptions.prefix, api.name);
 
-    const String channelName = 'channel';
+    const channelName = 'channel';
     indent.write(
       'void SetUp$apiName(id<FlutterBinaryMessenger> binaryMessenger, NSObject<$apiName> *api) ',
     );
@@ -1121,10 +1120,10 @@ static FlutterError *createConnectionError(NSString *channelName) {
   ) {
     void unpackArgs(String variable) {
       indent.writeln('NSArray<id> *args = $variable;');
-      int count = 0;
+      var count = 0;
       for (final NamedType arg in func.parameters) {
         final String argName = _getSafeArgName(count, arg);
-        final String valueGetter = 'GetNullableObjectAtIndex(args, $count)';
+        final valueGetter = 'GetNullableObjectAtIndex(args, $count)';
         final String? primitiveExtractionMethod = _nsnumberExtractionMethod(
           arg.type,
         );
@@ -1135,7 +1134,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
         final String ivarValueExpression;
         String beforeString = objcArgType.beforeString;
         if (arg.type.isEnum && !arg.type.isNullable) {
-          final String varName =
+          final varName =
               'boxed${_enumName(arg.type.baseName, prefix: generatorOptions.prefix)}';
           _writeEnumBoxToEnum(
             indent,
@@ -1169,7 +1168,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       _ObjcType returnType,
     ) {
       if (func.returnType.isVoid) {
-        const String callback = 'callback(wrapResult(nil, error));';
+        const callback = 'callback(wrapResult(nil, error));';
         if (func.parameters.isEmpty) {
           indent.writeScoped(
             '[api ${selectorComponents.first}:^(FlutterError *_Nullable error) {',
@@ -1188,8 +1187,8 @@ static FlutterError *createConnectionError(NSString *channelName) {
           );
         }
       } else {
-        const String callback = 'callback(wrapResult(output, error));';
-        String returnTypeString = '${returnType.beforeString}_Nullable output';
+        const callback = 'callback(wrapResult(output, error));';
+        var returnTypeString = '${returnType.beforeString}_Nullable output';
 
         if (func.returnType.isEnum) {
           returnTypeString =
@@ -1233,9 +1232,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
     }
 
     // TODO(gaaclarke): Incorporate this into _getSelectorComponents.
-    final String lastSelectorComponent = func.isAsynchronous
-        ? 'completion'
-        : 'error';
+    final lastSelectorComponent = func.isAsynchronous ? 'completion' : 'error';
     final String selector = _getSelector(func, lastSelectorComponent);
     indent.writeln(
       'NSCAssert([api respondsToSelector:@selector($selector)], @"$apiName api (%@) doesn\'t respond to @selector($selector)", api);',
@@ -1271,7 +1268,7 @@ static FlutterError *createConnectionError(NSString *channelName) {
       if (func.isAsynchronous) {
         writeAsyncBindings(selectorComponents, callSignature, returnType);
       } else {
-        final String syncCall = func.parameters.isEmpty
+        final syncCall = func.parameters.isEmpty
             ? '[api ${selectorComponents.first}:&error]'
             : '[api $callSignature error:&error]';
         writeSyncBindings(syncCall, returnType);
@@ -1360,7 +1357,7 @@ taskQueue:$taskQueue
       languageOptions.prefix,
     );
     indent.writeScoped(' {', '}', () {
-      const String result = 'pigeonResult';
+      const result = 'pigeonResult';
       indent.writeln('$className* $result = [[$className alloc] init];');
       for (final NamedType field in getFieldsInSerializationOrder(
         classDefinition,
@@ -1397,7 +1394,7 @@ void _writeMethod(
   if (func.parameters.isEmpty) {
     sendArgument = 'nil';
   } else {
-    int count = 0;
+    var count = 0;
     String makeVarOrNSNullExpression(NamedType arg) {
       final String argName = argNameFunc(count, arg);
       String varExpression = _collectionSafeExpression(argName, arg.type);
@@ -1447,7 +1444,7 @@ void _writeMethod(
         indent.addln('];');
       });
     });
-    final String valueOnErrorResponse = func.returnType.isVoid ? '' : 'nil, ';
+    final valueOnErrorResponse = func.returnType.isVoid ? '' : 'nil, ';
     indent.write(
       '[channel sendMessage:$sendArgument reply:^(NSArray<id> *reply) ',
     );
@@ -1459,7 +1456,7 @@ void _writeMethod(
           );
         }, addTrailingNewline: false);
         indent.addScoped('else {', '}', () {
-          const String nullCheck = 'reply[0] == [NSNull null] ? nil : reply[0]';
+          const nullCheck = 'reply[0] == [NSNull null] ? nil : reply[0]';
           if (func.returnType.isVoid) {
             indent.writeln('completion(nil);');
           } else {
@@ -1497,7 +1494,7 @@ void _writeObjcSourceClassInitializerDeclaration(
   String? prefix,
 ) {
   indent.write('+ (instancetype)makeWith');
-  bool isFirst = true;
+  var isFirst = true;
   indent.nest(2, () {
     for (final NamedType field in getFieldsInSerializationOrder(
       classDefinition,
@@ -1520,7 +1517,7 @@ void _writeObjcSourceClassInitializerDeclaration(
                   : _enumName(x, prefix: prefix)
             : (String x) => '${_className(prefix, x)} *',
       );
-      final String nullable = field.type.isNullable ? 'nullable ' : '';
+      final nullable = field.type.isNullable ? 'nullable ' : '';
       printer('$label:($nullable${hostDatatype.datatype})${field.name}');
     }
   });
@@ -1767,7 +1764,7 @@ Iterable<String> _getSelectorComponents(
   if (func.objcSelector.isEmpty) {
     final Iterator<NamedType> it = func.parameters.iterator;
     final bool hasArguments = it.moveNext();
-    final String namePostfix =
+    final namePostfix =
         (lastSelectorComponent.isNotEmpty && func.parameters.isEmpty)
         ? 'With${_capitalize(lastSelectorComponent)}'
         : '';
@@ -1820,7 +1817,7 @@ String _makeObjcSignature({
       if (arg.type.isEnum) {
         return '${arg.type.isNullable ? 'nullable ' : ''}${_enumName(arg.type.baseName, suffix: arg.type.isNullable ? ' *' : '', prefix: options.prefix, box: arg.type.isNullable)}';
       } else {
-        final String nullable = arg.type.isNullable ? 'nullable ' : '';
+        final nullable = arg.type.isNullable ? 'nullable ' : '';
         final _ObjcType argType = _objcTypeForDartType(
           options.prefix,
           arg.type,
@@ -1903,7 +1900,7 @@ void _writeInitializers(Indent indent) {
 /// Looks through the AST for features that aren't supported by the ObjC
 /// generator.
 List<Error> validateObjc(InternalObjcOptions options, Root root) {
-  final List<Error> errors = <Error>[];
+  final errors = <Error>[];
   for (final Api api in root.apis) {
     for (final Method method in api.methods) {
       for (final NamedType arg in method.parameters) {
@@ -2000,7 +1997,7 @@ void _writeDataClassDeclaration(
       isNullable: field.type.isNullable,
       isEnum: field.type.isEnum,
     );
-    final String nullability = field.type.isNullable ? ', nullable' : '';
+    final nullability = field.type.isNullable ? ', nullable' : '';
     final String fieldType = field.type.isEnum && field.type.isNullable
         ? _enumName(
             field.type.baseName,

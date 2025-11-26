@@ -11,7 +11,7 @@ const String DEFAULT_PACKAGE_NAME = 'test_package';
 void main() {
   group('ProxyApi', () {
     test('one api', () {
-      final Root root = Root(
+      final root = Root(
         apis: <Api>[
           AstProxyApi(
             name: 'Api',
@@ -81,8 +81,8 @@ void main() {
         classes: <Class>[],
         enums: <Enum>[],
       );
-      final StringBuffer sink = StringBuffer();
-      const SwiftGenerator generator = SwiftGenerator();
+      final sink = StringBuffer();
+      const generator = SwiftGenerator();
       generator.generate(
         const InternalSwiftOptions(
           fileSpecificClassNameComponent: 'MyFile',
@@ -92,7 +92,7 @@ void main() {
         sink,
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
-      final String code = sink.toString();
+      final code = sink.toString();
       final String collapsedCode = _collapseNewlineAndIndentation(code);
 
       // import
@@ -174,7 +174,7 @@ void main() {
 
     group('imports', () {
       test('add check if every class does not support iOS', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -190,21 +190,21 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
 
         expect(code, contains('#if !os(iOS)\nimport MyImport\n#endif'));
       });
 
       test('add check if every class does not support macOS', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -220,21 +220,21 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
 
         expect(code, contains('#if !os(macOS)\nimport MyImport\n#endif'));
       });
 
       test('add check if for multiple unsupported platforms', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -251,15 +251,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
 
         expect(
           code,
@@ -268,7 +268,7 @@ void main() {
       });
 
       test('do not add check if at least one class is supported', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -291,15 +291,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
 
         expect(code, isNot(contains('#if !os(iOS)\nimport MyImport')));
       });
@@ -307,13 +307,13 @@ void main() {
 
     group('inheritance', () {
       test('extends', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -331,26 +331,26 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(code, contains('var pigeonApiApi2: PigeonApiApi2'));
       });
 
       test('implements', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -370,32 +370,32 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(code, contains('var pigeonApiApi2: PigeonApiApi2'));
       });
 
       test('implements 2 ProxyApis', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final AstProxyApi api3 = AstProxyApi(
+        final api3 = AstProxyApi(
           name: 'Api3',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -421,15 +421,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(code, contains('var pigeonApiApi2: PigeonApiApi2'));
         expect(code, contains('var pigeonApiApi3: PigeonApiApi3'));
       });
@@ -437,7 +437,7 @@ void main() {
 
     group('Constructors', () {
       test('empty name and no params constructor', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -451,15 +451,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class PigeonApiApi: PigeonApiProtocolApi '));
         expect(
@@ -483,7 +483,7 @@ void main() {
       });
 
       test('named constructor', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -500,15 +500,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           collapsedCode,
@@ -525,11 +525,11 @@ void main() {
       });
 
       test('multiple params constructor', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -597,15 +597,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(code, contains('class PigeonApiApi: PigeonApiProtocolApi '));
         expect(
@@ -628,7 +628,7 @@ void main() {
       test(
         'host platform constructor calls new instance error for required callbacks',
         () {
-          final Root root = Root(
+          final root = Root(
             apis: <Api>[
               AstProxyApi(
                 name: 'Api',
@@ -647,8 +647,8 @@ void main() {
             classes: <Class>[],
             enums: <Enum>[],
           );
-          final StringBuffer sink = StringBuffer();
-          const SwiftGenerator generator = SwiftGenerator();
+          final sink = StringBuffer();
+          const generator = SwiftGenerator();
           generator.generate(
             const InternalSwiftOptions(
               errorClassName: 'TestError',
@@ -658,7 +658,7 @@ void main() {
             sink,
             dartPackageName: DEFAULT_PACKAGE_NAME,
           );
-          final String code = sink.toString();
+          final code = sink.toString();
           final String collapsedCode = _collapseNewlineAndIndentation(code);
 
           expect(
@@ -673,11 +673,11 @@ void main() {
 
     group('Fields', () {
       test('constructor with fields', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -742,15 +742,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           collapsedCode,
@@ -814,13 +814,13 @@ void main() {
       });
 
       test('attached field', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -843,15 +843,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(
           code,
           contains(
@@ -867,13 +867,13 @@ void main() {
       });
 
       test('static attached field', () {
-        final AstProxyApi api2 = AstProxyApi(
+        final api2 = AstProxyApi(
           name: 'Api2',
           constructors: <Constructor>[],
           fields: <ApiField>[],
           methods: <Method>[],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -897,15 +897,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         expect(
           code,
           contains(r'func aField(pigeonApi: PigeonApiApi) throws -> Api2'),
@@ -921,11 +921,11 @@ void main() {
 
     group('Host methods', () {
       test('multiple params method', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -995,15 +995,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           collapsedCode,
@@ -1025,7 +1025,7 @@ void main() {
       });
 
       test('static method', () {
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -1045,15 +1045,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           collapsedCode,
@@ -1068,11 +1068,11 @@ void main() {
 
     group('Flutter methods', () {
       test('multiple params flutter method', () {
-        final Enum anEnum = Enum(
+        final anEnum = Enum(
           name: 'AnEnum',
           members: <EnumMember>[EnumMember(name: 'one')],
         );
-        final Root root = Root(
+        final root = Root(
           apis: <Api>[
             AstProxyApi(
               name: 'Api',
@@ -1136,15 +1136,15 @@ void main() {
           classes: <Class>[],
           enums: <Enum>[anEnum],
         );
-        final StringBuffer sink = StringBuffer();
-        const SwiftGenerator generator = SwiftGenerator();
+        final sink = StringBuffer();
+        const generator = SwiftGenerator();
         generator.generate(
           const InternalSwiftOptions(swiftOut: ''),
           root,
           sink,
           dartPackageName: DEFAULT_PACKAGE_NAME,
         );
-        final String code = sink.toString();
+        final code = sink.toString();
         final String collapsedCode = _collapseNewlineAndIndentation(code);
         expect(
           collapsedCode,
@@ -1185,7 +1185,7 @@ void main() {
 /// void method( int param1, int param2, )
 /// ```
 String _collapseNewlineAndIndentation(String string) {
-  final StringBuffer result = StringBuffer();
+  final result = StringBuffer();
   for (final String line in string.split('\n')) {
     result.write('${line.trimLeft()} ');
   }

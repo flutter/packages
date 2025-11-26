@@ -774,8 +774,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
   @override
   TreeViewNode<T>? getNodeFor(T content) => _getNode(content, widget.tree);
   TreeViewNode<T>? _getNode(T content, List<TreeViewNode<T>> tree) {
-    final List<TreeViewNode<T>> nextDepth = <TreeViewNode<T>>[];
-    for (final TreeViewNode<T> node in tree) {
+    final nextDepth = <TreeViewNode<T>>[];
+    for (final node in tree) {
       if (node.content == content) {
         return node;
       }
@@ -799,7 +799,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
   @override
   void expandAll() {
-    final List<TreeViewNode<T>> activeNodesToExpand = <TreeViewNode<T>>[];
+    final activeNodesToExpand = <TreeViewNode<T>>[];
     _expandAll(widget.tree, activeNodesToExpand);
     activeNodesToExpand.reversed.forEach(toggleNode);
   }
@@ -808,7 +808,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     List<TreeViewNode<T>> tree,
     List<TreeViewNode<T>> activeNodesToExpand,
   ) {
-    for (final TreeViewNode<T> node in tree) {
+    for (final node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
         // Expand all the children, and their children.
@@ -831,7 +831,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
   @override
   void collapseAll() {
-    final List<TreeViewNode<T>> activeNodesToCollapse = <TreeViewNode<T>>[];
+    final activeNodesToCollapse = <TreeViewNode<T>>[];
     _collapseAll(widget.tree, activeNodesToCollapse);
     activeNodesToCollapse.reversed.forEach(toggleNode);
   }
@@ -840,7 +840,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     List<TreeViewNode<T>> tree,
     List<TreeViewNode<T>> activeNodesToCollapse,
   ) {
-    for (final TreeViewNode<T> node in tree) {
+    for (final node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
         // Collapse all the children, and their children.
@@ -942,7 +942,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
         case AnimationStatus.completed:
       }
 
-      final CurvedAnimation newAnimation = CurvedAnimation(
+      final newAnimation = CurvedAnimation(
         parent: controller,
         curve:
             widget.toggleAnimationStyle?.curve ??
