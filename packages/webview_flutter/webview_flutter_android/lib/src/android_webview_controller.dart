@@ -1089,7 +1089,7 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
 class AndroidWebViewWidgetCreationParams
     extends PlatformWebViewWidgetCreationParams {
   /// Creates [AndroidWebWidgetCreationParams].
-  AndroidWebViewWidgetCreationParams({
+  const AndroidWebViewWidgetCreationParams({
     super.key,
     required super.controller,
     super.layoutDirection,
@@ -1247,7 +1247,7 @@ class AndroidCustomViewWidget extends StatelessWidget {
   /// This constructor is visible for testing purposes only and should
   /// never be called externally.
   @visibleForTesting
-  AndroidCustomViewWidget.private({
+  const AndroidCustomViewWidget.private({
     super.key,
     required this.controller,
     required this.customView,
