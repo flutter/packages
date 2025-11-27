@@ -89,11 +89,15 @@ class PigeonOverrides {
   static Preview Function({
     ResolutionSelector? resolutionSelector,
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
   })?
   preview_new;
 
   /// Overrides [VideoCapture.withOutput].
-  static VideoCapture Function({required VideoOutput videoOutput})?
+  static VideoCapture Function({
+    required VideoOutput videoOutput,
+    CameraIntegerRange? targetFpsRange,
+  })?
   videoCapture_withOutput;
 
   /// Overrides [Recorder.new].
@@ -148,6 +152,7 @@ class PigeonOverrides {
   static ImageAnalysis Function({
     ResolutionSelector? resolutionSelector,
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
     int? outputImageFormat,
   })?
   imageAnalysis_new;
@@ -3719,11 +3724,13 @@ class Preview extends UseCase {
     PigeonInstanceManager? pigeon_instanceManager,
     ResolutionSelector? resolutionSelector,
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
   }) {
     if (PigeonOverrides.preview_new != null) {
       return PigeonOverrides.preview_new!(
         resolutionSelector: resolutionSelector,
         targetRotation: targetRotation,
+        targetFpsRange: targetFpsRange,
       );
     }
     return Preview.pigeon_new(
@@ -3731,6 +3738,7 @@ class Preview extends UseCase {
       pigeon_instanceManager: pigeon_instanceManager,
       resolutionSelector: resolutionSelector,
       targetRotation: targetRotation,
+      targetFpsRange: targetFpsRange,
     );
   }
 
@@ -3740,6 +3748,7 @@ class Preview extends UseCase {
     super.pigeon_instanceManager,
     this.resolutionSelector,
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(this);
@@ -3754,13 +3763,13 @@ class Preview extends UseCase {
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[
-        pigeonVar_instanceIdentifier,
-        resolutionSelector,
-        targetRotation,
-      ],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[
+          pigeonVar_instanceIdentifier,
+          resolutionSelector,
+          targetRotation,
+          targetFpsRange,
+        ]);
     () async {
       final List<Object?>? pigeonVar_replyList =
           await pigeonVar_sendFuture as List<Object?>?;
@@ -4048,14 +4057,19 @@ class VideoCapture extends UseCase {
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
     required VideoOutput videoOutput,
+    CameraIntegerRange? targetFpsRange,
   }) {
     if (PigeonOverrides.videoCapture_withOutput != null) {
-      return PigeonOverrides.videoCapture_withOutput!(videoOutput: videoOutput);
+      return PigeonOverrides.videoCapture_withOutput!(
+        videoOutput: videoOutput,
+        targetFpsRange: targetFpsRange,
+      );
     }
     return VideoCapture.pigeon_withOutput(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       videoOutput: videoOutput,
+      targetFpsRange: targetFpsRange,
     );
   }
 
@@ -4065,6 +4079,7 @@ class VideoCapture extends UseCase {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required VideoOutput videoOutput,
+    CameraIntegerRange? targetFpsRange,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
         .addDartCreatedInstance(this);
@@ -4080,7 +4095,7 @@ class VideoCapture extends UseCase {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[pigeonVar_instanceIdentifier, videoOutput],
+      <Object?>[pigeonVar_instanceIdentifier, videoOutput, targetFpsRange],
     );
     () async {
       final List<Object?>? pigeonVar_replyList =
@@ -6563,12 +6578,14 @@ class ImageAnalysis extends UseCase {
     PigeonInstanceManager? pigeon_instanceManager,
     ResolutionSelector? resolutionSelector,
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
     int? outputImageFormat,
   }) {
     if (PigeonOverrides.imageAnalysis_new != null) {
       return PigeonOverrides.imageAnalysis_new!(
         resolutionSelector: resolutionSelector,
         targetRotation: targetRotation,
+        targetFpsRange: targetFpsRange,
         outputImageFormat: outputImageFormat,
       );
     }
@@ -6577,6 +6594,7 @@ class ImageAnalysis extends UseCase {
       pigeon_instanceManager: pigeon_instanceManager,
       resolutionSelector: resolutionSelector,
       targetRotation: targetRotation,
+      targetFpsRange: targetFpsRange,
       outputImageFormat: outputImageFormat,
     );
   }
@@ -6587,6 +6605,7 @@ class ImageAnalysis extends UseCase {
     super.pigeon_instanceManager,
     this.resolutionSelector,
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
     int? outputImageFormat,
   }) : super.pigeon_detached() {
     final int pigeonVar_instanceIdentifier = pigeon_instanceManager
@@ -6607,6 +6626,7 @@ class ImageAnalysis extends UseCase {
           pigeonVar_instanceIdentifier,
           resolutionSelector,
           targetRotation,
+          targetFpsRange,
           outputImageFormat,
         ]);
     () async {
