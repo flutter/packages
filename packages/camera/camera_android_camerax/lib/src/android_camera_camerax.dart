@@ -288,6 +288,9 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// The preset resolution selector for the camera.
   ResolutionSelector? _presetResolutionSelector;
 
+  /// The configured target FPS range for the camera.
+  CameraIntegerRange? _targetFpsRange;
+
   /// The ID of the surface texture that the camera preview is drawn to.
   late int _flutterSurfaceTextureId;
 
@@ -408,6 +411,12 @@ class AndroidCameraCameraX extends CameraPlatform {
     _presetResolutionSelector = _getResolutionSelectorFromPreset(
       mediaSettings?.resolutionPreset,
     );
+
+    final int? targetFps = mediaSettings?.fps;
+    if (targetFps != null) {
+      _targetFpsRange = CameraIntegerRange(lower: targetFps, upper: targetFps);
+    }
+
     final QualitySelector? presetQualitySelector =
         _getQualitySelectorFromPreset(mediaSettings?.resolutionPreset);
 
@@ -418,6 +427,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     // Configure Preview instance.
     preview = proxy.newPreview(
       resolutionSelector: _presetResolutionSelector,
+      targetFpsRange: _targetFpsRange,
       /* use CameraX default target rotation */ targetRotation: null,
     );
     _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
@@ -433,7 +443,10 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     // Configure VideoCapture and Recorder instances.
     recorder = proxy.newRecorder(qualitySelector: presetQualitySelector);
-    videoCapture = proxy.withOutputVideoCapture(videoOutput: recorder!);
+    videoCapture = proxy.withOutputVideoCapture(
+      videoOutput: recorder!,
+      targetFpsRange: _targetFpsRange,
+    );
 
     // Retrieve info required for correcting the rotation of the camera preview
     // if necessary.
@@ -480,6 +493,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         _imageAnalysisOutputFormatFromImageFormatGroup(imageFormatGroup);
     imageAnalysis = proxy.newImageAnalysis(
       resolutionSelector: _presetResolutionSelector,
+      targetFpsRange: _targetFpsRange,
       outputImageFormat: _imageAnalysisOutputImageFormat,
       /* use CameraX default target rotation */ targetRotation: null,
     );
