@@ -423,8 +423,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
-  if (!currentItem || !currentItem.asset) {
-    return [FVPNativeAudioTrackData makeWithAssetTracks:nil mediaSelectionTracks:nil];
+  if (!currentItem) {
+    *error = [FlutterError errorWithCode:@"video_not_loaded"
+                                 message:@"Cannot get audio tracks: no video loaded"
+                                 details:nil];
+    return nil;
   }
 
   AVAsset *asset = currentItem.asset;
@@ -576,7 +579,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                          trackId:(NSInteger)trackId
                            error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
-  if (!currentItem || !currentItem.asset) {
+  if (!currentItem) {
+    *error = [FlutterError errorWithCode:@"video_not_loaded"
+                                 message:@"Cannot select audio track: no video loaded"
+                                 details:nil];
     return;
   }
 
