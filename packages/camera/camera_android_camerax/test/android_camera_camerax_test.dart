@@ -146,6 +146,7 @@ void main() {
     fromQualitySelector,
     Preview Function({
       int? targetRotation,
+      CameraIntegerRange? targetFpsRange,
       ResolutionSelector? resolutionSelector,
       // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
@@ -153,6 +154,15 @@ void main() {
       PigeonInstanceManager? pigeon_instanceManager,
     })?
     newPreview,
+    VideoCapture Function({
+      required VideoOutput videoOutput,
+      CameraIntegerRange? targetFpsRange,
+      // ignore: non_constant_identifier_names
+      BinaryMessenger? pigeon_binaryMessenger,
+      // ignore: non_constant_identifier_names
+      PigeonInstanceManager? pigeon_instanceManager,
+    })?
+    withOutputVideoCapture,
     ImageAnalysis Function({
       // ignore: non_constant_identifier_names
       BinaryMessenger? pigeon_binaryMessenger,
@@ -161,6 +171,7 @@ void main() {
       ResolutionSelector? resolutionSelector,
       int? outputImageFormat,
       int? targetRotation,
+      CameraIntegerRange? targetFpsRange,
     })?
     newImageAnalysis,
     Analyzer Function({
@@ -221,6 +232,7 @@ void main() {
           newPreview ??
           ({
             int? targetRotation,
+            CameraIntegerRange? targetFpsRange,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
@@ -273,8 +285,10 @@ void main() {
             return mockRecorder;
           },
       withOutputVideoCapture:
+          withOutputVideoCapture ??
           ({
             required VideoOutput videoOutput,
+            CameraIntegerRange? targetFpsRange,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
             // ignore: non_constant_identifier_names
@@ -286,6 +300,7 @@ void main() {
           newImageAnalysis ??
           ({
             int? targetRotation,
+            CameraIntegerRange? targetFpsRange,
             int? outputImageFormat,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
@@ -879,6 +894,7 @@ void main() {
         newPreview:
             ({
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -914,6 +930,7 @@ void main() {
         withOutputVideoCapture:
             ({
               required VideoOutput videoOutput,
+              CameraIntegerRange? targetFpsRange,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
               // ignore: non_constant_identifier_names
@@ -924,6 +941,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
               int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
@@ -1083,6 +1101,8 @@ void main() {
       );
 
       camera.processCameraProvider = mockProcessCameraProvider;
+      PigeonOverrides.cameraIntegerRange_new =
+          CameraIntegerRange.pigeon_detached;
 
       when(
         mockPreview.setSurfaceProvider(mockSystemServicesManager),
@@ -1647,6 +1667,7 @@ void main() {
         newPreview:
             ({
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -1688,6 +1709,7 @@ void main() {
         withOutputVideoCapture:
             ({
               required VideoOutput videoOutput,
+              CameraIntegerRange? targetFpsRange,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
               // ignore: non_constant_identifier_names
@@ -1698,6 +1720,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
               int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
@@ -1857,6 +1880,8 @@ void main() {
       when(mockCamera.cameraControl).thenAnswer((_) => mockCameraControl);
 
       camera.processCameraProvider = mockProcessCameraProvider;
+      PigeonOverrides.cameraIntegerRange_new =
+          CameraIntegerRange.pigeon_detached;
 
       final int flutterSurfaceTextureId = await camera.createCameraWithSettings(
         testCameraDescription,
@@ -2026,6 +2051,7 @@ void main() {
         newPreview:
             ({
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -2059,6 +2085,106 @@ void main() {
 
       expect(camera.sensorOrientationDegrees, testSensorOrientation);
       expect(camera.enableRecordingAudio, isTrue);
+    },
+  );
+
+  test(
+    'createCamera and initializeCamera sets targetFps as expected',
+    () async {
+      final camera = AndroidCameraCameraX();
+      const CameraLensDirection testLensDirection = CameraLensDirection.back;
+      const testSensorOrientation = 90;
+      const testCameraDescription = CameraDescription(
+        name: 'cameraName',
+        lensDirection: testLensDirection,
+        sensorOrientation: testSensorOrientation,
+      );
+      const fastTargetFps = 60;
+      const testCameraId = 12;
+      final mockCamera = MockCamera();
+
+      // Mock/Detached objects for (typically attached) objects created by
+      // createCamera.
+      final mockProcessCameraProvider = MockProcessCameraProvider();
+      final mockCameraInfo = MockCameraInfo();
+
+      when(
+        mockProcessCameraProvider.bindToLifecycle(any, any),
+      ).thenAnswer((_) async => mockCamera);
+      when(mockCamera.getCameraInfo()).thenAnswer((_) async => mockCameraInfo);
+      when(
+        mockCameraInfo.getCameraState(),
+      ).thenAnswer((_) async => MockLiveCameraState());
+      camera.processCameraProvider = mockProcessCameraProvider;
+      PigeonOverrides.cameraIntegerRange_new =
+          CameraIntegerRange.pigeon_detached;
+
+      CameraIntegerRange? targetPreviewFpsRange;
+      CameraIntegerRange? targetVideoCaptureFpsRange;
+      CameraIntegerRange? targetImageAnalysisFpsRange;
+
+      camera.proxy = getProxyForTestingUseCaseConfiguration(
+        mockProcessCameraProvider,
+        newPreview:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              CameraIntegerRange? targetFpsRange,
+              int? targetRotation,
+            }) {
+              targetPreviewFpsRange = targetFpsRange;
+              final mockPreview = MockPreview();
+              final testResolutionInfo = ResolutionInfo.pigeon_detached(
+                resolution: MockCameraSize(),
+              );
+              when(
+                mockPreview.getResolutionInfo(),
+              ).thenAnswer((_) async => testResolutionInfo);
+              return mockPreview;
+            },
+        withOutputVideoCapture:
+            ({
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              CameraIntegerRange? targetFpsRange,
+              required VideoOutput videoOutput,
+            }) {
+              targetVideoCaptureFpsRange = targetFpsRange;
+              return MockVideoCapture();
+            },
+        newImageAnalysis:
+            ({
+              int? outputImageFormat,
+              // ignore: non_constant_identifier_names
+              BinaryMessenger? pigeon_binaryMessenger,
+              // ignore: non_constant_identifier_names
+              PigeonInstanceManager? pigeon_instanceManager,
+              ResolutionSelector? resolutionSelector,
+              CameraIntegerRange? targetFpsRange,
+              int? targetRotation,
+            }) {
+              targetImageAnalysisFpsRange = targetFpsRange;
+              return MockImageAnalysis();
+            },
+      );
+
+      await camera.createCameraWithSettings(
+        testCameraDescription,
+        const MediaSettings(fps: fastTargetFps),
+      );
+      await camera.initializeCamera(testCameraId);
+
+      expect(targetPreviewFpsRange?.lower, fastTargetFps);
+      expect(targetPreviewFpsRange?.upper, fastTargetFps);
+      expect(targetVideoCaptureFpsRange?.lower, fastTargetFps);
+      expect(targetVideoCaptureFpsRange?.upper, fastTargetFps);
+      expect(targetImageAnalysisFpsRange?.lower, fastTargetFps);
+      expect(targetImageAnalysisFpsRange?.upper, fastTargetFps);
     },
   );
 
@@ -2169,6 +2295,7 @@ void main() {
         newPreview:
             ({
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
@@ -2204,6 +2331,7 @@ void main() {
         withOutputVideoCapture:
             ({
               required VideoOutput videoOutput,
+              CameraIntegerRange? targetFpsRange,
               // ignore: non_constant_identifier_names
               BinaryMessenger? pigeon_binaryMessenger,
               // ignore: non_constant_identifier_names
@@ -2214,6 +2342,7 @@ void main() {
         newImageAnalysis:
             ({
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
               int? outputImageFormat,
               ResolutionSelector? resolutionSelector,
               // ignore: non_constant_identifier_names
@@ -2502,6 +2631,7 @@ void main() {
             PigeonInstanceManager? pigeon_instanceManager,
             ResolutionSelector? resolutionSelector,
             int? targetRotation,
+            CameraIntegerRange? targetFpsRange,
           }) => mockPreview,
     );
 
@@ -2588,6 +2718,7 @@ void main() {
                 PigeonInstanceManager? pigeon_instanceManager,
                 ResolutionSelector? resolutionSelector,
                 int? targetRotation,
+                CameraIntegerRange? targetFpsRange,
                 int? outputImageFormat,
               }) {
                 imageAnalysisOutputImageFormat = outputImageFormat;
@@ -2601,6 +2732,7 @@ void main() {
                 PigeonInstanceManager? pigeon_instanceManager,
                 ResolutionSelector? resolutionSelector,
                 int? targetRotation,
+                CameraIntegerRange? targetFpsRange,
               }) => mockPreview,
         );
 
@@ -2684,6 +2816,7 @@ void main() {
       newPreview:
           ({
             int? targetRotation,
+            CameraIntegerRange? targetFpsRange,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
@@ -2713,6 +2846,7 @@ void main() {
       withOutputVideoCapture:
           ({
             required VideoOutput videoOutput,
+            CameraIntegerRange? targetFpsRange,
             // ignore: non_constant_identifier_names
             BinaryMessenger? pigeon_binaryMessenger,
             // ignore: non_constant_identifier_names
@@ -2721,6 +2855,7 @@ void main() {
       newImageAnalysis:
           ({
             int? targetRotation,
+            CameraIntegerRange? targetFpsRange,
             int? outputImageFormat,
             ResolutionSelector? resolutionSelector,
             // ignore: non_constant_identifier_names
@@ -4153,6 +4288,7 @@ void main() {
               PigeonInstanceManager? pigeon_instanceManager,
               ResolutionSelector? resolutionSelector,
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
             }) {
               when(
                 mockPreview.setSurfaceProvider(any),
@@ -4205,6 +4341,7 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
               required VideoOutput videoOutput,
+              CameraIntegerRange? targetFpsRange,
             }) {
               return mockVideoCapture;
             },
@@ -4217,6 +4354,7 @@ void main() {
               PigeonInstanceManager? pigeon_instanceManager,
               ResolutionSelector? resolutionSelector,
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
             }) {
               return mockImageAnalysis;
             },
@@ -4491,6 +4629,7 @@ void main() {
               PigeonInstanceManager? pigeon_instanceManager,
               ResolutionSelector? resolutionSelector,
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
             }) {
               when(
                 mockPreview.setSurfaceProvider(any),
@@ -4543,6 +4682,7 @@ void main() {
               // ignore: non_constant_identifier_names
               PigeonInstanceManager? pigeon_instanceManager,
               required VideoOutput videoOutput,
+              CameraIntegerRange? targetFpsRange,
             }) {
               return mockVideoCapture;
             },
@@ -4555,6 +4695,7 @@ void main() {
               PigeonInstanceManager? pigeon_instanceManager,
               ResolutionSelector? resolutionSelector,
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
             }) {
               return mockImageAnalysis;
             },
@@ -5438,6 +5579,7 @@ void main() {
               PigeonInstanceManager? pigeon_instanceManager,
               ResolutionSelector? resolutionSelector,
               int? targetRotation,
+              CameraIntegerRange? targetFpsRange,
             }) => mockImageAnalysis,
         getNv21BufferImageProxyUtils:
             (

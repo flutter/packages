@@ -11,7 +11,7 @@ a separate video player positioned on top of the app's content video player.
 
 |             | Android | iOS   |
 |-------------|---------|-------|
-| **Support** | SDK 21+ | 13.0+ |
+| **Support** | SDK 24+ | 13.0+ |
 
 **NOTE:**
 * Background Audio ads and Google Dynamic Ad Insertion methods are currently not supported.
