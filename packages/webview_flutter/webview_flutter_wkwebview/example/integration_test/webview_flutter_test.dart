@@ -111,7 +111,7 @@ Future<void> main() async {
             )?
             observeValue,
           }) {
-            final webView = UIViewWKWebView(
+            final webView = UIViewWKWebView.pigeon_new(
               initialConfiguration: initialConfiguration,
             );
             finalizer.attach(webView, webViewToken);
@@ -128,7 +128,7 @@ Future<void> main() async {
             )?
             observeValue,
           }) {
-            final webView = NSViewWKWebView(
+            final webView = NSViewWKWebView.pigeon_new(
               initialConfiguration: initialConfiguration,
             );
             finalizer.attach(webView, webViewToken);
