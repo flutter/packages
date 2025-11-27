@@ -12,7 +12,7 @@ const TableViewCell cell = TableViewCell(child: SizedBox.shrink());
 void main() {
   group('TableCellBuilderDelegate', () {
     test('exposes addAutomaticKeepAlives from super class', () {
-      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+      final delegate = TableCellBuilderDelegate(
         cellBuilder: (_, __) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
@@ -147,7 +147,7 @@ void main() {
     });
 
     test('sets max x and y index of super class', () {
-      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+      final delegate = TableCellBuilderDelegate(
         cellBuilder: (_, __) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
@@ -159,7 +159,7 @@ void main() {
     });
 
     test('Respects super class default for addRepaintBoundaries', () {
-      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+      final delegate = TableCellBuilderDelegate(
         cellBuilder: (_, __) => cell,
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
@@ -171,14 +171,14 @@ void main() {
     });
 
     test('Notifies listeners & rebuilds', () {
-      int notified = 0;
+      var notified = 0;
       TableCellBuilderDelegate oldDelegate;
       TableSpan spanBuilder(int index) => span;
       TableViewCell cellBuilder(BuildContext context, TableVicinity vicinity) {
         return cell;
       }
 
-      final TableCellBuilderDelegate delegate = TableCellBuilderDelegate(
+      final delegate = TableCellBuilderDelegate(
         cellBuilder: cellBuilder,
         columnBuilder: spanBuilder,
         rowBuilder: spanBuilder,
@@ -222,7 +222,7 @@ void main() {
 
   group('TableCellListDelegate', () {
     test('exposes addAutomaticKeepAlives from super class', () {
-      final TableCellListDelegate delegate = TableCellListDelegate(
+      final delegate = TableCellListDelegate(
         cells: <List<TableViewCell>>[<TableViewCell>[]],
         columnBuilder: (_) => span,
         rowBuilder: (_) => span,
@@ -337,10 +337,10 @@ void main() {
     });
 
     test('Notifies listeners & rebuilds', () {
-      int notified = 0;
+      var notified = 0;
       TableCellListDelegate oldDelegate;
       TableSpan spanBuilder(int index) => span;
-      TableCellListDelegate delegate = TableCellListDelegate(
+      var delegate = TableCellListDelegate(
         cells: <List<TableViewCell>>[
           <TableViewCell>[cell, cell],
           <TableViewCell>[cell, cell],
@@ -384,8 +384,8 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
         rowBuilder: spanBuilder,
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
@@ -398,8 +398,8 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
         rowBuilder: spanBuilder,
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
@@ -412,10 +412,10 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
 
@@ -427,10 +427,10 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
         pinnedRowCount: 2,
       );
       expect(delegate.shouldRebuild(oldDelegate), isTrue);
@@ -443,10 +443,10 @@ void main() {
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
         pinnedColumnCount: 2,
         pinnedRowCount: 2,
       );
@@ -457,16 +457,16 @@ void main() {
     });
 
     test('Changing pinned row and column counts asserts valid values', () {
-      final TableCellListDelegate delegate = TableCellListDelegate(
+      final delegate = TableCellListDelegate(
         cells: <List<TableViewCell>>[
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
           <TableViewCell>[cell, cell, cell],
         ],
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(150)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: RemainingTableSpanExtent()),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(150)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: RemainingTableSpanExtent()),
         pinnedColumnCount: 2,
         pinnedRowCount: 2,
       );

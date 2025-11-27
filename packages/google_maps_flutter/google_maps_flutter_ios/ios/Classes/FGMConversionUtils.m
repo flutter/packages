@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTGoogleMapJSONConversions.h"
+#import "FGMConversionUtils.h"
+
 #import "FGMMarkerUserData.h"
 
 /// Returns dict[key], or nil if dict[key] is NSNull.
@@ -212,11 +213,8 @@ GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate
   return nil;
 }
 
-UIColor *FGMGetColorForRGBA(NSInteger rgba) {
-  return [UIColor colorWithRed:((CGFloat)((rgba & 0xFF0000) >> 16)) / 255.0
-                         green:((CGFloat)((rgba & 0xFF00) >> 8)) / 255.0
-                          blue:((CGFloat)(rgba & 0xFF)) / 255.0
-                         alpha:((CGFloat)((rgba & 0xFF000000) >> 24)) / 255.0];
+UIColor *FGMGetColorForPigeonColor(FGMPlatformColor *color) {
+  return [UIColor colorWithRed:color.red green:color.green blue:color.blue alpha:color.alpha];
 }
 
 NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
@@ -239,7 +237,7 @@ NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(NSArray<FGMPlatformPatternIte
   return lengths;
 }
 
-@implementation FLTGoogleMapJSONConversions
+@implementation FGMHeatmapConversions
 
 // These constants must match the corresponding constants in serialization.dart
 NSString *const kHeatmapsToAddKey = @"heatmapsToAdd";
@@ -267,7 +265,11 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 }
 
 + (UIColor *)colorFromRGBA:(NSNumber *)numberColor {
-  return FGMGetColorForRGBA(numberColor.unsignedLongValue);
+  NSInteger rgba = numberColor.unsignedLongValue;
+  return [UIColor colorWithRed:((CGFloat)((rgba & 0xFF0000) >> 16)) / 255.0
+                         green:((CGFloat)((rgba & 0xFF00) >> 8)) / 255.0
+                          blue:((CGFloat)(rgba & 0xFF)) / 255.0
+                         alpha:((CGFloat)((rgba & 0xFF000000) >> 24)) / 255.0];
 }
 
 + (NSNumber *)RGBAFromColor:(UIColor *)color {
@@ -284,14 +286,14 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
     return nil;
   }
   return [[GMUWeightedLatLng alloc]
-      initWithCoordinate:[FLTGoogleMapJSONConversions locationFromLatLong:data[0]]
+      initWithCoordinate:[FGMHeatmapConversions locationFromLatLong:data[0]]
                intensity:[data[1] doubleValue]];
 }
 
 + (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng {
   GMSMapPoint point = {weightedLatLng.point.x, weightedLatLng.point.y};
   return @[
-    [FLTGoogleMapJSONConversions arrayFromLocation:GMSUnproject(point)], @(weightedLatLng.intensity)
+    [FGMHeatmapConversions arrayFromLocation:GMSUnproject(point)], @(weightedLatLng.intensity)
   ];
 }
 
@@ -299,7 +301,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   NSMutableArray<GMUWeightedLatLng *> *weightedData =
       [[NSMutableArray alloc] initWithCapacity:data.count];
   for (NSArray<id> *item in data) {
-    GMUWeightedLatLng *weightedLatLng = [FLTGoogleMapJSONConversions weightedLatLngFromArray:item];
+    GMUWeightedLatLng *weightedLatLng = [FGMHeatmapConversions weightedLatLngFromArray:item];
     if (weightedLatLng == nil) continue;
     [weightedData addObject:weightedLatLng];
   }
@@ -310,7 +312,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 + (NSArray<NSArray<id> *> *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData {
   NSMutableArray *data = [[NSMutableArray alloc] initWithCapacity:weightedData.count];
   for (GMUWeightedLatLng *weightedLatLng in weightedData) {
-    [data addObject:[FLTGoogleMapJSONConversions arrayFromWeightedLatLng:weightedLatLng]];
+    [data addObject:[FGMHeatmapConversions arrayFromWeightedLatLng:weightedLatLng]];
   }
 
   return data;
@@ -320,7 +322,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   NSArray *colorData = data[kHeatmapGradientColorsKey];
   NSMutableArray<UIColor *> *colors = [[NSMutableArray alloc] initWithCapacity:colorData.count];
   for (NSNumber *colorCode in colorData) {
-    [colors addObject:[FLTGoogleMapJSONConversions colorFromRGBA:colorCode]];
+    [colors addObject:[FGMHeatmapConversions colorFromRGBA:colorCode]];
   }
 
   return [[GMUGradient alloc] initWithColors:colors
@@ -332,7 +334,7 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   NSMutableArray<NSNumber *> *colorCodes =
       [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
   for (UIColor *color in gradient.colors) {
-    [colorCodes addObject:[FLTGoogleMapJSONConversions RGBAFromColor:color]];
+    [colorCodes addObject:[FGMHeatmapConversions RGBAFromColor:color]];
   }
 
   return @{

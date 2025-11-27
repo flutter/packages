@@ -1,3 +1,11 @@
+## 2.8.8
+
+* Refactors Dart internals for maintainability.
+
+## 2.8.7
+
+* Updates to Pigeon 26.
+
 ## 2.8.6
 
 * Fixes a bug where the video player fails to initialize when `AVFoundation` reports a duration of zero.

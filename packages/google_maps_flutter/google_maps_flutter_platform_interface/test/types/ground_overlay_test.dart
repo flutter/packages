@@ -9,29 +9,29 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('GroundOverlay', () {
-    const GroundOverlayId kID = GroundOverlayId('groundOverlay');
-    final LatLngBounds kBounds = LatLngBounds(
+    const kID = GroundOverlayId('groundOverlay');
+    final kBounds = LatLngBounds(
       southwest: const LatLng(37.42, -122.08),
       northeast: const LatLng(37.43, -122.09),
     );
-    const LatLng kPosition = LatLng(37.42, -122.08);
+    const kPosition = LatLng(37.42, -122.08);
     final MapBitmap kMapBitmap = AssetMapBitmap(
       'assets/asset.png',
       imagePixelRatio: 1.0,
       bitmapScaling: MapBitmapScaling.none,
     );
-    const Offset kAnchor = Offset(0.3, 0.7);
-    const double kBearing = 45.0;
-    const double kTransparency = 0.5;
-    const int kZIndex = 1;
-    const bool kVisible = false;
-    const bool kClickable = false;
+    const kAnchor = Offset(0.3, 0.7);
+    const kBearing = 45.0;
+    const kTransparency = 0.5;
+    const kZIndex = 1;
+    const kVisible = false;
+    const kClickable = false;
     const double kWidth = 200;
     const double kHeight = 300;
-    const double kZoomLevel = 10.0;
+    const kZoomLevel = 10.0;
 
     test('fromBounds constructor defaults', () {
-      final GroundOverlay groundOverlay = GroundOverlay.fromBounds(
+      final groundOverlay = GroundOverlay.fromBounds(
         groundOverlayId: kID,
         image: kMapBitmap,
         bounds: kBounds,
@@ -50,7 +50,7 @@ void main() {
     });
 
     test('fromBounds construct with values', () {
-      final GroundOverlay groundOverlay = GroundOverlay.fromBounds(
+      final groundOverlay = GroundOverlay.fromBounds(
         groundOverlayId: kID,
         image: kMapBitmap,
         bounds: kBounds,
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('fromPosition constructor defaults', () {
-      final GroundOverlay groundOverlay = GroundOverlay.fromPosition(
+      final groundOverlay = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,
@@ -97,7 +97,7 @@ void main() {
     });
 
     test('fromPosition construct with values', () {
-      final GroundOverlay groundOverlay = GroundOverlay.fromPosition(
+      final groundOverlay = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,
@@ -127,7 +127,7 @@ void main() {
     });
 
     test('copyWith fromPosition', () {
-      final GroundOverlay groundOverlay1 = GroundOverlay.fromPosition(
+      final groundOverlay1 = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,
@@ -159,7 +159,7 @@ void main() {
     });
 
     test('copyWith fromBounds', () {
-      final GroundOverlay groundOverlay1 = GroundOverlay.fromBounds(
+      final groundOverlay1 = GroundOverlay.fromBounds(
         groundOverlayId: kID,
         image: kMapBitmap,
         bounds: kBounds,
@@ -189,7 +189,7 @@ void main() {
     });
 
     test('fromPosition clone', () {
-      final GroundOverlay groundOverlay1 = GroundOverlay.fromPosition(
+      final groundOverlay1 = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,
@@ -203,7 +203,7 @@ void main() {
     });
 
     test('fromBounds clone', () {
-      final GroundOverlay groundOverlay1 = GroundOverlay.fromBounds(
+      final groundOverlay1 = GroundOverlay.fromBounds(
         groundOverlayId: kID,
         image: kMapBitmap,
         bounds: kBounds,
@@ -215,7 +215,7 @@ void main() {
     });
 
     test('==', () {
-      final GroundOverlay groundOverlayPosition1 = GroundOverlay.fromPosition(
+      final groundOverlayPosition1 = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,
@@ -230,7 +230,7 @@ void main() {
         zoomLevel: kZoomLevel,
       );
 
-      final GroundOverlay groundOverlayPosition2 = GroundOverlay.fromPosition(
+      final groundOverlayPosition2 = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,
@@ -245,7 +245,7 @@ void main() {
         zoomLevel: kZoomLevel,
       );
 
-      final GroundOverlay groundOverlayPosition3 = GroundOverlay.fromPosition(
+      final groundOverlayPosition3 = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,
@@ -260,7 +260,7 @@ void main() {
         zoomLevel: kZoomLevel + 1,
       );
 
-      final GroundOverlay groundOverlayBounds1 = GroundOverlay.fromBounds(
+      final groundOverlayBounds1 = GroundOverlay.fromBounds(
         groundOverlayId: kID,
         image: kMapBitmap,
         bounds: kBounds,
@@ -272,7 +272,7 @@ void main() {
         clickable: kClickable,
       );
 
-      final GroundOverlay groundOverlayBounds2 = GroundOverlay.fromBounds(
+      final groundOverlayBounds2 = GroundOverlay.fromBounds(
         groundOverlayId: kID,
         image: kMapBitmap,
         bounds: kBounds,
@@ -284,7 +284,7 @@ void main() {
         clickable: kClickable,
       );
 
-      final GroundOverlay groundOverlayBounds3 = GroundOverlay.fromBounds(
+      final groundOverlayBounds3 = GroundOverlay.fromBounds(
         groundOverlayId: kID,
         image: kMapBitmap,
         bounds: kBounds,
@@ -304,7 +304,7 @@ void main() {
     });
 
     test('hashCode', () {
-      final GroundOverlay groundOverlay = GroundOverlay.fromPosition(
+      final groundOverlay = GroundOverlay.fromPosition(
         groundOverlayId: kID,
         image: kMapBitmap,
         position: kPosition,

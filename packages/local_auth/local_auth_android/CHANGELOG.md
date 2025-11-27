@@ -1,3 +1,11 @@
+## 2.0.3
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.0.2
+
+* Updates to Pigeon 26.
+
 ## 2.0.1
 
 * Removed mockito-inline and updated to mockito-core 5.17.0.

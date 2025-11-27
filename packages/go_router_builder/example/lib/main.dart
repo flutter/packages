@@ -42,7 +42,7 @@ class App extends StatelessWidget {
 
       // check just the matchedLocation in case there are query parameters
       final String loginLoc = const LoginRoute().location;
-      final bool goingToLogin = state.matchedLocation == loginLoc;
+      final goingToLogin = state.matchedLocation == loginLoc;
 
       // the user is not logged in and not headed to /login, they need to login
       if (!loggedIn && !goingToLogin) {
@@ -263,21 +263,16 @@ class PersonScreen extends StatelessWidget {
           ListTile(
             title: Text('${entry.key.name} - ${entry.value}'),
             trailing: OutlinedButton(
-              onPressed:
-                  () => PersonDetailsRoute(
-                    family.id,
-                    person.id,
-                    entry.key,
-                    $extra: ++_extraClickCount,
-                  ).go(context),
+              onPressed: () => PersonDetailsRoute(
+                family.id,
+                person.id,
+                entry.key,
+                $extra: ++_extraClickCount,
+              ).go(context),
               child: const Text('With extra...'),
             ),
-            onTap:
-                () => PersonDetailsRoute(
-                  family.id,
-                  person.id,
-                  entry.key,
-                ).go(context),
+            onTap: () =>
+                PersonDetailsRoute(family.id, person.id, entry.key).go(context),
           ),
       ],
     ),

@@ -24,10 +24,11 @@ PushFn mockAd({Size size = Size.zero, String adStatus = AdStatus.FILLED}) {
 /// Returns a function that handles a bunch of ad units at once. Can be used with [mockAdsByGoogle].
 PushFn mockAds(List<MockAdConfig> adConfigs) {
   return (JSAny? _) {
-    final List<web.HTMLElement> foundTargets =
-        web.document.querySelectorAll('div[id^=adUnit] ins').toList;
+    final List<web.HTMLElement> foundTargets = web.document
+        .querySelectorAll('div[id^=adUnit] ins')
+        .toList;
 
-    for (int i = 0; i < foundTargets.length; i++) {
+    for (var i = 0; i < foundTargets.length; i++) {
       final web.HTMLElement adTarget = foundTargets[i];
       if (adTarget.children.length > 0) {
         continue;
@@ -35,11 +36,10 @@ PushFn mockAds(List<MockAdConfig> adConfigs) {
 
       final (:Size size, :String adStatus) = adConfigs[i];
 
-      final web.HTMLElement fakeAd =
-          web.HTMLDivElement()
-            ..style.width = '${size.width}px'
-            ..style.height = '${size.height}px'
-            ..style.background = '#fabada';
+      final web.HTMLElement fakeAd = web.HTMLDivElement()
+        ..style.width = '${size.width}px'
+        ..style.height = '${size.height}px'
+        ..style.background = '#fabada';
 
       // AdSense seems to be setting the width/height on the `ins` of the injected ad too.
       adTarget
@@ -54,8 +54,8 @@ PushFn mockAds(List<MockAdConfig> adConfigs) {
 
 extension on web.NodeList {
   List<web.HTMLElement> get toList {
-    final List<web.HTMLElement> result = <web.HTMLElement>[];
-    for (int i = 0; i < length; i++) {
+    final result = <web.HTMLElement>[];
+    for (var i = 0; i < length; i++) {
       final web.Node? node = item(i);
       if (node != null && node.isA<web.HTMLElement>()) {
         result.add(node as web.HTMLElement);

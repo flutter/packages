@@ -1,3 +1,7 @@
+## NEXT
+
+- Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 6.3.2
 
 - Makes a map keyed on FontWeight non-const for compatibility with proposed changes to the engine's implementation of FontWeight.

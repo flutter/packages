@@ -1,3 +1,11 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
 ## 7.2.0
 
 * Adds a `clearAuthorizationToken` method to remove an access token from the

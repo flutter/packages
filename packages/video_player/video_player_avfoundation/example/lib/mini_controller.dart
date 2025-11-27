@@ -245,7 +245,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         );
     }
 
-    final VideoCreationOptions creationOptions = VideoCreationOptions(
+    final creationOptions = VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
     );
@@ -254,7 +254,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         (await _platform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
-    final Completer<void> initializingCompleter = Completer<void>();
+    final initializingCompleter = Completer<void>();
 
     void eventListener(VideoEvent event) {
       switch (event.eventType) {
@@ -284,7 +284,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     }
 
     void errorListener(Object obj) {
-      final PlatformException e = obj as PlatformException;
+      final e = obj as PlatformException;
       value = VideoPlayerValue.erroneous(e.message!);
       _timer?.cancel();
       if (!initializingCompleter.isCompleted) {
@@ -450,7 +450,7 @@ class _VideoScrubberState extends State<_VideoScrubber> {
   @override
   Widget build(BuildContext context) {
     void seekToRelativePosition(Offset globalPosition) {
-      final RenderBox box = context.findRenderObject()! as RenderBox;
+      final box = context.findRenderObject()! as RenderBox;
       final Offset tapPos = box.globalToLocal(globalPosition);
       final double relative = tapPos.dx / box.size.width;
       final Duration position = controller.value.duration * relative;
@@ -510,9 +510,9 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    const Color playedColor = Color.fromRGBO(255, 0, 0, 0.7);
-    const Color bufferedColor = Color.fromRGBO(50, 50, 200, 0.2);
-    const Color backgroundColor = Color.fromRGBO(200, 200, 200, 0.5);
+    const playedColor = Color.fromRGBO(255, 0, 0, 0.7);
+    const bufferedColor = Color.fromRGBO(50, 50, 200, 0.2);
+    const backgroundColor = Color.fromRGBO(200, 200, 200, 0.5);
 
     final Widget progressIndicator;
     if (controller.value.isInitialized) {

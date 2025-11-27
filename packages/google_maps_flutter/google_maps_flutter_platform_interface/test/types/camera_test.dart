@@ -9,7 +9,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('toMap / fromMap', () {
-    const CameraPosition cameraPosition = CameraPosition(
+    const cameraPosition = CameraPosition(
       target: LatLng(10.0, 15.0),
       bearing: 0.5,
       tilt: 30.0,
@@ -26,7 +26,7 @@ void main() {
   });
 
   test('CameraUpdate.newCameraPosition', () {
-    const CameraPosition cameraPosition = CameraPosition(
+    const cameraPosition = CameraPosition(
       target: LatLng(10.0, 15.0),
       bearing: 0.5,
       tilt: 30.0,
@@ -39,27 +39,27 @@ void main() {
     expect(cameraUpdate.updateType, CameraUpdateType.newCameraPosition);
     cameraUpdate as CameraUpdateNewCameraPosition;
     expect(cameraUpdate.cameraPosition, cameraPosition);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'newCameraPosition');
   });
 
   test('CameraUpdate.newLatLng', () {
-    const LatLng latLng = LatLng(1.0, 2.0);
+    const latLng = LatLng(1.0, 2.0);
     final CameraUpdate cameraUpdate = CameraUpdate.newLatLng(latLng);
     expect(cameraUpdate.runtimeType, CameraUpdateNewLatLng);
     expect(cameraUpdate.updateType, CameraUpdateType.newLatLng);
     cameraUpdate as CameraUpdateNewLatLng;
     expect(cameraUpdate.latLng, latLng);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'newLatLng');
   });
 
   test('CameraUpdate.newLatLngBounds', () {
-    final LatLngBounds latLngBounds = LatLngBounds(
+    final latLngBounds = LatLngBounds(
       northeast: const LatLng(1.0, 2.0),
       southwest: const LatLng(-2.0, -3.0),
     );
-    const double padding = 1.0;
+    const padding = 1.0;
     final CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(
       latLngBounds,
       padding,
@@ -69,46 +69,46 @@ void main() {
     cameraUpdate as CameraUpdateNewLatLngBounds;
     expect(cameraUpdate.bounds, latLngBounds);
     expect(cameraUpdate.padding, padding);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'newLatLngBounds');
   });
 
   test('CameraUpdate.newLatLngZoom', () {
-    const LatLng latLng = LatLng(1.0, 2.0);
-    const double zoom = 2.0;
+    const latLng = LatLng(1.0, 2.0);
+    const zoom = 2.0;
     final CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(latLng, zoom);
     expect(cameraUpdate.runtimeType, CameraUpdateNewLatLngZoom);
     expect(cameraUpdate.updateType, CameraUpdateType.newLatLngZoom);
     cameraUpdate as CameraUpdateNewLatLngZoom;
     expect(cameraUpdate.latLng, latLng);
     expect(cameraUpdate.zoom, zoom);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'newLatLngZoom');
   });
 
   test('CameraUpdate.scrollBy', () {
-    const double dx = 2.0;
-    const double dy = 5.0;
+    const dx = 2.0;
+    const dy = 5.0;
     final CameraUpdate cameraUpdate = CameraUpdate.scrollBy(dx, dy);
     expect(cameraUpdate.runtimeType, CameraUpdateScrollBy);
     expect(cameraUpdate.updateType, CameraUpdateType.scrollBy);
     cameraUpdate as CameraUpdateScrollBy;
     expect(cameraUpdate.dx, dx);
     expect(cameraUpdate.dy, dy);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'scrollBy');
   });
 
   test('CameraUpdate.zoomBy', () {
-    const double amount = 1.5;
-    const Offset focus = Offset(-1.0, -2.0);
+    const amount = 1.5;
+    const focus = Offset(-1.0, -2.0);
     final CameraUpdate cameraUpdate = CameraUpdate.zoomBy(amount, focus);
     expect(cameraUpdate.runtimeType, CameraUpdateZoomBy);
     expect(cameraUpdate.updateType, CameraUpdateType.zoomBy);
     cameraUpdate as CameraUpdateZoomBy;
     expect(cameraUpdate.amount, amount);
     expect(cameraUpdate.focus, focus);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'zoomBy');
   });
 
@@ -116,7 +116,7 @@ void main() {
     final CameraUpdate cameraUpdate = CameraUpdate.zoomIn();
     expect(cameraUpdate.runtimeType, CameraUpdateZoomIn);
     expect(cameraUpdate.updateType, CameraUpdateType.zoomIn);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'zoomIn');
   });
 
@@ -124,7 +124,7 @@ void main() {
     final CameraUpdate cameraUpdate = CameraUpdate.zoomOut();
     expect(cameraUpdate.runtimeType, CameraUpdateZoomOut);
     expect(cameraUpdate.updateType, CameraUpdateType.zoomOut);
-    final List<Object> jsonList = cameraUpdate.toJson() as List<Object>;
+    final jsonList = cameraUpdate.toJson() as List<Object>;
     expect(jsonList[0], 'zoomOut');
   });
 }

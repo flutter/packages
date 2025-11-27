@@ -84,13 +84,12 @@ Future<BenchmarkResults> _runBenchmarks({
     compilationOptions: compilationOptions,
   );
 
-  final List<String> expectedMetrics =
-      expectedBenchmarkMetrics(
-        useWasm: compilationOptions.useWasm,
-      ).map((BenchmarkMetric metric) => metric.label).toList();
+  final List<String> expectedMetrics = expectedBenchmarkMetrics()
+      .map((BenchmarkMetric metric) => metric.label)
+      .toList();
 
-  for (final String benchmarkName in benchmarkNames) {
-    for (final String metricName in expectedMetrics) {
+  for (final benchmarkName in benchmarkNames) {
+    for (final metricName in expectedMetrics) {
       for (final BenchmarkMetricComputation computation
           in BenchmarkMetricComputation.values) {
         expect(

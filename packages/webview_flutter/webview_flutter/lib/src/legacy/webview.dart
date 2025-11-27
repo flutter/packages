@@ -340,7 +340,7 @@ class _WebViewState extends State<WebView> {
   }
 
   void _onWebViewPlatformCreated(WebViewPlatformController? webViewPlatform) {
-    final WebViewController controller = WebViewController._(
+    final controller = WebViewController._(
       widget,
       webViewPlatform!,
       _javascriptChannelRegistry,
@@ -406,7 +406,7 @@ WebSettings _clearUnchangedWebSettings(
   bool? hasNavigationDelegate;
   bool? hasProgressTracking;
   bool? debuggingEnabled;
-  WebSetting<String?> userAgent = const WebSetting<String?>.absent();
+  var userAgent = const WebSetting<String?>.absent();
   bool? zoomEnabled;
   if (currentValue.javascriptMode != newValue.javascriptMode) {
     javascriptMode = newValue.javascriptMode;
@@ -438,10 +438,9 @@ WebSettings _clearUnchangedWebSettings(
 }
 
 Set<String> _extractChannelNames(Set<JavascriptChannel>? channels) {
-  final Set<String> channelNames =
-      channels == null
-          ? <String>{}
-          : channels.map((JavascriptChannel channel) => channel.name).toSet();
+  final Set<String> channelNames = channels == null
+      ? <String>{}
+      : channels.map((JavascriptChannel channel) => channel.name).toSet();
   return channelNames;
 }
 
@@ -455,7 +454,7 @@ class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
     required String url,
     required bool isForMainFrame,
   }) async {
-    final NavigationRequest request = NavigationRequest._(
+    final request = NavigationRequest._(
       url: url,
       isForMainFrame: isForMainFrame,
     );
@@ -642,8 +641,8 @@ class WebViewController {
   Future<void> _updateJavascriptChannels(
     Set<JavascriptChannel>? newChannels,
   ) async {
-    final Set<String> currentChannels =
-        _javascriptChannelRegistry.channels.keys.toSet();
+    final Set<String> currentChannels = _javascriptChannelRegistry.channels.keys
+        .toSet();
     final Set<String> newChannelNames = _extractChannelNames(newChannels);
     final Set<String> channelsToAdd = newChannelNames.difference(
       currentChannels,

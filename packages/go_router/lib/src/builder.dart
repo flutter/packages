@@ -201,11 +201,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
 
   void _updatePages(BuildContext context) {
     assert(_pages == null);
-    final List<Page<Object?>> pages = <Page<Object?>>[];
-    final Map<Page<Object?>, RouteMatchBase> pageToRouteMatchBase =
-        <Page<Object?>, RouteMatchBase>{};
-    final Map<Page<Object?>, GoRouterState> registry =
-        <Page<Object?>, GoRouterState>{};
+    final pages = <Page<Object?>>[];
+    final pageToRouteMatchBase = <Page<Object?>, RouteMatchBase>{};
+    final registry = <Page<Object?>, GoRouterState>{};
     if (widget.matchList.isError) {
       pages.add(_buildErrorPage(context, widget.matchList));
     } else {
@@ -280,42 +278,43 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       widget.matchList,
     );
     final GlobalKey<NavigatorState> navigatorKey = match.navigatorKey;
-    final ShellRouteContext shellRouteContext = ShellRouteContext(
+    final shellRouteContext = ShellRouteContext(
       route: match.route,
       routerState: state,
       navigatorKey: navigatorKey,
       match: match,
       routeMatchList: widget.matchList,
-      navigatorBuilder: (
-        GlobalKey<NavigatorState> navigatorKey,
-        ShellRouteMatch match,
-        RouteMatchList matchList,
-        List<NavigatorObserver>? observers,
-        String? restorationScopeId,
-      ) {
-        return PopScope(
-          // Prevent ShellRoute from being popped, for example
-          // by an iOS back gesture, when the route has active sub-routes.
-          // TODO(LukasMirbt): Remove when minimum flutter version includes
-          // https://github.com/flutter/flutter/pull/152330.
-          canPop: match.matches.length == 1,
-          child: _CustomNavigator(
-            // The state needs to persist across rebuild.
-            key: GlobalObjectKey(navigatorKey.hashCode),
-            navigatorRestorationId: restorationScopeId,
-            navigatorKey: navigatorKey,
-            matches: match.matches,
-            matchList: matchList,
-            configuration: widget.configuration,
-            observers: observers ?? const <NavigatorObserver>[],
-            onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
-            // This is used to recursively build pages under this shell route.
-            errorBuilder: widget.errorBuilder,
-            errorPageBuilder: widget.errorPageBuilder,
-            requestFocus: widget.requestFocus,
-          ),
-        );
-      },
+      navigatorBuilder:
+          (
+            GlobalKey<NavigatorState> navigatorKey,
+            ShellRouteMatch match,
+            RouteMatchList matchList,
+            List<NavigatorObserver>? observers,
+            String? restorationScopeId,
+          ) {
+            return PopScope(
+              // Prevent ShellRoute from being popped, for example
+              // by an iOS back gesture, when the route has active sub-routes.
+              // TODO(LukasMirbt): Remove when minimum flutter version includes
+              // https://github.com/flutter/flutter/pull/152330.
+              canPop: match.matches.length == 1,
+              child: _CustomNavigator(
+                // The state needs to persist across rebuild.
+                key: GlobalObjectKey(navigatorKey.hashCode),
+                navigatorRestorationId: restorationScopeId,
+                navigatorKey: navigatorKey,
+                matches: match.matches,
+                matchList: matchList,
+                configuration: widget.configuration,
+                observers: observers ?? const <NavigatorObserver>[],
+                onPopPageWithRouteMatch: widget.onPopPageWithRouteMatch,
+                // This is used to recursively build pages under this shell route.
+                errorBuilder: widget.errorBuilder,
+                errorPageBuilder: widget.errorPageBuilder,
+                requestFocus: widget.requestFocus,
+              ),
+            );
+          },
     );
     final Page<Object?>? page = match.route.buildPage(
       context,
@@ -353,13 +352,13 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       if (elem != null && isMaterialApp(elem)) {
         log('Using MaterialApp configuration');
         _pageBuilderForAppType = pageBuilderForMaterialApp;
-        _errorBuilderForAppType =
-            (BuildContext c, GoRouterState s) => MaterialErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            MaterialErrorScreen(s.error);
       } else if (elem != null && isCupertinoApp(elem)) {
         log('Using CupertinoApp configuration');
         _pageBuilderForAppType = pageBuilderForCupertinoApp;
-        _errorBuilderForAppType =
-            (BuildContext c, GoRouterState s) => CupertinoErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            CupertinoErrorScreen(s.error);
       } else {
         log('Using WidgetsApp configuration');
         _pageBuilderForAppType =
@@ -376,8 +375,8 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
               restorationId: restorationId,
               child: child,
             );
-        _errorBuilderForAppType =
-            (BuildContext c, GoRouterState s) => ErrorScreen(s.error);
+        _errorBuilderForAppType = (BuildContext c, GoRouterState s) =>
+            ErrorScreen(s.error);
       }
     }
 
@@ -433,16 +432,16 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
     return widget.errorPageBuilder != null
         ? widget.errorPageBuilder!(context, state)
         : _buildPlatformAdapterPage(
-          context,
-          state,
-          errorBuilder != null
-              ? errorBuilder(context, state)
-              : _errorBuilderForAppType!(context, state),
-        );
+            context,
+            state,
+            errorBuilder != null
+                ? errorBuilder(context, state)
+                : _errorBuilderForAppType!(context, state),
+          );
   }
 
   bool _handlePopPage(Route<Object?> route, Object? result) {
-    final Page<Object?> page = route.settings as Page<Object?>;
+    final page = route.settings as Page<Object?>;
     final RouteMatchBase match = _pageToRouteMatchBase[page]!;
     return widget.onPopPageWithRouteMatch(route, result, match);
   }

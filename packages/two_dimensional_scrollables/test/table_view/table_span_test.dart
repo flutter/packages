@@ -10,7 +10,7 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 void main() {
   group('TableSpanExtent', () {
     test('FixedTableSpanExtent', () {
-      FixedTableSpanExtent extent = const FixedTableSpanExtent(150);
+      var extent = const FixedTableSpanExtent(150);
       expect(
         extent.calculateExtent(
           const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -42,7 +42,7 @@ void main() {
     });
 
     test('FractionalTableSpanExtent', () {
-      FractionalTableSpanExtent extent = const FractionalTableSpanExtent(0.5);
+      var extent = const FractionalTableSpanExtent(0.5);
       expect(
         extent.calculateExtent(
           const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -74,7 +74,7 @@ void main() {
     });
 
     test('RemainingTableSpanExtent', () {
-      const RemainingTableSpanExtent extent = RemainingTableSpanExtent();
+      const extent = RemainingTableSpanExtent();
       expect(
         extent.calculateExtent(
           const TableSpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -93,7 +93,7 @@ void main() {
     });
 
     test('CombiningTableSpanExtent', () {
-      final CombiningTableSpanExtent extent = CombiningTableSpanExtent(
+      final extent = CombiningTableSpanExtent(
         const FixedTableSpanExtent(100),
         const RemainingTableSpanExtent(),
         (double a, double b) {
@@ -118,7 +118,7 @@ void main() {
     });
 
     test('MaxTableSpanExtent', () {
-      const MaxTableSpanExtent extent = MaxTableSpanExtent(
+      const extent = MaxTableSpanExtent(
         FixedTableSpanExtent(100),
         RemainingTableSpanExtent(),
       );
@@ -140,7 +140,7 @@ void main() {
     });
 
     test('MinTableSpanExtent', () {
-      const MinTableSpanExtent extent = MinTableSpanExtent(
+      const extent = MinTableSpanExtent(
         FixedTableSpanExtent(100),
         RemainingTableSpanExtent(),
       );
@@ -163,25 +163,20 @@ void main() {
   });
 
   test('TableSpanDecoration', () {
-    TableSpanDecoration decoration = const TableSpanDecoration(
-      color: Color(0xffff0000),
+    var decoration = const TableSpanDecoration(color: Color(0xffff0000));
+    final canvas = TestCanvas();
+    const rect = Rect.fromLTWH(0, 0, 10, 10);
+    final details = TableSpanDecorationPaintDetails(
+      canvas: canvas,
+      rect: rect,
+      axisDirection: AxisDirection.down,
     );
-    final TestCanvas canvas = TestCanvas();
-    const Rect rect = Rect.fromLTWH(0, 0, 10, 10);
-    final TableSpanDecorationPaintDetails details =
-        TableSpanDecorationPaintDetails(
-          canvas: canvas,
-          rect: rect,
-          axisDirection: AxisDirection.down,
-        );
-    final BorderRadius radius = BorderRadius.circular(10.0);
+    final radius = BorderRadius.circular(10.0);
     decoration.paint(details);
     expect(canvas.rect, rect);
     expect(canvas.paint.color, const Color(0xffff0000));
     expect(canvas.paint.isAntiAlias, isFalse);
-    final TestTableSpanBorder border = TestTableSpanBorder(
-      leading: const BorderSide(),
-    );
+    final border = TestTableSpanBorder(leading: const BorderSide());
     decoration = TableSpanDecoration(border: border, borderRadius: radius);
     decoration.paint(details);
     expect(border.details, details);
@@ -218,7 +213,7 @@ void main() {
     testWidgets('Vertical main axis, vertical reversed', (
       WidgetTester tester,
     ) async {
-      final TableView table = TableView.builder(
+      final table = TableView.builder(
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
           reverse: true,
@@ -324,7 +319,7 @@ void main() {
     testWidgets('Vertical main axis, horizontal reversed', (
       WidgetTester tester,
     ) async {
-      final TableView table = TableView.builder(
+      final table = TableView.builder(
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
         ),
@@ -430,7 +425,7 @@ void main() {
     testWidgets('Vertical main axis, both reversed', (
       WidgetTester tester,
     ) async {
-      final TableView table = TableView.builder(
+      final table = TableView.builder(
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
           reverse: true,
@@ -537,7 +532,7 @@ void main() {
     testWidgets('Horizontal main axis, vertical reversed', (
       WidgetTester tester,
     ) async {
-      final TableView table = TableView.builder(
+      final table = TableView.builder(
         mainAxis: Axis.horizontal,
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -644,7 +639,7 @@ void main() {
     testWidgets('Horizontal main axis, horizontal reversed', (
       WidgetTester tester,
     ) async {
-      final TableView table = TableView.builder(
+      final table = TableView.builder(
         mainAxis: Axis.horizontal,
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -751,7 +746,7 @@ void main() {
     testWidgets('Horizontal main axis, both reversed', (
       WidgetTester tester,
     ) async {
-      final TableView table = TableView.builder(
+      final table = TableView.builder(
         mainAxis: Axis.horizontal,
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -884,15 +879,14 @@ void main() {
     // |*********|********|        |
     // |*********|********|        |
     // +---------+--------+--------+
-    final Map<TableVicinity, (int, int)> scenario1MergedRows =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          TableVicinity.zero.copyWith(row: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (1, 2),
-          const TableVicinity(row: 2, column: 1): (1, 2),
-          const TableVicinity(row: 2, column: 2): (2, 2),
-          const TableVicinity(row: 3, column: 2): (2, 2),
-        };
+    final scenario1MergedRows = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      TableVicinity.zero.copyWith(row: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (1, 2),
+      const TableVicinity(row: 2, column: 1): (1, 2),
+      const TableVicinity(row: 2, column: 2): (2, 2),
+      const TableVicinity(row: 3, column: 2): (2, 2),
+    };
 
     TableView buildScenario1({
       bool reverseVertical = false,
@@ -925,8 +919,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
       );
@@ -946,15 +941,14 @@ void main() {
     // |////////|        |M(2,2)***********|
     // |////////|        |*****************|
     // +--------+--------+--------+--------+
-    final Map<TableVicinity, (int, int)> scenario2MergedColumns =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          TableVicinity.zero.copyWith(column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (1, 2),
-          const TableVicinity(row: 1, column: 2): (1, 2),
-          const TableVicinity(row: 2, column: 2): (2, 2),
-          const TableVicinity(row: 2, column: 3): (2, 2),
-        };
+    final scenario2MergedColumns = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      TableVicinity.zero.copyWith(column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (1, 2),
+      const TableVicinity(row: 1, column: 2): (1, 2),
+      const TableVicinity(row: 2, column: 2): (2, 2),
+      const TableVicinity(row: 2, column: 3): (2, 2),
+    };
 
     TableView buildScenario2({
       bool reverseVertical = false,
@@ -987,8 +981,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
       );
@@ -1011,28 +1006,26 @@ void main() {
     // |////////|        |                 |
     // |////////|        |                 |
     // +--------+--------+--------+--------+
-    final Map<TableVicinity, (int, int)> scenario3MergedRows =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          const TableVicinity(row: 1, column: 0): (0, 2),
-          const TableVicinity(row: 0, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 2): (1, 2),
-          const TableVicinity(row: 2, column: 2): (1, 2),
-          const TableVicinity(row: 1, column: 3): (1, 2),
-          const TableVicinity(row: 2, column: 3): (1, 2),
-        };
-    final Map<TableVicinity, (int, int)> scenario3MergedColumns =
-        <TableVicinity, (int, int)>{
-          TableVicinity.zero: (0, 2),
-          const TableVicinity(row: 1, column: 0): (0, 2),
-          const TableVicinity(row: 0, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 1): (0, 2),
-          const TableVicinity(row: 1, column: 2): (2, 2),
-          const TableVicinity(row: 2, column: 2): (2, 2),
-          const TableVicinity(row: 1, column: 3): (2, 2),
-          const TableVicinity(row: 2, column: 3): (2, 2),
-        };
+    final scenario3MergedRows = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      const TableVicinity(row: 1, column: 0): (0, 2),
+      const TableVicinity(row: 0, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 2): (1, 2),
+      const TableVicinity(row: 2, column: 2): (1, 2),
+      const TableVicinity(row: 1, column: 3): (1, 2),
+      const TableVicinity(row: 2, column: 3): (1, 2),
+    };
+    final scenario3MergedColumns = <TableVicinity, (int, int)>{
+      TableVicinity.zero: (0, 2),
+      const TableVicinity(row: 1, column: 0): (0, 2),
+      const TableVicinity(row: 0, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 1): (0, 2),
+      const TableVicinity(row: 1, column: 2): (2, 2),
+      const TableVicinity(row: 2, column: 2): (2, 2),
+      const TableVicinity(row: 1, column: 3): (2, 2),
+      const TableVicinity(row: 2, column: 3): (2, 2),
+    };
 
     TableView buildScenario3({
       Axis mainAxis = Axis.vertical,
@@ -1064,8 +1057,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
         columnBuilder: (int index) {
@@ -1077,8 +1071,9 @@ void main() {
           }
           return TableSpan(
             extent: const FixedTableSpanExtent(100.0),
-            backgroundDecoration:
-                color == null ? null : TableSpanDecoration(color: color),
+            backgroundDecoration: color == null
+                ? null
+                : TableSpanDecoration(color: color),
           );
         },
       );
@@ -1628,8 +1623,8 @@ void main() {
               child: Text('M(0,0)'),
             );
           },
-          columnBuilder:
-              (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
+          columnBuilder: (_) =>
+              const TableSpan(extent: FixedTableSpanExtent(100.0)),
           rowBuilder: (_) {
             return const TableSpan(
               extent: FixedTableSpanExtent(100.0),
@@ -1657,8 +1652,8 @@ void main() {
               child: Text('M(0,0)'),
             );
           },
-          rowBuilder:
-              (_) => const TableSpan(extent: FixedTableSpanExtent(100.0)),
+          rowBuilder: (_) =>
+              const TableSpan(extent: FixedTableSpanExtent(100.0)),
           columnBuilder: (_) {
             return const TableSpan(
               extent: FixedTableSpanExtent(100.0),

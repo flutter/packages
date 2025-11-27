@@ -11,7 +11,7 @@ void main() {
 
   test('sanity check readmeSnippets', () async {
     // This key is set and cleared in the snippets.
-    const String clearedKey = 'counter';
+    const clearedKey = 'counter';
 
     // Set a mock store so that there's a platform implementation.
     SharedPreferences.setMockInitialValues(<String, Object>{clearedKey: 2});

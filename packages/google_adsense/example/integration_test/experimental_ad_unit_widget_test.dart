@@ -55,7 +55,7 @@ void main() async {
 
       await adSense.initialize(testClient);
 
-      final CallbackTracker tracker = CallbackTracker();
+      final tracker = CallbackTracker();
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(
           adSlot: testSlot,
@@ -80,14 +80,14 @@ void main() async {
       'Fixed size (without adFormat) ad units respect flutter constraints',
       (WidgetTester tester) async {
         const double maxHeight = 100;
-        const BoxConstraints constraints = BoxConstraints(maxHeight: maxHeight);
+        const constraints = BoxConstraints(maxHeight: maxHeight);
 
         // When
         mockAdsByGoogle(mockAd(size: const Size(320, 157)));
 
         await adSense.initialize(testClient);
 
-        final CallbackTracker tracker = CallbackTracker();
+        final tracker = CallbackTracker();
         final Widget adUnitWidget = AdUnitWidget(
           configuration: AdUnitConfiguration.displayAdUnit(adSlot: testSlot),
           adClient: adSense.adClient,
@@ -119,7 +119,7 @@ void main() async {
 
       await adSense.initialize(testClient);
 
-      final CallbackTracker tracker = CallbackTracker();
+      final tracker = CallbackTracker();
       final Widget adUnitWidget = AdUnitWidget(
         configuration: AdUnitConfiguration.displayAdUnit(adSlot: testSlot),
         adClient: adSense.adClient,
@@ -154,7 +154,7 @@ void main() async {
 
       await adSense.initialize(testClient);
 
-      final CallbackTracker tracker = CallbackTracker();
+      final tracker = CallbackTracker();
       final Widget bunchOfAds = Column(
         children: <Widget>[
           AdUnitWidget(
@@ -226,10 +226,12 @@ Future<void> pumpAdWidget(
   CallbackTracker tracker,
 ) async {
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: Center(child: adUnit))),
+    MaterialApp(
+      home: Scaffold(body: Center(child: adUnit)),
+    ),
   );
 
-  final Stopwatch timer = Stopwatch()..start();
+  final timer = Stopwatch()..start();
   while (!tracker.allCalled) {
     if (timer.elapsedMilliseconds > 1000) {
       fail('timeout while waiting for ad widget to be injected');

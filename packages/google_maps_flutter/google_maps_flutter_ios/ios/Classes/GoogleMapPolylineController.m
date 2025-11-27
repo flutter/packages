@@ -3,7 +3,9 @@
 // found in the LICENSE file.
 
 #import "GoogleMapPolylineController.h"
-#import "FLTGoogleMapJSONConversions.h"
+#import "GoogleMapPolylineController_Test.h"
+
+#import "FGMConversionUtils.h"
 
 @interface FLTGoogleMapPolylineController ()
 
@@ -30,50 +32,30 @@
   self.polyline.map = nil;
 }
 
-- (void)setConsumeTapEvents:(BOOL)consumes {
-  self.polyline.tappable = consumes;
-}
-- (void)setVisible:(BOOL)visible {
-  self.polyline.map = visible ? self.mapView : nil;
-}
-- (void)setZIndex:(int)zIndex {
-  self.polyline.zIndex = zIndex;
-}
-- (void)setPoints:(NSArray<CLLocation *> *)points {
-  GMSMutablePath *path = [GMSMutablePath path];
-
-  for (CLLocation *location in points) {
-    [path addCoordinate:location.coordinate];
-  }
-  self.polyline.path = path;
+- (void)updateFromPlatformPolyline:(FGMPlatformPolyline *)polyline {
+  [FLTGoogleMapPolylineController updatePolyline:self.polyline
+                            fromPlatformPolyline:polyline
+                                     withMapView:self.mapView];
 }
 
-- (void)setColor:(UIColor *)color {
-  self.polyline.strokeColor = color;
-}
-- (void)setStrokeWidth:(CGFloat)width {
-  self.polyline.strokeWidth = width;
-}
++ (void)updatePolyline:(GMSPolyline *)polyline
+    fromPlatformPolyline:(FGMPlatformPolyline *)platformPolyline
+             withMapView:(GMSMapView *)mapView {
+  polyline.tappable = platformPolyline.consumesTapEvents;
+  polyline.zIndex = (int)platformPolyline.zIndex;
+  GMSMutablePath *path =
+      FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolyline.points));
+  polyline.path = path;
+  UIColor *strokeColor = FGMGetColorForPigeonColor(platformPolyline.color);
+  polyline.strokeColor = strokeColor;
+  polyline.strokeWidth = platformPolyline.width;
+  polyline.geodesic = platformPolyline.geodesic;
+  polyline.spans =
+      GMSStyleSpans(path, FGMGetStrokeStylesFromPatterns(platformPolyline.patterns, strokeColor),
+                    FGMGetSpanLengthsFromPatterns(platformPolyline.patterns), kGMSLengthRhumb);
 
-- (void)setGeodesic:(BOOL)isGeodesic {
-  self.polyline.geodesic = isGeodesic;
-}
-
-- (void)setPattern:(NSArray<GMSStrokeStyle *> *)styles lengths:(NSArray<NSNumber *> *)lengths {
-  self.polyline.spans = GMSStyleSpans(self.polyline.path, styles, lengths, kGMSLengthRhumb);
-}
-
-- (void)updateFromPlatformPolyline:(FGMPlatformPolyline *)polyline
-                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self setConsumeTapEvents:polyline.consumesTapEvents];
-  [self setVisible:polyline.visible];
-  [self setZIndex:(int)polyline.zIndex];
-  [self setPoints:FGMGetPointsForPigeonLatLngs(polyline.points)];
-  [self setColor:FGMGetColorForRGBA(polyline.color)];
-  [self setStrokeWidth:polyline.width];
-  [self setGeodesic:polyline.geodesic];
-  [self setPattern:FGMGetStrokeStylesFromPatterns(polyline.patterns, self.polyline.strokeColor)
-           lengths:FGMGetSpanLengthsFromPatterns(polyline.patterns)];
+  // This must be done last, to avoid visual flickers of default property values.
+  polyline.map = platformPolyline.visible ? mapView : nil;
 }
 
 @end
@@ -111,7 +93,7 @@
         [[FLTGoogleMapPolylineController alloc] initWithPath:path
                                                   identifier:identifier
                                                      mapView:self.mapView];
-    [controller updateFromPlatformPolyline:polyline registrar:self.registrar];
+    [controller updateFromPlatformPolyline:polyline];
     self.polylineIdentifierToController[identifier] = controller;
   }
 }
@@ -120,7 +102,7 @@
   for (FGMPlatformPolyline *polyline in polylinesToChange) {
     NSString *identifier = polyline.polylineId;
     FLTGoogleMapPolylineController *controller = self.polylineIdentifierToController[identifier];
-    [controller updateFromPlatformPolyline:polyline registrar:self.registrar];
+    [controller updateFromPlatformPolyline:polyline];
   }
 }
 

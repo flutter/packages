@@ -22,8 +22,8 @@ ResourceRecord ip4Result(String name, InternetAddress address) {
 
 void testTimeout() {
   test('Resolver does not return with short timeout', () async {
-    const Duration shortTimeout = Duration(milliseconds: 1);
-    final LookupResolver resolver = LookupResolver();
+    const shortTimeout = Duration(milliseconds: 1);
+    final resolver = LookupResolver();
     final Stream<ResourceRecord> result = resolver.addPendingRequest(
       ResourceRecordType.addressIPv4,
       'xxx',
@@ -36,8 +36,8 @@ void testTimeout() {
 // One pending request and one response.
 void testResult() {
   test('One pending request and one response', () async {
-    const Duration noTimeout = Duration(days: 1);
-    final LookupResolver resolver = LookupResolver();
+    const noTimeout = Duration(days: 1);
+    final resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult = resolver.addPendingRequest(
       ResourceRecordType.addressIPv4,
       'xxx.local',
@@ -48,8 +48,7 @@ void testResult() {
       InternetAddress('1.2.3.4'),
     );
     resolver.handleResponse(<ResourceRecord>[response]);
-    final IPAddressResourceRecord result =
-        await futureResult.first as IPAddressResourceRecord;
+    final result = await futureResult.first as IPAddressResourceRecord;
     expect('1.2.3.4', result.address.address);
     resolver.clearPendingRequests();
   });
@@ -57,8 +56,8 @@ void testResult() {
 
 void testResult2() {
   test('Two requests', () async {
-    const Duration noTimeout = Duration(days: 1);
-    final LookupResolver resolver = LookupResolver();
+    const noTimeout = Duration(days: 1);
+    final resolver = LookupResolver();
     final Stream<ResourceRecord> futureResult1 = resolver.addPendingRequest(
       ResourceRecordType.addressIPv4,
       'xxx.local',
@@ -78,10 +77,8 @@ void testResult2() {
       InternetAddress('2.3.4.5'),
     );
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
-    final IPAddressResourceRecord result1 =
-        await futureResult1.first as IPAddressResourceRecord;
-    final IPAddressResourceRecord result2 =
-        await futureResult2.first as IPAddressResourceRecord;
+    final result1 = await futureResult1.first as IPAddressResourceRecord;
+    final result2 = await futureResult2.first as IPAddressResourceRecord;
     expect('1.2.3.4', result1.address.address);
     expect('2.3.4.5', result2.address.address);
     resolver.clearPendingRequests();
@@ -90,8 +87,8 @@ void testResult2() {
 
 void testResult3() {
   test('Multiple requests', () async {
-    const Duration noTimeout = Duration(days: 1);
-    final LookupResolver resolver = LookupResolver();
+    const noTimeout = Duration(days: 1);
+    final resolver = LookupResolver();
     final ResourceRecord response0 = ip4Result(
       'zzz.local',
       InternetAddress('2.3.4.5'),
@@ -121,10 +118,8 @@ void testResult3() {
     resolver.handleResponse(<ResourceRecord>[response0]);
     resolver.handleResponse(<ResourceRecord>[response2, response1]);
     resolver.handleResponse(<ResourceRecord>[response0]);
-    final IPAddressResourceRecord result1 =
-        await futureResult1.first as IPAddressResourceRecord;
-    final IPAddressResourceRecord result2 =
-        await futureResult2.first as IPAddressResourceRecord;
+    final result1 = await futureResult1.first as IPAddressResourceRecord;
+    final result2 = await futureResult2.first as IPAddressResourceRecord;
     expect('1.2.3.4', result1.address.address);
     expect('2.3.4.5', result2.address.address);
     resolver.clearPendingRequests();

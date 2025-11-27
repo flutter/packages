@@ -14,7 +14,7 @@ void expectSetMatch<T>(Iterable<T> actual, Iterable<T> expected) {
 
 // May return null if the credentials file doesn't exist.
 Map<String, dynamic>? getTestGcpCredentialsJson() {
-  final File f = File('secret/test_gcp_credentials.json');
+  final f = File('secret/test_gcp_credentials.json');
   if (!f.existsSync()) {
     return null;
   }
