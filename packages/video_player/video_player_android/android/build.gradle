@@ -29,7 +29,7 @@ android {
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {

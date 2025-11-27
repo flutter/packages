@@ -109,6 +109,7 @@ void main() {
     newPreview:
         ({
           int? targetRotation,
+          CameraIntegerRange? targetFpsRange,
           ResolutionSelector? resolutionSelector,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
@@ -148,6 +149,7 @@ void main() {
     withOutputVideoCapture:
         ({
           required VideoOutput videoOutput,
+          CameraIntegerRange? targetFpsRange,
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
           // ignore: non_constant_identifier_names
@@ -158,6 +160,7 @@ void main() {
     newImageAnalysis:
         ({
           int? targetRotation,
+          CameraIntegerRange? targetFpsRange,
           ResolutionSelector? resolutionSelector,
           int? outputImageFormat,
           // ignore: non_constant_identifier_names
