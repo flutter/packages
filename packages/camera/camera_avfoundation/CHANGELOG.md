@@ -1,6 +1,7 @@
-## 0.9.22+7
+## 0.9.23
 
 * Migrates `FLTCaptureConnection`, `FLTCaptureDeviceFormat` and `FLTAssetWriter` classes to Swift.
+* Adds error handling for asset writer start and sample buffer append failures.
 
 ## 0.9.22+6
 

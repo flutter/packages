@@ -511,7 +511,14 @@ final class DefaultCamera: NSObject, Camera {
     // https://github.com/flutter/flutter/issues/132016
     // https://github.com/flutter/flutter/issues/151319
     // Result ignored in line with the Objective-C implementation
-    let _ = videoWriter?.startWriting()
+    guard videoWriter?.startWriting() ?? false else {
+      completion(
+        FlutterError(
+          code: "IOError",
+          message: "Starting Writer Failed",
+          details: nil))
+      return
+    }
     isFirstVideoSample = true
     isRecording = true
     isRecordingPaused = false
@@ -1220,8 +1227,9 @@ final class DefaultCamera: NSObject, Camera {
         // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
         // https://github.com/flutter/flutter/issues/132073
         if videoWriterInput?.isReadyForMoreMediaData ?? false {
-          // Result ignored in line with the Objective-C implementation
-          let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+          if !(videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime) ?? false) {
+            reportErrorMessage("failed to append sample buffer")
+          }
         }
       } else {
         let dur = CMSampleBufferGetDuration(sampleBuffer)
