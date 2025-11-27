@@ -1168,6 +1168,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
     _i8.BinaryMessenger? pigeon_binaryMessenger,
     _i2.PigeonInstanceManager? pigeon_instanceManager,
     _i2.ResolutionSelector? resolutionSelector,
+    _i2.CameraIntegerRange? targetFpsRange,
     int? targetRotation,
   })
   get newPreview =>
@@ -1178,6 +1179,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.ResolutionSelector? resolutionSelector,
+                  _i2.CameraIntegerRange? targetFpsRange,
                   int? targetRotation,
                 }) => _FakePreview_19(this, Invocation.getter(#newPreview)),
             returnValueForMissingStub:
@@ -1185,6 +1187,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.ResolutionSelector? resolutionSelector,
+                  _i2.CameraIntegerRange? targetFpsRange,
                   int? targetRotation,
                 }) => _FakePreview_19(this, Invocation.getter(#newPreview)),
           )
@@ -1192,6 +1195,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             _i8.BinaryMessenger? pigeon_binaryMessenger,
             _i2.PigeonInstanceManager? pigeon_instanceManager,
             _i2.ResolutionSelector? resolutionSelector,
+            _i2.CameraIntegerRange? targetFpsRange,
             int? targetRotation,
           }));
 
@@ -1200,6 +1204,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
     required _i2.VideoOutput videoOutput,
     _i8.BinaryMessenger? pigeon_binaryMessenger,
     _i2.PigeonInstanceManager? pigeon_instanceManager,
+    _i2.CameraIntegerRange? targetFpsRange,
   })
   get withOutputVideoCapture =>
       (super.noSuchMethod(
@@ -1208,6 +1213,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                 ({
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
+                  _i2.CameraIntegerRange? targetFpsRange,
                   required _i2.VideoOutput videoOutput,
                 }) => _FakeVideoCapture_20(
                   this,
@@ -1217,6 +1223,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                 ({
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
+                  _i2.CameraIntegerRange? targetFpsRange,
                   required _i2.VideoOutput videoOutput,
                 }) => _FakeVideoCapture_20(
                   this,
@@ -1227,6 +1234,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             required _i2.VideoOutput videoOutput,
             _i8.BinaryMessenger? pigeon_binaryMessenger,
             _i2.PigeonInstanceManager? pigeon_instanceManager,
+            _i2.CameraIntegerRange? targetFpsRange,
           }));
 
   @override
@@ -1478,6 +1486,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
     _i8.BinaryMessenger? pigeon_binaryMessenger,
     _i2.PigeonInstanceManager? pigeon_instanceManager,
     _i2.ResolutionSelector? resolutionSelector,
+    _i2.CameraIntegerRange? targetFpsRange,
     int? targetRotation,
   })
   get newImageAnalysis =>
@@ -1489,6 +1498,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.ResolutionSelector? resolutionSelector,
+                  _i2.CameraIntegerRange? targetFpsRange,
                   int? targetRotation,
                 }) => _FakeImageAnalysis_26(
                   this,
@@ -1500,6 +1510,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
                   _i8.BinaryMessenger? pigeon_binaryMessenger,
                   _i2.PigeonInstanceManager? pigeon_instanceManager,
                   _i2.ResolutionSelector? resolutionSelector,
+                  _i2.CameraIntegerRange? targetFpsRange,
                   int? targetRotation,
                 }) => _FakeImageAnalysis_26(
                   this,
@@ -1511,6 +1522,7 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             _i8.BinaryMessenger? pigeon_binaryMessenger,
             _i2.PigeonInstanceManager? pigeon_instanceManager,
             _i2.ResolutionSelector? resolutionSelector,
+            _i2.CameraIntegerRange? targetFpsRange,
             int? targetRotation,
           }));
 
@@ -2214,6 +2226,42 @@ class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
             ),
           )
           as _i2.CameraCharacteristicsKey Function());
+
+  @override
+  _i5.Future<_i9.Uint8List?> Function(
+    int,
+    int,
+    List<_i2.PlaneProxy>, {
+    _i8.BinaryMessenger? pigeon_binaryMessenger,
+    _i2.PigeonInstanceManager? pigeon_instanceManager,
+  })
+  get getNv21BufferImageProxyUtils =>
+      (super.noSuchMethod(
+            Invocation.getter(#getNv21BufferImageProxyUtils),
+            returnValue:
+                (
+                  int imageWidth,
+                  int imageHeight,
+                  List<_i2.PlaneProxy> planes, {
+                  _i8.BinaryMessenger? pigeon_binaryMessenger,
+                  _i2.PigeonInstanceManager? pigeon_instanceManager,
+                }) => _i5.Future<_i9.Uint8List?>.value(),
+            returnValueForMissingStub:
+                (
+                  int imageWidth,
+                  int imageHeight,
+                  List<_i2.PlaneProxy> planes, {
+                  _i8.BinaryMessenger? pigeon_binaryMessenger,
+                  _i2.PigeonInstanceManager? pigeon_instanceManager,
+                }) => _i5.Future<_i9.Uint8List?>.value(),
+          )
+          as _i5.Future<_i9.Uint8List?> Function(
+            int,
+            int,
+            List<_i2.PlaneProxy>, {
+            _i8.BinaryMessenger? pigeon_binaryMessenger,
+            _i2.PigeonInstanceManager? pigeon_instanceManager,
+          }));
 
   @override
   set withModeFocusMeteringActionBuilder(
