@@ -11,18 +11,24 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class ObserverTest {
+  private ObserverProxyApi mockApi;
+  private TestProxyApiRegistrar registrar;
+  private ObserverProxyApi.ObserverImpl<String> instance;
+
+  @Before
+  public void setUp() {
+    mockApi = mock(ObserverProxyApi.class);
+    registrar = new TestProxyApiRegistrar();
+    when(mockApi.getPigeonRegistrar()).thenReturn(registrar);
+    instance = new ObserverProxyApi.ObserverImpl<>(mockApi);
+  }
+
   @Test
   public void onChanged_makesExpectedCallToDartCallback() {
-    final ObserverProxyApi mockApi = mock(ObserverProxyApi.class);
-    final TestProxyApiRegistrar registrar = new TestProxyApiRegistrar();
-    when(mockApi.getPigeonRegistrar()).thenReturn(registrar);
-
-    final ObserverProxyApi.ObserverImpl<String> instance =
-        new ObserverProxyApi.ObserverImpl<>(mockApi);
-
     // Add the observer to the instance manager to simulate normal operation
     registrar.getInstanceManager().addDartCreatedInstance(instance, 0);
 
@@ -34,13 +40,6 @@ public class ObserverTest {
 
   @Test
   public void onChanged_doesNotCallDartCallbackWhenObserverNotInInstanceManager() {
-    final ObserverProxyApi mockApi = mock(ObserverProxyApi.class);
-    final TestProxyApiRegistrar registrar = new TestProxyApiRegistrar();
-    when(mockApi.getPigeonRegistrar()).thenReturn(registrar);
-
-    final ObserverProxyApi.ObserverImpl<String> instance =
-        new ObserverProxyApi.ObserverImpl<>(mockApi);
-
     final String value = "result";
     instance.onChanged(value);
 
