@@ -29,6 +29,17 @@ class ObserverProxyApi extends PigeonApiObserver {
               new ProxyApiRegistrar.FlutterMethodRunnable() {
                 @Override
                 public void run() {
+                  // Check if this observer instance is still in the instance manager.
+                  // During hot restart, old observers may remain attached to LiveData but
+                  // are no longer tracked in the instance manager.
+                  if (!api.getPigeonRegistrar().getInstanceManager().containsInstance(ObserverImpl.this)) {
+                    android.util.Log.w(
+                        "ObserverProxyApi",
+                        "Ignoring onChanged callback for Observer not in InstanceManager (likely from previous hot restart): "
+                            + ObserverImpl.this);
+                    return;
+                  }
+
                   api.onChanged(
                       ObserverImpl.this,
                       t,

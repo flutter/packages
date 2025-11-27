@@ -1,3 +1,7 @@
+## 0.6.25+1
+
+* Fixes crash on hot restart caused by stale observers.
+
 ## 0.6.25
 
 * Adds support for `MediaSettings.fps` for camera preview, image streaming, and video recording.
