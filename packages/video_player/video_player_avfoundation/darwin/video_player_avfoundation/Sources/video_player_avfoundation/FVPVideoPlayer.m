@@ -448,12 +448,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
     for (NSInteger i = 0; i < audioGroup.options.count; i++) {
       AVMediaSelectionOption *option = audioGroup.options[i];
-
-      // Skip nil options
-      if (!option || [option isKindOfClass:[NSNull class]]) {
-        continue;
-      }
-
       NSString *displayName = option.displayName;
 
       NSString *languageCode = nil;
@@ -461,16 +455,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         languageCode = option.locale.languageCode;
       }
 
-      NSString *commonMetadataTitle = nil;
       NSArray<AVMetadataItem *> *titleItems =
           [AVMetadataItem metadataItemsFromArray:option.commonMetadata
                                          withKey:AVMetadataCommonKeyTitle
                                         keySpace:AVMetadataKeySpaceCommon];
-      if (titleItems.count > 0 && titleItems.firstObject.stringValue) {
-        commonMetadataTitle = titleItems.firstObject.stringValue;
-      }
+      NSString *commonMetadataTitle = titleItems.firstObject.stringValue;
 
-      BOOL isSelected = (currentSelection == option) || [currentSelection isEqual:option];
+      BOOL isSelected = [currentSelection isEqual:option];
 
       FVPMediaSelectionAudioTrackData *trackData =
           [FVPMediaSelectionAudioTrackData makeWithIndex:i
@@ -518,61 +509,41 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     NSNumber *channelCount = nil;
     NSString *codec = nil;
 
-    // Attempt format description parsing
+    // Extract format information from the track's format descriptions
     if (track.formatDescriptions.count > 0) {
-      @try {
-        id formatDescObj = track.formatDescriptions[0];
+      CMFormatDescriptionRef formatDesc =
+          (__bridge CMFormatDescriptionRef)track.formatDescriptions[0];
 
-        // Validate that we have a valid format description object
-        if (formatDescObj && [formatDescObj respondsToSelector:@selector(self)]) {
-          NSString *className = NSStringFromClass([formatDescObj class]);
-
-          // Only process objects that are clearly Core Media format descriptions
-          if ([className hasPrefix:@"CMAudioFormatDescription"] ||
-              [className hasPrefix:@"CMVideoFormatDescription"] ||
-              [className hasPrefix:@"CMFormatDescription"]) {
-            CMFormatDescriptionRef formatDesc = (__bridge CMFormatDescriptionRef)formatDescObj;
-
-            // Validate the format description reference before using Core Media APIs
-            if (formatDesc && CFGetTypeID(formatDesc) == CMFormatDescriptionGetTypeID()) {
-              // Get audio stream basic description
-              const AudioStreamBasicDescription *audioDesc =
-                  CMAudioFormatDescriptionGetStreamBasicDescription(formatDesc);
-              if (audioDesc) {
-                if (audioDesc->mSampleRate > 0) {
-                  sampleRate = @((NSInteger)audioDesc->mSampleRate);
-                }
-                if (audioDesc->mChannelsPerFrame > 0) {
-                  channelCount = @(audioDesc->mChannelsPerFrame);
-                }
-              }
-
-              // Try to get codec information
-              FourCharCode codecType = CMFormatDescriptionGetMediaSubType(formatDesc);
-              switch (codecType) {
-                case kAudioFormatMPEG4AAC:
-                  codec = @"aac";
-                  break;
-                case kAudioFormatAC3:
-                  codec = @"ac3";
-                  break;
-                case kAudioFormatEnhancedAC3:
-                  codec = @"eac3";
-                  break;
-                case kAudioFormatMPEGLayer3:
-                  codec = @"mp3";
-                  break;
-                default:
-                  codec = nil;
-                  break;
-              }
-            }
-          }
+      // Get audio stream basic description
+      const AudioStreamBasicDescription *audioDesc =
+          CMAudioFormatDescriptionGetStreamBasicDescription(formatDesc);
+      if (audioDesc) {
+        if (audioDesc->mSampleRate > 0) {
+          sampleRate = @((NSInteger)audioDesc->mSampleRate);
         }
-      } @catch (NSException *exception) {
-        // Handle any exceptions from format description parsing gracefully
-        // This ensures the method continues to work even with mock objects or invalid data
-        // In tests, this allows the method to return track data with nil format fields
+        if (audioDesc->mChannelsPerFrame > 0) {
+          channelCount = @(audioDesc->mChannelsPerFrame);
+        }
+      }
+
+      // Get codec information
+      FourCharCode codecType = CMFormatDescriptionGetMediaSubType(formatDesc);
+      switch (codecType) {
+        case kAudioFormatMPEG4AAC:
+          codec = @"aac";
+          break;
+        case kAudioFormatAC3:
+          codec = @"ac3";
+          break;
+        case kAudioFormatEnhancedAC3:
+          codec = @"eac3";
+          break;
+        case kAudioFormatMPEGLayer3:
+          codec = @"mp3";
+          break;
+        default:
+          codec = nil;
+          break;
       }
     }
 
