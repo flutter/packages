@@ -237,20 +237,18 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   ) {
     Task {
       @MainActor in
-      do {
-        var transactionsMsgs: [SK2TransactionMessage] = []
-        for await verificationResult in Transaction.unfinished {
-          switch verificationResult {
-          case .verified(let transaction):
-            transactionsMsgs.append(
-              transaction.convertToPigeon(receipt: verificationResult.jwsRepresentation)
-            )
-          case .unverified:
-            break
-          }
+      var transactionsMsgs: [SK2TransactionMessage] = []
+      for await verificationResult in Transaction.unfinished {
+        switch verificationResult {
+        case .verified(let transaction):
+          transactionsMsgs.append(
+            transaction.convertToPigeon(receipt: verificationResult.jwsRepresentation)
+          )
+        case .unverified:
+          break
         }
-        completion(.success(transactionsMsgs))
       }
+      completion(.success(transactionsMsgs))
     }
   }
 

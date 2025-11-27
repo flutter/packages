@@ -172,7 +172,7 @@ void main() {
     });
 
     test(
-      'buying consumable, should get PurchaseVerificationData with serverVerificationData and localVerificationData',
+      'buying consumable, should get PurchaseVerificationData with serverVerificationData, localVerificationData, and appAccountToken',
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
@@ -207,6 +207,10 @@ void main() {
         expect(
           result.first.verificationData.localVerificationData,
           'jsonRepresentation',
+        );
+        expect(
+          (result.first as SK2PurchaseDetails).appAccountToken,
+          'appAccountToken',
         );
       },
     );
@@ -680,41 +684,5 @@ void main() {
         expect(transactions.first.receiptData, 'fake_jws_representation');
       },
     );
-  });
-
-  group('appAccountToken exposure', () {
-    test('should expose appAccountToken in SK2PurchaseDetails', () async {
-      const String testToken = 'test-uuid-12345';
-      final SK2PurchaseDetails details = SK2PurchaseDetails(
-        productID: 'test_product',
-        purchaseID: '999',
-        verificationData: PurchaseVerificationData(
-          localVerificationData: '',
-          serverVerificationData: '',
-          source: 'app_store',
-        ),
-        transactionDate: '2025-11-15',
-        status: PurchaseStatus.purchased,
-        appAccountToken: testToken,
-      );
-
-      expect(details.appAccountToken, testToken);
-    });
-
-    test('should handle null appAccountToken in SK2PurchaseDetails', () async {
-      final SK2PurchaseDetails details = SK2PurchaseDetails(
-        productID: 'test_product',
-        purchaseID: '999',
-        verificationData: PurchaseVerificationData(
-          localVerificationData: '',
-          serverVerificationData: '',
-          source: 'app_store',
-        ),
-        transactionDate: '2025-11-15',
-        status: PurchaseStatus.purchased,
-      );
-
-      expect(details.appAccountToken, isNull);
-    });
   });
 }
