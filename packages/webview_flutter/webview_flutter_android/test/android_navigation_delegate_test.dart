@@ -722,11 +722,6 @@ AndroidNavigationDelegateCreationParams _buildCreationParams() {
       CapturingDownloadListener.new;
   return AndroidNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
     const PlatformNavigationDelegateCreationParams(),
-    // androidWebViewProxy: const AndroidWebViewProxy(
-    //   newWebChromeClient: CapturingWebChromeClient.new,
-    //   newWebViewClient: CapturingWebViewClient.new,
-    //   newDownloadListener: CapturingDownloadListener.new,
-    // ),
   );
 }
 
