@@ -2075,7 +2075,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
+      );
 
       final webViewWidget = AndroidWebViewWidget(
         AndroidWebViewWidgetCreationParams(
@@ -2102,7 +2104,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
+      );
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2152,7 +2156,9 @@ void main() {
         mockWebView: mockWebView,
       );
 
-      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
+      );
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2208,7 +2214,9 @@ void main() {
       onShowCustomViewCallback;
 
       final android_webview.WebView mockWebView = MockWebView();
-      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
+      );
 
       final AndroidWebViewController controller = createControllerWithMocks(
         createWebChromeClient:
@@ -2269,8 +2277,7 @@ void main() {
       onShowCustomViewCallback!(
         MockWebChromeClient(),
         mockWebView,
-        android_webview.CustomViewCallback.pigeon_detached(
-        ),
+        android_webview.CustomViewCallback.pigeon_detached(),
       );
       await tester.pumpAndSettle();
 
@@ -2281,7 +2288,9 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
+      );
 
       final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2351,7 +2360,9 @@ void main() {
       'PlatformView does not rebuild when creation params stay the same',
       (WidgetTester tester) async {
         final android_webview.WebView mockWebView = MockWebView();
-        android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+        android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+          mockWebView,
+        );
 
         final mockPlatformViewsService = MockPlatformViewsServiceProxy();
 
@@ -2428,7 +2439,9 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
+      );
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
@@ -2454,7 +2467,9 @@ void main() {
       WidgetTester tester,
     ) async {
       final android_webview.WebView mockWebView = MockWebView();
-      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(mockWebView);
+      android_webview.PigeonInstanceManager.instance.addDartCreatedInstance(
+        mockWebView,
+      );
 
       final AndroidWebViewController controller = createControllerWithMocks(
         mockWebView: mockWebView,
