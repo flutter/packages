@@ -419,7 +419,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
     // Test that finishing a non-existent transaction returns success
     // This is important for consumables that may have already been finished
     // or are no longer in the transaction history
-    let finishExpectation = self.expectation(description: "Finishing non-existent transaction should succeed")
+    let finishExpectation = self.expectation(
+      description: "Finishing non-existent transaction should succeed")
 
     plugin.finish(id: 999999) { result in
       switch result {

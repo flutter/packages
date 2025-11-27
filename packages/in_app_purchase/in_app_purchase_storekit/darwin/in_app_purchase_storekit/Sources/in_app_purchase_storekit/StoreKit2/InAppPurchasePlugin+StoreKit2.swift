@@ -391,7 +391,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         continue
       }
     }
-    
+
     // If not found in Transaction.all, check unfinished transactions
     // This is important for consumables that may have been purchased
     // but not yet iterated through Transaction.all
@@ -405,7 +405,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         continue
       }
     }
-    
+
     return nil
   }
 }
