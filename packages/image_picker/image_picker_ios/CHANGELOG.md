@@ -1,3 +1,7 @@
+## 0.8.13+3
+
+* Fixes camera confirmation taps leaking through the picker on some iOS versions (e.g., iOS 26).
+
 ## 0.8.13+2
 
 * Updates to Pigeon 26.
