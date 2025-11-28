@@ -2,6 +2,10 @@
 
 - Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
+## 17.0.1
+
+- Fixes an issue where `GoRouter.refresh()` did not trigger a widget rebuild.
+
 ## 17.0.0
 
 - **BREAKING CHANGE**
