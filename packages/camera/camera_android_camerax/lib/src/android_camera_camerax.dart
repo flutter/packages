@@ -418,7 +418,6 @@ class AndroidCameraCameraX extends CameraPlatform {
     preview = Preview(
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
-      /* use CameraX default target rotation */ targetRotation: null,
     );
     _flutterSurfaceTextureId = await preview!.setSurfaceProvider(
       systemServicesManager,
@@ -485,7 +484,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       resolutionSelector: _presetResolutionSelector,
       targetFpsRange: _targetFpsRange,
       outputImageFormat: _imageAnalysisOutputImageFormat,
-      /* use CameraX default target rotation */ targetRotation: null,
     );
 
     // Bind configured UseCases to ProcessCameraProvider instance & mark Preview
@@ -842,12 +840,12 @@ class AndroidCameraCameraX extends CameraPlatform {
   /// [cameraId] is not used.
   @override
   Future<void> setExposureMode(int cameraId, ExposureMode mode) async {
-    final Camera2CameraControl camera2Control = Camera2CameraControl.from(
+    final camera2Control = Camera2CameraControl.from(
       cameraControl: cameraControl,
     );
     final lockExposureMode = mode == ExposureMode.locked;
 
-    final CaptureRequestOptions captureRequestOptions = CaptureRequestOptions(
+    final captureRequestOptions = CaptureRequestOptions(
       options: <CaptureRequestKey, Object?>{
         CaptureRequest.controlAELock: lockExposureMode,
       },
@@ -1677,12 +1675,11 @@ class AndroidCameraCameraX extends CameraPlatform {
         );
       }
 
-      final DisplayOrientedMeteringPointFactory meteringPointFactory =
-          DisplayOrientedMeteringPointFactory(
-            width: 1.0,
-            height: 1.0,
-            cameraInfo: cameraInfo!,
-          );
+      final meteringPointFactory = DisplayOrientedMeteringPointFactory(
+        width: 1.0,
+        height: 1.0,
+        cameraInfo: cameraInfo!,
+      );
       meteringPoint = await meteringPointFactory.createPoint(point.x, point.y);
     }
     return _startFocusAndMeteringFor(

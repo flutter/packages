@@ -27,7 +27,7 @@ final class GenericsPigeonOverrides {
   observerNew;
 
   /// Sets all overridden ProxyApi class members to null.
-  void reset() {
+  static void reset() {
     observerNew = null;
   }
 }
@@ -170,15 +170,16 @@ class LiveData<T> extends camerax.LiveData {
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/Observer.
 class Observer<T> extends camerax.Observer {
+  /// Constructs an [Observer].
   factory Observer({
-    BinaryMessenger? pigeon_binaryMessenger,
-    required void Function(Observer<T> pigeon_instance, T value) onChanged,
+    required void Function(Observer<T> instance, T value) onChanged,
+    BinaryMessenger? binaryMessenger,
   }) {
     if (GenericsPigeonOverrides.observerNew != null) {
       return GenericsPigeonOverrides.observerNew!(onChanged: onChanged);
     }
     return Observer<T>.pigeonNew(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_binaryMessenger: binaryMessenger,
       onChanged: onChanged,
     );
   }

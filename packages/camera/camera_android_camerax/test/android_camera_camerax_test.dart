@@ -10,7 +10,7 @@ import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/camerax_library.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart'
-    show BinaryMessenger, DeviceOrientation, PlatformException, Uint8List;
+    show DeviceOrientation, PlatformException, Uint8List;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -66,6 +66,7 @@ void main() {
 
   setUp(() {
     PigeonOverrides.pigeon_reset();
+    GenericsPigeonOverrides.reset();
   });
 
   /// Helper method for testing sending/receiving CameraErrorEvents.

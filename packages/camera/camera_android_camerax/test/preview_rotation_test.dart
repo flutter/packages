@@ -40,6 +40,7 @@ void main() {
 
   setUp(() {
     PigeonOverrides.pigeon_reset();
+    GenericsPigeonOverrides.reset();
   });
 
   /// Sets up mock CameraSelector and mock ProcessCameraProvider used to
