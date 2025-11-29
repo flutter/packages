@@ -29,6 +29,12 @@ class _FakeTexturePlayerIds_0 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakeNativeAudioTrackData_1 extends _i1.SmartFake
+    implements _i2.NativeAudioTrackData {
+  _FakeNativeAudioTrackData_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [AndroidVideoPlayerApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -217,4 +223,33 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
             returnValueForMissingStub: _i4.Future<int>.value(0),
           )
           as _i4.Future<int>);
+
+  @override
+  _i4.Future<_i2.NativeAudioTrackData> getAudioTracks() =>
+      (super.noSuchMethod(
+            Invocation.method(#getAudioTracks, []),
+            returnValue: _i4.Future<_i2.NativeAudioTrackData>.value(
+              _FakeNativeAudioTrackData_1(
+                this,
+                Invocation.method(#getAudioTracks, []),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i4.Future<_i2.NativeAudioTrackData>.value(
+                  _FakeNativeAudioTrackData_1(
+                    this,
+                    Invocation.method(#getAudioTracks, []),
+                  ),
+                ),
+          )
+          as _i4.Future<_i2.NativeAudioTrackData>);
+
+  @override
+  _i4.Future<void> selectAudioTrack(int? groupIndex, int? trackIndex) =>
+      (super.noSuchMethod(
+            Invocation.method(#selectAudioTrack, [groupIndex, trackIndex]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }
