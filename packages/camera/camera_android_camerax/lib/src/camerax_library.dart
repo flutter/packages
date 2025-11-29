@@ -9,6 +9,29 @@ import 'camerax_library.g.dart' as camerax;
 
 export 'camerax_library.g.dart' hide CameraInfo, LiveData, Observer;
 
+/// Provides overrides for the constructors and static members of classes that
+/// extend Dart proxy classes.
+///
+/// Intended to be similar to [camerax.PigeonOverrides].
+///
+/// This is only intended to be used with unit tests to prevent errors from
+/// making message calls in a unit test.
+///
+/// See [GenericsPigeonOverrides.reset] to set all overrides back to null.
+@visibleForTesting
+final class GenericsPigeonOverrides {
+  /// Overrides [Observer.new].
+  static Observer<T> Function<T>({
+    required void Function(Observer<T> pigeonInstance, T value) onChanged,
+  })?
+  observerNew;
+
+  /// Sets all overridden ProxyApi class members to null.
+  void reset() {
+    observerNew = null;
+  }
+}
+
 /// Handles adding support for generics to the API wrapper.
 ///
 /// APIs wrapped with the pigeon ProxyAPI system doesn't support generics, so
@@ -24,13 +47,11 @@ void setUpGenerics({
           return LiveData<camerax.CameraState>.detached(
             type: type,
             pigeon_binaryMessenger: pigeonBinaryMessenger,
-            pigeon_instanceManager: pigeonInstanceManager,
           );
         case camerax.LiveDataSupportedType.zoomState:
           return LiveData<camerax.ZoomState>.detached(
             type: type,
             pigeon_binaryMessenger: pigeonBinaryMessenger,
-            pigeon_instanceManager: pigeonInstanceManager,
           );
       }
     },
@@ -43,7 +64,6 @@ void setUpGenerics({
             sensorRotationDegrees: sensorRotationDegrees,
             exposureState: exposureState,
             pigeon_binaryMessenger: pigeonBinaryMessenger,
-            pigeon_instanceManager: pigeonInstanceManager,
           );
         },
   );
@@ -87,8 +107,6 @@ class CameraInfo extends camerax.CameraInfo {
     required super.exposureState,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : super.pigeon_detached();
 
   @override
@@ -108,7 +126,6 @@ class CameraInfo extends camerax.CameraInfo {
       sensorRotationDegrees: sensorRotationDegrees,
       exposureState: exposureState,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }
@@ -130,8 +147,6 @@ class LiveData<T> extends camerax.LiveData {
     required super.type,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : super.pigeon_detached();
 
   @override
@@ -150,7 +165,6 @@ class LiveData<T> extends camerax.LiveData {
     return LiveData<T>.detached(
       type: type,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }
@@ -159,13 +173,25 @@ class LiveData<T> extends camerax.LiveData {
 ///
 /// See https://developer.android.com/reference/androidx/lifecycle/Observer.
 class Observer<T> extends camerax.Observer {
+  factory Observer({
+    BinaryMessenger? pigeon_binaryMessenger,
+    required void Function(Observer<T> pigeon_instance, T value) onChanged,
+  }) {
+    if (GenericsPigeonOverrides.observerNew != null) {
+      return GenericsPigeonOverrides.observerNew!(onChanged: onChanged);
+    }
+    return Observer<T>.pigeonNew(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      onChanged: onChanged,
+    );
+  }
+
   /// Constructs an [Observer].
-  Observer({
+  @protected
+  Observer.pigeonNew({
     required void Function(Observer<T> instance, T value) onChanged,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : _genericOnChanged = onChanged,
        super.pigeon_new(
          onChanged: (camerax.Observer instance, Object value) {
@@ -181,8 +207,6 @@ class Observer<T> extends camerax.Observer {
     required void Function(Observer<T> instance, T value) onChanged,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    super.pigeon_instanceManager,
   }) : _genericOnChanged = onChanged,
        super.pigeon_detached(
          onChanged: (camerax.Observer instance, Object value) {
@@ -198,7 +222,6 @@ class Observer<T> extends camerax.Observer {
     return Observer<T>.detached(
       onChanged: _genericOnChanged,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
     );
   }
 }
