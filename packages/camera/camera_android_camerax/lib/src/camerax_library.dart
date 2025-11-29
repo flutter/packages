@@ -36,10 +36,7 @@ final class GenericsPigeonOverrides {
 ///
 /// APIs wrapped with the pigeon ProxyAPI system doesn't support generics, so
 /// this handles using subclasses to add support.
-void setUpGenerics({
-  BinaryMessenger? pigeonBinaryMessenger,
-  camerax.PigeonInstanceManager? pigeonInstanceManager,
-}) {
+void setUpGenerics({BinaryMessenger? pigeonBinaryMessenger}) {
   camerax.LiveData.pigeon_setUpMessageHandlers(
     pigeon_newInstance: (camerax.LiveDataSupportedType type) {
       switch (type) {

@@ -850,39 +850,32 @@ void main() {
         await camera.initializeCamera(flutterSurfaceTextureId);
 
         late final CameraSize? expectedBoundSize;
-        final testInstanceManager = PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
+
         switch (resolutionPreset) {
           case ResolutionPreset.low:
             expectedBoundSize = CameraSize.pigeon_detached(
               width: 320,
               height: 240,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.medium:
             expectedBoundSize = CameraSize.pigeon_detached(
               width: 720,
               height: 480,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.high:
             expectedBoundSize = CameraSize.pigeon_detached(
               width: 1280,
               height: 720,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.veryHigh:
             expectedBoundSize = CameraSize.pigeon_detached(
               width: 1920,
               height: 1080,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.ultraHigh:
             expectedBoundSize = CameraSize.pigeon_detached(
               width: 3840,
               height: 2160,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.max:
             continue;
@@ -1011,39 +1004,32 @@ void main() {
         await camera.initializeCamera(flutterSurfaceTextureId);
 
         CameraSize? expectedPreferredResolution;
-        final testInstanceManager = PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
+
         switch (resolutionPreset) {
           case ResolutionPreset.low:
             expectedPreferredResolution = CameraSize.pigeon_detached(
               width: 320,
               height: 240,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.medium:
             expectedPreferredResolution = CameraSize.pigeon_detached(
               width: 720,
               height: 480,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.high:
             expectedPreferredResolution = CameraSize.pigeon_detached(
               width: 1280,
               height: 720,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.veryHigh:
             expectedPreferredResolution = CameraSize.pigeon_detached(
               width: 1920,
               height: 1080,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.ultraHigh:
             expectedPreferredResolution = CameraSize.pigeon_detached(
               width: 3840,
               height: 2160,
-              pigeon_instanceManager: testInstanceManager,
             );
           case ResolutionPreset.max:
             expectedPreferredResolution = null;
@@ -2183,16 +2169,12 @@ void main() {
     const resolutionWidth = 350;
     const resolutionHeight = 750;
     final Camera mockCamera = MockCamera();
-    final testInstanceManager = PigeonInstanceManager(
-      onWeakReferenceRemoved: (_) {},
-    );
+
     final testResolutionInfo = ResolutionInfo.pigeon_detached(
       resolution: CameraSize.pigeon_detached(
         width: resolutionWidth,
         height: resolutionHeight,
-        pigeon_instanceManager: testInstanceManager,
       ),
-      pigeon_instanceManager: testInstanceManager,
     );
 
     // Mocks for (typically attached) objects created by createCamera.
@@ -2721,12 +2703,7 @@ void main() {
               required void Function(VideoRecordEventListener, VideoRecordEvent)
               onEvent,
             }) {
-              return VideoRecordEventListener.pigeon_detached(
-                onEvent: onEvent,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
+              return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
             };
         PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
             MockCameraCharacteristicsKey();
@@ -2768,11 +2745,7 @@ void main() {
 
         // Simulate video recording being started so startVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventStart.pigeon_detached(),
         );
 
         await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
@@ -2856,12 +2829,7 @@ void main() {
               required void Function(VideoRecordEventListener, VideoRecordEvent)
               onEvent,
             }) {
-              return VideoRecordEventListener.pigeon_detached(
-                onEvent: onEvent,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
+              return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
             };
         PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
             MockCameraCharacteristicsKey();
@@ -2902,11 +2870,7 @@ void main() {
 
         // Simulate video recording being started so startVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventStart.pigeon_detached(),
         );
 
         await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
@@ -2991,12 +2955,7 @@ void main() {
               required void Function(VideoRecordEventListener, VideoRecordEvent)
               onEvent,
             }) {
-              return VideoRecordEventListener.pigeon_detached(
-                onEvent: onEvent,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
+              return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
             };
         PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
             MockCameraCharacteristicsKey();
@@ -3041,11 +3000,7 @@ void main() {
 
         // Simulate video recording being started so startVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventStart.pigeon_detached(),
         );
 
         await camera.startVideoCapturing(videoCaptureOptions);
@@ -3121,12 +3076,7 @@ void main() {
               required void Function(VideoRecordEventListener, VideoRecordEvent)
               onEvent,
             }) {
-              return VideoRecordEventListener.pigeon_detached(
-                onEvent: onEvent,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
+              return VideoRecordEventListener.pigeon_detached(onEvent: onEvent);
             };
         PigeonOverrides.cameraCharacteristics_infoSupportedHardwareLevel =
             MockCameraCharacteristicsKey();
@@ -3158,11 +3108,7 @@ void main() {
 
         // Simulate video recording being started so startVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventStart.pigeon_detached(),
         );
 
         // Orientation is unlocked and plugin does not need to set default target
@@ -3173,11 +3119,7 @@ void main() {
 
         // Simulate video recording being started so startVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventStart.pigeon_detached(),
         );
 
         // Orientation is locked and plugin does not need to set default target
@@ -3189,11 +3131,7 @@ void main() {
 
         // Simulate video recording being started so startVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventStart.pigeon_detached(),
         );
 
         // Orientation is locked and plugin does need to set default target
@@ -3206,11 +3144,7 @@ void main() {
 
         // Simulate video recording being started so startVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventStart.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventStart.pigeon_detached(),
         );
 
         // Orientation is unlocked and plugin does need to set default target
@@ -3267,11 +3201,7 @@ void main() {
 
       // Simulate video recording being finalized so stopVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventFinalize.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventFinalize.pigeon_detached(),
       );
 
       final XFile file = await camera.stopVideoRecording(0);
@@ -3316,11 +3246,7 @@ void main() {
       await expectLater(() async {
         // Simulate video recording being finalized so stopVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventFinalize.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventFinalize.pigeon_detached(),
         );
         await camera.stopVideoRecording(0);
       }, throwsA(isA<CameraException>()));
@@ -3343,11 +3269,7 @@ void main() {
 
       // Simulate video recording being finalized so stopVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventFinalize.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventFinalize.pigeon_detached(),
       );
 
       final XFile file = await camera.stopVideoRecording(0);
@@ -3380,11 +3302,7 @@ void main() {
 
         // Simulate video recording being finalized so stopVideoRecording completes.
         AndroidCameraCameraX.videoRecordingEventStreamController.add(
-          VideoRecordEventFinalize.pigeon_detached(
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          ),
+          VideoRecordEventFinalize.pigeon_detached(),
         );
 
         await camera.stopVideoRecording(90);
@@ -3606,11 +3524,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.availableCameras();
@@ -3865,11 +3779,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.availableCameras();
@@ -3965,10 +3875,6 @@ void main() {
           ({
             required void Function(DeviceOrientationManager, String)
             onDeviceOrientationChanged,
-            // ignore: non_constant_identifier_names
-            BinaryMessenger? pigeon_binaryMessenger,
-            // ignore: non_constant_identifier_names
-            PigeonInstanceManager? pigeon_instanceManager,
           }) {
             final mockDeviceOrientationManager = MockDeviceOrientationManager();
             when(
@@ -4129,17 +4035,13 @@ void main() {
   test('getMinExposureOffset returns expected exposure offset', () async {
     final camera = AndroidCameraCameraX();
     final mockCameraInfo = MockCameraInfo();
-    final testInstanceManager = PigeonInstanceManager(
-      onWeakReferenceRemoved: (_) {},
-    );
+
     final exposureState = ExposureState.pigeon_detached(
       exposureCompensationRange: CameraIntegerRange.pigeon_detached(
         lower: 3,
         upper: 4,
-        pigeon_instanceManager: testInstanceManager,
       ),
       exposureCompensationStep: 0.2,
-      pigeon_instanceManager: testInstanceManager,
     );
 
     // Set directly for test versus calling createCamera.
@@ -4155,17 +4057,13 @@ void main() {
   test('getMaxExposureOffset returns expected exposure offset', () async {
     final camera = AndroidCameraCameraX();
     final mockCameraInfo = MockCameraInfo();
-    final testInstanceManager = PigeonInstanceManager(
-      onWeakReferenceRemoved: (_) {},
-    );
+
     final exposureState = ExposureState.pigeon_detached(
       exposureCompensationRange: CameraIntegerRange.pigeon_detached(
         lower: 3,
         upper: 4,
-        pigeon_instanceManager: testInstanceManager,
       ),
       exposureCompensationStep: 0.2,
-      pigeon_instanceManager: testInstanceManager,
     );
 
     // Set directly for test versus calling createCamera.
@@ -4180,17 +4078,13 @@ void main() {
   test('getExposureOffsetStepSize returns expected exposure offset', () async {
     final camera = AndroidCameraCameraX();
     final mockCameraInfo = MockCameraInfo();
-    final testInstanceManager = PigeonInstanceManager(
-      onWeakReferenceRemoved: (_) {},
-    );
+
     final exposureState = ExposureState.pigeon_detached(
       exposureCompensationRange: CameraIntegerRange.pigeon_detached(
         lower: 3,
         upper: 4,
-        pigeon_instanceManager: testInstanceManager,
       ),
       exposureCompensationStep: 0.2,
-      pigeon_instanceManager: testInstanceManager,
     );
 
     // Set directly for test versus calling createCamera.
@@ -4206,17 +4100,12 @@ void main() {
     () async {
       final camera = AndroidCameraCameraX();
       final mockCameraInfo = MockCameraInfo();
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       final exposureState = ExposureState.pigeon_detached(
         exposureCompensationRange: CameraIntegerRange.pigeon_detached(
           lower: 0,
           upper: 0,
-          pigeon_instanceManager: testInstanceManager,
         ),
         exposureCompensationStep: 0,
-        pigeon_instanceManager: testInstanceManager,
       );
 
       // Set directly for test versus calling createCamera.
@@ -4236,9 +4125,6 @@ void main() {
     final zoomState = ZoomState.pigeon_detached(
       maxZoomRatio: maxZoomRatio,
       minZoomRatio: 0,
-      pigeon_instanceManager: PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      ),
     );
 
     // Set directly for test versus calling createCamera.
@@ -4260,9 +4146,6 @@ void main() {
     final zoomState = ZoomState.pigeon_detached(
       maxZoomRatio: 1,
       minZoomRatio: minZoomRatio,
-      pigeon_instanceManager: PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      ),
     );
 
     // Set directly for test versus calling createCamera.
@@ -4507,42 +4390,19 @@ void main() {
       // Set up CameraXProxy with ImageAnalysis specifics needed for testing its Analyzer.
       setUpOverridesForTestingUseCaseConfiguration(
         mockProcessCameraProvider,
-        newAnalyzer:
-            ({
-              required void Function(Analyzer, ImageProxy) analyze,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) {
-              return Analyzer.pigeon_detached(
-                analyze: analyze,
-                pigeon_instanceManager: PigeonInstanceManager(
-                  onWeakReferenceRemoved: (_) {},
-                ),
-              );
-            },
+        newAnalyzer: ({required void Function(Analyzer, ImageProxy) analyze}) {
+          return Analyzer.pigeon_detached(analyze: analyze);
+        },
         newImageAnalysis:
             ({
               int? outputImageFormat,
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
               ResolutionSelector? resolutionSelector,
               int? targetRotation,
               CameraIntegerRange? targetFpsRange,
             }) => mockImageAnalysis,
         getNv21BufferImageProxyUtils:
-            (
-              int imageWidth,
-              int imageHeight,
-              List<PlaneProxy> planes, {
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
-            }) => Future<Uint8List>.value(testNv21Buffer),
+            (int imageWidth, int imageHeight, List<PlaneProxy> planes) =>
+                Future<Uint8List>.value(testNv21Buffer),
       );
 
       // Create and initialize camera with NV21.
@@ -4769,19 +4629,12 @@ void main() {
 
       // Tell plugin to create detached Camera2CameraControl and
       // CaptureRequestOptions instances for testing.
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      final controlAELockKey = CaptureRequestKey.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final controlAELockKey = CaptureRequestKey.pigeon_detached();
       PigeonOverrides.camera2CameraControl_from =
           ({required CameraControl cameraControl}) =>
               cameraControl == mockCameraControl
               ? mockCamera2CameraControl
-              : Camera2CameraControl.pigeon_detached(
-                  pigeon_instanceManager: testInstanceManager,
-                );
+              : Camera2CameraControl.pigeon_detached();
       PigeonOverrides.captureRequestOptions_new =
           ({required Map<CaptureRequestKey, Object?> options}) {
             final mockCaptureRequestOptions = MockCaptureRequestOptions();
@@ -4840,16 +4693,12 @@ void main() {
       camera.cameraInfo = mockCameraInfo;
 
       final mockActionBuilder = MockFocusMeteringActionBuilder();
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       when(mockActionBuilder.build()).thenAnswer(
         (_) async => FocusMeteringAction.pigeon_detached(
           meteringPointsAe: const <MeteringPoint>[],
           meteringPointsAf: const <MeteringPoint>[],
           meteringPointsAwb: const <MeteringPoint>[],
           isAutoCancelEnabled: false,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       MeteringMode? actionBuilderMeteringMode;
@@ -4871,19 +4720,10 @@ void main() {
 
       // Verify current auto-exposure metering point is removed if previously set.
       final originalMeteringAction = FocusMeteringAction.pigeon_detached(
-        meteringPointsAe: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
-        meteringPointsAf: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAe: <MeteringPoint>[MeteringPoint.pigeon_detached()],
+        meteringPointsAf: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
       camera.currentFocusMeteringAction = originalMeteringAction;
 
@@ -4900,15 +4740,10 @@ void main() {
       // Verify current focus and metering action is cleared if only previously
       // set metering point was for auto-exposure.
       camera.currentFocusMeteringAction = FocusMeteringAction.pigeon_detached(
-        meteringPointsAe: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAe: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAf: const <MeteringPoint>[],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
 
       await camera.setExposurePoint(cameraId, null);
@@ -4950,14 +4785,9 @@ void main() {
       camera.cameraControl = mockCameraControl;
       camera.cameraInfo = mockCameraInfo;
 
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       var exposurePointX = 0.8;
       var exposurePointY = 0.1;
-      final createdMeteringPoint = MeteringPoint.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final createdMeteringPoint = MeteringPoint.pigeon_detached();
       MeteringMode? actionBuilderMeteringMode;
       MeteringPoint? actionBuilderMeteringPoint;
       final mockActionBuilder = MockFocusMeteringActionBuilder();
@@ -4967,7 +4797,6 @@ void main() {
           meteringPointsAf: const <MeteringPoint>[],
           meteringPointsAwb: const <MeteringPoint>[],
           isAutoCancelEnabled: false,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       setUpOverridesForExposureAndFocus(
@@ -4994,19 +4823,10 @@ void main() {
       // Verify current auto-exposure metering point is removed if previously set.
       var exposurePoint = Point<double>(exposurePointX, exposurePointY);
       var originalMeteringAction = FocusMeteringAction.pigeon_detached(
-        meteringPointsAe: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
-        meteringPointsAf: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAe: <MeteringPoint>[MeteringPoint.pigeon_detached()],
+        meteringPointsAf: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
       camera.currentFocusMeteringAction = originalMeteringAction;
 
@@ -5031,14 +4851,9 @@ void main() {
       exposurePoint = Point<double>(exposurePointX, exposurePointY);
       originalMeteringAction = FocusMeteringAction.pigeon_detached(
         meteringPointsAe: const <MeteringPoint>[],
-        meteringPointsAf: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAf: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
       camera.currentFocusMeteringAction = originalMeteringAction;
 
@@ -5073,12 +4888,7 @@ void main() {
       camera.cameraInfo = MockCameraInfo();
       camera.currentFocusMeteringAction = null;
 
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      final createdMeteringPoint = MeteringPoint.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final createdMeteringPoint = MeteringPoint.pigeon_detached();
       MeteringMode? actionBuilderMeteringMode;
       MeteringPoint? actionBuilderMeteringPoint;
       final mockActionBuilder = MockFocusMeteringActionBuilder();
@@ -5088,7 +4898,6 @@ void main() {
           meteringPointsAf: const <MeteringPoint>[],
           meteringPointsAwb: const <MeteringPoint>[],
           isAutoCancelEnabled: false,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       setUpOverridesForExposureAndFocus(
@@ -5177,17 +4986,12 @@ void main() {
       const cameraId = 6;
       const double offset = 2;
       final mockCameraInfo = MockCameraInfo();
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       final exposureState = ExposureState.pigeon_detached(
         exposureCompensationRange: CameraIntegerRange.pigeon_detached(
           lower: 3,
           upper: 4,
-          pigeon_instanceManager: testInstanceManager,
         ),
         exposureCompensationStep: 0,
-        pigeon_instanceManager: testInstanceManager,
       );
 
       // Set directly for test versus calling createCamera.
@@ -5210,17 +5014,12 @@ void main() {
       const double offset = 3;
       final mockCameraInfo = MockCameraInfo();
       final CameraControl mockCameraControl = MockCameraControl();
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       final exposureState = ExposureState.pigeon_detached(
         exposureCompensationRange: CameraIntegerRange.pigeon_detached(
           lower: 3,
           upper: 4,
-          pigeon_instanceManager: testInstanceManager,
         ),
         exposureCompensationStep: 0.2,
-        pigeon_instanceManager: testInstanceManager,
       );
 
       // Set directly for test versus calling createCamera.
@@ -5251,17 +5050,12 @@ void main() {
       const double offset = 5;
       final mockCameraInfo = MockCameraInfo();
       final CameraControl mockCameraControl = MockCameraControl();
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       final exposureState = ExposureState.pigeon_detached(
         exposureCompensationRange: CameraIntegerRange.pigeon_detached(
           lower: 3,
           upper: 4,
-          pigeon_instanceManager: testInstanceManager,
         ),
         exposureCompensationStep: 0.1,
-        pigeon_instanceManager: testInstanceManager,
       );
       final int expectedExposureCompensationIndex =
           (offset / exposureState.exposureCompensationStep).round();
@@ -5292,17 +5086,12 @@ void main() {
       const double offset = 3;
       final mockCameraInfo = MockCameraInfo();
       final CameraControl mockCameraControl = MockCameraControl();
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       final exposureState = ExposureState.pigeon_detached(
         exposureCompensationRange: CameraIntegerRange.pigeon_detached(
           lower: 3,
           upper: 4,
-          pigeon_instanceManager: testInstanceManager,
         ),
         exposureCompensationStep: 0.2,
-        pigeon_instanceManager: testInstanceManager,
       );
       final int expectedExposureCompensationIndex =
           (offset / exposureState.exposureCompensationStep).round();
@@ -5343,16 +5132,12 @@ void main() {
       camera.cameraInfo = mockCameraInfo;
 
       final mockActionBuilder = MockFocusMeteringActionBuilder();
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       when(mockActionBuilder.build()).thenAnswer(
         (_) async => FocusMeteringAction.pigeon_detached(
           meteringPointsAe: const <MeteringPoint>[],
           meteringPointsAf: const <MeteringPoint>[],
           meteringPointsAwb: const <MeteringPoint>[],
           isAutoCancelEnabled: false,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       MeteringMode? actionBuilderMeteringMode;
@@ -5373,19 +5158,10 @@ void main() {
       verifyNever(mockCameraControl.cancelFocusAndMetering());
 
       final originalMeteringAction = FocusMeteringAction.pigeon_detached(
-        meteringPointsAe: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
-        meteringPointsAf: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAe: <MeteringPoint>[MeteringPoint.pigeon_detached()],
+        meteringPointsAf: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
       camera.currentFocusMeteringAction = originalMeteringAction;
 
@@ -5403,14 +5179,9 @@ void main() {
       // set metering point was for auto-exposure.
       camera.currentFocusMeteringAction = FocusMeteringAction.pigeon_detached(
         meteringPointsAe: const <MeteringPoint>[],
-        meteringPointsAf: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAf: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
 
       await camera.setFocusPoint(cameraId, null);
@@ -5452,15 +5223,10 @@ void main() {
       camera.cameraControl = mockCameraControl;
       camera.cameraInfo = mockCameraInfo;
 
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       var focusPointX = 0.8;
       var focusPointY = 0.1;
       var focusPoint = Point<double>(focusPointX, focusPointY);
-      final createdMeteringPoint = MeteringPoint.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final createdMeteringPoint = MeteringPoint.pigeon_detached();
       MeteringMode? actionBuilderMeteringMode;
       MeteringPoint? actionBuilderMeteringPoint;
       final mockActionBuilder = MockFocusMeteringActionBuilder();
@@ -5470,7 +5236,6 @@ void main() {
           meteringPointsAf: const <MeteringPoint>[],
           meteringPointsAwb: const <MeteringPoint>[],
           isAutoCancelEnabled: false,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       setUpOverridesForExposureAndFocus(
@@ -5496,19 +5261,10 @@ void main() {
 
       // Verify current auto-exposure metering point is removed if previously set.
       var originalMeteringAction = FocusMeteringAction.pigeon_detached(
-        meteringPointsAe: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
-        meteringPointsAf: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAe: <MeteringPoint>[MeteringPoint.pigeon_detached()],
+        meteringPointsAf: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
       camera.currentFocusMeteringAction = originalMeteringAction;
 
@@ -5532,15 +5288,10 @@ void main() {
       focusPointY = 0.9;
       focusPoint = Point<double>(focusPointX, focusPointY);
       originalMeteringAction = FocusMeteringAction.pigeon_detached(
-        meteringPointsAe: <MeteringPoint>[
-          MeteringPoint.pigeon_detached(
-            pigeon_instanceManager: testInstanceManager,
-          ),
-        ],
+        meteringPointsAe: <MeteringPoint>[MeteringPoint.pigeon_detached()],
         meteringPointsAf: const <MeteringPoint>[],
         meteringPointsAwb: const <MeteringPoint>[],
         isAutoCancelEnabled: false,
-        pigeon_instanceManager: testInstanceManager,
       );
       camera.currentFocusMeteringAction = originalMeteringAction;
 
@@ -5575,12 +5326,7 @@ void main() {
       camera.cameraInfo = MockCameraInfo();
       camera.currentFocusMeteringAction = null;
 
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-      final createdMeteringPoint = MeteringPoint.pigeon_detached(
-        pigeon_instanceManager: testInstanceManager,
-      );
+      final createdMeteringPoint = MeteringPoint.pigeon_detached();
       MeteringMode? actionBuilderMeteringMode;
       MeteringPoint? actionBuilderMeteringPoint;
       final mockActionBuilder = MockFocusMeteringActionBuilder();
@@ -5590,7 +5336,6 @@ void main() {
           meteringPointsAf: const <MeteringPoint>[],
           meteringPointsAwb: const <MeteringPoint>[],
           isAutoCancelEnabled: false,
-          pigeon_instanceManager: testInstanceManager,
         ),
       );
       setUpOverridesForExposureAndFocus(
@@ -5738,9 +5483,6 @@ void main() {
         mockCamera2CameraControl.addCaptureRequestOptions(any),
       ).thenAnswer((_) async => Future<void>.value());
 
-      final testInstanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
       final createdMeteringPoints = <MeteringPoint>[];
       setUpOverridesForSettingFocusandExposurePoints(
         mockCameraControl,
@@ -5755,18 +5497,14 @@ void main() {
               when(
                 mockFactory.createPoint(exposurePointX, exposurePointY),
               ).thenAnswer((_) async {
-                final createdMeteringPoint = MeteringPoint.pigeon_detached(
-                  pigeon_instanceManager: testInstanceManager,
-                );
+                final createdMeteringPoint = MeteringPoint.pigeon_detached();
                 createdMeteringPoints.add(createdMeteringPoint);
                 return createdMeteringPoint;
               });
               when(mockFactory.createPointWithSize(0.5, 0.5, 1)).thenAnswer((
                 _,
               ) async {
-                final createdMeteringPoint = MeteringPoint.pigeon_detached(
-                  pigeon_instanceManager: testInstanceManager,
-                );
+                final createdMeteringPoint = MeteringPoint.pigeon_detached();
                 createdMeteringPoints.add(createdMeteringPoint);
                 return createdMeteringPoint;
               });
@@ -6531,11 +6269,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
@@ -6639,11 +6373,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
@@ -6747,11 +6477,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.startVideoCapturing(
@@ -6867,11 +6593,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.startVideoCapturing(
@@ -6981,11 +6703,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
@@ -7101,11 +6819,7 @@ void main() {
 
       // Simulate video recording being started so startVideoRecording completes.
       AndroidCameraCameraX.videoRecordingEventStreamController.add(
-        VideoRecordEventStart.pigeon_detached(
-          pigeon_instanceManager: PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        VideoRecordEventStart.pigeon_detached(),
       );
 
       await camera.startVideoCapturing(const VideoCaptureOptions(cameraId));
