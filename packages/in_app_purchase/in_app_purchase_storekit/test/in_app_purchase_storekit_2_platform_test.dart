@@ -172,7 +172,7 @@ void main() {
     });
 
     test(
-      'buying consumable, should get PurchaseVerificationData with serverVerificationData and localVerificationData',
+      'buying consumable, should get PurchaseVerificationData with serverVerificationData, localVerificationData, and appAccountToken',
       () async {
         final details = <PurchaseDetails>[];
         final completer = Completer<List<PurchaseDetails>>();
@@ -207,6 +207,10 @@ void main() {
         expect(
           result.first.verificationData.localVerificationData,
           'jsonRepresentation',
+        );
+        expect(
+          (result.first as SK2PurchaseDetails).appAccountToken,
+          'appAccountToken',
         );
       },
     );
@@ -655,6 +659,29 @@ void main() {
             ),
           ),
         );
+      },
+    );
+  });
+
+  group('unfinished transactions', () {
+    test('should return unfinished transactions', () async {
+      final List<SK2Transaction> transactions =
+          await SK2Transaction.unfinishedTransactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.id, '123');
+      expect(transactions.first.productId, 'product_id');
+    });
+
+    test(
+      'should expose receiptData (JWS) in unfinished transactions',
+      () async {
+        final List<SK2Transaction> transactions =
+            await SK2Transaction.unfinishedTransactions();
+
+        expect(transactions, isNotEmpty);
+        expect(transactions.first.receiptData, isNotNull);
+        expect(transactions.first.receiptData, 'fake_jws_representation');
       },
     );
   });
