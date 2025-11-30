@@ -1,3 +1,7 @@
+## 0.3.0+7
+
+* Removes internal native library Dart proxy.
+
 ## 0.3.0+6
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
