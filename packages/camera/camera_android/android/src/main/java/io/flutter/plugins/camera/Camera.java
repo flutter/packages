@@ -16,6 +16,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.OutputConfiguration;
 import android.hardware.camera2.params.SessionConfiguration;
@@ -134,6 +135,8 @@ class Camera
   private CaptureTimeoutsWrapper captureTimeouts;
   /** Holds the last known capture properties */
   private CameraCaptureProperties captureProps;
+  /** Exposure time in nanoseconds for the current capture */
+  private Long currentCaptureExposureTime;
 
   Messages.Result<String> flutterResult;
 
@@ -625,6 +628,9 @@ class Camera
 
     flutterResult = result;
 
+    // Reset exposure time for new capture
+    currentCaptureExposureTime = null;
+
     // Create temporary file.
     final File outputDir = applicationContext.getCacheDir();
     try {
@@ -727,6 +733,9 @@ class Camera
               @NonNull CameraCaptureSession session,
               @NonNull CaptureRequest request,
               @NonNull TotalCaptureResult result) {
+            // Extract exposure time from the capture result for this specific image
+            Long exposureTime = result.get(CaptureResult.SENSOR_EXPOSURE_TIME);
+            currentCaptureExposureTime = exposureTime;
             unlockAutoFocus();
           }
         };
@@ -1253,7 +1262,7 @@ class Camera
                 dartMessenger.error(flutterResult, errorCode, errorMessage, null);
               }
             },
-            captureProps.getLastSensorExposureTime()));
+            currentCaptureExposureTime));
     cameraCaptureCallback.setCameraState(CameraState.STATE_PREVIEW);
   }
 

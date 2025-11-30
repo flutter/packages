@@ -61,14 +61,18 @@ public class ImageSaver implements Runnable {
       output = FileOutputStreamFactory.create(file);
       output.write(bytes);
 
-      // Write exposure time to EXIF if available
+      // Write exposure time to EXIF if available and not already present
       if (exposureTimeNs != null) {
         try {
           ExifInterface exif = new ExifInterface(file.getAbsolutePath());
-          // Convert nanoseconds to seconds
-          double exposureTimeInSeconds = exposureTimeNs / 1_000_000_000.0;
-          exif.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, String.valueOf(exposureTimeInSeconds));
-          exif.saveAttributes();
+          // Only set exposure time if it's not already present in EXIF
+          String existingExposureTime = exif.getAttribute(ExifInterface.TAG_EXPOSURE_TIME);
+          if (existingExposureTime == null || existingExposureTime.isEmpty()) {
+            // Convert nanoseconds to seconds
+            double exposureTimeInSeconds = exposureTimeNs / 1_000_000_000.0;
+            exif.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, String.valueOf(exposureTimeInSeconds));
+            exif.saveAttributes();
+          }
         } catch (IOException e) {
           // Log error but don't fail the save operation
           Log.w(TAG, "Failed to write exposure time to EXIF", e);
