@@ -1,3 +1,7 @@
+## 0.10.10+15
+
+* Manually writes exposure time to EXIF metadata on Honor devices where Camera2 API doesn't automatically transfer it. Only sets exposure time if not already present in EXIF to avoid overwriting existing metadata.
+
 ## 0.10.10+14
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
