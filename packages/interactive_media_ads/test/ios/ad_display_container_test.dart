@@ -51,13 +51,8 @@ void main() {
           ({void Function(UIViewController, bool)? viewDidAppear}) {
             viewDidAppearCallback = viewDidAppear!;
 
-            final instanceManager = PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            );
-            final view = UIView.pigeon_detached(
-              pigeon_instanceManager: instanceManager,
-            );
-            instanceManager.addDartCreatedInstance(view);
+            final view = UIView.pigeon_detached();
+            PigeonInstanceManager.instance.addDartCreatedInstance(view);
 
             final mockController = MockUIViewController();
             when(mockController.view).thenReturn(view);
@@ -97,10 +92,6 @@ void main() {
     testWidgets('AdDisplayContainer ads CompanionAdSlots', (
       WidgetTester tester,
     ) async {
-      final instanceManager = PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
       final mockCompanionAdSlot = MockIMACompanionAdSlot();
       late final void Function(UIViewController, bool) viewDidAppearCallback;
       final addedAdSlotsCompleter = Completer<List<IMACompanionAdSlot>?>();
@@ -108,10 +99,8 @@ void main() {
           ({void Function(UIViewController, bool)? viewDidAppear}) {
             viewDidAppearCallback = viewDidAppear!;
 
-            final view = UIView.pigeon_detached(
-              pigeon_instanceManager: instanceManager,
-            );
-            instanceManager.addDartCreatedInstance(view);
+            final view = UIView.pigeon_detached();
+            PigeonInstanceManager.instance.addDartCreatedInstance(view);
 
             final mockController = MockUIViewController();
             when(mockController.view).thenReturn(view);
@@ -133,7 +122,7 @@ void main() {
             return mockCompanionAdSlot;
           };
       PigeonOverrides.uIView_new = () {
-        return UIView.pigeon_detached(pigeon_instanceManager: instanceManager);
+        return UIView.pigeon_detached();
       };
 
       final onContainerAddedCompleter = Completer<void>();

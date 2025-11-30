@@ -78,7 +78,7 @@ base class IOSAdDisplayContainer extends PlatformAdDisplayContainer {
         params.onContainerAdded(this);
       },
       layoutDirection: params.layoutDirection,
-      creationParams: _controller.view.pigeon_instanceManager.getIdentifier(
+      creationParams: PigeonInstanceManager.instance.getIdentifier(
         _controller.view,
       ),
       creationParamsCodec: const StandardMessageCodec(),

@@ -15,10 +15,6 @@ void main() {
 
   group('IOSAdsManagerDelegate', () {
     test('didReceiveAdEvent calls onAdEvent', () {
-      final instanceManager = ima.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
       late final void Function(
         ima.IMAAdsManagerDelegate,
         ima.IMAAdsManager,
@@ -52,7 +48,6 @@ void main() {
               didReceiveAdError: didReceiveAdError,
               didRequestContentPause: didRequestContentPause,
               didRequestContentResume: didRequestContentResume,
-              pigeon_instanceManager: instanceManager,
             );
             return delegate;
           };
@@ -72,24 +67,16 @@ void main() {
 
       didReceiveAdEventCallback(
         delegate,
-        ima.IMAAdsManager.pigeon_detached(
-          pigeon_instanceManager: instanceManager,
-          adCuePoints: const <double>[],
-        ),
+        ima.IMAAdsManager.pigeon_detached(adCuePoints: const <double>[]),
         ima.IMAAdEvent.pigeon_detached(
           type: ima.AdEventType.allAdsCompleted,
           typeString: 'typeString',
           adData: const <String, String>{'hello': 'world'},
-          pigeon_instanceManager: instanceManager,
         ),
       );
     });
 
     test('didRequestContentPause calls onAdEvent', () {
-      final instanceManager = ima.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
       late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
       didRequestContentPauseCallback;
 
@@ -119,7 +106,6 @@ void main() {
               didReceiveAdError: didReceiveAdError,
               didRequestContentPause: didRequestContentPause,
               didRequestContentResume: didRequestContentResume,
-              pigeon_instanceManager: instanceManager,
             );
             return delegate;
           };
@@ -138,18 +124,11 @@ void main() {
 
       didRequestContentPauseCallback(
         delegate,
-        ima.IMAAdsManager.pigeon_detached(
-          pigeon_instanceManager: instanceManager,
-          adCuePoints: const <double>[],
-        ),
+        ima.IMAAdsManager.pigeon_detached(adCuePoints: const <double>[]),
       );
     });
 
     test('didRequestContentResume calls onAdEvent', () {
-      final instanceManager = ima.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
       late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
       didRequestContentResumeCallback;
 
@@ -179,7 +158,6 @@ void main() {
               didReceiveAdError: didReceiveAdError,
               didRequestContentPause: didRequestContentPause,
               didRequestContentResume: didRequestContentResume,
-              pigeon_instanceManager: instanceManager,
             );
             return delegate;
           };
@@ -198,18 +176,11 @@ void main() {
 
       didRequestContentResumeCallback(
         delegate,
-        ima.IMAAdsManager.pigeon_detached(
-          pigeon_instanceManager: instanceManager,
-          adCuePoints: const <double>[],
-        ),
+        ima.IMAAdsManager.pigeon_detached(adCuePoints: const <double>[]),
       );
     });
 
     test('didReceiveAdError calls onAdErrorEvent', () {
-      final instanceManager = ima.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
       late final void Function(
         ima.IMAAdsManagerDelegate,
         ima.IMAAdsManager,
@@ -243,7 +214,6 @@ void main() {
               didReceiveAdError: didReceiveAdError,
               didRequestContentPause: didRequestContentPause,
               didRequestContentResume: didRequestContentResume,
-              pigeon_instanceManager: instanceManager,
             );
             return delegate;
           };
@@ -264,15 +234,11 @@ void main() {
 
       didReceiveAdErrorCallback(
         delegate,
-        ima.IMAAdsManager.pigeon_detached(
-          pigeon_instanceManager: instanceManager,
-          adCuePoints: const <double>[],
-        ),
+        ima.IMAAdsManager.pigeon_detached(adCuePoints: const <double>[]),
         ima.IMAAdError.pigeon_detached(
           type: ima.AdErrorType.loadingFailed,
           code: ima.AdErrorCode.apiError,
           message: 'error message',
-          pigeon_instanceManager: instanceManager,
         ),
       );
     });

@@ -52,7 +52,7 @@ base class IOSCompanionAdSlot extends PlatformCompanionAdSlot {
       key: params.key,
       viewType: 'interactive_media_ads.packages.flutter.dev/view',
       layoutDirection: params.layoutDirection,
-      creationParams: _view.pigeon_instanceManager.getIdentifier(_view),
+      creationParams: PigeonInstanceManager.instance.getIdentifier(_view),
       creationParamsCodec: const StandardMessageCodec(),
     );
   }

@@ -27,14 +27,10 @@ void main() {
           ({required int currentTimeMs, required int durationMs}) {
             expect(currentTimeMs, 1000);
             expect(durationMs, 10000);
-            return ima.VideoProgressUpdate.pigeon_detached(
-              pigeon_instanceManager: ima.PigeonInstanceManager(
-                onWeakReferenceRemoved: (_) {},
-              ),
-            );
+            return ima.VideoProgressUpdate.pigeon_detached();
           };
       final provider = AndroidContentProgressProvider(
-        AndroidContentProgressProviderCreationParams(),
+        const AndroidContentProgressProviderCreationParams(),
       );
 
       await provider.setProgress(

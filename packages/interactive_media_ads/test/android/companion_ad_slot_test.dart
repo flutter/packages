@@ -24,9 +24,7 @@ void main() {
 
   group('AndroidCompanionAdSlot', () {
     test('instantiate CompanionAdSlot with size', () async {
-      final frameLayout = ima.FrameLayout.pigeon_detached(
-        pigeon_instanceManager: _TestInstanceManager(),
-      );
+      final frameLayout = ima.FrameLayout.pigeon_detached();
       final mockCompanionAdSlot = MockCompanionAdSlot();
 
       ima.PigeonOverrides.frameLayout_new = () {
@@ -64,7 +62,6 @@ void main() {
           }) {
             return ima.CompanionAdSlotClickListener.pigeon_detached(
               onCompanionAdClick: onCompanionAdClick,
-              pigeon_instanceManager: _TestInstanceManager(),
             );
           };
       final params = AndroidCompanionAdSlotCreationParams(
@@ -84,8 +81,4 @@ void main() {
       clickListener.onCompanionAdClick(clickListener);
     });
   });
-}
-
-class _TestInstanceManager extends ima.PigeonInstanceManager {
-  _TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }

@@ -57,7 +57,6 @@ void main() {
             return IMACompanionDelegate.pigeon_detached(
               companionAdSlotFilled: companionAdSlotFilled,
               companionSlotWasClicked: companionSlotWasClicked,
-              pigeon_instanceManager: _TestInstanceManager(),
             );
           };
 
@@ -76,8 +75,4 @@ void main() {
       delegate.companionSlotWasClicked!(delegate, adSlot.nativeCompanionAdSlot);
     });
   });
-}
-
-class _TestInstanceManager extends PigeonInstanceManager {
-  _TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }

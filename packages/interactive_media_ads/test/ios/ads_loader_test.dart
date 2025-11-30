@@ -188,12 +188,7 @@ void main() {
       adLoaderLoadedWithCallback(
         MockIMAAdsLoaderDelegate(),
         MockIMAAdsLoader(),
-        ima.IMAAdsLoadedData.pigeon_detached(
-          adsManager: MockIMAAdsManager(),
-          pigeon_instanceManager: ima.PigeonInstanceManager(
-            onWeakReferenceRemoved: (_) {},
-          ),
-        ),
+        ima.IMAAdsLoadedData.pigeon_detached(adsManager: MockIMAAdsManager()),
       );
     });
 
@@ -241,10 +236,6 @@ void main() {
       // Trigger lazy initialization of native IMAAdsLoader
       await adsLoader.contentComplete();
 
-      final instanceManager = ima.PigeonInstanceManager(
-        onWeakReferenceRemoved: (_) {},
-      );
-
       adsLoaderFailedWithErrorDataCallback(
         MockIMAAdsLoaderDelegate(),
         MockIMAAdsLoader(),
@@ -252,9 +243,7 @@ void main() {
           adError: ima.IMAAdError.pigeon_detached(
             type: ima.AdErrorType.loadingFailed,
             code: ima.AdErrorCode.apiError,
-            pigeon_instanceManager: instanceManager,
           ),
-          pigeon_instanceManager: instanceManager,
         ),
       );
     });
@@ -266,13 +255,8 @@ Future<IOSAdDisplayContainer> _pumpAdDisplayContainer(
 ) async {
   ima.PigeonOverrides.uIViewController_new =
       ({void Function(ima.UIViewController, bool)? viewDidAppear}) {
-        final instanceManager = ima.PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        );
-        final view = ima.UIView.pigeon_detached(
-          pigeon_instanceManager: instanceManager,
-        );
-        instanceManager.addDartCreatedInstance(view);
+        final view = ima.UIView.pigeon_detached();
+        ima.PigeonInstanceManager.instance.addDartCreatedInstance(view);
 
         final mockController = MockUIViewController();
         viewDidAppear!.call(mockController, true);
