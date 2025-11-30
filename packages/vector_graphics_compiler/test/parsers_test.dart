@@ -21,11 +21,71 @@ void main() {
       parser.parseColor('#ABCDEF', attributeName: 'foo', id: null),
       const Color.fromARGB(255, 0xAB, 0xCD, 0xEF),
     );
-    // RGBA in svg/css, ARGB in this library.
-    expect(
-      parser.parseColor('#ABCDEF88', attributeName: 'foo', id: null),
-      const Color.fromARGB(0x88, 0xAB, 0xCD, 0xEF),
-    );
+  });
+
+  group('Colors - svg/css', () {
+    final parser = SvgParser('', const SvgTheme(), 'test_key', true, null);
+
+    group('with no opacity', () {
+      const rgbContentVariations = [
+        '171, 205, 239',
+        '171,205,239',
+        '171 205 239',
+        '171 205 239',
+        '171 205 239',
+        '171 205 239',
+        '171 205 239',
+        '67% 80.5% 93.7%',
+      ];
+
+      final List<String> rgbaVariations = [
+        '#ABCDEF',
+        ...rgbContentVariations.map((rgb) => 'rgba($rgb)'),
+        ...rgbContentVariations.map((rgb) => 'rgb($rgb)'),
+      ];
+
+      for (final rgba in rgbaVariations) {
+        test(rgba, () {
+          expect(
+            parser.parseColor(rgba, attributeName: 'foo', id: null),
+            const Color.fromARGB(0xFF, 0xAB, 0xCD, 0xEF),
+          );
+        });
+      }
+    });
+    group('with opacity', () {
+      const rgbContentVariations = [
+        '171, 205, 239, 0.53',
+        '171,205,239,0.53',
+        '171 205 239 0.53',
+        '171 205 239  0.53',
+        '171 205 239 / 53%',
+        '171 205 239 /  0.53',
+        '171 205 239 / 53%',
+        '67% 80.5% 93.7% / 53%',
+      ];
+      final List<String> rgbaVariations = [
+        '#ABCDEF87',
+        ...rgbContentVariations.map((rgb) => 'rgba($rgb)'),
+        ...rgbContentVariations.map((rgb) => 'rgb($rgb)'),
+      ];
+      for (final rgba in rgbaVariations) {
+        test(rgba, () {
+          expect(
+            parser.parseColor(rgba, attributeName: 'foo', id: null),
+            const Color.fromARGB(0x87, 0xAB, 0xCD, 0xEF),
+          );
+        });
+      }
+    });
+
+    test('rgba with no opacity', () {
+      // RGBA is now an alias for RGB, so opacity can be missing entirely
+      expect(
+        parser.parseColor('rgba(171 205 239)', attributeName: 'foo', id: null),
+        const Color.fromARGB(0xFF, 0xAB, 0xCD, 0xEF),
+      );
+    });
   });
 
   test('Colors - mapped', () async {
