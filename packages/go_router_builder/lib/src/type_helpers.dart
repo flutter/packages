@@ -162,7 +162,7 @@ String encodeField(
         } else {
           throw InvalidGenerationSourceError(
             'The parameter type '
-            '`${withoutNullability(element.returnType.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
+            '`${withoutNullability(element.type.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
             element: element,
           );
         }
@@ -791,12 +791,9 @@ class _TypeHelperJson extends _TypeHelperWithHelper {
 
     final functionType = secondParam.type as FunctionType;
     if (functionType.formalParameters.length != 1 ||
-        withoutNullability(functionType.returnType.getDisplayString()) !=
+        functionType.returnType.getDisplayString() !=
             type.element.typeParameters.first.displayName ||
-        withoutNullability(
-              functionType.formalParameters[0].type.getDisplayString(),
-            ) !=
-            'Object?') {
+        functionType.formalParameters[0].type.getDisplayString() != 'Object?') {
       throw InvalidGenerationSourceError(
         'The parameter type '
         '`${withoutNullability(type.getDisplayString())}` not have a supported fromJson definition.',
