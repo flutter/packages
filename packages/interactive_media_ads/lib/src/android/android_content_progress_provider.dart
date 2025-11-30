@@ -8,16 +8,12 @@ import 'package:meta/meta.dart';
 
 import '../platform_interface/platform_content_progress_provider.dart';
 import 'interactive_media_ads.g.dart' as ima;
-import 'interactive_media_ads_proxy.dart';
 
 /// Android implementation of [PlatformContentProgressProviderCreationParams].
 final class AndroidContentProgressProviderCreationParams
     extends PlatformContentProgressProviderCreationParams {
   /// Constructs a [AndroidContentProgressProviderCreationParams].
-  const AndroidContentProgressProviderCreationParams({
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-       super();
+  const AndroidContentProgressProviderCreationParams() : super();
 
   /// Creates a [AndroidContentProgressProviderCreationParams] from an instance of
   /// [PlatformContentProgressProviderCreationParams].
@@ -25,13 +21,10 @@ final class AndroidContentProgressProviderCreationParams
     // Placeholder to prevent requiring a breaking change if params are added to
     // PlatformContentProgressProviderCreationParams.
     // ignore: avoid_unused_constructor_parameters
-    PlatformContentProgressProviderCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
-    return AndroidContentProgressProviderCreationParams(proxy: proxy);
+    PlatformContentProgressProviderCreationParams params,
+  ) {
+    return const AndroidContentProgressProviderCreationParams();
   }
-
-  final InteractiveMediaAdsProxy _proxy;
 }
 
 /// Android implementation of [PlatformContentProgressProvider].
@@ -44,16 +37,8 @@ base class AndroidContentProgressProvider
   ///
   /// This allows the SDK to track progress of the content video.
   @internal
-  late final ima.ContentProgressProvider progressProvider = _androidParams
-      ._proxy
-      .newContentProgressProvider();
-
-  late final AndroidContentProgressProviderCreationParams _androidParams =
-      params is AndroidContentProgressProviderCreationParams
-      ? params as AndroidContentProgressProviderCreationParams
-      : AndroidContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
-          params,
-        );
+  late final ima.ContentProgressProvider progressProvider =
+      ima.ContentProgressProvider();
 
   @override
   Future<void> setProgress({
@@ -61,7 +46,7 @@ base class AndroidContentProgressProvider
     required Duration duration,
   }) async {
     return progressProvider.setContentProgress(
-      _androidParams._proxy.newVideoProgressUpdate(
+      ima.VideoProgressUpdate(
         currentTimeMs: progress.inMilliseconds,
         durationMs: duration.inMilliseconds,
       ),

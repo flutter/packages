@@ -13,7 +13,6 @@ import 'package:interactive_media_ads/src/android/android_content_progress_provi
 import 'package:interactive_media_ads/src/android/android_ima_settings.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
-import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/android/platform_views_service_proxy.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
@@ -41,6 +40,10 @@ import 'ads_loader_test.mocks.dart';
   MockSpec<PlatformViewsServiceProxy>(),
 ])
 void main() {
+  setUp(() {
+    ima.PigeonOverrides.pigeon_reset();
+  });
+
   group('AndroidAdsLoader', () {
     setUp(() {
       ima.PigeonOverrides.pigeon_reset();
@@ -114,10 +117,8 @@ void main() {
         adsLoader: mockAdsLoader,
       );
 
-      final proxy = InteractiveMediaAdsProxy(
-        newContentProgressProvider: () =>
-            ima.ContentProgressProvider.pigeon_detached(),
-      );
+      ima.PigeonOverrides.contentProgressProvider_new = () =>
+          ima.ContentProgressProvider.pigeon_detached();
 
       final adsLoader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
@@ -127,12 +128,11 @@ void main() {
           ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
-          proxy: proxy,
         ),
       );
 
       final progressProvider = AndroidContentProgressProvider(
-        AndroidContentProgressProviderCreationParams(proxy: proxy),
+        AndroidContentProgressProviderCreationParams(),
       );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdTagUrl(
@@ -179,10 +179,8 @@ void main() {
         adsLoader: mockAdsLoader,
       );
 
-      final proxy = InteractiveMediaAdsProxy(
-        newContentProgressProvider: () =>
-            ima.ContentProgressProvider.pigeon_detached(),
-      );
+      ima.PigeonOverrides.contentProgressProvider_new = () =>
+          ima.ContentProgressProvider.pigeon_detached();
 
       final adsLoader = AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
@@ -192,12 +190,11 @@ void main() {
           ),
           onAdsLoaded: (PlatformOnAdsLoadedData data) {},
           onAdsLoadError: (AdsLoadErrorData data) {},
-          proxy: proxy,
         ),
       );
 
       final progressProvider = AndroidContentProgressProvider(
-        AndroidContentProgressProviderCreationParams(proxy: proxy),
+        AndroidContentProgressProviderCreationParams(),
       );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdsResponse(
@@ -247,22 +244,20 @@ void main() {
       late final void Function(ima.AdsLoadedListener, ima.AdsManagerLoadedEvent)
       onAdsManagerLoadedCallback;
 
-      final proxy = InteractiveMediaAdsProxy(
-        newAdsLoadedListener:
-            ({
-              required void Function(
-                ima.AdsLoadedListener,
-                ima.AdsManagerLoadedEvent,
-              )
-              onAdsManagerLoaded,
-            }) {
-              onAdsManagerLoadedCallback = onAdsManagerLoaded;
-              return MockAdsLoadedListener();
-            },
-        newAdErrorListener: ({required dynamic onAdError}) {
-          return MockAdErrorListener();
-        },
-      );
+      ima.PigeonOverrides.adsLoadedListener_new =
+          ({
+            required void Function(
+              ima.AdsLoadedListener,
+              ima.AdsManagerLoadedEvent,
+            )
+            onAdsManagerLoaded,
+          }) {
+            onAdsManagerLoadedCallback = onAdsManagerLoaded;
+            return MockAdsLoadedListener();
+          };
+      ima.PigeonOverrides.adErrorListener_new = ({required dynamic onAdError}) {
+        return MockAdErrorListener();
+      };
 
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
@@ -272,7 +267,6 @@ void main() {
           ),
           onAdsLoaded: expectAsync1((_) {}),
           onAdsLoadError: (_) {},
-          proxy: proxy,
         ),
       );
 
@@ -299,19 +293,18 @@ void main() {
       late final void Function(ima.AdErrorListener, ima.AdErrorEvent)
       onAdErrorCallback;
 
-      final proxy = InteractiveMediaAdsProxy(
-        newAdsLoadedListener: ({required dynamic onAdsManagerLoaded}) {
-          return MockAdsLoadedListener();
-        },
-        newAdErrorListener:
-            ({
-              required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-              onAdError,
-            }) {
-              onAdErrorCallback = onAdError;
-              return MockAdErrorListener();
-            },
-      );
+      ima.PigeonOverrides.adsLoadedListener_new =
+          ({required dynamic onAdsManagerLoaded}) {
+            return MockAdsLoadedListener();
+          };
+      ima.PigeonOverrides.adErrorListener_new =
+          ({
+            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+            onAdError,
+          }) {
+            onAdErrorCallback = onAdError;
+            return MockAdErrorListener();
+          };
 
       AndroidAdsLoader(
         AndroidAdsLoaderCreationParams(
@@ -321,7 +314,6 @@ void main() {
           ),
           onAdsLoaded: (_) {},
           onAdsLoadError: expectAsync1((_) {}),
-          proxy: proxy,
         ),
       );
 
@@ -364,34 +356,29 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
   WidgetTester tester, {
   MockVideoAdPlayerCallback? mockAdPlayerCallback,
 }) async {
-  final imaProxy = InteractiveMediaAdsProxy(
-    newFrameLayout: () => MockFrameLayout(),
-    newVideoView:
-        ({
-          required dynamic onError,
-          dynamic onPrepared,
-          dynamic onCompletion,
-        }) => MockVideoView(),
-    createAdDisplayContainerImaSdkFactory: (_, __) async {
-      return MockAdDisplayContainer();
-    },
-    newVideoAdPlayer:
-        ({
-          required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
-          addCallback,
-          required dynamic loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          if (mockAdPlayerCallback != null) {
-            addCallback(MockVideoAdPlayer(), mockAdPlayerCallback);
-          }
-          return MockVideoAdPlayer();
-        },
-  );
+  ima.PigeonOverrides.frameLayout_new = () => MockFrameLayout();
+  ima.PigeonOverrides.videoView_new =
+      ({required dynamic onError, dynamic onPrepared, dynamic onCompletion}) =>
+          MockVideoView();
+  ima.PigeonOverrides.imaSdkFactory_createAdDisplayContainer = (_, __) async {
+    return MockAdDisplayContainer();
+  };
+  ima.PigeonOverrides.videoAdPlayer_new =
+      ({
+        required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
+        addCallback,
+        required dynamic loadAd,
+        required dynamic pauseAd,
+        required dynamic playAd,
+        required dynamic release,
+        required dynamic removeCallback,
+        required dynamic stopAd,
+      }) {
+        if (mockAdPlayerCallback != null) {
+          addCallback(MockVideoAdPlayer(), mockAdPlayerCallback);
+        }
+        return MockVideoAdPlayer();
+      };
 
   final mockPlatformViewsProxy = MockPlatformViewsServiceProxy();
   final mockAndroidViewController = MockSurfaceAndroidViewController();
@@ -421,7 +408,6 @@ Future<AndroidAdDisplayContainer> _pumpAdDisplayContainer(
         );
       },
       platformViewsProxy: mockPlatformViewsProxy,
-      imaProxy: imaProxy,
     ),
   );
 

@@ -8,7 +8,6 @@ import 'package:interactive_media_ads/src/android/android_ads_manager_delegate.d
 import 'package:interactive_media_ads/src/android/android_ads_rendering_settings.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
-import 'package:interactive_media_ads/src/android/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -26,6 +25,10 @@ import 'ads_manager_test.mocks.dart';
   MockSpec<ima.ImaSdkFactory>(),
 ])
 void main() {
+  setUp(() {
+    ima.PigeonOverrides.pigeon_reset();
+  });
+
   group('AndroidAdsManager', () {
     test('destroy', () {
       final mockAdsManager = MockAdsManager();
@@ -46,6 +49,7 @@ void main() {
 
       final adsManager = AndroidAdsManager(mockAdsManager);
 
+      ima.PigeonOverrides.imaSdkFactory_instance = mockImaSdkFactory;
       final settings = AndroidAdsRenderingSettings(
         AndroidAdsRenderingSettingsCreationParams(
           bitrate: 1000,
@@ -55,9 +59,6 @@ void main() {
           playAdsAfterTime: const Duration(seconds: 5),
           uiElements: const <AdUIElement>{AdUIElement.countdown},
           enableCustomTabs: true,
-          proxy: InteractiveMediaAdsProxy(
-            instanceImaSdkFactory: () => mockImaSdkFactory,
-          ),
         ),
       );
       await adsManager.init(settings: settings);
@@ -122,21 +123,18 @@ void main() {
       late final void Function(ima.AdEventListener, ima.AdEvent)
       onAdEventCallback;
 
-      final proxy = InteractiveMediaAdsProxy(
-        newAdEventListener:
-            ({
-              required void Function(ima.AdEventListener, ima.AdEvent)
-              onAdEvent,
-            }) {
-              onAdEventCallback = onAdEvent;
-              return MockAdEventListener();
-            },
-        newAdErrorListener: ({required dynamic onAdError}) {
-          return MockAdErrorListener();
-        },
-      );
+      ima.PigeonOverrides.adEventListener_new =
+          ({
+            required void Function(ima.AdEventListener, ima.AdEvent) onAdEvent,
+          }) {
+            onAdEventCallback = onAdEvent;
+            return MockAdEventListener();
+          };
+      ima.PigeonOverrides.adErrorListener_new = ({required dynamic onAdError}) {
+        return MockAdErrorListener();
+      };
 
-      final adsManager = AndroidAdsManager(mockAdsManager, proxy: proxy);
+      final adsManager = AndroidAdsManager(mockAdsManager);
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
@@ -160,21 +158,19 @@ void main() {
       late final void Function(ima.AdErrorListener, ima.AdErrorEvent)
       onAdErrorCallback;
 
-      final proxy = InteractiveMediaAdsProxy(
-        newAdEventListener: ({required dynamic onAdEvent}) {
-          return MockAdEventListener();
-        },
-        newAdErrorListener:
-            ({
-              required void Function(ima.AdErrorListener, ima.AdErrorEvent)
-              onAdError,
-            }) {
-              onAdErrorCallback = onAdError;
-              return MockAdErrorListener();
-            },
-      );
+      ima.PigeonOverrides.adEventListener_new = ({required dynamic onAdEvent}) {
+        return MockAdEventListener();
+      };
+      ima.PigeonOverrides.adErrorListener_new =
+          ({
+            required void Function(ima.AdErrorListener, ima.AdErrorEvent)
+            onAdError,
+          }) {
+            onAdErrorCallback = onAdError;
+            return MockAdErrorListener();
+          };
 
-      final adsManager = AndroidAdsManager(mockAdsManager, proxy: proxy);
+      final adsManager = AndroidAdsManager(mockAdsManager);
       await adsManager.setAdsManagerDelegate(
         AndroidAdsManagerDelegate(
           PlatformAdsManagerDelegateCreationParams(
