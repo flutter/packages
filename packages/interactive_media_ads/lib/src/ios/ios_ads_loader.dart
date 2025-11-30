@@ -4,12 +4,9 @@
 
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-
 import '../platform_interface/platform_interface.dart';
 import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart';
-import 'interactive_media_ads_proxy.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_manager.dart';
 import 'ios_content_progress_provider.dart';
@@ -23,26 +20,20 @@ final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
     required super.settings,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-       super();
+  }) : super();
 
   /// Creates a [IOSAdsLoaderCreationParams] from an instance of
   /// [PlatformAdsLoaderCreationParams].
   factory IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-    PlatformAdsLoaderCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
+    PlatformAdsLoaderCreationParams params,
+  ) {
     return IOSAdsLoaderCreationParams(
       container: params.container,
       settings: params.settings,
       onAdsLoaded: params.onAdsLoaded,
       onAdsLoadError: params.onAdsLoadError,
-      proxy: proxy,
     );
   }
-
-  final InteractiveMediaAdsProxy _proxy;
 }
 
 /// Implementation of [PlatformAdsLoader] for iOS.
@@ -129,7 +120,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   static IMAAdsLoaderDelegate _createAdsLoaderDelegate(
     WeakReference<IOSAdsLoader> interfaceLoader,
   ) {
-    return interfaceLoader.target!._iosParams._proxy.newIMAAdsLoaderDelegate(
+    return IMAAdsLoaderDelegate(
       adLoaderLoadedWith: (_, __, IMAAdsLoadedData adsLoadedData) {
         interfaceLoader.target?._iosParams.onAdsLoaded(
           PlatformOnAdsLoadedData(
@@ -157,7 +148,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
       _ => IOSImaSettings(_iosParams.settings.params),
     };
 
-    return _iosParams._proxy.newIMAAdsLoader(settings: settings.nativeSettings)
+    return IMAAdsLoader(settings: settings.nativeSettings)
       ..setDelegate(_delegate);
   }
 }
