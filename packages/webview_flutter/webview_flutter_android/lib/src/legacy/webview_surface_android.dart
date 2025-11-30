@@ -31,7 +31,7 @@ import 'webview_android_widget.dart';
 /// information.
 class SurfaceAndroidWebView extends AndroidWebView {
   /// Constructs a [SurfaceAndroidWebView].
-  SurfaceAndroidWebView({@visibleForTesting super.instanceManager});
+  SurfaceAndroidWebView();
 
   @override
   Widget build({
@@ -75,7 +75,7 @@ class SurfaceAndroidWebView extends AndroidWebView {
                 // directionality.
                 layoutDirection:
                     Directionality.maybeOf(context) ?? TextDirection.ltr,
-                webViewIdentifier: instanceManager.getIdentifier(
+                webViewIdentifier: PigeonInstanceManager.instance.getIdentifier(
                   controller.webView,
                 )!,
               )
