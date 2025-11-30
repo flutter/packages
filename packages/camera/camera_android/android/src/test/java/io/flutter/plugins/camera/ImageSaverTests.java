@@ -57,7 +57,7 @@ public class ImageSaverTests {
 
     // Set up testable ImageSaver instance
     mockCallback = mock(ImageSaver.Callback.class);
-    imageSaver = new ImageSaver(mockImage, mockFile, mockCallback);
+    imageSaver = new ImageSaver(mockImage, mockFile, mockCallback, null);
   }
 
   @After

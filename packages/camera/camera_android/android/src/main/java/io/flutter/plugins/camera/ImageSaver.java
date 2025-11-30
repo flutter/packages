@@ -5,8 +5,11 @@
 package io.flutter.plugins.camera;
 
 import android.media.Image;
+import android.util.Log;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
+import androidx.exifinterface.media.ExifInterface;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,6 +18,7 @@ import java.nio.ByteBuffer;
 
 /** Saves a JPEG {@link Image} into the specified {@link File}. */
 public class ImageSaver implements Runnable {
+  private static final String TAG = "ImageSaver";
 
   /** The JPEG image */
   private final Image image;
@@ -25,17 +29,26 @@ public class ImageSaver implements Runnable {
   /** Used to report the status of the save action. */
   private final Callback callback;
 
+  /** The exposure time in nanoseconds, or null if not available. */
+  @Nullable private final Long exposureTimeNs;
+
   /**
    * Creates an instance of the ImageSaver runnable
    *
    * @param image - The image to save
    * @param file - The file to save the image to
    * @param callback - The callback that is run on completion, or when an error is encountered.
+   * @param exposureTimeNs - The exposure time in nanoseconds, or null if not available.
    */
-  ImageSaver(@NonNull Image image, @NonNull File file, @NonNull Callback callback) {
+  ImageSaver(
+      @NonNull Image image,
+      @NonNull File file,
+      @NonNull Callback callback,
+      @Nullable Long exposureTimeNs) {
     this.image = image;
     this.file = file;
     this.callback = callback;
+    this.exposureTimeNs = exposureTimeNs;
   }
 
   @Override
@@ -47,6 +60,20 @@ public class ImageSaver implements Runnable {
     try {
       output = FileOutputStreamFactory.create(file);
       output.write(bytes);
+
+      // Write exposure time to EXIF if available
+      if (exposureTimeNs != null) {
+        try {
+          ExifInterface exif = new ExifInterface(file.getAbsolutePath());
+          // Convert nanoseconds to seconds
+          double exposureTimeInSeconds = exposureTimeNs / 1_000_000_000.0;
+          exif.setAttribute(ExifInterface.TAG_EXPOSURE_TIME, String.valueOf(exposureTimeInSeconds));
+          exif.saveAttributes();
+        } catch (IOException e) {
+          // Log error but don't fail the save operation
+          Log.w(TAG, "Failed to write exposure time to EXIF", e);
+        }
+      }
 
       callback.onComplete(file.getAbsolutePath());
 

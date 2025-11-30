@@ -1252,7 +1252,8 @@ class Camera
               public void onError(@NonNull String errorCode, @NonNull String errorMessage) {
                 dartMessenger.error(flutterResult, errorCode, errorMessage, null);
               }
-            }));
+            },
+            captureProps.getLastSensorExposureTime()));
     cameraCaptureCallback.setCameraState(CameraState.STATE_PREVIEW);
   }
 
