@@ -1,3 +1,7 @@
+## 0.6.26
+
+* Removes internal native library Dart proxy.
+
 ## 0.6.25
 
 * Adds support for `MediaSettings.fps` for camera preview, image streaming, and video recording.
