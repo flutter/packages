@@ -19,7 +19,7 @@ class AndroidViewWidget extends StatelessWidget {
   /// The [AndroidViewWidget] should only be instantiated internally.
   /// This constructor is visible for testing purposes only and should
   /// never be called externally.
-  AndroidViewWidget({
+  const AndroidViewWidget({
     super.key,
     required this.view,
     this.layoutDirection = TextDirection.ltr,

@@ -183,11 +183,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       (Timer timer) async {
         final int videoCurrentPosition = await _videoView.getCurrentPosition();
         if (_adDuration case final int adDuration) {
-          final ima.VideoProgressUpdate currentProgress =
-              ima.VideoProgressUpdate(
-                currentTimeMs: videoCurrentPosition,
-                durationMs: adDuration,
-              );
+          final currentProgress = ima.VideoProgressUpdate(
+            currentTimeMs: videoCurrentPosition,
+            durationMs: adDuration,
+          );
 
           await Future.wait(<Future<void>>[
             _videoAdPlayer.setAdProgress(currentProgress),

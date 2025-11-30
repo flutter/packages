@@ -51,13 +51,13 @@ void main() {
 
       ima.PigeonOverrides.imaSdkFactory_instance = mockImaSdkFactory;
       final settings = AndroidAdsRenderingSettings(
-        AndroidAdsRenderingSettingsCreationParams(
+        const AndroidAdsRenderingSettingsCreationParams(
           bitrate: 1000,
           enablePreloading: false,
-          loadVideoTimeout: const Duration(seconds: 2),
-          mimeTypes: const <String>['value'],
-          playAdsAfterTime: const Duration(seconds: 5),
-          uiElements: const <AdUIElement>{AdUIElement.countdown},
+          loadVideoTimeout: Duration(seconds: 2),
+          mimeTypes: <String>['value'],
+          playAdsAfterTime: Duration(seconds: 5),
+          uiElements: <AdUIElement>{AdUIElement.countdown},
           enableCustomTabs: true,
         ),
       );

@@ -43,13 +43,13 @@ void main() {
           mockAdsRenderingSettings;
 
       final settings = IOSAdsRenderingSettings(
-        IOSAdsRenderingSettingsCreationParams(
+        const IOSAdsRenderingSettingsCreationParams(
           bitrate: 1000,
           enablePreloading: false,
-          loadVideoTimeout: const Duration(seconds: 9),
-          mimeTypes: const <String>['value'],
-          playAdsAfterTime: const Duration(seconds: 5),
-          uiElements: const <AdUIElement>{AdUIElement.countdown},
+          loadVideoTimeout: Duration(seconds: 9),
+          mimeTypes: <String>['value'],
+          playAdsAfterTime: Duration(seconds: 5),
+          uiElements: <AdUIElement>{AdUIElement.countdown},
         ),
       );
       await adsManager.init(settings: settings);
@@ -141,7 +141,7 @@ void main() {
           };
 
       adsManager.setAdsManagerDelegate(
-        IOSAdsManagerDelegate(IOSAdsManagerDelegateCreationParams()),
+        IOSAdsManagerDelegate(const IOSAdsManagerDelegateCreationParams()),
       );
 
       verify(mockAdsManager.setDelegate(delegate));
