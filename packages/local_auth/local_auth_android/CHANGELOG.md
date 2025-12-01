@@ -1,3 +1,7 @@
+## 2.0.4
+
+* Bumps androidx.core:core from 1.13.1 to 1.17.0.
+
 ## 2.0.3
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
