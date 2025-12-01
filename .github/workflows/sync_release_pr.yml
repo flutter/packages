@@ -3,7 +3,7 @@ name: "Sync Release to Main"
 on:
   push:
     branches:
-      - 'release'
+      - 'release-go-router'
 
 jobs:
   create_sync_pr:
