@@ -293,8 +293,8 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       _activeEntries.forEach(_updateTransitionForEntry);
     }
 
-    final bool hasNewChild = widget.child != null;
-    final bool hasOldChild = _currentEntry != null;
+    final hasNewChild = widget.child != null;
+    final hasOldChild = _currentEntry != null;
     if (hasNewChild != hasOldChild ||
         hasNewChild &&
             !Widget.canUpdate(widget.child!, _currentEntry!.widgetChild)) {
@@ -327,11 +327,11 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
     if (widget.child == null) {
       return;
     }
-    final AnimationController primaryController = AnimationController(
+    final primaryController = AnimationController(
       duration: widget.duration,
       vsync: this,
     );
-    final AnimationController secondaryController = AnimationController(
+    final secondaryController = AnimationController(
       duration: widget.duration,
       vsync: this,
     );
@@ -373,7 +373,7 @@ class _PageTransitionSwitcherState extends State<PageTransitionSwitcher>
       primaryController,
       secondaryController,
     );
-    final _ChildEntry entry = _ChildEntry(
+    final entry = _ChildEntry(
       widgetChild: child,
       transition: KeyedSubtree.wrap(transition, _childNumber),
       primaryController: primaryController,

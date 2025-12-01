@@ -2,7 +2,7 @@ group = 'io.flutter.plugins.sharedpreferences'
 version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.2.10'
+    ext.kotlin_version = '2.2.21'
     repositories {
         google()
         mavenCentral()
@@ -50,7 +50,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lint {

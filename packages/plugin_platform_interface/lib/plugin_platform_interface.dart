@@ -86,7 +86,7 @@ abstract class PlatformInterface {
     required bool preventConstObject,
   }) {
     if (instance is MockPlatformInterfaceMixin) {
-      bool assertionsEnabled = false;
+      var assertionsEnabled = false;
       assert(() {
         assertionsEnabled = true;
         return true;

@@ -66,7 +66,7 @@ class Scanner {
 
       // If only a single delimiter character then create a text token.
       if (_openDelimiterInner != null && _peek() != _openDelimiterInner) {
-        final String value = String.fromCharCode(_openDelimiter!);
+        final value = String.fromCharCode(_openDelimiter!);
         _append(TokenType.text, value, start, _offset);
         continue;
       }
@@ -93,7 +93,7 @@ class Scanner {
           _parseChangeDelimiterTag(start);
         } else {
           // Scan standard mustache tag.
-          final String value = String.fromCharCodes(
+          final value = String.fromCharCodes(
             _openDelimiterInner == null
                 ? <int>[_openDelimiter!]
                 : <int>[_openDelimiter!, _openDelimiterInner!],
@@ -127,7 +127,7 @@ class Scanner {
       return '';
     }
 
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     while (_peek() != _EOF && test(_peek())) {
       buffer.writeCharCode(_read());
     }
@@ -167,7 +167,7 @@ class Scanner {
   // tokens for whitespace at the beginning of a line. This is because the
   // mustache spec requires special handing of whitespace.
   void _scanText() {
-    int start = 0;
+    var start = 0;
     TokenType token;
     String value;
 
@@ -277,7 +277,7 @@ class Scanner {
       }
       _expect(_closeDelimiter!);
 
-      final String value = String.fromCharCodes(
+      final value = String.fromCharCodes(
         _closeDelimiterInner == null
             ? <int>[_closeDelimiter!]
             : <int>[_closeDelimiterInner!, _closeDelimiter!],
@@ -352,7 +352,7 @@ class Scanner {
     _expect(delimiter!);
 
     // Create delimiter string.
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     buffer.writeCharCode(_openDelimiter!);
     if (_openDelimiterInner != null) {
       buffer.writeCharCode(_openDelimiterInner!);
@@ -362,7 +362,7 @@ class Scanner {
       buffer.writeCharCode(_closeDelimiterInner!);
     }
     buffer.writeCharCode(_closeDelimiter!);
-    final String value = buffer.toString();
+    final value = buffer.toString();
 
     _append(TokenType.changeDelimiter, value, start, _offset);
   }
