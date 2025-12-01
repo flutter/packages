@@ -108,7 +108,7 @@ class VideoConstraints {
   // TODO(dit): package:web has a class for this. Use it instead of jsify and toJson.
   /// Convert `this` to something that can be used on the browser.
   JSAny toMediaStreamConstraints() {
-    final Map<String, Object> constraints = <String, Object>{
+    final constraints = <String, Object>{
       if (width != null) 'width': width!.toJson(),
       if (height != null) 'height': height!.toJson(),
       if (facingMode != null) 'facingMode': facingMode!.toJson(),
