@@ -122,7 +122,25 @@ import 'dart:ui' as ui;
   canvas.drawPicture(pictureInfo.picture);
 
   // Or convert the picture to an image:
-  final ui.Image image = await pictureInfo.picture.toImage(width, height);
+  ui.Image image = await pictureInfo.picture.toImage(width, height);
+
+  // Or convert the picture to a scaled image:
+  const double targetWidth = 512;
+  const double targetHeight = 512;
+  final pictureRecorder = ui.PictureRecorder();
+  canvas = Canvas(
+    pictureRecorder,
+    Rect.fromPoints(Offset.zero, const Offset(targetWidth, targetHeight)),
+  );
+  canvas.scale(
+    targetWidth / pictureInfo.size.width,
+    targetHeight / pictureInfo.size.height,
+  );
+  canvas.drawPicture(pictureInfo.picture);
+  image = await pictureRecorder.endRecording().toImage(
+    targetWidth.ceil(),
+    targetHeight.ceil(),
+  );
 
   pictureInfo.picture.dispose();
 ```
