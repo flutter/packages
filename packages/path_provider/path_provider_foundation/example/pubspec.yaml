@@ -19,14 +19,10 @@ dependencies:
   path_provider_platform_interface: ^2.1.0
 
 dev_dependencies:
-  build_runner: ^2.6.0
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
-  mockito: ^5.5.0
-  objective_c: ^9.0.0
-  path: ^1.8.0
 
 flutter:
   uses-material-design: true

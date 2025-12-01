@@ -3193,7 +3193,8 @@ abstract class PigeonApiDeviceOrientationManager(
 abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonProxyApiRegistrar) {
   abstract fun pigeon_defaultConstructor(
       resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?,
-      targetRotation: Long?
+      targetRotation: Long?,
+      targetFpsRange: android.util.Range<*>?
   ): androidx.camera.core.Preview
 
   abstract fun resolutionSelector(
@@ -3249,10 +3250,12 @@ abstract class PigeonApiPreview(open val pigeonRegistrar: CameraXLibraryPigeonPr
             val resolutionSelectorArg =
                 args[1] as androidx.camera.core.resolutionselector.ResolutionSelector?
             val targetRotationArg = args[2] as Long?
+            val targetFpsRangeArg = args[3] as android.util.Range<*>?
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.pigeon_defaultConstructor(resolutionSelectorArg, targetRotationArg),
+                      api.pigeon_defaultConstructor(
+                          resolutionSelectorArg, targetRotationArg, targetFpsRangeArg),
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
@@ -3433,7 +3436,8 @@ abstract class PigeonApiVideoCapture(
 ) {
   /** Create a `VideoCapture` associated with the given `VideoOutput`. */
   abstract fun withOutput(
-      videoOutput: androidx.camera.video.VideoOutput
+      videoOutput: androidx.camera.video.VideoOutput,
+      targetFpsRange: android.util.Range<*>?
   ): androidx.camera.video.VideoCapture<*>
 
   /** Gets the VideoOutput associated with this VideoCapture. */
@@ -3462,10 +3466,11 @@ abstract class PigeonApiVideoCapture(
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
             val videoOutputArg = args[1] as androidx.camera.video.VideoOutput
+            val targetFpsRangeArg = args[2] as android.util.Range<*>?
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-                      api.withOutput(videoOutputArg), pigeon_identifierArg)
+                      api.withOutput(videoOutputArg, targetFpsRangeArg), pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   CameraXLibraryPigeonUtils.wrapError(exception)
@@ -5058,6 +5063,7 @@ abstract class PigeonApiImageAnalysis(
   abstract fun pigeon_defaultConstructor(
       resolutionSelector: androidx.camera.core.resolutionselector.ResolutionSelector?,
       targetRotation: Long?,
+      targetFpsRange: android.util.Range<*>?,
       outputImageFormat: Long?
   ): androidx.camera.core.ImageAnalysis
 
@@ -5097,12 +5103,16 @@ abstract class PigeonApiImageAnalysis(
             val resolutionSelectorArg =
                 args[1] as androidx.camera.core.resolutionselector.ResolutionSelector?
             val targetRotationArg = args[2] as Long?
-            val outputImageFormatArg = args[3] as Long?
+            val targetFpsRangeArg = args[3] as android.util.Range<*>?
+            val outputImageFormatArg = args[4] as Long?
             val wrapped: List<Any?> =
                 try {
                   api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
                       api.pigeon_defaultConstructor(
-                          resolutionSelectorArg, targetRotationArg, outputImageFormatArg),
+                          resolutionSelectorArg,
+                          targetRotationArg,
+                          targetFpsRangeArg,
+                          outputImageFormatArg),
                       pigeon_identifierArg)
                   listOf(null)
                 } catch (exception: Throwable) {

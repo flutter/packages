@@ -135,6 +135,7 @@ class CameraXProxy {
   /// Constructs [Preview].
   final Preview Function({
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
     ResolutionSelector? resolutionSelector,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
@@ -144,6 +145,7 @@ class CameraXProxy {
   /// Constructs [VideoCapture].
   final VideoCapture Function({
     required VideoOutput videoOutput,
+    CameraIntegerRange? targetFpsRange,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   })
@@ -208,6 +210,7 @@ class CameraXProxy {
   /// Constructs [ImageAnalysis].
   final ImageAnalysis Function({
     int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
     int? outputImageFormat,
     ResolutionSelector? resolutionSelector,
     BinaryMessenger? pigeon_binaryMessenger,
