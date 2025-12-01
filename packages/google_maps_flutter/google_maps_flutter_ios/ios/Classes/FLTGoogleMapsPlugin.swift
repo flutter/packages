@@ -29,7 +29,7 @@ class GoogleMapFactory: NSObject, FlutterPlatformViewFactory {
   {
     // Precache shared map services, if needed. Initializing this prepares GMSServices
     // on a background thread controlled by the GoogleMaps framework.
-    let mapServices = GoogleMapFactory.sharedMapServices
+    _ = GoogleMapFactory.sharedMapServices
 
     return FLTGoogleMapController(
       frame: frame, viewIdentifier: viewId,
