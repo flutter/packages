@@ -1,3 +1,23 @@
+## 2.8.22
+
+* Bumps kotlin_version to 2.2.21.
+
+## 2.8.21
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.8.20
+
+* Bumps `exoplayer_version` from 1.5.1 to 1.8.0.
+
+## 2.8.19
+
+* Updates to Pigeon 26.
+
+## 2.8.18
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
 ## 2.8.17
 
 * Moves video event processing logic to Dart, and fixes an issue where buffer

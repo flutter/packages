@@ -12,8 +12,9 @@ import 'package:interactive_media_ads/src/platform_interface/platform_interface.
 void main() {
   group('IOSAdsManagerDelegate', () {
     test('didReceiveAdEvent calls onAdEvent', () {
-      final ima.PigeonInstanceManager instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(
         ima.IMAAdsManagerDelegate,
@@ -23,7 +24,7 @@ void main() {
       didReceiveAdEventCallback;
 
       late final ima.IMAAdsManagerDelegate delegate;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsManagerDelegate:
             ({
               required void Function(
@@ -61,7 +62,7 @@ void main() {
             },
       );
 
-      final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
+      final adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.type, AdEventType.allAdsCompleted);
@@ -91,14 +92,15 @@ void main() {
     });
 
     test('didRequestContentPause calls onAdEvent', () {
-      final ima.PigeonInstanceManager instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
       didRequestContentPauseCallback;
 
       late final ima.IMAAdsManagerDelegate delegate;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsManagerDelegate:
             ({
               required void Function(
@@ -136,7 +138,7 @@ void main() {
             },
       );
 
-      final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
+      final adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.type, AdEventType.contentPauseRequested);
@@ -159,14 +161,15 @@ void main() {
     });
 
     test('didRequestContentResume calls onAdEvent', () {
-      final ima.PigeonInstanceManager instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(ima.IMAAdsManagerDelegate, ima.IMAAdsManager)
       didRequestContentResumeCallback;
 
       late final ima.IMAAdsManagerDelegate delegate;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsManagerDelegate:
             ({
               required void Function(
@@ -204,7 +207,7 @@ void main() {
             },
       );
 
-      final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
+      final adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.type, AdEventType.contentResumeRequested);
@@ -227,8 +230,9 @@ void main() {
     });
 
     test('didReceiveAdError calls onAdErrorEvent', () {
-      final ima.PigeonInstanceManager instanceManager =
-          ima.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
+      final instanceManager = ima.PigeonInstanceManager(
+        onWeakReferenceRemoved: (_) {},
+      );
 
       late final void Function(
         ima.IMAAdsManagerDelegate,
@@ -238,7 +242,7 @@ void main() {
       didReceiveAdErrorCallback;
 
       late final ima.IMAAdsManagerDelegate delegate;
-      final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
+      final imaProxy = InteractiveMediaAdsProxy(
         newIMAAdsManagerDelegate:
             ({
               required void Function(
@@ -276,7 +280,7 @@ void main() {
             },
       );
 
-      final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
+      final adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
           onAdErrorEvent: expectAsync1((AdErrorEvent event) {
             expect(event.error.type, AdErrorType.loading);

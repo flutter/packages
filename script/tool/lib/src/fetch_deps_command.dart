@@ -8,6 +8,7 @@ import 'common/gradle.dart';
 import 'common/output_utils.dart';
 import 'common/package_looping_command.dart';
 import 'common/plugin_utils.dart';
+import 'common/pub_utils.dart';
 import 'common/repository_package.dart';
 
 const int _exitPrecacheFailed = 3;
@@ -31,31 +32,52 @@ class FetchDepsCommand extends PackageLoopingCommand {
     super.gitDir,
   }) {
     argParser.addFlag(_dartFlag, defaultsTo: true, help: 'Run "pub get"');
-    argParser.addFlag(_supportingTargetPlatformsOnlyFlag,
-        help: 'Restricts "pub get" runs to packages that have at least one '
-            'example supporting at least one of the platform flags passed.\n'
-            'If no platform flags are passed, this will exclude all packages.');
-    argParser.addFlag(platformAndroid,
-        help: 'Run "gradlew dependencies" for Android plugins.\n'
-            'Include packages with Android examples when used with '
-            '--$_supportingTargetPlatformsOnlyFlag');
-    argParser.addFlag(platformIOS,
-        help: 'Run "pod install" for iOS plugins.\n'
-            'Include packages with iOS examples when used with '
-            '--$_supportingTargetPlatformsOnlyFlag');
-    argParser.addFlag(platformLinux,
-        help: 'Include packages with Linux examples when used with '
-            '--$_supportingTargetPlatformsOnlyFlag');
-    argParser.addFlag(platformMacOS,
-        help: 'Run "pod install" for macOS plugins.\n'
-            'Include packages with macOS examples when used with '
-            '--$_supportingTargetPlatformsOnlyFlag');
-    argParser.addFlag(platformWeb,
-        help: 'Include packages with Web examples when used with '
-            '--$_supportingTargetPlatformsOnlyFlag');
-    argParser.addFlag(platformWindows,
-        help: 'Include packages with Windows examples when used with '
-            '--$_supportingTargetPlatformsOnlyFlag');
+    argParser.addFlag(
+      _supportingTargetPlatformsOnlyFlag,
+      help:
+          'Restricts "pub get" runs to packages that have at least one '
+          'example supporting at least one of the platform flags passed.\n'
+          'If no platform flags are passed, this will exclude all packages.',
+    );
+    argParser.addFlag(
+      platformAndroid,
+      help:
+          'Run "gradlew dependencies" for Android plugins.\n'
+          'Include packages with Android examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformIOS,
+      help:
+          'Run "pod install" for iOS plugins.\n'
+          'Include packages with iOS examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformLinux,
+      help:
+          'Include packages with Linux examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformMacOS,
+      help:
+          'Run "pod install" for macOS plugins.\n'
+          'Include packages with macOS examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformWeb,
+      help:
+          'Include packages with Web examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
+    argParser.addFlag(
+      platformWindows,
+      help:
+          'Include packages with Windows examples when used with '
+          '--$_supportingTargetPlatformsOnlyFlag',
+    );
   }
 
   static const String _dartFlag = 'dart';
@@ -108,11 +130,12 @@ class FetchDepsCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    bool fetchedDeps = false;
-    final List<String> skips = <String>[];
+    var fetchedDeps = false;
+    final skips = <String>[];
     if (getBoolArg(_dartFlag)) {
-      final bool filterPlatforms =
-          getBoolArg(_supportingTargetPlatformsOnlyFlag);
+      final bool filterPlatforms = getBoolArg(
+        _supportingTargetPlatformsOnlyFlag,
+      );
       if (!filterPlatforms || _hasExampleSupportingRequestedPlatform(package)) {
         fetchedDeps = true;
         if (!await _fetchDartPackages(package)) {
@@ -121,12 +144,14 @@ class FetchDepsCommand extends PackageLoopingCommand {
           return PackageResult.fail(<String>['Failed to "pub get".']);
         }
       } else {
-        skips.add('Skipping Dart dependencies; no examples support requested '
-            'platforms.');
+        skips.add(
+          'Skipping Dart dependencies; no examples support requested '
+          'platforms.',
+        );
       }
     }
 
-    final List<String> errors = <String>[];
+    final errors = <String>[];
     for (final FlutterPlatform platform in _targetPlatforms) {
       final PackageResult result;
       switch (platform) {
@@ -169,19 +194,30 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }
 
   Future<PackageResult> _fetchAndroidDeps(RepositoryPackage package) async {
-    if (!pluginSupportsPlatform(platformAndroid, package,
-        requiredMode: PlatformSupport.inline)) {
+    if (!pluginSupportsPlatform(
+      platformAndroid,
+      package,
+      requiredMode: PlatformSupport.inline,
+    )) {
       return PackageResult.skip(
-          'Package does not have native Android dependencies.');
+        'Package does not have native Android dependencies.',
+      );
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
-      final GradleProject gradleProject = GradleProject(example,
-          processRunner: processRunner, platform: platform);
+      final gradleProject = GradleProject(
+        example,
+        processRunner: processRunner,
+        platform: platform,
+      );
 
       if (!gradleProject.isConfigured()) {
         final bool buildSuccess = await runConfigOnlyBuild(
-            example, processRunner, platform, FlutterPlatform.android);
+          example,
+          processRunner,
+          platform,
+          FlutterPlatform.android,
+        );
         if (!buildSuccess) {
           printError('Unable to configure Gradle project.');
           return PackageResult.fail(<String>['Unable to configure Gradle.']);
@@ -190,8 +226,9 @@ class FetchDepsCommand extends PackageLoopingCommand {
 
       final String packageName = package.directory.basename;
 
-      final int exitCode =
-          await gradleProject.runCommand('$packageName:dependencies');
+      final int exitCode = await gradleProject.runCommand(
+        '$packageName:dependencies',
+      );
       if (exitCode != 0) {
         return PackageResult.fail();
       }
@@ -201,24 +238,31 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }
 
   Future<PackageResult> _fetchDarwinDeps(
-      RepositoryPackage package, final String platformString) async {
-    if (!pluginSupportsPlatform(platformString, package,
-        requiredMode: PlatformSupport.inline)) {
+    RepositoryPackage package,
+    final String platformString,
+  ) async {
+    if (!pluginSupportsPlatform(
+      platformString,
+      package,
+      requiredMode: PlatformSupport.inline,
+    )) {
       // Convert from the flag (lower case ios/macos) to the actual name.
       final String displayPlatform = platformString.replaceFirst('os', 'OS');
       return PackageResult.skip(
-          'Package does not have native $displayPlatform dependencies.');
+        'Package does not have native $displayPlatform dependencies.',
+      );
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
       // Create the necessary native build files, which will run pub get and pod install if needed.
       final bool buildSuccess = await runConfigOnlyBuild(
-          example,
-          processRunner,
-          platform,
-          platformString == platformIOS
-              ? FlutterPlatform.ios
-              : FlutterPlatform.macos);
+        example,
+        processRunner,
+        platform,
+        platformString == platformIOS
+            ? FlutterPlatform.ios
+            : FlutterPlatform.macos,
+      );
       if (!buildSuccess) {
         printError('Unable to prepare native project files.');
         return PackageResult.fail(<String>['Unable to configure project.']);
@@ -229,17 +273,23 @@ class FetchDepsCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _fetchDartPackages(RepositoryPackage package) async {
-    final String command = package.requiresFlutter() ? flutterCommand : 'dart';
-    final int exitCode = await processRunner.runAndStream(
-        command, <String>['pub', 'get'],
-        workingDir: package.directory);
-    return exitCode == 0;
+    final packagesToGet = <RepositoryPackage>[
+      package,
+      ...package.getSubpackages(includeExamples: false),
+    ];
+    for (final p in packagesToGet) {
+      if (!await runPubGet(p, processRunner, platform)) {
+        return false;
+      }
+    }
+    return true;
   }
 
   bool _hasExampleSupportingRequestedPlatform(RepositoryPackage package) {
     return package.getExamples().any((RepositoryPackage example) {
       return _targetPlatforms.any(
-          (FlutterPlatform platform) => example.appSupportsPlatform(platform));
+        (FlutterPlatform platform) => example.appSupportsPlatform(platform),
+      );
     });
   }
 

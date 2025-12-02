@@ -15,7 +15,7 @@ void main() {
     testWidgets('should show error and stacktrace', (
       WidgetTester tester,
     ) async {
-      const String error = 'error';
+      const error = 'error';
       final StackTrace stackTrace = StackTrace.current;
 
       await tester.pumpWidget(

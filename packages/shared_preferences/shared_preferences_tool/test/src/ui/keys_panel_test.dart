@@ -79,12 +79,12 @@ void main() {
     testWidgets('should show keys list with all keys', (
       WidgetTester tester,
     ) async {
-      const List<String> allKeys = <String>['key1', 'key2'];
+      const allKeys = <String>['key1', 'key2'];
       stubDataState(allKeys: const AsyncState<List<String>>.data(allKeys));
 
       await pumpKeysPanel(tester);
 
-      for (final String key in allKeys) {
+      for (final key in allKeys) {
         expect(find.text(key), findsOneWidget);
       }
     });
@@ -92,8 +92,8 @@ void main() {
     testWidgets('only selected key should be highlighted', (
       WidgetTester tester,
     ) async {
-      const String selectedKey = 'selectedKey';
-      const List<String> keys = <String>['key1', selectedKey, 'key2'];
+      const selectedKey = 'selectedKey';
+      const keys = <String>['key1', selectedKey, 'key2'];
 
       stubDataState(
         allKeys: const AsyncState<List<String>>.data(keys),
@@ -109,14 +109,13 @@ void main() {
       final ColorScheme colorScheme = Theme.of(selectedKeyElement).colorScheme;
 
       Color? bgColorFor(String key) {
-        final Container? container =
-            tester
-                .element(find.text(key))
-                .findAncestorWidgetOfExactType<Container>();
+        final Container? container = tester
+            .element(find.text(key))
+            .findAncestorWidgetOfExactType<Container>();
         return container?.color;
       }
 
-      for (final String key in <String>[...keys]..remove(selectedKey)) {
+      for (final key in <String>[...keys]..remove(selectedKey)) {
         expect(
           bgColorFor(key),
           isNot(equals(colorScheme.selectedRowBackgroundColor)),
@@ -182,7 +181,7 @@ void main() {
     testWidgets('should select key on key clicked', (
       WidgetTester tester,
     ) async {
-      const String keyToSelect = 'keyToSelect';
+      const keyToSelect = 'keyToSelect';
       stubDataState(
         allKeys: const AsyncState<List<String>>.data(<String>[keyToSelect]),
       );

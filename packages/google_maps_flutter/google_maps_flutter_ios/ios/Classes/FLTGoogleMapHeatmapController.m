@@ -3,8 +3,11 @@
 // found in the LICENSE file.
 
 #import "FLTGoogleMapHeatmapController.h"
-#import "FLTGoogleMapJSONConversions.h"
+#import "FLTGoogleMapHeatmapController_Test.h"
+
 @import GoogleMapsUtils;
+
+#import "FGMConversionUtils.h"
 
 @interface FLTGoogleMapHeatmapController ()
 
@@ -25,9 +28,9 @@
     _heatmapTileLayer = heatmapTileLayer;
     _mapView = mapView;
 
-    [FLTGoogleMapHeatmapController interpretHeatmapOptions:_heatmapTileLayer
-                                                   mapView:_mapView
-                                                   options:options];
+    [FLTGoogleMapHeatmapController updateHeatmap:_heatmapTileLayer
+                                     fromOptions:options
+                                     withMapView:_mapView];
   }
   return self;
 }
@@ -41,23 +44,24 @@
 }
 
 - (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data {
-  [FLTGoogleMapHeatmapController interpretHeatmapOptions:_heatmapTileLayer
-                                                 mapView:_mapView
-                                                 options:data];
+  [FLTGoogleMapHeatmapController updateHeatmap:_heatmapTileLayer
+                                   fromOptions:data
+                                   withMapView:_mapView];
 }
 
-+ (void)interpretHeatmapOptions:(GMUHeatmapTileLayer *)heatmapTileLayer
-                        mapView:(GMSMapView *)mapView
-                        options:(NSDictionary<NSString *, id> *)options {
++ (void)updateHeatmap:(GMUHeatmapTileLayer *)heatmapTileLayer
+          fromOptions:(NSDictionary<NSString *, id> *)options
+          withMapView:(GMSMapView *)mapView {
+  // TODO(stuartmorgan): Migrate this to Pigeon. See
+  // https://github.com/flutter/flutter/issues/117907
   id weightedData = options[kHeatmapDataKey];
   if ([weightedData isKindOfClass:[NSArray class]]) {
-    heatmapTileLayer.weightedData =
-        [FLTGoogleMapJSONConversions weightedDataFromArray:weightedData];
+    heatmapTileLayer.weightedData = [FGMHeatmapConversions weightedDataFromArray:weightedData];
   }
 
   id gradient = options[kHeatmapGradientKey];
   if ([gradient isKindOfClass:[NSDictionary class]]) {
-    heatmapTileLayer.gradient = [FLTGoogleMapJSONConversions gradientFromDictionary:gradient];
+    heatmapTileLayer.gradient = [FGMHeatmapConversions gradientFromDictionary:gradient];
   }
 
   id opacity = options[kHeatmapOpacityKey];
@@ -81,6 +85,7 @@
   }
 
   // The map must be set each time for options to update.
+  // This must be done last, to avoid visual flickers of default property values.
   heatmapTileLayer.map = mapView;
 }
 @end
@@ -147,9 +152,9 @@
   FLTGoogleMapHeatmapController *heatmapController = self.heatmapIdToController[identifier];
   if (heatmapController) {
     return @{
-      kHeatmapDataKey : [FLTGoogleMapJSONConversions
+      kHeatmapDataKey : [FGMHeatmapConversions
           arrayFromWeightedData:heatmapController.heatmapTileLayer.weightedData],
-      kHeatmapGradientKey : [FLTGoogleMapJSONConversions
+      kHeatmapGradientKey : [FGMHeatmapConversions
           dictionaryFromGradient:heatmapController.heatmapTileLayer.gradient],
       kHeatmapOpacityKey : @(heatmapController.heatmapTileLayer.opacity),
       kHeatmapRadiusKey : @(heatmapController.heatmapTileLayer.radius),

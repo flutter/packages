@@ -129,8 +129,8 @@ class Camera {
 
   /// Whether the video of the given type is supported.
   @visibleForTesting
-  bool Function(String) isVideoTypeSupported =
-      (String type) => web.MediaRecorder.isTypeSupported(type);
+  bool Function(String) isVideoTypeSupported = (String type) =>
+      web.MediaRecorder.isTypeSupported(type);
 
   /// The list of consecutive video data files recorded with [mediaRecorder].
   final List<web.Blob> _videoData = <web.Blob>[];
@@ -170,12 +170,11 @@ class Camera {
 
     videoElement = web.HTMLVideoElement();
 
-    divElement =
-        web.HTMLDivElement()
-          ..style.setProperty('object-fit', 'cover')
-          ..style.setProperty('height', '100%')
-          ..style.setProperty('width', '100%')
-          ..append(videoElement);
+    divElement = web.HTMLDivElement()
+      ..style.setProperty('object-fit', 'cover')
+      ..style.setProperty('height', '100%')
+      ..style.setProperty('width', '100%')
+      ..append(videoElement);
 
     ui_web.platformViewRegistry.registerViewFactory(
       _getViewType(textureId),
@@ -190,8 +189,9 @@ class Camera {
 
     _applyDefaultVideoStyles(videoElement);
 
-    final List<web.MediaStreamTrack> videoTracks =
-        stream!.getVideoTracks().toDart;
+    final List<web.MediaStreamTrack> videoTracks = stream!
+        .getVideoTracks()
+        .toDart;
 
     if (videoTracks.isNotEmpty) {
       final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
@@ -224,8 +224,9 @@ class Camera {
 
   /// Stops the camera stream and resets the camera source.
   void stop() {
-    final List<web.MediaStreamTrack> videoTracks =
-        stream!.getVideoTracks().toDart;
+    final List<web.MediaStreamTrack> videoTracks = stream!
+        .getVideoTracks()
+        .toDart;
     if (videoTracks.isNotEmpty) {
       onEndedController.add(videoTracks.first);
     }
@@ -254,11 +255,10 @@ class Camera {
 
     final int videoWidth = videoElement.videoWidth;
     final int videoHeight = videoElement.videoHeight;
-    final web.HTMLCanvasElement canvas =
-        web.HTMLCanvasElement()
-          ..width = videoWidth
-          ..height = videoHeight;
-    final bool isBackCamera = getLensDirection() == CameraLensDirection.back;
+    final canvas = web.HTMLCanvasElement()
+      ..width = videoWidth
+      ..height = videoHeight;
+    final isBackCamera = getLensDirection() == CameraLensDirection.back;
 
     // Flip the picture horizontally if it is not taken from a back camera.
     if (!isBackCamera) {
@@ -267,7 +267,7 @@ class Camera {
         ..scale(-1, 1);
     }
 
-    canvas.context2D.drawImageScaled(
+    canvas.context2D.drawImage(
       videoElement,
       0,
       0,
@@ -275,7 +275,7 @@ class Camera {
       videoHeight.toDouble(),
     );
 
-    final Completer<web.Blob> blobCompleter = Completer<web.Blob>();
+    final blobCompleter = Completer<web.Blob>();
     canvas.toBlob(
       (web.Blob blob) {
         blobCompleter.complete(blob);
@@ -306,8 +306,8 @@ class Camera {
 
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
 
-    final web.MediaTrackSettings defaultVideoTrackSettings =
-        defaultVideoTrack.getSettings();
+    final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack
+        .getSettings();
 
     final int width = defaultVideoTrackSettings.width;
     final int height = defaultVideoTrackSettings.height;
@@ -328,8 +328,8 @@ class Camera {
   /// or the camera has not been initialized or started.
   void setFlashMode(FlashMode mode) {
     final web.MediaDevices mediaDevices = window.navigator.mediaDevices;
-    final web.MediaTrackSupportedConstraints supportedConstraints =
-        mediaDevices.getSupportedConstraints();
+    final web.MediaTrackSupportedConstraints supportedConstraints = mediaDevices
+        .getSupportedConstraints();
     final bool torchModeSupported = supportedConstraints.torchNullable ?? false;
 
     if (!torchModeSupported) {
@@ -436,8 +436,8 @@ class Camera {
     }
 
     final web.MediaStreamTrack defaultVideoTrack = videoTracks.first;
-    final web.MediaTrackSettings defaultVideoTrackSettings =
-        defaultVideoTrack.getSettings();
+    final web.MediaTrackSettings defaultVideoTrackSettings = defaultVideoTrack
+        .getSettings();
 
     final String? facingMode = defaultVideoTrackSettings.facingModeNullable;
 
@@ -456,9 +456,7 @@ class Camera {
   /// Throws a [CameraWebException] if the browser does not support any of the
   /// available video mime types from [_videoMimeType].
   Future<void> startVideoRecording() async {
-    final web.MediaRecorderOptions options = web.MediaRecorderOptions(
-      mimeType: _videoMimeType,
-    );
+    final options = web.MediaRecorderOptions(mimeType: _videoMimeType);
     if (recorderOptions.audioBitrate != null) {
       options.audioBitsPerSecond = recorderOptions.audioBitrate!;
     }
@@ -473,11 +471,11 @@ class Camera {
 
     _videoAvailableCompleter = Completer<XFile>();
 
-    _videoDataAvailableListener =
-        (web.BlobEvent event) => _onVideoDataAvailable(event);
+    _videoDataAvailableListener = (web.BlobEvent event) =>
+        _onVideoDataAvailable(event);
 
-    _videoRecordingStoppedListener =
-        (web.Event event) => _onVideoRecordingStopped(event);
+    _videoRecordingStoppedListener = (web.Event event) =>
+        _onVideoRecordingStopped(event);
 
     mediaRecorder!.addEventListener(
       'dataavailable',
@@ -492,7 +490,7 @@ class Camera {
     _onVideoRecordingErrorSubscription = mediaRecorderOnErrorProvider
         .forTarget(mediaRecorder)
         .listen((web.Event event) {
-          final web.ErrorEvent error = event as web.ErrorEvent;
+          final error = event as web.ErrorEvent;
           videoRecordingErrorController.add(error);
         });
 
@@ -511,7 +509,7 @@ class Camera {
       final web.Blob videoBlob = blobBuilder(_videoData, videoType);
 
       // Create a file containing the video blob.
-      final XFile file = XFile(
+      final file = XFile(
         web.URL.createObjectURL(videoBlob),
         mimeType: _videoMimeType,
         name: videoBlob.hashCode.toString(),
@@ -605,7 +603,7 @@ class Camera {
   /// Throws a [CameraWebException] if the browser does not support
   /// any of the available video mime types.
   String get _videoMimeType {
-    const List<String> types = <String>[
+    const types = <String>[
       'video/webm;codecs="vp9,opus"',
       'video/mp4',
       'video/webm',
@@ -613,13 +611,11 @@ class Camera {
 
     return types.firstWhere(
       (String type) => isVideoTypeSupported(type),
-      orElse:
-          () =>
-              throw CameraWebException(
-                textureId,
-                CameraErrorCode.notSupported,
-                'The browser does not support any of the following video types: ${types.join(',')}.',
-              ),
+      orElse: () => throw CameraWebException(
+        textureId,
+        CameraErrorCode.notSupported,
+        'The browser does not support any of the following video types: ${types.join(',')}.',
+      ),
     );
   }
 
@@ -632,7 +628,7 @@ class Camera {
 
   /// Applies default styles to the video [element].
   void _applyDefaultVideoStyles(web.HTMLVideoElement element) {
-    final bool isBackCamera = getLensDirection() == CameraLensDirection.back;
+    final isBackCamera = getLensDirection() == CameraLensDirection.back;
 
     // Flip the video horizontally if it is not taken from a back camera.
     if (!isBackCamera) {

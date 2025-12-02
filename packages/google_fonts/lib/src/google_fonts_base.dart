@@ -92,18 +92,17 @@ TextStyle googleFontsTextStyle({
     decorationThickness: decorationThickness,
   );
 
-  final GoogleFontsVariant variant = GoogleFontsVariant(
+  final variant = GoogleFontsVariant(
     fontWeight: textStyle.fontWeight ?? FontWeight.w400,
     fontStyle: textStyle.fontStyle ?? FontStyle.normal,
   );
   final GoogleFontsVariant matchedVariant = _closestMatch(variant, fonts.keys);
-  final GoogleFontsFamilyWithVariant familyWithVariant =
-      GoogleFontsFamilyWithVariant(
-        family: fontFamily,
-        googleFontsVariant: matchedVariant,
-      );
+  final familyWithVariant = GoogleFontsFamilyWithVariant(
+    family: fontFamily,
+    googleFontsVariant: matchedVariant,
+  );
 
-  final GoogleFontsDescriptor descriptor = GoogleFontsDescriptor(
+  final descriptor = GoogleFontsDescriptor(
     familyWithVariant: familyWithVariant,
     file: fonts[matchedVariant]!,
   );
@@ -129,8 +128,7 @@ TextStyle googleFontsTextStyle({
 /// the [fontUrl] and stored on device. In all cases, the returned future
 /// completes once the font is loaded into the [FontLoader].
 Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
-  final String familyWithVariantString =
-      descriptor.familyWithVariant.toString();
+  final familyWithVariantString = descriptor.familyWithVariant.toString();
   final String fontName = descriptor.familyWithVariant.toApiFilenamePrefix();
   final String fileHash = descriptor.file.expectedFileHash;
   // If this font has already already loaded or is loading, then there is no
@@ -223,7 +221,7 @@ Future<void> loadFontByteData(
     return;
   }
 
-  final FontLoader fontLoader = FontLoader(familyWithVariantString);
+  final fontLoader = FontLoader(familyWithVariantString);
   fontLoader.addFont(Future<ByteData>.value(fontData));
   await fontLoader.load();
 }
@@ -240,7 +238,7 @@ GoogleFontsVariant _closestMatch(
 ) {
   int? bestScore;
   late GoogleFontsVariant bestMatch;
-  for (final GoogleFontsVariant variantToCompare in variantsToCompare) {
+  for (final variantToCompare in variantsToCompare) {
     final int score = _computeMatch(sourceVariant, variantToCompare);
     if (bestScore == null || score < bestScore) {
       bestScore = score;
@@ -298,7 +296,7 @@ int _computeMatch(GoogleFontsVariant a, GoogleFontsVariant b) {
   if (a == b) {
     return 0;
   }
-  int score = (a.fontWeight.index - b.fontWeight.index).abs();
+  int score = (a.fontWeight.value - b.fontWeight.value).abs() ~/ 100;
   if (a.fontStyle != b.fontStyle) {
     score += 2;
   }
@@ -337,7 +335,7 @@ String? _findFamilyWithVariantAssetPath(
 
 bool _isFileSecure(GoogleFontsFile file, Uint8List bytes) {
   final int actualFileLength = bytes.length;
-  final String actualFileHash = sha256.convert(bytes).toString();
+  final actualFileHash = sha256.convert(bytes).toString();
   return file.expectedLength == actualFileLength &&
       file.expectedFileHash == actualFileHash;
 }

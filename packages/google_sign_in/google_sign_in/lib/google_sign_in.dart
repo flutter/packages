@@ -97,7 +97,7 @@ class GoogleSignInAccount implements GoogleIdentity {
 
   @override
   String toString() {
-    final Map<String, dynamic> data = <String, dynamic>{
+    final data = <String, dynamic>{
       'displayName': displayName,
       'email': email,
       'id': id,
@@ -236,8 +236,8 @@ class GoogleSignInAuthorizationClient {
     return tokens == null
         ? null
         : GoogleSignInServerAuthorization(
-          serverAuthCode: tokens.serverAuthCode,
-        );
+            serverAuthCode: tokens.serverAuthCode,
+          );
   }
 
   /// Removes the given [accessToken] from any local authorization caches.
@@ -461,7 +461,7 @@ class GoogleSignIn {
         return null;
       }
 
-      final GoogleSignInAccount account = GoogleSignInAccount._(
+      final account = GoogleSignInAccount._(
         result.user,
         result.authenticationTokens,
       );
@@ -544,7 +544,7 @@ class GoogleSignIn {
     try {
       final AuthenticationResults result = await GoogleSignInPlatform.instance
           .authenticate(AuthenticateParameters(scopeHint: scopeHint));
-      final GoogleSignInAccount account = GoogleSignInAccount._(
+      final account = GoogleSignInAccount._(
         result.user,
         result.authenticationTokens,
       );

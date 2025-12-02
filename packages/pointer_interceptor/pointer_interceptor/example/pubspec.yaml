@@ -4,14 +4,15 @@ publish_to: 'none'
 version: 1.0.0
 
 environment:
-  sdk: ^3.7.0
-  flutter: ">=3.29.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   flutter:
     sdk: flutter
   pointer_interceptor:
     path: ../
+  web: ^1.0.0
 
 dev_dependencies:
   flutter_test:

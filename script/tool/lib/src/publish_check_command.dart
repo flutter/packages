@@ -25,20 +25,25 @@ class PublishCheckCommand extends PackageLoopingCommand {
     super.platform,
     super.gitDir,
     http.Client? httpClient,
-  }) : _pubVersionFinder =
-            PubVersionFinder(httpClient: httpClient ?? http.Client()) {
+  }) : _pubVersionFinder = PubVersionFinder(
+         httpClient: httpClient ?? http.Client(),
+       ) {
     argParser.addFlag(
       _allowPrereleaseFlag,
-      help: 'Allows the pre-release SDK warning to pass.\n'
+      help:
+          'Allows the pre-release SDK warning to pass.\n'
           'When enabled, a pub warning, which asks to publish the package as a pre-release version when '
           'the SDK constraint is a pre-release version, is ignored.',
     );
-    argParser.addFlag(_machineFlag,
-        help: 'Switch outputs to a machine readable JSON. \n'
-            'The JSON contains a "status" field indicating the final status of the command, the possible values are:\n'
-            '    $_statusNeedsPublish: There is at least one package need to be published. They also passed all publish checks.\n'
-            '    $_statusMessageNoPublish: There are no packages needs to be published. Either no pubspec change detected or all versions have already been published.\n'
-            '    $_statusMessageError: Some error has occurred.');
+    argParser.addFlag(
+      _machineFlag,
+      help:
+          'Switch outputs to a machine readable JSON. \n'
+          'The JSON contains a "status" field indicating the final status of the command, the possible values are:\n'
+          '    $_statusNeedsPublish: There is at least one package need to be published. They also passed all publish checks.\n'
+          '    $_statusMessageNoPublish: There are no packages needs to be published. Either no pubspec change detected or all versions have already been published.\n'
+          '    $_statusMessageError: Some error has occurred.',
+    );
   }
 
   static const String _allowPrereleaseFlag = 'allow-pre-release';
@@ -81,8 +86,9 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
     // The pre-publish hook must be run first if it exists, since passing the
     // publish check may rely on its execution.
-    final bool prePublishHookPassesOrNoops =
-        await _validatePrePublishHook(package);
+    final bool prePublishHookPassesOrNoops = await _validatePrePublishHook(
+      package,
+    );
     // Given that, don't run publish check if the pre-publish hook fails.
     _PublishCheckResult result = prePublishHookPassesOrNoops
         ? await _passesPublishCheck(package)
@@ -91,8 +97,9 @@ class PublishCheckCommand extends PackageLoopingCommand {
     // But do continue with other checks to find all problems at once.
     if (!_passesAuthorsCheck(package)) {
       _printImportantStatusMessage(
-          'No AUTHORS file found. Packages must include an AUTHORS file.',
-          isError: true);
+        'No AUTHORS file found. Packages must include an AUTHORS file.',
+        isError: true,
+      );
       result = _PublishCheckResult.error;
     }
 
@@ -111,7 +118,7 @@ class PublishCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<void> handleCapturedOutput(List<String> output) async {
-    final Map<String, dynamic> machineOutput = <String, dynamic>{
+    final machineOutput = <String, dynamic>{
       _statusKey: _statusStringForResult(_overallResult),
       _humanMessageKey: output,
     };
@@ -162,34 +169,28 @@ class PublishCheckCommand extends PackageLoopingCommand {
       workingDirectory: package.directory,
     );
 
-    final StringBuffer outputBuffer = StringBuffer();
+    final outputBuffer = StringBuffer();
 
-    final Completer<void> stdOutCompleter = Completer<void>();
-    process.stdout.listen(
-      (List<int> event) {
-        final String output = String.fromCharCodes(event);
-        if (output.isNotEmpty) {
-          print(output);
-          outputBuffer.write(output);
-        }
-      },
-      onDone: () => stdOutCompleter.complete(),
-    );
+    final stdOutCompleter = Completer<void>();
+    process.stdout.listen((List<int> event) {
+      final output = String.fromCharCodes(event);
+      if (output.isNotEmpty) {
+        print(output);
+        outputBuffer.write(output);
+      }
+    }, onDone: () => stdOutCompleter.complete());
 
-    final Completer<void> stdInCompleter = Completer<void>();
-    process.stderr.listen(
-      (List<int> event) {
-        final String output = String.fromCharCodes(event);
-        if (output.isNotEmpty) {
-          // The final result is always printed on stderr, whether success or
-          // failure.
-          final bool isError = !output.contains('has 0 warnings');
-          _printImportantStatusMessage(output, isError: isError);
-          outputBuffer.write(output);
-        }
-      },
-      onDone: () => stdInCompleter.complete(),
-    );
+    final stdInCompleter = Completer<void>();
+    process.stderr.listen((List<int> event) {
+      final output = String.fromCharCodes(event);
+      if (output.isNotEmpty) {
+        // The final result is always printed on stderr, whether success or
+        // failure.
+        final bool isError = !output.contains('has 0 warnings');
+        _printImportantStatusMessage(output, isError: isError);
+        outputBuffer.write(output);
+      }
+    }, onDone: () => stdInCompleter.complete());
 
     if (await process.exitCode == 0) {
       return true;
@@ -202,10 +203,11 @@ class PublishCheckCommand extends PackageLoopingCommand {
     await stdOutCompleter.future;
     await stdInCompleter.future;
 
-    final String output = outputBuffer.toString();
+    final output = outputBuffer.toString();
     return output.contains('Package has 1 warning') &&
         output.contains(
-            'Packages with an SDK constraint on a pre-release of the Dart SDK should themselves be published as a pre-release version.');
+          'Packages with an SDK constraint on a pre-release of the Dart SDK should themselves be published as a pre-release version.',
+        );
   }
 
   /// Returns true if the package has been explicitly marked as not for
@@ -218,7 +220,8 @@ class PublishCheckCommand extends PackageLoopingCommand {
   /// Returns the result of the publish check, or null if the package is marked
   /// as unpublishable.
   Future<_PublishCheckResult> _passesPublishCheck(
-      RepositoryPackage package) async {
+    RepositoryPackage package,
+  ) async {
     final String packageName = package.directory.basename;
     final Pubspec? pubspec = _tryParsePubspec(package);
     if (pubspec == null) {
@@ -229,7 +232,9 @@ class PublishCheckCommand extends PackageLoopingCommand {
     final Version? version = pubspec.version;
     final _PublishCheckResult alreadyPublishedResult =
         await _checkPublishingStatus(
-            packageName: packageName, version: version);
+          packageName: packageName,
+          version: version,
+        );
     if (alreadyPublishedResult == _PublishCheckResult.error) {
       print('Check pub version failed $packageName');
       return _PublishCheckResult.error;
@@ -242,7 +247,8 @@ class PublishCheckCommand extends PackageLoopingCommand {
     if (await _hasValidPublishCheckRun(package)) {
       if (alreadyPublishedResult == _PublishCheckResult.nothingToPublish) {
         print(
-            'Package $packageName version: $version has already been published on pub.');
+          'Package $packageName version: $version has already been published on pub.',
+        );
       } else {
         print('Package $packageName is able to be published.');
       }
@@ -254,8 +260,10 @@ class PublishCheckCommand extends PackageLoopingCommand {
   }
 
   // Check if `packageName` already has `version` published on pub.
-  Future<_PublishCheckResult> _checkPublishingStatus(
-      {required String packageName, required Version? version}) async {
+  Future<_PublishCheckResult> _checkPublishingStatus({
+    required String packageName,
+    required Version? version,
+  }) async {
     final PubVersionFinderResponse pubVersionFinderResponse =
         await _pubVersionFinder.getPackageVersion(packageName: packageName);
     switch (pubVersionFinderResponse.result) {
@@ -276,8 +284,9 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
   }
 
   bool _passesAuthorsCheck(RepositoryPackage package) {
-    final List<String> pathComponents =
-        package.directory.fileSystem.path.split(package.path);
+    final List<String> pathComponents = package.directory.fileSystem.path.split(
+      package.path,
+    );
     if (pathComponents.contains('third_party')) {
       // Third-party packages aren't required to have an AUTHORS file.
       return true;
@@ -291,20 +300,25 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       // If there's no custom step, then it can't block publishing.
       return true;
     }
-    final String relativeScriptPath =
-        getRelativePosixPath(script, from: package.directory);
+    final String relativeScriptPath = getRelativePosixPath(
+      script,
+      from: package.directory,
+    );
     print('Running pre-publish hook $relativeScriptPath...');
 
     // Ensure that dependencies are available.
     if (!await runPubGet(package, processRunner, platform)) {
-      _printImportantStatusMessage('Failed to get depenedencies',
-          isError: true);
+      _printImportantStatusMessage(
+        'Failed to get depenedencies',
+        isError: true,
+      );
       return false;
     }
 
-    final int exitCode = await processRunner.runAndStream(
-        'dart', <String>['run', relativeScriptPath],
-        workingDir: package.directory);
+    final int exitCode = await processRunner.runAndStream('dart', <String>[
+      'run',
+      relativeScriptPath,
+    ], workingDir: package.directory);
     if (exitCode != 0) {
       _printImportantStatusMessage('Pre-publish script failed.', isError: true);
       return false;
@@ -313,7 +327,7 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
   }
 
   void _printImportantStatusMessage(String message, {required bool isError}) {
-    final String statusMessage = '${isError ? 'ERROR' : 'SUCCESS'}: $message';
+    final statusMessage = '${isError ? 'ERROR' : 'SUCCESS'}: $message';
     if (getBoolArg(_machineFlag)) {
       print(statusMessage);
     } else {
@@ -327,8 +341,4 @@ HTTP response: ${pubVersionFinderResponse.httpResponse.body}
 }
 
 /// Possible outcomes of of a publishing check.
-enum _PublishCheckResult {
-  nothingToPublish,
-  needsPublishing,
-  error,
-}
+enum _PublishCheckResult { nothingToPublish, needsPublishing, error }

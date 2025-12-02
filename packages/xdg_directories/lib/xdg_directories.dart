@@ -222,18 +222,18 @@ Directory? getUserDirectory(String dirName) {
 /// These are the names of the variables in "[configHome]/user-dirs.dirs", with
 /// the `XDG_` prefix removed and the `_DIR` suffix removed.
 Set<String> getUserDirectoryNames() {
-  final File configFile = File(path.join(configHome.path, 'user-dirs.dirs'));
+  final configFile = File(path.join(configHome.path, 'user-dirs.dirs'));
   List<String> contents;
   try {
     contents = configFile.readAsLinesSync();
   } on FileSystemException {
     return const <String>{};
   }
-  final Set<String> result = <String>{};
-  final RegExp dirRegExp = RegExp(
+  final result = <String>{};
+  final dirRegExp = RegExp(
     r'^\s*XDG_(?<dirname>[^=]*)_DIR\s*=\s*(?<dir>.*)\s*$',
   );
-  for (final String line in contents) {
+  for (final line in contents) {
     final RegExpMatch? match = dirRegExp.firstMatch(line);
     if (match == null) {
       continue;

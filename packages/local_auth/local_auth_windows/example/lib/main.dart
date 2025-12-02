@@ -34,11 +34,9 @@ class _MyAppState extends State<MyApp> {
     super.initState();
     LocalAuthPlatform.instance.isDeviceSupported().then(
       (bool isSupported) => setState(
-        () =>
-            _supportState =
-                isSupported
-                    ? _SupportState.supported
-                    : _SupportState.unsupported,
+        () => _supportState = isSupported
+            ? _SupportState.supported
+            : _SupportState.unsupported,
       ),
     );
   }
@@ -46,8 +44,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _checkBiometrics() async {
     late bool deviceSupportsBiometrics;
     try {
-      deviceSupportsBiometrics =
-          await LocalAuthPlatform.instance.deviceSupportsBiometrics();
+      deviceSupportsBiometrics = await LocalAuthPlatform.instance
+          .deviceSupportsBiometrics();
     } on PlatformException catch (e) {
       deviceSupportsBiometrics = false;
       print(e);
@@ -64,8 +62,8 @@ class _MyAppState extends State<MyApp> {
   Future<void> _getEnrolledBiometrics() async {
     late List<BiometricType> availableBiometrics;
     try {
-      availableBiometrics =
-          await LocalAuthPlatform.instance.getEnrolledBiometrics();
+      availableBiometrics = await LocalAuthPlatform.instance
+          .getEnrolledBiometrics();
     } on PlatformException catch (e) {
       availableBiometrics = <BiometricType>[];
       print(e);
@@ -80,7 +78,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _authenticate() async {
-    bool authenticated = false;
+    var authenticated = false;
     try {
       setState(() {
         _isAuthenticating = true;

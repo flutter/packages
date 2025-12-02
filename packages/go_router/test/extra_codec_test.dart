@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:leak_tracker_flutter_testing/leak_tracker_flutter_testing.dart';
 
 import 'test_helpers.dart';
 
@@ -14,9 +15,9 @@ void main() {
   testWidgets('router rebuild with extra codec works', (
     WidgetTester tester,
   ) async {
-    const String initialString = 'some string';
-    const String empty = 'empty';
-    final GoRouter router = GoRouter(
+    const initialString = 'some string';
+    const empty = 'empty';
+    final router = GoRouter(
       initialLocation: '/',
       extraCodec: ComplexDataCodec(),
       initialExtra: ComplexData(initialString),
@@ -36,7 +37,7 @@ void main() {
     );
 
     addTearDown(router.dispose);
-    final SimpleDependency dependency = SimpleDependency();
+    final dependency = SimpleDependency();
     addTearDown(() => dependency.dispose());
 
     await tester.pumpWidget(
@@ -52,33 +53,40 @@ void main() {
     expect(find.text(initialString), findsOneWidget);
   });
 
-  testWidgets('Restores state correctly', (WidgetTester tester) async {
-    const String initialString = 'some string';
-    const String empty = 'empty';
-    final List<RouteBase> routes = <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (_, GoRouterState state) {
-          return Text((state.extra as ComplexData?)?.data ?? empty);
-        },
-      ),
-    ];
+  testWidgets(
+    'Restores state correctly',
+    (WidgetTester tester) async {
+      const initialString = 'some string';
+      const empty = 'empty';
+      final routes = <RouteBase>[
+        GoRoute(
+          path: '/',
+          builder: (_, GoRouterState state) {
+            return Text((state.extra as ComplexData?)?.data ?? empty);
+          },
+        ),
+      ];
 
-    await createRouter(
-      routes,
-      tester,
-      initialExtra: ComplexData(initialString),
-      restorationScopeId: 'test',
-      extraCodec: ComplexDataCodec(),
-    );
-    expect(find.text(initialString), findsOneWidget);
+      await createRouter(
+        routes,
+        tester,
+        initialExtra: ComplexData(initialString),
+        restorationScopeId: 'test',
+        extraCodec: ComplexDataCodec(),
+      );
+      expect(find.text(initialString), findsOneWidget);
 
-    await tester.restartAndRestore();
-    addTearDown(tester.binding.restorationManager.dispose);
+      await tester.restartAndRestore();
 
-    await tester.pumpAndSettle();
-    expect(find.text(initialString), findsOneWidget);
-  });
+      await tester.pumpAndSettle();
+      expect(find.text(initialString), findsOneWidget);
+    },
+    // TODO(hgraceb): Remove when minimum flutter version includes
+    // https://github.com/flutter/flutter/pull/176519
+    experimentalLeakTesting: LeakTesting.settings.withIgnored(
+      classes: const <String>['TestRestorationManager', 'RestorationBucket'],
+    ),
+  );
 }
 
 class ComplexData {

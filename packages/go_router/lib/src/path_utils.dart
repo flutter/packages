@@ -28,18 +28,17 @@ RegExp patternToRegExp(
   List<String> parameters, {
   required bool caseSensitive,
 }) {
-  final StringBuffer buffer = StringBuffer('^');
-  int start = 0;
+  final buffer = StringBuffer('^');
+  var start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
     if (match.start > start) {
       buffer.write(RegExp.escape(pattern.substring(start, match.start)));
     }
     final String name = match[1]!;
     final String? optionalPattern = match[2];
-    final String regex =
-        optionalPattern != null
-            ? _escapeGroup(optionalPattern, name)
-            : '(?<$name>[^/]+)';
+    final String regex = optionalPattern != null
+        ? _escapeGroup(optionalPattern, name)
+        : '(?<$name>[^/]+)';
     buffer.write(regex);
     parameters.add(name);
     start = match.end;
@@ -79,8 +78,8 @@ String _escapeGroup(String group, [String? name]) {
 /// 2. Call [patternToPath] with the `pathParameters` from the first step and
 ///    the original `pattern` used for generating the [RegExp].
 String patternToPath(String pattern, Map<String, String> pathParameters) {
-  final StringBuffer buffer = StringBuffer();
-  int start = 0;
+  final buffer = StringBuffer();
+  var start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
     if (match.start > start) {
       buffer.write(pattern.substring(start, match.start));
@@ -140,7 +139,7 @@ String canonicalUri(String loc) {
   if (loc.isEmpty) {
     throw GoException('Location cannot be empty.');
   }
-  String canon = Uri.parse(loc).toString();
+  var canon = Uri.parse(loc).toString();
   canon = canon.endsWith('?') ? canon.substring(0, canon.length - 1) : canon;
   final Uri uri = Uri.parse(canon);
 
@@ -150,21 +149,20 @@ String canonicalUri(String loc) {
   // /login?from=/ => /login?from=/
   canon =
       uri.path.endsWith('/') &&
-              uri.path != '/' &&
-              !uri.hasQuery &&
-              !uri.hasFragment
-          ? canon.substring(0, canon.length - 1)
-          : canon;
+          uri.path != '/' &&
+          !uri.hasQuery &&
+          !uri.hasFragment
+      ? canon.substring(0, canon.length - 1)
+      : canon;
 
   // replace '/?', except for first occurrence, from path only
   // /login/?from=/ => /login?from=/
   // /?from=/ => /?from=/
-  final int pathStartIndex =
-      uri.host.isNotEmpty
-          ? uri.toString().indexOf(uri.host) + uri.host.length
-          : uri.hasScheme
-          ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
-          : 0;
+  final int pathStartIndex = uri.host.isNotEmpty
+      ? uri.toString().indexOf(uri.host) + uri.host.length
+      : uri.hasScheme
+      ? uri.toString().indexOf(uri.scheme) + uri.scheme.length
+      : 0;
   if (pathStartIndex < canon.length) {
     canon = canon.replaceFirst('/?', '?', pathStartIndex + 1);
   }
@@ -178,11 +176,10 @@ String? fullPathForRoute(
   String parentFullpath,
   List<RouteBase> routes,
 ) {
-  for (final RouteBase route in routes) {
-    final String fullPath =
-        (route is GoRoute)
-            ? concatenatePaths(parentFullpath, route.path)
-            : parentFullpath;
+  for (final route in routes) {
+    final String fullPath = (route is GoRoute)
+        ? concatenatePaths(parentFullpath, route.path)
+        : parentFullpath;
 
     if (route == targetRoute) {
       return fullPath;

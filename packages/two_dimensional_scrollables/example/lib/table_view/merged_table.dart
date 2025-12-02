@@ -101,9 +101,9 @@ class _MergedTableExampleState extends State<MergedTableExample> {
     final ({String name, Color color}) cell = _getColorForVicinity(vicinity);
     final Color textColor =
         ThemeData.estimateBrightnessForColor(cell.color) == Brightness.light
-            ? Colors.black
-            : Colors.white;
-    final TextStyle style = TextStyle(
+        ? Colors.black
+        : Colors.white;
+    final style = TextStyle(
       color: textColor,
       fontSize: 18.0,
       fontWeight: vicinity.column == 0 ? FontWeight.bold : null,
@@ -121,14 +121,13 @@ class _MergedTableExampleState extends State<MergedTableExample> {
   TableSpan _buildColumnSpan(int index) {
     return TableSpan(
       extent: FixedTableSpanExtent(index == 0 ? 220 : 180),
-      foregroundDecoration:
-          index == 0
-              ? const TableSpanDecoration(
-                border: TableSpanBorder(
-                  trailing: BorderSide(width: 5, color: Colors.white),
-                ),
-              )
-              : null,
+      foregroundDecoration: index == 0
+          ? const TableSpanDecoration(
+              border: TableSpanBorder(
+                trailing: BorderSide(width: 5, color: Colors.white),
+              ),
+            )
+          : null,
     );
   }
 

@@ -23,7 +23,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('CameraService', () {
-    const int cameraId = 1;
+    const cameraId = 1;
 
     late MockWindow mockWindow;
     late MockNavigator mockNavigator;
@@ -67,18 +67,16 @@ void main() {
       testWidgets('calls MediaDevices.getUserMedia '
           'with provided options', (WidgetTester tester) async {
         late final web.MediaStreamConstraints? capturedConstraints;
-        mockMediaDevices.getUserMedia =
-            ([web.MediaStreamConstraints? constraints]) {
-              capturedConstraints = constraints;
-              final web.MediaStream stream =
-                  createJSInteropWrapper(
-                        FakeMediaStream(<web.MediaStreamTrack>[]),
-                      )
-                      as web.MediaStream;
-              return Future<web.MediaStream>.value(stream).toJS;
-            }.toJS;
+        mockMediaDevices
+            .getUserMedia = ([web.MediaStreamConstraints? constraints]) {
+          capturedConstraints = constraints;
+          final stream =
+              createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
+                  as web.MediaStream;
+          return Future<web.MediaStream>.value(stream).toJS;
+        }.toJS;
 
-        final CameraOptions options = CameraOptions(
+        final options = CameraOptions(
           video: VideoConstraints(
             facingMode: FacingModeConstraint.exact(CameraType.user),
             width: const VideoSizeConstraint(ideal: 200),
@@ -101,12 +99,11 @@ void main() {
         testWidgets('with notFound error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotFoundError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'NotFoundError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'NotFoundError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -132,12 +129,11 @@ void main() {
         testWidgets('with notFound error '
             'when MediaDevices.getUserMedia throws DomException '
             'with DevicesNotFoundError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'DevicesNotFoundError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'DevicesNotFoundError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -163,12 +159,11 @@ void main() {
         testWidgets('with notReadable error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotReadableError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'NotReadableError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'NotReadableError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
           expect(
             () => cameraService.getMediaStreamForOptions(
               const CameraOptions(),
@@ -193,12 +188,11 @@ void main() {
         testWidgets('with notReadable error '
             'when MediaDevices.getUserMedia throws DomException '
             'with TrackStartError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'TrackStartError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'TrackStartError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -224,12 +218,11 @@ void main() {
         testWidgets('with overconstrained error '
             'when MediaDevices.getUserMedia throws DomException '
             'with OverconstrainedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'OverconstrainedError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'OverconstrainedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -255,12 +248,11 @@ void main() {
         testWidgets('with overconstrained error '
             'when MediaDevices.getUserMedia throws DomException '
             'with ConstraintNotSatisfiedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'ConstraintNotSatisfiedError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'ConstraintNotSatisfiedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -286,12 +278,11 @@ void main() {
         testWidgets('with permissionDenied error '
             'when MediaDevices.getUserMedia throws DomException '
             'with NotAllowedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'NotAllowedError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'NotAllowedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -317,12 +308,11 @@ void main() {
         testWidgets('with permissionDenied error '
             'when MediaDevices.getUserMedia throws DomException '
             'with PermissionDeniedError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'PermissionDeniedError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'PermissionDeniedError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -348,12 +338,11 @@ void main() {
         testWidgets('with type error '
             'when MediaDevices.getUserMedia throws DomException '
             'with TypeError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'TypeError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'TypeError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -379,12 +368,11 @@ void main() {
         testWidgets('with abort error '
             'when MediaDevices.getUserMedia throws DomException '
             'with AbortError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'AbortError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'AbortError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -410,12 +398,11 @@ void main() {
         testWidgets('with security error '
             'when MediaDevices.getUserMedia throws DomException '
             'with SecurityError', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'SecurityError');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'SecurityError');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -441,12 +428,11 @@ void main() {
         testWidgets('with unknown error '
             'when MediaDevices.getUserMedia throws DomException '
             'with an unknown error', (WidgetTester tester) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw web.DOMException('', 'Unknown');
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw web.DOMException('', 'Unknown');
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -473,12 +459,11 @@ void main() {
             'when MediaDevices.getUserMedia throws an unknown exception', (
           WidgetTester tester,
         ) async {
-          mockMediaDevices.getUserMedia =
-              ([web.MediaStreamConstraints? _]) {
-                throw Exception();
-                // ignore: dead_code
-                return Future<web.MediaStream>.value(web.MediaStream()).toJS;
-              }.toJS;
+          mockMediaDevices.getUserMedia = ([web.MediaStreamConstraints? _]) {
+            throw Exception();
+            // ignore: dead_code
+            return Future<web.MediaStream>.value(web.MediaStream()).toJS;
+          }.toJS;
 
           expect(
             () => cameraService.getMediaStreamForOptions(
@@ -528,17 +513,15 @@ void main() {
 
       testWidgets('returns the zoom level capability '
           'based on the first video track', (WidgetTester tester) async {
-        mockMediaDevices.getSupportedConstraints =
-            () {
-              return web.MediaTrackSupportedConstraints(zoom: true);
-            }.toJS;
+        mockMediaDevices.getSupportedConstraints = () {
+          return web.MediaTrackSupportedConstraints(zoom: true);
+        }.toJS;
 
-        mockVideoTrack.getCapabilities =
-            () {
-              return web.MediaTrackCapabilities(
-                zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
-              );
-            }.toJS;
+        mockVideoTrack.getCapabilities = () {
+          return web.MediaTrackCapabilities(
+            zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
+          );
+        }.toJS;
 
         final ZoomLevelCapability zoomLevelCapability = cameraService
             .getZoomLevelCapabilityForCamera(camera);
@@ -552,17 +535,15 @@ void main() {
         testWidgets('with zoomLevelNotSupported error '
             'when the zoom level is not supported '
             'in the browser', (WidgetTester tester) async {
-          mockMediaDevices.getSupportedConstraints =
-              () {
-                return web.MediaTrackSupportedConstraints(zoom: false);
-              }.toJS;
+          mockMediaDevices.getSupportedConstraints = () {
+            return web.MediaTrackSupportedConstraints(zoom: false);
+          }.toJS;
 
-          mockVideoTrack.getCapabilities =
-              () {
-                return web.MediaTrackCapabilities(
-                  zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
-                );
-              }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return web.MediaTrackCapabilities(
+              zoom: web.MediaSettingsRange(min: 100, max: 400, step: 2),
+            );
+          }.toJS;
 
           expect(
             () => cameraService.getZoomLevelCapabilityForCamera(camera),
@@ -586,10 +567,9 @@ void main() {
             'when the camera stream has not been initialized', (
           WidgetTester tester,
         ) async {
-          mockMediaDevices.getSupportedConstraints =
-              () {
-                return web.MediaTrackSupportedConstraints(zoom: true);
-              }.toJS;
+          mockMediaDevices.getSupportedConstraints = () {
+            return web.MediaTrackSupportedConstraints(zoom: true);
+          }.toJS;
 
           // Create a camera stream with no video tracks.
           when(camera.stream).thenReturn(
@@ -624,10 +604,9 @@ void main() {
 
       testWidgets('returns null '
           'when the facing mode is not supported', (WidgetTester tester) async {
-        mockMediaDevices.getSupportedConstraints =
-            () {
-              return web.MediaTrackSupportedConstraints(facingMode: false);
-            }.toJS;
+        mockMediaDevices.getSupportedConstraints = () {
+          return web.MediaTrackSupportedConstraints(facingMode: false);
+        }.toJS;
 
         final String? facingMode = cameraService.getFacingModeForVideoTrack(
           createJSInteropWrapper(MockMediaStreamTrack())
@@ -650,18 +629,16 @@ void main() {
             jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
           ).thenReturn(true);
 
-          mockMediaDevices.getSupportedConstraints =
-              () {
-                return web.MediaTrackSupportedConstraints(facingMode: true);
-              }.toJS;
+          mockMediaDevices.getSupportedConstraints = () {
+            return web.MediaTrackSupportedConstraints(facingMode: true);
+          }.toJS;
         });
 
         testWidgets('returns an appropriate facing mode '
             'based on the video track settings', (WidgetTester tester) async {
-          mockVideoTrack.getSettings =
-              () {
-                return web.MediaTrackSettings(facingMode: 'user');
-              }.toJS;
+          mockVideoTrack.getSettings = () {
+            return web.MediaTrackSettings(facingMode: 'user');
+          }.toJS;
 
           final String? facingMode = cameraService.getFacingModeForVideoTrack(
             videoTrack,
@@ -675,16 +652,14 @@ void main() {
             'when the facing mode setting is empty', (
           WidgetTester tester,
         ) async {
-          mockVideoTrack.getSettings =
-              () {
-                return web.MediaTrackSettings(facingMode: '');
-              }.toJS;
-          mockVideoTrack.getCapabilities =
-              () {
-                return web.MediaTrackCapabilities(
-                  facingMode: <JSString>['environment'.toJS, 'left'.toJS].toJS,
-                );
-              }.toJS;
+          mockVideoTrack.getSettings = () {
+            return web.MediaTrackSettings(facingMode: '');
+          }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return web.MediaTrackCapabilities(
+              facingMode: <JSString>['environment'.toJS, 'left'.toJS].toJS,
+            );
+          }.toJS;
 
           when(
             jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
@@ -700,16 +675,12 @@ void main() {
         testWidgets('returns null '
             'when the facing mode setting '
             'and capabilities are empty', (WidgetTester tester) async {
-          mockVideoTrack.getSettings =
-              () {
-                return web.MediaTrackSettings(facingMode: '');
-              }.toJS;
-          mockVideoTrack.getCapabilities =
-              () {
-                return web.MediaTrackCapabilities(
-                  facingMode: <JSString>[].toJS,
-                );
-              }.toJS;
+          mockVideoTrack.getSettings = () {
+            return web.MediaTrackSettings(facingMode: '');
+          }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return web.MediaTrackCapabilities(facingMode: <JSString>[].toJS);
+          }.toJS;
 
           final String? facingMode = cameraService.getFacingModeForVideoTrack(
             videoTrack,
@@ -723,10 +694,9 @@ void main() {
             'the video track capabilities are not supported', (
           WidgetTester tester,
         ) async {
-          mockVideoTrack.getSettings =
-              () {
-                return web.MediaTrackSettings(facingMode: '');
-              }.toJS;
+          mockVideoTrack.getSettings = () {
+            return web.MediaTrackSettings(facingMode: '');
+          }.toJS;
 
           when(
             jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
