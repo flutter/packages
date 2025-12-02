@@ -767,9 +767,11 @@
 
   // Mock camera access to avoid permission dialogs and device-specific logic.
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
-  OCMStub(ClassMethod([mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
       .andReturn(YES);
-  OCMStub(ClassMethod([mockUIImagePicker isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]))
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]))
       .andReturn(YES);
   id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
   OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
