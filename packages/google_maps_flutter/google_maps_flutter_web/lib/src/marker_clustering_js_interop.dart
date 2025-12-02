@@ -158,7 +158,7 @@ MarkerClusterer createMarkerClusterer(
   gmaps.Map map,
   ClusterClickHandler onClusterClickHandler,
 ) {
-  final MarkerClustererOptions options = MarkerClustererOptions(
+  final options = MarkerClustererOptions(
     map: map,
     onClusterClick: onClusterClickHandler,
   );

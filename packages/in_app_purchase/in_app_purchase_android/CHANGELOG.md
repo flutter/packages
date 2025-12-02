@@ -1,6 +1,10 @@
-## 0.4.0+8
+## 0.4.0+9
 
 * Bumps com.android.billingclient:billing from 7.1.1 to 8.1.0.
+
+## 0.4.0+8
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
 
 ## 0.4.0+7
 

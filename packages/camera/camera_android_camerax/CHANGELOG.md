@@ -1,3 +1,19 @@
+## 0.6.25+1
+
+* Bumps kotlin_version to 2.2.21.
+
+## 0.6.25
+
+* Adds support for `MediaSettings.fps` for camera preview, image streaming, and video recording.
+
+## 0.6.24+4
+
+* Allows for video recording without audio when permission RECORD_AUDIO is denied.
+
+## 0.6.24+3
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
 ## 0.6.24+2
 
 * Updates to Pigeon 26.
