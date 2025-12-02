@@ -2241,6 +2241,18 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
                         $errorClassName("ignore-calls-error", "Calls to Dart are being ignored.", "")))
                 return''');
                 },
+                addTrailingNewline: false,
+              );
+              indent.writeScoped(
+                ' else if (!pigeonRegistrar.instanceManager.containsInstance(${classMemberNamePrefix}instanceArg)) {',
+                '}',
+                () {
+                  indent.format('''
+                callback(
+                    Result.failure(
+                        $errorClassName("missing-instance-error", "Calling instance is not in the instance manager.", "")))
+                return''');
+                },
               );
               indent.writeln(
                 'val binaryMessenger = pigeonRegistrar.binaryMessenger',
