@@ -264,15 +264,18 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
       do {
-        let transaction = try await fetchTransaction(by: UInt64(id))
+        let transaction = try await fetchUnfinishedTransaction(by: UInt64(id))
         if let transaction = transaction {
           await transaction.finish()
           completion(.success(Void()))
         } else {
-          // Transaction not found - this can happen for consumables that have
-          // already been finished or are no longer in the transaction history.
-          // We still return success as the transaction is effectively complete.
-          completion(.success(Void()))
+          // Transaction not found in unfinished transactions
+          completion(
+            .failure(
+              PigeonError(
+                code: "storekit2_transaction_not_found",
+                message: "Transaction not found in unfinished transactions.",
+                details: "Transaction ID: \(id)")))
         }
       } catch {
         completion(
@@ -376,25 +379,9 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     return transactions
   }
 
-  /// Helper function to fetch specific transaction by ID.
-  /// First checks Transaction.all, then falls back to unfinished transactions
-  /// to ensure consumable transactions can be found and finished.
-  func fetchTransaction(by id: UInt64) async throws -> Transaction? {
-    // First, try to find in Transaction.all
-    for await result in Transaction.all {
-      switch result {
-      case .verified(let transaction):
-        if transaction.id == id {
-          return transaction
-        }
-      case .unverified:
-        continue
-      }
-    }
-
-    // If not found in Transaction.all, check unfinished transactions
-    // This is important for consumables that may have been purchased
-    // but not yet iterated through Transaction.all
+  /// Helper function to fetch specific transaction by ID from unfinished transactions.
+  /// Used by finish() to find transactions that need to be completed.
+  func fetchUnfinishedTransaction(by id: UInt64) async throws -> Transaction? {
     for await result in Transaction.unfinished {
       switch result {
       case .verified(let transaction):
@@ -405,7 +392,22 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         continue
       }
     }
+    return nil
+  }
 
+  /// Helper function to fetch specific transaction by ID from all transactions.
+  /// Used for general transaction lookups.
+  func fetchTransaction(by id: UInt64) async throws -> Transaction? {
+    for await result in Transaction.all {
+      switch result {
+      case .verified(let transaction):
+        if transaction.id == id {
+          return transaction
+        }
+      case .unverified:
+        continue
+      }
+    }
     return nil
   }
 }

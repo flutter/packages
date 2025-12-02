@@ -415,19 +415,19 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [finishExpectation], timeout: 5)
   }
 
-  func testFinishNonExistentTransactionSucceeds() async throws {
-    // Test that finishing a non-existent transaction returns success
-    // This is important for consumables that may have already been finished
-    // or are no longer in the transaction history
+  func testFinishNonExistentTransactionReturnsError() async throws {
+    // Test that finishing a non-existent transaction returns an error
     let finishExpectation = self.expectation(
-      description: "Finishing non-existent transaction should succeed")
+      description: "Finishing non-existent transaction should return error")
 
     plugin.finish(id: 999999) { result in
       switch result {
       case .success():
-        finishExpectation.fulfill()
+        XCTFail("Finish should fail for non-existent transaction")
       case .failure(let error):
-        XCTFail("Finish should NOT fail for non-existent transaction. Failed with \(error)")
+        let pigeonError = error as! PigeonError
+        XCTAssertEqual(pigeonError.code, "storekit2_transaction_not_found")
+        finishExpectation.fulfill()
       }
     }
 

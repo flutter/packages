@@ -1,8 +1,8 @@
 ## 0.4.6+3
 
-* Fixes consumable products not being repurchasable after the first purchase in StoreKit2.
-* Ensures `finish()` always completes even when the transaction is not found in the transaction history.
-* Improves transaction lookup to also check `Transaction.unfinished` for consumables.
+* Fixes `finish()` method to always call its completion handler in StoreKit2.
+* `finish()` now returns an error when the transaction is not found in unfinished transactions.
+* Adds `fetchUnfinishedTransaction()` helper for looking up transactions that need to be completed.
 
 ## 0.4.6+2
 
