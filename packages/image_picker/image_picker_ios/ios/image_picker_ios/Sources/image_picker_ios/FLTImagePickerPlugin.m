@@ -36,11 +36,11 @@ typedef void (^FLTImagePickerRemoveCallback)(void);
 
 /**
  * A UIView subclass that monitors the removal of a PickerViewController from the window hierarchy.
- * 
+ *
  * This observer view is added to the PickerViewController's view and monitors changes to its window
  * property. When the PickerViewController is removed from the screen (either through user dismissal
  * or programmatic dismissal), this view detects the change and triggers the associated callback.
- * 
+ *
  * This mechanism ensures that the plugin receives notification when the picker is dismissed under
  * various circumstances, including interactive dismissal gestures that occur before the
  * PickerViewController has fully appeared on screen.
