@@ -423,13 +423,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
 - (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
-  if (!currentItem) {
-    *error = [FlutterError errorWithCode:@"video_not_loaded"
-                                 message:@"Cannot get audio tracks: no video loaded"
-                                 details:nil];
-    return nil;
-  }
-
+  NSAssert(currentItem, @"currentItem should not be nil");
   AVAsset *asset = currentItem.asset;
 
   // First, try to get tracks from media selection (for HLS streams)
@@ -438,16 +432,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   if (audioGroup.options.count > 0) {
     NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
         [[NSMutableArray alloc] init];
-    AVMediaSelectionOption *currentSelection = nil;
-    if (@available(iOS 11.0, macOS 10.13, *)) {
-      AVMediaSelection *mediaSelection = currentItem.currentMediaSelection;
-      currentSelection = [mediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
-    } else {
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-      currentSelection = [currentItem selectedMediaOptionInMediaSelectionGroup:audioGroup];
-#pragma clang diagnostic pop
-    }
+    AVMediaSelection *mediaSelection = currentItem.currentMediaSelection;
+    AVMediaSelectionOption *currentSelection =
+        [mediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
 
     for (NSInteger i = 0; i < audioGroup.options.count; i++) {
       AVMediaSelectionOption *option = audioGroup.options[i];
@@ -579,13 +566,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                          trackId:(NSInteger)trackId
                            error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
-  if (!currentItem) {
-    *error = [FlutterError errorWithCode:@"video_not_loaded"
-                                 message:@"Cannot select audio track: no video loaded"
-                                 details:nil];
-    return;
-  }
-
+  NSAssert(currentItem, @"currentItem should not be nil");
   AVAsset *asset = currentItem.asset;
 
   // Check if this is a media selection track (for HLS streams)
