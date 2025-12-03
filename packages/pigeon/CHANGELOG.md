@@ -1,6 +1,6 @@
 ## 26.1.3
 
-* [swift][kotlin] Fixes crash that occurs when a object that is removed from the instance manager
+* [swift][kotlin] Fixes crash that occurs when an object that is removed from the instance manager
   calls to Dart.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
