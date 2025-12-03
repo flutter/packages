@@ -5,20 +5,20 @@ publish_to: 'none'
 version: 1.0.1
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.9.0
 
 dependencies:
-  devtools_app_shared: ^0.3.0
-  devtools_extensions: ^0.3.0
+  devtools_app_shared: ^0.4.0
+  devtools_extensions: ^0.4.0
   flutter:
     sdk: flutter
   vm_service: '>=14.3.0 <16.0.0'
 
 dev_dependencies:
-  build_runner: ^2.4.10
+  build_runner: ^2.10.4
   flutter_test:
     sdk: flutter
-  mockito: 5.4.4
+  mockito: 5.6.1
 
 flutter:
   uses-material-design: true
