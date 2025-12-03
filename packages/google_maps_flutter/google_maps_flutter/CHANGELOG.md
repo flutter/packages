@@ -1,4 +1,4 @@
-## 2.14.1
+## 2.15.0
 
 * Adds `colorScheme` support for web cloud-based maps styling brightness.
 * Replaces internal use of deprecated methods.
