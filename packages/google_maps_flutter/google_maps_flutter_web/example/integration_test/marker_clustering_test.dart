@@ -19,23 +19,21 @@ void main() {
   final GoogleMapsInspectorPlatform inspector =
       GoogleMapsInspectorPlatform.instance!;
 
-  const LatLng mapCenter = LatLng(20, 20);
-  const CameraPosition initialCameraPosition = CameraPosition(
-    target: mapCenter,
-  );
+  const mapCenter = LatLng(20, 20);
+  const initialCameraPosition = CameraPosition(target: mapCenter);
 
   group('MarkersController', () {
-    const int testMapId = 33930;
+    const testMapId = 33930;
 
     testWidgets('Marker clustering', (WidgetTester tester) async {
-      const ClusterManagerId clusterManagerId = ClusterManagerId('cluster 1');
+      const clusterManagerId = ClusterManagerId('cluster 1');
 
-      final Set<ClusterManager> clusterManagers = <ClusterManager>{
+      final clusterManagers = <ClusterManager>{
         const ClusterManager(clusterManagerId: clusterManagerId),
       };
 
       // Create the marker with clusterManagerId.
-      final Set<Marker> initialMarkers = <Marker>{
+      final initialMarkers = <Marker>{
         const Marker(
           markerId: MarkerId('1'),
           position: mapCenter,
@@ -48,7 +46,7 @@ void main() {
         ),
       };
 
-      final Completer<int> mapIdCompleter = Completer<int>();
+      final mapIdCompleter = Completer<int>();
 
       await _pumpMap(
         tester,
@@ -87,14 +85,11 @@ void main() {
 
       // Copy only the first marker with null clusterManagerId.
       // This means that both markers should be removed from the cluster.
-      final Set<Marker> updatedMarkers = <Marker>{
+      final updatedMarkers = <Marker>{
         _copyMarkerWithClusterManagerId(initialMarkers.first, null),
       };
 
-      final MarkerUpdates markerUpdates = MarkerUpdates.from(
-        initialMarkers,
-        updatedMarkers,
-      );
+      final markerUpdates = MarkerUpdates.from(initialMarkers, updatedMarkers);
       await plugin.updateMarkers(markerUpdates, mapId: mapId);
 
       final List<Cluster> updatedClusters =
@@ -128,7 +123,7 @@ Future<T?> waitForValueMatchingPredicate<T>(
   bool Function(T) predicate, {
   int maxTries = 100,
 }) async {
-  for (int i = 0; i < maxTries; i++) {
+  for (var i = 0; i < maxTries; i++) {
     final T value = await getValue();
     if (predicate(value)) {
       return value;
@@ -180,7 +175,9 @@ Future<void> _pumpMap(
 Widget _wrapMap(Widget map, [Size size = const Size.square(200)]) {
   return MaterialApp(
     home: Scaffold(
-      body: Center(child: SizedBox.fromSize(size: size, child: map)),
+      body: Center(
+        child: SizedBox.fromSize(size: size, child: map),
+      ),
     ),
   );
 }

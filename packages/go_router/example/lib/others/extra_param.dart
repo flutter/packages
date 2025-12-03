@@ -62,8 +62,8 @@ class App extends StatelessWidget {
       GoRoute(
         name: 'home',
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'family',
@@ -71,7 +71,7 @@ class App extends StatelessWidget {
             builder: (BuildContext context, GoRouterState state) {
               final Map<String, Object> params =
                   state.extra! as Map<String, String>;
-              final String fid = params['fid']! as String;
+              final fid = params['fid']! as String;
               return FamilyScreen(fid: fid);
             },
           ),
@@ -94,11 +94,10 @@ class HomeScreen extends StatelessWidget {
         for (final MapEntry<String, Family> entry in _families.entries)
           ListTile(
             title: Text(entry.value.name),
-            onTap:
-                () => context.goNamed(
-                  'family',
-                  extra: <String, String>{'fid': entry.key},
-                ),
+            onTap: () => context.goNamed(
+              'family',
+              extra: <String, String>{'fid': entry.key},
+            ),
           ),
       ],
     ),

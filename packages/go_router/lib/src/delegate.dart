@@ -56,7 +56,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   @override
   Future<bool> popRoute() async {
     final Iterable<NavigatorState> states = _findCurrentNavigators();
-    for (final NavigatorState state in states) {
+    for (final state in states) {
       final bool didPop = await state.maybePop(); // Call maybePop() directly
       if (didPop) {
         return true; // Return true if maybePop handled the pop
@@ -114,7 +114,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   /// 2. Branch route
   /// 3. Parent route
   Iterable<NavigatorState> _findCurrentNavigators() {
-    final List<NavigatorState> states = <NavigatorState>[];
+    final states = <NavigatorState>[];
     if (navigatorKey.currentState != null) {
       // Set state directly without canPop check
       states.add(navigatorKey.currentState!);
@@ -179,7 +179,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
   }
 
   void _completeRouteMatch(Object? result, RouteMatchBase match) {
-    RouteMatchBase walker = match;
+    var walker = match;
     while (walker is ShellRouteMatch) {
       walker = walker.matches.last;
     }
@@ -230,14 +230,14 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
     final BuildContext? navigatorContext = navigatorKey.currentContext;
     // If navigator is not built or disposed, the GoRoute.onExit is irrelevant.
     if (navigatorContext != null) {
-      final List<RouteMatch> currentGoRouteMatches = <RouteMatch>[];
+      final currentGoRouteMatches = <RouteMatch>[];
       currentConfiguration.visitRouteMatches((RouteMatchBase match) {
         if (match is RouteMatch) {
           currentGoRouteMatches.add(match);
         }
         return true;
       });
-      final List<RouteMatch> newGoRouteMatches = <RouteMatch>[];
+      final newGoRouteMatches = <RouteMatch>[];
       configuration.visitRouteMatches((RouteMatchBase match) {
         if (match is RouteMatch) {
           newGoRouteMatches.add(match);
@@ -249,7 +249,7 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
         currentGoRouteMatches.length,
         newGoRouteMatches.length,
       );
-      int indexOfFirstDiff = 0;
+      var indexOfFirstDiff = 0;
       for (; indexOfFirstDiff < compareUntil; indexOfFirstDiff++) {
         if (currentGoRouteMatches[indexOfFirstDiff] !=
             newGoRouteMatches[indexOfFirstDiff]) {
@@ -258,8 +258,9 @@ class GoRouterDelegate extends RouterDelegate<RouteMatchList>
       }
 
       if (indexOfFirstDiff < currentGoRouteMatches.length) {
-        final List<RouteMatch> exitingMatches =
-            currentGoRouteMatches.sublist(indexOfFirstDiff).toList();
+        final List<RouteMatch> exitingMatches = currentGoRouteMatches
+            .sublist(indexOfFirstDiff)
+            .toList();
         return _callOnExitStartsAt(
           exitingMatches.length - 1,
           context: navigatorContext,

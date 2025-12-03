@@ -5,17 +5,17 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/src/in_app_purchase_apis.dart';
 
 import 'fakes/fake_storekit_platform.dart';
-import 'test_api.g.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+  final fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
+    setInAppPurchaseHostApis(api: fakeStoreKitPlatform);
   });
 
   group('present code redemption sheet', () {

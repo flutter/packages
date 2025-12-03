@@ -1,3 +1,12 @@
+## 6.4.0
+
+* Improves compatibility with `UIScene`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 6.3.6
+
+* Updates to Pigeon 26.
+
 ## 6.3.5
 
 * Updates minimum supported version to iOS 13.

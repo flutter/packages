@@ -17,10 +17,10 @@ void main() {
     late HTMLInputElement input;
 
     FileList? createFileList(List<File> files) {
-      final DataTransfer dataTransfer = DataTransfer();
+      final dataTransfer = DataTransfer();
       // Tear-offs of external extension type interop member 'add' are disallowed.
       // ignore: prefer_foreach
-      for (final File e in files) {
+      for (final e in files) {
         dataTransfer.items.add(e);
       }
       return dataTransfer.files;
@@ -41,13 +41,13 @@ void main() {
 
     setUp(() {
       domHelper = DomHelper();
-      input =
-          (document.createElement('input') as HTMLInputElement)..type = 'file';
+      input = (document.createElement('input') as HTMLInputElement)
+        ..type = 'file';
     });
 
     group('getFiles', () {
-      final File mockFile1 = File(<JSAny>['123456'.toJS].toJS, 'file1.txt');
-      final File mockFile2 = File(<JSAny>[].toJS, 'file2.txt');
+      final mockFile1 = File(<JSAny>['123456'.toJS].toJS, 'file1.txt');
+      final mockFile2 = File(<JSAny>[].toJS, 'file2.txt');
 
       testWidgets('works', (_) async {
         final Future<List<XFile>> futureFiles = domHelper.getFiles(
@@ -107,8 +107,8 @@ void main() {
       });
 
       testWidgets('sets the <input /> attributes and clicks it', (_) async {
-        const String accept = '.jpg,.png';
-        const bool multiple = true;
+        const accept = '.jpg,.png';
+        const multiple = true;
         final Future<bool> wasClicked = input.onClick.first.then((_) => true);
 
         final Future<List<XFile>> futureFile = domHelper.getFiles(

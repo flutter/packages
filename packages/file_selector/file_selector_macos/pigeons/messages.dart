@@ -9,7 +9,6 @@ import 'package:pigeon/pigeon.dart';
     swiftOut:
         'macos/file_selector_macos/Sources/file_selector_macos/messages.g.swift',
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/messages_test.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -36,11 +35,13 @@ class SavePanelOptions {
     this.directoryPath,
     this.nameFieldStringValue,
     this.prompt,
+    this.canCreateDirectories,
   });
   final AllowedTypes? allowedFileTypes;
   final String? directoryPath;
   final String? nameFieldStringValue;
   final String? prompt;
+  final bool? canCreateDirectories;
 }
 
 /// Options for open panels.
@@ -63,7 +64,7 @@ class OpenPanelOptions {
   final SavePanelOptions baseOptions;
 }
 
-@HostApi(dartHostTestHandler: 'TestFileSelectorApi')
+@HostApi()
 abstract class FileSelectorApi {
   /// Shows an open panel with the given [options], returning the list of
   /// selected paths.

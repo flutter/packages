@@ -1,3 +1,11 @@
+## 0.4.6+2
+
+* Updates to Pigeon 26.
+
+## 0.4.6+1
+
+* Refactors internals for improved testability.
+
 ## 0.4.6
 
 * Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`

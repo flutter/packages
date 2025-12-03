@@ -160,9 +160,7 @@ class StandardMessageCodec implements MessageCodec<Object?> {
     if (message == null) {
       return null;
     }
-    final WriteBuffer buffer = WriteBuffer(
-      startCapacity: _writeBufferStartCapacity,
-    );
+    final buffer = WriteBuffer(startCapacity: _writeBufferStartCapacity);
     writeValue(buffer, message);
     return buffer.done();
   }
@@ -172,7 +170,7 @@ class StandardMessageCodec implements MessageCodec<Object?> {
     if (message == null) {
       return null;
     }
-    final ReadBuffer buffer = ReadBuffer(message);
+    final buffer = ReadBuffer(message);
     final Object? result = readValue(buffer);
     if (buffer.hasRemaining) {
       throw const FormatException('Message corrupted');
@@ -242,11 +240,11 @@ class StandardMessageCodec implements MessageCodec<Object?> {
       }
     } else if (value is String) {
       buffer.putUint8(_valueString);
-      final Uint8List asciiBytes = Uint8List(value.length);
+      final asciiBytes = Uint8List(value.length);
       Uint8List? utf8Bytes;
-      int utf8Offset = 0;
+      var utf8Offset = 0;
       // Only do utf8 encoding if we encounter non-ascii characters.
-      for (int i = 0; i < value.length; i += 1) {
+      for (var i = 0; i < value.length; i += 1) {
         final int char = value.codeUnitAt(i);
         if (char <= 0x7f) {
           asciiBytes[i] = char;
@@ -354,15 +352,15 @@ class StandardMessageCodec implements MessageCodec<Object?> {
         return buffer.getFloat64List(length);
       case _valueList:
         final int length = readSize(buffer);
-        final List<Object?> result = List<Object?>.filled(length, null);
-        for (int i = 0; i < length; i++) {
+        final result = List<Object?>.filled(length, null);
+        for (var i = 0; i < length; i++) {
           result[i] = readValue(buffer);
         }
         return result;
       case _valueMap:
         final int length = readSize(buffer);
-        final Map<Object?, Object?> result = <Object?, Object?>{};
-        for (int i = 0; i < length; i++) {
+        final result = <Object?, Object?>{};
+        for (var i = 0; i < length; i++) {
           result[readValue(buffer)] = readValue(buffer);
         }
         return result;

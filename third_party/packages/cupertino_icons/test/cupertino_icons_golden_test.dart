@@ -34,21 +34,20 @@ void main() async {
     return;
   }
   // Load font.
-  final String effectiveFontFamily =
-      const TextStyle(
-        fontFamily: CupertinoIcons.iconFont,
-        package: CupertinoIcons.iconFontPackage,
-      ).fontFamily!;
-  final FontLoader fontLoader = FontLoader(effectiveFontFamily);
+  final String effectiveFontFamily = const TextStyle(
+    fontFamily: CupertinoIcons.iconFont,
+    package: CupertinoIcons.iconFontPackage,
+  ).fontFamily!;
+  final fontLoader = FontLoader(effectiveFontFamily);
   final String filePath = path.canonicalize('assets/CupertinoIcons.ttf');
-  final File file = File(filePath);
+  final file = File(filePath);
   fontLoader.addFont(
     file.readAsBytes().then((Uint8List v) => v.buffer.asByteData()),
   );
   await fontLoader.load();
 
   assert(icons.isNotEmpty);
-  for (int index = 0; index < icons.length;) {
+  for (var index = 0; index < icons.length;) {
     final int groupEndCodePoint =
         (icons[index].codePoint ~/ iconsPerImage + 1) * iconsPerImage;
     final int next = icons.indexWhere(
@@ -71,20 +70,17 @@ void registerTestForIconGroup(List<IconData> iconGroup) {
       codePoint.toRadixString(16).toUpperCase().padLeft(4, '0');
   final int groupStartCodePoint =
       (iconGroup.first.codePoint ~/ iconsPerImage) * iconsPerImage;
-  final String range =
+  final range =
       'U+${hexCodePoint(groupStartCodePoint)}-${hexCodePoint(groupStartCodePoint + iconsPerImage - 1)}';
 
   testWidgets('font golden test: $range', (WidgetTester tester) async {
     addTearDown(tester.view.reset);
-    const Size canvasSize = Size(
-      iconSize * iconsPerRow,
-      iconSize * iconsPerCol,
-    );
+    const canvasSize = Size(iconSize * iconsPerRow, iconSize * iconsPerCol);
     tester.view.physicalSize = canvasSize * tester.view.devicePixelRatio;
 
     const Widget fillerBox = SizedBox.square(dimension: iconSize);
-    final List<Widget> children = List<Widget>.filled(iconsPerImage, fillerBox);
-    for (final IconData icon in iconGroup) {
+    final children = List<Widget>.filled(iconsPerImage, fillerBox);
+    for (final icon in iconGroup) {
       children[icon.codePoint - groupStartCodePoint] = Icon(
         icon,
         size: iconSize,

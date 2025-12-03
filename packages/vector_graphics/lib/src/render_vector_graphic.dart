@@ -207,8 +207,8 @@ class RenderVectorGraphic extends RenderBox {
     // arguments of Picture.toImage do not control the resolution that the
     // picture is rendered at, instead it controls how much of the picture to
     // capture in a raster.
-    final ui.PictureRecorder recorder = ui.PictureRecorder();
-    final ui.Canvas canvas = ui.Canvas(recorder);
+    final recorder = ui.PictureRecorder();
+    final canvas = ui.Canvas(recorder);
 
     canvas.scale(scaleFactor);
     canvas.drawPicture(info.picture);
@@ -236,11 +236,11 @@ class RenderVectorGraphic extends RenderBox {
   // is sufficiently different. Returns `null` if rasterData has been
   // updated immediately.
   void _maybeUpdateRaster() {
-    final int scaledWidth =
-        (pictureInfo.size.width * devicePixelRatio / scale).round();
+    final int scaledWidth = (pictureInfo.size.width * devicePixelRatio / scale)
+        .round();
     final int scaledHeight =
         (pictureInfo.size.height * devicePixelRatio / scale).round();
-    final RasterKey key = RasterKey(assetKey, scaledWidth, scaledHeight);
+    final key = RasterKey(assetKey, scaledWidth, scaledHeight);
 
     // First check if the raster is available synchronously. This also handles
     // a no-op change that would resolve to an identical picture.
@@ -313,18 +313,13 @@ class RenderVectorGraphic extends RenderBox {
 
     // Use `FilterQuality.low` to scale the image, which corresponds to
     // bilinear interpolation.
-    final Paint colorPaint = Paint()..filterQuality = ui.FilterQuality.low;
+    final colorPaint = Paint()..filterQuality = ui.FilterQuality.low;
     if (colorFilter != null) {
       colorPaint.colorFilter = colorFilter;
     }
     colorPaint.color = Color.fromRGBO(0, 0, 0, _opacityValue);
-    final Rect src = ui.Rect.fromLTWH(
-      0,
-      0,
-      width.toDouble(),
-      height.toDouble(),
-    );
-    final Rect dst = ui.Rect.fromLTWH(
+    final src = ui.Rect.fromLTWH(0, 0, width.toDouble(), height.toDouble());
+    final dst = ui.Rect.fromLTWH(
       offset.dx,
       offset.dy,
       pictureInfo.size.width,
@@ -433,7 +428,7 @@ class RenderPictureVectorGraphic extends RenderBox {
       return;
     }
 
-    final Paint colorPaint = Paint();
+    final colorPaint = Paint();
     if (colorFilter != null) {
       colorPaint.colorFilter = colorFilter;
     }

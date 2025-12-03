@@ -51,8 +51,9 @@ void main() {
     final List<ResolvedPathNode> nodes = queryChildren<ResolvedPathNode>(
       resolvedNode,
     );
-    final SaveLayerNode saveLayerNode =
-        queryChildren<SaveLayerNode>(resolvedNode).single;
+    final SaveLayerNode saveLayerNode = queryChildren<SaveLayerNode>(
+      resolvedNode,
+    ).single;
 
     expect(saveLayerNode.paint.fill!.color, const Color(0x7FFF0000));
 
@@ -137,18 +138,15 @@ void main() {
   });
 
   test('visitChildren on clips and masks', () {
-    final ResolvedClipNode clip = ResolvedClipNode(
-      clips: <Path>[],
-      child: Node.empty,
-    );
+    final clip = ResolvedClipNode(clips: <Path>[], child: Node.empty);
 
-    final ResolvedMaskNode mask = ResolvedMaskNode(
+    final mask = ResolvedMaskNode(
       child: Node.empty,
       mask: Node.empty,
       blendMode: BlendMode.color,
     );
 
-    int visitCount = 0;
+    var visitCount = 0;
     clip.visitChildren((Node child) {
       visitCount += 1;
       expect(child, Node.empty);
@@ -172,8 +170,9 @@ void main() {
       ResolvingVisitor(),
       AffineMatrix.identity,
     );
-    final ResolvedImageNode imageNode =
-        queryChildren<ResolvedImageNode>(resolvedNode).single;
+    final ResolvedImageNode imageNode = queryChildren<ResolvedImageNode>(
+      resolvedNode,
+    ).single;
     expect(
       imageNode.transform,
       const AffineMatrix(1.0, 0.0, 0.0, -1.0, 50.0, 50.0),

@@ -187,7 +187,7 @@ void main() {
   });
 
   test('None on fill', () {
-    const String svg = '''
+    const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" fill="none"
   style="-webkit-print-color-adjust:exact">
   <defs>
@@ -212,13 +212,19 @@ void main() {
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
     // Should _not_ contain a paint with an opaque black fill for the rect with class "frame-background".
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff22c55e))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xfff59e0b))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff22c55e)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xfff59e0b)),
+      ),
     ]);
   });
 
   test('text spacing', () {
-    const String svg = '''
+    const svg = '''
 <svg width="185" height="43" viewBox="0 0 185 43" xmlns="http://www.w3.org/2000/svg">
     <g fill="none" fill-rule="evenodd">
         <text x="35.081" y="15" font-family="OpenSans-Italic, Open Sans" font-size="14" font-style="italic" fill="#333">
@@ -272,7 +278,7 @@ void main() {
   });
 
   test('stroke-opacity', () {
-    const String strokeOpacitySvg = '''
+    const strokeOpacitySvg = '''
 <svg viewBox="0 0 10 10" fill="none">
   <rect x="0" y="0" width="5" height="5" stroke="red" stroke-opacity=".5" />
 </svg>
@@ -289,7 +295,7 @@ void main() {
   });
 
   test('preserve opacity from color mapper for strokes', () {
-    const String strokeOpacitySvg = '''
+    const strokeOpacitySvg = '''
 <svg viewBox="0 0 10 10" fill="none">
   <rect x="0" y="0" width="5" height="5" stroke="#000000" />
 </svg>
@@ -363,7 +369,7 @@ void main() {
   });
 
   test('currentColor', () {
-    const String currentColorSvg = '''
+    const currentColorSvg = '''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="5" height="5" fill="currentColor" />
 </svg>
@@ -390,7 +396,7 @@ void main() {
   });
 
   test('currentColor stoke opacity', () {
-    const String currentColorSvg = '''
+    const currentColorSvg = '''
 <svg viewBox="0 0 10 10">
   <rect x="0" y="0" width="5" height="5" fill="currentColor" stroke="currentColor" />
 </svg>
@@ -433,12 +439,21 @@ void main() {
 ''');
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x06202124))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x06202124)),
+      ),
       // The paint for the saveLayer.
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x0a000000))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x0a000000)),
+      ),
       // The paint for the path drawn in the saveLayer - must not be the same as
       // the saveLayer otherwise the path will be drawn almost completely transparent.
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color.opaqueBlack)),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color.opaqueBlack),
+      ),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
@@ -782,7 +797,7 @@ void main() {
   });
 
   test('stroke-width with invalid value', () {
-    const String svg =
+    const svg =
         '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="invalid"/></svg>';
 
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
@@ -808,18 +823,18 @@ void main() {
   });
 
   test('stroke-width with unit value', () {
-    const SvgTheme theme = SvgTheme();
+    const theme = SvgTheme();
     const double ptConversionFactor = 96 / 72;
 
-    const String svg_px =
+    const svg_px =
         '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1px"/></svg>';
-    const String svg_pt =
+    const svg_pt =
         '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1pt"/></svg>';
-    const String svg_ex =
+    const svg_ex =
         '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1ex"/></svg>';
-    const String svg_em =
+    const svg_em =
         '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1em"/></svg>';
-    const String svg_rem =
+    const svg_rem =
         '<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><path d="M100 10 H180 V90 H100 Z" fill="#ff0000" stroke="#0000ff" stroke-width="1rem"/></svg>';
 
     final VectorInstructions instructionsPx = parseWithoutOptimizers(svg_px);
@@ -1096,7 +1111,7 @@ void main() {
   );
 
   test('Opaque blend mode gets a save layer', () {
-    const String svg = '''
+    const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <rect x="0" y="0" width="100" height="100" fill="red" />
   <g style="mix-blend-mode:screen">
@@ -1107,8 +1122,14 @@ void main() {
     final VectorInstructions instructions = parseWithoutOptimizers(svg);
     expect(instructions.paints, const <Paint>[
       Paint(fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color.opaqueBlack)),
-      Paint(blendMode: BlendMode.screen, fill: Fill(color: Color(0xff008000))),
+      Paint(
+        blendMode: BlendMode.screen,
+        fill: Fill(color: Color.opaqueBlack),
+      ),
+      Paint(
+        blendMode: BlendMode.screen,
+        fill: Fill(color: Color(0xff008000)),
+      ),
     ]);
     expect(instructions.commands, const <DrawCommand>[
       DrawCommand(DrawCommandType.path, objectId: 0, paintId: 0),
@@ -1119,7 +1140,7 @@ void main() {
   });
 
   test('Stroke properties respected in toStroke', () {
-    const String svg = '''
+    const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 112 102">
   <path fill="none" stroke="red" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.7" d="M70.822 65.557l5.376 5.296 8.389-8.676" />
 </svg>
@@ -1338,7 +1359,7 @@ void main() {
   });
 
   test('Handles viewBox transformations correctly', () {
-    const String svg = '''
+    const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-10 -12 120 120">
   <rect x="11" y="36" width="31" height="20" fill="red" />
 </svg>
@@ -1353,7 +1374,7 @@ void main() {
   });
 
   test('Parses rrects correctly', () {
-    const String svg = '''
+    const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
   <rect x="11" y="36" width="31" height="20" rx="2.5" fill="red" />
 </svg>
@@ -1598,7 +1619,7 @@ void main() {
   });
 
   test('Parses text with pattern as fill', () {
-    const String textWithPattern = '''
+    const textWithPattern = '''
 <svg width="600" height="400">
     <defs>
           <pattern id="textPattern" x="7" y="7" width="10" height="10" patternUnits="userSpaceOnUse">
@@ -1637,7 +1658,7 @@ void main() {
 
   test('Defaults image height/width when not specified', () {
     // 1x1 PNG image from png-pixel.com.
-    const String svgStr = '''
+    const svgStr = '''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==" />
 </svg>''';
@@ -1655,7 +1676,7 @@ void main() {
     // 1x1 PNG image from png-pixel.com. Claiming that it's JPEG and using "img"
     // instead of "image" to make sure parser doesn't barf. Chrome is ok with
     // this kind of nonsense. How far we have strayed.
-    const String svgStr = '''
+    const svgStr = '''
 <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
     <image href="data:img/jpeg;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg==" />
 </svg>''';
@@ -3123,7 +3144,7 @@ void main() {
   });
 
   test('Parse empty tag', () {
-    const String svgStr = '''
+    const svgStr = '''
      <svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
         <polygon
             fill="#0a287d"

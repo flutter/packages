@@ -4,18 +4,18 @@
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:in_app_purchase_storekit/src/in_app_purchase_apis.dart';
 import 'package:in_app_purchase_storekit/src/messages.g.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
-import '../test_api.g.dart';
 import 'sk_test_stub_objects.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final FakeStoreKitPlatform fakeStoreKitPlatform = FakeStoreKitPlatform();
+  final fakeStoreKitPlatform = FakeStoreKitPlatform();
 
   setUpAll(() {
-    TestInAppPurchaseApi.setUp(fakeStoreKitPlatform);
+    setInAppPurchaseHostApis(api: fakeStoreKitPlatform);
   });
 
   setUp(() {});
@@ -77,7 +77,7 @@ void main() {
       fakeStoreKitPlatform.getReceiptFailTest = true;
       expect(
         () async => SKReceiptManager.retrieveReceiptData(),
-        throwsA(const TypeMatcher<PlatformException>()),
+        throwsA(const TypeMatcher<Exception>()),
       );
     });
   });
@@ -98,7 +98,7 @@ void main() {
     });
 
     test('storefront returns valid SKStoreFrontWrapper object', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
+      final queue = SKPaymentQueueWrapper();
       expect(
         await queue.storefront(),
         SKStorefrontWrapper.fromJson(const <String, dynamic>{
@@ -123,18 +123,16 @@ void main() {
     );
 
     test('should add payment to the payment queue', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      final TestPaymentTransactionObserver observer =
-          TestPaymentTransactionObserver();
+      final queue = SKPaymentQueueWrapper();
+      final observer = TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.addPayment(dummyPayment);
       expect(fakeStoreKitPlatform.payments.first, equals(dummyPayment));
     });
 
     test('should finish transaction', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      final TestPaymentTransactionObserver observer =
-          TestPaymentTransactionObserver();
+      final queue = SKPaymentQueueWrapper();
+      final observer = TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.finishTransaction(dummyTransaction);
       expect(
@@ -144,9 +142,8 @@ void main() {
     });
 
     test('should restore transaction', () async {
-      final SKPaymentQueueWrapper queue = SKPaymentQueueWrapper();
-      final TestPaymentTransactionObserver observer =
-          TestPaymentTransactionObserver();
+      final queue = SKPaymentQueueWrapper();
+      final observer = TestPaymentTransactionObserver();
       queue.setTransactionObserver(observer);
       await queue.restoreTransactions(applicationUserName: 'aUserID');
       expect(
@@ -192,7 +189,7 @@ void main() {
   });
 }
 
-class FakeStoreKitPlatform implements TestInAppPurchaseApi {
+class FakeStoreKitPlatform implements InAppPurchaseAPI {
   // get product request
   List<dynamic> startProductRequestParam = <dynamic>[];
   bool getProductRequestFailTest = false;
@@ -223,19 +220,19 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   bool? queueIsActive;
 
   @override
-  void addPayment(Map<String?, Object?> paymentMap) {
+  Future<void> addPayment(Map<String?, Object?> paymentMap) async {
     payments.add(
       SKPaymentWrapper.fromJson(Map<String, dynamic>.from(paymentMap)),
     );
   }
 
   @override
-  bool canMakePayments() {
+  Future<bool> canMakePayments() async {
     return true;
   }
 
   @override
-  SKStorefrontMessage storefront() {
+  Future<SKStorefrontMessage> storefront() async {
     return SKStorefrontMessage(
       countryCode: 'USA',
       identifier: 'unique_identifier',
@@ -243,59 +240,59 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  List<SKPaymentTransactionMessage> transactions() =>
+  Future<List<SKPaymentTransactionMessage>> transactions() async =>
       <SKPaymentTransactionMessage>[dummyTransactionMessage];
 
   @override
-  void finishTransaction(Map<String?, Object?> finishMap) {
+  Future<void> finishTransaction(Map<String?, Object?> finishMap) async {
     transactionsFinished.add(Map<String, String>.from(finishMap));
   }
 
   @override
-  void presentCodeRedemptionSheet() {
+  Future<void> presentCodeRedemptionSheet() async {
     presentCodeRedemption = true;
   }
 
   @override
-  void restoreTransactions(String? applicationUserName) {
+  Future<void> restoreTransactions(String? applicationUserName) async {
     applicationNameHasTransactionRestored = applicationUserName!;
   }
 
   @override
   Future<SKProductsResponseMessage> startProductRequest(
     List<String?> productIdentifiers,
-  ) {
+  ) async {
     startProductRequestParam = productIdentifiers;
     if (getProductRequestFailTest) {
       return Future<SKProductsResponseMessage>.value(
         SKProductsResponseMessage(),
       );
     }
-    return Future<SKProductsResponseMessage>.value(dummyProductResponseMessage);
+    return dummyProductResponseMessage;
   }
 
   @override
-  void registerPaymentQueueDelegate() {
+  Future<void> registerPaymentQueueDelegate() async {
     isPaymentQueueDelegateRegistered = true;
   }
 
   @override
-  void removePaymentQueueDelegate() {
+  Future<void> removePaymentQueueDelegate() async {
     isPaymentQueueDelegateRegistered = false;
   }
 
   @override
-  void startObservingPaymentQueue() {
+  Future<void> startObservingPaymentQueue() async {
     queueIsActive = true;
   }
 
   @override
-  void stopObservingPaymentQueue() {
+  Future<void> stopObservingPaymentQueue() async {
     queueIsActive = false;
   }
 
   @override
-  String retrieveReceiptData() {
+  Future<String> retrieveReceiptData() async {
     if (getReceiptFailTest) {
       throw Exception('some arbitrary error');
     }
@@ -312,14 +309,22 @@ class FakeStoreKitPlatform implements TestInAppPurchaseApi {
   }
 
   @override
-  void showPriceConsentIfNeeded() {
+  Future<void> showPriceConsentIfNeeded() async {
     showPriceConsent = true;
   }
 
   @override
-  bool supportsStoreKit2() {
+  Future<bool> supportsStoreKit2() async {
     return true;
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }
 
 class TestPaymentQueueDelegate extends SKPaymentQueueDelegateWrapper {}

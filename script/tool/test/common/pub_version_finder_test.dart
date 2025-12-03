@@ -12,12 +12,13 @@ import 'package:test/test.dart';
 
 void main() {
   test('Package does not exist.', () async {
-    final MockClient mockClient = MockClient((http.Request request) async {
+    final mockClient = MockClient((http.Request request) async {
       return http.Response('', 404);
     });
-    final PubVersionFinder finder = PubVersionFinder(httpClient: mockClient);
-    final PubVersionFinderResponse response =
-        await finder.getPackageVersion(packageName: 'some_package');
+    final finder = PubVersionFinder(httpClient: mockClient);
+    final PubVersionFinderResponse response = await finder.getPackageVersion(
+      packageName: 'some_package',
+    );
 
     expect(response.versions, isEmpty);
     expect(response.result, PubVersionFinderResult.noPackageFound);
@@ -26,12 +27,13 @@ void main() {
   });
 
   test('HTTP error when getting versions from pub', () async {
-    final MockClient mockClient = MockClient((http.Request request) async {
+    final mockClient = MockClient((http.Request request) async {
       return http.Response('', 400);
     });
-    final PubVersionFinder finder = PubVersionFinder(httpClient: mockClient);
-    final PubVersionFinderResponse response =
-        await finder.getPackageVersion(packageName: 'some_package');
+    final finder = PubVersionFinder(httpClient: mockClient);
+    final PubVersionFinderResponse response = await finder.getPackageVersion(
+      packageName: 'some_package',
+    );
 
     expect(response.versions, isEmpty);
     expect(response.result, PubVersionFinderResult.fail);
@@ -40,7 +42,7 @@ void main() {
   });
 
   test('Get a correct list of versions when http response is OK.', () async {
-    const Map<String, dynamic> httpResponse = <String, dynamic>{
+    const httpResponse = <String, dynamic>{
       'name': 'some_package',
       'versions': <String>[
         '0.0.1',
@@ -57,12 +59,13 @@ void main() {
         '1.0.0',
       ],
     };
-    final MockClient mockClient = MockClient((http.Request request) async {
+    final mockClient = MockClient((http.Request request) async {
       return http.Response(json.encode(httpResponse), 200);
     });
-    final PubVersionFinder finder = PubVersionFinder(httpClient: mockClient);
-    final PubVersionFinderResponse response =
-        await finder.getPackageVersion(packageName: 'some_package');
+    final finder = PubVersionFinder(httpClient: mockClient);
+    final PubVersionFinderResponse response = await finder.getPackageVersion(
+      packageName: 'some_package',
+    );
 
     expect(response.versions, <Version>[
       Version.parse('2.0.0'),

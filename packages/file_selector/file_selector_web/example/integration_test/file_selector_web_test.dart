@@ -19,16 +19,14 @@ void main() {
       testWidgets('works', (WidgetTester _) async {
         final XFile mockFile = createXFile('1001', 'identity.png');
 
-        final MockDomHelper mockDomHelper = MockDomHelper(
+        final mockDomHelper = MockDomHelper(
           files: <XFile>[mockFile],
           expectAccept: '.jpg,.jpeg,image/png,image/*',
         );
 
-        final FileSelectorWeb plugin = FileSelectorWeb(
-          domHelper: mockDomHelper,
-        );
+        final plugin = FileSelectorWeb(domHelper: mockDomHelper);
 
-        const XTypeGroup typeGroup = XTypeGroup(
+        const typeGroup = XTypeGroup(
           label: 'images',
           extensions: <String>['jpg', 'jpeg'],
           mimeTypes: <String>['image/png'],
@@ -50,11 +48,9 @@ void main() {
         WidgetTester _,
       ) async {
         // Simulate returning an empty list of files from the DomHelper...
-        final MockDomHelper mockDomHelper = MockDomHelper(files: <XFile>[]);
+        final mockDomHelper = MockDomHelper(files: <XFile>[]);
 
-        final FileSelectorWeb plugin = FileSelectorWeb(
-          domHelper: mockDomHelper,
-        );
+        final plugin = FileSelectorWeb(domHelper: mockDomHelper);
 
         final XFile? file = await plugin.openFile();
 
@@ -67,17 +63,15 @@ void main() {
         final XFile mockFile1 = createXFile('123456', 'file1.txt');
         final XFile mockFile2 = createXFile('', 'file2.txt');
 
-        final MockDomHelper mockDomHelper = MockDomHelper(
+        final mockDomHelper = MockDomHelper(
           files: <XFile>[mockFile1, mockFile2],
           expectAccept: '.txt',
           expectMultiple: true,
         );
 
-        final FileSelectorWeb plugin = FileSelectorWeb(
-          domHelper: mockDomHelper,
-        );
+        final plugin = FileSelectorWeb(domHelper: mockDomHelper);
 
-        const XTypeGroup typeGroup = XTypeGroup(
+        const typeGroup = XTypeGroup(
           label: 'files',
           extensions: <String>['.txt'],
         );
@@ -102,7 +96,7 @@ void main() {
 
     group('getSavePath', () {
       testWidgets('returns non-null', (WidgetTester _) async {
-        final FileSelectorWeb plugin = FileSelectorWeb();
+        final plugin = FileSelectorWeb();
         final Future<String?> savePath = plugin.getSavePath();
         expect(await savePath, isNotNull);
       });
@@ -144,6 +138,6 @@ class MockDomHelper implements DomHelper {
 }
 
 XFile createXFile(String content, String name) {
-  final Uint8List data = Uint8List.fromList(content.codeUnits);
+  final data = Uint8List.fromList(content.codeUnits);
   return XFile.fromData(data, name: name, lastModified: DateTime.now());
 }

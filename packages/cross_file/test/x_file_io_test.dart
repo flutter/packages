@@ -12,8 +12,9 @@ import 'dart:typed_data';
 import 'package:cross_file/cross_file.dart';
 import 'package:test/test.dart';
 
-final String pathPrefix =
-    Directory.current.path.endsWith('test') ? './assets/' : './test/assets/';
+final String pathPrefix = Directory.current.path.endsWith('test')
+    ? './assets/'
+    : './test/assets/';
 final String path = '${pathPrefix}hello.txt';
 const String expectedStringContents = 'Hello, world!';
 final Uint8List bytes = Uint8List.fromList(utf8.encode(expectedStringContents));
@@ -23,28 +24,28 @@ final String textFilePath = textFile.path;
 void main() {
   group('Create with a path', () {
     test('Can be read as a string', () async {
-      final XFile file = XFile(textFilePath);
+      final file = XFile(textFilePath);
       expect(await file.readAsString(), equals(expectedStringContents));
     });
     test('Can be read as bytes', () async {
-      final XFile file = XFile(textFilePath);
+      final file = XFile(textFilePath);
       expect(await file.readAsBytes(), equals(bytes));
     });
 
     test('Can be read as a stream', () async {
-      final XFile file = XFile(textFilePath);
+      final file = XFile(textFilePath);
       expect(await file.openRead().first, equals(bytes));
     });
 
     test('Stream can be sliced', () async {
-      final XFile file = XFile(textFilePath);
+      final file = XFile(textFilePath);
       expect(await file.openRead(2, 5).first, equals(bytes.sublist(2, 5)));
     });
 
     test('saveTo(..) creates file', () async {
-      final XFile file = XFile(textFilePath);
+      final file = XFile(textFilePath);
       final Directory tempDir = Directory.systemTemp.createTempSync();
-      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      final targetFile = File('${tempDir.path}/newFilePath.txt');
       if (targetFile.existsSync()) {
         await targetFile.delete();
       }
@@ -58,9 +59,9 @@ void main() {
     });
 
     test('saveTo(..) does not load the file into memory', () async {
-      final TestXFile file = TestXFile(textFilePath);
+      final file = TestXFile(textFilePath);
       final Directory tempDir = Directory.systemTemp.createTempSync();
-      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      final targetFile = File('${tempDir.path}/newFilePath.txt');
       if (targetFile.existsSync()) {
         await targetFile.delete();
       }
@@ -78,7 +79,7 @@ void main() {
   });
 
   group('Create with data', () {
-    final XFile file = XFile.fromData(bytes);
+    final file = XFile.fromData(bytes);
 
     test('Can be read as a string', () async {
       expect(await file.readAsString(), equals(expectedStringContents));
@@ -97,7 +98,7 @@ void main() {
 
     test('Function saveTo(..) creates file', () async {
       final Directory tempDir = Directory.systemTemp.createTempSync();
-      final File targetFile = File('${tempDir.path}/newFilePath.txt');
+      final targetFile = File('${tempDir.path}/newFilePath.txt');
       if (targetFile.existsSync()) {
         await targetFile.delete();
       }

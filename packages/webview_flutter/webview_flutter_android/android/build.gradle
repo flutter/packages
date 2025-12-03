@@ -2,14 +2,14 @@ group = 'io.flutter.plugins.webviewflutter'
 version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.2.10'
+    ext.kotlin_version = '2.2.21'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.1'
+        classpath 'com.android.tools.build:gradle:8.13.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -53,7 +53,7 @@ android {
         implementation("androidx.annotation:annotation:1.9.1")
         implementation("androidx.webkit:webkit:1.14.0")
         testImplementation("junit:junit:4.13.2")
-        testImplementation("org.mockito:mockito-core:5.19.0")
+        testImplementation("org.mockito:mockito-core:5.20.0")
         testImplementation("org.mockito:mockito-inline:5.2.0")
         testImplementation("androidx.test:core:1.7.0")
     }

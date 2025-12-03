@@ -9,9 +9,9 @@ on iOS and to the [App
 Shortcuts](https://developer.android.com/guide/topics/ui/shortcuts.html) APIs on
 Android.
 
-|             | Android   | iOS  |
-|-------------|-----------|------|
-| **Support** | SDK 21+\* | 9.0+ |
+|             | Android   | iOS   |
+|-------------|-----------|-------|
+| **Support** | SDK 24+\* | 13.0+ |
 
 ## Usage
 
@@ -45,7 +45,7 @@ quick action.
 
 ### Android
 
-\* The plugin will compile and run on SDK 16+, but will be a no-op below SDK 25
+\* The plugin will compile and run on SDK 24, but will be a no-op below SDK 25
 (Android 7.1).
 
 If the drawables used as icons are not referenced other than in your Dart code,

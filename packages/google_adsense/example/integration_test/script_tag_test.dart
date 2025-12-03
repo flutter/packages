@@ -18,14 +18,14 @@ void main() async {
   group('JS initialization', () {
     testWidgets('Initialization adds AdSense snippet.', (WidgetTester _) async {
       // Given
-      const String expectedScriptUrl =
+      const expectedScriptUrl =
           'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
 
       // When (using the singleton adSense from the plugin)
       await adSense.initialize(testClient);
 
       // Then
-      final web.HTMLScriptElement? injected =
+      final injected =
           web.document.head?.lastElementChild as web.HTMLScriptElement?;
 
       expect(injected, isNotNull);

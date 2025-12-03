@@ -1,3 +1,10 @@
+## NEXT
+
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
 ## 0.11.3
 
 * Adds support to configure persistent recording on Android. See `CameraController.startVideoRecording(enablePersistentRecording)`.
