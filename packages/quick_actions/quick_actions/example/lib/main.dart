@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    const QuickActions quickActions = QuickActions();
+    const quickActions = QuickActions();
     quickActions.initialize((String shortcutType) {
       setState(() {
         shortcut = shortcutType;

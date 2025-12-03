@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,12 +11,12 @@ void main() {
       'is restored when restorationIds are provided', (
     WidgetTester tester,
   ) async {
-    const String homeTitle = 'Home';
-    const String welcomeTitle = 'Welcome';
-    const String setupTitle = 'Setup';
+    const homeTitle = 'Home';
+    const welcomeTitle = 'Welcome';
+    const setupTitle = 'Setup';
 
-    const String homeText = 'homeText';
-    const String setupText = 'setupText';
+    const homeText = 'homeText';
+    const setupText = 'setupText';
 
     await tester.pumpWidget(const App());
     expect(find.text(homeTitle), findsOneWidget);

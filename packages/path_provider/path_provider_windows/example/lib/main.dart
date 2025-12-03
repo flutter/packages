@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     String? appSupportDirectory;
     String? documentsDirectory;
     String? cacheDirectory;
-    final PathProviderWindows provider = PathProviderWindows();
+    final provider = PathProviderWindows();
 
     try {
       tempDirectory = await provider.getTemporaryPath();

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,14 +18,14 @@ void main() async {
   group('JS initialization', () {
     testWidgets('Initialization adds AdSense snippet.', (WidgetTester _) async {
       // Given
-      const String expectedScriptUrl =
+      const expectedScriptUrl =
           'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-$testClient';
 
       // When (using the singleton adSense from the plugin)
       await adSense.initialize(testClient);
 
       // Then
-      final web.HTMLScriptElement? injected =
+      final injected =
           web.document.head?.lastElementChild as web.HTMLScriptElement?;
 
       expect(injected, isNotNull);

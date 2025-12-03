@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,7 +46,7 @@ Future<void> readmeSnippets() async {
 
 Future<void> readmeSnippetsAsync() async {
   // #docregion Async
-  final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+  final asyncPrefs = SharedPreferencesAsync();
 
   await asyncPrefs.setBool('repeat', true);
   await asyncPrefs.setString('action', 'Start');
@@ -91,7 +91,7 @@ Future<void> readmeSnippetsWithCache() async {
 // from examples.
 Future<void> readmeTestSnippets() async {
   // #docregion Tests
-  final Map<String, Object> values = <String, Object>{'counter': 1};
+  final values = <String, Object>{'counter': 1};
   SharedPreferences.setMockInitialValues(values);
   // #enddocregion Tests
 }

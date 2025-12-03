@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,8 +26,7 @@ class QuickActionsIos extends QuickActionsPlatform {
 
   @override
   Future<void> initialize(QuickActionHandler handler) async {
-    final _QuickActionHandlerApi quickActionsHandlerApi =
-        _QuickActionHandlerApi();
+    final quickActionsHandlerApi = _QuickActionHandlerApi();
     IOSQuickActionsFlutterApi.setUp(quickActionsHandlerApi);
     _handler = handler;
   }

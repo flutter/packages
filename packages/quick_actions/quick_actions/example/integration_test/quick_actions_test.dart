@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,10 +10,10 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Can set shortcuts', (WidgetTester tester) async {
-    const QuickActions quickActions = QuickActions();
+    const quickActions = QuickActions();
     await quickActions.initialize((String _) {});
 
-    const ShortcutItem shortCutItem = ShortcutItem(
+    const shortCutItem = ShortcutItem(
       type: 'action_one',
       localizedTitle: 'Action one',
       icon: 'AppIcon',

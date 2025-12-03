@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -92,6 +92,13 @@ static GtkFileChooserNative* create_dialog(
       }
       gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
     }
+  }
+
+  const gboolean* create_folders =
+      ffs_platform_file_chooser_options_get_create_folders(options);
+  if (create_folders != nullptr) {
+    gtk_file_chooser_set_create_folders(GTK_FILE_CHOOSER(dialog),
+                                        *create_folders);
   }
 
   return GTK_FILE_CHOOSER_NATIVE(g_object_ref(dialog));

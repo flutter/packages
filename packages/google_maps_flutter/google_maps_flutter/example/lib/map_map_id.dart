@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -54,6 +54,7 @@ class MapIdBodyState extends State<MapIdBody> {
     switch (_initializedRenderer) {
       case AndroidMapRenderer.latest:
         return 'latest';
+      // ignore: deprecated_member_use
       case AndroidMapRenderer.legacy:
         return 'legacy';
       case AndroidMapRenderer.platformDefault:
@@ -74,7 +75,7 @@ class MapIdBodyState extends State<MapIdBody> {
 
   @override
   Widget build(BuildContext context) {
-    final GoogleMap googleMap = GoogleMap(
+    final googleMap = GoogleMap(
       onMapCreated: _onMapCreated,
       initialCameraPosition: const CameraPosition(
         target: _kMapCenter,
@@ -84,7 +85,7 @@ class MapIdBodyState extends State<MapIdBody> {
       cloudMapId: _mapId,
     );
 
-    final List<Widget> columnChildren = <Widget>[
+    final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(

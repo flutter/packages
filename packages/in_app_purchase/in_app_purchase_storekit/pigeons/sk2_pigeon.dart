@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,9 +7,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/sk2_pigeon.g.dart',
-    dartTestOut: 'test/sk2_test_api.g.dart',
     swiftOut:
-        'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/sk2_pigeon.g.swift',
+        'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit/StoreKit2/StoreKit2Messages.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -209,9 +208,14 @@ class SK2ErrorMessage {
   final Map<String, Object>? userInfo;
 }
 
-enum SK2ProductPurchaseResultMessage { success, userCancelled, pending }
+enum SK2ProductPurchaseResultMessage {
+  success,
+  unverified,
+  userCancelled,
+  pending,
+}
 
-@HostApi(dartHostTestHandler: 'TestInAppPurchase2Api')
+@HostApi()
 abstract class InAppPurchase2API {
   // https://developer.apple.com/documentation/storekit/appstore/3822277-canmakepayments
   bool canMakePayments();

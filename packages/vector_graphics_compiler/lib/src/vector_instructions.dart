@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -216,7 +216,7 @@ class DrawCommand {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('DrawCommand($type');
+    final buffer = StringBuffer('DrawCommand($type');
     if (objectId != null) {
       buffer.write(', objectId: $objectId');
     }

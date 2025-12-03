@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -249,7 +249,7 @@ Map<String, dynamic> buildErrorMap(SKError error) {
 Map<String, dynamic> buildTransactionMap(
   SKPaymentTransactionWrapper transaction,
 ) {
-  final Map<String, dynamic> map = <String, dynamic>{
+  final map = <String, dynamic>{
     'transactionState': SKPaymentTransactionStateWrapper.values.indexOf(
       SKPaymentTransactionStateWrapper.purchased,
     ),
@@ -267,7 +267,7 @@ Map<String, dynamic> buildTransactionMap(
 Map<String, dynamic> buildTransactionMessage(
   SKPaymentTransactionWrapper transaction,
 ) {
-  final Map<String, dynamic> map = <String, dynamic>{
+  final map = <String, dynamic>{
     'transactionState': SKPaymentTransactionStateWrapper.values.indexOf(
       SKPaymentTransactionStateWrapper.purchased,
     ),

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,10 +19,9 @@ void main() {
   test(
     'passing non-default InAppBrowserConfiguration to LaunchOptions works',
     () {
-      const InAppBrowserConfiguration browserConfiguration =
-          InAppBrowserConfiguration(showTitle: true);
+      const browserConfiguration = InAppBrowserConfiguration(showTitle: true);
 
-      const LaunchOptions launchOptions = LaunchOptions(
+      const launchOptions = LaunchOptions(
         browserConfiguration: browserConfiguration,
       );
 

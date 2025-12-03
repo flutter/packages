@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -252,10 +252,9 @@ class VideoRecordedEvent extends CameraEvent {
   /// class.
   VideoRecordedEvent.fromJson(Map<String, dynamic> json)
     : file = XFile(json['path']! as String),
-      maxVideoDuration =
-          json['maxVideoDuration'] != null
-              ? Duration(milliseconds: json['maxVideoDuration'] as int)
-              : null,
+      maxVideoDuration = json['maxVideoDuration'] != null
+          ? Duration(milliseconds: json['maxVideoDuration'] as int)
+          : null,
       super(json['cameraId']! as int);
 
   /// XFile of the recorded video.

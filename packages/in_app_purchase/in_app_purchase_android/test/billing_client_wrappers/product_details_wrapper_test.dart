@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,74 +40,72 @@ void main() {
 
   group('BillingResultWrapper', () {
     test('operator == of ProductDetailsWrapper works fine', () {
-      const ProductDetailsWrapper firstProductDetailsInstance =
-          ProductDetailsWrapper(
-            description: 'description',
-            title: 'title',
-            productType: ProductType.inapp,
-            name: 'name',
-            productId: 'productId',
-            oneTimePurchaseOfferDetails: OneTimePurchaseOfferDetailsWrapper(
-              formattedPrice: 'formattedPrice',
-              priceAmountMicros: 10,
-              priceCurrencyCode: 'priceCurrencyCode',
-            ),
-            subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
-              SubscriptionOfferDetailsWrapper(
-                basePlanId: 'basePlanId',
-                offerTags: <String>['offerTags'],
-                offerIdToken: 'offerToken',
-                pricingPhases: <PricingPhaseWrapper>[
-                  PricingPhaseWrapper(
-                    billingCycleCount: 4,
-                    billingPeriod: 'billingPeriod',
-                    formattedPrice: 'formattedPrice',
-                    priceAmountMicros: 10,
-                    priceCurrencyCode: 'priceCurrencyCode',
-                    recurrenceMode: RecurrenceMode.finiteRecurring,
-                  ),
-                ],
-                installmentPlanDetails: InstallmentPlanDetailsWrapper(
-                  commitmentPaymentsCount: 1,
-                  subsequentCommitmentPaymentsCount: 2,
-                ),
+      const firstProductDetailsInstance = ProductDetailsWrapper(
+        description: 'description',
+        title: 'title',
+        productType: ProductType.inapp,
+        name: 'name',
+        productId: 'productId',
+        oneTimePurchaseOfferDetails: OneTimePurchaseOfferDetailsWrapper(
+          formattedPrice: 'formattedPrice',
+          priceAmountMicros: 10,
+          priceCurrencyCode: 'priceCurrencyCode',
+        ),
+        subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
+          SubscriptionOfferDetailsWrapper(
+            basePlanId: 'basePlanId',
+            offerTags: <String>['offerTags'],
+            offerIdToken: 'offerToken',
+            pricingPhases: <PricingPhaseWrapper>[
+              PricingPhaseWrapper(
+                billingCycleCount: 4,
+                billingPeriod: 'billingPeriod',
+                formattedPrice: 'formattedPrice',
+                priceAmountMicros: 10,
+                priceCurrencyCode: 'priceCurrencyCode',
+                recurrenceMode: RecurrenceMode.finiteRecurring,
               ),
             ],
-          );
-      const ProductDetailsWrapper secondProductDetailsInstance =
-          ProductDetailsWrapper(
-            description: 'description',
-            title: 'title',
-            productType: ProductType.inapp,
-            name: 'name',
-            productId: 'productId',
-            oneTimePurchaseOfferDetails: OneTimePurchaseOfferDetailsWrapper(
-              formattedPrice: 'formattedPrice',
-              priceAmountMicros: 10,
-              priceCurrencyCode: 'priceCurrencyCode',
+            installmentPlanDetails: InstallmentPlanDetailsWrapper(
+              commitmentPaymentsCount: 1,
+              subsequentCommitmentPaymentsCount: 2,
             ),
-            subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
-              SubscriptionOfferDetailsWrapper(
-                basePlanId: 'basePlanId',
-                offerTags: <String>['offerTags'],
-                offerIdToken: 'offerToken',
-                pricingPhases: <PricingPhaseWrapper>[
-                  PricingPhaseWrapper(
-                    billingCycleCount: 4,
-                    billingPeriod: 'billingPeriod',
-                    formattedPrice: 'formattedPrice',
-                    priceAmountMicros: 10,
-                    priceCurrencyCode: 'priceCurrencyCode',
-                    recurrenceMode: RecurrenceMode.finiteRecurring,
-                  ),
-                ],
-                installmentPlanDetails: InstallmentPlanDetailsWrapper(
-                  commitmentPaymentsCount: 1,
-                  subsequentCommitmentPaymentsCount: 2,
-                ),
+          ),
+        ],
+      );
+      const secondProductDetailsInstance = ProductDetailsWrapper(
+        description: 'description',
+        title: 'title',
+        productType: ProductType.inapp,
+        name: 'name',
+        productId: 'productId',
+        oneTimePurchaseOfferDetails: OneTimePurchaseOfferDetailsWrapper(
+          formattedPrice: 'formattedPrice',
+          priceAmountMicros: 10,
+          priceCurrencyCode: 'priceCurrencyCode',
+        ),
+        subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
+          SubscriptionOfferDetailsWrapper(
+            basePlanId: 'basePlanId',
+            offerTags: <String>['offerTags'],
+            offerIdToken: 'offerToken',
+            pricingPhases: <PricingPhaseWrapper>[
+              PricingPhaseWrapper(
+                billingCycleCount: 4,
+                billingPeriod: 'billingPeriod',
+                formattedPrice: 'formattedPrice',
+                priceAmountMicros: 10,
+                priceCurrencyCode: 'priceCurrencyCode',
+                recurrenceMode: RecurrenceMode.finiteRecurring,
               ),
             ],
-          );
+            installmentPlanDetails: InstallmentPlanDetailsWrapper(
+              commitmentPaymentsCount: 1,
+              subsequentCommitmentPaymentsCount: 2,
+            ),
+          ),
+        ],
+      );
       expect(
         firstProductDetailsInstance == secondProductDetailsInstance,
         isTrue,
@@ -115,16 +113,14 @@ void main() {
     });
 
     test('operator == of BillingResultWrapper works fine', () {
-      const BillingResultWrapper firstBillingResultInstance =
-          BillingResultWrapper(
-            responseCode: BillingResponse.ok,
-            debugMessage: 'debugMessage',
-          );
-      const BillingResultWrapper secondBillingResultInstance =
-          BillingResultWrapper(
-            responseCode: BillingResponse.ok,
-            debugMessage: 'debugMessage',
-          );
+      const firstBillingResultInstance = BillingResultWrapper(
+        responseCode: BillingResponse.ok,
+        debugMessage: 'debugMessage',
+      );
+      const secondBillingResultInstance = BillingResultWrapper(
+        responseCode: BillingResponse.ok,
+        debugMessage: 'debugMessage',
+      );
       expect(firstBillingResultInstance == secondBillingResultInstance, isTrue);
     });
   });

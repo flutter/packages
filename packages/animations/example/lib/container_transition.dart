@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -84,10 +84,9 @@ class _OpenContainerTransformDemoState
                     onPressed: (int index) {
                       setModalState(() {
                         setState(() {
-                          _transitionType =
-                              index == 0
-                                  ? ContainerTransitionType.fade
-                                  : ContainerTransitionType.fadeThrough;
+                          _transitionType = index == 0
+                              ? ContainerTransitionType.fade
+                              : ContainerTransitionType.fadeThrough;
                         });
                       });
                     },
@@ -385,7 +384,7 @@ class _ExampleSingleTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const double height = 100.0;
+    const height = 100.0;
 
     return _InkWellOverlay(
       openContainer: openContainer,

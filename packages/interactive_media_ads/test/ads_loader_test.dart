@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'test_stubs.dart';
 
 void main() {
   test('contentComplete', () async {
-    final TestPlatformAdsLoader adsLoader = TestPlatformAdsLoader(
+    final adsLoader = TestPlatformAdsLoader(
       PlatformAdsLoaderCreationParams(
         container: createTestAdDisplayContainer(),
         settings: TestImaSettings(const PlatformImaSettingsCreationParams()),
@@ -22,12 +22,12 @@ void main() {
       onRequestAds: (PlatformAdsRequest request) async {},
     );
 
-    final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
+    final loader = AdsLoader.fromPlatform(adsLoader);
     await loader.contentComplete();
   });
 
   test('requestAds', () async {
-    final PlatformAdsRequest platformRequest = PlatformAdsRequest.withAdTagUrl(
+    final platformRequest = PlatformAdsRequest.withAdTagUrl(
       adTagUrl: 'adTagUrl',
       adWillAutoPlay: true,
       adWillPlayMuted: false,
@@ -42,7 +42,7 @@ void main() {
       ),
     );
 
-    final TestPlatformAdsLoader adsLoader = TestPlatformAdsLoader(
+    final adsLoader = TestPlatformAdsLoader(
       PlatformAdsLoaderCreationParams(
         container: createTestAdDisplayContainer(),
         settings: TestImaSettings(const PlatformImaSettingsCreationParams()),
@@ -73,7 +73,7 @@ void main() {
       onContentComplete: () async {},
     );
 
-    final AdsLoader loader = AdsLoader.fromPlatform(adsLoader);
+    final loader = AdsLoader.fromPlatform(adsLoader);
     await loader.requestAds(
       AdsRequest(
         adTagUrl: (platformRequest as PlatformAdsRequestWithAdTagUrl).adTagUrl,

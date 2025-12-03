@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,7 +40,7 @@ abstract class StructuredGenerator<T extends InternalOptions>
     StringSink sink, {
     required String dartPackageName,
   }) {
-    final Indent indent = Indent(sink);
+    final indent = Indent(sink);
 
     writeFilePrologue(
       generatorOptions,

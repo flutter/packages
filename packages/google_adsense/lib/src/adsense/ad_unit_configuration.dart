@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -77,8 +77,8 @@ class AdUnitConfiguration {
          if (isFullWidthResponsive != null)
            AdUnitParams.FULL_WIDTH_RESPONSIVE: isFullWidthResponsive.toString(),
          if (matchedContentUiType != null)
-           AdUnitParams.MATCHED_CONTENT_UI_TYPE:
-               matchedContentUiType.toString(),
+           AdUnitParams.MATCHED_CONTENT_UI_TYPE: matchedContentUiType
+               .toString(),
          if (columnsNum != null)
            AdUnitParams.MATCHED_CONTENT_COLUMNS_NUM: columnsNum.toString(),
          if (rowsNum != null)

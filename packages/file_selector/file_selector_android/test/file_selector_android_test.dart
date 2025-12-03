@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -61,12 +61,12 @@ void main() {
         ),
       );
 
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
       );
 
-      const XTypeGroup group2 = XTypeGroup(
+      const group2 = XTypeGroup(
         extensions: <String>['jpg'],
         mimeTypes: <String>['image/jpg'],
       );
@@ -120,12 +120,12 @@ void main() {
         ]),
       );
 
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
       );
 
-      const XTypeGroup group2 = XTypeGroup(
+      const group2 = XTypeGroup(
         extensions: <String>['jpg'],
         mimeTypes: <String>['image/jpg'],
       );

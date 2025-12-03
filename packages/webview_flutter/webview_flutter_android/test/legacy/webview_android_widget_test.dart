@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -63,7 +63,6 @@ void main() {
         mockWebViewProxy.createWebViewClient(
           onPageStarted: anyNamed('onPageStarted'),
           onPageFinished: anyNamed('onPageFinished'),
-          onReceivedError: anyNamed('onReceivedError'),
           onReceivedRequestError: anyNamed('onReceivedRequestError'),
           requestLoading: anyNamed('requestLoading'),
           urlLoading: anyNamed('urlLoading'),
@@ -236,12 +235,11 @@ void main() {
         });
 
         testWidgets('hasNavigationDelegate', (WidgetTester tester) async {
-          final MockWebViewClient mockWebViewClient = MockWebViewClient();
+          final mockWebViewClient = MockWebViewClient();
           when(
             mockWebViewProxy.createWebViewClient(
               onPageStarted: anyNamed('onPageStarted'),
               onPageFinished: anyNamed('onPageFinished'),
-              onReceivedError: anyNamed('onReceivedError'),
               onReceivedRequestError: anyNamed('onReceivedRequestError'),
               requestLoading: anyNamed('requestLoading'),
               urlLoading: anyNamed('urlLoading'),
@@ -336,7 +334,7 @@ void main() {
       ) async {
         await buildWidget(tester);
 
-        const String filePath = '/path/to/file.html';
+        const filePath = '/path/to/file.html';
         await testController.loadFile(filePath);
 
         verify(mockWebView.loadUrl('file://$filePath', <String, String>{}));
@@ -366,7 +364,7 @@ void main() {
 
       testWidgets('loadFlutterAsset', (WidgetTester tester) async {
         await buildWidget(tester);
-        const String assetKey = 'test_assets/index.html';
+        const assetKey = 'test_assets/index.html';
 
         when(
           mockFlutterAssetManager.getAssetFilePathByName(assetKey),
@@ -389,7 +387,7 @@ void main() {
         WidgetTester tester,
       ) async {
         await buildWidget(tester);
-        const String assetKey = 'index.html';
+        const assetKey = 'index.html';
 
         when(
           mockFlutterAssetManager.getAssetFilePathByName(assetKey),
@@ -412,7 +410,7 @@ void main() {
         'loadFlutterAsset throws ArgumentError when asset does not exist',
         (WidgetTester tester) async {
           await buildWidget(tester);
-          const String assetKey = 'test_assets/index.html';
+          const assetKey = 'test_assets/index.html';
 
           when(
             mockFlutterAssetManager.getAssetFilePathByName(assetKey),
@@ -441,8 +439,7 @@ void main() {
       ) async {
         await buildWidget(tester);
 
-        const String htmlString =
-            '<html lang=""><body>Test data.</body></html>';
+        const htmlString = '<html lang=""><body>Test data.</body></html>';
         await testController.loadHtmlString(htmlString);
 
         verify(
@@ -459,8 +456,7 @@ void main() {
       testWidgets('loadHtmlString with base URL', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        const String htmlString =
-            '<html lang=""><body>Test data.</body></html>';
+        const htmlString = '<html lang=""><body>Test data.</body></html>';
         await testController.loadHtmlString(
           htmlString,
           baseUrl: 'https://flutter.dev',
@@ -557,7 +553,7 @@ void main() {
         testWidgets('POST with body', (WidgetTester tester) async {
           await buildWidget(tester);
 
-          final Uint8List body = Uint8List.fromList('Test Body'.codeUnits);
+          final body = Uint8List.fromList('Test Body'.codeUnits);
 
           await testController.loadRequest(
             WebViewRequest(
@@ -761,17 +757,11 @@ void main() {
     group('WebViewPlatformCallbacksHandler', () {
       testWidgets('onPageStarted', (WidgetTester tester) async {
         await buildWidget(tester);
-        final void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          String,
-        )
-        onPageStarted =
+        final onPageStarted =
             verify(
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: captureAnyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: anyNamed('requestLoading'),
                     urlLoading: anyNamed('urlLoading'),
@@ -795,17 +785,11 @@ void main() {
       testWidgets('onPageFinished', (WidgetTester tester) async {
         await buildWidget(tester);
 
-        final void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          String,
-        )
-        onPageFinished =
+        final onPageFinished =
             verify(
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: captureAnyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: anyNamed('requestLoading'),
                     urlLoading: anyNamed('urlLoading'),
@@ -826,79 +810,16 @@ void main() {
         verify(mockCallbacksHandler.onPageFinished('https://google.com'));
       });
 
-      testWidgets('onWebResourceError from onReceivedError', (
-        WidgetTester tester,
-      ) async {
-        await buildWidget(tester);
-
-        final void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          int,
-          String,
-          String,
-        )
-        onReceivedError =
-            verify(
-                  mockWebViewProxy.createWebViewClient(
-                    onPageStarted: anyNamed('onPageStarted'),
-                    onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: captureAnyNamed('onReceivedError'),
-                    onReceivedRequestError: anyNamed('onReceivedRequestError'),
-                    requestLoading: anyNamed('requestLoading'),
-                    urlLoading: anyNamed('urlLoading'),
-                    onReceivedSslError: anyNamed('onReceivedSslError'),
-                    onFormResubmission: anyNamed('onFormResubmission'),
-                    onReceivedClientCertRequest: anyNamed(
-                      'onReceivedClientCertRequest',
-                    ),
-                  ),
-                ).captured.single
-                as void Function(
-                  android_webview.WebViewClient,
-                  android_webview.WebView,
-                  int,
-                  String,
-                  String,
-                );
-
-        onReceivedError(
-          MockWebViewClient(),
-          mockWebView,
-          WebViewClientConstants.errorAuthentication,
-          'description',
-          'https://google.com',
-        );
-
-        final WebResourceError error =
-            verify(
-                  mockCallbacksHandler.onWebResourceError(captureAny),
-                ).captured.single
-                as WebResourceError;
-        expect(error.description, 'description');
-        expect(error.errorCode, -4);
-        expect(error.failingUrl, 'https://google.com');
-        expect(error.domain, isNull);
-        expect(error.errorType, WebResourceErrorType.authentication);
-      });
-
       testWidgets('onWebResourceError from onReceivedRequestError', (
         WidgetTester tester,
       ) async {
         await buildWidget(tester);
 
-        final void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          android_webview.WebResourceRequest,
-          android_webview.WebResourceError,
-        )
-        onReceivedRequestError =
+        final onReceivedRequestError =
             verify(
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: captureAnyNamed(
                       'onReceivedRequestError',
                     ),
@@ -935,7 +856,7 @@ void main() {
           ),
         );
 
-        final WebResourceError error =
+        final error =
             verify(
                   mockCallbacksHandler.onWebResourceError(captureAny),
                 ).captured.single
@@ -958,17 +879,11 @@ void main() {
           ),
         ).thenReturn(true);
 
-        final void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          String,
-        )
-        urlLoading =
+        final urlLoading =
             verify(
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: anyNamed('requestLoading'),
                     urlLoading: captureAnyNamed('urlLoading'),
@@ -1006,17 +921,11 @@ void main() {
           ),
         ).thenReturn(true);
 
-        final void Function(
-          android_webview.WebViewClient,
-          android_webview.WebView,
-          android_webview.WebResourceRequest,
-        )
-        requestLoading =
+        final requestLoading =
             verify(
                   mockWebViewProxy.createWebViewClient(
                     onPageStarted: anyNamed('onPageStarted'),
                     onPageFinished: anyNamed('onPageFinished'),
-                    onReceivedError: anyNamed('onReceivedError'),
                     onReceivedRequestError: anyNamed('onReceivedRequestError'),
                     requestLoading: captureAnyNamed('requestLoading'),
                     urlLoading: anyNamed('urlLoading'),
@@ -1060,7 +969,7 @@ void main() {
 
           await testController.addJavascriptChannels(<String>{'hello'});
 
-          final WebViewAndroidJavaScriptChannel javaScriptChannel =
+          final javaScriptChannel =
               verify(
                     mockWebView.addJavaScriptChannel(captureAny),
                   ).captured.single

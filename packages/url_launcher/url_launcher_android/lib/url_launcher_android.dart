@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -62,10 +62,9 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
     return launchUrl(
       url,
       LaunchOptions(
-        mode:
-            useWebView
-                ? PreferredLaunchMode.inAppWebView
-                : PreferredLaunchMode.externalApplication,
+        mode: useWebView
+            ? PreferredLaunchMode.inAppWebView
+            : PreferredLaunchMode.externalApplication,
         webViewConfiguration: InAppWebViewConfiguration(
           enableDomStorage: enableDomStorage,
           enableJavaScript: enableJavaScript,
@@ -78,17 +77,16 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
   @override
   Future<bool> launchUrl(String url, LaunchOptions options) async {
     final bool inApp;
+    var requireNonBrowser = false;
     switch (options.mode) {
       case PreferredLaunchMode.inAppWebView:
       case PreferredLaunchMode.inAppBrowserView:
         inApp = true;
       case PreferredLaunchMode.externalApplication:
-      case PreferredLaunchMode.externalNonBrowserApplication:
-        // TODO(stuartmorgan): Add full support for
-        // externalNonBrowsingApplication; see
-        // https://github.com/flutter/flutter/issues/66721.
-        // Currently it's treated the same as externalApplication.
         inApp = false;
+      case PreferredLaunchMode.externalNonBrowserApplication:
+        inApp = false;
+        requireNonBrowser = true;
       case PreferredLaunchMode.platformDefault:
       // Intentionally treat any new values as platformDefault; see comment in
       // supportsMode.
@@ -115,6 +113,7 @@ class UrlLauncherAndroid extends UrlLauncherPlatform {
       succeeded = await _hostApi.launchUrl(
         url,
         options.webViewConfiguration.headers,
+        requireNonBrowser,
       );
     }
 

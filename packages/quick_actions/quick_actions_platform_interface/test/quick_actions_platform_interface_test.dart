@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,8 +39,7 @@ void main() {
       'Default implementation of initialize() should throw unimplemented error',
       () {
         // Arrange
-        final ExtendsQuickActionsPlatform quickActionsPlatform =
-            ExtendsQuickActionsPlatform();
+        final quickActionsPlatform = ExtendsQuickActionsPlatform();
 
         // Act & Assert
         expect(
@@ -54,8 +53,7 @@ void main() {
       'Default implementation of setShortcutItems() should throw unimplemented error',
       () {
         // Arrange
-        final ExtendsQuickActionsPlatform quickActionsPlatform =
-            ExtendsQuickActionsPlatform();
+        final quickActionsPlatform = ExtendsQuickActionsPlatform();
 
         // Act & Assert
         expect(
@@ -69,8 +67,7 @@ void main() {
       'Default implementation of clearShortcutItems() should throw unimplemented error',
       () {
         // Arrange
-        final ExtendsQuickActionsPlatform quickActionsPlatform =
-            ExtendsQuickActionsPlatform();
+        final quickActionsPlatform = ExtendsQuickActionsPlatform();
 
         // Act & Assert
         expect(

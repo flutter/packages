@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -56,7 +56,7 @@ void main() {
         count: 2,
         reason: 'Go router should log the 2 events',
       );
-      final List<String> logs = <String>[];
+      final logs = <String>[];
       Logger.root.onRecord.listen((LogRecord event) => logs.add(event.message));
       GoRouter(
         debugLogDiagnostics: true,
@@ -85,7 +85,7 @@ void main() {
       );
       hierarchicalLoggingEnabled = true;
 
-      final List<String> logs = <String>[];
+      final logs = <String>[];
       Logger.root.onRecord.listen((LogRecord event) => logs.add(event.message));
       GoRouter(
         debugLogDiagnostics: true,

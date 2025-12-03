@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -41,7 +41,7 @@ base class InMemorySharedPreferencesAsync
     SharedPreferencesOptions options,
   ) async {
     final PreferencesFilters filter = parameters.filter;
-    final Map<String, Object> preferences = Map<String, Object>.from(_data);
+    final preferences = Map<String, Object>.from(_data);
     preferences.removeWhere(
       (String key, _) =>
           filter.allowList != null && !filter.allowList!.contains(key),
@@ -134,7 +134,7 @@ base class InMemorySharedPreferencesAsync
     String key,
     SharedPreferencesOptions options,
   ) async {
-    final List<Object>? data = _data[key] as List<Object>?;
+    final data = _data[key] as List<Object>?;
     return data?.cast<String>();
   }
 

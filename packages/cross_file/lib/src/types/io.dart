@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -81,7 +81,7 @@ class XFile extends XFileBase {
     if (_bytes == null) {
       await _file.copy(path);
     } else {
-      final File fileToSave = File(path);
+      final fileToSave = File(path);
       // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
       // ignore: unnecessary_non_null_assertion
       await fileToSave.writeAsBytes(_bytes!);

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,8 +35,9 @@ ProductDetailsResponseWrapper productDetailsResponseWrapperFromPlatform(
 ) {
   return ProductDetailsResponseWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    productDetailsList:
-        response.productDetails.map(productDetailsWrapperFromPlatform).toList(),
+    productDetailsList: response.productDetails
+        .map(productDetailsWrapperFromPlatform)
+        .toList(),
   );
 }
 
@@ -53,10 +54,9 @@ ProductDetailsWrapper productDetailsWrapperFromPlatform(
     oneTimePurchaseOfferDetails: oneTimePurchaseOfferDetailsWrapperFromPlatform(
       product.oneTimePurchaseOfferDetails,
     ),
-    subscriptionOfferDetails:
-        product.subscriptionOfferDetails
-            ?.map(subscriptionOfferDetailsWrapperFromPlatform)
-            .toList(),
+    subscriptionOfferDetails: product.subscriptionOfferDetails
+        ?.map(subscriptionOfferDetailsWrapperFromPlatform)
+        .toList(),
   );
 }
 
@@ -81,10 +81,9 @@ PurchasesHistoryResult purchaseHistoryResultFromPlatform(
 ) {
   return PurchasesHistoryResult(
     billingResult: resultWrapperFromPlatform(response.billingResult),
-    purchaseHistoryRecordList:
-        response.purchases
-            .map(purchaseHistoryRecordWrapperFromPlatform)
-            .toList(),
+    purchaseHistoryRecordList: response.purchases
+        .map(purchaseHistoryRecordWrapperFromPlatform)
+        .toList(),
   );
 }
 
@@ -110,10 +109,9 @@ PurchasesResultWrapper purchasesResultWrapperFromPlatform(
   return PurchasesResultWrapper(
     billingResult: resultWrapperFromPlatform(response.billingResult),
     purchasesList: response.purchases.map(purchaseWrapperFromPlatform).toList(),
-    responseCode:
-        forceOkResponseCode
-            ? BillingResponse.ok
-            : billingResponseFromPlatform(response.billingResult.responseCode),
+    responseCode: forceOkResponseCode
+        ? BillingResponse.ok
+        : billingResponseFromPlatform(response.billingResult.responseCode),
   );
 }
 
@@ -258,8 +256,9 @@ SubscriptionOfferDetailsWrapper subscriptionOfferDetailsWrapperFromPlatform(
     offerId: offer.offerId,
     offerTags: offer.offerTags,
     offerIdToken: offer.offerToken,
-    pricingPhases:
-        offer.pricingPhases.map(pricingPhaseWrapperFromPlatform).toList(),
+    pricingPhases: offer.pricingPhases
+        .map(pricingPhaseWrapperFromPlatform)
+        .toList(),
     installmentPlanDetails: installmentPlanDetailsFromPlatform(
       offer.installmentPlanDetails,
     ),
@@ -273,8 +272,9 @@ UserChoiceDetailsWrapper userChoiceDetailsFromPlatform(
   return UserChoiceDetailsWrapper(
     originalExternalTransactionId: details.originalExternalTransactionId ?? '',
     externalTransactionToken: details.externalTransactionToken,
-    products:
-        details.products.map(userChoiceDetailsProductFromPlatform).toList(),
+    products: details.products
+        .map(userChoiceDetailsProductFromPlatform)
+        .toList(),
   );
 }
 

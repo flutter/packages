@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,7 +30,7 @@ class AppStorePurchaseDetails extends PurchaseDetails {
     SKPaymentTransactionWrapper transaction,
     String base64EncodedReceipt,
   ) {
-    final AppStorePurchaseDetails purchaseDetails = AppStorePurchaseDetails(
+    final purchaseDetails = AppStorePurchaseDetails(
       productID: transaction.payment.productIdentifier,
       purchaseID: transaction.transactionIdentifier,
       skPaymentTransaction: transaction,

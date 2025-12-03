@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,19 +39,18 @@ class GroundOverlaysController extends GeometryController {
       groundOverlay.bounds!,
     );
 
-    final gmaps.GroundOverlayOptions groundOverlayOptions =
-        gmaps.GroundOverlayOptions()
-          ..opacity = 1.0 - groundOverlay.transparency
-          ..clickable = groundOverlay.clickable
-          ..map = groundOverlay.visible ? googleMap : null;
+    final groundOverlayOptions = gmaps.GroundOverlayOptions()
+      ..opacity = 1.0 - groundOverlay.transparency
+      ..clickable = groundOverlay.clickable
+      ..map = groundOverlay.visible ? googleMap : null;
 
-    final gmaps.GroundOverlay overlay = gmaps.GroundOverlay(
+    final overlay = gmaps.GroundOverlay(
       urlFromMapBitmap(groundOverlay.image),
       bounds,
       groundOverlayOptions,
     );
 
-    final GroundOverlayController controller = GroundOverlayController(
+    final controller = GroundOverlayController(
       groundOverlay: overlay,
       onTap: () {
         _onGroundOverlayTap(groundOverlay.groundOverlayId);

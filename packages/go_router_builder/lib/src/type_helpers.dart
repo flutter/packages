@@ -1,12 +1,14 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/analysis/session.dart';
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/constant/value.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
+import 'package:collection/collection.dart';
 import 'package:source_gen/source_gen.dart';
 import 'package:source_helper/source_helper.dart';
 
@@ -49,7 +51,35 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
   _TypeHelperString(),
   _TypeHelperUri(),
   _TypeHelperIterable(),
+  _TypeHelperJson(),
 ];
+
+/// Checks if has a function that converts string to string, such as encode and decode.
+bool _isStringToStringFunction(
+  ExecutableElement? executableElement,
+  String name,
+) {
+  if (executableElement == null) {
+    return false;
+  }
+  final List<FormalParameterElement> parameters =
+      executableElement.formalParameters;
+  return parameters.length == 1 &&
+      parameters.first.type.isDartCoreString &&
+      executableElement.returnType.isDartCoreString;
+}
+
+/// Returns the custom codec for the annotation.
+String? _getCustomCodec(ElementAnnotation annotation, String name) {
+  final ExecutableElement? executableElement = annotation
+      .computeConstantValue()
+      ?.getField(name)
+      ?.toFunctionValue();
+  if (_isStringToStringFunction(executableElement, name)) {
+    return executableElement!.displayName;
+  }
+  return null;
+}
 
 /// Returns the decoded [String] value for [element], if its type is supported.
 ///
@@ -57,6 +87,7 @@ const List<_TypeHelper> _helpers = <_TypeHelper>[
 String decodeParameter(
   FormalParameterElement element,
   Set<String> pathParameters,
+  List<ElementAnnotation>? metadata,
 ) {
   if (element.isExtraField) {
     return 'state.${_stateValueAccess(element, pathParameters)}';
@@ -65,12 +96,36 @@ String decodeParameter(
   final DartType paramType = element.type;
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(paramType)) {
-      String decoded = helper._decode(element, pathParameters);
+      String? decoder;
+
+      final ElementAnnotation? annotation = metadata?.firstWhereOrNull((
+        ElementAnnotation annotation,
+      ) {
+        return annotation.computeConstantValue()?.type?.getDisplayString() ==
+            'CustomParameterCodec';
+      });
+      if (annotation != null) {
+        final String? decode = _getCustomCodec(annotation, 'decode');
+        final String? encode = _getCustomCodec(annotation, 'encode');
+        if (decode != null && encode != null) {
+          decoder = decode;
+        } else {
+          throw InvalidGenerationSourceError(
+            'The parameter type '
+            '`${withoutNullability(paramType.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
+            element: element,
+          );
+        }
+      }
+      String decoded = helper._decode(element, pathParameters, decoder);
       if (element.isOptional && element.hasDefaultValue) {
         if (element.type.isNullableType) {
           throw NullableDefaultValueError(element);
         }
         decoded += ' ?? ${element.defaultValueCode!}';
+      }
+      if (helper is _TypeHelperString && decoder != null) {
+        return _fieldWithEncoder(decoded, decoder);
       }
       return decoded;
     }
@@ -86,13 +141,38 @@ String decodeParameter(
 /// Returns the encoded [String] value for [element], if its type is supported.
 ///
 /// Otherwise, throws an [InvalidGenerationSourceError].
-String encodeField(PropertyAccessorElement2 element) {
+String encodeField(
+  PropertyAccessorElement element,
+  List<ElementAnnotation>? metadata,
+) {
   for (final _TypeHelper helper in _helpers) {
     if (helper._matchesType(element.returnType)) {
-      return helper._encode(
+      String? encoder;
+      final ElementAnnotation? annotation = metadata?.firstWhereOrNull((
+        ElementAnnotation annotation,
+      ) {
+        final DartObject? constant = annotation.computeConstantValue();
+        return constant?.type?.getDisplayString() == 'CustomParameterCodec';
+      });
+      if (annotation != null) {
+        final String? decode = _getCustomCodec(annotation, 'decode');
+        final String? encode = _getCustomCodec(annotation, 'encode');
+        if (decode != null && encode != null) {
+          encoder = encode;
+        } else {
+          throw InvalidGenerationSourceError(
+            'The parameter type '
+            '`${withoutNullability(element.type.getDisplayString())}` not have a well defined CustomParameterCodec decorator.',
+            element: element,
+          );
+        }
+      }
+      final String encoded = helper._encode(
         '$selfFieldName.${element.displayName}',
         element.returnType,
+        encoder,
       );
+      return encoded;
     }
   }
 
@@ -102,16 +182,15 @@ String encodeField(PropertyAccessorElement2 element) {
   );
 }
 
-/// Returns an AstNode type from a InterfaceElement.
-T? getNodeDeclaration<T extends AstNode>(InterfaceElement2 element) {
+/// Returns an AstNode type from a InterfaceElement2.
+T? getNodeDeclaration<T extends AstNode>(InterfaceElement element) {
   final AnalysisSession? session = element.session;
   if (session == null) {
     return null;
   }
 
-  final ParsedLibraryResult parsedLibrary =
-      session.getParsedLibraryByElement2(element.library2)
-          as ParsedLibraryResult;
+  final parsedLibrary =
+      session.getParsedLibraryByElement(element.library) as ParsedLibraryResult;
   final FragmentDeclarationResult? declaration = parsedLibrary
       .getFragmentDeclaration(element.firstFragment);
   final AstNode? node = declaration?.node;
@@ -143,7 +222,11 @@ String compareField(
 }
 
 /// Gets the name of the `const` map generated to help encode [Enum] types.
-String enumMapName(InterfaceType type) => '_\$${type.element.name}EnumMap';
+String enumMapName(InterfaceType type) =>
+    '_\$${type.element.displayName}EnumMap';
+
+/// Gets the name of the `const` map generated to help encode [Json] types.
+String jsonMapName(InterfaceType type) => type.element.displayName;
 
 String _stateValueAccess(
   FormalParameterElement element,
@@ -155,8 +238,9 @@ String _stateValueAccess(
   }
 
   late String access;
-  final String suffix =
-      !element.type.isNullableType && !element.hasDefaultValue ? '!' : '';
+  final suffix = !element.type.isNullableType && !element.hasDefaultValue
+      ? '!'
+      : '';
   if (pathParameters.contains(element.displayName)) {
     access = 'pathParameters[${escapeDartString(element.displayName)}]$suffix';
   } else {
@@ -177,6 +261,10 @@ String withoutNullability(String type) {
   return _isNullableType(type) ? type.substring(0, type.length - 1) : type;
 }
 
+String _fieldWithEncoder(String field, String? customEncoder) {
+  return customEncoder != null ? '$customEncoder($field)' : field;
+}
+
 abstract class _TypeHelper {
   const _TypeHelper();
 
@@ -184,10 +272,11 @@ abstract class _TypeHelper {
   String _decode(
     FormalParameterElement parameterElement,
     Set<String> pathParameters,
+    String? customDecoder,
   );
 
   /// Encodes the value from its string representation in the URL.
-  String _encode(String fieldName, DartType type);
+  String _encode(String fieldName, DartType type, String? customEncoder);
 
   bool _matchesType(DartType type);
 
@@ -206,12 +295,17 @@ class _TypeHelperBigInt extends _TypeHelperWithHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        '$fieldName${type.ensureNotNull}.toString()',
+        customEncoder,
+      );
 
   @override
-  bool _matchesType(DartType type) =>
-      const TypeChecker.fromRuntime(BigInt).isAssignableFromType(type);
+  bool _matchesType(DartType type) => const TypeChecker.typeNamed(
+    BigInt,
+    inSdk: true,
+  ).isAssignableFromType(type);
 }
 
 class _TypeHelperBool extends _TypeHelperWithHelper {
@@ -221,8 +315,11 @@ class _TypeHelperBool extends _TypeHelperWithHelper {
   String helperName(DartType paramType) => boolConverterHelperName;
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        '$fieldName${type.ensureNotNull}.toString()',
+        customEncoder,
+      );
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreBool;
@@ -240,12 +337,17 @@ class _TypeHelperDateTime extends _TypeHelperWithHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        '$fieldName${type.ensureNotNull}.toString()',
+        customEncoder,
+      );
 
   @override
-  bool _matchesType(DartType type) =>
-      const TypeChecker.fromRuntime(DateTime).isAssignableFromType(type);
+  bool _matchesType(DartType type) => const TypeChecker.typeNamed(
+    DateTime,
+    inSdk: true,
+  ).isAssignableFromType(type);
 }
 
 class _TypeHelperDouble extends _TypeHelperWithHelper {
@@ -260,8 +362,11 @@ class _TypeHelperDouble extends _TypeHelperWithHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        '$fieldName${type.ensureNotNull}.toString()',
+        customEncoder,
+      );
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreDouble;
@@ -275,8 +380,14 @@ class _TypeHelperEnum extends _TypeHelperWithHelper {
       '${enumMapName(paramType as InterfaceType)}.$enumExtensionHelperName';
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]';
+  String _encode(
+    String fieldName,
+    DartType type,
+    String? customEncoder,
+  ) => _fieldWithEncoder(
+    '${enumMapName(type as InterfaceType)}[$fieldName${type.ensureNotNull}]',
+    customEncoder,
+  );
 
   @override
   bool _matchesType(DartType type) => type.isEnum;
@@ -300,13 +411,14 @@ class _TypeHelperExtensionType extends _TypeHelper {
   String _decode(
     FormalParameterElement parameterElement,
     Set<String> pathParameters,
+    String? customDecoder,
   ) {
     final DartType paramType = parameterElement.type;
     if (paramType.isNullableType && parameterElement.hasDefaultValue) {
       throw NullableDefaultValueError(parameterElement);
     }
 
-    final String stateValue =
+    final stateValue =
         'state.${_stateValueAccess(parameterElement, pathParameters)}';
     final String castType;
     if (paramType.isNullableType || parameterElement.hasDefaultValue) {
@@ -336,7 +448,7 @@ class _TypeHelperExtensionType extends _TypeHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) {
+  String _encode(String fieldName, DartType type, String? customDecoder) {
     final DartType representationType = type.extensionTypeErasure;
     if (representationType.isDartCoreString) {
       return '$fieldName${type.ensureNotNull} as String';
@@ -364,14 +476,17 @@ class _TypeHelperExtensionType extends _TypeHelper {
         representationType.isDartCoreNum ||
         representationType.isDartCoreBool ||
         representationType.isEnum ||
-        const TypeChecker.fromRuntime(
+        const TypeChecker.typeNamed(
           BigInt,
+          inSdk: true,
         ).isAssignableFromType(representationType) ||
-        const TypeChecker.fromRuntime(
+        const TypeChecker.typeNamed(
           DateTime,
+          inSdk: true,
         ).isAssignableFromType(representationType) ||
-        const TypeChecker.fromRuntime(
+        const TypeChecker.typeNamed(
           Uri,
+          inSdk: true,
         ).isAssignableFromType(representationType);
   }
 }
@@ -388,8 +503,11 @@ class _TypeHelperInt extends _TypeHelperWithHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        '$fieldName${type.ensureNotNull}.toString()',
+        customEncoder,
+      );
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreInt;
@@ -407,8 +525,11 @@ class _TypeHelperNum extends _TypeHelperWithHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        '$fieldName${type.ensureNotNull}.toString()',
+        customEncoder,
+      );
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreNum;
@@ -421,10 +542,12 @@ class _TypeHelperString extends _TypeHelper {
   String _decode(
     FormalParameterElement parameterElement,
     Set<String> pathParameters,
+    String? customDecoder,
   ) => 'state.${_stateValueAccess(parameterElement, pathParameters)}';
 
   @override
-  String _encode(String fieldName, DartType type) => fieldName;
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(fieldName, customEncoder);
 
   @override
   bool _matchesType(DartType type) => type.isDartCoreString;
@@ -442,12 +565,15 @@ class _TypeHelperUri extends _TypeHelperWithHelper {
   }
 
   @override
-  String _encode(String fieldName, DartType type) =>
-      '$fieldName${type.ensureNotNull}.toString()';
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        '$fieldName${type.ensureNotNull}.toString()',
+        customEncoder,
+      );
 
   @override
   bool _matchesType(DartType type) =>
-      const TypeChecker.fromRuntime(Uri).isAssignableFromType(type);
+      const TypeChecker.typeNamed(Uri, inSdk: true).isAssignableFromType(type);
 }
 
 class _TypeHelperIterable extends _TypeHelperWithHelper {
@@ -460,14 +586,15 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
   String _decode(
     FormalParameterElement parameterElement,
     Set<String> pathParameters,
+    String? customDecoder,
   ) {
     if (parameterElement.type is ParameterizedType) {
       final DartType iterableType =
           (parameterElement.type as ParameterizedType).typeArguments.first;
 
       // get a type converter for values in iterable
-      String entriesTypeDecoder = '(e) => e';
-      String convertToNotNull = '';
+      var entriesTypeDecoder = '(e) => e';
+      var convertToNotNull = '';
 
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType) &&
@@ -476,22 +603,28 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
             convertToNotNull = '.cast<$iterableType>()';
           }
           entriesTypeDecoder = helper.helperName(iterableType);
+          if (customDecoder != null) {
+            entriesTypeDecoder =
+                '(e) => $entriesTypeDecoder($customDecoder(e))';
+          }
         }
       }
 
       // get correct type for iterable
-      String iterableCaster = '';
-      String fallBack = '';
-      if (const TypeChecker.fromRuntime(
+      var iterableCaster = '';
+      var fallBack = '';
+      if (const TypeChecker.typeNamed(
         List,
+        inSdk: true,
       ).isAssignableFromType(parameterElement.type)) {
         iterableCaster += '.toList()';
         if (!parameterElement.type.isNullableType &&
             !parameterElement.hasDefaultValue) {
           fallBack = '?? const []';
         }
-      } else if (const TypeChecker.fromRuntime(
+      } else if (const TypeChecker.typeNamed(
         Set,
+        inSdk: true,
       ).isAssignableFromType(parameterElement.type)) {
         iterableCaster += '.toSet()';
         if (!parameterElement.type.isNullableType &&
@@ -510,17 +643,17 @@ state.uri.queryParametersAll[${escapeDartString(parameterElement.displayName.keb
   }
 
   @override
-  String _encode(String fieldName, DartType type) {
-    final String nullAwareAccess = type.isNullableType ? '?' : '';
+  String _encode(String fieldName, DartType type, String? customEncoder) {
+    final nullAwareAccess = type.isNullableType ? '?' : '';
     if (type is ParameterizedType) {
       final DartType iterableType = type.typeArguments.first;
 
       // get a type encoder for values in iterable
-      String entriesTypeEncoder = '';
+      var entriesTypeEncoder = '';
       for (final _TypeHelper helper in _helpers) {
         if (helper._matchesType(iterableType)) {
           entriesTypeEncoder = '''
-$nullAwareAccess.map((e) => ${helper._encode('e', iterableType)}).toList()''';
+$nullAwareAccess.map((e) => ${helper._encode('e', iterableType, customEncoder)}).toList()''';
         }
       }
       return '''
@@ -532,12 +665,144 @@ $fieldName$nullAwareAccess.map((e) => e.toString()).toList()''';
   }
 
   @override
-  bool _matchesType(DartType type) =>
-      const TypeChecker.fromRuntime(Iterable).isAssignableFromType(type);
+  bool _matchesType(DartType type) => const TypeChecker.typeNamed(
+    Iterable,
+    inSdk: true,
+  ).isAssignableFromType(type);
 
   @override
   String _compare(String value1, String value2) =>
       '!$iterablesEqualHelperName($value1, $value2)';
+}
+
+class _TypeHelperJson extends _TypeHelperWithHelper {
+  const _TypeHelperJson();
+
+  @override
+  String helperName(DartType paramType) {
+    return _helperNameN(paramType, 0);
+  }
+
+  @override
+  String _encode(String fieldName, DartType type, String? customEncoder) =>
+      _fieldWithEncoder(
+        'jsonEncode($fieldName${type.ensureNotNull}.toJson())',
+        customEncoder,
+      );
+
+  @override
+  bool _matchesType(DartType type) {
+    if (type is! InterfaceType) {
+      return false;
+    }
+
+    final MethodElement? toJsonMethod = type.lookUpMethod(
+      'toJson',
+      type.element.library,
+    );
+    if (toJsonMethod == null ||
+        !toJsonMethod.isPublic ||
+        toJsonMethod.formalParameters.isNotEmpty) {
+      return false;
+    }
+
+    // test for template
+    if (_isNestedTemplate(type)) {
+      // check for deep compatibility
+      return _matchesType(type.typeArguments.first);
+    }
+
+    final ConstructorElement? fromJsonMethod = type.element.getNamedConstructor(
+      'fromJson',
+    );
+
+    if (fromJsonMethod == null ||
+        !fromJsonMethod.isPublic ||
+        fromJsonMethod.formalParameters.length != 1 ||
+        withoutNullability(
+              fromJsonMethod.formalParameters.first.type.getDisplayString(),
+            ) !=
+            'Map<String, dynamic>') {
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${withoutNullability(type.getDisplayString())}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+    }
+
+    return true;
+  }
+
+  String _helperNameN(DartType paramType, int index) {
+    final mainType = index == 0 ? 'String' : 'Object?';
+    final mainDecoder = index == 0
+        ? 'jsonDecode(json$index) as Map<String, dynamic>'
+        : 'json$index as Map<String, dynamic>';
+    if (_isNestedTemplate(paramType as InterfaceType)) {
+      return '''
+($mainType json$index) {
+  return ${jsonMapName(paramType)}.fromJson(
+    $mainDecoder,
+    ${_helperNameN(paramType.typeArguments.first, index + 1)},
+  );
+}''';
+    }
+    return '''
+($mainType json$index) {
+  return ${jsonMapName(paramType)}.fromJson($mainDecoder);
+}''';
+  }
+
+  bool _isNestedTemplate(InterfaceType type) {
+    // check if has fromJson constructor
+    final ConstructorElement? fromJsonMethod = type.element.getNamedConstructor(
+      'fromJson',
+    );
+    if (fromJsonMethod == null || !fromJsonMethod.isPublic) {
+      return false;
+    }
+
+    if (type.typeArguments.length != 1) {
+      return false;
+    }
+
+    // check if fromJson method receive two parameters
+    final List<FormalParameterElement> parameters =
+        fromJsonMethod.formalParameters;
+    if (parameters.length != 2) {
+      return false;
+    }
+
+    final FormalParameterElement firstParam = parameters[0];
+    if (withoutNullability(firstParam.type.getDisplayString()) !=
+        'Map<String, dynamic>') {
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${withoutNullability(type.getDisplayString())}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+    }
+
+    // Test for (T Function(Object? json)).
+    final FormalParameterElement secondParam = parameters[1];
+    if (secondParam.type is! FunctionType) {
+      return false;
+    }
+
+    final functionType = secondParam.type as FunctionType;
+    if (functionType.formalParameters.length != 1 ||
+        functionType.returnType.getDisplayString() !=
+            type.element.typeParameters.first.displayName ||
+        functionType.formalParameters[0].type.getDisplayString() != 'Object?') {
+      throw InvalidGenerationSourceError(
+        'The parameter type '
+        '`${withoutNullability(type.getDisplayString())}` not have a supported fromJson definition.',
+        element: type.element,
+      );
+    }
+
+    return true;
+  }
 }
 
 abstract class _TypeHelperWithHelper extends _TypeHelper {
@@ -549,6 +814,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
   String _decode(
     FormalParameterElement parameterElement,
     Set<String> pathParameters,
+    String? customDecoder,
   ) {
     final DartType paramType = parameterElement.type;
     final String parameterName = parameterElement.displayName;
@@ -560,15 +826,17 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
           'state.uri.queryParameters, '
           '${helperName(paramType)})';
     }
-
-    final String nullableSuffix =
+    final nullableSuffix =
         paramType.isNullableType ||
-                (paramType.isEnum && !paramType.isNullableType)
-            ? '!'
-            : '';
+            (paramType.isEnum && !paramType.isNullableType)
+        ? '!'
+        : '';
 
-    return '${helperName(paramType)}'
-        '(state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''})$nullableSuffix';
+    final String decode = _fieldWithEncoder(
+      'state.${_stateValueAccess(parameterElement, pathParameters)} ${!parameterElement.isRequired ? " ?? '' " : ''}',
+      customDecoder,
+    );
+    return '${helperName(paramType)}($decode)$nullableSuffix';
   }
 }
 
@@ -590,7 +858,7 @@ extension FormalParameterElementExtension on FormalParameterElement {
 /// An error thrown when a default value is used with a nullable type.
 class NullableDefaultValueError extends InvalidGenerationSourceError {
   /// An error thrown when a default value is used with a nullable type.
-  NullableDefaultValueError(Element2 element)
+  NullableDefaultValueError(Element element)
     : super(
         'Default value used with a nullable type. Only non-nullable type can have a default value.',
         todo: 'Remove the default value or make the type non-nullable.',

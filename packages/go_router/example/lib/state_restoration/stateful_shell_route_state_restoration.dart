@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,16 +23,17 @@ class _AppState extends State<App> {
     routes: <RouteBase>[
       StatefulShellRoute.indexedStack(
         restorationScopeId: 'appShell',
-        pageBuilder: (
-          BuildContext context,
-          GoRouterState state,
-          StatefulNavigationShell navigationShell,
-        ) {
-          return MaterialPage<void>(
-            restorationId: 'appShellPage',
-            child: AppShell(navigationShell: navigationShell),
-          );
-        },
+        pageBuilder:
+            (
+              BuildContext context,
+              GoRouterState state,
+              StatefulNavigationShell navigationShell,
+            ) {
+              return MaterialPage<void>(
+                restorationId: 'appShellPage',
+                child: AppShell(navigationShell: navigationShell),
+              );
+            },
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             restorationScopeId: 'homeBranch',

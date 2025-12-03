@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,7 +22,7 @@ import 'package:web/web.dart';
 import 'overlays_test.mocks.dart';
 
 MockTileProvider neverTileProvider() {
-  final MockTileProvider tileProvider = MockTileProvider();
+  final tileProvider = MockTileProvider();
   when(
     tileProvider.getTile(any, any, any),
   ).thenAnswer((_) => Completer<Tile>().future);
@@ -145,8 +145,7 @@ void main() {
     });
 
     testWidgets('clearTileCache', (WidgetTester tester) async {
-      final Completer<GoogleMapController> controllerCompleter =
-          Completer<GoogleMapController>();
+      final controllerCompleter = Completer<GoogleMapController>();
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

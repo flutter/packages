@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -118,7 +118,7 @@ class AVFoundationCamera extends CameraPlatform {
       () => HostCameraMessageHandler(cameraId, cameraEventStreamController),
     );
 
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
 
     unawaited(
       onCameraInitialized(cameraId).first.then((CameraInitializedEvent value) {
@@ -274,7 +274,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   void _startStreamListener() {
-    const EventChannel cameraEventChannel = EventChannel(
+    const cameraEventChannel = EventChannel(
       'plugins.flutter.io/camera_avfoundation/imageStream',
     );
     _platformImageStreamSubscription = cameraEventChannel

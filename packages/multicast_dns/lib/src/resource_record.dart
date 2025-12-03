@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -310,8 +310,8 @@ class SrvResourceRecord extends ResourceRecord {
   @override
   Uint8List encodeResponseRecord() {
     final List<int> data = utf8.encode(target);
-    final Uint8List result = Uint8List(data.length + 7);
-    final ByteData resultData = ByteData.view(result.buffer);
+    final result = Uint8List(data.length + 7);
+    final resultData = ByteData.view(result.buffer);
     resultData.setUint16(0, priority);
     resultData.setUint16(2, weight);
     resultData.setUint16(4, port);

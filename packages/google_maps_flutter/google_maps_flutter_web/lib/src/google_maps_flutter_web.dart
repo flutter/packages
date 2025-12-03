@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -334,10 +334,9 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
       return _mapById[creationId]!.widget!;
     }
 
-    final StreamController<MapEvent<Object?>> controller =
-        StreamController<MapEvent<Object?>>.broadcast();
+    final controller = StreamController<MapEvent<Object?>>.broadcast();
 
-    final GoogleMapController mapController = GoogleMapController(
+    final mapController = GoogleMapController(
       mapId: creationId,
       streamController: controller,
       widgetConfiguration: widgetConfiguration,

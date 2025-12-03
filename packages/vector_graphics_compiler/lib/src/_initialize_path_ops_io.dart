@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,8 +34,7 @@ bool initializePathOpsFromFlutterCache() {
     print('path_ops not supported on ${Platform.localeName}');
     return false;
   }
-  final String pathops =
-      '${cacheRoot.path}/artifacts/engine/$platform/$executable';
+  final pathops = '${cacheRoot.path}/artifacts/engine/$platform/$executable';
   if (!File(pathops).existsSync()) {
     print('Could not locate libpathops at $pathops.');
     print('Ensure you are on a supported version of flutter and then run ');

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -88,7 +88,7 @@ Future<void> _runFormat(String baseDir, {required bool ciMode}) async {
 }
 
 Future<void> _runTests(List<String> testsToRun, {required bool ciMode}) async {
-  for (final String test in testsToRun) {
+  for (final test in testsToRun) {
     final TestInfo? info = testSuites[test];
     if (info != null) {
       _printHeading('Running $test', ciMode: ciMode);
@@ -107,9 +107,9 @@ Future<void> _runTests(List<String> testsToRun, {required bool ciMode}) async {
 }
 
 void _printHeading(String heading, {required bool ciMode}) {
-  String timestamp = '';
+  var timestamp = '';
   if (ciMode) {
-    final DateTime now = DateTime.now();
+    final now = DateTime.now();
     timestamp = ' [start time ${now.hour}:${now.minute}:${now.second}]';
   }
   print('##############################');

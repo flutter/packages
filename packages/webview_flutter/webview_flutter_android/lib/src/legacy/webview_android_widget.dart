@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -136,20 +136,6 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             weakReference.target?.callbacksHandler.onPageFinished(url);
           };
         }),
-        onReceivedError: withWeakReferenceTo(this, (
-          WeakReference<WebViewAndroidPlatformController> weakReference,
-        ) {
-          return (_, __, int errorCode, String description, String failingUrl) {
-            weakReference.target?.callbacksHandler.onWebResourceError(
-              WebResourceError(
-                errorCode: errorCode,
-                description: description,
-                failingUrl: failingUrl,
-                errorType: _errorCodeToErrorType(errorCode),
-              ),
-            );
-          };
-        }),
         onReceivedRequestError: withWeakReferenceTo(this, (
           WeakReference<WebViewAndroidPlatformController> weakReference,
         ) {
@@ -181,29 +167,18 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             );
           };
         }),
-        onFormResubmission: (
-          _,
-          __,
-          android_webview.AndroidMessage dontResend,
-          ___,
-        ) {
-          dontResend.sendToTarget();
-        },
-        onReceivedClientCertRequest: (
-          _,
-          __,
-          android_webview.ClientCertRequest request,
-        ) {
-          request.cancel();
-        },
-        onReceivedSslError: (
-          _,
-          __,
-          android_webview.SslErrorHandler handler,
-          ___,
-        ) {
-          handler.cancel();
-        },
+        onFormResubmission:
+            (_, __, android_webview.AndroidMessage dontResend, ___) {
+              dontResend.sendToTarget();
+            },
+        onReceivedClientCertRequest:
+            (_, __, android_webview.ClientCertRequest request) {
+              request.cancel();
+            },
+        onReceivedSslError:
+            (_, __, android_webview.SslErrorHandler handler, ___) {
+              handler.cancel();
+            },
         requestLoading: withWeakReferenceTo(this, (
           WeakReference<WebViewAndroidPlatformController> weakReference,
         ) {
@@ -294,10 +269,9 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
   @override
   Future<void> loadFile(String absoluteFilePath) {
-    final String url =
-        absoluteFilePath.startsWith('file://')
-            ? absoluteFilePath
-            : 'file://$absoluteFilePath';
+    final url = absoluteFilePath.startsWith('file://')
+        ? absoluteFilePath
+        : 'file://$absoluteFilePath';
 
     webView.settings.setAllowFileAccess(true);
     return webView.loadUrl(url, <String, String>{});
@@ -419,11 +393,10 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             return !_javaScriptChannels.containsKey(channelName);
           })
           .map<Future<void>>((String channelName) {
-            final WebViewAndroidJavaScriptChannel javaScriptChannel =
-                WebViewAndroidJavaScriptChannel(
-                  channelName: channelName,
-                  javascriptChannelRegistry: javascriptChannelRegistry,
-                );
+            final javaScriptChannel = WebViewAndroidJavaScriptChannel(
+              channelName: channelName,
+              javascriptChannelRegistry: javascriptChannelRegistry,
+            );
             _javaScriptChannels[channelName] = javaScriptChannel;
             return webView.addJavaScriptChannel(javaScriptChannel);
           }),
@@ -477,7 +450,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
     final Color? backgroundColor = creationParams.backgroundColor;
     if (backgroundColor != null) {
-      webView.setBackgroundColor(backgroundColor.value);
+      webView.setBackgroundColor(backgroundColor.toARGB32());
     }
 
     addJavascriptChannels(creationParams.javascriptChannelNames);
@@ -598,7 +571,7 @@ class WebViewAndroidJavaScriptChannel
   WebViewAndroidJavaScriptChannel({
     required super.channelName,
     required this.javascriptChannelRegistry,
-  }) : super(
+  }) : super.pigeon_new(
          postMessage: withWeakReferenceTo(javascriptChannelRegistry, (
            WeakReference<JavascriptChannelRegistry> weakReference,
          ) {
@@ -652,14 +625,6 @@ class WebViewProxy {
     void Function(
       android_webview.WebViewClient,
       android_webview.WebView webView,
-      int errorCode,
-      String description,
-      String failingUrl,
-    )?
-    onReceivedError,
-    void Function(
-      android_webview.WebViewClient,
-      android_webview.WebView webView,
       android_webview.WebResourceRequest request,
     )?
     requestLoading,
@@ -694,7 +659,6 @@ class WebViewProxy {
       onPageStarted: onPageStarted,
       onPageFinished: onPageFinished,
       onReceivedRequestError: onReceivedRequestError,
-      onReceivedError: onReceivedError,
       requestLoading: requestLoading,
       urlLoading: urlLoading,
     );

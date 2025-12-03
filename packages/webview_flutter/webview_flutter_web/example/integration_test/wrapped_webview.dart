@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,10 +12,9 @@ import 'package:webview_flutter_web_example/legacy/web_view.dart';
 Widget wrappedWebView(WebWebViewController controller) {
   return _wrapped(
     Builder(
-      builder:
-          (BuildContext ctx) => PlatformWebViewWidget(
-            PlatformWebViewWidgetCreationParams(controller: controller),
-          ).build(ctx),
+      builder: (BuildContext ctx) => PlatformWebViewWidget(
+        PlatformWebViewWidgetCreationParams(controller: controller),
+      ).build(ctx),
     ),
   );
 }

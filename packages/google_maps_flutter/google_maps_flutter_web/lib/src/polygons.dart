@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,9 +33,8 @@ class PolygonsController extends GeometryController {
       googleMap,
       polygon,
     );
-    final gmaps.Polygon gmPolygon = gmaps.Polygon(polygonOptions)
-      ..map = googleMap;
-    final PolygonController controller = PolygonController(
+    final gmPolygon = gmaps.Polygon(polygonOptions)..map = googleMap;
+    final controller = PolygonController(
       polygon: gmPolygon,
       consumeTapEvents: polygon.consumeTapEvents,
       onTap: () {

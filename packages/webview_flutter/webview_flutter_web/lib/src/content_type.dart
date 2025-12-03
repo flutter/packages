@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,12 +13,14 @@ class ContentType {
         .split(';')
         .map((String e) => e.trim().toLowerCase());
 
-    for (final String chunk in chunks) {
+    for (final chunk in chunks) {
       if (!chunk.contains('=')) {
         _mimeType = chunk;
       } else {
-        final List<String> bits =
-            chunk.split('=').map((String e) => e.trim()).toList();
+        final List<String> bits = chunk
+            .split('=')
+            .map((String e) => e.trim())
+            .toList();
         assert(bits.length == 2);
         switch (bits[0]) {
           case 'charset':

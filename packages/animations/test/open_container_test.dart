@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,14 +7,43 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('Can be opened via GlobalKey', (WidgetTester tester) async {
+    final openContainerKey = GlobalKey<OpenContainerState>();
+
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            key: openContainerKey,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Open'), findsNothing);
+
+    openContainerKey.currentState!.openContainer();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+  });
+
   testWidgets('Container opens - Fade (by default)', (
     WidgetTester tester,
   ) async {
     const ShapeBorder shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(8.0)),
     );
-    bool closedBuilderCalled = false;
-    bool openBuilderCalled = false;
+    var closedBuilderCalled = false;
+    var openBuilderCalled = false;
 
     await tester.pumpWidget(
       _boilerplate(
@@ -42,7 +71,7 @@ void main() {
     final Element srcMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final Material srcMaterial = srcMaterialElement.widget as Material;
+    final srcMaterial = srcMaterialElement.widget as Material;
     expect(srcMaterial.color, Colors.green);
     expect(srcMaterial.elevation, 4.0);
     expect(srcMaterial.shape, shape);
@@ -64,7 +93,7 @@ void main() {
     final Element destMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final Material closedMaterial = destMaterialElement.widget as Material;
+    final closedMaterial = destMaterialElement.widget as Material;
     expect(closedMaterial.color, Colors.green);
     expect(closedMaterial.elevation, 4.0);
     expect(closedMaterial.shape, shape);
@@ -77,14 +106,11 @@ void main() {
     expect(_getOpacity(tester, 'Open'), 0.0);
     expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    final _TrackedData dataClosed = _TrackedData(
-      closedMaterial,
-      closedMaterialRect,
-    );
+    final dataClosed = _TrackedData(closedMaterial, closedMaterialRect);
 
     // Jump to the start of the fade in.
     await tester.pump(const Duration(milliseconds: 60)); // 300ms * 1/5 = 60ms
-    final _TrackedData dataPreFade = _TrackedData(
+    final dataPreFade = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -100,7 +126,7 @@ void main() {
 
     // Jump to the middle of the fade in.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 3/10 = 90ms
-    final _TrackedData dataMidFadeIn = _TrackedData(
+    final dataMidFadeIn = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -119,7 +145,7 @@ void main() {
     // Jump to the end of the fade in at 2/5 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 2/5 = 120ms
 
-    final _TrackedData dataPostFadeIn = _TrackedData(
+    final dataPostFadeIn = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -135,7 +161,7 @@ void main() {
 
     // Jump almost to the end of the transition.
     await tester.pump(const Duration(milliseconds: 180));
-    final _TrackedData dataTransitionDone = _TrackedData(
+    final dataTransitionDone = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -158,7 +184,7 @@ void main() {
     final Element finalMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
-    final _TrackedData dataOpen = _TrackedData(
+    final dataOpen = _TrackedData(
       finalMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == finalMaterialElement),
@@ -206,7 +232,7 @@ void main() {
     final Element initialMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
-    final _TrackedData dataOpen = _TrackedData(
+    final dataOpen = _TrackedData(
       initialMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == initialMaterialElement),
@@ -227,7 +253,7 @@ void main() {
     final Element materialElement = tester.firstElement(
       find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
-    final _TrackedData dataTransitionStart = _TrackedData(
+    final dataTransitionStart = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -241,7 +267,7 @@ void main() {
 
     // Jump to start of fade out: 1/5 of 300.
     await tester.pump(const Duration(milliseconds: 60)); // 300 * 1/5 = 60
-    final _TrackedData dataPreFadeOut = _TrackedData(
+    final dataPreFadeOut = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -257,7 +283,7 @@ void main() {
 
     // Jump to the middle of the fade out.
     await tester.pump(const Duration(milliseconds: 30)); // 300 * 3/10 = 90
-    final _TrackedData dataMidpoint = _TrackedData(
+    final dataMidpoint = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -275,7 +301,7 @@ void main() {
 
     // Jump to the end of the fade out.
     await tester.pump(const Duration(milliseconds: 30)); // 300 * 2/5 = 120
-    final _TrackedData dataPostFadeOut = _TrackedData(
+    final dataPostFadeOut = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -291,7 +317,7 @@ void main() {
 
     // Jump almost to the end of the transition.
     await tester.pump(const Duration(milliseconds: 180));
-    final _TrackedData dataTransitionDone = _TrackedData(
+    final dataTransitionDone = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -314,7 +340,7 @@ void main() {
     final Element finalMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final _TrackedData dataClosed = _TrackedData(
+    final dataClosed = _TrackedData(
       finalMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == finalMaterialElement),
@@ -333,8 +359,8 @@ void main() {
     const ShapeBorder shape = RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(8.0)),
     );
-    bool closedBuilderCalled = false;
-    bool openBuilderCalled = false;
+    var closedBuilderCalled = false;
+    var openBuilderCalled = false;
 
     await tester.pumpWidget(
       _boilerplate(
@@ -364,7 +390,7 @@ void main() {
     final Element srcMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final Material srcMaterial = srcMaterialElement.widget as Material;
+    final srcMaterial = srcMaterialElement.widget as Material;
     expect(srcMaterial.color, Colors.green);
     expect(srcMaterial.elevation, 4.0);
     expect(srcMaterial.shape, shape);
@@ -386,7 +412,7 @@ void main() {
     final Element destMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final Material closedMaterial = destMaterialElement.widget as Material;
+    final closedMaterial = destMaterialElement.widget as Material;
     expect(closedMaterial.color, Colors.green);
     expect(closedMaterial.elevation, 4.0);
     expect(closedMaterial.shape, shape);
@@ -399,14 +425,11 @@ void main() {
     expect(_getOpacity(tester, 'Open'), 0.0);
     expect(_getOpacity(tester, 'Closed'), 1.0);
 
-    final _TrackedData dataClosed = _TrackedData(
-      closedMaterial,
-      closedMaterialRect,
-    );
+    final dataClosed = _TrackedData(closedMaterial, closedMaterialRect);
 
     // The fade-out takes 1/5 of 300ms. Let's jump to the midpoint of that.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/10 = 30ms
-    final _TrackedData dataMidFadeOut = _TrackedData(
+    final dataMidFadeOut = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -424,7 +447,7 @@ void main() {
 
     // Let's jump to the crossover point at 1/5 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/5 = 60ms
-    final _TrackedData dataMidpoint = _TrackedData(
+    final dataMidpoint = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -441,7 +464,7 @@ void main() {
 
     // Let's jump to the middle of the fade-in at 3/5 of 300ms
     await tester.pump(const Duration(milliseconds: 120)); // 300ms * 3/5 = 180ms
-    final _TrackedData dataMidFadeIn = _TrackedData(
+    final dataMidFadeIn = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -459,7 +482,7 @@ void main() {
 
     // Let's jump almost to the end of the transition.
     await tester.pump(const Duration(milliseconds: 120));
-    final _TrackedData dataTransitionDone = _TrackedData(
+    final dataTransitionDone = _TrackedData(
       destMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == destMaterialElement),
@@ -487,7 +510,7 @@ void main() {
     final Element finalMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
-    final _TrackedData dataOpen = _TrackedData(
+    final dataOpen = _TrackedData(
       finalMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == finalMaterialElement),
@@ -535,7 +558,7 @@ void main() {
     final Element initialMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
-    final _TrackedData dataOpen = _TrackedData(
+    final dataOpen = _TrackedData(
       initialMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == initialMaterialElement),
@@ -557,7 +580,7 @@ void main() {
     final Element materialElement = tester.firstElement(
       find.ancestor(of: find.text('Open'), matching: find.byType(Material)),
     );
-    final _TrackedData dataTransitionStart = _TrackedData(
+    final dataTransitionStart = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -572,7 +595,7 @@ void main() {
 
     // Jump to mid-point of fade-out: 1/10 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/10 = 30ms
-    final _TrackedData dataMidFadeOut = _TrackedData(
+    final dataMidFadeOut = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -593,7 +616,7 @@ void main() {
 
     // Let's jump to the crossover point at 1/5 of 300ms.
     await tester.pump(const Duration(milliseconds: 30)); // 300ms * 1/5 = 60ms
-    final _TrackedData dataMidpoint = _TrackedData(
+    final dataMidpoint = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -610,7 +633,7 @@ void main() {
 
     // Let's jump to the middle of the fade-in at 3/5 of 300ms
     await tester.pump(const Duration(milliseconds: 120)); // 300ms * 3/5 = 180ms
-    final _TrackedData dataMidFadeIn = _TrackedData(
+    final dataMidFadeIn = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -628,7 +651,7 @@ void main() {
 
     // Let's jump almost to the end of the transition.
     await tester.pump(const Duration(milliseconds: 120));
-    final _TrackedData dataTransitionDone = _TrackedData(
+    final dataTransitionDone = _TrackedData(
       materialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == materialElement),
@@ -655,7 +678,7 @@ void main() {
     final Element finalMaterialElement = tester.firstElement(
       find.ancestor(of: find.text('Closed'), matching: find.byType(Material)),
     );
-    final _TrackedData dataClosed = _TrackedData(
+    final dataClosed = _TrackedData(
       finalMaterialElement.widget as Material,
       tester.getRect(
         find.byElementPredicate((Element e) => e == finalMaterialElement),
@@ -1010,7 +1033,7 @@ void main() {
         ),
       ),
     );
-    const Rect fullNavigator = Rect.fromLTWH(250, 100, 300, 400);
+    const fullNavigator = Rect.fromLTWH(250, 100, 300, 400);
 
     expect(tester.getRect(find.byType(Navigator)), fullNavigator);
     final Rect materialRectClosed = tester.getRect(
@@ -1276,9 +1299,7 @@ void main() {
   testWidgets(
     'Container partly offscreen can be opened without crash - vertical',
     (WidgetTester tester) async {
-      final ScrollController controller = ScrollController(
-        initialScrollOffset: 50,
-      );
+      final controller = ScrollController(initialScrollOffset: 50);
       await tester.pumpWidget(
         Center(
           child: SizedBox(
@@ -1352,9 +1373,7 @@ void main() {
   testWidgets(
     'Container partly offscreen can be opened without crash - horizontal',
     (WidgetTester tester) async {
-      final ScrollController controller = ScrollController(
-        initialScrollOffset: 50,
-      );
+      final controller = ScrollController(initialScrollOffset: 50);
       await tester.pumpWidget(
         Center(
           child: SizedBox(
@@ -1464,7 +1483,7 @@ void main() {
   testWidgets('onClosed callback is called when container has closed', (
     WidgetTester tester,
   ) async {
-    bool hasClosed = false;
+    var hasClosed = false;
     final Widget openContainer = OpenContainer(
       onClosed: (dynamic _) {
         hasClosed = true;
@@ -1508,15 +1527,13 @@ void main() {
         closedBuilder: (BuildContext context, VoidCallback action) {
           return GestureDetector(onTap: action, child: const Text('Closed'));
         },
-        openBuilder: (
-          BuildContext context,
-          CloseContainerActionCallback<bool> action,
-        ) {
-          return GestureDetector(
-            onTap: () => action(returnValue: true),
-            child: const Text('Open'),
-          );
-        },
+        openBuilder:
+            (BuildContext context, CloseContainerActionCallback<bool> action) {
+              return GestureDetector(
+                onTap: () => action(returnValue: true),
+                child: const Text('Open'),
+              );
+            },
       );
 
       await tester.pumpWidget(_boilerplate(child: openContainer));
@@ -1548,23 +1565,20 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder: (
-        BuildContext context,
-        CloseContainerActionCallback<bool> action,
-      ) {
-        return const Text('Open');
-      },
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
+            return const Text('Open');
+          },
     );
 
     await tester.pumpWidget(_boilerplate(child: openContainer));
 
-    final Finder closedBuilderMaterial =
-        find
-            .ancestor(
-              of: find.byKey(closedBuilderKey),
-              matching: find.byType(Material),
-            )
-            .first;
+    final Finder closedBuilderMaterial = find
+        .ancestor(
+          of: find.byKey(closedBuilderKey),
+          matching: find.byType(Material),
+        )
+        .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.antiAlias);
@@ -1576,24 +1590,21 @@ void main() {
       closedBuilder: (BuildContext context, VoidCallback action) {
         return Text('Close', key: closedBuilderKey);
       },
-      openBuilder: (
-        BuildContext context,
-        CloseContainerActionCallback<bool> action,
-      ) {
-        return const Text('Open');
-      },
+      openBuilder:
+          (BuildContext context, CloseContainerActionCallback<bool> action) {
+            return const Text('Open');
+          },
       clipBehavior: Clip.none,
     );
 
     await tester.pumpWidget(_boilerplate(child: openContainer));
 
-    final Finder closedBuilderMaterial =
-        find
-            .ancestor(
-              of: find.byKey(closedBuilderKey),
-              matching: find.byType(Material),
-            )
-            .first;
+    final Finder closedBuilderMaterial = find
+        .ancestor(
+          of: find.byKey(closedBuilderKey),
+          matching: find.byType(Material),
+        )
+        .first;
 
     final Material material = tester.widget<Material>(closedBuilderMaterial);
     expect(material.clipBehavior, Clip.none);
@@ -1644,8 +1655,8 @@ void main() {
   testWidgets(
     'Verify that "useRootNavigator: false" uses the correct navigator',
     (WidgetTester tester) async {
-      const Key appKey = Key('App');
-      const Key nestedNavigatorKey = Key('Nested Navigator');
+      const appKey = Key('App');
+      const nestedNavigatorKey = Key('Nested Navigator');
 
       await tester.pumpWidget(
         createRootNavigatorTest(
@@ -1676,8 +1687,8 @@ void main() {
   testWidgets(
     'Verify that "useRootNavigator: true" uses the correct navigator',
     (WidgetTester tester) async {
-      const Key appKey = Key('App');
-      const Key nestedNavigatorKey = Key('Nested Navigator');
+      const appKey = Key('App');
+      const nestedNavigatorKey = Key('Nested Navigator');
 
       await tester.pumpWidget(
         createRootNavigatorTest(
@@ -1708,8 +1719,8 @@ void main() {
   testWidgets('Verify correct opened size  when "useRootNavigator: false"', (
     WidgetTester tester,
   ) async {
-    const Key appKey = Key('App');
-    const Key nestedNavigatorKey = Key('Nested Navigator');
+    const appKey = Key('App');
+    const nestedNavigatorKey = Key('Nested Navigator');
 
     await tester.pumpWidget(
       createRootNavigatorTest(
@@ -1731,8 +1742,8 @@ void main() {
   testWidgets('Verify correct opened size  when "useRootNavigator: true"', (
     WidgetTester tester,
   ) async {
-    const Key appKey = Key('App');
-    const Key nestedNavigatorKey = Key('Nested Navigator');
+    const appKey = Key('App');
+    const nestedNavigatorKey = Key('Nested Navigator');
 
     await tester.pumpWidget(
       createRootNavigatorTest(
@@ -1754,7 +1765,7 @@ void main() {
   testWidgets('Verify routeSettings passed to Navigator', (
     WidgetTester tester,
   ) async {
-    const RouteSettings routeSettings = RouteSettings(
+    const routeSettings = RouteSettings(
       name: 'route-name',
       arguments: 'arguments',
     );
@@ -1777,8 +1788,9 @@ void main() {
 
     // Expect the last route pushed to the navigator to contain RouteSettings
     // equal to the RouteSettings passed to the OpenContainer
-    final ModalRoute<dynamic> modalRoute =
-        ModalRoute.of(tester.element(find.text('Open')))!;
+    final ModalRoute<dynamic> modalRoute = ModalRoute.of(
+      tester.element(find.text('Open')),
+    )!;
     expect(modalRoute.settings, routeSettings);
   });
 }
@@ -1829,12 +1841,11 @@ class _TrackedData {
 }
 
 double _getRadius(Material material) {
-  final RoundedRectangleBorder? shape =
-      material.shape as RoundedRectangleBorder?;
+  final shape = material.shape as RoundedRectangleBorder?;
   if (shape == null) {
     return 0.0;
   }
-  final BorderRadius radius = shape.borderRadius as BorderRadius;
+  final radius = shape.borderRadius as BorderRadius;
   return radius.topRight.x;
 }
 
@@ -1861,6 +1872,7 @@ class _SizableContainerState extends State<_SizableContainer> {
 
   double get size => _size;
   late double _size;
+
   set size(double value) {
     if (value == _size) {
       return;
@@ -1891,35 +1903,34 @@ class __RemoveOpenContainerExampleState
     return removeOpenContainerWidget
         ? const Text('Container has been removed')
         : OpenContainer(
-          closedBuilder:
-              (BuildContext context, VoidCallback action) => Column(
-                children: <Widget>[
-                  const Text('Closed'),
-                  ElevatedButton(
-                    onPressed: action,
-                    child: const Text('Open the container'),
-                  ),
-                ],
-              ),
-          openBuilder:
-              (BuildContext context, VoidCallback action) => Column(
-                children: <Widget>[
-                  const Text('Open'),
-                  ElevatedButton(
-                    onPressed: action,
-                    child: const Text('Close the container'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      setState(() {
-                        removeOpenContainerWidget = true;
-                      });
-                    },
-                    child: const Text('Remove the container'),
-                  ),
-                ],
-              ),
-        );
+            closedBuilder: (BuildContext context, VoidCallback action) =>
+                Column(
+                  children: <Widget>[
+                    const Text('Closed'),
+                    ElevatedButton(
+                      onPressed: action,
+                      child: const Text('Open the container'),
+                    ),
+                  ],
+                ),
+            openBuilder: (BuildContext context, VoidCallback action) => Column(
+              children: <Widget>[
+                const Text('Open'),
+                ElevatedButton(
+                  onPressed: action,
+                  child: const Text('Close the container'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      removeOpenContainerWidget = true;
+                    });
+                  },
+                  child: const Text('Remove the container'),
+                ),
+              ],
+            ),
+          );
   }
 }
 

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -71,12 +71,11 @@ class TreeExampleState extends State<TreeExample> {
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
             () => TapGestureRecognizer(),
-            (TapGestureRecognizer t) =>
-                t.onTap = () {
-                  setState(() {
-                    _selectedNode = node;
-                  });
-                },
+            (TapGestureRecognizer t) => t.onTap = () {
+              setState(() {
+                _selectedNode = node;
+              });
+            },
           ),
     };
   }

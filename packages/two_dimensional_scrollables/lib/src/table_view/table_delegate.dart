@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -159,9 +159,8 @@ class TableCellBuilderDelegate extends TwoDimensionalChildBuilderDelegate
        _pinnedColumnCount = pinnedColumnCount,
        _pinnedRowCount = pinnedRowCount,
        super(
-         builder:
-             (BuildContext context, ChildVicinity vicinity) =>
-                 cellBuilder(context, vicinity as TableVicinity),
+         builder: (BuildContext context, ChildVicinity vicinity) =>
+             cellBuilder(context, vicinity as TableVicinity),
          maxXIndex: columnCount == null ? columnCount : columnCount - 1,
          maxYIndex: rowCount == null ? rowCount : rowCount - 1,
          // repaintBoundaries handled by TableViewCell

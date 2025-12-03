@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -102,7 +102,7 @@ void main() {
 
   test('loadFontIfNecessary method does nothing if the font is in the '
       'Asset Manifest', () async {
-    final GoogleFontsDescriptor descriptorInAssets = GoogleFontsDescriptor(
+    final descriptorInAssets = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
@@ -118,7 +118,7 @@ void main() {
     await loadFontIfNecessary(descriptorInAssets);
     verifyNever(mockHttpClient.gets(anything));
 
-    final GoogleFontsDescriptor descriptorNotInAssets = GoogleFontsDescriptor(
+    final descriptorNotInAssets = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Bar',
         googleFontsVariant: GoogleFontsVariant(

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ void main() {
 
   group('$Cluster', () {
     test('constructor', () {
-      final Cluster cluster = Cluster(
+      final cluster = Cluster(
         const ClusterManagerId('3456787654'),
         const <MarkerId>[MarkerId('23456')],
         position: const LatLng(55.0, 66.0),

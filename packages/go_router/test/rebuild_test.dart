@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ void main() {
   testWidgets('GoRouter.push does not trigger unnecessary rebuilds', (
     WidgetTester tester,
   ) async {
-    final List<GoRoute> routes = <GoRoute>[
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
         builder: (BuildContext context, __) => const HomePage(),

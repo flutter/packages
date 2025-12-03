@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   test('clearCookies should call android_webview.clearCookies', () {
-    final MockCookieManager mockCookieManager = MockCookieManager();
+    final mockCookieManager = MockCookieManager();
     when(
       mockCookieManager.removeAllCookies(),
     ).thenAnswer((_) => Future<bool>.value(true));
@@ -29,16 +29,15 @@ void main() {
 
   test('setCookie should throw ArgumentError for cookie with invalid path', () {
     expect(
-      () => WebViewAndroidCookieManager(
-        cookieManager: MockCookieManager(),
-      ).setCookie(
-        const WebViewCookie(
-          name: 'foo',
-          value: 'bar',
-          domain: 'flutter.dev',
-          path: 'invalid;path',
-        ),
-      ),
+      () => WebViewAndroidCookieManager(cookieManager: MockCookieManager())
+          .setCookie(
+            const WebViewCookie(
+              name: 'foo',
+              value: 'bar',
+              domain: 'flutter.dev',
+              path: 'invalid;path',
+            ),
+          ),
       throwsA(const TypeMatcher<ArgumentError>()),
     );
   });
@@ -46,7 +45,7 @@ void main() {
   test(
     'setCookie should call android_webview.csetCookie with properly formatted cookie value',
     () {
-      final MockCookieManager mockCookieManager = MockCookieManager();
+      final mockCookieManager = MockCookieManager();
       WebViewAndroidCookieManager(cookieManager: mockCookieManager).setCookie(
         const WebViewCookie(name: 'foo&', value: 'bar@', domain: 'flutter.dev'),
       );

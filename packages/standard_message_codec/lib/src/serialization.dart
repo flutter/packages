@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,7 +28,7 @@ class WriteBuffer {
   /// performance.
   factory WriteBuffer({int startCapacity = 8}) {
     assert(startCapacity > 0);
-    final ByteData eightBytes = ByteData(8);
+    final eightBytes = ByteData(8);
     final Uint8List eightBytesAsList = eightBytes.buffer.asUint8List();
     return WriteBuffer._(
       Uint8List(startCapacity),
@@ -76,7 +76,7 @@ class WriteBuffer {
   void _resize([int? requiredLength]) {
     final int doubleLength = _buffer.length * 2;
     final int newLength = math.max(requiredLength ?? 0, doubleLength);
-    final Uint8List newBuffer = Uint8List(newLength);
+    final newBuffer = Uint8List(newLength);
     newBuffer.setRange(0, _buffer.length, _buffer);
     _buffer = newBuffer;
   }

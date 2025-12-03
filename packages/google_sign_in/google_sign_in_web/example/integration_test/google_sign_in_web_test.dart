@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,26 +26,21 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('Constructor', () {
-    const String expectedClientId = '3xp3c73d_c113n7_1d';
+    const expectedClientId = '3xp3c73d_c113n7_1d';
 
     testWidgets('Loads clientId when set in a meta', (_) async {
-      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.autoDetectedClientId, isNull);
 
       // Add it to the test page now, and try again
-      final web.HTMLMetaElement meta =
-          web.document.createElement('meta') as web.HTMLMetaElement
-            ..name = clientIdMetaName
-            ..content = expectedClientId;
+      final meta = web.document.createElement('meta') as web.HTMLMetaElement
+        ..name = clientIdMetaName
+        ..content = expectedClientId;
 
       web.document.head!.appendChild(meta);
 
-      final GoogleSignInPlugin another = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final another = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(another.autoDetectedClientId, expectedClientId);
 
@@ -106,9 +101,7 @@ void main() {
 
   group('support queries', () {
     testWidgets('reports lack of support for authenticate', (_) async {
-      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.supportsAuthenticate(), false);
     });
@@ -116,9 +109,7 @@ void main() {
     testWidgets('reports requirement for user interaction to authorize', (
       _,
     ) async {
-      final GoogleSignInPlugin plugin = GoogleSignInPlugin(
-        debugOverrideLoader: true,
-      );
+      final plugin = GoogleSignInPlugin(debugOverrideLoader: true);
 
       expect(plugin.authorizationRequiresUserInteraction(), true);
     });
@@ -127,9 +118,7 @@ void main() {
   group('(with mocked GIS)', () {
     late GoogleSignInPlugin plugin;
     late MockGisSdkClient mockGis;
-    const InitParameters options = InitParameters(
-      clientId: 'some-non-null-client-id',
-    );
+    const options = InitParameters(clientId: 'some-non-null-client-id');
 
     setUp(() {
       mockGis = MockGisSdkClient();
@@ -165,8 +154,8 @@ void main() {
     });
 
     group('clientAuthorizationTokensForScopes', () {
-      const String someAccessToken = '50m3_4cc35_70k3n';
-      const List<String> scopes = <String>['scope1', 'scope2'];
+      const someAccessToken = '50m3_4cc35_70k3n';
+      const scopes = <String>['scope1', 'scope2'];
 
       setUp(() {
         plugin.init(options);
@@ -195,18 +184,17 @@ void main() {
               ),
             );
 
-        final List<Object?> arguments =
-            mockito
-                .verify(
-                  mockGis.requestScopes(
-                    mockito.captureAny,
-                    promptIfUnauthorized: mockito.captureAnyNamed(
-                      'promptIfUnauthorized',
-                    ),
-                    userHint: mockito.captureAnyNamed('userHint'),
-                  ),
-                )
-                .captured;
+        final List<Object?> arguments = mockito
+            .verify(
+              mockGis.requestScopes(
+                mockito.captureAny,
+                promptIfUnauthorized: mockito.captureAnyNamed(
+                  'promptIfUnauthorized',
+                ),
+                userHint: mockito.captureAnyNamed('userHint'),
+              ),
+            )
+            .captured;
 
         expect(token?.accessToken, someAccessToken);
 
@@ -216,7 +204,7 @@ void main() {
       });
 
       testWidgets('passes expected values to requestScopes', (_) async {
-        const String someUserId = 'someUser';
+        const someUserId = 'someUser';
         mockito
             .when(
               mockGis.requestScopes(
@@ -239,18 +227,17 @@ void main() {
               ),
             );
 
-        final List<Object?> arguments =
-            mockito
-                .verify(
-                  mockGis.requestScopes(
-                    mockito.captureAny,
-                    promptIfUnauthorized: mockito.captureAnyNamed(
-                      'promptIfUnauthorized',
-                    ),
-                    userHint: mockito.captureAnyNamed('userHint'),
-                  ),
-                )
-                .captured;
+        final List<Object?> arguments = mockito
+            .verify(
+              mockGis.requestScopes(
+                mockito.captureAny,
+                promptIfUnauthorized: mockito.captureAnyNamed(
+                  'promptIfUnauthorized',
+                ),
+                userHint: mockito.captureAnyNamed('userHint'),
+              ),
+            )
+            .captured;
 
         expect(token?.accessToken, someAccessToken);
 
@@ -277,8 +264,8 @@ void main() {
     });
 
     group('serverAuthorizationTokensForScopes', () {
-      const String someAuthCode = 'abc123';
-      const List<String> scopes = <String>['scope1', 'scope2'];
+      const someAuthCode = 'abc123';
+      const scopes = <String>['scope1', 'scope2'];
 
       setUp(() {
         plugin.init(options);
@@ -289,7 +276,7 @@ void main() {
             .when(mockGis.requestServerAuthCode(mockito.any))
             .thenAnswer((_) => Future<String>.value(someAuthCode));
 
-        const AuthorizationRequestDetails request = AuthorizationRequestDetails(
+        const request = AuthorizationRequestDetails(
           scopes: scopes,
           userId: null,
           email: null,
@@ -302,15 +289,13 @@ void main() {
               ),
             );
 
-        final List<Object?> arguments =
-            mockito
-                .verify(mockGis.requestServerAuthCode(mockito.captureAny))
-                .captured;
+        final List<Object?> arguments = mockito
+            .verify(mockGis.requestServerAuthCode(mockito.captureAny))
+            .captured;
 
         expect(token?.serverAuthCode, someAuthCode);
 
-        final AuthorizationRequestDetails passedRequest =
-            arguments.first! as AuthorizationRequestDetails;
+        final passedRequest = arguments.first! as AuthorizationRequestDetails;
         expect(passedRequest.scopes, request.scopes);
         expect(passedRequest.userId, request.userId);
         expect(passedRequest.email, request.email);
@@ -336,11 +321,29 @@ void main() {
         );
       });
     });
+
+    group('clearAuthorizationToken', () {
+      setUp(() {
+        plugin.init(options);
+      });
+
+      testWidgets('calls clearAuthorizationToken on GIS client', (_) async {
+        const someToken = 'someToken';
+        await plugin.clearAuthorizationToken(
+          const ClearAuthorizationTokenParams(accessToken: someToken),
+        );
+
+        final List<Object?> arguments = mockito
+            .verify(mockGis.clearAuthorizationToken(mockito.captureAny))
+            .captured;
+
+        expect(arguments.first, someToken);
+      });
+    });
   });
 
   group('userDataEvents', () {
-    final StreamController<AuthenticationEvent> controller =
-        StreamController<AuthenticationEvent>.broadcast();
+    final controller = StreamController<AuthenticationEvent>.broadcast();
     late GoogleSignInPlugin plugin;
 
     setUp(() {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,7 +20,7 @@ void main() {
   ) async {
     WidgetsFlutterBinding.ensureInitialized();
     // Adds 10 fake camera descriptions.
-    for (int i = 0; i < 10; i++) {
+    for (var i = 0; i < 10; i++) {
       cameras.add(
         CameraDescription(
           name: 'camera_$i',

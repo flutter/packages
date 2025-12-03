@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,11 +27,9 @@ class HeatmapsController extends GeometryController {
   void _addHeatmap(Heatmap heatmap) {
     final visualization.HeatmapLayerOptions heatmapOptions =
         _heatmapOptionsFromHeatmap(heatmap);
-    final visualization.HeatmapLayer gmHeatmap = visualization.HeatmapLayer(
-      heatmapOptions,
-    );
+    final gmHeatmap = visualization.HeatmapLayer(heatmapOptions);
     gmHeatmap.map = googleMap;
-    final HeatmapController controller = HeatmapController(heatmap: gmHeatmap);
+    final controller = HeatmapController(heatmap: gmHeatmap);
     _heatmapIdToController[heatmap.heatmapId] = controller;
   }
 
@@ -48,7 +46,7 @@ class HeatmapsController extends GeometryController {
 
   /// Removes a set of [HeatmapId]s from the cache.
   void removeHeatmaps(Set<HeatmapId> heatmapIdsToRemove) {
-    for (final HeatmapId heatmapId in heatmapIdsToRemove) {
+    for (final heatmapId in heatmapIdsToRemove) {
       final HeatmapController? heatmapController =
           _heatmapIdToController[heatmapId];
       heatmapController?.remove();

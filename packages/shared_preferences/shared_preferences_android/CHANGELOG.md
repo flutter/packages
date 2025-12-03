@@ -1,3 +1,29 @@
+## 2.4.18
+
+* Bumps kotlin_version to 2.2.21.
+
+## 2.4.17
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.4.16
+
+* Updates to Pigeon 26.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.4.15
+
+* Resolves Gradle 9 deprecations.
+
+## 2.4.14
+
+* Updates Java compatibility version to 17.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 2.4.13
+
+* Bumps androidx.datastore:datastore from 1.1.3 to 1.1.7.
+
 ## 2.4.12
 
 * Bumps com.android.tools.build:gradle to 8.12.1 and kotlin_version to 2.2.10.

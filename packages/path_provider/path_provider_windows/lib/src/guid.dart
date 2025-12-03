@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,8 +34,8 @@ base class GUID extends Struct {
     if (hexOnly.length != 32) {
       throw ArgumentError.value(guid, 'guid', 'Invalid GUID string');
     }
-    final ByteData bytes = ByteData(16);
-    for (int i = 0; i < 16; ++i) {
+    final bytes = ByteData(16);
+    for (var i = 0; i < 16; ++i) {
       bytes.setUint8(
         i,
         int.parse(hexOnly.substring(i * 2, i * 2 + 2), radix: 16),

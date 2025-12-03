@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,15 +17,13 @@ void main() {
   testWidgets('Subscriptions are canceled on dispose', (
     WidgetTester tester,
   ) async {
-    final FakeGoogleMapsFlutterPlatform platform =
-        FakeGoogleMapsFlutterPlatform();
+    final platform = FakeGoogleMapsFlutterPlatform();
 
     GoogleMapsFlutterPlatform.instance = platform;
 
-    final Completer<GoogleMapController?> controllerCompleter =
-        Completer<GoogleMapController?>();
+    final controllerCompleter = Completer<GoogleMapController?>();
 
-    final GoogleMap googleMap = GoogleMap(
+    final googleMap = GoogleMap(
       onMapCreated: (GoogleMapController controller) {
         controllerCompleter.complete(controller);
       },

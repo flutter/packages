@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -53,7 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
     BuildContext context,
     AsyncSnapshot<String?> snapshot,
   ) {
-    Text text = const Text('');
+    var text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
         text = Text('Error: ${snapshot.error}');
@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     BuildContext context,
     AsyncSnapshot<List<String>?> snapshot,
   ) {
-    Text text = const Text('');
+    var text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
         text = Text('Error: ${snapshot.error}');

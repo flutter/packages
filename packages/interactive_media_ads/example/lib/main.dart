@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -53,8 +53,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }) {
     Navigator.of(context).push<void>(
       MaterialPageRoute<void>(
-        builder:
-            (_) => VideoAdExampleScreen(adType: adType, adTagUrl: adTagUrl),
+        builder: (_) =>
+            VideoAdExampleScreen(adType: adType, adTagUrl: adTagUrl),
       ),
     );
   }
@@ -74,11 +74,10 @@ class _HomeScreenState extends State<HomeScreen> {
           itemBuilder: (_, int index) {
             final (String adType, String adTagUrl) = _testAdTagUrls[index];
             return ElevatedButton(
-              onPressed:
-                  () => _pushVideoAdExampleWithAdTagUrl(
-                    adType: adType,
-                    adTagUrl: adTagUrl,
-                  ),
+              onPressed: () => _pushVideoAdExampleWithAdTagUrl(
+                adType: adType,
+                adTagUrl: adTagUrl,
+              ),
               child: Text(adType),
             );
           },

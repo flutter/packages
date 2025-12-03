@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,8 +30,8 @@ class CirclesController extends GeometryController {
 
   void _addCircle(Circle circle) {
     final gmaps.CircleOptions circleOptions = _circleOptionsFromCircle(circle);
-    final gmaps.Circle gmCircle = gmaps.Circle(circleOptions)..map = googleMap;
-    final CircleController controller = CircleController(
+    final gmCircle = gmaps.Circle(circleOptions)..map = googleMap;
+    final controller = CircleController(
       circle: gmCircle,
       consumeTapEvents: circle.consumeTapEvents,
       onTap: () {

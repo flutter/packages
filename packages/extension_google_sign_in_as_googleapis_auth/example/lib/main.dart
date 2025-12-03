@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -117,7 +117,7 @@ class SignInDemoState extends State<SignInDemo> {
     final auth.AuthClient client = authorization.authClient(scopes: scopes);
 
     // Prepare a People Service authenticated client.
-    final PeopleServiceApi peopleApi = PeopleServiceApi(client);
+    final peopleApi = PeopleServiceApi(client);
     // Retrieve a list of connected contacts' names.
     final ListConnectionsResponse response = await peopleApi.people.connections
         .list('people/me', personFields: 'names');

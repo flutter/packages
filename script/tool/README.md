@@ -8,7 +8,7 @@ local development.
 Set up:
 
 ```sh
-cd script/tool && dart pub get && cd ../../
+dart pub get -C script/tool
 ```
 
 Run:

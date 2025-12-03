@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -43,9 +43,7 @@ class TileOverlaysController extends GeometryController {
   }
 
   void _addTileOverlay(TileOverlay tileOverlay) {
-    final TileOverlayController controller = TileOverlayController(
-      tileOverlay: tileOverlay,
-    );
+    final controller = TileOverlayController(tileOverlay: tileOverlay);
     _tileOverlays[tileOverlay.tileOverlayId] = controller;
 
     if (tileOverlay.visible) {

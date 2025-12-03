@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,8 +11,8 @@ void main() {
     WidgetTester tester,
   ) async {
     final GlobalKey innerKey = GlobalKey();
-    final FocusScopeNode focusNode = FocusScopeNode();
-    final GoRouter router = GoRouter(
+    final focusNode = FocusScopeNode();
+    final router = GoRouter(
       initialLocation: '/',
       routes: <GoRoute>[
         GoRoute(path: '/', name: 'home', builder: (_, __) => const Text('A')),

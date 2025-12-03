@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,18 +16,14 @@ import 'content_progress_provider_test.mocks.dart';
 void main() {
   group('AndroidContentProgressProvider', () {
     test('setProgress', () async {
-      final MockContentProgressProvider mockContentProgressProvider =
-          MockContentProgressProvider();
+      final mockContentProgressProvider = MockContentProgressProvider();
 
-      final AndroidContentProgressProvider provider =
-          AndroidContentProgressProvider(
-            AndroidContentProgressProviderCreationParams(
-              proxy: InteractiveMediaAdsProxy(
-                newContentProgressProvider: () => mockContentProgressProvider,
-                newVideoProgressUpdate: ({
-                  required int currentTimeMs,
-                  required int durationMs,
-                }) {
+      final provider = AndroidContentProgressProvider(
+        AndroidContentProgressProviderCreationParams(
+          proxy: InteractiveMediaAdsProxy(
+            newContentProgressProvider: () => mockContentProgressProvider,
+            newVideoProgressUpdate:
+                ({required int currentTimeMs, required int durationMs}) {
                   expect(currentTimeMs, 1000);
                   expect(durationMs, 10000);
                   return ima.VideoProgressUpdate.pigeon_detached(
@@ -36,9 +32,9 @@ void main() {
                     ),
                   );
                 },
-              ),
-            ),
-          );
+          ),
+        ),
+      );
 
       await provider.setProgress(
         progress: const Duration(seconds: 1),

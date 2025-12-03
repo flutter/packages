@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,39 +16,36 @@ import 'package:shared_preferences_platform_interface/types.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
+  const stringKey = 'testString';
+  const boolKey = 'testBool';
+  const intKey = 'testInt';
+  const doubleKey = 'testDouble';
+  const listKey = 'testList';
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
 
   SharedPreferencesAsyncAndroid getPreferences(bool useDataStore) {
-    final _FakeSharedPreferencesApi api = _FakeSharedPreferencesApi();
-    final SharedPreferencesAsyncAndroid preferences =
-        SharedPreferencesAsyncAndroid(
-          dataStoreApi: api,
-          sharedPreferencesApi: api,
-        );
+    final api = _FakeSharedPreferencesApi();
+    final preferences = SharedPreferencesAsyncAndroid(
+      dataStoreApi: api,
+      sharedPreferencesApi: api,
+    );
 
     return preferences;
   }
 
   void runTests(bool useDataStore) {
-    final String backend = useDataStore ? 'DataStore' : 'SharedPreferences';
+    final backend = useDataStore ? 'DataStore' : 'SharedPreferences';
 
-    final SharedPreferencesAsyncAndroidOptions emptyOptions =
-        SharedPreferencesAsyncAndroidOptions(
-          backend:
-              useDataStore
-                  ? SharedPreferencesAndroidBackendLibrary.DataStore
-                  : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-        );
+    final emptyOptions = SharedPreferencesAsyncAndroidOptions(
+      backend: useDataStore
+          ? SharedPreferencesAndroidBackendLibrary.DataStore
+          : SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+    );
 
     test('set and get String with $backend', () async {
       final SharedPreferencesAsyncAndroid preferences = getPreferences(
@@ -277,7 +274,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
     List<String?>? allowList,
     SharedPreferencesPigeonOptions options,
   ) async {
-    final Map<String, Object> filteredItems = <String, Object>{...items};
+    final filteredItems = <String, Object>{...items};
     if (allowList != null) {
       filteredItems.removeWhere((String key, _) => !allowList.contains(key));
     }
@@ -337,9 +334,9 @@ class _FakeSharedPreferencesApi implements SharedPreferencesAsyncApi {
     return value == null
         ? null
         : StringListResult(
-          jsonEncodedValue: value as String?,
-          type: StringListLookupResultType.jsonEncoded,
-        );
+            jsonEncodedValue: value as String?,
+            type: StringListLookupResultType.jsonEncoded,
+          );
   }
 
   @override

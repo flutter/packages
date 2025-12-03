@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ class AdsRequestProxyAPIDelegate: PigeonApiDelegateIMAAdsRequest {
   /// The current version of the `interactive_media_ads` plugin.
   ///
   /// This must match the version in pubspec.yaml.
-  static let pluginVersion = "0.2.6+7"
+  static let pluginVersion = "0.3.0+7"
 
   func pigeonDefaultConstructor(
     pigeonApi: PigeonApiIMAAdsRequest, adTagUrl: String, adDisplayContainer: IMAAdDisplayContainer,

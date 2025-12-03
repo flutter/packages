@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -68,13 +68,14 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
                             );
                           });
                         },
-                        dropdownMenuEntries:
-                            GoogleFonts.asMap().keys.map((String font) {
-                              return DropdownMenuEntry<String>(
-                                label: font,
-                                value: font,
-                              );
-                            }).toList(),
+                        dropdownMenuEntries: GoogleFonts.asMap().keys.map((
+                          String font,
+                        ) {
+                          return DropdownMenuEntry<String>(
+                            label: font,
+                            value: font,
+                          );
+                        }).toList(),
                       ),
                     ],
                   ),
@@ -82,22 +83,24 @@ class ExampleFontSelectionState extends State<ExampleFontSelection> {
                   Expanded(
                     child: FutureBuilder<List<void>>(
                       future: _googleFontsPending,
-                      builder: (
-                        BuildContext context,
-                        AsyncSnapshot<List<void>> snapshot,
-                      ) {
-                        if (snapshot.connectionState != ConnectionState.done) {
-                          return const SizedBox();
-                        }
+                      builder:
+                          (
+                            BuildContext context,
+                            AsyncSnapshot<List<void>> snapshot,
+                          ) {
+                            if (snapshot.connectionState !=
+                                ConnectionState.done) {
+                              return const SizedBox();
+                            }
 
-                        return Text(
-                          _textEditingController.text,
-                          style: GoogleFonts.getFont(
-                            _selectedFont,
-                            fontSize: 50.0,
-                          ),
-                        );
-                      },
+                            return Text(
+                              _textEditingController.text,
+                              style: GoogleFonts.getFont(
+                                _selectedFont,
+                                fontSize: 50.0,
+                              ),
+                            );
+                          },
                     ),
                   ),
                 ],

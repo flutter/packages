@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,9 +33,8 @@ class PolylinesController extends GeometryController {
       googleMap,
       polyline,
     );
-    final gmaps.Polyline gmPolyline = gmaps.Polyline(polylineOptions)
-      ..map = googleMap;
-    final PolylineController controller = PolylineController(
+    final gmPolyline = gmaps.Polyline(polylineOptions)..map = googleMap;
+    final controller = PolylineController(
       polyline: gmPolyline,
       consumeTapEvents: polyline.consumeTapEvents,
       onTap: () {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,7 @@ import CoreMotion
   import camera_avfoundation_objc
 #endif
 
-final class DefaultCamera: FLTCam, Camera {
+final class DefaultCamera: NSObject, Camera {
   var dartAPI: FCPCameraEventApi?
   var onFrameAvailable: (() -> Void)?
 
@@ -22,16 +22,6 @@ final class DefaultCamera: FLTCam, Camera {
   }
 
   private(set) var isPreviewPaused = false
-
-  override var deviceOrientation: UIDeviceOrientation {
-    get { super.deviceOrientation }
-    set {
-      guard newValue != super.deviceOrientation else { return }
-
-      super.deviceOrientation = newValue
-      updateOrientation()
-    }
-  }
 
   var minimumExposureOffset: CGFloat { CGFloat(captureDevice.minExposureTargetBias) }
   var maximumExposureOffset: CGFloat { CGFloat(captureDevice.maxExposureTargetBias) }
@@ -53,18 +43,34 @@ final class DefaultCamera: FLTCam, Camera {
   private let mediaSettings: FCPPlatformMediaSettings
   private let mediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper
 
+  private let videoCaptureSession: CaptureSession
+  private let audioCaptureSession: CaptureSession
+
   /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
-  private let captureDeviceFactory: CaptureDeviceFactory
+  private let videoCaptureDeviceFactory: VideoCaptureDeviceFactory
   private let audioCaptureDeviceFactory: AudioCaptureDeviceFactory
-  private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  private let captureDeviceInputFactory: CaptureDeviceInputFactory
   private let assetWriterFactory: AssetWriterFactory
   private let inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
 
-  private let deviceOrientationProvider: FLTDeviceOrientationProviding
+  /// A wrapper for CMVideoFormatDescriptionGetDimensions.
+  /// Allows for alternate implementations in tests.
+  private let videoDimensionsConverter: VideoDimensionsConverter
+
+  private let deviceOrientationProvider: DeviceOrientationProvider
+  private let motionManager = CMMotionManager()
+
+  private(set) var captureDevice: CaptureDevice
+  // Setter exposed for tests.
+  var captureVideoOutput: CaptureVideoDataOutput
+  // Setter exposed for tests.
+  var capturePhotoOutput: CapturePhotoOutput
+  private var captureVideoInput: CaptureInput
 
   private var videoWriter: FLTAssetWriter?
   private var videoWriterInput: FLTAssetWriterInput?
   private var audioWriterInput: FLTAssetWriterInput?
+  private var assetWriterPixelBufferAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
   private var videoAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
 
   /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
@@ -76,11 +82,20 @@ final class DefaultCamera: FLTCam, Camera {
 
   private var imageStreamHandler: FLTImageStreamHandler?
 
+  private var previewSize: CGSize?
+  var deviceOrientation: UIDeviceOrientation {
+    didSet {
+      guard deviceOrientation != oldValue else { return }
+      updateOrientation()
+    }
+  }
+
   /// Tracks the latest pixel buffer sent from AVFoundation's sample buffer delegate callback.
   /// Used to deliver the latest pixel buffer to the flutter engine via the `copyPixelBuffer` API.
   private var latestPixelBuffer: CVPixelBuffer?
 
   private var videoRecordingPath: String?
+  private var isRecording = false
   private var isRecordingPaused = false
   private var isFirstVideoSample = false
   private var videoIsDisconnected = false
@@ -103,6 +118,8 @@ final class DefaultCamera: FLTCam, Camera {
   /// https://github.com/flutter/plugins/pull/4520#discussion_r766335637
   private var maxStreamingPendingFramesCount = 4
 
+  private var fileFormat = FCPPlatformImageFileFormat.jpeg
+  private var lockedCaptureOrientation = UIDeviceOrientation.unknown
   private var exposureMode = FCPPlatformExposureMode.auto
   private var focusMode = FCPPlatformFocusMode.auto
   private var flashMode: FCPPlatformFlashMode
@@ -115,16 +132,15 @@ final class DefaultCamera: FLTCam, Camera {
   }
 
   private static func createConnection(
-    captureDevice: FLTCaptureDevice,
+    captureDevice: CaptureDevice,
     videoFormat: FourCharCode,
-    captureDeviceInputFactory: FLTCaptureDeviceInputFactory
-  ) throws -> (FLTCaptureInput, FLTCaptureVideoDataOutput, AVCaptureConnection) {
+    captureDeviceInputFactory: CaptureDeviceInputFactory
+  ) throws -> (CaptureInput, CaptureVideoDataOutput, AVCaptureConnection) {
     // Setup video capture input.
     let captureVideoInput = try captureDeviceInputFactory.deviceInput(with: captureDevice)
 
     // Setup video capture output.
-    let captureVideoOutput = FLTDefaultCaptureVideoDataOutput(
-      captureVideoOutput: AVCaptureVideoDataOutput())
+    let captureVideoOutput = AVCaptureVideoDataOutput()
     captureVideoOutput.videoSettings = [
       kCVPixelBufferPixelFormatTypeKey as String: videoFormat
     ]
@@ -142,30 +158,25 @@ final class DefaultCamera: FLTCam, Camera {
     return (captureVideoInput, captureVideoOutput, connection)
   }
 
-  init(configuration: FLTCamConfiguration) throws {
+  init(configuration: CameraConfiguration) throws {
     captureSessionQueue = configuration.captureSessionQueue
     mediaSettings = configuration.mediaSettings
     mediaSettingsAVWrapper = configuration.mediaSettingsWrapper
-    captureDeviceFactory = configuration.captureDeviceFactory
+    videoCaptureSession = configuration.videoCaptureSession
+    audioCaptureSession = configuration.audioCaptureSession
+    videoCaptureDeviceFactory = configuration.videoCaptureDeviceFactory
     audioCaptureDeviceFactory = configuration.audioCaptureDeviceFactory
     captureDeviceInputFactory = configuration.captureDeviceInputFactory
     assetWriterFactory = configuration.assetWriterFactory
     inputPixelBufferAdaptorFactory = configuration.inputPixelBufferAdaptorFactory
+    videoDimensionsConverter = configuration.videoDimensionsConverter
     deviceOrientationProvider = configuration.deviceOrientationProvider
 
-    let captureDevice = captureDeviceFactory(configuration.initialCameraName)
+    captureDevice = videoCaptureDeviceFactory(configuration.initialCameraName)
     flashMode = captureDevice.hasFlash ? .auto : .off
 
-    super.init()
-
-    videoCaptureSession = configuration.videoCaptureSession
-    audioCaptureSession = configuration.audioCaptureSession
-    videoDimensionsForFormat = configuration.videoDimensionsForFormat
-
-    self.captureDevice = captureDevice
-
-    capturePhotoOutput = FLTDefaultCapturePhotoOutput(photoOutput: AVCapturePhotoOutput())
-    capturePhotoOutput.highResolutionCaptureEnabled = true
+    capturePhotoOutput = AVCapturePhotoOutput()
+    capturePhotoOutput.isHighResolutionCaptureEnabled = true
 
     videoCaptureSession.automaticallyConfiguresApplicationAudioSession = false
     audioCaptureSession.automaticallyConfiguresApplicationAudioSession = false
@@ -177,6 +188,8 @@ final class DefaultCamera: FLTCam, Camera {
       captureDevice: captureDevice,
       videoFormat: videoFormat,
       captureDeviceInputFactory: configuration.captureDeviceInputFactory)
+
+    super.init()
 
     captureVideoOutput.setSampleBufferDelegate(self, queue: captureSessionQueue)
 
@@ -196,17 +209,12 @@ final class DefaultCamera: FLTCam, Camera {
       mediaSettingsAVWrapper.beginConfiguration(for: videoCaptureSession)
       defer { mediaSettingsAVWrapper.commitConfiguration(for: videoCaptureSession) }
 
-      // Possible values for presets are hard-coded in FLT interface having
-      // corresponding AVCaptureSessionPreset counterparts.
-      // If _resolutionPreset is not supported by camera there is
-      // fallback to lower resolution presets.
-      // If none can be selected there is error condition.
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
 
-      FLTSelectBestFormatForRequestedFrameRate(
-        captureDevice,
-        mediaSettings,
-        videoDimensionsForFormat)
+      FormatUtils.selectBestFormat(
+        for: captureDevice,
+        mediaSettings: mediaSettings,
+        videoDimensionsConverter: videoDimensionsConverter)
 
       if let framesPerSecond = mediaSettings.framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
@@ -225,9 +233,113 @@ final class DefaultCamera: FLTCam, Camera {
     updateOrientation()
   }
 
+  // Possible values for presets are hard-coded in FLT interface having
+  // corresponding AVCaptureSessionPreset counterparts.
+  // If _resolutionPreset is not supported by camera there is
+  // fallback to lower resolution presets.
+  // If none can be selected there is error condition.
+  private func setCaptureSessionPreset(
+    _ resolutionPreset: FCPPlatformResolutionPreset
+  ) throws {
+    switch resolutionPreset {
+    case .max:
+      if let bestFormat = highestResolutionFormat(forCaptureDevice: captureDevice) {
+        videoCaptureSession.sessionPreset = .inputPriority
+        do {
+          try captureDevice.lockForConfiguration()
+          // Set the best device format found and finish the device configuration.
+          captureDevice.flutterActiveFormat = bestFormat
+          captureDevice.unlockForConfiguration()
+          break
+        }
+      }
+      fallthrough
+    case .ultraHigh:
+      if videoCaptureSession.canSetSessionPreset(.hd4K3840x2160) {
+        videoCaptureSession.sessionPreset = .hd4K3840x2160
+        break
+      }
+      if videoCaptureSession.canSetSessionPreset(.high) {
+        videoCaptureSession.sessionPreset = .high
+        break
+      }
+      fallthrough
+    case .veryHigh:
+      if videoCaptureSession.canSetSessionPreset(.hd1920x1080) {
+        videoCaptureSession.sessionPreset = .hd1920x1080
+        break
+      }
+      fallthrough
+    case .high:
+      if videoCaptureSession.canSetSessionPreset(.hd1280x720) {
+        videoCaptureSession.sessionPreset = .hd1280x720
+        break
+      }
+      fallthrough
+    case .medium:
+      if videoCaptureSession.canSetSessionPreset(.vga640x480) {
+        videoCaptureSession.sessionPreset = .vga640x480
+        break
+      }
+      fallthrough
+    case .low:
+      if videoCaptureSession.canSetSessionPreset(.cif352x288) {
+        videoCaptureSession.sessionPreset = .cif352x288
+        break
+      }
+      fallthrough
+    default:
+      if videoCaptureSession.canSetSessionPreset(.low) {
+        videoCaptureSession.sessionPreset = .low
+      } else {
+        throw NSError(
+          domain: NSCocoaErrorDomain,
+          code: URLError.unknown.rawValue,
+          userInfo: [
+            NSLocalizedDescriptionKey: "No capture session available for current capture session."
+          ])
+      }
+    }
+
+    let size = videoDimensionsConverter(captureDevice.flutterActiveFormat)
+    previewSize = CGSize(width: CGFloat(size.width), height: CGFloat(size.height))
+    audioCaptureSession.sessionPreset = videoCaptureSession.sessionPreset
+  }
+
+  /// Finds the highest available resolution in terms of pixel count for the given device.
+  /// Preferred are formats with the same subtype as current activeFormat.
+  private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
+    -> FLTCaptureDeviceFormat?
+  {
+    let preferredSubType = CMFormatDescriptionGetMediaSubType(
+      captureDevice.flutterActiveFormat.formatDescription)
+    var bestFormat: FLTCaptureDeviceFormat? = nil
+    var maxPixelCount: UInt = 0
+    var isBestSubTypePreferred = false
+
+    for format in captureDevice.flutterFormats {
+      let resolution = videoDimensionsConverter(format)
+      let height = UInt(resolution.height)
+      let width = UInt(resolution.width)
+      let pixelCount = height * width
+      let subType = CMFormatDescriptionGetMediaSubType(format.formatDescription)
+      let isSubTypePreferred = subType == preferredSubType
+
+      if pixelCount > maxPixelCount
+        || (pixelCount == maxPixelCount && isSubTypePreferred && !isBestSubTypePreferred)
+      {
+        bestFormat = format
+        maxPixelCount = pixelCount
+        isBestSubTypePreferred = isSubTypePreferred
+      }
+    }
+
+    return bestFormat
+  }
+
   func setUpCaptureSessionForAudioIfNeeded() {
     // Don't setup audio twice or we will lose the audio.
-    guard !mediaSettings.enableAudio || !isAudioSetup else { return }
+    guard mediaSettings.enableAudio && !isAudioSetup else { return }
 
     let audioDevice = audioCaptureDeviceFactory()
     do {
@@ -315,8 +427,9 @@ final class DefaultCamera: FLTCam, Camera {
     // Get all the state on the current thread, not the main thread.
     let state = FCPPlatformCameraState.make(
       withPreviewSize: FCPPlatformSize.make(
-        withWidth: Double(previewSize.width),
-        height: Double(previewSize.height)
+        // previewSize is set during init, so it will never be nil.
+        withWidth: previewSize!.width,
+        height: previewSize!.height
       ),
       exposureMode: exposureMode,
       focusMode: focusMode,
@@ -411,13 +524,13 @@ final class DefaultCamera: FLTCam, Camera {
   private func setupWriter(forPath path: String) -> Bool {
     setUpCaptureSessionForAudioIfNeeded()
 
-    var error: NSError?
-    videoWriter = assetWriterFactory(URL(fileURLWithPath: path), AVFileType.mp4, &error)
+    let videoWriter: FLTAssetWriter
 
-    guard let videoWriter = videoWriter else {
-      if let error = error {
-        reportErrorMessage(error.description)
-      }
+    do {
+      videoWriter = try assetWriterFactory(URL(fileURLWithPath: path), .mp4)
+      self.videoWriter = videoWriter
+    } catch let error as NSError {
+      reportErrorMessage(error.description)
       return false
     }
 
@@ -621,6 +734,45 @@ final class DefaultCamera: FLTCam, Camera {
     return file
   }
 
+  private func updateOrientation() {
+    guard !isRecording else { return }
+
+    let orientation =
+      (lockedCaptureOrientation != .unknown)
+      ? lockedCaptureOrientation
+      : deviceOrientation
+
+    updateOrientation(orientation, forCaptureOutput: capturePhotoOutput)
+    updateOrientation(orientation, forCaptureOutput: captureVideoOutput)
+  }
+
+  private func updateOrientation(
+    _ orientation: UIDeviceOrientation, forCaptureOutput captureOutput: CaptureOutput
+  ) {
+    if let connection = captureOutput.connection(with: .video),
+      connection.isVideoOrientationSupported
+    {
+      connection.videoOrientation = videoOrientation(forDeviceOrientation: orientation)
+    }
+  }
+
+  private func videoOrientation(forDeviceOrientation deviceOrientation: UIDeviceOrientation)
+    -> AVCaptureVideoOrientation
+  {
+    switch deviceOrientation {
+    case .portrait:
+      return .portrait
+    case .landscapeLeft:
+      return .landscapeRight
+    case .landscapeRight:
+      return .landscapeLeft
+    case .portraitUpsideDown:
+      return .portraitUpsideDown
+    default:
+      return .portrait
+    }
+  }
+
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
     let orientation = FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation)
     if lockedCaptureOrientation != orientation {
@@ -648,12 +800,12 @@ final class DefaultCamera: FLTCam, Camera {
     switch exposureMode {
     case .locked:
       // AVCaptureExposureMode.autoExpose automatically adjusts the exposure one time, and then locks exposure for the device
-      captureDevice.setExposureMode(.autoExpose)
+      captureDevice.exposureMode = .autoExpose
     case .auto:
       if captureDevice.isExposureModeSupported(.continuousAutoExposure) {
-        captureDevice.setExposureMode(.continuousAutoExposure)
+        captureDevice.exposureMode = .continuousAutoExposure
       } else {
-        captureDevice.setExposureMode(.autoExpose)
+        captureDevice.exposureMode = .autoExpose
       }
     @unknown default:
       assertionFailure("Unknown exposure mode")
@@ -684,7 +836,7 @@ final class DefaultCamera: FLTCam, Camera {
     // A nil point resets to the center.
     let exposurePoint = cgPoint(
       for: point ?? FCPPlatformPoint.makeWith(x: 0.5, y: 0.5), withOrientation: orientation)
-    captureDevice.setExposurePointOfInterest(exposurePoint)
+    captureDevice.exposurePointOfInterest = exposurePoint
     captureDevice.unlockForConfiguration()
     // Retrigger auto exposure
     applyExposureMode()
@@ -706,14 +858,14 @@ final class DefaultCamera: FLTCam, Camera {
       return
     }
 
-    let orientation = deviceOrientationProvider.orientation()
+    let orientation = deviceOrientationProvider.orientation
     try? captureDevice.lockForConfiguration()
     // A nil point resets to the center.
-    captureDevice.setFocusPointOfInterest(
+    captureDevice.focusPointOfInterest =
       cgPoint(
         for: point ?? .makeWith(x: 0.5, y: 0.5),
         withOrientation: orientation)
-    )
+
     captureDevice.unlockForConfiguration()
     // Retrigger auto focus
     applyFocusMode()
@@ -725,20 +877,20 @@ final class DefaultCamera: FLTCam, Camera {
   }
 
   private func applyFocusMode(
-    _ focusMode: FCPPlatformFocusMode, onDevice captureDevice: FLTCaptureDevice
+    _ focusMode: FCPPlatformFocusMode, onDevice captureDevice: CaptureDevice
   ) {
     try? captureDevice.lockForConfiguration()
     switch focusMode {
     case .locked:
       // AVCaptureFocusMode.autoFocus automatically adjusts the focus one time, and then locks focus
       if captureDevice.isFocusModeSupported(.autoFocus) {
-        captureDevice.setFocusMode(.autoFocus)
+        captureDevice.focusMode = .autoFocus
       }
     case .auto:
       if captureDevice.isFocusModeSupported(.continuousAutoFocus) {
-        captureDevice.setFocusMode(.continuousAutoFocus)
+        captureDevice.focusMode = .continuousAutoFocus
       } else if captureDevice.isFocusModeSupported(.autoFocus) {
-        captureDevice.setFocusMode(.autoFocus)
+        captureDevice.focusMode = .autoFocus
       }
     @unknown default:
       assertionFailure("Unknown focus mode")
@@ -836,7 +988,7 @@ final class DefaultCamera: FLTCam, Camera {
         return
       }
       let avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode)
-      guard capturePhotoOutput.supportedFlashModes.contains(NSNumber(value: avFlashMode.rawValue))
+      guard capturePhotoOutput.supportedFlashModes.contains(avFlashMode)
       else {
         completion(
           FlutterError(
@@ -878,9 +1030,9 @@ final class DefaultCamera: FLTCam, Camera {
       return
     }
 
-    captureDevice = captureDeviceFactory(cameraName)
+    captureDevice = videoCaptureDeviceFactory(cameraName)
 
-    let oldConnection = captureVideoOutput.connection(withMediaType: .video)
+    let oldConnection = captureVideoOutput.connection(with: .video)
 
     // Stop video capture from the old output.
     captureVideoOutput.setSampleBufferDelegate(nil, queue: nil)
@@ -1168,9 +1320,9 @@ final class DefaultCamera: FLTCam, Camera {
       "height": imageHeight,
       "format": videoFormat,
       "planes": planes,
-      "lensAperture": Double(captureDevice.lensAperture()),
-      "sensorExposureTime": Int(captureDevice.exposureDuration().seconds * 1_000_000_000),
-      "sensorSensitivity": Double(captureDevice.iso()),
+      "lensAperture": Double(captureDevice.lensAperture),
+      "sensorExposureTime": Int(captureDevice.exposureDuration.seconds * 1_000_000_000),
+      "sensorSensitivity": Double(captureDevice.iso),
     ]
 
     DispatchQueue.main.async {
@@ -1226,13 +1378,13 @@ final class DefaultCamera: FLTCam, Camera {
   func close() {
     stop()
     for input in videoCaptureSession.inputs {
-      videoCaptureSession.removeInput(FLTDefaultCaptureInput(input: input))
+      videoCaptureSession.removeInput(input)
     }
     for output in videoCaptureSession.outputs {
       videoCaptureSession.removeOutput(output)
     }
     for input in audioCaptureSession.inputs {
-      audioCaptureSession.removeInput(FLTDefaultCaptureInput(input: input))
+      audioCaptureSession.removeInput(input)
     }
     for output in audioCaptureSession.outputs {
       audioCaptureSession.removeOutput(output)

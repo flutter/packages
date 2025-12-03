@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,7 +30,7 @@ void main() {
         testInstanceManager,
       );
 
-      final WebKitWebViewWidget widget = WebKitWebViewWidget(
+      final widget = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
           key: const Key('keyValue'),
           controller: controller,
@@ -62,7 +62,7 @@ void main() {
       final WebKitWebViewController controller1 = createTestWebViewController(
         testInstanceManager,
       );
-      final WebKitWebViewWidget webViewWidget = WebKitWebViewWidget(
+      final webViewWidget = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
           controller: controller1,
           instanceManager: testInstanceManager,
@@ -89,7 +89,7 @@ void main() {
       final WebKitWebViewController controller2 = createTestWebViewController(
         testInstanceManager,
       );
-      final WebKitWebViewWidget webViewWidget2 = WebKitWebViewWidget(
+      final webViewWidget2 = WebKitWebViewWidget(
         WebKitWebViewWidgetCreationParams(
           controller: controller2,
           instanceManager: testInstanceManager,
@@ -131,7 +131,7 @@ void main() {
           testInstanceManager,
         );
 
-        final WebKitWebViewWidget webViewWidget = WebKitWebViewWidget(
+        final webViewWidget = WebKitWebViewWidget(
           WebKitWebViewWidgetCreationParams(
             controller: controller,
             instanceManager: testInstanceManager,
@@ -154,7 +154,7 @@ void main() {
           findsOneWidget,
         );
 
-        final WebKitWebViewWidget webViewWidget2 = WebKitWebViewWidget(
+        final webViewWidget2 = WebKitWebViewWidget(
           WebKitWebViewWidgetCreationParams(
             controller: controller,
             instanceManager: testInstanceManager,
@@ -199,7 +199,7 @@ WebKitWebViewController createTestWebViewController(
               )?
               observeValue,
             }) {
-              final UIViewWKWebView webView = UIViewWKWebView.pigeon_detached(
+              final webView = UIViewWKWebView.pigeon_detached(
                 pigeon_instanceManager: testInstanceManager,
               );
               testInstanceManager.addDartCreatedInstance(webView);
@@ -216,7 +216,7 @@ WebKitWebViewController createTestWebViewController(
               dynamic runJavaScriptConfirmPanel,
               dynamic runJavaScriptTextInputPanel,
             }) {
-              final MockWKUIDelegate mockWKUIDelegate = MockWKUIDelegate();
+              final mockWKUIDelegate = MockWKUIDelegate();
               when(
                 mockWKUIDelegate.pigeon_copy(),
               ).thenReturn(MockWKUIDelegate());
@@ -225,8 +225,7 @@ WebKitWebViewController createTestWebViewController(
               return mockWKUIDelegate;
             },
         newUIScrollViewDelegate: ({dynamic scrollViewDidScroll}) {
-          final MockUIScrollViewDelegate mockScrollViewDelegate =
-              MockUIScrollViewDelegate();
+          final mockScrollViewDelegate = MockUIScrollViewDelegate();
           when(
             mockScrollViewDelegate.pigeon_copy(),
           ).thenReturn(MockUIScrollViewDelegate());

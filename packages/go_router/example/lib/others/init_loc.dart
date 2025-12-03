@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,18 +24,18 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const Page1Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page1Screen(),
       ),
       GoRoute(
         path: '/page2',
-        builder:
-            (BuildContext context, GoRouterState state) => const Page2Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page2Screen(),
       ),
       GoRoute(
         path: '/page3',
-        builder:
-            (BuildContext context, GoRouterState state) => const Page3Screen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const Page3Screen(),
       ),
     ],
   );

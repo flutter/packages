@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,10 +21,18 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   String? _serverClientId;
   String? _hostedDomain;
   String? _nonce;
+  // A cache of accounts that have been successfully authenticated via this
+  // plugin instance, and one of the scopes that has been authorized for it.
+  final Map<String, String> _cachedAccounts = <String, String>{};
 
   /// Registers this class as the default instance of [GoogleSignInPlatform].
   static void registerWith() {
     GoogleSignInPlatform.instance = GoogleSignInAndroid();
+  }
+
+  @override
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
+    return _hostApi.clearAuthorizationToken(params.accessToken);
   }
 
   @override
@@ -109,10 +117,26 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<void> disconnect(DisconnectParams params) async {
-    // TODO(stuartmorgan): Implement this once Credential Manager adds the
-    //  necessary API (or temporarily implement it with the deprecated SDK if
-    //  it becomes a significant issue before the API is added).
-    //  https://github.com/flutter/flutter/issues/169612
+    // AuthorizationClient requires an account, and at least one currently
+    // granted scope, to request revocation. The app-facing API currently
+    // does not take any parameters, and is documented to revoke all authorized
+    // accounts, so disconnect every account that has been authorized.
+    // TODO(stuartmorgan): Consider deprecating the account-less API at the
+    //  app-facing level, and have it instead be an account-level method, to
+    //  better align with the current SDKs.
+    for (final MapEntry<String, String> entry in _cachedAccounts.entries) {
+      // Because revokeAccess removes all authorizations for the app, not just
+      // the scopes provided, (per
+      // https://developer.android.com/identity/authorization#revoke-permissions)
+      // an arbitrary granted scope is used here.
+      await _hostApi.revokeAccess(
+        PlatformRevokeAccessRequest(
+          accountEmail: entry.key,
+          scopes: <String>[entry.value],
+        ),
+      );
+    }
+    _cachedAccounts.clear();
     await signOut(const SignOutParams());
   }
 
@@ -210,6 +234,10 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
           details: authnResult.details,
         );
       case GetCredentialSuccess():
+        // Store a preliminary entry using the 'openid' scope, which in practice
+        // always seems to be granted at authentication time, so that an account
+        // that is authenticated but never authorized can still be disconnected.
+        _cachedAccounts[authnResult.credential.id] = 'openid';
         return authnResult.credential;
     }
   }
@@ -218,13 +246,15 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     AuthorizationRequestDetails request, {
     required bool requestOfflineAccess,
   }) async {
+    final String? email = request.email;
     final AuthorizeResult result = await _hostApi.authorize(
       PlatformAuthorizationRequest(
         scopes: request.scopes,
-        accountEmail: request.email,
+        accountEmail: email,
         hostedDomain: _hostedDomain,
-        serverClientIdForForcedRefreshToken:
-            requestOfflineAccess ? _serverClientId : null,
+        serverClientIdForForcedRefreshToken: requestOfflineAccess
+            ? _serverClientId
+            : null,
       ),
       promptIfUnauthorized: request.promptIfUnauthorized,
     );
@@ -257,6 +287,19 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
         final String? accessToken = result.accessToken;
         if (accessToken == null) {
           return (accessToken: null, serverAuthCode: null);
+        }
+        // Update the account entry with a scope that was reported as granted,
+        // just in case for some reason 'openid' isn't valid. If the request
+        // wasn't associated with an account, then it won't be available to
+        // disconnect.
+        // TODO(stuartmorgan): If this becomes an issue, see if there is an
+        //  indirect way to get the associated email address that's not
+        //  deprecated.
+        if (email != null) {
+          final String? scope = result.grantedScopes.firstOrNull;
+          if (scope != null) {
+            _cachedAccounts[email] = scope;
+          }
         }
         return (
           accessToken: accessToken,
@@ -303,14 +346,14 @@ final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
 ///
 /// See https://stackoverflow.com/a/78064720
 String? _idFromIdToken(String idToken) {
-  final RegExp jwtTokenRegexp = RegExp(
+  final jwtTokenRegexp = RegExp(
     r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
   );
   final RegExpMatch? match = jwtTokenRegexp.firstMatch(idToken);
   final String? payload = match?.namedGroup('payload');
   if (payload != null) {
     try {
-      final Map<String, Object?>? contents =
+      final contents =
           _jwtCodec.decode(base64.normalize(payload)) as Map<String, Object?>?;
       if (contents != null) {
         return contents['sub'] as String?;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,9 +28,7 @@ void main() {
       mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
-        type: BreakType.reward,
-      );
+      final adBreakPlacement = AdBreakPlacement(type: BreakType.reward);
 
       h5GamesAds.adBreak(adBreakPlacement);
 
@@ -61,7 +59,7 @@ void main() {
       );
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
+      final adBreakPlacement = AdBreakPlacement(
         type: BreakType.reward,
         adBreakDone: adBreakDoneCallback,
       );
@@ -81,7 +79,7 @@ void main() {
       mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
+      final adBreakPlacement = AdBreakPlacement(
         type: BreakType.reward,
         name: 'my-test-break',
       );
@@ -99,7 +97,7 @@ void main() {
 
   group('h5GamesAds.adConfig', () {
     testWidgets('can set up configuration', (WidgetTester tester) async {
-      bool called = false;
+      var called = false;
       void onReadyCallback() {
         called = true;
       }

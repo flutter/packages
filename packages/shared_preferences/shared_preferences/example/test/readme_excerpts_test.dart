@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ void main() {
 
   test('sanity check readmeSnippets', () async {
     // This key is set and cleared in the snippets.
-    const String clearedKey = 'counter';
+    const clearedKey = 'counter';
 
     // Set a mock store so that there's a platform implementation.
     SharedPreferences.setMockInitialValues(<String, Object>{clearedKey: 2});

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,8 +36,7 @@ void main() async {
 
       await adSense.initialize(testClient, jsLoaderTarget: target);
 
-      final web.HTMLScriptElement? injected =
-          target.lastElementChild as web.HTMLScriptElement?;
+      final injected = target.lastElementChild as web.HTMLScriptElement?;
 
       expect(injected, isNotNull);
       expect(injected!.src, testScriptUrl);
@@ -65,8 +64,7 @@ void main() async {
         ),
       );
 
-      final web.HTMLScriptElement injected =
-          target.lastElementChild! as web.HTMLScriptElement;
+      final injected = target.lastElementChild! as web.HTMLScriptElement;
 
       expect(injected.dataset['adHost'], 'test-adHost');
       expect(
@@ -90,10 +88,9 @@ void main() async {
     testWidgets('Skips initialization if script is already present.', (
       WidgetTester _,
     ) async {
-      final web.HTMLScriptElement script =
-          web.HTMLScriptElement()
-            ..id = 'previously-injected'
-            ..src = testScriptUrl;
+      final script = web.HTMLScriptElement()
+        ..id = 'previously-injected'
+        ..src = testScriptUrl;
       final web.HTMLElement target = web.HTMLDivElement()..appendChild(script);
 
       await adSense.initialize(testClient, jsLoaderTarget: target);

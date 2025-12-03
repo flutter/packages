@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ void main() {
     expect(find.text(example.App.title), findsOneWidget);
 
     // Directly set the url through platform message.
-    Map<String, dynamic> testRouteInformation = <String, dynamic>{
+    var testRouteInformation = <String, dynamic>{
       'location': '/family/f1?sort=asc',
     };
     ByteData message = const JSONMethodCodec().encodeMethodCall(

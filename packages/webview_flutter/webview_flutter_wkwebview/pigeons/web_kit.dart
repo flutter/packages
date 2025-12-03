@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -602,6 +602,9 @@ abstract class WKWebsiteDataStore extends NSObject {
 )
 abstract class UIView extends NSObject {
   /// The view’s background color.
+  // TODO(bparrishMines): Using an int here is lossy, and should be replaced
+  //  with a full color representation. See
+  //  https://github.com/flutter/flutter/issues/178870.
   void setBackgroundColor(int? value);
 
   /// A Boolean value that determines whether the view is opaque.

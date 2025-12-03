@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.11.0" type="baseline" client="gradle" dependencies="false" name="AGP (8.11.0)" variant="all" version="8.11.0">
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `kotlin.collections.Map` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="          (b as Map&lt;Any?, Any?>).containsKey(it.key) &amp;&amp;"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/CoreTests.gen.kt"
+            line="67"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `kotlin.collections.Map` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="          (b as Map&lt;Any?, Any?>).containsKey(it.key) &amp;&amp;"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/Enum.gen.kt"
+            line="67"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `kotlin.collections.Map` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="          (b as Map&lt;Any?, Any?>).containsKey(it.key) &amp;&amp;"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/EventChannelTests.gen.kt"
+            line="44"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `kotlin.collections.Map` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="          (b as Map&lt;Any?, Any?>).containsKey(it.key) &amp;&amp;"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/FlutterUnittests.gen.kt"
+            line="64"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `kotlin.collections.Map` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="          (b as Map&lt;Any?, Any?>).containsKey(it.key) &amp;&amp;"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/Message.gen.kt"
+            line="67"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `kotlin.collections.Map` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="          (b as Map&lt;Any?, Any?>).containsKey(it.key) &amp;&amp;"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/NonNullFields.gen.kt"
+            line="67"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `kotlin.collections.Map` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="          (b as Map&lt;Any?, Any?>).containsKey(it.key) &amp;&amp;"
+        errorLine2="          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/NullFields.gen.kt"
+            line="67"
+            column="11"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`remove` is defined both as a member in class `java.util.HashMap` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="    return strongInstances.remove(identifier) as T?"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/ProxyApiTests.gen.kt"
+            line="131"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `java.util.WeakHashMap` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="    return identifiers.containsKey(instance)"
+        errorLine2="           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/ProxyApiTests.gen.kt"
+            line="195"
+            column="12"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`remove` is defined both as a member in class `java.util.HashMap` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="        weakInstances.remove(identifier)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/ProxyApiTests.gen.kt"
+            line="240"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`remove` is defined both as a member in class `java.util.HashMap` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="        strongInstances.remove(identifier)"
+        errorLine2="        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/ProxyApiTests.gen.kt"
+            line="241"
+            column="9"/>
+    </issue>
+
+    <issue
+        id="MemberExtensionConflict"
+        message="`containsKey` is defined both as a member in class `java.util.HashMap` and an extension in package `kotlin.collections`. The defined behavior for this is to use the member, but since the extension is explicitly imported into this file, there&apos;s a chance that this was not expected. (One common way this happens is for members to be added to a class after code was already written to use an extension)."
+        errorLine1="    require(!weakInstances.containsKey(identifier)) {"
+        errorLine2="             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/test_plugin/ProxyApiTests.gen.kt"
+            line="250"
+            column="14"/>
+    </issue>
+
+</issues>

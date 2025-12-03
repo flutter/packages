@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,7 +50,7 @@ class NetworkSvgLoader extends BytesLoader {
     return compute(
       (String svgUrl) async {
         final http.Response request = await http.get(Uri.parse(svgUrl));
-        final TimelineTask task = TimelineTask()..start('encodeSvg');
+        final task = TimelineTask()..start('encodeSvg');
         final Uint8List compiledBytes = encodeSvg(
           xml: request.body,
           debugName: svgUrl,

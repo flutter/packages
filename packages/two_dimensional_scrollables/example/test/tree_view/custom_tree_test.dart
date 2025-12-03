@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,7 +35,7 @@ void main() {
     expect(verticalPosition.maxScrollExtent, 0.0);
     expect(verticalPosition.pixels, 0.0);
 
-    final CustomTreeExampleState state =
+    final state =
         tester.state(find.byType(CustomTreeExample)) as CustomTreeExampleState;
 
     state.treeController.toggleNode(state.treeController.getNodeFor('lib')!);

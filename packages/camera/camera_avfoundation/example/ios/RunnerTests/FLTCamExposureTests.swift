@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,7 +17,7 @@ final class FLTCamExposureTests: XCTestCase {
     let mockDeviceOrientationProvider = MockDeviceOrientationProvider()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { _ in mockDevice }
+    configuration.videoCaptureDeviceFactory = { _ in mockDevice }
     configuration.deviceOrientationProvider = mockDeviceOrientationProvider
     let camera = CameraTestUtils.createTestCamera(configuration)
 

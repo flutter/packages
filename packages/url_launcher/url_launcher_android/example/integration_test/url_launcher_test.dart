@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -40,8 +40,8 @@ void main() {
       }),
     );
     // Https to avoid cleartext warning on android.
-    final String prefixUrl = 'https://${server.address.address}:${server.port}';
-    final String primaryUrl = '$prefixUrl/hello.txt';
+    final prefixUrl = 'https://${server.address.address}:${server.port}';
+    final primaryUrl = '$prefixUrl/hello.txt';
 
     // Launch a url then close.
     expect(

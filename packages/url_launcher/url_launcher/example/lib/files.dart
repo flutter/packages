@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,11 +28,11 @@ Future<void> _openFile() async {
     ...p.split(Directory.systemTemp.path),
     'flutter_url_launcher_example.txt',
   ]);
-  final File testFile = File(tempFilePath);
+  final testFile = File(tempFilePath);
   await testFile.writeAsString('Hello, world!');
   // #docregion file
   final String filePath = testFile.absolute.path;
-  final Uri uri = Uri.file(filePath);
+  final uri = Uri.file(filePath);
 
   if (!File(uri.toFilePath()).existsSync()) {
     throw Exception('$uri does not exist!');

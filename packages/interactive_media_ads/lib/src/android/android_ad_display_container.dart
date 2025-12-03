@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -65,8 +65,7 @@ final class AndroidAdDisplayContainerCreationParams
 base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Constructs an [AndroidAdDisplayContainer].
   AndroidAdDisplayContainer(super.params) : super.implementation() {
-    final WeakReference<AndroidAdDisplayContainer> weakThis =
-        WeakReference<AndroidAdDisplayContainer>(this);
+    final weakThis = WeakReference<AndroidAdDisplayContainer>(this);
     _videoView = _setUpVideoView(weakThis);
     _frameLayout.addView(_videoView);
     _videoAdPlayer = _setUpVideoAdPlayer(weakThis);
@@ -80,8 +79,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   // The `ViewGroup` used to create the native `ima.AdDisplayContainer`. The
   // `View` that handles playing an ad is added as a child to this `ViewGroup`.
-  late final ima.FrameLayout _frameLayout =
-      _androidParams._imaProxy.newFrameLayout();
+  late final ima.FrameLayout _frameLayout = _androidParams._imaProxy
+      .newFrameLayout();
 
   // Handles loading and displaying an ad.
   late ima.VideoView _videoView;
@@ -132,10 +131,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   late final AndroidAdDisplayContainerCreationParams _androidParams =
       params is AndroidAdDisplayContainerCreationParams
-          ? params as AndroidAdDisplayContainerCreationParams
-          : AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
-            params,
-          );
+      ? params as AndroidAdDisplayContainerCreationParams
+      : AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
+          params,
+        );
 
   @override
   Widget build(BuildContext context) {
@@ -151,7 +150,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   }
 
   // Resets the state to before an ad is loaded and releases references to all
-  // ads and allbacks.
+  // ads and callbacks.
   void _release() {
     _resetStateForNextAd();
     _loadedAdMediaInfoQueue.clear();
@@ -306,8 +305,8 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
           // app is returned to the foreground.
           container._startPlayerWhenVideoIsPrepared = false;
           await player.pause();
-          container._savedAdPosition =
-              await container._videoView.getCurrentPosition();
+          container._savedAdPosition = await container._videoView
+              .getCurrentPosition();
           container._stopAdProgressTracking();
           await Future.wait(<Future<void>>[
             for (final ima.VideoAdPlayerCallback callback

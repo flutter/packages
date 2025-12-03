@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -39,9 +39,8 @@ class BookDetailsScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.of(context).push<void>(
                   MaterialPageRoute<void>(
-                    builder:
-                        (BuildContext context) =>
-                            AuthorDetailsScreen(author: book!.author),
+                    builder: (BuildContext context) =>
+                        AuthorDetailsScreen(author: book!.author),
                   ),
                 );
               },
@@ -49,8 +48,8 @@ class BookDetailsScreen extends StatelessWidget {
             ),
             Link(
               uri: Uri.parse('/author/${book!.author.id}'),
-              builder:
-                  (BuildContext context, FollowLink? followLink) => TextButton(
+              builder: (BuildContext context, FollowLink? followLink) =>
+                  TextButton(
                     onPressed: followLink,
                     child: const Text('View author (Link)'),
                   ),

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,7 +32,7 @@ class MyCameraDelegate extends ImagePickerCameraDelegate {
 /// Example function for README demonstration of various pick* calls.
 Future<List<XFile?>> readmePickExample() async {
   // #docregion Pick
-  final ImagePicker picker = ImagePicker();
+  final picker = ImagePicker();
   // Pick an image.
   final XFile? image = await picker.pickImage(source: ImageSource.gallery);
   // Capture a photo.
@@ -66,7 +66,7 @@ Future<List<XFile?>> readmePickExample() async {
 /// Example function for README demonstration of getting lost data.
 // #docregion LostData
 Future<void> getLostData() async {
-  final ImagePicker picker = ImagePicker();
+  final picker = ImagePicker();
   final LostDataResponse response = await picker.retrieveLostData();
   if (response.isEmpty) {
     return;

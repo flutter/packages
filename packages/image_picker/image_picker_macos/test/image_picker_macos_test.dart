@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -92,7 +92,7 @@ void main() {
     );
 
     test('getImageFromSource calls delegate when source is camera', () async {
-      const String fakePath = '/tmp/foo';
+      const fakePath = '/tmp/foo';
       plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
       expect(
         (await plugin.getImageFromSource(source: ImageSource.camera))!.path,
@@ -152,7 +152,7 @@ void main() {
     });
 
     test('getVideo calls delegate when source is camera', () async {
-      const String fakePath = '/tmp/foo';
+      const fakePath = '/tmp/foo';
       plugin.cameraDelegate = FakeCameraDelegate(result: XFile(fakePath));
       expect(
         (await plugin.getVideo(source: ImageSource.camera))!.path,

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,8 +35,8 @@ void main() {
     expect(find.text('Query param: true'), findsOneWidget);
     expect(find.text('Query param with default value: true'), findsOneWidget);
 
-    final DateTime param = DateTime.now();
-    final DateTime query = DateTime(2017, 9, 7, 17, 30);
+    final param = DateTime.now();
+    final query = DateTime(2017, 9, 7, 17, 30);
     DateTimeRoute(
       requiredDateTimeField: param,
       dateTimeField: query,

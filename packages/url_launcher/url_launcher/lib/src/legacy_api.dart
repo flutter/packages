@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -88,11 +88,11 @@ Future<bool> launch(
   }
 
   /// [true] so that ui is automatically computed if [statusBarBrightness] is set.
-  bool previousAutomaticSystemUiAdjustment = true;
+  var previousAutomaticSystemUiAdjustment = true;
   final RenderView? renderViewToAdjust =
       statusBarBrightness != null && defaultTargetPlatform == TargetPlatform.iOS
-          ? _findImplicitRenderView()
-          : null;
+      ? _findImplicitRenderView()
+      : null;
   if (renderViewToAdjust != null) {
     previousAutomaticSystemUiAdjustment =
         renderViewToAdjust.automaticSystemUiAdjustment;

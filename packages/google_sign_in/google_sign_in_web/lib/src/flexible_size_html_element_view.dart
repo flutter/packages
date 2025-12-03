@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:js_interop';
@@ -121,7 +121,7 @@ class _FlexHtmlElementView extends State<FlexHtmlElementView> {
         viewType: widget.viewType,
         onPlatformViewCreated: (int viewId) {
           final ElementCreatedCallback? callback = widget.onElementCreated;
-          final web.Element root =
+          final root =
               ui_web.platformViewRegistry.getViewById(viewId) as web.Element;
           _registerListeners(root);
           if (callback != null) {

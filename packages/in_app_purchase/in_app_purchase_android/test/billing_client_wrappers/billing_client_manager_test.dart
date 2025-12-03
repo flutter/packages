@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -44,7 +44,7 @@ void main() {
     });
 
     test('waits for connection before executing the operations', () async {
-      final Completer<void> connectedCompleter = Completer<void>();
+      final connectedCompleter = Completer<void>();
       when(mockApi.startConnection(any, any, any)).thenAnswer((_) async {
         connectedCompleter.complete();
         return PlatformBillingResult(
@@ -53,8 +53,8 @@ void main() {
         );
       });
 
-      final Completer<void> calledCompleter1 = Completer<void>();
-      final Completer<void> calledCompleter2 = Completer<void>();
+      final calledCompleter1 = Completer<void>();
+      final calledCompleter2 = Completer<void>();
       unawaited(
         manager.runWithClient((BillingClient _) async {
           calledCompleter1.complete();
@@ -148,16 +148,15 @@ void main() {
       () async {
         clearInteractions(mockApi);
 
-        int timesCalled = 0;
+        var timesCalled = 0;
         final BillingResultWrapper result = await manager.runWithClient((
           BillingClient _,
         ) async {
           timesCalled++;
           return BillingResultWrapper(
-            responseCode:
-                timesCalled == 1
-                    ? BillingResponse.serviceDisconnected
-                    : BillingResponse.ok,
+            responseCode: timesCalled == 1
+                ? BillingResponse.serviceDisconnected
+                : BillingResponse.ok,
           );
         });
         verify(mockApi.startConnection(any, any, any)).called(1);
@@ -179,7 +178,7 @@ void main() {
         // Ensures all asynchronous connected code finishes.
         await manager.runWithClientNonRetryable((_) async {});
 
-        const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+        const expected = UserChoiceDetailsWrapper(
           originalExternalTransactionId: 'TransactionId',
           externalTransactionToken: 'TransactionToken',
           products: <UserChoiceDetailsProductWrapper>[

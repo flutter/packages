@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,7 +32,7 @@ WidgetTesterCallback testClickingTheButtonRedirectsToRoot({
   Widget Function(GoRouter router) appRouterBuilder = materialAppRouterBuilder,
 }) {
   return (WidgetTester tester) async {
-    final GoRouter router = GoRouter(
+    final router = GoRouter(
       initialLocation: '/error',
       routes: <GoRoute>[
         GoRoute(path: '/', builder: (_, __) => const DummyStatefulWidget()),

@@ -3,12 +3,11 @@
 
 [![pub package](https://img.shields.io/pub/v/image_picker.svg)](https://pub.dev/packages/image_picker)
 
-A Flutter plugin for iOS and Android for picking images from the image library,
-and taking new pictures with the camera.
+A Flutter plugin for picking images from the image library, and taking new pictures with the camera.
 
 |             | Android | iOS     | Linux | macOS  | Web                             | Windows     |
 |-------------|---------|---------|-------|--------|---------------------------------|-------------|
-| **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
+| **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | [See `image_picker_for_web`](https://pub.dev/packages/image_picker_for_web#limitations-on-the-web-platform) | Windows 10+ |
 
 ## Setup
 
@@ -38,9 +37,6 @@ _Privacy - Microphone Usage Description_ in the visual editor.
 
 ### Android
 
-Starting with version **0.8.1** the Android implementation support to pick
-(multiple) images on Android 4.3 or higher.
-
 No configuration required - the plugin should work out of the box. It is however
 highly recommended to prepare for Android killing the application when low on memory. How to prepare for this is discussed in the
 [Handling MainActivity destruction on Android](#handling-mainactivity-destruction-on-android)
@@ -64,7 +60,7 @@ application. Since the data is never returned to the original call use the
 <?code-excerpt "readme_excerpts.dart (LostData)"?>
 ```dart
 Future<void> getLostData() async {
-  final ImagePicker picker = ImagePicker();
+  final picker = ImagePicker();
   final LostDataResponse response = await picker.retrieveLostData();
   if (response.isEmpty) {
     return;
@@ -168,7 +164,7 @@ add a filesystem access
 
 <?code-excerpt "readme_excerpts.dart (Pick)"?>
 ```dart
-final ImagePicker picker = ImagePicker();
+final picker = ImagePicker();
 // Pick an image.
 final XFile? image = await picker.pickImage(source: ImageSource.gallery);
 // Capture a photo.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -166,7 +166,7 @@ class Heatmap implements MapsObject<Heatmap> {
   /// Converts this object to something serializable in JSON.
   @override
   Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
+    final json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
       if (value != null) {
@@ -283,7 +283,7 @@ class HeatmapGradient {
 
   /// Converts this object to something serializable in JSON.
   Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
+    final json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
       if (value != null) {
@@ -293,7 +293,7 @@ class HeatmapGradient {
 
     addIfPresent(
       'colors',
-      colors.map((HeatmapGradientColor e) => e.color.value).toList(),
+      colors.map((HeatmapGradientColor e) => e.color.toARGB32()).toList(),
     );
     addIfPresent(
       'startPoints',

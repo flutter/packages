@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import '../mocks/mock_url_launcher_platform.dart';
 
 void main() {
-  final MockUrlLauncher mock = MockUrlLauncher();
+  final mock = MockUrlLauncher();
   UrlLauncherPlatform.instance = mock;
 
   test('closeWebView default behavior', () async {
@@ -284,7 +284,7 @@ void main() {
       final TestWidgetsFlutterBinding binding =
           TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      final RenderView renderView = RenderView(
+      final renderView = RenderView(
         view: binding.platformDispatcher.implicitView!,
       );
       binding.addRenderView(renderView);
@@ -320,7 +320,7 @@ void main() {
       final TestWidgetsFlutterBinding binding =
           TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      final RenderView renderView = RenderView(
+      final renderView = RenderView(
         view: binding.platformDispatcher.implicitView!,
       );
       binding.addRenderView(renderView);

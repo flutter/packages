@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -577,40 +577,39 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
   /// Display a row of toggle to select the camera (or a message if no camera is available).
   Widget _cameraTogglesRowWidget() {
-    final List<Widget> toggles = <Widget>[];
-
-    void onChanged(CameraDescription? description) {
-      if (description == null) {
-        return;
-      }
-
-      onNewCameraSelected(description);
-    }
+    final toggles = <Widget>[];
 
     if (_cameras.isEmpty) {
       SchedulerBinding.instance.addPostFrameCallback((_) async {
         showInSnackBar('No camera found.');
       });
       return const Text('None');
-    } else {
-      for (final CameraDescription cameraDescription in _cameras) {
-        toggles.add(
-          SizedBox(
-            width: 90.0,
-            child: RadioListTile<CameraDescription>(
-              title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
-              groupValue: controller?.description,
-              value: cameraDescription,
-              onChanged: (controller?.value.isRecordingVideo ?? false)
-                  ? null
-                  : onChanged,
-            ),
-          ),
-        );
-      }
     }
 
-    return Row(children: toggles);
+    final bool isRecording = controller?.value.isRecordingVideo ?? false;
+
+    for (final CameraDescription cameraDescription in _cameras) {
+      toggles.add(
+        SizedBox(
+          width: 90.0,
+          child: RadioListTile<CameraDescription>(
+            title: Icon(getCameraLensIcon(cameraDescription.lensDirection)),
+            value: cameraDescription,
+            enabled: !isRecording,
+          ),
+        ),
+      );
+    }
+
+    return RadioGroup<CameraDescription>(
+      groupValue: controller?.description,
+      onChanged: (CameraDescription? description) {
+        if (description != null) {
+          onNewCameraSelected(description);
+        }
+      },
+      child: Row(children: toggles),
+    );
   }
 
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
@@ -628,7 +627,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
 
     final CameraController cameraController = controller!;
 
-    final Point<double> point = Point<double>(
+    final point = Point<double>(
       details.localPosition.dx / constraints.maxWidth,
       details.localPosition.dy / constraints.maxHeight,
     );
@@ -647,7 +646,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   Future<void> _initializeCameraController(
     CameraDescription cameraDescription,
   ) async {
-    final CameraController cameraController = CameraController(
+    final cameraController = CameraController(
       cameraDescription,
       kIsWeb ? ResolutionPreset.max : ResolutionPreset.medium,
       enableAudio: enableAudio,
@@ -1001,7 +1000,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       return;
     }
 
-    final VideoPlayerController vController = kIsWeb
+    final vController = kIsWeb
         ? VideoPlayerController.networkUrl(Uri.parse(videoFile!.path))
         : VideoPlayerController.file(File(videoFile!.path));
 

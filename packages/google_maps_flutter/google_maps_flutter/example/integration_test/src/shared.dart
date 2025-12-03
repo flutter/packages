@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,7 +50,9 @@ Future<void> pumpMap(
 Widget wrapMap(GoogleMap map, [Size size = const Size.square(200)]) {
   return MaterialApp(
     home: Scaffold(
-      body: Center(child: SizedBox.fromSize(size: size, child: map)),
+      body: Center(
+        child: SizedBox.fromSize(size: size, child: map),
+      ),
     ),
   );
 }

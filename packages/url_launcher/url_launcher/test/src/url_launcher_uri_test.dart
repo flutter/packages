@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,7 +10,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import '../mocks/mock_url_launcher_platform.dart';
 
 void main() {
-  final MockUrlLauncher mock = MockUrlLauncher();
+  final mock = MockUrlLauncher();
   UrlLauncherPlatform.instance = mock;
 
   test('closeInAppWebView', () async {
@@ -281,7 +281,7 @@ void main() {
     });
 
     test('non-web URL with default options', () async {
-      final Uri emailLaunchUrl = Uri(
+      final emailLaunchUrl = Uri(
         scheme: 'mailto',
         path: 'smith@example.com',
         queryParameters: <String, String>{'subject': 'Hello'},

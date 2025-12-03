@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -361,6 +361,29 @@ class AuthenticationResults {
 
   /// Authentication tokens for the signed-in user.
   final AuthenticationTokenData authenticationTokens;
+}
+
+/// Parameters for the clearAuthorizationToken method.
+@immutable
+class ClearAuthorizationTokenParams {
+  /// Creates new parameters for clearAuthorizationToken with the given
+  /// [accessToken]
+  const ClearAuthorizationTokenParams({required this.accessToken});
+
+  /// The OAuth2 access token to clear.
+  final String accessToken;
+
+  @override
+  int get hashCode => accessToken.hashCode;
+
+  @override
+  bool operator ==(Object other) {
+    if (other.runtimeType != runtimeType) {
+      return false;
+    }
+    return other is ClearAuthorizationTokenParams &&
+        other.accessToken == accessToken;
+  }
 }
 
 /// Parameters for the signOut method.

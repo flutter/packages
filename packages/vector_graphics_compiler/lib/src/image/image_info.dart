@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -139,7 +139,7 @@ class JpegImageSizeData extends ImageSizeData {
     : super(format: ImageFormat.jpeg);
 
   factory JpegImageSizeData._fromBytes(ByteData data) {
-    int index = 4; // Skip the first header bytes (already validated).
+    var index = 4; // Skip the first header bytes (already validated).
     index += data.getUint16(index);
     while (index < data.lengthInBytes) {
       if (data.getUint8(index) != 0xFF) {

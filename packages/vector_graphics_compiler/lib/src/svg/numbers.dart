@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,14 +18,13 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
     return null;
   }
 
-  rawDouble =
-      rawDouble
-          .replaceFirst('rem', '')
-          .replaceFirst('em', '')
-          .replaceFirst('ex', '')
-          .replaceFirst('px', '')
-          .replaceFirst('pt', '')
-          .trim();
+  rawDouble = rawDouble
+      .replaceFirst('rem', '')
+      .replaceFirst('em', '')
+      .replaceFirst('ex', '')
+      .replaceFirst('px', '')
+      .replaceFirst('pt', '')
+      .trim();
 
   if (tryParse) {
     return double.tryParse(rawDouble);
@@ -66,7 +65,7 @@ double? parseDoubleWithUnits(
   bool tryParse = false,
   required SvgTheme theme,
 }) {
-  double unit = 1.0;
+  var unit = 1.0;
 
   // 1 rem unit is equal to the root font size.
   // 1 em unit is equal to the current font size.

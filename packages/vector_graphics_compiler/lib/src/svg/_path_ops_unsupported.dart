@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,7 +19,7 @@ class Path implements PathProxy {
 
   /// Creates a copy of this path.
   factory Path.from(Path other) {
-    final Path result = Path(other.fillType);
+    final result = Path(other.fillType);
     other.replay(result);
     return result;
   }

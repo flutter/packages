@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -103,12 +103,7 @@ class TreeRowBorder extends SpanBorder {
 
   @override
   void paint(SpanDecorationPaintDetails details, BorderRadius? borderRadius) {
-    final Border border = Border(
-      top: top,
-      bottom: bottom,
-      left: left,
-      right: right,
-    );
+    final border = Border(top: top, bottom: bottom, left: left, right: right);
     border.paint(details.canvas, details.rect, borderRadius: borderRadius);
   }
 }

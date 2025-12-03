@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -84,7 +84,7 @@ abstract class LinkInfo {
 /// Returns the raw data returned by the framework.
 // TODO(ianh): Remove the first argument.
 Future<ByteData> pushRouteNameToFramework(Object? _, String routeName) {
-  final Completer<ByteData> completer = Completer<ByteData>();
+  final completer = Completer<ByteData>();
   SystemNavigator.routeInformationUpdated(uri: Uri.parse(routeName));
   ui.channelBuffers.push(
     'flutter/navigation',

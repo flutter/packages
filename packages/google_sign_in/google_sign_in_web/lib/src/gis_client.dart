@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:async';
@@ -96,7 +96,7 @@ class GisSdkClient {
     bool? useFedCM,
   }) {
     // Initialize `id` for the silent-sign in code.
-    final IdConfiguration idConfig = IdConfiguration(
+    final idConfig = IdConfiguration(
       client_id: clientId,
       callback: onResponse,
       cancel_on_tap_outside: false,
@@ -131,7 +131,7 @@ class GisSdkClient {
     required ErrorCallbackFn onError,
   }) {
     // Create a Token Client for authorization calls.
-    final TokenClientConfig tokenConfig = TokenClientConfig(
+    final tokenConfig = TokenClientConfig(
       prompt: userHint == null ? '' : 'select_account',
       client_id: clientId,
       login_hint: userHint,
@@ -151,7 +151,7 @@ class GisSdkClient {
     required ErrorCallbackFn onError,
   }) {
     // Create a Token Client for authorization calls.
-    final CodeClientConfig codeConfig = CodeClientConfig(
+    final codeConfig = CodeClientConfig(
       client_id: _clientId,
       login_hint: userHint,
       hd: _hostedDomain,
@@ -229,8 +229,7 @@ class GisSdkClient {
   Future<String?> requestServerAuthCode(
     AuthorizationRequestDetails request,
   ) async {
-    final Completer<(String? code, Exception? e)> completer =
-        Completer<(String? code, Exception? e)>();
+    final completer = Completer<(String? code, Exception? e)>();
     final CodeClient codeClient = _initializeCodeClient(
       userHint: request.userId,
       onResponse: (CodeResponse response) {
@@ -279,6 +278,14 @@ class GisSdkClient {
     await signOut();
   }
 
+  /// Clears the authorization cache for the given [token].
+  void clearAuthorizationToken(String token) {
+    _lastClientAuthorizationByUser.removeWhere(
+      (String? key, (TokenResponse tokenResponse, DateTime expiration) value) =>
+          value.$1.access_token == token,
+    );
+  }
+
   /// Requests the given list of [scopes], and returns the resulting
   /// authorization token if successful.
   ///
@@ -303,8 +310,7 @@ class GisSdkClient {
       return null;
     }
 
-    final Completer<(String? token, Exception? e)> completer =
-        Completer<(String? token, Exception? e)>();
+    final completer = Completer<(String? token, Exception? e)>();
     final TokenClient tokenClient = _initializeTokenClient(
       _clientId,
       scopes: scopes,

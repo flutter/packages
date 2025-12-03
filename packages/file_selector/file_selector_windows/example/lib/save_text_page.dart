@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,8 +42,8 @@ class SaveTextPage extends StatelessWidget {
       }
     }
     final String text = _contentController.text;
-    final Uint8List fileData = Uint8List.fromList(text.codeUnits);
-    final XFile textFile = XFile.fromData(fileData, name: fileName);
+    final fileData = Uint8List.fromList(text.codeUnits);
+    final textFile = XFile.fromData(fileData, name: fileName);
     await textFile.saveTo(result.path);
   }
 

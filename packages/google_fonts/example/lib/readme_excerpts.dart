@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -86,7 +86,7 @@ class MyApp extends StatelessWidget {
 }
 
 ThemeData _buildTheme(Brightness brightness) {
-  final ThemeData baseTheme = ThemeData(brightness: brightness);
+  final baseTheme = ThemeData(brightness: brightness);
 
   return baseTheme.copyWith(
     textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),

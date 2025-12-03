@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,8 +26,8 @@ void main() {
   });
 
   test('invalid extra throws', () {
-    const example.MyExtraCodec extraCodec = example.MyExtraCodec();
-    const List<Object?> invalidValue = <Object?>['invalid'];
+    const extraCodec = example.MyExtraCodec();
+    const invalidValue = <Object?>['invalid'];
 
     expect(
       () => extraCodec.decode(invalidValue),

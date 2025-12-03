@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,7 +46,7 @@ void main() {
 
 /// Creates an XFile with a 1x1 png file.
 XFile createXFileWeb() {
-  const String pixel =
+  const pixel =
       'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR'
       '42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
   final Uint8List data = base64Decode(pixel);

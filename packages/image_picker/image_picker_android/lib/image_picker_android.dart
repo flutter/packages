@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -339,7 +339,7 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     }
 
     if (limit != null && limit < 2) {
-      throw ArgumentError.value(limit, 'limit', 'cannot be lower then 2');
+      throw ArgumentError.value(limit, 'limit', 'cannot be lower than 2');
     }
 
     return GeneralOptions(
@@ -376,15 +376,15 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     assert(result.paths.isEmpty != (result.error == null));
 
     final CacheRetrievalError? error = result.error;
-    final PlatformException? exception =
-        error == null
-            ? null
-            : PlatformException(code: error.code, message: error.message);
+    final PlatformException? exception = error == null
+        ? null
+        : PlatformException(code: error.code, message: error.message);
 
     // Entries are guaranteed not to be null, even though that's not currently
     // expressible in Pigeon.
-    final List<XFile> pickedFileList =
-        result.paths.map((String? path) => XFile(path!)).toList();
+    final List<XFile> pickedFileList = result.paths
+        .map((String? path) => XFile(path!))
+        .toList();
 
     return LostDataResponse(
       file: pickedFileList.isEmpty ? null : pickedFileList.last,

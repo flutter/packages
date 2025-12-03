@@ -1,6 +1,11 @@
 ## NEXT
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 1.0.32
+
+* Updates broken links in README.md.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 * Removes the wasm example.
 
 ## 1.0.31

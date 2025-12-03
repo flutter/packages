@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,10 +114,9 @@ void main() {
             debugMessage: '',
           );
         });
-        final PurchaseDetails purchase =
-            GooglePlayPurchaseDetails.fromPurchase(
-              dummyUnacknowledgedPurchase,
-            ).first;
+        final PurchaseDetails purchase = GooglePlayPurchaseDetails.fromPurchase(
+          dummyUnacknowledgedPurchase,
+        ).first;
         final BillingResultWrapper result = await iapAndroidPlatform
             .completePurchase(purchase);
         verify(mockApi.acknowledgePurchase(any)).called(2);
@@ -141,7 +140,7 @@ void main() {
 
   group('queryProductDetails', () {
     test('handles empty productDetails', () async {
-      const String debugMessage = 'dummy message';
+      const debugMessage = 'dummy message';
       const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
       when(mockApi.queryProductDetailsAsync(any)).thenAnswer(
         (_) async => PlatformProductDetailsResponse(
@@ -159,7 +158,7 @@ void main() {
     });
 
     test('should get correct product details', () async {
-      const String debugMessage = 'dummy message';
+      const debugMessage = 'dummy message';
       const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
       when(mockApi.queryProductDetailsAsync(any)).thenAnswer(
         (_) async => PlatformProductDetailsResponse(
@@ -192,7 +191,7 @@ void main() {
     });
 
     test('should get the correct notFoundIDs', () async {
-      const String debugMessage = 'dummy message';
+      const debugMessage = 'dummy message';
       const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
       when(mockApi.queryProductDetailsAsync(any)).thenAnswer(
         (_) async => PlatformProductDetailsResponse(
@@ -269,8 +268,7 @@ void main() {
     });
 
     test('returns ProductDetailsResponseWrapper', () async {
-      final Completer<List<PurchaseDetails>> completer =
-          Completer<List<PurchaseDetails>>();
+      final completer = Completer<List<PurchaseDetails>>();
       final Stream<List<PurchaseDetails>> stream =
           iapAndroidPlatform.purchaseStream;
 
@@ -282,7 +280,7 @@ void main() {
         }
       });
 
-      const String debugMessage = 'dummy message';
+      const debugMessage = 'dummy message';
       const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
 
       when(mockApi.queryPurchasesAsync(any)).thenAnswer(
@@ -302,9 +300,8 @@ void main() {
       final List<PurchaseDetails> restoredPurchases = await completer.future;
 
       expect(restoredPurchases.length, 2);
-      for (final PurchaseDetails element in restoredPurchases) {
-        final GooglePlayPurchaseDetails purchase =
-            element as GooglePlayPurchaseDetails;
+      for (final element in restoredPurchases) {
+        final purchase = element as GooglePlayPurchaseDetails;
 
         expect(purchase.productID, dummyPurchase.products.first);
         expect(purchase.purchaseID, dummyPurchase.orderId);
@@ -330,10 +327,10 @@ void main() {
       () async {
         const ProductDetailsWrapper productDetails =
             dummySubscriptionProductDetails;
-        const String accountId = 'hashedAccountId';
-        const String debugMessage = 'dummy message';
+        const accountId = 'hashedAccountId';
+        const debugMessage = 'dummy message';
         const BillingResponse sentCode = BillingResponse.ok;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+        const expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode,
           debugMessage: debugMessage,
         );
@@ -365,8 +362,7 @@ void main() {
 
           return convertToPigeonResult(expectedBillingResult);
         });
-        final Completer<PurchaseDetails> completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -376,11 +372,12 @@ void main() {
           completer.complete(purchaseDetails);
           subscription.cancel();
         }, onDone: () {});
-        final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
+        final purchaseParam = GooglePlayPurchaseParam(
           offerToken:
               productDetails.subscriptionOfferDetails?.first.offerIdToken,
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
@@ -397,10 +394,10 @@ void main() {
 
     test('buy non consumable, serializes and deserializes data', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-      const String accountId = 'hashedAccountId';
-      const String debugMessage = 'dummy message';
+      const accountId = 'hashedAccountId';
+      const debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.ok;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+      const expectedBillingResult = BillingResultWrapper(
         responseCode: sentCode,
         debugMessage: debugMessage,
       );
@@ -432,7 +429,7 @@ void main() {
 
         return convertToPigeonResult(expectedBillingResult);
       });
-      final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
+      final completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
@@ -442,9 +439,10 @@ void main() {
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
-      final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-        productDetails:
-            GooglePlayProductDetails.fromProductDetails(productDetails).first,
+      final purchaseParam = GooglePlayPurchaseParam(
+        productDetails: GooglePlayProductDetails.fromProductDetails(
+          productDetails,
+        ).first,
         applicationUserName: accountId,
       );
       final bool launchResult = await iapAndroidPlatform.buyNonConsumable(
@@ -460,10 +458,10 @@ void main() {
 
     test('handles an error with an empty purchases list', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-      const String accountId = 'hashedAccountId';
-      const String debugMessage = 'dummy message';
+      const accountId = 'hashedAccountId';
+      const debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.error;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+      const expectedBillingResult = BillingResultWrapper(
         responseCode: sentCode,
         debugMessage: debugMessage,
       );
@@ -480,7 +478,7 @@ void main() {
 
         return convertToPigeonResult(expectedBillingResult);
       });
-      final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
+      final completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
@@ -490,9 +488,10 @@ void main() {
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
-      final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-        productDetails:
-            GooglePlayProductDetails.fromProductDetails(productDetails).first,
+      final purchaseParam = GooglePlayPurchaseParam(
+        productDetails: GooglePlayProductDetails.fromProductDetails(
+          productDetails,
+        ).first,
         applicationUserName: accountId,
       );
       await iapAndroidPlatform.buyNonConsumable(purchaseParam: purchaseParam);
@@ -508,10 +507,10 @@ void main() {
       'buy consumable with auto consume, serializes and deserializes data',
       () async {
         const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-        const String accountId = 'hashedAccountId';
-        const String debugMessage = 'dummy message';
+        const accountId = 'hashedAccountId';
+        const debugMessage = 'dummy message';
         const BillingResponse sentCode = BillingResponse.ok;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+        const expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode,
           debugMessage: debugMessage,
         );
@@ -543,25 +542,22 @@ void main() {
 
           return convertToPigeonResult(expectedBillingResult);
         });
-        final Completer<String> consumeCompleter = Completer<String>();
+        final consumeCompleter = Completer<String>();
         // adding call back for consume purchase
         const BillingResponse expectedCode = BillingResponse.ok;
-        const BillingResultWrapper expectedBillingResultForConsume =
-            BillingResultWrapper(
-              responseCode: expectedCode,
-              debugMessage: debugMessage,
-            );
+        const expectedBillingResultForConsume = BillingResultWrapper(
+          responseCode: expectedCode,
+          debugMessage: debugMessage,
+        );
         when(mockApi.consumeAsync(any)).thenAnswer((
           Invocation invocation,
         ) async {
-          final String purchaseToken =
-              invocation.positionalArguments.first as String;
+          final purchaseToken = invocation.positionalArguments.first as String;
           consumeCompleter.complete(purchaseToken);
           return convertToPigeonResult(expectedBillingResultForConsume);
         });
 
-        final Completer<PurchaseDetails> completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -571,9 +567,10 @@ void main() {
           completer.complete(purchaseDetails);
           subscription.cancel();
         }, onDone: () {});
-        final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+        final purchaseParam = GooglePlayPurchaseParam(
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         final bool launchResult = await iapAndroidPlatform.buyConsumable(
@@ -581,8 +578,7 @@ void main() {
         );
 
         // Verify that the result has succeeded
-        final GooglePlayPurchaseDetails result =
-            await completer.future as GooglePlayPurchaseDetails;
+        final result = await completer.future as GooglePlayPurchaseDetails;
         expect(launchResult, isTrue);
         expect(result.billingClientPurchase, isNotNull);
         expect(
@@ -597,9 +593,9 @@ void main() {
     test(
       'buyNonConsumable propagates failures to launch the billing flow',
       () async {
-        const String debugMessage = 'dummy message';
+        const debugMessage = 'dummy message';
         const BillingResponse sentCode = BillingResponse.error;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+        const expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode,
           debugMessage: debugMessage,
         );
@@ -609,10 +605,9 @@ void main() {
 
         final bool result = await iapAndroidPlatform.buyNonConsumable(
           purchaseParam: GooglePlayPurchaseParam(
-            productDetails:
-                GooglePlayProductDetails.fromProductDetails(
-                  dummyOneTimeProductDetails,
-                ).first,
+            productDetails: GooglePlayProductDetails.fromProductDetails(
+              dummyOneTimeProductDetails,
+            ).first,
           ),
         );
 
@@ -624,9 +619,9 @@ void main() {
     test(
       'buyConsumable propagates failures to launch the billing flow',
       () async {
-        const String debugMessage = 'dummy message';
+        const debugMessage = 'dummy message';
         const BillingResponse sentCode = BillingResponse.developerError;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+        const expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode,
           debugMessage: debugMessage,
         );
@@ -636,10 +631,9 @@ void main() {
 
         final bool result = await iapAndroidPlatform.buyConsumable(
           purchaseParam: GooglePlayPurchaseParam(
-            productDetails:
-                GooglePlayProductDetails.fromProductDetails(
-                  dummyOneTimeProductDetails,
-                ).first,
+            productDetails: GooglePlayProductDetails.fromProductDetails(
+              dummyOneTimeProductDetails,
+            ).first,
           ),
         );
 
@@ -650,10 +644,10 @@ void main() {
 
     test('adds consumption failures to PurchaseDetails objects', () async {
       const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-      const String accountId = 'hashedAccountId';
-      const String debugMessage = 'dummy message';
+      const accountId = 'hashedAccountId';
+      const debugMessage = 'dummy message';
       const BillingResponse sentCode = BillingResponse.ok;
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+      const expectedBillingResult = BillingResultWrapper(
         responseCode: sentCode,
         debugMessage: debugMessage,
       );
@@ -684,22 +678,20 @@ void main() {
 
         return convertToPigeonResult(expectedBillingResult);
       });
-      final Completer<String> consumeCompleter = Completer<String>();
+      final consumeCompleter = Completer<String>();
       // adding call back for consume purchase
       const BillingResponse expectedCode = BillingResponse.error;
-      const BillingResultWrapper expectedBillingResultForConsume =
-          BillingResultWrapper(
-            responseCode: expectedCode,
-            debugMessage: debugMessage,
-          );
+      const expectedBillingResultForConsume = BillingResultWrapper(
+        responseCode: expectedCode,
+        debugMessage: debugMessage,
+      );
       when(mockApi.consumeAsync(any)).thenAnswer((Invocation invocation) async {
-        final String purchaseToken =
-            invocation.positionalArguments.first as String;
+        final purchaseToken = invocation.positionalArguments.first as String;
         consumeCompleter.complete(purchaseToken);
         return convertToPigeonResult(expectedBillingResultForConsume);
       });
 
-      final Completer<PurchaseDetails> completer = Completer<PurchaseDetails>();
+      final completer = Completer<PurchaseDetails>();
       PurchaseDetails purchaseDetails;
       final Stream<List<PurchaseDetails>> purchaseStream =
           iapAndroidPlatform.purchaseStream;
@@ -709,16 +701,16 @@ void main() {
         completer.complete(purchaseDetails);
         subscription.cancel();
       }, onDone: () {});
-      final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-        productDetails:
-            GooglePlayProductDetails.fromProductDetails(productDetails).first,
+      final purchaseParam = GooglePlayPurchaseParam(
+        productDetails: GooglePlayProductDetails.fromProductDetails(
+          productDetails,
+        ).first,
         applicationUserName: accountId,
       );
       await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
       // Verify that the result has an error for the failed consumption
-      final GooglePlayPurchaseDetails result =
-          await completer.future as GooglePlayPurchaseDetails;
+      final result = await completer.future as GooglePlayPurchaseDetails;
       expect(result.billingClientPurchase, isNotNull);
       expect(
         result.billingClientPurchase.purchaseToken,
@@ -733,10 +725,10 @@ void main() {
       'buy consumable without auto consume, consume api should not receive calls',
       () async {
         const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-        const String accountId = 'hashedAccountId';
-        const String debugMessage = 'dummy message';
+        const accountId = 'hashedAccountId';
+        const debugMessage = 'dummy message';
         const BillingResponse sentCode = BillingResponse.developerError;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+        const expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode,
           debugMessage: debugMessage,
         );
@@ -768,19 +760,17 @@ void main() {
 
           return convertToPigeonResult(expectedBillingResult);
         });
-        final Completer<String?> consumeCompleter = Completer<String?>();
+        final consumeCompleter = Completer<String?>();
         // adding call back for consume purchase
         const BillingResponse expectedCode = BillingResponse.ok;
-        const BillingResultWrapper expectedBillingResultForConsume =
-            BillingResultWrapper(
-              responseCode: expectedCode,
-              debugMessage: debugMessage,
-            );
+        const expectedBillingResultForConsume = BillingResultWrapper(
+          responseCode: expectedCode,
+          debugMessage: debugMessage,
+        );
         when(mockApi.consumeAsync(any)).thenAnswer((
           Invocation invocation,
         ) async {
-          final String purchaseToken =
-              invocation.positionalArguments.first as String;
+          final purchaseToken = invocation.positionalArguments.first as String;
           consumeCompleter.complete(purchaseToken);
           return convertToPigeonResult(expectedBillingResultForConsume);
         });
@@ -792,9 +782,10 @@ void main() {
           consumeCompleter.complete(null);
           subscription.cancel();
         }, onDone: () {});
-        final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+        final purchaseParam = GooglePlayPurchaseParam(
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         await iapAndroidPlatform.buyConsumable(
@@ -809,10 +800,10 @@ void main() {
       'should get canceled purchase status when response code is BillingResponse.userCanceled',
       () async {
         const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-        const String accountId = 'hashedAccountId';
-        const String debugMessage = 'dummy message';
+        const accountId = 'hashedAccountId';
+        const debugMessage = 'dummy message';
         const BillingResponse sentCode = BillingResponse.userCanceled;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+        const expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode,
           debugMessage: debugMessage,
         );
@@ -843,25 +834,22 @@ void main() {
 
           return convertToPigeonResult(expectedBillingResult);
         });
-        final Completer<String> consumeCompleter = Completer<String>();
+        final consumeCompleter = Completer<String>();
         // adding call back for consume purchase
         const BillingResponse expectedCode = BillingResponse.userCanceled;
-        const BillingResultWrapper expectedBillingResultForConsume =
-            BillingResultWrapper(
-              responseCode: expectedCode,
-              debugMessage: debugMessage,
-            );
+        const expectedBillingResultForConsume = BillingResultWrapper(
+          responseCode: expectedCode,
+          debugMessage: debugMessage,
+        );
         when(mockApi.consumeAsync(any)).thenAnswer((
           Invocation invocation,
         ) async {
-          final String purchaseToken =
-              invocation.positionalArguments.first as String;
+          final purchaseToken = invocation.positionalArguments.first as String;
           consumeCompleter.complete(purchaseToken);
           return convertToPigeonResult(expectedBillingResultForConsume);
         });
 
-        final Completer<PurchaseDetails> completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -871,16 +859,16 @@ void main() {
           completer.complete(purchaseDetails);
           subscription.cancel();
         }, onDone: () {});
-        final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+        final purchaseParam = GooglePlayPurchaseParam(
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
         );
         await iapAndroidPlatform.buyConsumable(purchaseParam: purchaseParam);
 
         // Verify that the result has an error for the failed consumption
-        final GooglePlayPurchaseDetails result =
-            await completer.future as GooglePlayPurchaseDetails;
+        final result = await completer.future as GooglePlayPurchaseDetails;
         expect(result.status, PurchaseStatus.canceled);
       },
     );
@@ -889,10 +877,10 @@ void main() {
       'should get purchased purchase status when upgrading subscription by deferred proration mode',
       () async {
         const ProductDetailsWrapper productDetails = dummyOneTimeProductDetails;
-        const String accountId = 'hashedAccountId';
-        const String debugMessage = 'dummy message';
+        const accountId = 'hashedAccountId';
+        const debugMessage = 'dummy message';
         const BillingResponse sentCode = BillingResponse.ok;
-        const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+        const expectedBillingResult = BillingResultWrapper(
           responseCode: sentCode,
           debugMessage: debugMessage,
         );
@@ -909,8 +897,7 @@ void main() {
           return convertToPigeonResult(expectedBillingResult);
         });
 
-        final Completer<PurchaseDetails> completer =
-            Completer<PurchaseDetails>();
+        final completer = Completer<PurchaseDetails>();
         PurchaseDetails purchaseDetails;
         final Stream<List<PurchaseDetails>> purchaseStream =
             iapAndroidPlatform.purchaseStream;
@@ -920,15 +907,15 @@ void main() {
           completer.complete(purchaseDetails);
           subscription.cancel();
         }, onDone: () {});
-        final GooglePlayPurchaseParam purchaseParam = GooglePlayPurchaseParam(
-          productDetails:
-              GooglePlayProductDetails.fromProductDetails(productDetails).first,
+        final purchaseParam = GooglePlayPurchaseParam(
+          productDetails: GooglePlayProductDetails.fromProductDetails(
+            productDetails,
+          ).first,
           applicationUserName: accountId,
           changeSubscriptionParam: ChangeSubscriptionParam(
-            oldPurchaseDetails:
-                GooglePlayPurchaseDetails.fromPurchase(
-                  dummyUnacknowledgedPurchase,
-                ).first,
+            oldPurchaseDetails: GooglePlayPurchaseDetails.fromPurchase(
+              dummyUnacknowledgedPurchase,
+            ).first,
             replacementMode: ReplacementMode.deferred,
           ),
         );
@@ -943,8 +930,8 @@ void main() {
   group('complete purchase', () {
     test('complete purchase success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
-      const String debugMessage = 'dummy message';
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+      const debugMessage = 'dummy message';
+      const expectedBillingResult = BillingResultWrapper(
         responseCode: expectedCode,
         debugMessage: debugMessage,
       );
@@ -955,8 +942,7 @@ void main() {
           GooglePlayPurchaseDetails.fromPurchase(
             dummyUnacknowledgedPurchase,
           ).first;
-      final Completer<BillingResultWrapper> completer =
-          Completer<BillingResultWrapper>();
+      final completer = Completer<BillingResultWrapper>();
       purchaseDetails.status = PurchaseStatus.purchased;
       if (purchaseDetails.pendingCompletePurchase) {
         final BillingResultWrapper billingResultWrapper =
@@ -970,8 +956,8 @@ void main() {
 
   group('billingConfig', () {
     test('getCountryCode success', () async {
-      const String expectedCountryCode = 'US';
-      const BillingConfigWrapper expected = BillingConfigWrapper(
+      const expectedCountryCode = 'US';
+      const expected = BillingConfigWrapper(
         countryCode: expectedCountryCode,
         responseCode: BillingResponse.ok,
         debugMessage: 'dummy message',

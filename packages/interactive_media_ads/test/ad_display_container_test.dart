@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,11 +14,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('build', (WidgetTester tester) async {
-    final TestPlatformAdDisplayContainer adDisplayContainer =
-        TestPlatformAdDisplayContainer(
-          PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
-          onBuild: (_) => Container(),
-        );
+    final adDisplayContainer = TestPlatformAdDisplayContainer(
+      PlatformAdDisplayContainerCreationParams(onContainerAdded: (_) {}),
+      onBuild: (_) => Container(),
+    );
 
     await tester.pumpWidget(
       AdDisplayContainer.fromPlatform(platform: adDisplayContainer),
@@ -31,28 +30,26 @@ void main() {
     'constructor parameters are correctly passed to creation params',
     (WidgetTester tester) async {
       InteractiveMediaAdsPlatform.instance = TestInteractiveMediaAdsPlatform(
-        onCreatePlatformAdDisplayContainer: (
-          PlatformAdDisplayContainerCreationParams params,
-        ) {
-          return TestPlatformAdDisplayContainer(
-            params,
-            onBuild: (_) => Container(),
-          );
-        },
+        onCreatePlatformAdDisplayContainer:
+            (PlatformAdDisplayContainerCreationParams params) {
+              return TestPlatformAdDisplayContainer(
+                params,
+                onBuild: (_) => Container(),
+              );
+            },
         onCreatePlatformAdsLoader: (PlatformAdsLoaderCreationParams params) {
           throw UnimplementedError();
         },
-        onCreatePlatformAdsManagerDelegate: (
-          PlatformAdsManagerDelegateCreationParams params,
-        ) {
-          throw UnimplementedError();
-        },
+        onCreatePlatformAdsManagerDelegate:
+            (PlatformAdsManagerDelegateCreationParams params) {
+              throw UnimplementedError();
+            },
         onCreatePlatformContentProgressProvider: (_) {
           throw UnimplementedError();
         },
       );
 
-      final AdDisplayContainer adDisplayContainer = AdDisplayContainer(
+      final adDisplayContainer = AdDisplayContainer(
         key: GlobalKey(),
         onContainerAdded: (_) {},
       );

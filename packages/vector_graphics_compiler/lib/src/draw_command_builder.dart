@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -135,13 +135,9 @@ class DrawCommandBuilder {
 
   /// Add an image to the current draw command stack.
   void addImage(ResolvedImageNode node, String? debugString) {
-    final ImageData imageData = ImageData(node.data, node.format.index);
+    final imageData = ImageData(node.data, node.format.index);
     final int imageId = _getOrGenerateId(imageData, _images);
-    final DrawImageData drawImageData = DrawImageData(
-      imageId,
-      node.rect,
-      node.transform,
-    );
+    final drawImageData = DrawImageData(imageId, node.rect, node.transform);
 
     final int drawImageId = _getOrGenerateId(drawImageData, _drawImages);
     _commands.add(

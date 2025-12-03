@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,8 +38,7 @@ void main() {
     });
 
     test('Can be mocked with `implements`', () {
-      final GoogleMapsFlutterPlatformMock mock =
-          GoogleMapsFlutterPlatformMock();
+      final mock = GoogleMapsFlutterPlatformMock();
       GoogleMapsFlutterPlatform.instance = mock;
     });
 
@@ -131,8 +130,9 @@ void main() {
             ExtendsGoogleMapsFlutterPlatform();
         GoogleMapsFlutterPlatform.instance = platform;
 
-        const CameraUpdateAnimationConfiguration animationConfig =
-            CameraUpdateAnimationConfiguration(duration: Duration(seconds: 2));
+        const animationConfig = CameraUpdateAnimationConfiguration(
+          duration: Duration(seconds: 2),
+        );
         final CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(
           const CameraPosition(target: LatLng(10.0, 15.0)),
         );

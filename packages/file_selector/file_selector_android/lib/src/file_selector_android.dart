@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -76,8 +76,8 @@ class FileSelectorAndroid extends FileSelectorPlatform {
       return FileTypes(extensions: <String>[], mimeTypes: <String>[]);
     }
 
-    final Set<String> mimeTypes = <String>{};
-    final Set<String> extensions = <String>{};
+    final mimeTypes = <String>{};
+    final extensions = <String>{};
 
     for (final XTypeGroup group in typeGroups) {
       if (!group.allowsAny &&

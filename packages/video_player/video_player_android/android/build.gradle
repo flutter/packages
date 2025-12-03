@@ -1,14 +1,16 @@
-group 'io.flutter.plugins.videoplayer'
-version '1.0-SNAPSHOT'
+group = 'io.flutter.plugins.videoplayer'
+version = '1.0-SNAPSHOT'
 
 buildscript {
+    ext.kotlin_version = '2.2.21'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.1'
+        classpath 'com.android.tools.build:gradle:8.13.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -20,37 +22,45 @@ rootProject.allprojects {
 }
 
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
-    namespace 'io.flutter.plugins.videoplayer'
+    namespace = "io.flutter.plugins.videoplayer"
     compileSdk = flutter.compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     lintOptions {
-        checkAllWarnings true
-        warningsAsErrors true
+        checkAllWarnings = true
+        warningsAsErrors = true
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_11
-        targetCompatibility JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     dependencies {
-        def exoplayer_version = "1.5.1"
-        implementation "androidx.media3:media3-exoplayer:${exoplayer_version}"
-        implementation "androidx.media3:media3-exoplayer-hls:${exoplayer_version}"
-        implementation "androidx.media3:media3-exoplayer-dash:${exoplayer_version}"
-        implementation "androidx.media3:media3-exoplayer-rtsp:${exoplayer_version}"
-        implementation "androidx.media3:media3-exoplayer-smoothstreaming:${exoplayer_version}"
-        testImplementation 'junit:junit:4.13.2'
-        testImplementation 'androidx.test:core:1.7.0'
-        testImplementation 'org.mockito:mockito-inline:5.2.0'
-        testImplementation 'org.robolectric:robolectric:4.15.1'
-        testImplementation "androidx.media3:media3-test-utils:${exoplayer_version}"
+        def exoplayer_version = "1.8.0"
+        implementation("androidx.media3:media3-exoplayer:${exoplayer_version}")
+        implementation("androidx.media3:media3-exoplayer-hls:${exoplayer_version}")
+        implementation("androidx.media3:media3-exoplayer-dash:${exoplayer_version}")
+        implementation("androidx.media3:media3-exoplayer-rtsp:${exoplayer_version}")
+        implementation("androidx.media3:media3-exoplayer-smoothstreaming:${exoplayer_version}")
+        testImplementation("junit:junit:4.13.2")
+        testImplementation("androidx.test:core:1.7.0")
+        testImplementation("org.mockito:mockito-core:5.20.0")
+        testImplementation("org.robolectric:robolectric:4.16")
+        testImplementation("androidx.media3:media3-test-utils:${exoplayer_version}")
     }
 
     testOptions {

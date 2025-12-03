@@ -1,6 +1,21 @@
-## NEXT
+## 2.5.1
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Reverts to plugin-based implementation while FFI issues are investigated.
+
+## 2.5.0
+
+* **Retracted** due to production build issues.
+* Replaces Flutter-plugin-based implementation with direct FFI calls to
+  Foundation.
+
+## 2.4.4
+
+* Updates to Pigeon 26.
+
+## 2.4.3
+
+* Updates minimum supported version to iOS 13 and macOS 10.15.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 2.4.2
 

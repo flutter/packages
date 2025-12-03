@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,7 +34,7 @@ bool initializeTessellatorFromFlutterCache() {
     print('Tesselation not supported on ${Platform.localeName}');
     return false;
   }
-  final String tessellator =
+  final tessellator =
       '${cacheRoot.path}/artifacts/engine/$platform/$executable';
   if (!File(tessellator).existsSync()) {
     print('Could not locate libtessellator at $tessellator.');

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -54,8 +54,7 @@ final class AndroidAdsRenderingSettingsCreationParams
 base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
   /// Constructs an [AndroidAdsRenderingSettings].
   AndroidAdsRenderingSettings(super.params) : super.implementation() {
-    final Completer<ima.AdsRenderingSettings> nativeSettingsCompleter =
-        Completer<ima.AdsRenderingSettings>();
+    final nativeSettingsCompleter = Completer<ima.AdsRenderingSettings>();
     nativeSettings = nativeSettingsCompleter.future;
 
     _androidParams._proxy
@@ -105,8 +104,8 @@ base class AndroidAdsRenderingSettings extends PlatformAdsRenderingSettings {
 
   late final AndroidAdsRenderingSettingsCreationParams _androidParams =
       params is AndroidAdsRenderingSettingsCreationParams
-          ? params as AndroidAdsRenderingSettingsCreationParams
-          : AndroidAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
-            params,
-          );
+      ? params as AndroidAdsRenderingSettingsCreationParams
+      : AndroidAdsRenderingSettingsCreationParams.fromPlatformAdsRenderingSettingsCreationParams(
+          params,
+        );
 }

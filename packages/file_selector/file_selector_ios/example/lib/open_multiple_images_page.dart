@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,12 +15,12 @@ class OpenMultipleImagesPage extends StatelessWidget {
   const OpenMultipleImagesPage({super.key});
 
   Future<void> _openImageFile(BuildContext context) async {
-    const XTypeGroup jpgsTypeGroup = XTypeGroup(
+    const jpgsTypeGroup = XTypeGroup(
       label: 'JPEGs',
       extensions: <String>['jpg', 'jpeg'],
       uniformTypeIdentifiers: <String>['public.jpeg'],
     );
-    const XTypeGroup pngTypeGroup = XTypeGroup(
+    const pngTypeGroup = XTypeGroup(
       label: 'PNGs',
       extensions: <String>['png'],
       uniformTypeIdentifiers: <String>['public.png'],
@@ -82,10 +82,9 @@ class MultipleImagesDisplay extends StatelessWidget {
           children: <Widget>[
             ...files.map(
               (XFile file) => Flexible(
-                child:
-                    kIsWeb
-                        ? Image.network(file.path)
-                        : Image.file(File(file.path)),
+                child: kIsWeb
+                    ? Image.network(file.path)
+                    : Image.file(File(file.path)),
               ),
             ),
           ],

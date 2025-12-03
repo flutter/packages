@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,22 +18,19 @@ void main() {
     'can substitute one controller by another without crashing',
     (WidgetTester tester) async {
       // Use WebM for web to allow CI to use Chromium.
-      const String videoAssetKey =
-          kIsWeb ? 'assets/Butterfly-209.webm' : 'assets/Butterfly-209.mp4';
+      const videoAssetKey = kIsWeb
+          ? 'assets/Butterfly-209.webm'
+          : 'assets/Butterfly-209.mp4';
 
-      final VideoPlayerController controller = VideoPlayerController.asset(
-        videoAssetKey,
-      );
-      final VideoPlayerController another = VideoPlayerController.asset(
-        videoAssetKey,
-      );
+      final controller = VideoPlayerController.asset(videoAssetKey);
+      final another = VideoPlayerController.asset(videoAssetKey);
       await controller.initialize();
       await another.initialize();
       await controller.setVolume(0);
       await another.setVolume(0);
 
-      final Completer<void> started = Completer<void>();
-      final Completer<void> ended = Completer<void>();
+      final started = Completer<void>();
+      final ended = Completer<void>();
 
       another.addListener(() {
         if (another.value.isBuffering && !started.isCompleted) {

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -27,7 +27,7 @@ class Path implements PathProxy {
 
   /// Creates a copy of this path.
   factory Path.from(Path other) {
-    final Path result = Path(other.fillType);
+    final result = Path(other.fillType);
     other.replay(result);
     return result;
   }
@@ -57,7 +57,7 @@ class Path implements PathProxy {
     if (reset) {
       proxy.reset();
     }
-    int index = 0;
+    var index = 0;
     for (final PathVerb verb in verbs.toList()) {
       switch (verb) {
         case PathVerb.moveTo:
@@ -188,7 +188,7 @@ class Path implements PathProxy {
   Path applyOp(Path other, PathOp op) {
     assert(_path != null);
     assert(other._path != null);
-    final Path result = Path.from(this);
+    final result = Path.from(this);
     _opFn(result._path!, other._path!, op.index);
     return result;
   }

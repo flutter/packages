@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -137,13 +137,12 @@ class ClusterManagersController extends GeometryController {
       markerClustererCluster.bounds!,
     );
 
-    final List<MarkerId> markerIds =
-        markerClustererCluster.markers
-            .map<MarkerId>(
-              (gmaps.Marker marker) =>
-                  MarkerId((marker.get('markerId')! as JSString).toDart),
-            )
-            .toList();
+    final List<MarkerId> markerIds = markerClustererCluster.markers
+        .map<MarkerId>(
+          (gmaps.Marker marker) =>
+              MarkerId((marker.get('markerId')! as JSString).toDart),
+        )
+        .toList();
     return Cluster(
       clusterManagerId,
       markerIds,

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -51,10 +51,9 @@ class _MyHomePageState extends State<MyHomePage> {
             ListView.builder(
               shrinkWrap: true,
               itemCount: userDirectoryNames.length,
-              itemBuilder:
-                  (BuildContext context, int index) => Text(
-                    '${userDirectoryNames.elementAt(index)}: \n${getUserDirectory(userDirectoryNames.elementAt(index))?.path}\n',
-                  ),
+              itemBuilder: (BuildContext context, int index) => Text(
+                '${userDirectoryNames.elementAt(index)}: \n${getUserDirectory(userDirectoryNames.elementAt(index))?.path}\n',
+              ),
             ),
             Text('Data Home: \n${dataHome.path}\n'),
             Text('Config Home: \n${configHome.path}\n'),

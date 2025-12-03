@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -47,8 +47,8 @@ void main() {
   group('consume purchases', () {
     test('consume purchase async success', () async {
       const BillingResponse expectedCode = BillingResponse.ok;
-      const String debugMessage = 'dummy message';
-      const BillingResultWrapper expectedBillingResult = BillingResultWrapper(
+      const debugMessage = 'dummy message';
+      const expectedBillingResult = BillingResultWrapper(
         responseCode: expectedCode,
         debugMessage: debugMessage,
       );
@@ -66,8 +66,8 @@ void main() {
 
   group('billingConfig', () {
     test('getCountryCode success', () async {
-      const String expectedCountryCode = 'US';
-      const BillingConfigWrapper expected = BillingConfigWrapper(
+      const expectedCountryCode = 'US';
+      const expected = BillingConfigWrapper(
         countryCode: expectedCountryCode,
         responseCode: BillingResponse.ok,
         debugMessage: 'dummy message',
@@ -76,8 +76,8 @@ void main() {
       when(
         mockApi.getBillingConfigAsync(),
       ).thenAnswer((_) async => platformBillingConfigFromWrapper(expected));
-      final String countryCode =
-          await iapAndroidPlatformAddition.getCountryCode();
+      final String countryCode = await iapAndroidPlatformAddition
+          .getCountryCode();
 
       expect(countryCode, equals(expectedCountryCode));
     });
@@ -122,7 +122,7 @@ void main() {
 
   group('isAlternativeBillingOnlyAvailable', () {
     test('isAlternativeBillingOnlyAvailable success', () async {
-      const BillingResultWrapper expected = BillingResultWrapper(
+      const expected = BillingResultWrapper(
         responseCode: BillingResponse.ok,
         debugMessage: 'dummy message',
       );
@@ -133,8 +133,8 @@ void main() {
         ),
       );
 
-      final BillingResultWrapper result =
-          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+      final BillingResultWrapper result = await iapAndroidPlatformAddition
+          .isAlternativeBillingOnlyAvailable();
 
       expect(result, equals(expected));
     });
@@ -142,7 +142,7 @@ void main() {
 
   group('showAlternativeBillingOnlyInformationDialog', () {
     test('showAlternativeBillingOnlyInformationDialog success', () async {
-      const BillingResultWrapper expected = BillingResultWrapper(
+      const expected = BillingResultWrapper(
         responseCode: BillingResponse.ok,
         debugMessage: 'dummy message',
       );
@@ -153,8 +153,8 @@ void main() {
       when(
         mockApi.showAlternativeBillingOnlyInformationDialog(),
       ).thenAnswer((_) async => convertToPigeonResult(expected));
-      final BillingResultWrapper result =
-          await iapAndroidPlatformAddition.isAlternativeBillingOnlyAvailable();
+      final BillingResultWrapper result = await iapAndroidPlatformAddition
+          .isAlternativeBillingOnlyAvailable();
 
       expect(result, equals(expected));
     });
@@ -163,7 +163,7 @@ void main() {
   group('queryPastPurchase', () {
     group('queryPurchaseDetails', () {
       test('returns ProductDetailsResponseWrapper', () async {
-        const String debugMessage = 'dummy message';
+        const debugMessage = 'dummy message';
         const PlatformBillingResponse responseCode = PlatformBillingResponse.ok;
 
         when(mockApi.queryPurchasesAsync(any)).thenAnswer(
@@ -231,7 +231,7 @@ void main() {
     test('called', () async {
       final Future<GooglePlayUserChoiceDetails> futureDetails =
           iapAndroidPlatformAddition.userChoiceDetailsStream.first;
-      const UserChoiceDetailsWrapper expected = UserChoiceDetailsWrapper(
+      const expected = UserChoiceDetailsWrapper(
         originalExternalTransactionId: 'TransactionId',
         externalTransactionToken: 'TransactionToken',
         products: <UserChoiceDetailsProductWrapper>[

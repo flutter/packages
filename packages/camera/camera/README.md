@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web allowing access to the device cameras.
 
 |                | Android | iOS       | Web                    |
 |----------------|---------|-----------|------------------------|
-| **Support**    | SDK 23+ | iOS 12.0+ | [See `camera_web `][1] |
+| **Support**    | SDK 24+ | iOS 13.0+ | [See `camera_web `][1] |
 
 ## Features
 
@@ -36,12 +36,6 @@ If editing `Info.plist` as text, add:
 ```
 
 ### Android
-
-Change the minimum Android sdk version to 23 (or higher) in your `android/app/build.gradle` file.
-
-```groovy
-minSdk = 23
-```
 
 The endorsed [`camera_android_camerax`][2] implementation of the camera plugin built with CameraX has
 better support for more devices than `camera_android`, but has some limitations; please see [this list][3]

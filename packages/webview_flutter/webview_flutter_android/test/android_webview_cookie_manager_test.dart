@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,29 +23,30 @@ void main() {
       mockCookieManager.removeAllCookies(),
     ).thenAnswer((_) => Future<bool>.value(true));
 
-    final AndroidWebViewCookieManagerCreationParams params =
+    final params =
         AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
           const PlatformWebViewCookieManagerCreationParams(),
         );
 
-    final bool hasClearedCookies =
-        await AndroidWebViewCookieManager(
-          params,
-          cookieManager: mockCookieManager,
-        ).clearCookies();
+    final bool hasClearedCookies = await AndroidWebViewCookieManager(
+      params,
+      cookieManager: mockCookieManager,
+    ).clearCookies();
 
     expect(hasClearedCookies, true);
     verify(mockCookieManager.removeAllCookies());
   });
 
   test('setCookie should throw ArgumentError for cookie with invalid path', () {
-    final AndroidWebViewCookieManagerCreationParams params =
+    final params =
         AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
           const PlatformWebViewCookieManagerCreationParams(),
         );
 
-    final AndroidWebViewCookieManager androidCookieManager =
-        AndroidWebViewCookieManager(params, cookieManager: MockCookieManager());
+    final androidCookieManager = AndroidWebViewCookieManager(
+      params,
+      cookieManager: MockCookieManager(),
+    );
 
     expect(
       () => androidCookieManager.setCookie(
@@ -65,7 +66,7 @@ void main() {
     () {
       final android_webview.CookieManager mockCookieManager =
           MockCookieManager();
-      final AndroidWebViewCookieManagerCreationParams params =
+      final params =
           AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
             const PlatformWebViewCookieManagerCreationParams(),
           );
@@ -84,13 +85,14 @@ void main() {
   );
 
   test('setAcceptThirdPartyCookies', () async {
-    final MockAndroidWebViewController mockController =
-        MockAndroidWebViewController();
+    final mockController = MockAndroidWebViewController();
 
-    final android_webview.PigeonInstanceManager instanceManager =
-        android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-    final android_webview.WebView webView = android_webview
-        .WebView.pigeon_detached(pigeon_instanceManager: instanceManager);
+    final instanceManager = android_webview.PigeonInstanceManager(
+      onWeakReferenceRemoved: (_) {},
+    );
+    final webView = android_webview.WebView.pigeon_detached(
+      pigeon_instanceManager: instanceManager,
+    );
 
     final int webViewIdentifier = instanceManager.addDartCreatedInstance(
       webView,
@@ -98,12 +100,12 @@ void main() {
 
     when(mockController.webViewIdentifier).thenReturn(webViewIdentifier);
 
-    final AndroidWebViewCookieManagerCreationParams params =
+    final params =
         AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
           const PlatformWebViewCookieManagerCreationParams(),
         );
 
-    final MockCookieManager mockCookieManager = MockCookieManager();
+    final mockCookieManager = MockCookieManager();
     // ignore: invalid_use_of_protected_member
     when(mockCookieManager.pigeon_instanceManager).thenReturn(instanceManager);
 

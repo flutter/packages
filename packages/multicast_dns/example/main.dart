@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,8 +12,8 @@ import 'package:multicast_dns/multicast_dns.dart';
 Future<void> main() async {
   // Parse the command line arguments.
 
-  const String name = '_dartobservatory._tcp.local';
-  final MDnsClient client = MDnsClient();
+  const name = '_dartobservatory._tcp.local';
+  final client = MDnsClient();
   // Start the client with default options.
   await client.start();
 

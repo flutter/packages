@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,7 @@ String acceptedTypesToString(List<XTypeGroup>? acceptedTypes) {
   if (acceptedTypes == null) {
     return '';
   }
-  final List<String> allTypes = <String>[];
+  final allTypes = <String>[];
   for (final XTypeGroup group in acceptedTypes) {
     // If any group allows everything, no filtering should be done.
     if (group.allowsAny) {

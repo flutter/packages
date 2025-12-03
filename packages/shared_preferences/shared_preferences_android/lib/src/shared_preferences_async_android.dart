@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -142,7 +142,7 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
-    final String stringValue = '$jsonListPrefix${jsonEncode(value)}';
+    final stringValue = '$jsonListPrefix${jsonEncode(value)}';
     return api.setString(key, stringValue, pigeonOptions);
   }
 

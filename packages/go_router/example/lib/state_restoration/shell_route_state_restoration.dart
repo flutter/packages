@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,16 +29,13 @@ class _AppState extends State<App> {
         routes: <RouteBase>[
           ShellRoute(
             restorationScopeId: 'onboardingShell',
-            pageBuilder: (
-              BuildContext context,
-              GoRouterState state,
-              Widget child,
-            ) {
-              return MaterialPage<void>(
-                restorationId: 'onboardingPage',
-                child: OnboardingScaffold(child: child),
-              );
-            },
+            pageBuilder:
+                (BuildContext context, GoRouterState state, Widget child) {
+                  return MaterialPage<void>(
+                    restorationId: 'onboardingPage',
+                    child: OnboardingScaffold(child: child),
+                  );
+                },
             routes: <GoRoute>[
               GoRoute(
                 path: 'welcome',

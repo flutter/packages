@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,21 +22,21 @@ void main() {
 
   group('canLaunch', () {
     test('returns true', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool canLaunch = await launcher.canLaunch('http://example.com/');
 
       expect(canLaunch, true);
     });
 
     test('returns false', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool canLaunch = await launcher.canLaunch('unknown://scheme');
 
       expect(canLaunch, false);
     });
 
     test('checks a generic URL if an http URL returns false', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool canLaunch = await launcher.canLaunch(
         'http://${_FakeUrlLauncherApi.specialHandlerDomain}',
       );
@@ -45,7 +45,7 @@ void main() {
     });
 
     test('checks a generic URL if an https URL returns false', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool canLaunch = await launcher.canLaunch(
         'https://${_FakeUrlLauncherApi.specialHandlerDomain}',
       );
@@ -56,7 +56,7 @@ void main() {
 
   group('legacy launch without webview', () {
     test('calls through', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launch(
         'http://example.com/',
         useSafariVC: true,
@@ -73,7 +73,7 @@ void main() {
     });
 
     test('passes headers', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await launcher.launch(
         'http://example.com/',
         useSafariVC: true,
@@ -88,7 +88,7 @@ void main() {
     });
 
     test('passes through no-activity exception', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launch(
           'https://noactivity',
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('throws if there is no handling activity', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launch(
           'unknown://scheme',
@@ -128,7 +128,7 @@ void main() {
 
   group('legacy launch with webview', () {
     test('calls through', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launch(
         'http://example.com/',
         useSafariVC: true,
@@ -147,7 +147,7 @@ void main() {
     });
 
     test('passes enableJavaScript to webview', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await launcher.launch(
         'http://example.com/',
         useSafariVC: true,
@@ -162,7 +162,7 @@ void main() {
     });
 
     test('passes enableDomStorage to webview', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await launcher.launch(
         'http://example.com/',
         useSafariVC: true,
@@ -177,7 +177,7 @@ void main() {
     });
 
     test('passes showTitle to webview', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(
@@ -189,7 +189,7 @@ void main() {
     });
 
     test('passes through no-activity exception', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launch(
           'https://noactivity',
@@ -205,7 +205,7 @@ void main() {
     });
 
     test('throws if there is no handling activity', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launch(
           'unknown://scheme',
@@ -229,18 +229,19 @@ void main() {
 
   group('launch without webview', () {
     test('calls through', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(mode: PreferredLaunchMode.externalApplication),
       );
       expect(launched, true);
       expect(api.usedWebView, false);
+      expect(api.requiredNonBrowser, false);
       expect(api.passedWebViewOptions?.headers, isEmpty);
     });
 
     test('passes headers', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(
@@ -254,8 +255,21 @@ void main() {
       expect(api.passedWebViewOptions?.headers['key'], 'value');
     });
 
+    test('passes non-browser flag', () async {
+      final launcher = UrlLauncherAndroid(api: api);
+      final bool launched = await launcher.launchUrl(
+        'http://example.com/',
+        const LaunchOptions(
+          mode: PreferredLaunchMode.externalNonBrowserApplication,
+        ),
+      );
+      expect(launched, true);
+      expect(api.usedWebView, false);
+      expect(api.requiredNonBrowser, true);
+    });
+
     test('passes through no-activity exception', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launchUrl('https://noactivity', const LaunchOptions()),
         throwsA(isA<PlatformException>()),
@@ -263,7 +277,7 @@ void main() {
     });
 
     test('throws if there is no handling activity', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launchUrl('unknown://scheme', const LaunchOptions()),
         throwsA(
@@ -279,7 +293,7 @@ void main() {
 
   group('launch with webview', () {
     test('calls through', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(mode: PreferredLaunchMode.inAppWebView),
@@ -293,7 +307,7 @@ void main() {
     });
 
     test('passes enableJavaScript to webview', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(
@@ -308,7 +322,7 @@ void main() {
     });
 
     test('passes enableDomStorage to webview', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(
@@ -323,7 +337,7 @@ void main() {
     });
 
     test('passes through no-activity exception', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launchUrl(
           'https://noactivity',
@@ -334,7 +348,7 @@ void main() {
     });
 
     test('throws if there is no handling activity', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       await expectLater(
         launcher.launchUrl(
           'unknown://scheme',
@@ -353,7 +367,7 @@ void main() {
 
   group('launch with custom tab', () {
     test('calls through', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(mode: PreferredLaunchMode.inAppBrowserView),
@@ -366,7 +380,7 @@ void main() {
 
   group('launch with platform default', () {
     test('uses custom tabs for http', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launchUrl(
         'http://example.com/',
         const LaunchOptions(),
@@ -377,7 +391,7 @@ void main() {
     });
 
     test('uses custom tabs for https', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launchUrl(
         'https://example.com/',
         const LaunchOptions(),
@@ -388,7 +402,7 @@ void main() {
     });
 
     test('uses external for other schemes', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       final bool launched = await launcher.launchUrl(
         'supportedcustomscheme://example.com/',
         const LaunchOptions(),
@@ -400,7 +414,7 @@ void main() {
 
   group('supportsMode', () {
     test('returns true for platformDefault', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       expect(
         await launcher.supportsMode(PreferredLaunchMode.platformDefault),
         true,
@@ -408,7 +422,7 @@ void main() {
     });
 
     test('returns true for external application', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       expect(
         await launcher.supportsMode(PreferredLaunchMode.externalApplication),
         true,
@@ -416,7 +430,7 @@ void main() {
     });
 
     test('returns true for in app web view', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       expect(
         await launcher.supportsMode(PreferredLaunchMode.inAppWebView),
         true,
@@ -424,7 +438,7 @@ void main() {
     });
 
     test('returns true for in app browser view when available', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       api.hasCustomTabSupport = true;
       expect(
         await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
@@ -433,7 +447,7 @@ void main() {
     });
 
     test('returns false for in app browser view when not available', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       api.hasCustomTabSupport = false;
       expect(
         await launcher.supportsMode(PreferredLaunchMode.inAppBrowserView),
@@ -444,7 +458,7 @@ void main() {
 
   group('supportsCloseForMode', () {
     test('returns true for in app web view', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       expect(
         await launcher.supportsCloseForMode(PreferredLaunchMode.inAppWebView),
         true,
@@ -452,7 +466,7 @@ void main() {
     });
 
     test('returns false for other modes', () async {
-      final UrlLauncherAndroid launcher = UrlLauncherAndroid(api: api);
+      final launcher = UrlLauncherAndroid(api: api);
       expect(
         await launcher.supportsCloseForMode(
           PreferredLaunchMode.externalApplication,
@@ -484,6 +498,7 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   BrowserOptions? passedBrowserOptions;
   bool? usedWebView;
   bool? allowedCustomTab;
+  bool? requiredNonBrowser;
   bool? closed;
 
   /// A domain that will be treated as having no handler, even for http(s).
@@ -495,13 +510,18 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
   }
 
   @override
-  Future<bool> launchUrl(String url, Map<String, String> headers) async {
+  Future<bool> launchUrl(
+    String url,
+    Map<String, String> headers,
+    bool requireNonBrowser,
+  ) async {
     passedWebViewOptions = WebViewOptions(
       enableJavaScript: false,
       enableDomStorage: false,
       headers: headers,
     );
 
+    requiredNonBrowser = requireNonBrowser;
     usedWebView = false;
     return _launch(url);
   }

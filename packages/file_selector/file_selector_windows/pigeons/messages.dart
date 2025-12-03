@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,6 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/test_api.g.dart',
     cppOptions: CppOptions(namespace: 'file_selector_windows'),
     cppHeaderOut: 'windows/messages.g.h',
     cppSourceOut: 'windows/messages.g.cpp',
@@ -48,7 +47,7 @@ class FileDialogResult {
   int? typeGroupIndex;
 }
 
-@HostApi(dartHostTestHandler: 'TestFileSelectorApi')
+@HostApi()
 abstract class FileSelectorApi {
   FileDialogResult showOpenDialog(
     SelectionOptions options,

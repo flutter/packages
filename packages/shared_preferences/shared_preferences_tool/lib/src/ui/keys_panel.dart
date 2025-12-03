@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -225,10 +225,11 @@ class _KeyItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final SelectedSharedPreferencesKey? selectedKey =
         SharedPreferencesStateProvider.selectedKeyOf(context);
-    final bool isSelected = selectedKey?.key == keyName;
+    final isSelected = selectedKey?.key == keyName;
     final ColorScheme colorScheme = Theme.of(context).colorScheme;
-    final Color? backgroundColor =
-        isSelected ? colorScheme.selectedRowBackgroundColor : null;
+    final Color? backgroundColor = isSelected
+        ? colorScheme.selectedRowBackgroundColor
+        : null;
 
     return InkWell(
       onTap: () {

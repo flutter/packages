@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -160,5 +160,9 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
 
   override fun getPigeonApiCompanionAdSlot(): PigeonApiCompanionAdSlot {
     return CompanionAdSlotProxyApi(this)
+  }
+
+  override fun getPigeonApiAdSlot(): PigeonApiAdSlot {
+    return AdSlotProxyApi(this)
   }
 }

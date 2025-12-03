@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -278,26 +278,25 @@ class _WebViewState extends State<WebView> {
   Widget build(BuildContext context) {
     return WebView.platform.build(
       context: context,
-      onWebViewPlatformCreated: (
-        WebViewPlatformController? webViewPlatformController,
-      ) {
-        final WebViewController controller = WebViewController(
-          widget,
-          webViewPlatformController!,
-          _javascriptChannelRegistry,
-        );
-        _controller.complete(controller);
+      onWebViewPlatformCreated:
+          (WebViewPlatformController? webViewPlatformController) {
+            final controller = WebViewController(
+              widget,
+              webViewPlatformController!,
+              _javascriptChannelRegistry,
+            );
+            _controller.complete(controller);
 
-        if (widget.onWebViewCreated != null) {
-          widget.onWebViewCreated!(controller);
-        }
-      },
+            if (widget.onWebViewCreated != null) {
+              widget.onWebViewCreated!(controller);
+            }
+          },
       webViewPlatformCallbacksHandler: _platformCallbacksHandler,
       creationParams: CreationParams(
         initialUrl: widget.initialUrl,
         webSettings: _webSettingsFromWidget(widget),
-        javascriptChannelNames:
-            _javascriptChannelRegistry.channels.keys.toSet(),
+        javascriptChannelNames: _javascriptChannelRegistry.channels.keys
+            .toSet(),
         autoMediaPlaybackPolicy: widget.initialMediaPlaybackPolicy,
         userAgent: widget.userAgent,
         backgroundColor: widget.backgroundColor,
@@ -505,8 +504,8 @@ class WebViewController {
   Future<void> _updateJavascriptChannels(
     Set<JavascriptChannel>? newChannels,
   ) async {
-    final Set<String> currentChannels =
-        _javascriptChannelRegistry.channels.keys.toSet();
+    final Set<String> currentChannels = _javascriptChannelRegistry.channels.keys
+        .toSet();
     final Set<String> newChannelNames = _extractChannelNames(newChannels);
     final Set<String> channelsToAdd = newChannelNames.difference(
       currentChannels,
@@ -628,7 +627,7 @@ class WebViewController {
     bool? hasNavigationDelegate;
     bool? hasProgressTracking;
     bool? debuggingEnabled;
-    WebSetting<String?> userAgent = const WebSetting<String?>.absent();
+    var userAgent = const WebSetting<String?>.absent();
     bool? zoomEnabled;
     if (currentValue.javascriptMode != newValue.javascriptMode) {
       javascriptMode = newValue.javascriptMode;
@@ -660,10 +659,9 @@ class WebViewController {
   }
 
   Set<String> _extractChannelNames(Set<JavascriptChannel>? channels) {
-    final Set<String> channelNames =
-        channels == null
-            ? <String>{}
-            : channels.map((JavascriptChannel channel) => channel.name).toSet();
+    final Set<String> channelNames = channels == null
+        ? <String>{}
+        : channels.map((JavascriptChannel channel) => channel.name).toSet();
     return channelNames;
   }
 

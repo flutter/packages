@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -112,7 +112,7 @@ public class ResolutionFeature extends CameraFeature<ResolutionPreset> {
   }
 
   @Override
-  public boolean checkIsSupported() {
+  public final boolean checkIsSupported() {
     return cameraId >= 0;
   }
 

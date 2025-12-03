@@ -1,6 +1,11 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.11.1
+
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Fixes typo in limit parameter validation error messages.
 
 ## 2.11.0
 

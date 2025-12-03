@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -163,7 +163,9 @@ class NotificationsPageView extends StatelessWidget {
               Tab(
                 child: Text('Latest', style: TextStyle(color: Colors.black87)),
               ),
-              Tab(child: Text('Old', style: TextStyle(color: Colors.black87))),
+              Tab(
+                child: Text('Old', style: TextStyle(color: Colors.black87)),
+              ),
               Tab(
                 child: Text('Archive', style: TextStyle(color: Colors.black87)),
               ),

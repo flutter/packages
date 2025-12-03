@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,7 @@ void main() {
     testPageNotFound(widget: widgetsAppBuilder(home: const ErrorScreen(null))),
   );
 
-  final Exception exception = Exception('Something went wrong!');
+  final exception = Exception('Something went wrong!');
   testWidgets(
     'shows the exception message when provided',
     testPageShowsExceptionMessage(

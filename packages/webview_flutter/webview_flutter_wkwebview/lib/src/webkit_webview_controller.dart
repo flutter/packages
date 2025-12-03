@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -193,8 +193,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       <KeyValueObservingOptions>[KeyValueObservingOptions.newValue],
     );
 
-    final WeakReference<WebKitWebViewController> weakThis =
-        WeakReference<WebKitWebViewController>(this);
+    final weakThis = WeakReference<WebKitWebViewController>(this);
     _uiDelegate = _webKitParams.webKitProxy.newWKUIDelegate(
       onCreateWebView:
           (
@@ -248,8 +247,7 @@ class WebKitWebViewController extends PlatformWebViewController {
                   return PermissionDecision.prompt;
               }
 
-              final Completer<PermissionDecision> decisionCompleter =
-                  Completer<PermissionDecision>();
+              final decisionCompleter = Completer<PermissionDecision>();
 
               callback(
                 WebKitWebViewPermissionRequest._(
@@ -266,11 +264,10 @@ class WebKitWebViewController extends PlatformWebViewController {
             final Future<void> Function(JavaScriptAlertDialogRequest request)?
             callback = weakThis.target?._onJavaScriptAlertDialog;
             if (callback != null) {
-              final JavaScriptAlertDialogRequest request =
-                  JavaScriptAlertDialogRequest(
-                    message: message,
-                    url: await frame.request?.getUrl() ?? '',
-                  );
+              final request = JavaScriptAlertDialogRequest(
+                message: message,
+                url: await frame.request?.getUrl() ?? '',
+              );
               await callback.call(request);
               return;
             }
@@ -280,11 +277,10 @@ class WebKitWebViewController extends PlatformWebViewController {
             final Future<bool> Function(JavaScriptConfirmDialogRequest request)?
             callback = weakThis.target?._onJavaScriptConfirmDialog;
             if (callback != null) {
-              final JavaScriptConfirmDialogRequest request =
-                  JavaScriptConfirmDialogRequest(
-                    message: message,
-                    url: await frame.request?.getUrl() ?? '',
-                  );
+              final request = JavaScriptConfirmDialogRequest(
+                message: message,
+                url: await frame.request?.getUrl() ?? '',
+              );
               final bool result = await callback.call(request);
               return result;
             }
@@ -298,12 +294,11 @@ class WebKitWebViewController extends PlatformWebViewController {
             )?
             callback = weakThis.target?._onJavaScriptTextInputDialog;
             if (callback != null) {
-              final JavaScriptTextInputDialogRequest request =
-                  JavaScriptTextInputDialogRequest(
-                    message: prompt,
-                    url: await frame.request?.getUrl() ?? '',
-                    defaultText: defaultText,
-                  );
+              final request = JavaScriptTextInputDialogRequest(
+                message: prompt,
+                url: await frame.request?.getUrl() ?? '',
+                defaultText: defaultText,
+              );
               final String result = await callback.call(request);
               return result;
             }
@@ -316,51 +311,47 @@ class WebKitWebViewController extends PlatformWebViewController {
   }
 
   /// The WebKit WebView being controlled.
-  late final PlatformWebView _webView = _webKitParams.webKitProxy
-      .newPlatformWebView(
-        initialConfiguration: _webKitParams._configuration,
-        observeValue: withWeakReferenceTo(this, (
-          WeakReference<WebKitWebViewController> weakReference,
-        ) {
-          return (
-            _,
-            String? keyPath,
-            NSObject? object,
-            Map<KeyValueChangeKey, Object?>? change,
-          ) async {
-            final WebKitWebViewController? controller = weakReference.target;
-            if (controller == null || change == null) {
-              return;
-            }
+  late final PlatformWebView
+  _webView = _webKitParams.webKitProxy.newPlatformWebView(
+    initialConfiguration: _webKitParams._configuration,
+    observeValue: withWeakReferenceTo(this, (
+      WeakReference<WebKitWebViewController> weakReference,
+    ) {
+      return (
+        _,
+        String? keyPath,
+        NSObject? object,
+        Map<KeyValueChangeKey, Object?>? change,
+      ) async {
+        final WebKitWebViewController? controller = weakReference.target;
+        if (controller == null || change == null) {
+          return;
+        }
 
-            switch (keyPath) {
-              case 'estimatedProgress':
-                final ProgressCallback? progressCallback =
-                    controller._currentNavigationDelegate?._onProgress;
-                if (progressCallback != null) {
-                  final double progress =
-                      change[KeyValueChangeKey.newValue]! as double;
-                  progressCallback((progress * 100).round());
-                }
-              case 'URL':
-                final UrlChangeCallback? urlChangeCallback =
-                    controller._currentNavigationDelegate?._onUrlChange;
-                if (urlChangeCallback != null) {
-                  final URL? url = change[KeyValueChangeKey.newValue] as URL?;
-                  urlChangeCallback(
-                    UrlChange(url: await url?.getAbsoluteString()),
-                  );
-                }
-              case 'canGoBack':
-                if (controller._onCanGoBackChangeCallback != null) {
-                  final bool canGoBack =
-                      change[KeyValueChangeKey.newValue]! as bool;
-                  controller._onCanGoBackChangeCallback!(canGoBack);
-                }
+        switch (keyPath) {
+          case 'estimatedProgress':
+            final ProgressCallback? progressCallback =
+                controller._currentNavigationDelegate?._onProgress;
+            if (progressCallback != null) {
+              final progress = change[KeyValueChangeKey.newValue]! as double;
+              progressCallback((progress * 100).round());
             }
-          };
-        }),
-      );
+          case 'URL':
+            final UrlChangeCallback? urlChangeCallback =
+                controller._currentNavigationDelegate?._onUrlChange;
+            if (urlChangeCallback != null) {
+              final url = change[KeyValueChangeKey.newValue] as URL?;
+              urlChangeCallback(UrlChange(url: await url?.getAbsoluteString()));
+            }
+          case 'canGoBack':
+            if (controller._onCanGoBackChangeCallback != null) {
+              final canGoBack = change[KeyValueChangeKey.newValue]! as bool;
+              controller._onCanGoBackChangeCallback!(canGoBack);
+            }
+        }
+      };
+    }),
+  );
 
   late final WKUIDelegate _uiDelegate;
 
@@ -503,7 +494,7 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     _javaScriptChannelParams[webKitParams.name] = webKitParams;
 
-    final String wrapperSource =
+    final wrapperSource =
         'window.${webKitParams.name} = webkit.messageHandlers.${webKitParams.name};';
     final WKUserScript wrapperScript = _webKitParams.webKitProxy
         .newWKUserScript(
@@ -651,9 +642,9 @@ class WebKitWebViewController extends PlatformWebViewController {
   Future<void> setBackgroundColor(Color color) {
     return Future.wait(<Future<void>>[
       _webView.setOpaque(false),
-      _webView.setBackgroundColor(Colors.transparent.value),
+      _webView.setBackgroundColor(Colors.transparent.toARGB32()),
       // This method must be called last.
-      _webView.scrollView.setBackgroundColor(color.value),
+      _webView.scrollView.setBackgroundColor(color.toARGB32()),
     ]);
   }
 
@@ -738,8 +729,7 @@ class WebKitWebViewController extends PlatformWebViewController {
           return;
         }
 
-        final Map<String, dynamic> consoleLog =
-            jsonDecode(message.message) as Map<String, dynamic>;
+        final consoleLog = jsonDecode(message.message) as Map<String, dynamic>;
 
         JavaScriptLogLevel level;
         switch (consoleLog['level']) {
@@ -806,8 +796,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       _onScrollPositionChangeCallback = onScrollPositionChange;
 
       if (onScrollPositionChange != null) {
-        final WeakReference<WebKitWebViewController> weakThis =
-            WeakReference<WebKitWebViewController>(this);
+        final weakThis = WeakReference<WebKitWebViewController>(this);
         _uiScrollViewDelegate = _webKitParams.webKitProxy
             .newUIScrollViewDelegate(
               scrollViewDidScroll: (_, __, double x, double y) {
@@ -882,7 +871,7 @@ class WebKitWebViewController extends PlatformWebViewController {
     _javaScriptChannelParams.keys.forEach(
       controller.removeScriptMessageHandler,
     );
-    final Map<String, WebKitJavaScriptChannelParams> remainingChannelParams =
+    final remainingChannelParams =
         Map<String, WebKitJavaScriptChannelParams>.from(
           _javaScriptChannelParams,
         );
@@ -1208,8 +1197,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
                 params,
               ),
       ) {
-    final WeakReference<WebKitNavigationDelegate> weakThis =
-        WeakReference<WebKitNavigationDelegate>(this);
+    final weakThis = WeakReference<WebKitNavigationDelegate>(this);
     _navigationDelegate = (this.params as WebKitNavigationDelegateCreationParams)
         .webKitProxy
         .newWKNavigationDelegate(
@@ -1446,8 +1434,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     required URLProtectionSpace protectionSpace,
     required WebKitProxy proxy,
   }) {
-    final Completer<AuthenticationChallengeResponse> responseCompleter =
-        Completer<AuthenticationChallengeResponse>();
+    final responseCompleter = Completer<AuthenticationChallengeResponse>();
 
     onHttpAuthRequest(
       HttpAuthRequest(
@@ -1486,8 +1473,7 @@ class WebKitNavigationDelegate extends PlatformNavigationDelegate {
     required PlatformException secTrustException,
     required WebKitProxy proxy,
   }) async {
-    final Completer<AuthenticationChallengeResponse> responseCompleter =
-        Completer<AuthenticationChallengeResponse>();
+    final responseCompleter = Completer<AuthenticationChallengeResponse>();
 
     final List<SecCertificate> certificates =
         (await proxy.copyCertificateChainSecTrust(serverTrust)) ??

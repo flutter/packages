@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -222,8 +222,7 @@ class CameraController extends ValueNotifier<CameraValue> {
   Future<void> initialize() => _initializeWithDescription(description);
 
   Future<void> _initializeWithDescription(CameraDescription description) async {
-    final Completer<CameraInitializedEvent> initializeCompleter =
-        Completer<CameraInitializedEvent>();
+    final initializeCompleter = Completer<CameraInitializedEvent>();
 
     _deviceOrientationSubscription = CameraPlatform.instance
         .onDeviceOrientationChanged()

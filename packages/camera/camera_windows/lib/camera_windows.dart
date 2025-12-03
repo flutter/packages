@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,14 +50,11 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<String?> cameras = await _hostApi.getAvailableCameras();
+      final List<String> cameras = await _hostApi.getAvailableCameras();
 
-      return cameras.map((String? cameraName) {
+      return cameras.map((String cameraName) {
         return CameraDescription(
-          // This type is only nullable due to Pigeon limitations, see
-          // https://github.com/flutter/flutter/issues/97848. The native code
-          // will never return null.
-          name: cameraName!,
+          name: cameraName,
           // TODO(stuartmorgan): Implement these; see
           // https://github.com/flutter/flutter/issues/97540.
           lensDirection: CameraLensDirection.front,

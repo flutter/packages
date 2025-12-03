@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,10 +46,9 @@ final GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
 final Map<GoogleFontsVariant, GoogleFontsFile> fakeFonts =
     <GoogleFontsVariant, GoogleFontsFile>{
       const GoogleFontsVariant(
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.normal,
-          ):
-          _fakeResponseFile,
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): _fakeResponseFile,
     };
 
 void main() {

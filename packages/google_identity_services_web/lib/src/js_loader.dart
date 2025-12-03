@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,7 +33,7 @@ Future<void> loadWebSdk({
   String trustedTypePolicyName = _defaultTrustedPolicyName,
   String? nonce = _undefined,
 }) {
-  final Completer<void> completer = Completer<void>();
+  final completer = Completer<void>();
   onGoogleLibraryLoad = () => completer.complete();
 
   // If TrustedTypes are available, prepare a trusted URL.
@@ -55,10 +55,9 @@ Future<void> loadWebSdk({
     }
   }
 
-  final web.HTMLScriptElement script =
-      web.HTMLScriptElement()
-        ..async = true
-        ..defer = true;
+  final script = web.HTMLScriptElement()
+    ..async = true
+    ..defer = true;
   if (trustedUrl != null) {
     script.trustedSrc = trustedUrl;
   } else {
@@ -89,7 +88,7 @@ String? _getNonce({String? suppliedNonce, web.Window? window}) {
     'script',
   );
 
-  for (int i = 0; i < elements.length; i++) {
+  for (var i = 0; i < elements.length; i++) {
     if (elements.item(i) case final web.HTMLScriptElement element) {
       // Chrome may return an empty string instead of null.
       final String nonce =
