@@ -1,3 +1,7 @@
+## 4.10.10
+
+* Bumps kotlin_version to 2.2.21.
+
 ## 4.10.9
 
 * Fixes a compatibility issue with Kotlin 1.8.

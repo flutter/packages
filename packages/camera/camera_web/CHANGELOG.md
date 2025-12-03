@@ -1,3 +1,8 @@
+## 0.3.5+2
+
+* Fixes camera initialization failure on Firefox Android by using `{video: true}` instead
+  of `{video: {}}` when no video constraints are specified.
+
 ## 0.3.5+1
 
 * Uses `CanvasRenderingContext2D.drawImage` instead of the deprecated `drawImageScaled`.
