@@ -1811,8 +1811,7 @@ class ProxyApiTestClassDelegate: PigeonApiDelegateProxyApiTestClass {
 
   }
 
-  func echoStaticString(pigeonApi: PigeonApiProxyApiTestClass, aString: String) throws -> String
-  {
+  func echoStaticString(pigeonApi: PigeonApiProxyApiTestClass, aString: String) throws -> String {
     return aString
   }
 
@@ -2149,8 +2148,8 @@ class ProxyApiTestClassDelegate: PigeonApiDelegateProxyApiTestClass {
     aProxyApi: ProxyApiSuperClass?,
     completion: @escaping (Result<ProxyApiSuperClass?, Error>) -> Void
   ) {
-    pigeonApi.flutterEchoNullableProxyApi(pigeonInstance: pigeonInstance, aProxyApi: aProxyApi)
-    { response in
+    pigeonApi.flutterEchoNullableProxyApi(pigeonInstance: pigeonInstance, aProxyApi: aProxyApi) {
+      response in
       switch response {
       case .success(let res):
         completion(.success(res))

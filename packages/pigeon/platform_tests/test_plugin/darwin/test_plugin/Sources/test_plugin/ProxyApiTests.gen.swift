@@ -2850,6 +2850,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2884,6 +2891,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2921,6 +2935,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -2955,6 +2976,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -2998,6 +3026,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3039,6 +3074,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3082,6 +3124,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3124,6 +3173,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3165,6 +3221,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3209,6 +3272,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3250,6 +3320,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3295,6 +3372,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3336,6 +3420,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3379,6 +3470,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3421,6 +3519,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3456,6 +3561,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3493,6 +3605,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3528,6 +3647,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3565,6 +3691,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3600,6 +3733,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3637,6 +3777,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3672,6 +3819,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3710,6 +3864,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3747,6 +3908,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
       return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
+      return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
     let codec = pigeonRegistrar.codec
@@ -3781,6 +3949,13 @@ final class PigeonApiProxyApiTestClass: PigeonApiProtocolProxyApiTestClass {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger
@@ -3986,6 +4161,13 @@ final class PigeonApiProxyApiInterface: PigeonApiProtocolProxyApiInterface {
           ProxyApiTestsError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
+      return
+    } else if !pigeonRegistrar.instanceManager.containsInstance(pigeonInstanceArg as AnyObject) {
+      completion(
+        .failure(
+          ProxyApiTestsError(
+            code: "missing-instance-error",
+            message: "Calling instance is not in the instance manager.", details: "")))
       return
     }
     let binaryMessenger = pigeonRegistrar.binaryMessenger

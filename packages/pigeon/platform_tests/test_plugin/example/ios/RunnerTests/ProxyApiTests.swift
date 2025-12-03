@@ -10,25 +10,25 @@ import XCTest
 class ProxyApiTests: XCTestCase {
   func testCallsToDartFailIfTheInstanceIsNotInTheInstanceManager() {
     let testObject = ProxyApiTestClass()
-    
-    let binaryMessenger = MockBinaryMessenger<Any>(codec: FlutterStandardMessageCodec.sharedInstance());
+
+    let binaryMessenger = MockBinaryMessenger<Any>(
+      codec: FlutterStandardMessageCodec.sharedInstance())
     let registrar = ProxyApiTestsPigeonProxyApiRegistrar(
       binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
-    
+
     _ = registrar.instanceManager.addHostCreatedInstance(testObject)
     try? registrar.instanceManager.removeAllObjects()
-    
+
     let api = PigeonApiProxyApiTestClass(
       pigeonRegistrar: registrar, delegate: ProxyApiTestClassDelegate())
-    
+
     var error: String? = nil
     api.flutterNoop(pigeonInstance: testObject) { response in
-      if case let .failure(response) = response {
+      if case .failure(let response) = response {
         error = response.message
       }
     }
-    
+
     XCTAssertEqual(error, "Calling instance is not in the instance manager.")
   }
 }
-
