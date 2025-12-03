@@ -16,7 +16,7 @@ public final class URLLauncherPlugin: NSObject, FlutterPlugin, UrlLauncherApi {
 
   private var currentSession: URLLaunchSession?
   private let launcher: Launcher
-  /// The view controller provider, for showing a Safari view controller.
+  /// The view presenter provider, for showing a Safari view controller.
   private let viewPresenterProvider: ViewPresenterProvider
 
   init(launcher: Launcher = DefaultLauncher(), viewPresenterProvider: ViewPresenterProvider) {
