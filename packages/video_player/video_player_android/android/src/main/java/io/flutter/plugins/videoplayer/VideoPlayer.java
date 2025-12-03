@@ -34,6 +34,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
   @Nullable protected final SurfaceProducer surfaceProducer;
   @Nullable private DisposeHandler disposeHandler;
   @NonNull protected ExoPlayer exoPlayer;
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi @Nullable protected DefaultTrackSelector trackSelector;
 
   /** A closure-compatible signature since {@link java.util.function.Supplier} is API level 24. */
@@ -142,6 +143,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     return exoPlayer;
   }
 
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   @Override
   public @NonNull NativeAudioTrackData getAudioTracks() {
@@ -180,6 +182,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     return new NativeAudioTrackData(audioTracks);
   }
 
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   @Override
   public void selectAudioTrack(long groupIndex, long trackIndex) {

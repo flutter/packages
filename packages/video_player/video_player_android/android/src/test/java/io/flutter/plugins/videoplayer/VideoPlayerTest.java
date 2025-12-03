@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.videoplayer;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -517,20 +518,17 @@ public final class VideoPlayerTest {
     videoPlayer.dispose();
   }
 
-  @Test(expected = IllegalStateException.class)
+  @Test
   public void testSelectAudioTrack_nullTrackSelector() {
     // Track selector is null by default in mock
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    try {
-      // Should throw IllegalStateException
-      videoPlayer.selectAudioTrack(0, 0);
-    } finally {
-      videoPlayer.dispose();
-    }
+    assertThrows(IllegalStateException.class, () -> videoPlayer.selectAudioTrack(0, 0));
+
+    videoPlayer.dispose();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testSelectAudioTrack_invalidGroupIndex() {
     DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
     Tracks mockTracks = mock(Tracks.class);
@@ -546,15 +544,13 @@ public final class VideoPlayerTest {
 
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    try {
-      // Test with invalid group index (only 1 group exists at index 0)
-      videoPlayer.selectAudioTrack(5, 0);
-    } finally {
-      videoPlayer.dispose();
-    }
+    // Test with invalid group index (only 1 group exists at index 0)
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(5, 0));
+
+    videoPlayer.dispose();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testSelectAudioTrack_invalidTrackIndex() {
     DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
     Tracks mockTracks = mock(Tracks.class);
@@ -574,15 +570,13 @@ public final class VideoPlayerTest {
 
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    try {
-      // Test with invalid track index (only 1 track exists at index 0)
-      videoPlayer.selectAudioTrack(0, 5);
-    } finally {
-      videoPlayer.dispose();
-    }
+    // Test with invalid track index (only 1 track exists at index 0)
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(0, 5));
+
+    videoPlayer.dispose();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testSelectAudioTrack_nonAudioGroup() {
     DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
     Tracks mockTracks = mock(Tracks.class);
@@ -599,15 +593,13 @@ public final class VideoPlayerTest {
 
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    try {
-      // Test selecting from a non-audio group
-      videoPlayer.selectAudioTrack(0, 0);
-    } finally {
-      videoPlayer.dispose();
-    }
+    // Test selecting from a non-audio group
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(0, 0));
+
+    videoPlayer.dispose();
   }
 
-  @Test(expected = IllegalArgumentException.class)
+  @Test
   public void testSelectAudioTrack_negativeIndices() {
     DefaultTrackSelector mockTrackSelector = mock(DefaultTrackSelector.class);
     Tracks mockTracks = mock(Tracks.class);
@@ -623,11 +615,9 @@ public final class VideoPlayerTest {
 
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    try {
-      // Test with negative indices - should be caught by bounds checking
-      videoPlayer.selectAudioTrack(-1, 0);
-    } finally {
-      videoPlayer.dispose();
-    }
+    // Test with negative indices - should be caught by bounds checking
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(-1, 0));
+
+    videoPlayer.dispose();
   }
 }
