@@ -79,6 +79,12 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   /// initialization calls.
   final Completer<void> _initCalled = Completer<void>();
 
+  /// A boolean flag to track if [init] has been called.
+  ///
+  /// This is used to prevent race conditions when [init] is called multiple
+  /// times without awaiting.
+  bool _isInitCalled = false;
+
   // A StreamController to communicate status changes from the GisSdkClient.
   final StreamController<AuthenticationEvent> _authenticationController;
 
@@ -90,12 +96,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   ///
   /// This ensures that the SDK has been loaded, and that the `init` method
   /// has finished running.
-  Future<void> get _initialized {
-    return Future.wait<void>(<Future<void>>[
-      _jsSdkLoadedFuture,
-      _initCalled.future,
-    ]);
-  }
+  Future<void> get _initialized => _initCalled.future;
 
   /// Stores the client ID if it was set in a meta-tag of the page.
   @visibleForTesting
@@ -109,11 +110,12 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   @override
   Future<void> init(InitParameters params) async {
     // Throw if init() is called more than once
-    if (_initCalled.isCompleted) {
+    if (_isInitCalled) {
       throw StateError(
         'init() has already been called. Calling init() more than once results in undefined behavior.',
       );
     }
+    _isInitCalled = true;
 
     final String? appClientId = params.clientId ?? autoDetectedClientId;
     assert(
@@ -139,9 +141,6 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     );
 
     _initCalled.complete();
-
-    // Return the initialized future for external users
-    return _initialized;
   }
 
   @override
@@ -240,8 +239,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<void> clearAuthorizationToken(
     ClearAuthorizationTokenParams params,
   ) async {
-    await initialized;
-    return _gisClient.clearAuthorizationToken(params.accessToken);
+    await _initialized;
+    return _gisSdkClient.clearAuthorizationToken(params.accessToken);
   }
 
   @override
