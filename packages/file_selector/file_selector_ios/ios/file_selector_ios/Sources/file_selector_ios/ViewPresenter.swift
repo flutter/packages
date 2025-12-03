@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import UIKit
 
 /// Protocol for UIViewController methods relating to presenting a controller.
@@ -18,3 +19,26 @@ protocol ViewPresenter {
 
 /// ViewPresenter is intentionally a direct passthroguh to UIViewController.
 extension UIViewController: ViewPresenter {}
+
+/// Protocol for FlutterPluginRegistrar method for accessing the view controller.
+///
+/// This is necessary because Swift doesn't allow for only partially implementing a protocol, so
+/// a stub implementation of FlutterPluginRegistrar for tests would break any time something was
+/// added to that protocol.
+protocol ViewPresenterProvider {
+  /// Returns the view controller associated with the Flutter content.
+  var viewPresenter: ViewPresenter? { get }
+}
+
+/// Non-test implementation of ViewPresenterProvider that forwards to the plugin registrar.
+final class DefaultViewPresenterProvider: ViewPresenterProvider {
+  private let registrar: FlutterPluginRegistrar
+
+  init(registrar: FlutterPluginRegistrar) {
+    self.registrar = registrar
+  }
+
+  var viewPresenter: ViewPresenter? {
+    registrar.viewController
+  }
+}
