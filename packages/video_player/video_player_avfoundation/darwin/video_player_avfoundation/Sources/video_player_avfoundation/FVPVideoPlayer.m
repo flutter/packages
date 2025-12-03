@@ -82,7 +82,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   AVAsset *asset = [item asset];
   void (^assetCompletionHandler)(void) = ^{
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      void (^processVideoTracks)(NSArray *) = ^(NSArray *tracks) {
+      void (^processVideoTracks)(NSArray<AVAssetTrack *> *) = ^(NSArray<AVAssetTrack *> *tracks) {
         if ([tracks count] > 0) {
           AVAssetTrack *videoTrack = tracks[0];
           void (^trackCompletionHandler)(void) = ^{
@@ -119,6 +119,8 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
                                          NSError *_Nullable error) {
                        if (error == nil && tracks != nil) {
                          processVideoTracks(tracks);
+                       } else if (error != nil) {
+                         NSLog(@"Error loading tracks: %@", error);
                        }
                      }];
       } else {
