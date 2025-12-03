@@ -153,7 +153,9 @@ class MapConfiguration {
   @Deprecated('cloudMapId is deprecated. Use mapId instead.')
   String? get cloudMapId => mapId;
 
-  /// Preferred color scheme for the map in web platform
+  /// Preferred color scheme for the cloud-styled map. Web only.
+  ///
+  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
   final MapColorScheme? colorScheme;
 
   /// Returns a new options object containing only the values of this instance

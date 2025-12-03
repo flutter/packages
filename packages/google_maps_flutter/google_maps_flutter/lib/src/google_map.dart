@@ -379,8 +379,7 @@ class GoogleMap extends StatefulWidget {
   /// The colorScheme option can only be set when the map is initialized;
   /// setting this option after the map is created will have no effect.
   ///
-  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme
-  /// for more details.
+  /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme for more details.
   final MapColorScheme? colorScheme;
 
   /// Creates a [State] for this [GoogleMap].

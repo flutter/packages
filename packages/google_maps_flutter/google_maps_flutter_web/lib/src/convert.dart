@@ -142,24 +142,6 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   return options;
 }
 
-/// Converts a [MapColorScheme] into a [gmaps.ColorScheme]
-gmaps.ColorScheme? _gmapTypeColorSchemeForPluginColor(MapColorScheme? scheme) {
-  // Guard clause for null
-  if (scheme == null) {
-    return null;
-  }
-
-  // Map to gmaps.ColorScheme
-  switch (scheme) {
-    case MapColorScheme.dark:
-      return gmaps.ColorScheme.DARK;
-    case MapColorScheme.light:
-      return gmaps.ColorScheme.LIGHT;
-    case MapColorScheme.followSystem:
-      return gmaps.ColorScheme.FOLLOW_SYSTEM;
-  }
-}
-
 gmaps.MapTypeId _gmapTypeIDForPluginType(MapType type) {
   switch (type) {
     case MapType.satellite:
@@ -179,6 +161,23 @@ gmaps.MapTypeId _gmapTypeIDForPluginType(MapType type) {
   // switch as needing an update.
   // ignore: dead_code
   return gmaps.MapTypeId.ROADMAP;
+}
+
+gmaps.ColorScheme? _gmapTypeColorSchemeForPluginColor(MapColorScheme? scheme) {
+  if (scheme == null) {
+    return null;
+  }
+
+  switch (scheme) {
+    case MapColorScheme.dark:
+      return gmaps.ColorScheme.DARK;
+    case MapColorScheme.light:
+      return gmaps.ColorScheme.LIGHT;
+    case MapColorScheme.followSystem:
+      return gmaps.ColorScheme.FOLLOW_SYSTEM;
+  }
+  // ignore: dead_code
+  return gmaps.ColorScheme.FOLLOW_SYSTEM;
 }
 
 gmaps.MapOptions _applyInitialPosition(
