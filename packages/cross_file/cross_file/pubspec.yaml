@@ -10,7 +10,7 @@ environment:
 dependencies:
   cross_file_platform_interface:
     path: ../cross_file_platform_interface
-  meta: ^1.3.0
+  meta: ^1.17.0
   web: ">=0.5.1 <2.0.0"
 
 dev_dependencies:
