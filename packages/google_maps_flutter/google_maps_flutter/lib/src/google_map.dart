@@ -134,7 +134,7 @@ class GoogleMap extends StatefulWidget {
     this.onTap,
     this.onLongPress,
     this.cloudMapId,
-    this.colorScheme = MapColorScheme.followSystem,
+    this.colorScheme,
   });
 
   /// Callback method for when the map is ready to be used.
@@ -375,12 +375,13 @@ class GoogleMap extends StatefulWidget {
   final String? cloudMapId;
 
   /// Color scheme for the cloud-style map. Web only.
+  ///
   /// The colorScheme option can only be set when the map is initialized;
   /// setting this option after the map is created will have no effect.
   ///
   /// See https://developers.google.com/maps/documentation/javascript/mapcolorscheme
   /// for more details.
-  final MapColorScheme colorScheme;
+  final MapColorScheme? colorScheme;
 
   /// Creates a [State] for this [GoogleMap].
   @override
