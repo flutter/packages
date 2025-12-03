@@ -14,9 +14,8 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter/ios' }
   s.documentation_url = 'https://pub.dev/packages/google_maps_flutter_ios'
-  s.source_files = 'Classes/**/*.{h,m}'
+  s.source_files = 'Classes/**/*.{h,m,swift}'
   s.public_header_files = 'Classes/**/*.h'
-  s.module_map = 'Classes/google_maps_flutter_ios.modulemap'
   s.dependency 'Flutter'
   # Allow any version up to the next breaking change after the latest version that
   # has been confirmed to be compatible via an example in examples/. See discussion
@@ -37,5 +36,6 @@ Downloaded by pub (not CocoaPods).
     'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
   }
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
