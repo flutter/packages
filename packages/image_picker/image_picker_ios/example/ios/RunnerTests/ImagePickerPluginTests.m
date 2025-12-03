@@ -704,9 +704,12 @@
 - (void)testPickVideoSetsCurrentRepresentationMode API_AVAILABLE(ios(14)) {
   id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
   OCMStub(ClassMethod([mockPickerViewController alloc])).andReturn(mockPickerViewController);
-  OCMExpect([mockPickerViewController initWithConfiguration:[OCMArg checkWithBlock:^BOOL(PHPickerConfiguration *config) {
-    return config.preferredAssetRepresentationMode == PHPickerConfigurationAssetRepresentationModeCurrent;
-  }]]).andReturn(mockPickerViewController);
+  OCMExpect([mockPickerViewController
+                initWithConfiguration:[OCMArg checkWithBlock:^BOOL(PHPickerConfiguration *config) {
+                  return config.preferredAssetRepresentationMode ==
+                         PHPickerConfigurationAssetRepresentationModeCurrent;
+                }]])
+      .andReturn(mockPickerViewController);
 
   FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
   id partialPlugin = OCMPartialMock(plugin);
