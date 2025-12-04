@@ -63,7 +63,8 @@ void main() {
     final player = AndroidVideoPlayer(
       pluginApi: pluginApi,
       playerApiProvider: (_) => instanceApi,
-      videoEventStreamProvider: (_) => streamController.stream.asBroadcastStream(),
+      videoEventStreamProvider: (_) =>
+          streamController.stream.asBroadcastStream(),
     );
     player.ensurePlayerInitialized(
       playerId,
@@ -100,17 +101,23 @@ void main() {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 100);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
+      when(api.createForTextureView(any)).thenAnswer(
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
+      );
 
       const asset = 'someAsset';
       const package = 'somePackage';
       const assetKey = 'resultingAssetKey';
-      when(api.getLookupKeyForAsset(asset, package)).thenAnswer((_) async => assetKey);
+      when(
+        api.getLookupKeyForAsset(asset, package),
+      ).thenAnswer((_) async => assetKey);
 
       final int? playerId = await player.create(
-        DataSource(sourceType: DataSourceType.asset, asset: asset, package: package),
+        DataSource(
+          sourceType: DataSourceType.asset,
+          asset: asset,
+          package: package,
+        ),
       );
 
       final VerificationResult verification = verify(
@@ -129,9 +136,9 @@ void main() {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 100);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
+      when(api.createForTextureView(any)).thenAnswer(
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
+      );
 
       const uri = 'https://example.com';
       final int? playerId = await player.create(
@@ -254,7 +261,11 @@ void main() {
       const fileUri = 'file:///foo/bar';
       const headers = <String, String>{'Authorization': 'Bearer token'};
       await player.create(
-        DataSource(sourceType: DataSourceType.file, uri: fileUri, httpHeaders: headers),
+        DataSource(
+          sourceType: DataSourceType.file,
+          uri: fileUri,
+          httpHeaders: headers,
+        ),
       );
       final VerificationResult verification = verify(
         api.createForTextureView(captureAny),
@@ -267,14 +278,16 @@ void main() {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 100);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
+      when(api.createForTextureView(any)).thenAnswer(
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
+      );
 
       const asset = 'someAsset';
       const package = 'somePackage';
       const assetKey = 'resultingAssetKey';
-      when(api.getLookupKeyForAsset(asset, package)).thenAnswer((_) async => assetKey);
+      when(
+        api.getLookupKeyForAsset(asset, package),
+      ).thenAnswer((_) async => assetKey);
 
       final int? playerId = await player.createWithOptions(
         VideoCreationOptions(
@@ -303,9 +316,9 @@ void main() {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 100);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
+      when(api.createForTextureView(any)).thenAnswer(
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
+      );
 
       const uri = 'https://example.com';
       final int? playerId = await player.createWithOptions(
@@ -337,9 +350,9 @@ void main() {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 100);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
+      when(api.createForTextureView(any)).thenAnswer(
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
+      );
 
       const headers = <String, String>{'Authorization': 'Bearer token'};
       final int? playerId = await player.createWithOptions(
@@ -365,9 +378,9 @@ void main() {
       final (AndroidVideoPlayer player, MockAndroidVideoPlayerApi api, _) =
           setUpMockPlayer(playerId: 1, textureId: 100);
       const newPlayerId = 2;
-      when(
-        api.createForTextureView(any),
-      ).thenAnswer((_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100));
+      when(api.createForTextureView(any)).thenAnswer(
+        (_) async => TexturePlayerIds(playerId: newPlayerId, textureId: 100),
+      );
 
       const fileUri = 'file:///foo/bar';
       final int? playerId = await player.createWithOptions(
@@ -443,24 +456,39 @@ void main() {
     });
 
     test('setLooping', () async {
-      final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
-          setUpMockPlayer(playerId: 1);
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.setLooping(1, true);
 
       verify(playerApi.setLooping(true));
     });
 
     test('play', () async {
-      final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
-          setUpMockPlayer(playerId: 1);
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.play(1);
 
       verify(playerApi.play());
     });
 
     test('pause', () async {
-      final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
-          setUpMockPlayer(playerId: 1);
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       await player.pause(1);
 
       verify(playerApi.pause());
@@ -485,8 +513,13 @@ void main() {
     });
 
     test('setVolume', () async {
-      final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
-          setUpMockPlayer(playerId: 1);
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const volume = 0.7;
       await player.setVolume(1, volume);
 
@@ -494,8 +527,13 @@ void main() {
     });
 
     test('setPlaybackSpeed', () async {
-      final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
-          setUpMockPlayer(playerId: 1);
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const speed = 1.5;
       await player.setPlaybackSpeed(1, speed);
 
@@ -503,19 +541,34 @@ void main() {
     });
 
     test('seekTo', () async {
-      final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
-          setUpMockPlayer(playerId: 1);
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const positionMilliseconds = 12345;
-      await player.seekTo(1, const Duration(milliseconds: positionMilliseconds));
+      await player.seekTo(
+        1,
+        const Duration(milliseconds: positionMilliseconds),
+      );
 
       verify(playerApi.seekTo(positionMilliseconds));
     });
 
     test('getPosition', () async {
-      final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi playerApi) =
-          setUpMockPlayer(playerId: 1);
+      final (
+        AndroidVideoPlayer player,
+        _,
+        MockVideoPlayerInstanceApi playerApi,
+      ) = setUpMockPlayer(
+        playerId: 1,
+      );
       const positionMilliseconds = 12345;
-      when(playerApi.getCurrentPosition()).thenAnswer((_) async => positionMilliseconds);
+      when(
+        playerApi.getCurrentPosition(),
+      ).thenAnswer((_) async => positionMilliseconds);
 
       final Duration position = await player.getPosition(1);
       expect(position, const Duration(milliseconds: positionMilliseconds));
@@ -525,7 +578,9 @@ void main() {
       // Sets up a mock player that emits the given event structure as a success
       // callback on the internal platform channel event stream, and returns
       // the player's videoEventsFor(...) stream.
-      Stream<VideoEvent> mockPlayerEmitingEvents(List<PlatformVideoEvent> events) {
+      Stream<VideoEvent> mockPlayerEmitingEvents(
+        List<PlatformVideoEvent> events,
+      ) {
         const playerId = 1;
         final (
           AndroidVideoPlayer player,
@@ -542,16 +597,15 @@ void main() {
       }
 
       test('initialize', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(
-          <PlatformVideoEvent>[
-            InitializationEvent(
-              duration: 98765,
-              width: 1920,
-              height: 1080,
-              rotationCorrection: 90,
-            ),
-          ],
-        );
+        final Stream<VideoEvent> eventStream =
+            mockPlayerEmitingEvents(<PlatformVideoEvent>[
+              InitializationEvent(
+                duration: 98765,
+                width: 1920,
+                height: 1080,
+                rotationCorrection: 90,
+              ),
+            ]);
 
         expect(
           eventStream,
@@ -567,16 +621,15 @@ void main() {
       });
 
       test('initialization triggers buffer update polling', () async {
-        final Stream<VideoEvent> eventStream = mockPlayerEmitingEvents(
-          <PlatformVideoEvent>[
-            InitializationEvent(
-              duration: 98765,
-              width: 1920,
-              height: 1080,
-              rotationCorrection: 90,
-            ),
-          ],
-        );
+        final Stream<VideoEvent> eventStream =
+            mockPlayerEmitingEvents(<PlatformVideoEvent>[
+              InitializationEvent(
+                duration: 98765,
+                width: 1920,
+                height: 1080,
+                rotationCorrection: 90,
+              ),
+            ]);
 
         expect(
           eventStream,
@@ -589,7 +642,9 @@ void main() {
             ),
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
-              buffered: <DurationRange>[DurationRange(Duration.zero, Duration.zero)],
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
             ),
           ]),
         );
@@ -604,7 +659,9 @@ void main() {
 
         expect(
           eventStream,
-          emitsInOrder(<dynamic>[VideoEvent(eventType: VideoEventType.completed)]),
+          emitsInOrder(<dynamic>[
+            VideoEvent(eventType: VideoEventType.completed),
+          ]),
         );
       });
 
@@ -622,7 +679,9 @@ void main() {
             // A buffer start should trigger a buffer update as well.
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
-              buffered: <DurationRange>[DurationRange(Duration.zero, Duration.zero)],
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
             ),
           ]),
         );
@@ -645,7 +704,9 @@ void main() {
             VideoEvent(eventType: VideoEventType.bufferingStart),
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
-              buffered: <DurationRange>[DurationRange(Duration.zero, Duration.zero)],
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
             ),
             // Emitted by ready.
             VideoEvent(eventType: VideoEventType.bufferingEnd),
@@ -670,7 +731,9 @@ void main() {
             VideoEvent(eventType: VideoEventType.bufferingStart),
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
-              buffered: <DurationRange>[DurationRange(Duration.zero, Duration.zero)],
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
             ),
             // Emitted by ready.
             VideoEvent(eventType: VideoEventType.bufferingEnd),
@@ -695,7 +758,9 @@ void main() {
             VideoEvent(eventType: VideoEventType.bufferingStart),
             VideoEvent(
               eventType: VideoEventType.bufferingUpdate,
-              buffered: <DurationRange>[DurationRange(Duration.zero, Duration.zero)],
+              buffered: <DurationRange>[
+                DurationRange(Duration.zero, Duration.zero),
+              ],
             ),
             // Emitted by ended.
             VideoEvent(eventType: VideoEventType.completed),
@@ -712,7 +777,10 @@ void main() {
         expect(
           eventStream,
           emitsInOrder(<dynamic>[
-            VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: true),
+            VideoEvent(
+              eventType: VideoEventType.isPlayingStateUpdate,
+              isPlaying: true,
+            ),
           ]),
         );
       });
@@ -725,7 +793,10 @@ void main() {
         expect(
           eventStream,
           emitsInOrder(<dynamic>[
-            VideoEvent(eventType: VideoEventType.isPlayingStateUpdate, isPlaying: false),
+            VideoEvent(
+              eventType: VideoEventType.isPlayingStateUpdate,
+              isPlaying: false,
+            ),
           ]),
         );
       });
@@ -742,7 +813,9 @@ void main() {
         final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
             setUpMockPlayer(playerId: 1);
         when(api.getAudioTracks()).thenAnswer(
-          (_) async => NativeAudioTrackData(exoPlayerTracks: <ExoPlayerAudioTrackData>[]),
+          (_) async => NativeAudioTrackData(
+            exoPlayerTracks: <ExoPlayerAudioTrackData>[],
+          ),
         );
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
@@ -751,61 +824,66 @@ void main() {
         verify(api.getAudioTracks());
       });
 
-      test('getAudioTracks converts native tracks to VideoAudioTrack', () async {
-        final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
-            setUpMockPlayer(playerId: 1);
-        when(api.getAudioTracks()).thenAnswer(
-          (_) async => NativeAudioTrackData(
-            exoPlayerTracks: <ExoPlayerAudioTrackData>[
-              ExoPlayerAudioTrackData(
-                groupIndex: 0,
-                trackIndex: 1,
-                label: 'English',
-                language: 'en',
-                isSelected: true,
-                bitrate: 128000,
-                sampleRate: 44100,
-                channelCount: 2,
-                codec: 'mp4a.40.2',
-              ),
-              ExoPlayerAudioTrackData(
-                groupIndex: 0,
-                trackIndex: 2,
-                label: 'Spanish',
-                language: 'es',
-                isSelected: false,
-                bitrate: 128000,
-                sampleRate: 44100,
-                channelCount: 2,
-                codec: 'mp4a.40.2',
-              ),
-            ],
-          ),
-        );
+      test(
+        'getAudioTracks converts native tracks to VideoAudioTrack',
+        () async {
+          final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
+              setUpMockPlayer(playerId: 1);
+          when(api.getAudioTracks()).thenAnswer(
+            (_) async => NativeAudioTrackData(
+              exoPlayerTracks: <ExoPlayerAudioTrackData>[
+                ExoPlayerAudioTrackData(
+                  groupIndex: 0,
+                  trackIndex: 1,
+                  label: 'English',
+                  language: 'en',
+                  isSelected: true,
+                  bitrate: 128000,
+                  sampleRate: 44100,
+                  channelCount: 2,
+                  codec: 'mp4a.40.2',
+                ),
+                ExoPlayerAudioTrackData(
+                  groupIndex: 0,
+                  trackIndex: 2,
+                  label: 'Spanish',
+                  language: 'es',
+                  isSelected: false,
+                  bitrate: 128000,
+                  sampleRate: 44100,
+                  channelCount: 2,
+                  codec: 'mp4a.40.2',
+                ),
+              ],
+            ),
+          );
 
-        final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
+          final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
-        expect(tracks.length, 2);
+          expect(tracks.length, 2);
 
-        expect(tracks[0].id, '0_1');
-        expect(tracks[0].label, 'English');
-        expect(tracks[0].language, 'en');
-        expect(tracks[0].isSelected, true);
-        expect(tracks[0].bitrate, 128000);
-        expect(tracks[0].sampleRate, 44100);
-        expect(tracks[0].channelCount, 2);
-        expect(tracks[0].codec, 'mp4a.40.2');
+          expect(tracks[0].id, '0_1');
+          expect(tracks[0].label, 'English');
+          expect(tracks[0].language, 'en');
+          expect(tracks[0].isSelected, true);
+          expect(tracks[0].bitrate, 128000);
+          expect(tracks[0].sampleRate, 44100);
+          expect(tracks[0].channelCount, 2);
+          expect(tracks[0].codec, 'mp4a.40.2');
 
-        expect(tracks[1].id, '0_2');
-        expect(tracks[1].label, 'Spanish');
-        expect(tracks[1].language, 'es');
-        expect(tracks[1].isSelected, false);
-      });
+          expect(tracks[1].id, '0_2');
+          expect(tracks[1].label, 'Spanish');
+          expect(tracks[1].language, 'es');
+          expect(tracks[1].isSelected, false);
+        },
+      );
 
       test('getAudioTracks handles null exoPlayerTracks', () async {
         final (AndroidVideoPlayer player, _, MockVideoPlayerInstanceApi api) =
             setUpMockPlayer(playerId: 1);
-        when(api.getAudioTracks()).thenAnswer((_) async => NativeAudioTrackData());
+        when(
+          api.getAudioTracks(),
+        ).thenAnswer((_) async => NativeAudioTrackData());
 
         final List<VideoAudioTrack> tracks = await player.getAudioTracks(1);
 
@@ -843,7 +921,10 @@ void main() {
       test('selectAudioTrack throws on trackId with too many parts', () async {
         final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
 
-        expect(() => player.selectAudioTrack(1, '1_2_3'), throwsA(isA<ArgumentError>()));
+        expect(
+          () => player.selectAudioTrack(1, '1_2_3'),
+          throwsA(isA<ArgumentError>()),
+        );
       });
 
       test('selectAudioTrack completes on AudioTrackChangedEvent', () async {
