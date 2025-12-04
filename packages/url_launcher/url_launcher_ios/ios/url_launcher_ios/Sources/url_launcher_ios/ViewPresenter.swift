@@ -26,7 +26,7 @@ extension UIViewController: ViewPresenter {}
 /// a stub implementation of FlutterPluginRegistrar for tests would break any time something was
 /// added to that protocol.
 protocol ViewPresenterProvider {
-  /// Returns the view controller associated with the Flutter content.
+  /// Returns the view presenter associated with the Flutter content.
   var viewPresenter: ViewPresenter? { get }
 }
 

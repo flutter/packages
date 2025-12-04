@@ -1,6 +1,10 @@
-## 0.3.0+7
+## 0.3.0+8
 
 * Removes internal native library Dart proxy.
+
+## 0.3.0+7
+
+* Bumps kotlin_version to 2.2.21.
 
 ## 0.3.0+6
 
