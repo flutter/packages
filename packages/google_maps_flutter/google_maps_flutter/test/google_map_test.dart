@@ -660,9 +660,7 @@ void main() {
     expect(map.tileOverlaySets.length, 1);
   });
 
-  testWidgets('Is default color scheme follow system', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('Is default color scheme null', (WidgetTester tester) async {
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,
@@ -674,7 +672,7 @@ void main() {
 
     final PlatformMapStateRecorder map = platform.lastCreatedMap;
 
-    expect(map.mapConfiguration.colorScheme, MapColorScheme.followSystem);
+    expect(map.mapConfiguration.colorScheme, null);
   });
 
   testWidgets('Can set color scheme to non-default', (
