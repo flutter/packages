@@ -20,9 +20,6 @@ import 'webview_android_widget.dart';
 /// an [AndroidView] to embed the webview in the widget hierarchy, and uses a method channel to
 /// communicate with the platform code.
 class AndroidWebView implements WebViewPlatform {
-  /// Constructs an [AndroidWebView].
-  AndroidWebView();
-
   @override
   Widget build({
     required BuildContext context,
