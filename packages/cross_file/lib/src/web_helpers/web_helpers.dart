@@ -50,10 +50,9 @@ Future<void> saveFileAs(XFile file, String path) async {
   final Element target = ensureInitialized('__x_file_dom_element');
 
   // Create <a> element.
-  final HTMLAnchorElement element =
-      anchorElementOverride != null
-          ? anchorElementOverride!(file.path, file.name)
-          : createAnchorElement(file.path, file.name);
+  final HTMLAnchorElement element = anchorElementOverride != null
+      ? anchorElementOverride!(file.path, file.name)
+      : createAnchorElement(file.path, file.name);
 
   // Clear existing children before appending new one.
   while (target.children.length > 0) {
