@@ -9,24 +9,6 @@ import 'package:meta/meta.dart';
 import '../platform_interface/platform_content_progress_provider.dart';
 import 'interactive_media_ads.g.dart' as ima;
 
-/// Android implementation of [PlatformContentProgressProviderCreationParams].
-final class AndroidContentProgressProviderCreationParams
-    extends PlatformContentProgressProviderCreationParams {
-  /// Constructs a [AndroidContentProgressProviderCreationParams].
-  const AndroidContentProgressProviderCreationParams() : super();
-
-  /// Creates a [AndroidContentProgressProviderCreationParams] from an instance of
-  /// [PlatformContentProgressProviderCreationParams].
-  factory AndroidContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
-    // Placeholder to prevent requiring a breaking change if params are added to
-    // PlatformContentProgressProviderCreationParams.
-    // ignore: avoid_unused_constructor_parameters
-    PlatformContentProgressProviderCreationParams params,
-  ) {
-    return const AndroidContentProgressProviderCreationParams();
-  }
-}
-
 /// Android implementation of [PlatformContentProgressProvider].
 base class AndroidContentProgressProvider
     extends PlatformContentProgressProvider {

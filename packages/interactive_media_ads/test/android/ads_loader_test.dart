@@ -132,7 +132,7 @@ void main() {
       );
 
       final progressProvider = AndroidContentProgressProvider(
-        const AndroidContentProgressProviderCreationParams(),
+        const PlatformContentProgressProviderCreationParams(),
       );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdTagUrl(
@@ -194,7 +194,7 @@ void main() {
       );
 
       final progressProvider = AndroidContentProgressProvider(
-        const AndroidContentProgressProviderCreationParams(),
+        const PlatformContentProgressProviderCreationParams(),
       );
       await adsLoader.requestAds(
         PlatformAdsRequest.withAdsResponse(

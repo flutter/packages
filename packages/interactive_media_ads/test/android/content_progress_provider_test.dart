@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/android/android_content_progress_provider.dart';
 import 'package:interactive_media_ads/src/android/interactive_media_ads.g.dart'
     as ima;
+import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -30,7 +31,7 @@ void main() {
             return ima.VideoProgressUpdate.pigeon_detached();
           };
       final provider = AndroidContentProgressProvider(
-        const AndroidContentProgressProviderCreationParams(),
+        const PlatformContentProgressProviderCreationParams(),
       );
 
       await provider.setProgress(

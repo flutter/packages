@@ -5,6 +5,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart';
 import 'package:interactive_media_ads/src/ios/ios_content_progress_provider.dart';
+import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
@@ -23,7 +24,7 @@ void main() {
       PigeonOverrides.iMAContentPlayhead_new = () => mockContentPlayhead;
 
       final provider = IOSContentProgressProvider(
-        const IOSContentProgressProviderCreationParams(),
+        const PlatformContentProgressProviderCreationParams(),
       );
 
       await provider.setProgress(

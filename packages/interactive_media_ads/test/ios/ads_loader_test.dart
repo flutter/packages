@@ -114,7 +114,7 @@ void main() {
       );
 
       final provider = IOSContentProgressProvider(
-        const IOSContentProgressProviderCreationParams(),
+        const PlatformContentProgressProviderCreationParams(),
       );
 
       await loader.requestAds(

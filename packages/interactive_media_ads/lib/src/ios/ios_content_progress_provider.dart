@@ -9,24 +9,6 @@ import 'package:meta/meta.dart';
 import '../platform_interface/platform_content_progress_provider.dart';
 import 'interactive_media_ads.g.dart' as ima;
 
-/// Implementation of [PlatformContentProgressProviderCreationParams] for iOS.
-final class IOSContentProgressProviderCreationParams
-    extends PlatformContentProgressProviderCreationParams {
-  /// Constructs an [IOSContentProgressProviderCreationParams].
-  const IOSContentProgressProviderCreationParams() : super();
-
-  /// Creates a [IOSContentProgressProviderCreationParams] from an instance of
-  /// [PlatformContentProgressProviderCreationParams].
-  factory IOSContentProgressProviderCreationParams.fromPlatformContentProgressProviderCreationParams(
-    // Placeholder to prevent requiring a breaking change if params are added to
-    // PlatformContentProgressProviderCreationParams.
-    // ignore: avoid_unused_constructor_parameters
-    PlatformContentProgressProviderCreationParams params,
-  ) {
-    return const IOSContentProgressProviderCreationParams();
-  }
-}
-
 /// Implementation of [PlatformContentProgressProvider] for iOS.
 base class IOSContentProgressProvider extends PlatformContentProgressProvider {
   /// Constructs an [IOSContentProgressProvider].
