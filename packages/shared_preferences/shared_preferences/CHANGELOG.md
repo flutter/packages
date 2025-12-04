@@ -1,6 +1,6 @@
-## NEXT
+## 2.5.4
 
-* Updates shared preferences devtools extension dependencies
+* Updates dependencies for the `shared_preferences_tool` DevTools extension and fixes related deprecations.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
