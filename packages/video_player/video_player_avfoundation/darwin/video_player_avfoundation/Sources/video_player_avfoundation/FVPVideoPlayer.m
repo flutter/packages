@@ -82,32 +82,54 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   AVAsset *asset = [item asset];
   void (^assetCompletionHandler)(void) = ^{
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([tracks count] > 0) {
-        AVAssetTrack *videoTrack = tracks[0];
-        void (^trackCompletionHandler)(void) = ^{
-          if (self->_disposed) return;
-          if ([videoTrack statusOfValueForKey:@"preferredTransform"
-                                        error:nil] == AVKeyValueStatusLoaded) {
-            // Rotate the video by using a videoComposition and the preferredTransform
-            self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
-            // Do not use video composition when it is not needed.
-            if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
-              return;
+      void (^processVideoTracks)(NSArray<AVAssetTrack *> *) = ^(NSArray<AVAssetTrack *> *tracks) {
+        if ([tracks count] > 0) {
+          AVAssetTrack *videoTrack = tracks[0];
+          void (^trackCompletionHandler)(void) = ^{
+            if (self->_disposed) return;
+            if ([videoTrack statusOfValueForKey:@"preferredTransform"
+                                          error:nil] == AVKeyValueStatusLoaded) {
+              // Rotate the video by using a videoComposition and the preferredTransform
+              self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
+              // Do not use video composition when it is not needed.
+              if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
+                return;
+              }
+              // Note:
+              // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
+              // Video composition can only be used with file-based media and is not supported for
+              // use with media served using HTTP Live Streaming.
+              AVMutableVideoComposition *videoComposition =
+                  [self getVideoCompositionWithTransform:self->_preferredTransform
+                                               withAsset:asset
+                                          withVideoTrack:videoTrack];
+              item.videoComposition = videoComposition;
             }
-            // Note:
-            // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
-            // Video composition can only be used with file-based media and is not supported for
-            // use with media served using HTTP Live Streaming.
-            AVMutableVideoComposition *videoComposition =
-                [self getVideoCompositionWithTransform:self->_preferredTransform
-                                             withAsset:asset
-                                        withVideoTrack:videoTrack];
-            item.videoComposition = videoComposition;
-          }
-        };
-        [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
-                                  completionHandler:trackCompletionHandler];
+          };
+          [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
+                                    completionHandler:trackCompletionHandler];
+        }
+      };
+
+      // Use the new async API on iOS 15.0+/macOS 12.0+, fall back to deprecated API on older
+      // versions
+      if (@available(iOS 15.0, macOS 12.0, *)) {
+        [asset loadTracksWithMediaType:AVMediaTypeVideo
+                     completionHandler:^(NSArray<AVAssetTrack *> *_Nullable tracks,
+                                         NSError *_Nullable error) {
+                       if (error == nil && tracks != nil) {
+                         processVideoTracks(tracks);
+                       } else if (error != nil) {
+                         NSLog(@"Error loading tracks: %@", error);
+                       }
+                     }];
+      } else {
+        // For older OS versions, use the deprecated API with warning suppression
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic pop
+        processVideoTracks(tracks);
       }
     }
   };
