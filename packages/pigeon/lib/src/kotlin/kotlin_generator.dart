@@ -2250,7 +2250,7 @@ fun deepEquals(a: Any?, b: Any?): Boolean {
                   indent.format('''
                 callback(
                     Result.failure(
-                        $errorClassName("missing-instance-error", "Calling instance is not in the instance manager.", "")))
+                        $errorClassName("missing-instance-error", "Callback to `${api.name}.${method.name}` failed because native instance was not in the instance manager.", "")))
                 return''');
                 },
               );

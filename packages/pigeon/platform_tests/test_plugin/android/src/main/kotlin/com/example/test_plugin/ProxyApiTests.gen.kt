@@ -3138,7 +3138,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterNoop` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3173,7 +3173,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterThrowError` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3213,7 +3213,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterThrowErrorFromVoid` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3253,7 +3253,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoBool` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3301,7 +3301,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoInt` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3348,7 +3348,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoDouble` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3396,7 +3396,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoString` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3444,7 +3444,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoUint8List` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3492,7 +3492,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoList` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3540,7 +3540,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoProxyApiList` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3588,7 +3588,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoMap` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3635,7 +3635,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoProxyApiMap` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3683,7 +3683,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoEnum` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3731,7 +3731,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoProxyApi` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3779,7 +3779,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableBool` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3820,7 +3820,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableInt` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3861,7 +3861,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableDouble` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3902,7 +3902,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableString` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3943,7 +3943,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableUint8List` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -3984,7 +3984,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableList` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -4025,7 +4025,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableMap` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -4066,7 +4066,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableEnum` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -4107,7 +4107,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoNullableProxyApi` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -4147,7 +4147,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterNoopAsync` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -4187,7 +4187,7 @@ abstract class PigeonApiProxyApiTestClass(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiTestClass.flutterEchoAsyncString` failed because native instance was not in the instance manager.",
                   "")))
       return
     }
@@ -4379,7 +4379,7 @@ open class PigeonApiProxyApiInterface(
           Result.failure(
               ProxyApiTestsError(
                   "missing-instance-error",
-                  "Calling instance is not in the instance manager.",
+                  "Callback to `ProxyApiInterface.anInterfaceMethod` failed because native instance was not in the instance manager.",
                   "")))
       return
     }

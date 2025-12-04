@@ -2707,7 +2707,7 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
                   .failure(
                     ${_getErrorClassName(generatorOptions)}(
                       code: "missing-instance-error",
-                      message: "Calling instance is not in the instance manager.", details: "")))
+                      message: "Callback to `${api.name}.${method.name}` failed because native instance was not in the instance manager.", details: "")))
                 return''');
             },
           );

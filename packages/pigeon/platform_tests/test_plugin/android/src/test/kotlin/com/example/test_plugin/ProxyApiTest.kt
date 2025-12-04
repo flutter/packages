@@ -20,7 +20,9 @@ class ProxyApiTest {
     var b: Throwable? = null
     api.flutterNoop(testObject) { b = it.exceptionOrNull() }
 
-    assertEquals(b?.message, "Calling instance is not in the instance manager.")
+    assertEquals(
+        b?.message,
+        "Callback to `ProxyApiTestClass.flutterNoop` failed because native instance was not in the instance manager.")
   }
 }
 

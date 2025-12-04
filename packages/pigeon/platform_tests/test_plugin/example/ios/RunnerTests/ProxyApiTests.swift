@@ -29,6 +29,9 @@ class ProxyApiTests: XCTestCase {
       }
     }
 
-    XCTAssertEqual(error, "Calling instance is not in the instance manager.")
+    XCTAssertEqual(
+      error,
+      "Callback to `ProxyApiTestClass.flutterNoop` failed because native instance was not in the instance manager."
+    )
   }
 }
