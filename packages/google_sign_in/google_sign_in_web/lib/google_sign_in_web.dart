@@ -73,10 +73,7 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   // A future that completes when the JS loader is done.
   late Future<void> _jsSdkLoadedFuture;
 
-  /// A completer used to track whether [init] has been called.
-  ///
-  /// Completes when [init] finishes, and is used to prevent multiple
-  /// initialization calls.
+  /// A completer used to track whether [init] has finished.
   final Completer<void> _initCalled = Completer<void>();
 
   /// A boolean flag to track if [init] has been called.
