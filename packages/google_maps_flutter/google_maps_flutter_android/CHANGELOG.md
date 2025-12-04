@@ -1,6 +1,3 @@
-## 2.18.6
-
-* Adds support for `colorScheme` for cloud-based maps styling brightness in web.
 ## 2.18.8
 
 * Bumps com.google.maps.android:android-maps-utils from 3.6.0 to 3.19.1.
