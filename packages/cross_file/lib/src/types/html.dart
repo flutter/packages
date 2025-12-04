@@ -68,9 +68,9 @@ class XFile extends XFileBase {
     return (mimeType == null)
         ? Blob(<JSUint8Array>[bytes.toJS].toJS)
         : Blob(
-            <JSUint8Array>[bytes.toJS].toJS,
-            BlobPropertyBag(type: mimeType),
-          );
+          <JSUint8Array>[bytes.toJS].toJS,
+          BlobPropertyBag(type: mimeType),
+        );
   }
 
   // Overridable (meta) data that can be specified by the constructors.
@@ -122,24 +122,27 @@ class XFile extends XFileBase {
     final blobCompleter = Completer<Blob>();
 
     late XMLHttpRequest request;
-    request = XMLHttpRequest()
-      ..open('get', path, true)
-      ..responseType = 'blob'
-      ..onLoad.listen((ProgressEvent e) {
-        assert(
-          request.response != null,
-          'The Blob backing this XFile cannot be null!',
-        );
-        blobCompleter.complete(request.response! as Blob);
-      })
-      ..onError.listen((ProgressEvent e) {
-        if (e.type == 'error') {
-          blobCompleter.completeError(
-            Exception('Could not load Blob from its URL. Has it been revoked?'),
-          );
-        }
-      })
-      ..send();
+    request =
+        XMLHttpRequest()
+          ..open('get', path, true)
+          ..responseType = 'blob'
+          ..onLoad.listen((ProgressEvent e) {
+            assert(
+              request.response != null,
+              'The Blob backing this XFile cannot be null!',
+            );
+            blobCompleter.complete(request.response! as Blob);
+          })
+          ..onError.listen((ProgressEvent e) {
+            if (e.type == 'error') {
+              blobCompleter.completeError(
+                Exception(
+                  'Could not load Blob from its URL. Has it been revoked?',
+                ),
+              );
+            }
+          })
+          ..send();
 
     return blobCompleter.future;
   }
@@ -176,8 +179,8 @@ class XFile extends XFileBase {
 
     await reader.onLoadEnd.first;
 
-    final Uint8List? result = (reader.result as JSArrayBuffer?)?.toDart
-        .asUint8List();
+    final Uint8List? result =
+        (reader.result as JSArrayBuffer?)?.toDart.asUint8List();
 
     if (result == null) {
       throw Exception('Cannot read bytes from Blob. Is it still available?');

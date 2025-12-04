@@ -1,6 +1,6 @@
 ## 0.3.6
 
-* Separate "Save As" implementation details from XFile web class.
+* Separates "Save As" implementation details from XFile web class.
 
 ## 0.3.5+1
 
