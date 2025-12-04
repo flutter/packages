@@ -1,10 +1,10 @@
+## 1.1.1
+
+* Throws a more actionable error when init is called more than once
+
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
-
-## 1.1.1
-
-* Fixes Bad state: Future already completed on the web.
 
 ## 1.1.0
 
