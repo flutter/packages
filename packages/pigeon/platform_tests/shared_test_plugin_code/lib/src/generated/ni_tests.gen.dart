@@ -7,8 +7,9 @@
 // ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers
 
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:io' show Platform;
-import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
+import 'dart:typed_data';
 
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
@@ -533,30 +534,9 @@ class _PigeonFfiCodec {
       }
     } else if (NSString.isInstance(value)) {
       return (NSString.castFrom(value)).toDartString();
-      // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
-      //   final Uint8List list = Uint8List(value.as(NSByteArray.type).length);
-      //   for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
-      //     list[i] = value.as(NSByteArray.type)[i];
-      //   }
-      //   return list;
-      // } else if (value.isA<NSIntArray>(NSIntArray.type)) {
-      //   final Int32List list = Int32List(value.as(NSIntArray.type).length);
-      //   for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
-      //     list[i] = value.as(NSIntArray.type)[i];
-      //   }
-      //   return list;
-      // } else if (value.isA<NSLongArray>(NSLongArray.type)) {
-      //   final Int64List list = Int64List(value.as(NSLongArray.type).length);
-      //   for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
-      //     list[i] = value.as(NSLongArray.type)[i];
-      //   }
-      //   return list;
-      // } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
-      //   final Float64List list = Float64List(value.as(NSDoubleArray.type).length);
-      //   for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
-      //     list[i] = value.as(NSDoubleArray.type)[i];
-      //   }
-      //   return list;
+    } else if (value is ffi_bridge.PigeonTypedData ||
+        ffi_bridge.PigeonTypedData.isInstance(value)) {
+      return getValueFromPigeonTypedData(value as ffi_bridge.PigeonTypedData);
     } else if (value is NSArray || NSArray.isInstance(value)) {
       final NSArray array = NSArray.castFrom(value);
       final List<Object?> res = <Object?>[];
@@ -599,8 +579,8 @@ class _PigeonFfiCodec {
 
   static T writeValue<T extends ObjCObjectBase?>(Object? value) {
     if (value == null) {
-      final String tString = T.toString();
-      if (tString.contains('ObjCObjectBase') || tString.contains('NSObject')) {
+      if (isTypeOrNullableType<T>(ObjCObjectBase) ||
+          isTypeOrNullableType<T>(NSObject)) {
         return ffi_bridge.PigeonInternalNull() as T;
       }
       return null as T;
@@ -608,8 +588,8 @@ class _PigeonFfiCodec {
         value is double ||
         value is int ||
         value is Enum) {
-      if (T != NSNumber && T.toString() != 'NSNumber?') {
-        return convertNumberWrapperToFfi(value) as T;
+      if (!isType<T>(NSNumber) && !isType<NSNumber?>(T)) {
+        return convertToFfiNumberWrapper(value) as T;
       }
       if (value is bool) {
         return NSNumber.alloc().initWithLong(value ? 1 : 0) as T;
@@ -623,37 +603,11 @@ class _PigeonFfiCodec {
       if (value is Enum) {
         return NSNumber.alloc().initWithLong(value.index) as T;
       }
-      return convertNumberWrapperToFfi(value) as T;
+      return convertToFfiNumberWrapper(value) as T;
     } else if (value is String) {
       return NSString(value) as T;
-      // } else if (isTypeOrNullableType<NSByteArray>(T)) {
-      //   value as List<int>;
-      //   final NSByteArray array = NSByteArray(value.length);
-      //   for (int i = 0; i < value.length; i++) {
-      //     array[i] = value[i];
-      //   }
-      //   return array as T;
-      // } else if (isTypeOrNullableType<NSIntArray>(T)) {
-      //   value as List<int>;
-      //   final NSIntArray array = NSIntArray(value.length);
-      //   for (int i = 0; i < value.length; i++) {
-      //     array[i] = value[i];
-      //   }
-      //   return array as T;
-      // } else if (isTypeOrNullableType<NSLongArray>(T)) {
-      //   value as List<int>;
-      //   final NSLongArray array = NSLongArray(value.length);
-      //   for (int i = 0; i < value.length; i++) {
-      //     array[i] = value[i];
-      //   }
-      //   return array as T;
-      // } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
-      //   value as List<double>;
-      //   final NSDoubleArray array = NSDoubleArray(value.length);
-      //   for (int i = 0; i < value.length; i++) {
-      //     array[i] = value[i];
-      //   }
-      //   return array as T;
+    } else if (isTypeOrNullableType<ffi_bridge.PigeonTypedData>(T)) {
+      return toPigeonTypedData(value as TypedData) as T;
     } else if (value is List<bool> && isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final bool entry in value) {
@@ -937,6 +891,93 @@ class _PigeonFfiCodec {
   }
 }
 
+ffi_bridge.PigeonTypedData toPigeonTypedData(TypedData value) {
+  if (value is Uint8List) {
+    final Pointer<Uint8> ptr = calloc<Uint8>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type$1: 0);
+  } else if (value is Int32List) {
+    final Pointer<Int32> ptr = calloc<Int32>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type$1: 1);
+  } else if (value is Int64List) {
+    final Pointer<Int64> ptr = calloc<Int64>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type$1: 2);
+  } else if (value is Float32List) {
+    final Pointer<Float> ptr = calloc<Float>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type$1: 3);
+  } else if (value is Float64List) {
+    final Pointer<Double> ptr = calloc<Double>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type$1: 4);
+  }
+  throw ArgumentError.value(value);
+}
+
+Object? getValueFromPigeonTypedData(ffi_bridge.PigeonTypedData value) {
+  final NSData data = value.data;
+  final Pointer<Void> bytes = data.bytes;
+  switch (value.type) {
+    case 0:
+      return Uint8List.fromList(bytes.cast<Uint8>().asTypedList(data.length));
+    case 1:
+      return Int32List.fromList(
+        bytes.cast<Int32>().asTypedList(data.length ~/ 4),
+      );
+    case 2:
+      return Int64List.fromList(
+        bytes.cast<Int64>().asTypedList(data.length ~/ 8),
+      );
+    case 3:
+      return Float32List.fromList(
+        bytes.cast<Float>().asTypedList(data.length ~/ 4),
+      );
+    case 4:
+      return Float64List.fromList(
+        bytes.cast<Double>().asTypedList(data.length ~/ 8),
+      );
+    default:
+      throw ArgumentError.value(value);
+  }
+}
+
 Object? convertNumberWrapperToDart(ffi_bridge.NumberWrapper value) {
   switch (value.type) {
     case 1:
@@ -954,7 +995,7 @@ Object? convertNumberWrapperToDart(ffi_bridge.NumberWrapper value) {
   }
 }
 
-ffi_bridge.NumberWrapper convertNumberWrapperToFfi(Object value) {
+ffi_bridge.NumberWrapper convertToFfiNumberWrapper(Object value) {
   switch (value) {
     case int _:
       return ffi_bridge.NumberWrapper.alloc().initWithNumber(
@@ -1056,6 +1097,10 @@ class NIAllTypes {
     this.anInt = 0,
     this.anInt64 = 0,
     this.aDouble = 0,
+    required this.aByteArray,
+    required this.a4ByteArray,
+    required this.a8ByteArray,
+    required this.aFloatArray,
     this.anEnum = NIAnEnum.one,
     this.anotherEnum = NIAnotherEnum.justInCase,
     this.aString = '',
@@ -1085,6 +1130,14 @@ class NIAllTypes {
   int anInt64;
 
   double aDouble;
+
+  Uint8List aByteArray;
+
+  Int32List a4ByteArray;
+
+  Int64List a8ByteArray;
+
+  Float64List aFloatArray;
 
   NIAnEnum anEnum;
 
@@ -1132,6 +1185,10 @@ class NIAllTypes {
       anInt,
       anInt64,
       aDouble,
+      aByteArray,
+      a4ByteArray,
+      a8ByteArray,
+      aFloatArray,
       anEnum,
       anotherEnum,
       aString,
@@ -1161,6 +1218,18 @@ class NIAllTypes {
       anInt: anInt,
       anInt64: anInt64,
       aDouble: aDouble,
+      aByteArray: _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+        aByteArray,
+      ),
+      a4ByteArray: _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+        a4ByteArray,
+      ),
+      a8ByteArray: _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+        a8ByteArray,
+      ),
+      aFloatArray: _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+        aFloatArray,
+      ),
       anEnum: ffi_bridge.NIAnEnum.values[anEnum.index],
       anotherEnum: ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
       aString: _PigeonFfiCodec.writeValue<NSString>(aString),
@@ -1196,6 +1265,15 @@ class NIAllTypes {
             anInt: ffiClass.anInt,
             anInt64: ffiClass.anInt64,
             aDouble: ffiClass.aDouble,
+            aByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aByteArray)! as Uint8List),
+            a4ByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.a4ByteArray)! as Int32List),
+            a8ByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.a8ByteArray)! as Int64List),
+            aFloatArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aFloatArray)!
+                    as Float64List),
             anEnum: NIAnEnum.values[ffiClass.anEnum.index],
             anotherEnum: NIAnotherEnum.values[ffiClass.anotherEnum.index],
             aString: ffiClass.aString.toDartString(),
@@ -1267,28 +1345,32 @@ class NIAllTypes {
       anInt: result[1]! as int,
       anInt64: result[2]! as int,
       aDouble: result[3]! as double,
-      anEnum: result[4]! as NIAnEnum,
-      anotherEnum: result[5]! as NIAnotherEnum,
-      aString: result[6]! as String,
-      anObject: result[7]!,
-      list: result[8]! as List<Object?>,
-      stringList: (result[9] as List<Object?>?)!.cast<String>(),
-      intList: (result[10] as List<Object?>?)!.cast<int>(),
-      doubleList: (result[11] as List<Object?>?)!.cast<double>(),
-      boolList: (result[12] as List<Object?>?)!.cast<bool>(),
-      enumList: (result[13] as List<Object?>?)!.cast<NIAnEnum>(),
-      objectList: (result[14] as List<Object?>?)!.cast<Object>(),
-      listList: (result[15] as List<Object?>?)!.cast<List<Object?>>(),
-      mapList: (result[16] as List<Object?>?)!.cast<Map<Object?, Object?>>(),
-      map: result[17]! as Map<Object?, Object?>,
-      stringMap: (result[18] as Map<Object?, Object?>?)!.cast<String, String>(),
-      intMap: (result[19] as Map<Object?, Object?>?)!.cast<int, int>(),
-      enumMap: (result[20] as Map<Object?, Object?>?)!
+      aByteArray: result[4]! as Uint8List,
+      a4ByteArray: result[5]! as Int32List,
+      a8ByteArray: result[6]! as Int64List,
+      aFloatArray: result[7]! as Float64List,
+      anEnum: result[8]! as NIAnEnum,
+      anotherEnum: result[9]! as NIAnotherEnum,
+      aString: result[10]! as String,
+      anObject: result[11]!,
+      list: result[12]! as List<Object?>,
+      stringList: (result[13] as List<Object?>?)!.cast<String>(),
+      intList: (result[14] as List<Object?>?)!.cast<int>(),
+      doubleList: (result[15] as List<Object?>?)!.cast<double>(),
+      boolList: (result[16] as List<Object?>?)!.cast<bool>(),
+      enumList: (result[17] as List<Object?>?)!.cast<NIAnEnum>(),
+      objectList: (result[18] as List<Object?>?)!.cast<Object>(),
+      listList: (result[19] as List<Object?>?)!.cast<List<Object?>>(),
+      mapList: (result[20] as List<Object?>?)!.cast<Map<Object?, Object?>>(),
+      map: result[21]! as Map<Object?, Object?>,
+      stringMap: (result[22] as Map<Object?, Object?>?)!.cast<String, String>(),
+      intMap: (result[23] as Map<Object?, Object?>?)!.cast<int, int>(),
+      enumMap: (result[24] as Map<Object?, Object?>?)!
           .cast<NIAnEnum, NIAnEnum>(),
-      objectMap: (result[21] as Map<Object?, Object?>?)!.cast<Object, Object>(),
-      listMap: (result[22] as Map<Object?, Object?>?)!
+      objectMap: (result[25] as Map<Object?, Object?>?)!.cast<Object, Object>(),
+      listMap: (result[26] as Map<Object?, Object?>?)!
           .cast<int, List<Object?>>(),
-      mapMap: (result[23] as Map<Object?, Object?>?)!
+      mapMap: (result[27] as Map<Object?, Object?>?)!
           .cast<int, Map<Object?, Object?>>(),
     );
   }
@@ -1306,6 +1388,10 @@ class NIAllTypes {
         anInt == other.anInt &&
         anInt64 == other.anInt64 &&
         aDouble == other.aDouble &&
+        _deepEquals(aByteArray, other.aByteArray) &&
+        _deepEquals(a4ByteArray, other.a4ByteArray) &&
+        _deepEquals(a8ByteArray, other.a8ByteArray) &&
+        _deepEquals(aFloatArray, other.aFloatArray) &&
         anEnum == other.anEnum &&
         anotherEnum == other.anotherEnum &&
         aString == other.aString &&
@@ -1331,6 +1417,11 @@ class NIAllTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 /// A class containing all supported nullable types.
@@ -1343,6 +1434,10 @@ class NIAllNullableTypesWithoutRecursion {
     this.aNullableInt,
     this.aNullableInt64,
     this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -1372,6 +1467,14 @@ class NIAllNullableTypesWithoutRecursion {
   int? aNullableInt64;
 
   double? aNullableDouble;
+
+  Uint8List? aNullableByteArray;
+
+  Int32List? aNullable4ByteArray;
+
+  Int64List? aNullable8ByteArray;
+
+  Float64List? aNullableFloatArray;
 
   NIAnEnum? aNullableEnum;
 
@@ -1419,6 +1522,10 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt,
       aNullableInt64,
       aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
       aNullableEnum,
       anotherNullableEnum,
       aNullableString,
@@ -1451,6 +1558,22 @@ class NIAllNullableTypesWithoutRecursion {
           aNullableDouble: _PigeonFfiCodec.writeValue<NSNumber?>(
             aNullableDouble,
           ),
+          aNullableByteArray:
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullableByteArray,
+              ),
+          aNullable4ByteArray:
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullable4ByteArray,
+              ),
+          aNullable8ByteArray:
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullable8ByteArray,
+              ),
+          aNullableFloatArray:
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullableFloatArray,
+              ),
           aNullableEnum: _PigeonFfiCodec.writeValue<NSNumber?>(
             aNullableEnum?.index,
           ),
@@ -1496,6 +1619,18 @@ class NIAllNullableTypesWithoutRecursion {
             aNullableInt: ffiClass.aNullableInt?.longValue,
             aNullableInt64: ffiClass.aNullableInt64?.longValue,
             aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
+            aNullableByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullableByteArray)
+                    as Uint8List?),
+            aNullable4ByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray)
+                    as Int32List?),
+            aNullable8ByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray)
+                    as Int64List?),
+            aNullableFloatArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray)
+                    as Float64List?),
             aNullableEnum: ffiClass.aNullableEnum == null
                 ? null
                 : NIAnEnum.values[ffiClass.aNullableEnum!.longValue],
@@ -1573,30 +1708,34 @@ class NIAllNullableTypesWithoutRecursion {
       aNullableInt: result[1] as int?,
       aNullableInt64: result[2] as int?,
       aNullableDouble: result[3] as double?,
-      aNullableEnum: result[4] as NIAnEnum?,
-      anotherNullableEnum: result[5] as NIAnotherEnum?,
-      aNullableString: result[6] as String?,
-      aNullableObject: result[7],
-      list: result[8] as List<Object?>?,
-      stringList: (result[9] as List<Object?>?)?.cast<String?>(),
-      intList: (result[10] as List<Object?>?)?.cast<int?>(),
-      doubleList: (result[11] as List<Object?>?)?.cast<double?>(),
-      boolList: (result[12] as List<Object?>?)?.cast<bool?>(),
-      enumList: (result[13] as List<Object?>?)?.cast<NIAnEnum?>(),
-      objectList: (result[14] as List<Object?>?)?.cast<Object?>(),
-      listList: (result[15] as List<Object?>?)?.cast<List<Object?>?>(),
-      mapList: (result[16] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
-      map: result[17] as Map<Object?, Object?>?,
-      stringMap: (result[18] as Map<Object?, Object?>?)
+      aNullableByteArray: result[4] as Uint8List?,
+      aNullable4ByteArray: result[5] as Int32List?,
+      aNullable8ByteArray: result[6] as Int64List?,
+      aNullableFloatArray: result[7] as Float64List?,
+      aNullableEnum: result[8] as NIAnEnum?,
+      anotherNullableEnum: result[9] as NIAnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      list: result[12] as List<Object?>?,
+      stringList: (result[13] as List<Object?>?)?.cast<String?>(),
+      intList: (result[14] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[15] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[16] as List<Object?>?)?.cast<bool?>(),
+      enumList: (result[17] as List<Object?>?)?.cast<NIAnEnum?>(),
+      objectList: (result[18] as List<Object?>?)?.cast<Object?>(),
+      listList: (result[19] as List<Object?>?)?.cast<List<Object?>?>(),
+      mapList: (result[20] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      map: result[21] as Map<Object?, Object?>?,
+      stringMap: (result[22] as Map<Object?, Object?>?)
           ?.cast<String?, String?>(),
-      intMap: (result[19] as Map<Object?, Object?>?)?.cast<int?, int?>(),
-      enumMap: (result[20] as Map<Object?, Object?>?)
+      intMap: (result[23] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[24] as Map<Object?, Object?>?)
           ?.cast<NIAnEnum?, NIAnEnum?>(),
-      objectMap: (result[21] as Map<Object?, Object?>?)
+      objectMap: (result[25] as Map<Object?, Object?>?)
           ?.cast<Object?, Object?>(),
-      listMap: (result[22] as Map<Object?, Object?>?)
+      listMap: (result[26] as Map<Object?, Object?>?)
           ?.cast<int?, List<Object?>?>(),
-      mapMap: (result[23] as Map<Object?, Object?>?)
+      mapMap: (result[27] as Map<Object?, Object?>?)
           ?.cast<int?, Map<Object?, Object?>?>(),
     );
   }
@@ -1615,6 +1754,10 @@ class NIAllNullableTypesWithoutRecursion {
         aNullableInt == other.aNullableInt &&
         aNullableInt64 == other.aNullableInt64 &&
         aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
         aNullableEnum == other.aNullableEnum &&
         anotherNullableEnum == other.anotherNullableEnum &&
         aNullableString == other.aNullableString &&
@@ -1640,6 +1783,11 @@ class NIAllNullableTypesWithoutRecursion {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 /// A class for testing nested class handling.
@@ -1769,6 +1917,11 @@ class NIAllClassesWrapper {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {
@@ -2037,6 +2190,150 @@ class NIHostIntegrationCoreApiForNativeInterop {
           );
         } else {
           final String dartTypeRes = res!.toDartString();
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Uint8List echoUint8List(Uint8List aUint8List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoUint8ListWithAUint8List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+                aUint8List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Uint8List dartTypeRes =
+              (_PigeonFfiCodec.readValue(res)! as Uint8List);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Int32List echoInt32List(Int32List aInt32List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoInt32ListWithAInt32List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+                aInt32List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Int32List dartTypeRes =
+              (_PigeonFfiCodec.readValue(res)! as Int32List);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Int64List echoInt64List(Int64List aInt64List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoInt64ListWithAInt64List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+                aInt64List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Int64List dartTypeRes =
+              (_PigeonFfiCodec.readValue(res)! as Int64List);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Float64List echoFloat64List(Float64List aFloat64List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoFloat64ListWithAFloat64List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
+                aFloat64List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Float64List dartTypeRes =
+              (_PigeonFfiCodec.readValue(res)! as Float64List);
           return dartTypeRes;
         }
       }
@@ -3115,6 +3412,150 @@ class NIHostIntegrationCoreApiForNativeInterop {
     throw Exception("this shouldn't be possible");
   }
 
+  Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoNullableUint8ListWithANullableUint8List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullableUint8List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Uint8List? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as Uint8List?);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Int32List? echoNullableInt32List(Int32List? aNullableInt32List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoNullableInt32ListWithANullableInt32List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullableInt32List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Int32List? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as Int32List?);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Int64List? echoNullableInt64List(Int64List? aNullableInt64List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoNullableInt64ListWithANullableInt64List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullableInt64List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Int64List? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as Int64List?);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Float64List? echoNullableFloat64List(Float64List? aNullableFloat64List) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.PigeonTypedData? res = _ffiApi
+            .echoNullableFloat64ListWithANullableFloat64List(
+              _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+                aNullableFloat64List,
+              ),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details: error.details.toString(),
+          );
+        } else {
+          final Float64List? dartTypeRes =
+              (_PigeonFfiCodec.readValue(res) as Float64List?);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
   Object? echoNullableObject(Object? aNullableObject) {
     try {
       if (_jniApi != null) {
@@ -3979,6 +4420,154 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as String?)!;
+    }
+  }
+
+  /// Returns the passed in Uint8List.
+  Future<Uint8List> echoUint8List(Uint8List aUint8List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoUint8List(aUint8List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoUint8List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aUint8List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Uint8List?)!;
+    }
+  }
+
+  /// Returns the passed in Int32List.
+  Future<Int32List> echoInt32List(Int32List aInt32List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoInt32List(aInt32List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoInt32List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aInt32List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int32List?)!;
+    }
+  }
+
+  /// Returns the passed in Int64List.
+  Future<Int64List> echoInt64List(Int64List aInt64List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoInt64List(aInt64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoInt64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aInt64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int64List?)!;
+    }
+  }
+
+  /// Returns the passed in Float64List.
+  Future<Float64List> echoFloat64List(Float64List aFloat64List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoFloat64List(aFloat64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoFloat64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aFloat64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Float64List?)!;
     }
   }
 
@@ -5150,6 +5739,142 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// Returns the passed in Uint8List.
+  Future<Uint8List?> echoNullableUint8List(
+    Uint8List? aNullableUint8List,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableUint8List(aNullableUint8List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableUint8List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aNullableUint8List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Uint8List?);
+    }
+  }
+
+  /// Returns the passed in Int32List.
+  Future<Int32List?> echoNullableInt32List(
+    Int32List? aNullableInt32List,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableInt32List(aNullableInt32List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableInt32List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aNullableInt32List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int32List?);
+    }
+  }
+
+  /// Returns the passed in Int64List.
+  Future<Int64List?> echoNullableInt64List(
+    Int64List? aNullableInt64List,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableInt64List(aNullableInt64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableInt64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aNullableInt64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int64List?);
+    }
+  }
+
+  /// Returns the passed in Float64List.
+  Future<Float64List?> echoNullableFloat64List(
+    Float64List? aNullableFloat64List,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoNullableFloat64List(aNullableFloat64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableFloat64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aNullableFloat64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Float64List?);
     }
   }
 

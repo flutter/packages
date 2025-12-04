@@ -7,7 +7,7 @@
 // ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers
 
 import 'dart:async';
-import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
@@ -88,6 +88,11 @@ class UnusedClass {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 /// A class containing all supported types.
@@ -294,6 +299,11 @@ class AllTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 /// A class containing all supported nullable types.
@@ -522,6 +532,11 @@ class AllNullableTypes {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -733,6 +748,11 @@ class AllNullableTypesWithoutRecursion {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 /// A class for testing nested class handling.
@@ -819,6 +839,11 @@ class AllClassesWrapper {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 /// A data class containing a List, used in unit tests.
@@ -855,6 +880,11 @@ class TestMessage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
 }
 
 class _PigeonCodec extends StandardMessageCodec {

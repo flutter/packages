@@ -621,6 +621,7 @@ class _PigeonFfiCodec {
     Class classDefinition, {
     bool private = false,
     bool useFfi = false,
+    bool useFfiTypedData = false,
     bool hashable = true,
   }) {
     final String privateString = private ? 'private ' : '';
@@ -684,6 +685,7 @@ class _PigeonFfiCodec {
           field,
           addNil: !classDefinition.isSwiftClass,
           useFfi: useFfi,
+          useFfiTypedData: useFfiTypedData,
         );
         indent.newln();
       }
@@ -799,7 +801,11 @@ if (wrapped == nil) {
       _docCommentSpec,
       generatorComments: generatedComments,
     );
-    _writeDataClassSignature(indent, classDefinition);
+    _writeDataClassSignature(
+      indent,
+      classDefinition,
+      useFfiTypedData: generatorOptions.useFfi,
+    );
     indent.writeScoped('', '}', () {
       if (classDefinition.isSealed) {
         return;
@@ -810,6 +816,7 @@ if (wrapped == nil) {
         indent,
         classDefinition,
         dartPackageName: dartPackageName,
+        useFfi: generatorOptions.useFfi,
       );
       writeClassEncode(
         generatorOptions,
@@ -917,6 +924,17 @@ if (wrapped == nil) {
         return type.isNullable || forceNullable
             ? _numberToObjc(varName, getter: '!')
             : varName;
+      case 'Uint8List':
+      case 'Int32List':
+      case 'Int64List':
+      case 'Float32List':
+      case 'Float64List':
+        return wrapConditionally(
+          'PigeonTypedData($varName${type.isNullable || forceNullable ? '!' : ''})',
+          'isNullish($varName) ? nil : ',
+          '',
+          type.isNullable || forceNullable,
+        );
       case 'String':
         return '$varName as NSString$nullable';
       case 'List':
@@ -957,6 +975,16 @@ if (wrapped == nil) {
         return type.isNullable || forceNullable
             ? 'isNullish($varName) ? nil : $varName!.boolValue'
             : varName;
+      case 'Uint8List':
+        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toUint8Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Int32List':
+        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toInt32Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Int64List':
+        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toInt64Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Float32List':
+        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat32Array()${type.isNullable || forceNullable ? '' : '!'}';
+      case 'Float64List':
+        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat64Array()${type.isNullable || forceNullable ? '' : '!'}';
       case 'String':
         return '$varName as String$nullable';
       case 'List':
@@ -1021,6 +1049,7 @@ if (wrapped == nil) {
     List<NamedType> fields,
     String objc, {
     bool useFfi = false,
+    bool useFfiTypedData = false,
   }) {
     indent.writeScoped('${objc}init(', ')', () {
       for (int i = 0; i < fields.length; i++) {
@@ -1035,7 +1064,7 @@ if (wrapped == nil) {
     }, addTrailingNewline: false);
     indent.addScoped(' {', '}', () {
       for (final NamedType field in fields) {
-        _writeClassFieldInit(indent, field);
+        _writeClassFieldInit(indent, field, useFfiTypedData: useFfiTypedData);
       }
     });
   }
@@ -1045,14 +1074,19 @@ if (wrapped == nil) {
     NamedType field, {
     bool addNil = true,
     bool useFfi = false,
+    bool useFfiTypedData = false,
   }) {
     final String defaultNil = field.type.isNullable && addNil ? ' = nil' : '';
     indent.add(
-      '${field.name}: ${_nullSafeSwiftTypeForDartType(field.type, useFfi: useFfi)}$defaultNil',
+      '${field.name}: ${_nullSafeSwiftTypeForDartType(field.type, useFfi: useFfi, ffiTypedData: useFfiTypedData)}$defaultNil',
     );
   }
 
-  void _writeClassFieldInit(Indent indent, NamedType field) {
+  void _writeClassFieldInit(
+    Indent indent,
+    NamedType field, {
+    bool useFfiTypedData = false,
+  }) {
     indent.writeln('self.${field.name} = ${field.name}');
   }
 
@@ -1117,6 +1151,7 @@ if (wrapped == nil) {
     Indent indent,
     Class classDefinition, {
     required String dartPackageName,
+    bool useFfi = false,
   }) {
     final String className = classDefinition.name;
     indent.write(
@@ -1134,8 +1169,9 @@ if (wrapped == nil) {
           indent: indent,
           value: listValue,
           variableName: field.name,
-          fieldType: _swiftTypeForDartType(field.type),
+          fieldType: _swiftTypeForDartType(field.type, ffiTypedData: useFfi),
           type: field.type,
+          ffiTypedData: useFfi,
         );
       });
 
@@ -1331,14 +1367,19 @@ if (wrapped == nil) {
         );
         indent.addScoped(' {', '}', () {
           indent.writeScoped('do {', '}', () {
-            if (method.returnType.isNullable && method.returnType.isEnum) {
+            if ((method.returnType.isNullable && method.returnType.isEnum) ||
+                method.returnType.baseName == 'Uint8List' ||
+                method.returnType.baseName == 'Int32List' ||
+                method.returnType.baseName == 'Int64List' ||
+                method.returnType.baseName == 'Float32List' ||
+                method.returnType.baseName == 'Float64List') {
               indent.writeln(
                 'let res = try api!.${method.name}(${method.parameters.map((NamedType param) {
                   return '${param.name}: ${_varToSwift(param.name, param.type)}';
-                }).join(', ')})?.rawValue',
+                }).join(', ')})${method.returnType.isEnum ? '?.rawValue' : ''}',
               );
               indent.writeln(
-                'return isNullish(res) ? nil : NSNumber(value: res!)',
+                'return isNullish(res) ? nil : ${method.returnType.isEnum ? 'NSNumber(value: res!)' : 'PigeonTypedData(res${method.returnType.isNullable ? '!' : ''})'}',
               );
             } else {
               indent.writeln(
@@ -1417,6 +1458,7 @@ if (wrapped == nil) {
             errorTypeName: 'Error',
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,
+            useFfiTypedData: generatorOptions.useFfi,
           ),
         );
       }
@@ -1920,7 +1962,11 @@ if (wrapped == nil) {
     );
   }
 
-  String _castForceUnwrap(String value, TypeDeclaration type) {
+  String _castForceUnwrap(
+    String value,
+    TypeDeclaration type, {
+    bool ffiTypedData = false,
+  }) {
     assert(!type.isVoid);
     if (type.baseName == 'Object') {
       return value + (type.isNullable ? '' : '!');
@@ -1928,11 +1974,11 @@ if (wrapped == nil) {
       // It needs soft-casting followed by force unwrapping.
     } else if (type.baseName == 'Map' &&
         type.typeArguments.any((TypeDeclaration type) => type.isEnum)) {
-      return '$value as? ${_swiftTypeForDartType(type)}';
+      return '$value as? ${_swiftTypeForDartType(type, ffiTypedData: ffiTypedData)}';
     } else if (type.isNullable) {
       return 'nilOrValue($value)';
     } else {
-      return '$value as! ${_swiftTypeForDartType(type)}';
+      return '$value as! ${_swiftTypeForDartType(type, ffiTypedData: ffiTypedData)}';
     }
   }
 
@@ -1942,13 +1988,16 @@ if (wrapped == nil) {
     required String variableName,
     required String fieldType,
     required TypeDeclaration type,
+    bool ffiTypedData = false,
   }) {
     if (type.isNullable) {
       indent.writeln(
-        'let $variableName: $fieldType? = ${_castForceUnwrap(value, type)}',
+        'let $variableName: $fieldType? = ${_castForceUnwrap(value, type, ffiTypedData: ffiTypedData)}',
       );
     } else {
-      indent.writeln('let $variableName = ${_castForceUnwrap(value, type)}');
+      indent.writeln(
+        'let $variableName = ${_castForceUnwrap(value, type, ffiTypedData: ffiTypedData)}',
+      );
     }
   }
 
@@ -2238,6 +2287,130 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
         });
       },
     );
+
+    indent.format(r'''
+// Enum to represent the Dart TypedData types
+enum MyDataType: Int {
+  case uint8 = 0
+  case int32 = 1
+  case int64 = 2
+  case float32 = 3
+  case float64 = 4
+}
+
+@available(iOS 13, macOS 16.0.0, *)
+@objc public class PigeonTypedData: NSObject {
+  @objc public let data: NSData
+  @objc public let type: Int
+
+  @objc public init(data: NSData, type: Int) {
+    self.data = data
+    self.type = type
+  }
+
+  public init(_ data: [UInt8]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.uint8.rawValue
+  }
+
+  public init(_ data: [Int32]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.int32.rawValue
+  }
+
+  public init(_ data: [Int64]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.int64.rawValue
+  }
+
+  public init(_ data: [Float32]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.float32.rawValue
+  }
+
+  public init(_ data: [Float64]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.float64.rawValue
+  }
+
+  /// Returns the data as a [UInt8] array, if the type is .uint8
+  public func toUint8Array() -> [UInt8]? {
+    guard type == MyDataType.uint8.rawValue else { return nil }
+    var array = [UInt8](repeating: 0, count: data.length)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Int32] array, if the type is .int32
+  public func toInt32Array() -> [Int32]? {
+    guard type == MyDataType.int32.rawValue else { return nil }
+    let itemSize = MemoryLayout<Int32>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Int32](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Int64] array, if the type is .int64
+  public func toInt64Array() -> [Int64]? {
+    guard type == MyDataType.int64.rawValue else { return nil }
+    let itemSize = MemoryLayout<Int64>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Int64](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Float32] array, if the type is .float32
+  public func toFloat32Array() -> [Float32]? {
+    guard type == MyDataType.float32.rawValue else { return nil }
+    let itemSize = MemoryLayout<Float32>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Float32](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Float64] array (Array<Double>), if the type is .float64
+  public func toFloat64Array() -> [Double]? {
+    guard type == MyDataType.float64.rawValue else { return nil }
+    let itemSize = MemoryLayout<Double>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Double](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  @objc public func getUint8Array() -> [NSNumber]? {
+    return toUint8Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getInt32Array() -> [NSNumber]? {
+    return toInt32Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getInt64Array() -> [NSNumber]? {
+    return toInt64Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getFloat32Array() -> [NSNumber]? {
+    return toFloat32Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getFloat64Array() -> [NSNumber]? {
+    return toFloat64Array()?.map { NSNumber(value: $0) }
+  }
+}
+  ''');
   }
 
   @override
@@ -3693,6 +3866,7 @@ String? _swiftTypeForBuiltinDartType(
   TypeDeclaration type, {
   bool mapKey = false,
   bool useFfi = false,
+  bool ffiTypedData = false,
 }) {
   const Map<String, String> swiftTypeForDartTypeMap = <String, String>{
     'void': 'Void',
@@ -3717,6 +3891,19 @@ String? _swiftTypeForBuiltinDartType(
             type.baseName == 'bool')) {
       return swiftTypeForDartTypeMap[type.baseName];
     }
+    if (ffiTypedData) {
+      if (type.baseName == 'Uint8List') {
+        return '[UInt8]';
+      } else if (type.baseName == 'Int32List') {
+        return '[Int32]';
+      } else if (type.baseName == 'Int64List') {
+        return '[Int64]';
+      } else if (type.baseName == 'Float32List') {
+        return '[Float32]';
+      } else if (type.baseName == 'Float64List') {
+        return '[Float64]';
+      }
+    }
     return useFfi
         ? _ffiTypeForBuiltinDartType(type)
         : swiftTypeForDartTypeMap[type.baseName];
@@ -3738,11 +3925,11 @@ String? _ffiTypeForBuiltinDartType(
     'String': 'NSString',
     'int': 'NSNumber',
     'double': 'NSNumber',
-    'Uint8List': 'FlutterStandardTypedData',
-    'Int32List': 'FlutterStandardTypedData',
-    'Int64List': 'FlutterStandardTypedData',
-    'Float32List': 'FlutterStandardTypedData',
-    'Float64List': 'FlutterStandardTypedData',
+    'Uint8List': 'PigeonTypedData',
+    'Int32List': 'PigeonTypedData',
+    'Int64List': 'PigeonTypedData',
+    'Float32List': 'PigeonTypedData',
+    'Float64List': 'PigeonTypedData',
     'Object': 'NSObject',
   };
   if (type.baseName == 'Object' && collectionSubType) {
@@ -3779,11 +3966,17 @@ String _swiftTypeForDartType(
   TypeDeclaration type, {
   bool mapKey = false,
   bool useFfi = false,
+  bool ffiTypedData = false,
 }) {
   if (useFfi && type.isEnum && type.isNullable) {
     return 'NSNumber';
   }
-  return _swiftTypeForBuiltinDartType(type, mapKey: mapKey, useFfi: useFfi) ??
+  return _swiftTypeForBuiltinDartType(
+        type,
+        mapKey: mapKey,
+        useFfi: useFfi,
+        ffiTypedData: ffiTypedData,
+      ) ??
       _swiftTypeForProxyApiType(type) ??
       (useFfi && type.isClass ? '${type.baseName}Bridge' : type.baseName);
 }
@@ -3805,9 +3998,10 @@ String _nullSafeSwiftTypeForDartType(
   TypeDeclaration type, {
   bool mapKey = false,
   bool useFfi = false,
+  bool ffiTypedData = false,
 }) {
   final String nullSafe = type.isNullable ? '?' : '';
-  return '${_swiftTypeForDartType(type, mapKey: mapKey, useFfi: useFfi)}$nullSafe';
+  return '${_swiftTypeForDartType(type, mapKey: mapKey, useFfi: useFfi, ffiTypedData: ffiTypedData)}$nullSafe';
 }
 
 String _nullSafeFfiTypeForDartType(
@@ -3826,6 +4020,7 @@ String _getMethodSignature({
   bool isAsynchronous = false,
   bool useFfi = false,
   String? swiftFunction,
+  bool useFfiTypedData = false,
   String Function(int index, NamedType argument) getParameterName =
       _getArgumentName,
 }) {
@@ -3837,10 +4032,16 @@ String _getMethodSignature({
   );
   String methodName = components.name;
   String returnTypeString =
-      returnType.isVoid ? 'Void' : _nullSafeSwiftTypeForDartType(returnType);
+      returnType.isVoid
+          ? 'Void'
+          : _nullSafeSwiftTypeForDartType(
+            returnType,
+            ffiTypedData: useFfiTypedData,
+          );
 
   Iterable<String> types = parameters.map(
-    (NamedType e) => _nullSafeSwiftTypeForDartType(e.type),
+    (NamedType e) =>
+        _nullSafeSwiftTypeForDartType(e.type, ffiTypedData: useFfiTypedData),
   );
   final Iterable<String> labels = indexMap(components.arguments, (
     int index,

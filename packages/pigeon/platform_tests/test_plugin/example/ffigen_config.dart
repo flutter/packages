@@ -7,6 +7,7 @@ import 'package:swiftgen/swiftgen.dart';
 Future<void> main() async {
   final List<String> classes = <String>[
     'PigeonInternalNull',
+    'PigeonTypedData',
     'NumberWrapper',
     'NIHostIntegrationCoreApi',
     'NIHostIntegrationCoreApiSetup',

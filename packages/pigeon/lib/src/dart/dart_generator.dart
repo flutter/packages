@@ -168,14 +168,14 @@ class _FfiType {
       case 'int':
       case 'double':
         return 'NSNumber';
-      // case 'Uint8List':
-      //   return 'NSByteArray';
-      // case 'Int32List':
-      //   return 'NSIntArray';
-      // case 'Int64List':
-      //   return 'NSLongArray';
-      // case 'Float64List':
-      //   return 'NSDoubleArray';
+      case 'Uint8List':
+        return 'ffi_bridge.PigeonTypedData';
+      case 'Int32List':
+        return 'ffi_bridge.PigeonTypedData';
+      case 'Int64List':
+        return 'ffi_bridge.PigeonTypedData';
+      case 'Float64List':
+        return 'ffi_bridge.PigeonTypedData';
       case 'Object':
         return 'NSObject';
       case 'List':
@@ -191,9 +191,6 @@ class _FfiType {
           if (type.isEnum) {
             return 'NSNumber';
           }
-          // if (type.isEnum) {
-          //   return type.isNullable ? 'NSNumber' : 'ffi_bridge.${type.baseName}';
-          // }
           return 'There is something wrong, a type is not classified';
         }
     }
@@ -811,14 +808,15 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     indent.writeln("import 'dart:async';");
+    if (generatorOptions.useFfi) {
+      indent.writeln("import 'dart:ffi';");
+    }
     if (generatorOptions.useJni ||
         generatorOptions.useFfi ||
         root.containsProxyApi) {
       indent.writeln("import 'dart:io' show Platform;");
     }
-    indent.writeln(
-      "import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;",
-    );
+    indent.writeln("import 'dart:typed_data';");
     indent.newln();
 
     if (generatorOptions.useFfi) {
@@ -998,6 +996,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         classDefinition,
         dartPackageName: dartPackageName,
       );
+      indent.newln();
+      indent.writeln('@override');
+      indent.writeScoped('String toString() {', '}', () {
+        indent.write('return _toList().toString();');
+      });
     });
   }
 
@@ -2701,7 +2704,7 @@ class _PigeonJniCodec {
     typeNum = 4;
     indent.format(
       '''
-      ffi_bridge.NumberWrapper convertNumberWrapperToFfi(Object value) {
+      ffi_bridge.NumberWrapper convertToFfiNumberWrapper(Object value) {
         switch (value) {
           case int _:
             return ffi_bridge.NumberWrapper.alloc().initWithNumber(NSNumber.alloc().initWithLong(value), type: 1);
@@ -2740,37 +2743,15 @@ class _PigeonFfiCodec {
         case const (bool):
           return numValue.boolValue;
         ${root.enums.map((Enum enumDefinition) => '''
-case const (${enumDefinition.name}):
+        case const (${enumDefinition.name}):
           return ${enumDefinition.name}.fromNSNumber(numValue);''').join('\n')}
         default:
           return numValue.longValue;
       }
     } else if (NSString.isInstance(value)) {
       return (NSString.castFrom(value)).toDartString();
-      // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
-      //   final Uint8List list = Uint8List(value.as(NSByteArray.type).length);
-      //   for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
-      //     list[i] = value.as(NSByteArray.type)[i];
-      //   }
-      //   return list;
-      // } else if (value.isA<NSIntArray>(NSIntArray.type)) {
-      //   final Int32List list = Int32List(value.as(NSIntArray.type).length);
-      //   for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
-      //     list[i] = value.as(NSIntArray.type)[i];
-      //   }
-      //   return list;
-      // } else if (value.isA<NSLongArray>(NSLongArray.type)) {
-      //   final Int64List list = Int64List(value.as(NSLongArray.type).length);
-      //   for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
-      //     list[i] = value.as(NSLongArray.type)[i];
-      //   }
-      //   return list;
-      // } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
-      //   final Float64List list = Float64List(value.as(NSDoubleArray.type).length);
-      //   for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
-      //     list[i] = value.as(NSDoubleArray.type)[i];
-      //   }
-      //   return list;
+    } else if (value is ffi_bridge.PigeonTypedData || ffi_bridge.PigeonTypedData.isInstance(value)) {
+      return getValueFromPigeonTypedData(value as ffi_bridge.PigeonTypedData);
     } else if (value is NSArray || NSArray.isInstance(value)) {
       final NSArray array = NSArray.castFrom(value);
       final List<Object?> res = <Object?>[];
@@ -2805,14 +2786,13 @@ case const (${enumDefinition.name}):
 
   static T writeValue<T extends ObjCObjectBase?>(Object? value) {
     if (value == null) {
-      final String tString = T.toString();
-      if (tString.contains('ObjCObjectBase') || tString.contains('NSObject')) {
+      if (isTypeOrNullableType<T>(ObjCObjectBase) || isTypeOrNullableType<T>(NSObject)) {
         return ffi_bridge.PigeonInternalNull() as T;
       }
       return null as T;
     } else if (value is bool || value is double || value is int || value is Enum) {
-      if (T != NSNumber && T.toString() != 'NSNumber?') {
-        return convertNumberWrapperToFfi(value) as T;
+      if (!isType<T>(NSNumber) && !isType<NSNumber?>(T)) {
+        return convertToFfiNumberWrapper(value) as T;
       }
       if (value is bool) {
         return NSNumber.alloc().initWithLong(value ? 1 : 0) as T;
@@ -2826,37 +2806,11 @@ case const (${enumDefinition.name}):
       if (value is Enum) {
         return NSNumber.alloc().initWithLong(value.index) as T;
       }
-      return convertNumberWrapperToFfi(value) as T;
+      return convertToFfiNumberWrapper(value) as T;
     } else if (value is String) {
       return NSString(value) as T;
-    // } else if (isTypeOrNullableType<NSByteArray>(T)) {
-    //   value as List<int>;
-    //   final NSByteArray array = NSByteArray(value.length);
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i];
-    //   }
-    //   return array as T;
-    // } else if (isTypeOrNullableType<NSIntArray>(T)) {
-    //   value as List<int>;
-    //   final NSIntArray array = NSIntArray(value.length);
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i];
-    //   }
-    //   return array as T;
-    // } else if (isTypeOrNullableType<NSLongArray>(T)) {
-    //   value as List<int>;
-    //   final NSLongArray array = NSLongArray(value.length);
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i];
-    //   }
-    //   return array as T;
-    // } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
-    //   value as List<double>;
-    //   final NSDoubleArray array = NSDoubleArray(value.length);
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i];
-    //   }
-    //   return array as T;
+    } else if (isTypeOrNullableType<ffi_bridge.PigeonTypedData>(T)) {
+      return toPigeonTypedData(value as TypedData) as T;
     ${root.lists.values.sorted(sortByObjectCount).map((TypeDeclaration list) {
       if (list.typeArguments.isEmpty || list.typeArguments.first.baseName == 'Object') {
         return '';
@@ -2908,6 +2862,94 @@ case const (${enumDefinition.name}):
     } else {
       throw ArgumentError.value(value);
     }
+  }
+}
+
+ffi_bridge.PigeonTypedData toPigeonTypedData(TypedData value) {
+  if (value is Uint8List) {
+    final Pointer<Uint8> ptr = calloc<Uint8>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type\$1: 0);
+  } else if (value is Int32List) {
+    final Pointer<Int32> ptr = calloc<Int32>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type\$1: 1);
+  } else if (value is Int64List) {
+    final Pointer<Int64> ptr = calloc<Int64>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type\$1: 2);
+  } else if (value is Float32List) {
+    final Pointer<Float> ptr = calloc<Float>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type\$1: 3);
+  } else if (value is Float64List) {
+    final Pointer<Double> ptr = calloc<Double>(value.length);
+    for (int i = 0; i < value.length; i++) {
+      ptr[i] = value[i];
+    }
+    final NSData nsData = NSData.dataWithBytes(
+      ptr.cast<Void>(),
+      length: value.lengthInBytes,
+    );
+    calloc.free(ptr);
+    return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type\$1: 4);
+  }
+  throw ArgumentError.value(value);
+}
+
+
+Object? getValueFromPigeonTypedData(ffi_bridge.PigeonTypedData value) {
+  final NSData data = value.data;
+  final Pointer<Void> bytes = data.bytes;
+  switch (value.type) {
+    case 0:
+      return Uint8List.fromList(bytes.cast<Uint8>().asTypedList(data.length));
+    case 1:
+      return Int32List.fromList(
+        bytes.cast<Int32>().asTypedList(data.length ~/ 4),
+      );
+    case 2:
+      return Int64List.fromList(
+        bytes.cast<Int64>().asTypedList(data.length ~/ 8),
+      );
+    case 3:
+      return Float32List.fromList(
+        bytes.cast<Float>().asTypedList(data.length ~/ 4),
+      );
+    case 4:
+      return Float64List.fromList(
+        bytes.cast<Double>().asTypedList(data.length ~/ 8),
+      );
+    default:
+      throw ArgumentError.value(value);
   }
 }
     ''');

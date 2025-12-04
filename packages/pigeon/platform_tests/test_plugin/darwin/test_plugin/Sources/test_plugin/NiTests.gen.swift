@@ -115,6 +115,127 @@ private func numberCodec(number: Any) -> Int {
     return 0
   }
 }
+// Enum to represent the Dart TypedData types
+enum MyDataType: Int {
+  case uint8 = 0
+  case int32 = 1
+  case int64 = 2
+  case float32 = 3
+  case float64 = 4
+}
+
+@available(iOS 13, macOS 16.0.0, *)
+@objc public class PigeonTypedData: NSObject {
+  @objc public let data: NSData
+  @objc public let type: Int
+
+  @objc public init(data: NSData, type: Int) {
+    self.data = data
+    self.type = type
+  }
+
+  public init(_ data: [UInt8]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.uint8.rawValue
+  }
+
+  public init(_ data: [Int32]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.int32.rawValue
+  }
+
+  public init(_ data: [Int64]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.int64.rawValue
+  }
+
+  public init(_ data: [Float32]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.float32.rawValue
+  }
+
+  public init(_ data: [Float64]) {
+    let swiftData = data.withUnsafeBufferPointer { Data(buffer: $0) }
+    self.data = NSData(data: swiftData)
+    self.type = MyDataType.float64.rawValue
+  }
+
+  /// Returns the data as a [UInt8] array, if the type is .uint8
+  public func toUint8Array() -> [UInt8]? {
+    guard type == MyDataType.uint8.rawValue else { return nil }
+    var array = [UInt8](repeating: 0, count: data.length)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Int32] array, if the type is .int32
+  public func toInt32Array() -> [Int32]? {
+    guard type == MyDataType.int32.rawValue else { return nil }
+    let itemSize = MemoryLayout<Int32>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Int32](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Int64] array, if the type is .int64
+  public func toInt64Array() -> [Int64]? {
+    guard type == MyDataType.int64.rawValue else { return nil }
+    let itemSize = MemoryLayout<Int64>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Int64](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Float32] array, if the type is .float32
+  public func toFloat32Array() -> [Float32]? {
+    guard type == MyDataType.float32.rawValue else { return nil }
+    let itemSize = MemoryLayout<Float32>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Float32](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  /// Returns the data as a [Float64] array (Array<Double>), if the type is .float64
+  public func toFloat64Array() -> [Double]? {
+    guard type == MyDataType.float64.rawValue else { return nil }
+    let itemSize = MemoryLayout<Double>.stride
+    guard data.length % itemSize == 0 else { return nil }
+    let count = data.length / itemSize
+    var array = [Double](repeating: 0, count: count)
+    data.getBytes(&array, length: data.length)
+    return array
+  }
+
+  @objc public func getUint8Array() -> [NSNumber]? {
+    return toUint8Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getInt32Array() -> [NSNumber]? {
+    return toInt32Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getInt64Array() -> [NSNumber]? {
+    return toInt64Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getFloat32Array() -> [NSNumber]? {
+    return toFloat32Array()?.map { NSNumber(value: $0) }
+  }
+
+  @objc public func getFloat64Array() -> [NSNumber]? {
+    return toFloat64Array()?.map { NSNumber(value: $0) }
+  }
+}
 
 private func isNullish(_ value: Any?) -> Bool {
   guard let innerValue = value else {
@@ -215,6 +336,10 @@ struct NIAllTypes: Hashable {
   var anInt: Int64
   var anInt64: Int64
   var aDouble: Double
+  var aByteArray: [UInt8]
+  var a4ByteArray: [Int32]
+  var a8ByteArray: [Int64]
+  var aFloatArray: [Float64]
   var anEnum: NIAnEnum
   var anotherEnum: NIAnotherEnum
   var aString: String
@@ -241,32 +366,40 @@ struct NIAllTypes: Hashable {
     let anInt = pigeonVar_list[1] as! Int64
     let anInt64 = pigeonVar_list[2] as! Int64
     let aDouble = pigeonVar_list[3] as! Double
-    let anEnum = pigeonVar_list[4] as! NIAnEnum
-    let anotherEnum = pigeonVar_list[5] as! NIAnotherEnum
-    let aString = pigeonVar_list[6] as! String
-    let anObject = pigeonVar_list[7]!
-    let list = pigeonVar_list[8] as! [Any?]
-    let stringList = pigeonVar_list[9] as! [String]
-    let intList = pigeonVar_list[10] as! [Int64]
-    let doubleList = pigeonVar_list[11] as! [Double]
-    let boolList = pigeonVar_list[12] as! [Bool]
-    let enumList = pigeonVar_list[13] as! [NIAnEnum]
-    let objectList = pigeonVar_list[14] as! [Any]
-    let listList = pigeonVar_list[15] as! [[Any?]]
-    let mapList = pigeonVar_list[16] as! [[AnyHashable?: Any?]]
-    let map = pigeonVar_list[17] as! [AnyHashable?: Any?]
-    let stringMap = pigeonVar_list[18] as! [String: String]
-    let intMap = pigeonVar_list[19] as! [Int64: Int64]
-    let enumMap = pigeonVar_list[20] as? [NIAnEnum: NIAnEnum]
-    let objectMap = pigeonVar_list[21] as! [AnyHashable: Any]
-    let listMap = pigeonVar_list[22] as! [Int64: [Any?]]
-    let mapMap = pigeonVar_list[23] as! [Int64: [AnyHashable?: Any?]]
+    let aByteArray = pigeonVar_list[4] as! [UInt8]
+    let a4ByteArray = pigeonVar_list[5] as! [Int32]
+    let a8ByteArray = pigeonVar_list[6] as! [Int64]
+    let aFloatArray = pigeonVar_list[7] as! [Float64]
+    let anEnum = pigeonVar_list[8] as! NIAnEnum
+    let anotherEnum = pigeonVar_list[9] as! NIAnotherEnum
+    let aString = pigeonVar_list[10] as! String
+    let anObject = pigeonVar_list[11]!
+    let list = pigeonVar_list[12] as! [Any?]
+    let stringList = pigeonVar_list[13] as! [String]
+    let intList = pigeonVar_list[14] as! [Int64]
+    let doubleList = pigeonVar_list[15] as! [Double]
+    let boolList = pigeonVar_list[16] as! [Bool]
+    let enumList = pigeonVar_list[17] as! [NIAnEnum]
+    let objectList = pigeonVar_list[18] as! [Any]
+    let listList = pigeonVar_list[19] as! [[Any?]]
+    let mapList = pigeonVar_list[20] as! [[AnyHashable?: Any?]]
+    let map = pigeonVar_list[21] as! [AnyHashable?: Any?]
+    let stringMap = pigeonVar_list[22] as! [String: String]
+    let intMap = pigeonVar_list[23] as! [Int64: Int64]
+    let enumMap = pigeonVar_list[24] as? [NIAnEnum: NIAnEnum]
+    let objectMap = pigeonVar_list[25] as! [AnyHashable: Any]
+    let listMap = pigeonVar_list[26] as! [Int64: [Any?]]
+    let mapMap = pigeonVar_list[27] as! [Int64: [AnyHashable?: Any?]]
 
     return NIAllTypes(
       aBool: aBool,
       anInt: anInt,
       anInt64: anInt64,
       aDouble: aDouble,
+      aByteArray: aByteArray,
+      a4ByteArray: a4ByteArray,
+      a8ByteArray: a8ByteArray,
+      aFloatArray: aFloatArray,
       anEnum: anEnum,
       anotherEnum: anotherEnum,
       aString: aString,
@@ -295,6 +428,10 @@ struct NIAllTypes: Hashable {
       anInt,
       anInt64,
       aDouble,
+      aByteArray,
+      a4ByteArray,
+      a8ByteArray,
+      aFloatArray,
       anEnum,
       anotherEnum,
       aString,
@@ -335,6 +472,10 @@ struct NIAllTypes: Hashable {
     anInt: Int64,
     anInt64: Int64,
     aDouble: Double,
+    aByteArray: PigeonTypedData,
+    a4ByteArray: PigeonTypedData,
+    a8ByteArray: PigeonTypedData,
+    aFloatArray: PigeonTypedData,
     anEnum: NIAnEnum,
     anotherEnum: NIAnotherEnum,
     aString: NSString,
@@ -360,6 +501,10 @@ struct NIAllTypes: Hashable {
     self.anInt = anInt
     self.anInt64 = anInt64
     self.aDouble = aDouble
+    self.aByteArray = aByteArray
+    self.a4ByteArray = a4ByteArray
+    self.a8ByteArray = a8ByteArray
+    self.aFloatArray = aFloatArray
     self.anEnum = anEnum
     self.anotherEnum = anotherEnum
     self.aString = aString
@@ -385,6 +530,10 @@ struct NIAllTypes: Hashable {
   @objc var anInt: Int64
   @objc var anInt64: Int64
   @objc var aDouble: Double
+  @objc var aByteArray: PigeonTypedData
+  @objc var a4ByteArray: PigeonTypedData
+  @objc var a8ByteArray: PigeonTypedData
+  @objc var aFloatArray: PigeonTypedData
   @objc var anEnum: NIAnEnum
   @objc var anotherEnum: NIAnotherEnum
   @objc var aString: NSString
@@ -415,6 +564,10 @@ struct NIAllTypes: Hashable {
       anInt: pigeonVar_Class!.anInt,
       anInt64: pigeonVar_Class!.anInt64,
       aDouble: pigeonVar_Class!.aDouble,
+      aByteArray: PigeonTypedData(pigeonVar_Class!.aByteArray),
+      a4ByteArray: PigeonTypedData(pigeonVar_Class!.a4ByteArray),
+      a8ByteArray: PigeonTypedData(pigeonVar_Class!.a8ByteArray),
+      aFloatArray: PigeonTypedData(pigeonVar_Class!.aFloatArray),
       anEnum: pigeonVar_Class!.anEnum,
       anotherEnum: pigeonVar_Class!.anotherEnum,
       aString: pigeonVar_Class!.aString as NSString,
@@ -445,6 +598,10 @@ struct NIAllTypes: Hashable {
       anInt: anInt,
       anInt64: anInt64,
       aDouble: aDouble,
+      aByteArray: aByteArray.toUint8Array()!,
+      a4ByteArray: a4ByteArray.toInt32Array()!,
+      a8ByteArray: a8ByteArray.toInt64Array()!,
+      aFloatArray: aFloatArray.toFloat64Array()!,
       anEnum: anEnum,
       anotherEnum: anotherEnum,
       aString: aString as String,
@@ -481,6 +638,10 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   var aNullableInt: Int64? = nil
   var aNullableInt64: Int64? = nil
   var aNullableDouble: Double? = nil
+  var aNullableByteArray: [UInt8]? = nil
+  var aNullable4ByteArray: [Int32]? = nil
+  var aNullable8ByteArray: [Int64]? = nil
+  var aNullableFloatArray: [Float64]? = nil
   var aNullableEnum: NIAnEnum? = nil
   var anotherNullableEnum: NIAnotherEnum? = nil
   var aNullableString: String? = nil
@@ -507,32 +668,40 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     let aNullableInt: Int64? = nilOrValue(pigeonVar_list[1])
     let aNullableInt64: Int64? = nilOrValue(pigeonVar_list[2])
     let aNullableDouble: Double? = nilOrValue(pigeonVar_list[3])
-    let aNullableEnum: NIAnEnum? = nilOrValue(pigeonVar_list[4])
-    let anotherNullableEnum: NIAnotherEnum? = nilOrValue(pigeonVar_list[5])
-    let aNullableString: String? = nilOrValue(pigeonVar_list[6])
-    let aNullableObject: Any? = pigeonVar_list[7]
-    let list: [Any?]? = nilOrValue(pigeonVar_list[8])
-    let stringList: [String?]? = nilOrValue(pigeonVar_list[9])
-    let intList: [Int64?]? = nilOrValue(pigeonVar_list[10])
-    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[11])
-    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[12])
-    let enumList: [NIAnEnum?]? = nilOrValue(pigeonVar_list[13])
-    let objectList: [Any?]? = nilOrValue(pigeonVar_list[14])
-    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[15])
-    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[16])
-    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[17])
-    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[18])
-    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[19])
-    let enumMap: [NIAnEnum?: NIAnEnum?]? = pigeonVar_list[20] as? [NIAnEnum?: NIAnEnum?]
-    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[21])
-    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[22])
-    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[23])
+    let aNullableByteArray: [UInt8]? = nilOrValue(pigeonVar_list[4])
+    let aNullable4ByteArray: [Int32]? = nilOrValue(pigeonVar_list[5])
+    let aNullable8ByteArray: [Int64]? = nilOrValue(pigeonVar_list[6])
+    let aNullableFloatArray: [Float64]? = nilOrValue(pigeonVar_list[7])
+    let aNullableEnum: NIAnEnum? = nilOrValue(pigeonVar_list[8])
+    let anotherNullableEnum: NIAnotherEnum? = nilOrValue(pigeonVar_list[9])
+    let aNullableString: String? = nilOrValue(pigeonVar_list[10])
+    let aNullableObject: Any? = pigeonVar_list[11]
+    let list: [Any?]? = nilOrValue(pigeonVar_list[12])
+    let stringList: [String?]? = nilOrValue(pigeonVar_list[13])
+    let intList: [Int64?]? = nilOrValue(pigeonVar_list[14])
+    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[15])
+    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[16])
+    let enumList: [NIAnEnum?]? = nilOrValue(pigeonVar_list[17])
+    let objectList: [Any?]? = nilOrValue(pigeonVar_list[18])
+    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[19])
+    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[20])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[21])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[22])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[23])
+    let enumMap: [NIAnEnum?: NIAnEnum?]? = pigeonVar_list[24] as? [NIAnEnum?: NIAnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[25])
+    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[26])
+    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[27])
 
     return NIAllNullableTypesWithoutRecursion(
       aNullableBool: aNullableBool,
       aNullableInt: aNullableInt,
       aNullableInt64: aNullableInt64,
       aNullableDouble: aNullableDouble,
+      aNullableByteArray: aNullableByteArray,
+      aNullable4ByteArray: aNullable4ByteArray,
+      aNullable8ByteArray: aNullable8ByteArray,
+      aNullableFloatArray: aNullableFloatArray,
       aNullableEnum: aNullableEnum,
       anotherNullableEnum: anotherNullableEnum,
       aNullableString: aNullableString,
@@ -561,6 +730,10 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       aNullableInt,
       aNullableInt64,
       aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
       aNullableEnum,
       anotherNullableEnum,
       aNullableString,
@@ -606,6 +779,10 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     aNullableInt: NSNumber? = nil,
     aNullableInt64: NSNumber? = nil,
     aNullableDouble: NSNumber? = nil,
+    aNullableByteArray: PigeonTypedData? = nil,
+    aNullable4ByteArray: PigeonTypedData? = nil,
+    aNullable8ByteArray: PigeonTypedData? = nil,
+    aNullableFloatArray: PigeonTypedData? = nil,
     aNullableEnum: NSNumber? = nil,
     anotherNullableEnum: NSNumber? = nil,
     aNullableString: NSString? = nil,
@@ -631,6 +808,10 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
     self.aNullableInt = aNullableInt
     self.aNullableInt64 = aNullableInt64
     self.aNullableDouble = aNullableDouble
+    self.aNullableByteArray = aNullableByteArray
+    self.aNullable4ByteArray = aNullable4ByteArray
+    self.aNullable8ByteArray = aNullable8ByteArray
+    self.aNullableFloatArray = aNullableFloatArray
     self.aNullableEnum = aNullableEnum
     self.anotherNullableEnum = anotherNullableEnum
     self.aNullableString = aNullableString
@@ -656,6 +837,10 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   @objc var aNullableInt: NSNumber? = nil
   @objc var aNullableInt64: NSNumber? = nil
   @objc var aNullableDouble: NSNumber? = nil
+  @objc var aNullableByteArray: PigeonTypedData? = nil
+  @objc var aNullable4ByteArray: PigeonTypedData? = nil
+  @objc var aNullable8ByteArray: PigeonTypedData? = nil
+  @objc var aNullableFloatArray: PigeonTypedData? = nil
   @objc var aNullableEnum: NSNumber? = nil
   @objc var anotherNullableEnum: NSNumber? = nil
   @objc var aNullableString: NSString? = nil
@@ -692,6 +877,14 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt64!),
       aNullableDouble: isNullish(pigeonVar_Class!.aNullableDouble)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableDouble!),
+      aNullableByteArray: isNullish(pigeonVar_Class!.aNullableByteArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullableByteArray!),
+      aNullable4ByteArray: isNullish(pigeonVar_Class!.aNullable4ByteArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullable4ByteArray!),
+      aNullable8ByteArray: isNullish(pigeonVar_Class!.aNullable8ByteArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullable8ByteArray!),
+      aNullableFloatArray: isNullish(pigeonVar_Class!.aNullableFloatArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullableFloatArray!),
       aNullableEnum: isNullish(pigeonVar_Class!.aNullableEnum)
         ? nil : NSNumber(value: pigeonVar_Class!.aNullableEnum!.rawValue),
       anotherNullableEnum: isNullish(pigeonVar_Class!.anotherNullableEnum)
@@ -724,6 +917,13 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       aNullableInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
       aNullableInt64: isNullish(aNullableInt64) ? nil : aNullableInt64!.int64Value,
       aNullableDouble: isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue,
+      aNullableByteArray: isNullish(aNullableByteArray) ? nil : aNullableByteArray!.toUint8Array(),
+      aNullable4ByteArray: isNullish(aNullable4ByteArray)
+        ? nil : aNullable4ByteArray!.toInt32Array(),
+      aNullable8ByteArray: isNullish(aNullable8ByteArray)
+        ? nil : aNullable8ByteArray!.toInt64Array(),
+      aNullableFloatArray: isNullish(aNullableFloatArray)
+        ? nil : aNullableFloatArray!.toFloat64Array(),
       aNullableEnum: isNullish(aNullableEnum)
         ? nil : NIAnEnum.init(rawValue: aNullableEnum!.intValue),
       anotherNullableEnum: isNullish(anotherNullableEnum)
@@ -1046,6 +1246,14 @@ protocol NIHostIntegrationCoreApi {
   func echoBool(aBool: Bool) throws -> Bool
   /// Returns the passed in string.
   func echoString(aString: String) throws -> String
+  /// Returns the passed in Uint8List.
+  func echoUint8List(aUint8List: [UInt8]) throws -> [UInt8]
+  /// Returns the passed in Int32List.
+  func echoInt32List(aInt32List: [Int32]) throws -> [Int32]
+  /// Returns the passed in Int64List.
+  func echoInt64List(aInt64List: [Int64]) throws -> [Int64]
+  /// Returns the passed in Float64List.
+  func echoFloat64List(aFloat64List: [Float64]) throws -> [Float64]
   /// Returns the passed in generic Object.
   func echoObject(anObject: Any) throws -> Any
   /// Returns the passed list, to test serialization and deserialization.
@@ -1118,6 +1326,14 @@ protocol NIHostIntegrationCoreApi {
   func echoNullableBool(aNullableBool: Bool?) throws -> Bool?
   /// Returns the passed in string.
   func echoNullableString(aNullableString: String?) throws -> String?
+  /// Returns the passed in Uint8List.
+  func echoNullableUint8List(aNullableUint8List: [UInt8]?) throws -> [UInt8]?
+  /// Returns the passed in Int32List.
+  func echoNullableInt32List(aNullableInt32List: [Int32]?) throws -> [Int32]?
+  /// Returns the passed in Int64List.
+  func echoNullableInt64List(aNullableInt64List: [Int64]?) throws -> [Int64]?
+  /// Returns the passed in Float64List.
+  func echoNullableFloat64List(aNullableFloat64List: [Float64]?) throws -> [Float64]?
   /// Returns the passed in generic Object.
   func echoNullableObject(aNullableObject: Any?) throws -> Any?
   /// Returns the passed list, to test serialization and deserialization.
@@ -1256,6 +1472,82 @@ protocol NIHostIntegrationCoreApi {
   @objc func echoString(aString: NSString, wrappedError: NiTestsError) -> NSString? {
     do {
       return try api!.echoString(aString: aString as String) as NSString?
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Uint8List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoUint8List(aUint8List: PigeonTypedData, wrappedError: NiTestsError)
+    -> PigeonTypedData?
+  {
+    do {
+      let res = try api!.echoUint8List(aUint8List: aUint8List.toUint8Array()!)
+      return isNullish(res) ? nil : PigeonTypedData(res)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Int32List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoInt32List(aInt32List: PigeonTypedData, wrappedError: NiTestsError)
+    -> PigeonTypedData?
+  {
+    do {
+      let res = try api!.echoInt32List(aInt32List: aInt32List.toInt32Array()!)
+      return isNullish(res) ? nil : PigeonTypedData(res)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Int64List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoInt64List(aInt64List: PigeonTypedData, wrappedError: NiTestsError)
+    -> PigeonTypedData?
+  {
+    do {
+      let res = try api!.echoInt64List(aInt64List: aInt64List.toInt64Array()!)
+      return isNullish(res) ? nil : PigeonTypedData(res)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Float64List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoFloat64List(aFloat64List: PigeonTypedData, wrappedError: NiTestsError)
+    -> PigeonTypedData?
+  {
+    do {
+      let res = try api!.echoFloat64List(aFloat64List: aFloat64List.toFloat64Array()!)
+      return isNullish(res) ? nil : PigeonTypedData(res)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -1857,6 +2149,90 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       return try api!.echoNullableString(aNullableString: aNullableString as String?) as NSString?
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Uint8List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableUint8List(aNullableUint8List: PigeonTypedData?, wrappedError: NiTestsError)
+    -> PigeonTypedData?
+  {
+    do {
+      let res = try api!.echoNullableUint8List(
+        aNullableUint8List: isNullish(aNullableUint8List) ? nil : aNullableUint8List!.toUint8Array()
+      )
+      return isNullish(res) ? nil : PigeonTypedData(res!)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Int32List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableInt32List(aNullableInt32List: PigeonTypedData?, wrappedError: NiTestsError)
+    -> PigeonTypedData?
+  {
+    do {
+      let res = try api!.echoNullableInt32List(
+        aNullableInt32List: isNullish(aNullableInt32List) ? nil : aNullableInt32List!.toInt32Array()
+      )
+      return isNullish(res) ? nil : PigeonTypedData(res!)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Int64List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableInt64List(aNullableInt64List: PigeonTypedData?, wrappedError: NiTestsError)
+    -> PigeonTypedData?
+  {
+    do {
+      let res = try api!.echoNullableInt64List(
+        aNullableInt64List: isNullish(aNullableInt64List) ? nil : aNullableInt64List!.toInt64Array()
+      )
+      return isNullish(res) ? nil : PigeonTypedData(res!)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in Float64List.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoNullableFloat64List(
+    aNullableFloat64List: PigeonTypedData?, wrappedError: NiTestsError
+  ) -> PigeonTypedData? {
+    do {
+      let res = try api!.echoNullableFloat64List(
+        aNullableFloat64List: isNullish(aNullableFloat64List)
+          ? nil : aNullableFloat64List!.toFloat64Array())
+      return isNullish(res) ? nil : PigeonTypedData(res!)
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

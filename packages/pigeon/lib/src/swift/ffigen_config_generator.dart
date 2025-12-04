@@ -60,6 +60,7 @@ import 'package:swiftgen/swiftgen.dart';
       indent.writeScoped('final List<String> classes = <String>[', '];', () {
         indent.inc();
         indent.writeln("'PigeonInternalNull',");
+        indent.writeln("'PigeonTypedData',");
         indent.writeln("'NumberWrapper',");
         for (final Api api in root.apis) {
           if (api is AstHostApi || api is AstFlutterApi) {

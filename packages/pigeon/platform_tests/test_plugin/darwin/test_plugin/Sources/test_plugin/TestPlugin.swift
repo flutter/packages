@@ -1216,6 +1216,38 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoUint8List(aUint8List: [UInt8]) throws -> [UInt8] {
+    return aUint8List
+  }
+
+  func echoInt32List(aInt32List: [Int32]) throws -> [Int32] {
+    return aInt32List
+  }
+
+  func echoInt64List(aInt64List: [Int64]) throws -> [Int64] {
+    return aInt64List
+  }
+
+  func echoFloat64List(aFloat64List: [Float64]) throws -> [Float64] {
+    return aFloat64List
+  }
+
+  func echoNullableUint8List(aNullableUint8List: [UInt8]?) throws -> [UInt8]? {
+    return aNullableUint8List
+  }
+
+  func echoNullableInt32List(aNullableInt32List: [Int32]?) throws -> [Int32]? {
+    return aNullableInt32List
+  }
+
+  func echoNullableInt64List(aNullableInt64List: [Int64]?) throws -> [Int64]? {
+    return aNullableInt64List
+  }
+
+  func echoNullableFloat64List(aNullableFloat64List: [Float64]?) throws -> [Float64]? {
+    return aNullableFloat64List
+  }
+
   func echoNonNullClassMap(classMap: [Int64: NIAllNullableTypesWithoutRecursion]) throws -> [Int64:
     NIAllNullableTypesWithoutRecursion]
   {

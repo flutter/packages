@@ -373,6 +373,7 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 @end
 
 @class NSNumber;
+@class PigeonTypedData;
 @class NSString;
 /// A class containing all supported nullable types.
 /// The primary purpose for this class is to ensure coverage of Swift structs
@@ -388,6 +389,10 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
              aNullableInt:(NSNumber* _Nullable)aNullableInt
            aNullableInt64:(NSNumber* _Nullable)aNullableInt64
           aNullableDouble:(NSNumber* _Nullable)aNullableDouble
+       aNullableByteArray:(PigeonTypedData* _Nullable)aNullableByteArray
+      aNullable4ByteArray:(PigeonTypedData* _Nullable)aNullable4ByteArray
+      aNullable8ByteArray:(PigeonTypedData* _Nullable)aNullable8ByteArray
+      aNullableFloatArray:(PigeonTypedData* _Nullable)aNullableFloatArray
             aNullableEnum:(NSNumber* _Nullable)aNullableEnum
       anotherNullableEnum:(NSNumber* _Nullable)anotherNullableEnum
           aNullableString:(NSString* _Nullable)aNullableString
@@ -419,6 +424,10 @@ SWIFT_AVAILABILITY(ios, introduced = 13)
 @property(nonatomic, strong) NSNumber* _Nullable aNullableInt;
 @property(nonatomic, strong) NSNumber* _Nullable aNullableInt64;
 @property(nonatomic, strong) NSNumber* _Nullable aNullableDouble;
+@property(nonatomic, strong) PigeonTypedData* _Nullable aNullableByteArray;
+@property(nonatomic, strong) PigeonTypedData* _Nullable aNullable4ByteArray;
+@property(nonatomic, strong) PigeonTypedData* _Nullable aNullable8ByteArray;
+@property(nonatomic, strong) PigeonTypedData* _Nullable aNullableFloatArray;
 @property(nonatomic, strong) NSNumber* _Nullable aNullableEnum;
 @property(nonatomic, strong) NSNumber* _Nullable anotherNullableEnum;
 @property(nonatomic, strong) NSString* _Nullable aNullableString;
@@ -463,6 +472,10 @@ SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIAllTypesBridge : NSObject
             anInt:(int64_t)anInt
           anInt64:(int64_t)anInt64
           aDouble:(double)aDouble
+       aByteArray:(PigeonTypedData* _Nonnull)aByteArray
+      a4ByteArray:(PigeonTypedData* _Nonnull)a4ByteArray
+      a8ByteArray:(PigeonTypedData* _Nonnull)a8ByteArray
+      aFloatArray:(PigeonTypedData* _Nonnull)aFloatArray
            anEnum:(enum NIAnEnum)anEnum
       anotherEnum:(enum NIAnotherEnum)anotherEnum
           aString:(NSString* _Nonnull)aString
@@ -488,6 +501,10 @@ SWIFT_AVAILABILITY(ios, introduced = 13) @interface NIAllTypesBridge : NSObject
 @property(nonatomic) int64_t anInt;
 @property(nonatomic) int64_t anInt64;
 @property(nonatomic) double aDouble;
+@property(nonatomic, strong) PigeonTypedData* _Nonnull aByteArray;
+@property(nonatomic, strong) PigeonTypedData* _Nonnull a4ByteArray;
+@property(nonatomic, strong) PigeonTypedData* _Nonnull a8ByteArray;
+@property(nonatomic, strong) PigeonTypedData* _Nonnull aFloatArray;
 @property(nonatomic) enum NIAnEnum anEnum;
 @property(nonatomic) enum NIAnotherEnum anotherEnum;
 @property(nonatomic, strong) NSString* _Nonnull aString;
@@ -569,6 +586,30 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
 - (NSString* _Nullable)echoStringWithAString:(NSString* _Nonnull)aString
                                 wrappedError:
                                     (NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Uint8List.
+- (PigeonTypedData* _Nullable)
+    echoUint8ListWithAUint8List:(PigeonTypedData* _Nonnull)aUint8List
+                   wrappedError:(NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Int32List.
+- (PigeonTypedData* _Nullable)
+    echoInt32ListWithAInt32List:(PigeonTypedData* _Nonnull)aInt32List
+                   wrappedError:(NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Int64List.
+- (PigeonTypedData* _Nullable)
+    echoInt64ListWithAInt64List:(PigeonTypedData* _Nonnull)aInt64List
+                   wrappedError:(NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Float64List.
+- (PigeonTypedData* _Nullable)
+    echoFloat64ListWithAFloat64List:(PigeonTypedData* _Nonnull)aFloat64List
+                       wrappedError:(NiTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed in generic Object.
@@ -785,6 +826,38 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
                              wrappedError:(NiTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Uint8List.
+- (PigeonTypedData* _Nullable)
+    echoNullableUint8ListWithANullableUint8List:
+        (PigeonTypedData* _Nullable)aNullableUint8List
+                                   wrappedError:
+                                       (NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Int32List.
+- (PigeonTypedData* _Nullable)
+    echoNullableInt32ListWithANullableInt32List:
+        (PigeonTypedData* _Nullable)aNullableInt32List
+                                   wrappedError:
+                                       (NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Int64List.
+- (PigeonTypedData* _Nullable)
+    echoNullableInt64ListWithANullableInt64List:
+        (PigeonTypedData* _Nullable)aNullableInt64List
+                                   wrappedError:
+                                       (NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns the passed in Float64List.
+- (PigeonTypedData* _Nullable)
+    echoNullableFloat64ListWithANullableFloat64List:
+        (PigeonTypedData* _Nullable)aNullableFloat64List
+                                       wrappedError:
+                                           (NiTestsError* _Nonnull)wrappedError
+    SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns the passed in generic Object.
 - (NSObject* _Nullable)
     echoNullableObjectWithANullableObject:(NSObject* _Nonnull)aNullableObject
@@ -932,6 +1005,24 @@ SWIFT_CLASS("_TtC11test_plugin13NumberWrapper")
 SWIFT_CLASS("_TtC11test_plugin18PigeonInternalNull")
 @interface PigeonInternalNull : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
+
+@class NSData;
+SWIFT_CLASS("_TtC11test_plugin15PigeonTypedData")
+SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+SWIFT_AVAILABILITY(ios, introduced = 13) @interface PigeonTypedData : NSObject
+@property(nonatomic, readonly, strong) NSData* _Nonnull data;
+@property(nonatomic, readonly) NSInteger type;
+- (nonnull instancetype)initWithData:(NSData* _Nonnull)data
+                                type:(NSInteger)type
+    OBJC_DESIGNATED_INITIALIZER;
+- (NSArray<NSNumber*>* _Nullable)getUint8Array SWIFT_WARN_UNUSED_RESULT;
+- (NSArray<NSNumber*>* _Nullable)getInt32Array SWIFT_WARN_UNUSED_RESULT;
+- (NSArray<NSNumber*>* _Nullable)getInt64Array SWIFT_WARN_UNUSED_RESULT;
+- (NSArray<NSNumber*>* _Nullable)getFloat32Array SWIFT_WARN_UNUSED_RESULT;
+- (NSArray<NSNumber*>* _Nullable)getFloat64Array SWIFT_WARN_UNUSED_RESULT;
+- (nonnull instancetype)init SWIFT_UNAVAILABLE;
++ (nonnull instancetype)new SWIFT_UNAVAILABLE_MSG("-init is unavailable");
 @end
 
 #endif

@@ -33,10 +33,10 @@ class NIAllTypes {
     this.anInt = 0,
     this.anInt64 = 0,
     this.aDouble = 0,
-    // required this.aByteArray,
-    // required this.a4ByteArray,
-    // required this.a8ByteArray,
-    // required this.aFloatArray,
+    required this.aByteArray,
+    required this.a4ByteArray,
+    required this.a8ByteArray,
+    required this.aFloatArray,
     this.anEnum = NIAnEnum.one,
     this.anotherEnum = NIAnotherEnum.justInCase,
     this.aString = '',
@@ -69,10 +69,10 @@ class NIAllTypes {
   int anInt;
   int anInt64;
   double aDouble;
-  // Uint8List aByteArray;
-  // Int32List a4ByteArray;
-  // Int64List a8ByteArray;
-  // Float64List aFloatArray;
+  Uint8List aByteArray;
+  Int32List a4ByteArray;
+  Int64List a8ByteArray;
+  Float64List aFloatArray;
   NIAnEnum anEnum;
   NIAnotherEnum anotherEnum;
   String aString;
@@ -188,10 +188,10 @@ class NIAllNullableTypesWithoutRecursion {
     this.aNullableInt,
     this.aNullableInt64,
     this.aNullableDouble,
-    //     this.aNullableByteArray,
-    //     this.aNullable4ByteArray,
-    //     this.aNullable8ByteArray,
-    //     this.aNullableFloatArray,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
     this.aNullableEnum,
     this.anotherNullableEnum,
     this.aNullableString,
@@ -224,10 +224,10 @@ class NIAllNullableTypesWithoutRecursion {
   int? aNullableInt;
   int? aNullableInt64;
   double? aNullableDouble;
-  //   Uint8List? aNullableByteArray;
-  //   Int32List? aNullable4ByteArray;
-  //   Int64List? aNullable8ByteArray;
-  //   Float64List? aNullableFloatArray;
+  Uint8List? aNullableByteArray;
+  Int32List? aNullable4ByteArray;
+  Int64List? aNullable8ByteArray;
+  Float64List? aNullableFloatArray;
   NIAnEnum? aNullableEnum;
   NIAnotherEnum? anotherNullableEnum;
   String? aNullableString;
@@ -322,25 +322,25 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(_:)')
   String echoString(String aString);
 
-  // /// Returns the passed in Uint8List.
-  // @ObjCSelector('echoUint8List:')
+  /// Returns the passed in Uint8List.
+  @ObjCSelector('echoUint8List:')
   // @SwiftFunction('echo(_:)')
-  // Uint8List echoUint8List(Uint8List aUint8List);
+  Uint8List echoUint8List(Uint8List aUint8List);
 
-  // /// Returns the passed in Int32List.
-  // @ObjCSelector('echoInt32List:')
+  /// Returns the passed in Int32List.
+  @ObjCSelector('echoInt32List:')
   // @SwiftFunction('echo(_:)')
-  // Int32List echoInt32List(Int32List aInt32List);
+  Int32List echoInt32List(Int32List aInt32List);
 
-  // /// Returns the passed in Int64List.
-  // @ObjCSelector('echoInt64List:')
+  /// Returns the passed in Int64List.
+  @ObjCSelector('echoInt64List:')
   // @SwiftFunction('echo(_:)')
-  // Int64List echoInt64List(Int64List aInt64List);
+  Int64List echoInt64List(Int64List aInt64List);
 
-  // /// Returns the passed in Float64List.
-  // @ObjCSelector('echoFloat64List:')
+  /// Returns the passed in Float64List.
+  @ObjCSelector('echoFloat64List:')
   // @SwiftFunction('echo(_:)')
-  // Float64List echoFloat64List(Float64List aFloat64List);
+  Float64List echoFloat64List(Float64List aFloat64List);
 
   /// Returns the passed in generic Object.
   @ObjCSelector('echoObject:')
@@ -540,25 +540,25 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(_:)')
   String? echoNullableString(String? aNullableString);
 
-  // /// Returns the passed in Uint8List.
-  // @ObjCSelector('echoNullableUint8List:')
+  /// Returns the passed in Uint8List.
+  @ObjCSelector('echoNullableUint8List:')
   // @SwiftFunction('echo(_:)')
-  // Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List);
+  Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List);
 
-  // /// Returns the passed in Int32List.
-  // @ObjCSelector('echoNullableInt32List:')
+  /// Returns the passed in Int32List.
+  @ObjCSelector('echoNullableInt32List:')
   // @SwiftFunction('echo(_:)')
-  // Int32List? echoNullableInt32List(Int32List? aNullableInt32List);
+  Int32List? echoNullableInt32List(Int32List? aNullableInt32List);
 
-  // /// Returns the passed in Int64List.
-  // @ObjCSelector('echoNullableInt64List:')
+  /// Returns the passed in Int64List.
+  @ObjCSelector('echoNullableInt64List:')
   // @SwiftFunction('echo(_:)')
-  // Int64List? echoNullableInt64List(Int64List? aNullableInt64List);
+  Int64List? echoNullableInt64List(Int64List? aNullableInt64List);
 
-  // /// Returns the passed in Float64List.
-  // @ObjCSelector('echoNullableFloat64List:')
+  /// Returns the passed in Float64List.
+  @ObjCSelector('echoNullableFloat64List:')
   // @SwiftFunction('echo(_:)')
-  // Float64List? echoNullableFloat64List(Float64List? aNullableFloat64List);
+  Float64List? echoNullableFloat64List(Float64List? aNullableFloat64List);
 
   /// Returns the passed in generic Object.
   @ObjCSelector('echoNullableObject:')

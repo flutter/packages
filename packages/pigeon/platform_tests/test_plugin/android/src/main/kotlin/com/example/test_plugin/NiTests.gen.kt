@@ -102,6 +102,10 @@ data class NIAllTypes(
     val anInt: Long,
     val anInt64: Long,
     val aDouble: Double,
+    val aByteArray: ByteArray,
+    val a4ByteArray: IntArray,
+    val a8ByteArray: LongArray,
+    val aFloatArray: DoubleArray,
     val anEnum: NIAnEnum,
     val anotherEnum: NIAnotherEnum,
     val aString: String,
@@ -129,31 +133,39 @@ data class NIAllTypes(
       val anInt = pigeonVar_list[1] as Long
       val anInt64 = pigeonVar_list[2] as Long
       val aDouble = pigeonVar_list[3] as Double
-      val anEnum = pigeonVar_list[4] as NIAnEnum
-      val anotherEnum = pigeonVar_list[5] as NIAnotherEnum
-      val aString = pigeonVar_list[6] as String
-      val anObject = pigeonVar_list[7] as Any
-      val list = pigeonVar_list[8] as List<Any?>
-      val stringList = pigeonVar_list[9] as List<String>
-      val intList = pigeonVar_list[10] as List<Long>
-      val doubleList = pigeonVar_list[11] as List<Double>
-      val boolList = pigeonVar_list[12] as List<Boolean>
-      val enumList = pigeonVar_list[13] as List<NIAnEnum>
-      val objectList = pigeonVar_list[14] as List<Any>
-      val listList = pigeonVar_list[15] as List<List<Any?>>
-      val mapList = pigeonVar_list[16] as List<Map<Any?, Any?>>
-      val map = pigeonVar_list[17] as Map<Any, Any?>
-      val stringMap = pigeonVar_list[18] as Map<String, String>
-      val intMap = pigeonVar_list[19] as Map<Long, Long>
-      val enumMap = pigeonVar_list[20] as Map<NIAnEnum, NIAnEnum>
-      val objectMap = pigeonVar_list[21] as Map<Any, Any>
-      val listMap = pigeonVar_list[22] as Map<Long, List<Any?>>
-      val mapMap = pigeonVar_list[23] as Map<Long, Map<Any?, Any?>>
+      val aByteArray = pigeonVar_list[4] as ByteArray
+      val a4ByteArray = pigeonVar_list[5] as IntArray
+      val a8ByteArray = pigeonVar_list[6] as LongArray
+      val aFloatArray = pigeonVar_list[7] as DoubleArray
+      val anEnum = pigeonVar_list[8] as NIAnEnum
+      val anotherEnum = pigeonVar_list[9] as NIAnotherEnum
+      val aString = pigeonVar_list[10] as String
+      val anObject = pigeonVar_list[11] as Any
+      val list = pigeonVar_list[12] as List<Any?>
+      val stringList = pigeonVar_list[13] as List<String>
+      val intList = pigeonVar_list[14] as List<Long>
+      val doubleList = pigeonVar_list[15] as List<Double>
+      val boolList = pigeonVar_list[16] as List<Boolean>
+      val enumList = pigeonVar_list[17] as List<NIAnEnum>
+      val objectList = pigeonVar_list[18] as List<Any>
+      val listList = pigeonVar_list[19] as List<List<Any?>>
+      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>>
+      val map = pigeonVar_list[21] as Map<Any, Any?>
+      val stringMap = pigeonVar_list[22] as Map<String, String>
+      val intMap = pigeonVar_list[23] as Map<Long, Long>
+      val enumMap = pigeonVar_list[24] as Map<NIAnEnum, NIAnEnum>
+      val objectMap = pigeonVar_list[25] as Map<Any, Any>
+      val listMap = pigeonVar_list[26] as Map<Long, List<Any?>>
+      val mapMap = pigeonVar_list[27] as Map<Long, Map<Any?, Any?>>
       return NIAllTypes(
           aBool,
           anInt,
           anInt64,
           aDouble,
+          aByteArray,
+          a4ByteArray,
+          a8ByteArray,
+          aFloatArray,
           anEnum,
           anotherEnum,
           aString,
@@ -183,6 +195,10 @@ data class NIAllTypes(
         anInt,
         anInt64,
         aDouble,
+        aByteArray,
+        a4ByteArray,
+        a8ByteArray,
+        aFloatArray,
         anEnum,
         anotherEnum,
         aString,
@@ -231,6 +247,10 @@ data class NIAllNullableTypesWithoutRecursion(
     val aNullableInt: Long? = null,
     val aNullableInt64: Long? = null,
     val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
     val aNullableEnum: NIAnEnum? = null,
     val anotherNullableEnum: NIAnotherEnum? = null,
     val aNullableString: String? = null,
@@ -258,31 +278,39 @@ data class NIAllNullableTypesWithoutRecursion(
       val aNullableInt = pigeonVar_list[1] as Long?
       val aNullableInt64 = pigeonVar_list[2] as Long?
       val aNullableDouble = pigeonVar_list[3] as Double?
-      val aNullableEnum = pigeonVar_list[4] as NIAnEnum?
-      val anotherNullableEnum = pigeonVar_list[5] as NIAnotherEnum?
-      val aNullableString = pigeonVar_list[6] as String?
-      val aNullableObject = pigeonVar_list[7]
-      val list = pigeonVar_list[8] as List<Any?>?
-      val stringList = pigeonVar_list[9] as List<String?>?
-      val intList = pigeonVar_list[10] as List<Long?>?
-      val doubleList = pigeonVar_list[11] as List<Double?>?
-      val boolList = pigeonVar_list[12] as List<Boolean?>?
-      val enumList = pigeonVar_list[13] as List<NIAnEnum?>?
-      val objectList = pigeonVar_list[14] as List<Any?>?
-      val listList = pigeonVar_list[15] as List<List<Any?>?>?
-      val mapList = pigeonVar_list[16] as List<Map<Any?, Any?>?>?
-      val map = pigeonVar_list[17] as Map<Any, Any?>?
-      val stringMap = pigeonVar_list[18] as Map<String?, String?>?
-      val intMap = pigeonVar_list[19] as Map<Long?, Long?>?
-      val enumMap = pigeonVar_list[20] as Map<NIAnEnum?, NIAnEnum?>?
-      val objectMap = pigeonVar_list[21] as Map<Any?, Any?>?
-      val listMap = pigeonVar_list[22] as Map<Long?, List<Any?>?>?
-      val mapMap = pigeonVar_list[23] as Map<Long?, Map<Any?, Any?>?>?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val aNullableEnum = pigeonVar_list[8] as NIAnEnum?
+      val anotherNullableEnum = pigeonVar_list[9] as NIAnotherEnum?
+      val aNullableString = pigeonVar_list[10] as String?
+      val aNullableObject = pigeonVar_list[11]
+      val list = pigeonVar_list[12] as List<Any?>?
+      val stringList = pigeonVar_list[13] as List<String?>?
+      val intList = pigeonVar_list[14] as List<Long?>?
+      val doubleList = pigeonVar_list[15] as List<Double?>?
+      val boolList = pigeonVar_list[16] as List<Boolean?>?
+      val enumList = pigeonVar_list[17] as List<NIAnEnum?>?
+      val objectList = pigeonVar_list[18] as List<Any?>?
+      val listList = pigeonVar_list[19] as List<List<Any?>?>?
+      val mapList = pigeonVar_list[20] as List<Map<Any?, Any?>?>?
+      val map = pigeonVar_list[21] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[22] as Map<String?, String?>?
+      val intMap = pigeonVar_list[23] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[24] as Map<NIAnEnum?, NIAnEnum?>?
+      val objectMap = pigeonVar_list[25] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[26] as Map<Long?, List<Any?>?>?
+      val mapMap = pigeonVar_list[27] as Map<Long?, Map<Any?, Any?>?>?
       return NIAllNullableTypesWithoutRecursion(
           aNullableBool,
           aNullableInt,
           aNullableInt64,
           aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
           aNullableEnum,
           anotherNullableEnum,
           aNullableString,
@@ -312,6 +340,10 @@ data class NIAllNullableTypesWithoutRecursion(
         aNullableInt,
         aNullableInt64,
         aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
         aNullableEnum,
         anotherNullableEnum,
         aNullableString,
@@ -425,6 +457,14 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoBool(aBool: Boolean): Boolean
   /** Returns the passed in string. */
   abstract fun echoString(aString: String): String
+  /** Returns the passed in Uint8List. */
+  abstract fun echoUint8List(aUint8List: ByteArray): ByteArray
+  /** Returns the passed in Int32List. */
+  abstract fun echoInt32List(aInt32List: IntArray): IntArray
+  /** Returns the passed in Int64List. */
+  abstract fun echoInt64List(aInt64List: LongArray): LongArray
+  /** Returns the passed in Float64List. */
+  abstract fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray
   /** Returns the passed in generic Object. */
   abstract fun echoObject(anObject: Any): Any
   /** Returns the passed list, to test serialization and deserialization. */
@@ -512,6 +552,14 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoNullableBool(aNullableBool: Boolean?): Boolean?
   /** Returns the passed in string. */
   abstract fun echoNullableString(aNullableString: String?): String?
+  /** Returns the passed in Uint8List. */
+  abstract fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray?
+  /** Returns the passed in Int32List. */
+  abstract fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray?
+  /** Returns the passed in Int64List. */
+  abstract fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray?
+  /** Returns the passed in Float64List. */
+  abstract fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray?
   /** Returns the passed in generic Object. */
   abstract fun echoNullableObject(aNullableObject: Any?): Any?
   /** Returns the passed list, to test serialization and deserialization. */
@@ -635,6 +683,50 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List. */
+  override fun echoUint8List(aUint8List: ByteArray): ByteArray {
+    api?.let {
+      try {
+        return api!!.echoUint8List(aUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List. */
+  override fun echoInt32List(aInt32List: IntArray): IntArray {
+    api?.let {
+      try {
+        return api!!.echoInt32List(aInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List. */
+  override fun echoInt64List(aInt64List: LongArray): LongArray {
+    api?.let {
+      try {
+        return api!!.echoInt64List(aInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List. */
+  override fun echoFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    api?.let {
+      try {
+        return api!!.echoFloat64List(aFloat64List)
       } catch (e: Exception) {
         throw e
       }
@@ -1002,6 +1094,50 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoNullableString(aNullableString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List. */
+  override fun echoNullableUint8List(aNullableUint8List: ByteArray?): ByteArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableUint8List(aNullableUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List. */
+  override fun echoNullableInt32List(aNullableInt32List: IntArray?): IntArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableInt32List(aNullableInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List. */
+  override fun echoNullableInt64List(aNullableInt64List: LongArray?): LongArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableInt64List(aNullableInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List. */
+  override fun echoNullableFloat64List(aNullableFloat64List: DoubleArray?): DoubleArray? {
+    api?.let {
+      try {
+        return api!!.echoNullableFloat64List(aNullableFloat64List)
       } catch (e: Exception) {
         throw e
       }
