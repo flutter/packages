@@ -140,6 +140,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       add_recipes_cq: "true"
       target_file: dart_unit_tests.yaml
       channel: master
@@ -155,6 +159,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -169,6 +177,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -183,6 +195,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -197,6 +213,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       add_recipes_cq: "true"
       target_file: web_dart_unit_tests.yaml
       channel: master
@@ -212,6 +232,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: web_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -226,6 +250,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -240,6 +268,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: web_dart_unit_tests.yaml
       channel: stable
       version_file: flutter_stable.version
@@ -255,6 +287,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       add_recipes_cq: "true"
       target_file: web_dart_unit_tests_wasm.yaml
       channel: master
@@ -1320,6 +1356,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version
@@ -1334,6 +1374,10 @@ targets:
     recipe: packages/packages
     timeout: 60
     properties:
+      dependencies: >-
+        [
+          {"dependency": "goldctl", "version": "git_revision:2387d6fff449587eecbb7e45b2692ca0710b63b9"}
+        ]
       target_file: windows_dart_unit_tests.yaml
       channel: master
       version_file: flutter_master.version

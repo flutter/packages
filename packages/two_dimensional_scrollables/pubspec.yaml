@@ -13,6 +13,8 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  flutter_goldens:
+    sdk: flutter
   flutter_test:
     sdk: flutter
 

@@ -8,6 +8,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 
 void main() {
+
+testWidgets('Inconsequential golden test', (WidgetTester tester) async {
+    // The test validates the Flutter Gold integration. Any changes to the
+    // golden file can be approved at any time.
+    await tester.pumpWidget(RepaintBoundary(child: Container(color: const Color(0xAFF61145))));
+
+    await tester.pumpAndSettle();
+    await expectLater(
+      find.byType(RepaintBoundary),
+      matchesGoldenFile('inconsequential_golden_file.png'),
+    );
+  });
+
   group('SpanExtent', () {
     test('FixedSpanExtent', () {
       var extent = const FixedSpanExtent(150);
