@@ -20,7 +20,6 @@ void main() {
 
       await tester.pumpWidget(
         DevToolsExtension(
-          requiresRunningApplication: false,
           child: Directionality(
             textDirection: TextDirection.ltr,
             child: ErrorPanel(error: error, stackTrace: stackTrace),
