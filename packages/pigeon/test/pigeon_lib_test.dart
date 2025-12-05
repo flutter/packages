@@ -1757,6 +1757,39 @@ abstract class MyClass {
         ),
       );
     });
+
+    test('constructor parameters can share name of attached fields', () {
+      const code = '''
+@ProxyApi()
+abstract class MyClass {
+  MyClass(int aField);
+
+  @attached
+  late MyClass aField;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isEmpty);
+    });
+
+    test('constructor parameters can not share name of unattached fields', () {
+      const code = '''
+@ProxyApi()
+abstract class MyClass {
+  MyClass(int aField);
+
+  late MyClass? aField;
+}
+''';
+      final ParseResults parseResult = parseSource(code);
+      expect(parseResult.errors, isNotEmpty);
+      expect(
+        parseResult.errors[0].message,
+        contains(
+          'Parameter names must not share a name with a field or callback method in constructor "" in API: "MyClass"',
+        ),
+      );
+    });
   });
 
   group('event channel validation', () {

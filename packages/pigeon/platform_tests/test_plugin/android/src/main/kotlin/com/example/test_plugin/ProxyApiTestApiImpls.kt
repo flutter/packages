@@ -15,7 +15,7 @@ interface ProxyApiInterface
 
 @RequiresApi(25) class ClassWithApiRequirement
 
-class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
+open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
     ProxyApiTestsPigeonProxyApiRegistrar(binaryMessenger) {
   override fun getPigeonApiProxyApiTestClass(): PigeonApiProxyApiTestClass {
     return ProxyApiTestClassApi(this)

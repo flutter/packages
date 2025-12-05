@@ -1079,7 +1079,10 @@ List<Error> _validateProxyApi(
         result.add(unsupportedDataClassError(parameter));
       }
 
-      if (api.fields.any((ApiField field) => field.name == parameter.name) ||
+      if (api.fields.any(
+            (ApiField field) =>
+                field.name == parameter.name && !field.isAttached,
+          ) ||
           api.flutterMethods.any(
             (Method method) => method.name == parameter.name,
           )) {

@@ -1,3 +1,7 @@
+## 0.8.13+3
+
+* Fixes a performance regression on iOS where picking videos could cause a long delay due to transcoding. The picker is now configured to request the original asset to avoid conversion.
+
 ## 0.8.13+2
 
 * Updates to Pigeon 26.

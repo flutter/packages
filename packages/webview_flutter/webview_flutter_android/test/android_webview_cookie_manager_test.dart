@@ -87,16 +87,10 @@ void main() {
   test('setAcceptThirdPartyCookies', () async {
     final mockController = MockAndroidWebViewController();
 
-    final instanceManager = android_webview.PigeonInstanceManager(
-      onWeakReferenceRemoved: (_) {},
-    );
-    final webView = android_webview.WebView.pigeon_detached(
-      pigeon_instanceManager: instanceManager,
-    );
+    final webView = android_webview.WebView.pigeon_detached();
 
-    final int webViewIdentifier = instanceManager.addDartCreatedInstance(
-      webView,
-    );
+    final int webViewIdentifier = android_webview.PigeonInstanceManager.instance
+        .addDartCreatedInstance(webView);
 
     when(mockController.webViewIdentifier).thenReturn(webViewIdentifier);
 
@@ -106,8 +100,6 @@ void main() {
         );
 
     final mockCookieManager = MockCookieManager();
-    // ignore: invalid_use_of_protected_member
-    when(mockCookieManager.pigeon_instanceManager).thenReturn(instanceManager);
 
     await AndroidWebViewCookieManager(
       params,
