@@ -171,7 +171,6 @@ class MarkersController extends GeometryController {
                     )
                     .whereType<gmaps.Marker>()
                     .toList(),
-
               ),
             );
 
