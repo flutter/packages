@@ -1,3 +1,7 @@
+## 0.6.25+2
+
+* Updates pigeon generation to prevent crash when objects call to Dart after a hot restart.
+
 ## 0.6.25+1
 
 * Bumps kotlin_version to 2.2.21.
