@@ -81,6 +81,22 @@ void main() {
       );
     });
 
+    testWidgets('throws if init is called twice synchronously', (_) async {
+      final Future<void> firstInit = plugin.init(
+        const InitParameters(clientId: 'some-non-null-client-id'),
+      );
+
+      // Calling init() a second time synchronously should throw state error
+      expect(
+        () => plugin.init(
+          const InitParameters(clientId: 'some-non-null-client-id'),
+        ),
+        throwsStateError,
+      );
+
+      await firstInit;
+    });
+
     testWidgets('asserts clientId is not null', (_) async {
       expect(() async {
         await plugin.init(const InitParameters());
