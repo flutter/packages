@@ -169,9 +169,9 @@ class MarkersController extends GeometryController {
                       (MapEntry<MarkerId, MarkerController?> x) =>
                           x.value?.marker,
                     )
-                    .where((gmaps.Marker? x) => x != null)
-                    .cast<gmaps.Marker>()
+                    .whereType<gmaps.Marker>()
                     .toList(),
+
               ),
             );
 
