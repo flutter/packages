@@ -547,20 +547,24 @@ void main() {
     });
 
     test('detects pending changelog changes for batch release', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
 ''');
 
-      const List<String> changedFiles = <String>[
+      const changedFiles = <String>[
         'packages/a_package/pending_changelogs/some_change.yaml',
       ];
 
-      final PackageChangeState state = await checkPackageChangeState(package,
-          changedPaths: changedFiles,
-          relativePackagePath: 'packages/a_package/');
+      final PackageChangeState state = await checkPackageChangeState(
+        package,
+        changedPaths: changedFiles,
+        relativePackagePath: 'packages/a_package/',
+      );
 
       expect(state.hasChanges, true);
       expect(state.hasChangelogChange, true);
