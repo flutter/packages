@@ -117,9 +117,9 @@ class BranchForBatchReleaseCommand extends PackageCommand {
     List<PendingChangelogEntry> pendingChangelogEntries,
     Version oldVersion,
   ) {
-    final List<String> changelogs = <String>[];
+    final changelogs = <String>[];
     int versionIndex = VersionChange.skip.index;
-    for (final PendingChangelogEntry entry in pendingChangelogEntries) {
+    for (final entry in pendingChangelogEntries) {
       changelogs.add(entry.changelog);
       versionIndex = math.min(versionIndex, entry.version.index);
     }

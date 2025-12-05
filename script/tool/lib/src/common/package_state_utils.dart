@@ -80,7 +80,7 @@ Future<PackageChangeState> checkPackageChangeState(
       continue;
     }
 
-    if (package.parseCiConfig()?.isBatchRelease ?? false) {
+    if (package.parseCIConfig()?.isBatchRelease ?? false) {
       if (components.first == 'pending_changelogs') {
         hasChangelogChange = true;
         continue;
@@ -213,6 +213,9 @@ Future<bool> _isDevChange(
       pathComponents.first == 'run_tests.sh' ||
       // CONTRIBUTING.md is dev-facing.
       pathComponents.last == 'CONTRIBUTING.md' ||
+      // The top-level "pending_changelogs" directory is the repo convention for storing
+      // pending changelog files.
+      pathComponents.first == 'pending_changelogs' ||
       // Lints don't affect clients.
       pathComponents.contains('analysis_options.yaml') ||
       pathComponents.contains('lint-baseline.xml') ||

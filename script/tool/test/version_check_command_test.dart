@@ -921,6 +921,46 @@ void main() {
         );
       });
 
+      test('passes if the only change is in pending_changelogs', () async {
+        final RepositoryPackage plugin = createFakePlugin(
+          'plugin',
+          packagesDir,
+          version: '1.0.0',
+        );
+
+        const changelog = '''
+## 1.0.0
+* Some changes.
+''';
+        plugin.changelogFile.writeAsStringSync(changelog);
+        gitProcessRunner.mockProcessesForExecutable['git-show'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+            ];
+        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
+packages/plugin/pending_changelogs/some_entry.yaml
+''',
+                ),
+              ),
+            ];
+
+        final List<String> output = await runWithMissingChangeDetection(
+          <String>[],
+        );
+
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains('Running for plugin'),
+            contains('No issues found'),
+          ]),
+        );
+      });
+
       test('fails if a version and CHANGELOG change is missing from a change '
           'that does not pass the exemption check', () async {
         final RepositoryPackage plugin = createFakePlugin(
@@ -1857,157 +1897,196 @@ ${indentation}HTTP response: null
     });
     group('batch release', () {
       test(
-          'ignores changelog and pubspec yaml version modifications check with post-release label',
-          () async {
-        final RepositoryPackage package =
-            createFakePackage('package', packagesDir, version: '1.0.0');
+        'ignores changelog and pubspec yaml version modifications check with post-release label',
+        () async {
+          final RepositoryPackage package = createFakePackage(
+            'package',
+            packagesDir,
+            version: '1.0.0',
+          );
+          package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+          // Create the pending_changelogs directory so the test doesn't fail on that check.
+          package.directory.childDirectory('pending_changelogs').createSync();
+
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(
+                  MockProcess(
+                    stdout: '''
+packages/package/CHANGELOG.md
+packages/package/pubspec.yaml
+''',
+                  ),
+                ),
+              ];
+          gitProcessRunner.mockProcessesForExecutable['git-show'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+              ];
+
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'version-check',
+            '--base-sha=main',
+            '--pr-labels=post-release-package',
+          ]);
+
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for package'),
+              contains('No issues found!'),
+            ]),
+          );
+        },
+      );
+
+      test('fails when there is changelog modifications', () async {
+        final RepositoryPackage package = createFakePackage(
+          'package',
+          packagesDir,
+          version: '1.0.0',
+        );
         package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
 ''');
-        // Create the pending_changelogs directory so we don't fail on that check.
+        // Create the pending_changelogs directory so the test doesn't fail on that check.
         package.directory.childDirectory('pending_changelogs').createSync();
 
         gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: '''
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 packages/package/CHANGELOG.md
-packages/package/pubspec.yaml
-''')),
-        ];
+''',
+                ),
+              ),
+            ];
         gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-        ];
+              FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+            ];
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
-          '--base-sha=main',
-          '--pr-labels=post-release-package',
-        ]);
+        Error? commandError;
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['version-check', '--base-sha=main'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
+        expect(commandError, isA<ToolExit>());
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('Running for package'),
-            contains('No issues found!'),
+            contains(
+              'This package uses batch release, so CHANGELOG.md should not be changed directly.',
+            ),
           ]),
         );
       });
 
-      test('fails when there is changelog modifications', () async {
-        final RepositoryPackage package =
-            createFakePackage('package', packagesDir, version: '1.0.0');
-        package.ciConfigFile.writeAsStringSync('''
-release:
-  batch: true
-''');
-        // Create the pending_changelogs directory so we don't fail on that check.
-        package.directory.childDirectory('pending_changelogs').createSync();
-
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: '''
-packages/package/CHANGELOG.md
-''')),
-        ];
-        gitProcessRunner.mockProcessesForExecutable['git-show'] =
-            <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-        ];
-
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
-          '--base-sha=main',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
-
-        expect(commandError, isA<ToolExit>());
-        expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                  'This package uses batch release, so CHANGELOG.md should not be changed directly.'),
-            ]));
-      });
-
       test('fails when there is pubspec version modifications', () async {
-        final RepositoryPackage package =
-            createFakePackage('package', packagesDir, version: '1.0.1');
+        final RepositoryPackage package = createFakePackage(
+          'package',
+          packagesDir,
+          version: '1.0.1',
+        );
         package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
 ''');
-        // Create the pending_changelogs directory so we don't fail on that check.
+        // Create the pending_changelogs directory so the test doesn't fail on that check.
         package.directory.childDirectory('pending_changelogs').createSync();
 
         gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: '''
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 packages/package/pubspec.yaml
-''')),
-        ];
+''',
+                ),
+              ),
+            ];
         gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-        ];
+              FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+            ];
 
         Error? commandError;
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
-          '--base-sha=main',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>['version-check', '--base-sha=main'],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
         expect(commandError, isA<ToolExit>());
         expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                  'This package uses batch release, so the version in pubspec.yaml should not be changed directly.'),
-            ]));
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'This package uses batch release, so the version in pubspec.yaml should not be changed directly.',
+            ),
+          ]),
+        );
       });
 
-      test('passes when there is pubspec modification but no version change',
-          () async {
-        final RepositoryPackage package =
-            createFakePackage('package', packagesDir, version: '1.0.0');
-        package.ciConfigFile.writeAsStringSync('''
+      test(
+        'passes when there is pubspec modification but no version change',
+        () async {
+          final RepositoryPackage package = createFakePackage(
+            'package',
+            packagesDir,
+            version: '1.0.0',
+          );
+          package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
 ''');
-        // Create the pending_changelogs directory so we don't fail on that check.
-        package.directory.childDirectory('pending_changelogs').createSync();
+          // Create the pending_changelogs directory so the test doesn't fail on that check.
+          package.directory.childDirectory('pending_changelogs').createSync();
 
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: '''
+          gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(
+                  MockProcess(
+                    stdout: '''
 packages/package/pubspec.yaml
-''')),
-        ];
-        gitProcessRunner.mockProcessesForExecutable['git-show'] =
-            <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-        ];
+''',
+                  ),
+                ),
+              ];
+          gitProcessRunner.mockProcessesForExecutable['git-show'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+              ];
 
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
-          '--base-sha=main',
-        ]);
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'version-check',
+            '--base-sha=main',
+          ]);
 
-        expect(
+          expect(
             output,
-            containsAllInOrder(<Matcher>[
-              contains('No issues found!'),
-            ]));
-      });
+            containsAllInOrder(<Matcher>[contains('No issues found!')]),
+          );
+        },
+      );
 
       test('fails for batch release package with no new changelog', () async {
-        final RepositoryPackage package =
-            createFakePackage('package', packagesDir, version: '1.0.0');
+        final RepositoryPackage package = createFakePackage(
+          'package',
+          packagesDir,
+          version: '1.0.0',
+        );
         package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
@@ -2016,39 +2095,48 @@ release:
         package.libDirectory
             .childFile('foo.dart')
             .writeAsStringSync('void foo() {}');
-        // Create the pending_changelogs directory so we don't fail on that check.
+        // Create the pending_changelogs directory so the test doesn't fail on that check.
         package.directory.childDirectory('pending_changelogs').createSync();
 
-        gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-            <FakeProcessInfo>[
+        gitProcessRunner
+            .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
           FakeProcessInfo(MockProcess(stdout: 'packages/package/lib/foo.dart')),
         ];
         gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-        ];
+              FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+            ];
 
         Error? commandError;
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'version-check',
-          '--base-sha=main',
-          '--check-for-missing-changes',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
+        final List<String> output = await runCapturingPrint(
+          runner,
+          <String>[
+            'version-check',
+            '--base-sha=main',
+            '--check-for-missing-changes',
+          ],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
         expect(commandError, isA<ToolExit>());
         expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains(
-                  'No new changelog files found in the pending_changelogs folder.'),
-            ]));
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'No new changelog files found in the pending_changelogs folder.',
+            ),
+          ]),
+        );
       });
 
       test('passes for batch release package with new changelog', () async {
-        final RepositoryPackage package =
-            createFakePackage('package', packagesDir, version: '1.0.0');
+        final RepositoryPackage package = createFakePackage(
+          'package',
+          packagesDir,
+          version: '1.0.0',
+        );
         package.ciConfigFile.writeAsStringSync('''
 release:
   batch: true
@@ -2057,9 +2145,10 @@ release:
         package.libDirectory
             .childFile('foo.dart')
             .writeAsStringSync('void foo() {}');
-        // Create the pending_changelogs directory so we don't fail on that check.
-        final Directory pendingChangelogs =
-            package.directory.childDirectory('pending_changelogs');
+        // Create the pending_changelogs directory so the test doesn't fail on that check.
+        final Directory pendingChangelogs = package.directory.childDirectory(
+          'pending_changelogs',
+        );
         pendingChangelogs.createSync();
         pendingChangelogs.childFile('some_change.yaml').writeAsStringSync('''
 changelog: "Some change"
@@ -2068,15 +2157,19 @@ version: patch
 
         gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: '''
+              FakeProcessInfo(
+                MockProcess(
+                  stdout: '''
 packages/package/lib/foo.dart
 packages/package/pending_changelogs/some_change.yaml
-''')),
-        ];
+''',
+                ),
+              ),
+            ];
         gitProcessRunner.mockProcessesForExecutable['git-show'] =
             <FakeProcessInfo>[
-          FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
-        ];
+              FakeProcessInfo(MockProcess(stdout: 'version: 1.0.0')),
+            ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'version-check',
@@ -2085,10 +2178,9 @@ packages/package/pending_changelogs/some_change.yaml
         ]);
 
         expect(
-            output,
-            containsAllInOrder(<Matcher>[
-              contains('No issues found!'),
-            ]));
+          output,
+          containsAllInOrder(<Matcher>[contains('No issues found!')]),
+        );
       });
     });
   });
