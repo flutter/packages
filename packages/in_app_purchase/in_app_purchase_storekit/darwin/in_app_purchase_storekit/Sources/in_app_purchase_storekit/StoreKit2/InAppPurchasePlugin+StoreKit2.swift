@@ -267,16 +267,10 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         let transaction = try await fetchUnfinishedTransaction(by: UInt64(id))
         if let transaction = transaction {
           await transaction.finish()
-          completion(.success(Void()))
-        } else {
-          // Transaction not found in unfinished transactions
-          completion(
-            .failure(
-              PigeonError(
-                code: "storekit2_transaction_not_found",
-                message: "Transaction not found in unfinished transactions.",
-                details: "Transaction ID: \(id)")))
         }
+        // If transaction is not found, it means it's already been finished.
+        // This is a success case - the transaction is complete.
+        completion(.success(Void()))
       } catch {
         completion(
           .failure(
