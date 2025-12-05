@@ -263,10 +263,21 @@ extension InAppPurchasePlugin: InAppPurchase2API {
   /// Wrapper method around StoreKit2's finish() method https://developer.apple.com/documentation/storekit/transaction/3749694-finish
   func finish(id: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
     Task {
-      let transaction = try await fetchTransaction(by: UInt64(id))
-      if let transaction = transaction {
-        await transaction.finish()
+      do {
+        let transaction = try await fetchUnfinishedTransaction(by: UInt64(id))
+        if let transaction = transaction {
+          await transaction.finish()
+        }
+        // If transaction is not found, it means it's already been finished.
+        // This is a success case - the transaction is complete.
         completion(.success(Void()))
+      } catch {
+        completion(
+          .failure(
+            PigeonError(
+              code: "storekit2_finish_transaction_failed",
+              message: "Failed to finish transaction: \(error.localizedDescription)",
+              details: "Transaction ID: \(id)")))
       }
     }
   }
@@ -362,7 +373,24 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     return transactions
   }
 
-  /// Helper function to fetch specific transaction
+  /// Helper function to fetch specific transaction by ID from unfinished transactions.
+  /// Used by finish() to find transactions that need to be completed.
+  func fetchUnfinishedTransaction(by id: UInt64) async throws -> Transaction? {
+    for await result in Transaction.unfinished {
+      switch result {
+      case .verified(let transaction):
+        if transaction.id == id {
+          return transaction
+        }
+      case .unverified:
+        continue
+      }
+    }
+    return nil
+  }
+
+  /// Helper function to fetch specific transaction by ID from all transactions.
+  /// Used for general transaction lookups.
   func fetchTransaction(by id: UInt64) async throws -> Transaction? {
     for await result in Transaction.all {
       switch result {
