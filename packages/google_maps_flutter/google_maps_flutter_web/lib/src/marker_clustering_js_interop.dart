@@ -8,9 +8,12 @@
 @JS()
 library;
 
+import 'dart:async';
 import 'dart:js_interop';
 
 import 'package:google_maps/google_maps.dart' as gmaps;
+
+import 'marker_clustering.dart';
 
 /// A typedef representing a callback function for handling cluster tap events.
 typedef ClusterClickHandler =
@@ -63,6 +66,16 @@ extension type MarkerClustererOptions._(JSObject _) implements JSObject {
   @JS('onClusterClick')
   external JSExportedDartFunction? get _onClusterClick;
 }
+
+@JS('google.maps.event.addListener')
+external JSAny _gmapsAddListener(
+  JSAny instance,
+  String eventName,
+  JSFunction handler,
+);
+
+@JS('google.maps.event.removeListener')
+external void _gmapsRemoveListener(JSAny listenerHandle);
 
 /// The cluster object handled by the [MarkerClusterer].
 ///
@@ -117,7 +130,7 @@ extension type MarkerClusterer._(JSObject _) implements JSObject {
 
   /// Adds a list of markers to be clustered by the [MarkerClusterer].
   void addMarkers(List<gmaps.Marker>? markers, bool? noDraw) =>
-      _addMarkers(markers?.cast<JSAny>().toJS, noDraw);
+      _addMarkers(markers?.toJS, noDraw);
   @JS('addMarkers')
   external void _addMarkers(JSArray<JSAny>? markers, bool? noDraw);
 
@@ -129,7 +142,7 @@ extension type MarkerClusterer._(JSObject _) implements JSObject {
 
   /// Removes a list of markers from the [MarkerClusterer].
   bool removeMarkers(List<gmaps.Marker>? markers, bool? noDraw) =>
-      _removeMarkers(markers?.cast<JSAny>().toJS, noDraw);
+      _removeMarkers(markers?.toJS, noDraw);
   @JS('removeMarkers')
   external bool _removeMarkers(JSArray<JSAny>? markers, bool? noDraw);
 
@@ -163,4 +176,30 @@ MarkerClusterer createMarkerClusterer(
     onClusterClick: onClusterClickHandler,
   );
   return MarkerClusterer(options);
+}
+
+///Converts events that clustering manager emits during rendering to stream
+Stream<ClusteringEvent> getClustererEvents(MarkerClusterer clusterer) {
+  late final StreamController<ClusteringEvent> controller;
+
+  final JSAny beginHandle = _gmapsAddListener(
+    clusterer,
+    'clusteringbegin',
+    ((JSAny mc) => controller.add(ClusteringEvent.begin)).toJS,
+  );
+
+  final JSAny endHandle = _gmapsAddListener(
+    clusterer,
+    'clusteringend',
+    ((JSAny mc) => controller.add(ClusteringEvent.end)).toJS,
+  );
+
+  controller = StreamController<ClusteringEvent>(
+    onCancel: () {
+      _gmapsRemoveListener(beginHandle);
+      _gmapsRemoveListener(endHandle);
+    },
+  );
+
+  return controller.stream;
 }

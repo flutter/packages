@@ -10,7 +10,17 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import '../google_maps_flutter_web.dart';
 import 'marker_clustering_js_interop.dart';
+import 'marker_clustering_js_interop.dart' as interop;
 import 'types.dart';
+
+/// Events emitted by the marker clustering lifecycle.
+enum ClusteringEvent {
+  /// Clustering has started.
+  begin,
+
+  /// Clustering finished and clusters are available.
+  end,
+}
 
 /// A controller class for managing marker clustering.
 ///
@@ -137,6 +147,13 @@ class ClusterManagersController extends GeometryController {
     }
     return <Cluster>[];
   }
+
+  /// Returns the stream of clustering lifecycle events for the given manager.
+  Stream<ClusteringEvent>? getClustererEvents(
+    ClusterManagerId clusterManagerId,
+  ) => interop.getClustererEvents(
+    _clusterManagerIdToMarkerClusterer[clusterManagerId]!,
+  );
 
   void _clusterClicked(
     ClusterManagerId clusterManagerId,
