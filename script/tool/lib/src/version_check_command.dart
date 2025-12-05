@@ -219,61 +219,28 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
     final errors = <String>[];
 
-    final CiConfig? ciConfig = package.parseCiConfig();
+    final CIConfig? ciConfig = package.parseCIConfig();
     final _CurrentVersionState versionState = await _getVersionState(
       package,
       pubspec: pubspec,
     );
     final bool usesBatchRelease = ciConfig?.isBatchRelease ?? false;
     // PR with post release label is going to sync changelog.md and pubspec.yaml
-    // change back to main branch. We can proceed with ragular version check.
+    // change back to main branch. Proceed with ragular version check.
     final bool hasPostReleaseLabel = _prLabels.contains(
       'post-release-${pubspec.name}',
     );
-    bool versionChanged = false;
+    bool versionChanged;
 
     if (usesBatchRelease && !hasPostReleaseLabel) {
-      final String relativePackagePath = await _getRelativePackagePath(package);
-      final List<String> changedFilesInPackage = changedFiles
-          .where((String path) => path.startsWith(relativePackagePath))
-          .toList();
-
-      // For batch release, we only check pending changelog files.
-      final List<PendingChangelogEntry> allChangelogs;
-      try {
-        allChangelogs = package.getPendingChangelogs();
-      } on FormatException catch (e) {
-        errors.add(e.message);
-        return PackageResult.fail(errors);
-      }
-
-      final List<PendingChangelogEntry> newEntries = allChangelogs
-          .where(
-            (PendingChangelogEntry entry) => changedFilesInPackage.any(
-              (String path) => path.endsWith(entry.file.path.split('/').last),
-            ),
-          )
-          .toList();
-      versionChanged = newEntries.any(
-        (PendingChangelogEntry entry) => entry.version != VersionChange.skip,
+      versionChanged = await _validateBatchRelease(
+        package: package,
+        changedFiles: changedFiles,
+        errors: errors,
+        versionState: versionState,
       );
-
-      // The changelog.md and pubspec.yaml's version should not be updated directly.
-      if (changedFilesInPackage.contains('$relativePackagePath/CHANGELOG.md')) {
-        printError(
-          'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
-          'Instead, create a pending changelog file in pending_changelogs folder.',
-        );
-        errors.add('CHANGELOG.md changed');
-      }
-      if (changedFilesInPackage.contains('$relativePackagePath/pubspec.yaml')) {
-        if (versionState != _CurrentVersionState.unchanged) {
-          printError(
-            'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
-            'Instead, create a pending changelog file in pending_changelogs folder.',
-          );
-          errors.add('pubspec.yaml version changed');
-        }
+      if (errors.isNotEmpty) {
+        return PackageResult.fail(errors);
       }
     } else {
       switch (versionState) {
@@ -678,9 +645,8 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
         );
       } else {
         missingChangelogChange = true;
-        final bool isBatchRelease =
-            package.parseCiConfig()?.isBatchRelease ?? false;
-        if (isBatchRelease) {
+        final CIConfig? config = package.parseCIConfig();
+        if (config?.isBatchRelease ?? false) {
           printError(
             'No new changelog files found in the pending_changelogs folder.\n'
             'If this PR needs an exemption from the standard policy of listing '
@@ -688,7 +654,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
             'comment in the PR to explain why the PR is exempt, and add (or '
             'ask your reviewer to add) the\n'
             '"$_missingChangelogChangeOverrideLabel" label.\n'
-            'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
+            'Otherwise, please add a changelog entry with version:skip in the pending_changelogs folder as described in '
             'the contributing guide.\n',
           );
         } else {
@@ -723,5 +689,56 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     }
 
     return null;
+  }
+
+  Future<bool> _validateBatchRelease({
+    required RepositoryPackage package,
+    required List<String> changedFiles,
+    required List<String> errors,
+    required _CurrentVersionState versionState,
+  }) async {
+    final String relativePackagePath = await _getRelativePackagePath(package);
+    final List<String> changedFilesInPackage = changedFiles
+        .where((String path) => path.startsWith(relativePackagePath))
+        .toList();
+
+    // For batch release, only check pending changelog files.
+    final List<PendingChangelogEntry> allChangelogs;
+    try {
+      allChangelogs = package.getPendingChangelogs();
+    } on FormatException catch (e) {
+      errors.add(e.message);
+      return false;
+    }
+
+    final List<PendingChangelogEntry> newEntries = allChangelogs
+        .where(
+          (PendingChangelogEntry entry) => changedFilesInPackage.any(
+            (String path) => path.endsWith(entry.file.path.split('/').last),
+          ),
+        )
+        .toList();
+    final bool versionChanged = newEntries.any(
+      (PendingChangelogEntry entry) => entry.version != VersionChange.skip,
+    );
+
+    // The changelog.md and pubspec.yaml's version should not be updated directly.
+    if (changedFilesInPackage.contains('$relativePackagePath/CHANGELOG.md')) {
+      printError(
+        'This package uses batch release, so CHANGELOG.md should not be changed directly.\n'
+        'Instead, create a pending changelog file in pending_changelogs folder.',
+      );
+      errors.add('CHANGELOG.md changed');
+    }
+    if (changedFilesInPackage.contains('$relativePackagePath/pubspec.yaml')) {
+      if (versionState != _CurrentVersionState.unchanged) {
+        printError(
+          'This package uses batch release, so the version in pubspec.yaml should not be changed directly.\n'
+          'Instead, create a pending changelog file in pending_changelogs folder.',
+        );
+        errors.add('pubspec.yaml version changed');
+      }
+    }
+    return versionChanged;
   }
 }

@@ -279,123 +279,51 @@ void main() {
       expect(package.requiresFlutter(), false);
     });
   });
-  group('ciConfig', () {
-    test('file', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
-
-      final File ciConfigFile = plugin.ciConfigFile;
-
-      expect(
-          ciConfigFile.path, plugin.directory.childFile('ci_config.yaml').path);
-    });
-
-    test('parsing', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
-      plugin.ciConfigFile.writeAsStringSync('''
-release:
-  batch: true
-''');
-
-      final CiConfig? config = plugin.parseCiConfig();
-
-      expect(config, isNotNull);
-      expect(config!.isBatchRelease, isTrue);
-    });
-
-    test('parsing missing file returns null', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
-
-      final CiConfig? config = plugin.parseCiConfig();
-
-      expect(config, isNull);
-    });
-
-    test('parsing invalid file throws', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
-      plugin.ciConfigFile.writeAsStringSync('not a map');
-
-      expect(
-          () => plugin.parseCiConfig(),
-          throwsA(isA<FormatException>().having(
-              (FormatException e) => e.message,
-              'message',
-              contains('Root of ci_config.yaml must be a map'))));
-    });
-
-    test('reports unknown keys', () {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
-      plugin.ciConfigFile.writeAsStringSync('''
-foo: bar
-''');
-
-      expect(
-          () => plugin.parseCiConfig(),
-          throwsA(isA<FormatException>().having(
-              (FormatException e) => e.message,
-              'message',
-              contains('Unknown key `foo` in config'))));
-    });
-
-    test('reports invalid values', () {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
-      plugin.ciConfigFile.writeAsStringSync('''
-release:
-  batch: not-a-bool
-''');
-
-      expect(
-          () => plugin.parseCiConfig(),
-          throwsA(isA<FormatException>().having(
-              (FormatException e) => e.message,
-              'message',
-              contains('Invalid value `not-a-bool` for key `release.batch`'))));
-    });
-  });
 
   group('getPendingChangelogs', () {
     test('returns an error if the directory is missing', () {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       expect(() => package.getPendingChangelogs(), throwsFormatException);
     });
 
     test('returns empty lists if the directory is empty', () {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       package.pendingChangelogsDirectory.createSync();
 
-      final List<PendingChangelogEntry> changelogs =
-          package.getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs = package
+          .getPendingChangelogs();
 
       expect(changelogs, isEmpty);
     });
 
     test('returns entries for valid files', () {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       package.pendingChangelogsDirectory.createSync();
-      package.pendingChangelogsDirectory
-          .childFile('a.yaml')
-          .writeAsStringSync('''
+      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync(
+        '''
 changelog: A
 version: patch
-''');
-      package.pendingChangelogsDirectory
-          .childFile('b.yaml')
-          .writeAsStringSync('''
+''',
+      );
+      package.pendingChangelogsDirectory.childFile('b.yaml').writeAsStringSync(
+        '''
 changelog: B
 version: minor
-''');
+''',
+      );
 
-      final List<PendingChangelogEntry> changelogs =
-          package.getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs = package
+          .getPendingChangelogs();
 
       expect(changelogs, hasLength(2));
       expect(changelogs[0].changelog, 'A');
@@ -405,31 +333,40 @@ version: minor
     });
 
     test('returns an error for a malformed file', () {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       package.pendingChangelogsDirectory.createSync();
-      final File changelogFile =
-          package.pendingChangelogsDirectory.childFile('a.yaml');
+      final File changelogFile = package.pendingChangelogsDirectory.childFile(
+        'a.yaml',
+      );
       changelogFile.writeAsStringSync('not yaml');
 
       expect(
-          () => package.getPendingChangelogs(),
-          throwsA(isA<FormatException>().having(
-              (FormatException e) => e.message,
-              'message',
-              contains('Expected a YAML map, but found String'))));
+        () => package.getPendingChangelogs(),
+        throwsA(
+          isA<FormatException>().having(
+            (FormatException e) => e.message,
+            'message',
+            contains('Expected a YAML map, but found String'),
+          ),
+        ),
+      );
     });
 
     test('ignores template.yaml', () {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       package.pendingChangelogsDirectory.createSync();
-      package.pendingChangelogsDirectory
-          .childFile('a.yaml')
-          .writeAsStringSync('''
+      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync(
+        '''
 changelog: A
 version: patch
-''');
+''',
+      );
       package.pendingChangelogsDirectory
           .childFile('template.yaml')
           .writeAsStringSync('''
@@ -437,8 +374,8 @@ changelog: TEMPLATE
 version: skip
 ''');
 
-      final List<PendingChangelogEntry> changelogs =
-          package.getPendingChangelogs();
+      final List<PendingChangelogEntry> changelogs = package
+          .getPendingChangelogs();
 
       expect(changelogs, hasLength(1));
       expect(changelogs[0].changelog, 'A');

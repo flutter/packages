@@ -80,7 +80,7 @@ Future<PackageChangeState> checkPackageChangeState(
       continue;
     }
 
-    if (package.parseCiConfig()?.isBatchRelease ?? false) {
+    if (package.parseCIConfig()?.isBatchRelease ?? false) {
       if (components.first == 'pending_changelogs') {
         hasChangelogChange = true;
         continue;
