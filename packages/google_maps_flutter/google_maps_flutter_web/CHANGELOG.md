@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
+## 0.5.14+4
+
+* Batches clustered marker add/remove operations to avoid redundant re-rendering.
+
 ## 0.5.14+3
 
 * Replaces uses of deprecated `Color` properties.
