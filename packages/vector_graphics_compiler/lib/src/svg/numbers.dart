@@ -8,7 +8,7 @@ import 'theme.dart';
 
 /// Parses a [rawDouble] `String` to a `double`.
 ///
-/// The [rawDouble] might include a unit (`px`, `em` or `ex`)
+/// The [rawDouble] might include a unit (`px`, `pt`, `em`, `ex`, `rem`, or `%`)
 /// which is stripped off when parsed to a `double`.
 ///
 /// Passing `null` will return `null`.
@@ -24,6 +24,7 @@ double? parseDouble(String? rawDouble, {bool tryParse = false}) {
       .replaceFirst('ex', '')
       .replaceFirst('px', '')
       .replaceFirst('pt', '')
+      .replaceFirst('%', '')
       .trim();
 
   if (tryParse) {
@@ -56,6 +57,10 @@ const double kPointsToPixelFactor = kCssPixelsPerInch / kCssPointsPerInch;
 /// relative to the provided [xHeight]:
 /// 1 ex = 1 * `xHeight`.
 ///
+/// Passing a `%` value will calculate the result
+/// relative to the provided [percentageRef]:
+/// 50% with percentageRef=100 = 50.
+///
 /// The `rawDouble` might include a unit which is
 /// stripped off when parsed to a `double`.
 ///
@@ -64,8 +69,29 @@ double? parseDoubleWithUnits(
   String? rawDouble, {
   bool tryParse = false,
   required SvgTheme theme,
+  double? percentageRef,
 }) {
   var unit = 1.0;
+
+  // Handle percentage values first.
+  // Check inline to avoid circular import with parsers.dart.
+  final bool isPercent = rawDouble?.endsWith('%') ?? false;
+  if (isPercent) {
+    if (percentageRef == null || percentageRef.isInfinite) {
+      // If no reference dimension is available, treat as 0.
+      // This maintains backwards compatibility for cases where
+      // percentages can't be resolved.
+      if (tryParse) {
+        return null;
+      }
+      throw FormatException(
+        'Percentage value "$rawDouble" requires a reference dimension '
+        '(viewport width/height) but none was available.',
+      );
+    }
+    final double? value = parseDouble(rawDouble, tryParse: tryParse);
+    return value != null ? (value / 100) * percentageRef : null;
+  }
 
   // 1 rem unit is equal to the root font size.
   // 1 em unit is equal to the current font size.
