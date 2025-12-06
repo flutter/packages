@@ -694,13 +694,14 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   self.previousKeyWindow = presentingWindow;
   UIWindow *blockerWindow;
-  if (@available(iOS 13.0, *)) {
+  if (@available(iOS 13.0, *&&presentingWindow.windowScene)) {
     blockerWindow = [[UIWindow alloc] initWithWindowScene:presentingWindow.windowScene];
   } else {
     blockerWindow = [[UIWindow alloc] initWithFrame:presentingWindow.bounds];
   }
   blockerWindow.frame = presentingWindow.bounds;
-  blockerWindow.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  blockerWindow.autoresizingMask =
+      UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
   blockerWindow.windowLevel = presentingWindow.windowLevel + 1;
   UIViewController *vc = [[UIViewController alloc] init];
   vc.view.backgroundColor = [UIColor clearColor];
@@ -711,6 +712,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)removeInteractionBlocker {
+  if (!self.interactionBlockerWindow) {
+    return;
+  }
   self.interactionBlockerWindow.hidden = YES;
   if (self.previousKeyWindow) {
     [self.previousKeyWindow makeKeyWindow];
