@@ -522,7 +522,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     ? int.parse(limitController.text)
                     : null;
                 onPick(width, height, quality, limit);
-                Navigator.of(context).pop();
+                // Leave the dialog open to verify that tapping the transparent area no longer pops it.
+                // Regression check for https://github.com/flutter/flutter/issues/173453.
+                // Navigator.of(context).pop();
               },
             ),
           ],
