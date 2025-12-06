@@ -535,9 +535,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
   NSURL *videoURL = info[UIImagePickerControllerMediaURL];
+  __weak typeof(self) weakSelf = self;
   [picker dismissViewControllerAnimated:YES
                              completion:^{
-                               [self removeInteractionBlocker];
+                               [weakSelf removeInteractionBlocker];
                              }];
   // The method dismissViewControllerAnimated does not immediately prevent
   // further didFinishPickingMediaWithInfo invocations. A nil check is necessary
@@ -624,9 +625,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+  __weak typeof(self) weakSelf = self;
   [picker dismissViewControllerAnimated:YES
                              completion:^{
-                               [self removeInteractionBlocker];
+                               [weakSelf removeInteractionBlocker];
                              }];
   [self sendCallResultWithSavedPathList:nil];
 }
@@ -694,7 +696,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   self.previousKeyWindow = presentingWindow;
   UIWindow *blockerWindow;
-  if (@available(iOS 13.0, *&&presentingWindow.windowScene)) {
+  if (@available(iOS 13.0, *) && presentingWindow.windowScene) {
     blockerWindow = [[UIWindow alloc] initWithWindowScene:presentingWindow.windowScene];
   } else {
     blockerWindow = [[UIWindow alloc] initWithFrame:presentingWindow.bounds];

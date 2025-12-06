@@ -1,6 +1,6 @@
 ## 0.8.13+4
 
-* Fixes camera confirmation taps leaking through the picker on some iOS versions (e.g., iOS 26).
+* Fixes camera confirmation buttons (e.g., Retake/Use Photo) taps passing through to the underlying Flutter UI while the picker is dismissing on some iOS versions (e.g., iOS 26).
 
 ## 0.8.13+3
 
