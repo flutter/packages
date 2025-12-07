@@ -6,9 +6,11 @@
 // intended for use as an actual example application.
 
 // #docregion OutputConversion
+// #docregion OutputScaling
 import 'dart:ui' as ui;
 
 // #enddocregion OutputConversion
+// #enddocregion OutputScaling
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -79,7 +81,7 @@ Widget loadPrecompiledAsset() {
 
 /// Demonstrates converting SVG to another type.
 Future<ui.Image> convertSvgOutput() async {
-  var canvas = Canvas(ui.PictureRecorder());
+  final canvas = Canvas(ui.PictureRecorder());
   const width = 100;
   const height = 100;
 
@@ -94,29 +96,46 @@ Future<ui.Image> convertSvgOutput() async {
   canvas.drawPicture(pictureInfo.picture);
 
   // Or convert the picture to an image:
-  ui.Image image = await pictureInfo.picture.toImage(width, height);
+  final ui.Image image = await pictureInfo.picture.toImage(width, height);
 
-  // Or convert the picture to a scaled image:
+  pictureInfo.picture.dispose();
+  // #enddocregion OutputConversion
+  return image;
+}
+
+/// Demonstrates scaling SVG to a larger image
+Future<ui.Image> scaleSvgOutput() async {
+  // #docregion OutputScaling
+  const rawSvg = '''<svg ...>...</svg>''';
+  final PictureInfo pictureInfo = await vg.loadPicture(
+    const SvgStringLoader(rawSvg),
+    null,
+  );
+
+  // You can convert the picture to a scaled image:
   const double targetWidth = 512;
   const double targetHeight = 512;
   final pictureRecorder = ui.PictureRecorder();
-  canvas = Canvas(
+  final canvas = Canvas(
     pictureRecorder,
-    Rect.fromPoints(Offset.zero, const Offset(targetWidth, targetHeight)),
+    Rect.fromPoints(
+      Offset.zero,
+      const Offset(targetWidth, targetHeight),
+    ),
   );
   canvas.scale(
     targetWidth / pictureInfo.size.width,
     targetHeight / pictureInfo.size.height,
   );
   canvas.drawPicture(pictureInfo.picture);
-  image = await pictureRecorder.endRecording().toImage(
+  final ui.Image scaledImage = await pictureRecorder.endRecording().toImage(
     targetWidth.ceil(),
     targetHeight.ceil(),
   );
 
   pictureInfo.picture.dispose();
-  // #enddocregion OutputConversion
-  return image;
+  // #enddocregion OutputScaling
+  return scaledImage;
 }
 
 // #docregion ColorMapper
