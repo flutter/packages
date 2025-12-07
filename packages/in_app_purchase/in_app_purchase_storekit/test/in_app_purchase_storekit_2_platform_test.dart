@@ -684,5 +684,14 @@ void main() {
         expect(transactions.first.receiptData, 'fake_jws_representation');
       },
     );
+
+    test('should expose appAccountToken in unfinished transactions', () async {
+      final List<SK2Transaction> transactions =
+          await SK2Transaction.unfinishedTransactions();
+
+      expect(transactions, isNotEmpty);
+      expect(transactions.first.appAccountToken, isNotNull);
+      expect(transactions.first.appAccountToken, 'fake_app_account_token');
+    });
   });
 }
