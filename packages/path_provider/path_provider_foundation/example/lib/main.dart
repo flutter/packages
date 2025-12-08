@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -45,7 +45,7 @@ class _MyAppState extends State<MyApp> {
     String? containerDirectory;
     String? cacheDirectory;
     final PathProviderPlatform provider = PathProviderPlatform.instance;
-    final PathProviderFoundation providerFoundation = PathProviderFoundation();
+    final providerFoundation = PathProviderFoundation();
 
     try {
       tempDirectory = await provider.getTemporaryPath();
@@ -78,7 +78,8 @@ class _MyAppState extends State<MyApp> {
 
     try {
       containerDirectory = await providerFoundation.getContainerPath(
-          appGroupIdentifier: 'group.flutter.appGroupTest');
+        appGroupIdentifier: 'group.flutter.appGroupTest',
+      );
     } catch (exception) {
       containerDirectory =
           'Failed to get app group container directory: $exception';
@@ -105,9 +106,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Path Provider example app'),
-        ),
+        appBar: AppBar(title: const Text('Path Provider example app')),
         body: Center(
           child: Column(
             children: <Widget>[

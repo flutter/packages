@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,14 +57,17 @@ class _MyAppState extends State<_MyApp> {
   void initState() {
     final Stream<List<PurchaseDetails>> purchaseUpdated =
         _iapStoreKitPlatform.purchaseStream;
-    _subscription =
-        purchaseUpdated.listen((List<PurchaseDetails> purchaseDetailsList) {
-      _listenToPurchaseUpdated(purchaseDetailsList);
-    }, onDone: () {
-      _subscription.cancel();
-    }, onError: (Object error) {
-      // handle error here.
-    });
+    _subscription = purchaseUpdated.listen(
+      (List<PurchaseDetails> purchaseDetailsList) {
+        _listenToPurchaseUpdated(purchaseDetailsList);
+      },
+      onDone: () {
+        _subscription.cancel();
+      },
+      onError: (Object error) {
+        // handle error here.
+      },
+    );
 
     // Register the example payment queue delegate
     _iapStoreKitPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
@@ -137,7 +140,7 @@ class _MyAppState extends State<_MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> stack = <Widget>[];
+    final stack = <Widget>[];
     if (_queryProductError == null) {
       stack.add(
         ListView(
@@ -150,9 +153,7 @@ class _MyAppState extends State<_MyApp> {
         ),
       );
     } else {
-      stack.add(Center(
-        child: Text(_queryProductError!),
-      ));
+      stack.add(Center(child: Text(_queryProductError!)));
     }
     if (_purchasePending) {
       stack.add(
@@ -162,9 +163,7 @@ class _MyAppState extends State<_MyApp> {
               opacity: 0.3,
               child: ModalBarrier(dismissible: false, color: Colors.grey),
             ),
-            Center(
-              child: CircularProgressIndicator(),
-            ),
+            Center(child: CircularProgressIndicator()),
           ],
         ),
       );
@@ -172,12 +171,8 @@ class _MyAppState extends State<_MyApp> {
 
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('IAP Example'),
-        ),
-        body: Stack(
-          children: stack,
-        ),
+        appBar: AppBar(title: const Text('IAP Example')),
+        body: Stack(children: stack),
       ),
     );
   }
@@ -187,23 +182,29 @@ class _MyAppState extends State<_MyApp> {
       return const Card(child: ListTile(title: Text('Trying to connect...')));
     }
     final Widget storeHeader = ListTile(
-      leading: Icon(_isAvailable ? Icons.check : Icons.block,
-          color: _isAvailable
-              ? Colors.green
-              : ThemeData.light().colorScheme.error),
-      title:
-          Text('The store is ${_isAvailable ? 'available' : 'unavailable'}.'),
+      leading: Icon(
+        _isAvailable ? Icons.check : Icons.block,
+        color: _isAvailable
+            ? Colors.green
+            : ThemeData.light().colorScheme.error,
+      ),
+      title: Text(
+        'The store is ${_isAvailable ? 'available' : 'unavailable'}.',
+      ),
     );
-    final List<Widget> children = <Widget>[storeHeader];
+    final children = <Widget>[storeHeader];
 
     if (!_isAvailable) {
       children.addAll(<Widget>[
         const Divider(),
         ListTile(
-          title: Text('Not connected',
-              style: TextStyle(color: ThemeData.light().colorScheme.error)),
+          title: Text(
+            'Not connected',
+            style: TextStyle(color: ThemeData.light().colorScheme.error),
+          ),
           subtitle: const Text(
-              'Unable to connect to the payments processor. Has this app been configured correctly? See the example README for instructions.'),
+            'Unable to connect to the payments processor. Has this app been configured correctly? See the example README for instructions.',
+          ),
         ),
       ]);
     }
@@ -213,98 +214,96 @@ class _MyAppState extends State<_MyApp> {
   Widget _buildProductList() {
     if (_loading) {
       return const Card(
-          child: ListTile(
-              leading: CircularProgressIndicator(),
-              title: Text('Fetching products...')));
+        child: ListTile(
+          leading: CircularProgressIndicator(),
+          title: Text('Fetching products...'),
+        ),
+      );
     }
     if (!_isAvailable) {
       return const Card();
     }
-    const ListTile productHeader = ListTile(
+    const productHeader = ListTile(
       title: Text(
         'Products for Sale',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
-    const ListTile promoHeader = ListTile(
+    const promoHeader = ListTile(
       title: Text(
         'Products in promo',
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-        ),
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
     );
-    final List<ListTile> productList = <ListTile>[];
+    final productList = <ListTile>[];
     if (_notFoundIds.isNotEmpty) {
-      productList.add(ListTile(
-          title: Text('[${_notFoundIds.join(", ")}] not found',
-              style: TextStyle(color: ThemeData.light().colorScheme.error)),
+      productList.add(
+        ListTile(
+          title: Text(
+            '[${_notFoundIds.join(", ")}] not found',
+            style: TextStyle(color: ThemeData.light().colorScheme.error),
+          ),
           subtitle: const Text(
-              'This app needs special configuration to run. Please see example/README.md for instructions.')));
+            'This app needs special configuration to run. Please see example/README.md for instructions.',
+          ),
+        ),
+      );
     }
 
     // This loading previous purchases code is just a demo. Please do not use this as it is.
     // In your app you should always verify the purchase data using the `verificationData` inside the [PurchaseDetails] object before trusting it.
     // We recommend that you use your own server to verify the purchase data.
-    final Map<String, PurchaseDetails> purchases =
-        Map<String, PurchaseDetails>.fromEntries(
-            _purchases.map((PurchaseDetails purchase) {
-      if (purchase.pendingCompletePurchase) {
-        _iapStoreKitPlatform.completePurchase(purchase);
-      }
-      return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
-    }));
-    productList.addAll(_products.map(
-      (ProductDetails productDetails) {
+    final purchases = Map<String, PurchaseDetails>.fromEntries(
+      _purchases.map((PurchaseDetails purchase) {
+        if (purchase.pendingCompletePurchase) {
+          _iapStoreKitPlatform.completePurchase(purchase);
+        }
+        return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
+      }),
+    );
+    productList.addAll(
+      _products.map((ProductDetails productDetails) {
         final PurchaseDetails? previousPurchase = purchases[productDetails.id];
         return ListTile(
-            title: Text(
-              productDetails.title,
-            ),
-            subtitle: Text(
-              productDetails.description,
-            ),
-            trailing: previousPurchase != null
-                ? IconButton(
-                    onPressed: () {
-                      _iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
-                    },
-                    icon: const Icon(Icons.upgrade))
-                : TextButton(
-                    style: TextButton.styleFrom(
-                      backgroundColor: Colors.green[800],
-                      foregroundColor: Colors.white,
-                    ),
-                    onPressed: () {
-                      final PurchaseParam purchaseParam = PurchaseParam(
-                        productDetails: productDetails,
+          title: Text(productDetails.title),
+          subtitle: Text(productDetails.description),
+          trailing: previousPurchase != null
+              ? IconButton(
+                  onPressed: () {
+                    _iapStoreKitPlatformAddition.showPriceConsentIfNeeded();
+                  },
+                  icon: const Icon(Icons.upgrade),
+                )
+              : TextButton(
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.green[800],
+                    foregroundColor: Colors.white,
+                  ),
+                  onPressed: () {
+                    final purchaseParam = PurchaseParam(
+                      productDetails: productDetails,
+                    );
+                    if (productDetails.id == _kConsumableId) {
+                      _iapStoreKitPlatform.buyConsumable(
+                        purchaseParam: purchaseParam,
                       );
-                      if (productDetails.id == _kConsumableId) {
-                        _iapStoreKitPlatform.buyConsumable(
-                            purchaseParam: purchaseParam);
-                      } else {
-                        _iapStoreKitPlatform.buyNonConsumable(
-                            purchaseParam: purchaseParam);
-                      }
-                    },
-                    child: Text(productDetails.price),
-                  ));
-      },
-    ));
+                    } else {
+                      _iapStoreKitPlatform.buyNonConsumable(
+                        purchaseParam: purchaseParam,
+                      );
+                    }
+                  },
+                  child: Text(productDetails.price),
+                ),
+        );
+      }),
+    );
 
     return Column(
       children: <Widget>[
         Card(
           child: Column(
-            children: <Widget>[
-              productHeader,
-              const Divider(),
-              ...productList,
-            ],
+            children: <Widget>[productHeader, const Divider(), ...productList],
           ),
         ),
         Card(
@@ -314,18 +313,19 @@ class _MyAppState extends State<_MyApp> {
               const Divider(),
               FutureBuilder<List<ListTile>>(
                 future: _buildPromoList(),
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<ListTile>> snapshot) {
-                  final List<ListTile>? data = snapshot.data;
+                builder:
+                    (
+                      BuildContext context,
+                      AsyncSnapshot<List<ListTile>> snapshot,
+                    ) {
+                      final List<ListTile>? data = snapshot.data;
 
-                  if (data != null) {
-                    return Column(
-                      children: data,
-                    );
-                  }
+                      if (data != null) {
+                        return Column(children: data);
+                      }
 
-                  return const SizedBox.shrink();
-                },
+                      return const SizedBox.shrink();
+                    },
               ),
             ],
           ),
@@ -335,7 +335,7 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Future<List<ListTile>> _buildPromoList() async {
-    final List<ListTile> promoList = <ListTile>[];
+    final promoList = <ListTile>[];
     for (final ProductDetails detail in _products) {
       if (detail is AppStoreProduct2Details) {
         final SK2SubscriptionInfo? subscription =
@@ -343,13 +343,10 @@ class _MyAppState extends State<_MyApp> {
         final List<SK2SubscriptionOffer> offers =
             subscription?.promotionalOffers ?? <SK2SubscriptionOffer>[];
 
-        for (final SK2SubscriptionOffer offer in offers) {
+        for (final offer in offers) {
           if (offer.type == SK2SubscriptionOfferType.winBack) {
-            final bool eligible =
-                await _iapStoreKitPlatform.isWinBackOfferEligible(
-              detail.id,
-              offer.id ?? '',
-            );
+            final bool eligible = await _iapStoreKitPlatform
+                .isWinBackOfferEligible(detail.id, offer.id ?? '');
 
             if (!eligible) {
               continue;
@@ -368,19 +365,15 @@ class _MyAppState extends State<_MyApp> {
     SK2SubscriptionOffer offer,
   ) {
     return ListTile(
-      title: Text(
-        '${productDetails.title} [${offer.type.name}]',
-      ),
-      subtitle: Text(
-        productDetails.description,
-      ),
+      title: Text('${productDetails.title} [${offer.type.name}]'),
+      subtitle: Text(productDetails.description),
       trailing: TextButton(
         style: TextButton.styleFrom(
           backgroundColor: Colors.green[800],
           foregroundColor: Colors.white,
         ),
         onPressed: () {
-          final Sk2PurchaseParam purchaseParam = Sk2PurchaseParam.fromOffer(
+          final purchaseParam = Sk2PurchaseParam.fromOffer(
             productDetails: productDetails,
             offer: offer,
             signature: SK2SubscriptionOfferSignature(
@@ -401,39 +394,39 @@ class _MyAppState extends State<_MyApp> {
   Card _buildConsumableBox() {
     if (_loading) {
       return const Card(
-          child: ListTile(
-              leading: CircularProgressIndicator(),
-              title: Text('Fetching consumables...')));
+        child: ListTile(
+          leading: CircularProgressIndicator(),
+          title: Text('Fetching consumables...'),
+        ),
+      );
     }
     if (!_isAvailable || _notFoundIds.contains(_kConsumableId)) {
       return const Card();
     }
-    const ListTile consumableHeader =
-        ListTile(title: Text('Purchased consumables'));
+    const consumableHeader = ListTile(title: Text('Purchased consumables'));
     final List<Widget> tokens = _consumables.map((String id) {
       return GridTile(
         child: IconButton(
-          icon: const Icon(
-            Icons.stars,
-            size: 42.0,
-            color: Colors.orange,
-          ),
+          icon: const Icon(Icons.stars, size: 42.0, color: Colors.orange),
           splashColor: Colors.yellowAccent,
           onPressed: () => consume(id),
         ),
       );
     }).toList();
     return Card(
-        child: Column(children: <Widget>[
-      consumableHeader,
-      const Divider(),
-      GridView.count(
-        crossAxisCount: 5,
-        shrinkWrap: true,
-        padding: const EdgeInsets.all(16.0),
-        children: tokens,
-      )
-    ]));
+      child: Column(
+        children: <Widget>[
+          consumableHeader,
+          const Divider(),
+          GridView.count(
+            crossAxisCount: 5,
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(16.0),
+            children: tokens,
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildRestoreButton() {
@@ -511,7 +504,8 @@ class _MyAppState extends State<_MyApp> {
   }
 
   Future<void> _handleReportedPurchaseState(
-      PurchaseDetails purchaseDetails) async {
+    PurchaseDetails purchaseDetails,
+  ) async {
     if (purchaseDetails.status == PurchaseStatus.pending) {
       showPendingUI();
     } else {

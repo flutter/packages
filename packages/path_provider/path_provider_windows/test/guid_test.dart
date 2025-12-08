@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +13,7 @@ void main() {
   test('has correct byte representation', () async {
     final Pointer<GUID> guid = calloc<GUID>()
       ..ref.parse('{00112233-4455-6677-8899-aabbccddeeff}');
-    final ByteData data = ByteData(16)
+    final data = ByteData(16)
       ..setInt32(0, guid.ref.data1, Endian.little)
       ..setInt16(4, guid.ref.data2, Endian.little)
       ..setInt16(6, guid.ref.data3, Endian.little)

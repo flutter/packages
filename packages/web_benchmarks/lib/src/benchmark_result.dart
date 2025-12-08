@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,17 +7,13 @@ class BenchmarkScore {
   /// Creates a benchmark score.
   ///
   /// [metric] and [value] must not be null.
-  BenchmarkScore({
-    required this.metric,
-    required this.value,
-    this.delta,
-  });
+  BenchmarkScore({required this.metric, required this.value, this.delta});
 
   /// Deserializes a JSON object to create a [BenchmarkScore] object.
   factory BenchmarkScore.parse(Map<String, Object?> json) {
-    final String metric = json[metricKey]! as String;
+    final metric = json[metricKey]! as String;
     final double value = (json[valueKey]! as num).toDouble();
-    final num? delta = json[deltaKey] as num?;
+    final delta = json[deltaKey] as num?;
     return BenchmarkScore(metric: metric, value: value, delta: delta);
   }
 
@@ -63,8 +59,7 @@ class BenchmarkResults {
 
   /// Deserializes a JSON object to create a [BenchmarkResults] object.
   factory BenchmarkResults.parse(Map<String, Object?> json) {
-    final Map<String, List<BenchmarkScore>> results =
-        <String, List<BenchmarkScore>>{};
+    final results = <String, List<BenchmarkScore>>{};
     for (final String key in json.keys) {
       final List<BenchmarkScore> scores = (json[key]! as List<Object?>)
           .cast<Map<String, Object?>>()
@@ -80,8 +75,10 @@ class BenchmarkResults {
 
   /// Serializes benchmark metrics to JSON.
   Map<String, List<Map<String, Object?>>> toJson() {
-    return scores.map<String, List<Map<String, Object?>>>(
-        (String benchmarkName, List<BenchmarkScore> scores) {
+    return scores.map<String, List<Map<String, Object?>>>((
+      String benchmarkName,
+      List<BenchmarkScore> scores,
+    ) {
       return MapEntry<String, List<Map<String, Object?>>>(
         benchmarkName,
         scores.map((BenchmarkScore score) => score.toJson()).toList(),

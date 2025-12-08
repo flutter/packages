@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,12 +12,12 @@ import 'test_svg_strings.dart';
 
 Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
-  final ResolvingVisitor visitor = ResolvingVisitor();
+  final visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
 }
 
 List<T> queryChildren<T extends Node>(Node node) {
-  final List<T> children = <T>[];
+  final children = <T>[];
   void visitor(Node child) {
     if (child is T) {
       children.add(child);
@@ -48,19 +48,20 @@ void main() {
   <circle cx="100" cy="100" r="100" clip-path="url(#a)" fill="white" />
 </svg>''');
 
-    final ClippingOptimizer visitor = ClippingOptimizer();
+    final visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
-    final List<ResolvedClipNode> clipNodesNew =
-        queryChildren<ResolvedClipNode>(newNode);
+    final List<ResolvedClipNode> clipNodesNew = queryChildren<ResolvedClipNode>(
+      newNode,
+    );
 
     expect(clipNodesNew.length, 0);
   });
 
   test(
-      "Don't resolve a ClipNode if one of the PathNodes it's applied to has stroke.width set",
-      () async {
-    final Node node = parseAndResolve('''
+    "Don't resolve a ClipNode if one of the PathNodes it's applied to has stroke.width set",
+    () async {
+      final Node node = parseAndResolve('''
  <svg width="10" height="10">
   <clipPath id="clip0">
     <path d="M2 3h7.9v2H1" />
@@ -68,18 +69,20 @@ void main() {
   <path d="M2, 5L8,6" stroke="black" stroke-linecap="round" stroke-width="2" clip-path="url(#clip0)" />
 </svg>''');
 
-    final ClippingOptimizer visitor = ClippingOptimizer();
-    final Node newNode = visitor.apply(node);
+      final visitor = ClippingOptimizer();
+      final Node newNode = visitor.apply(node);
 
-    final List<ResolvedClipNode> clipNodesNew =
-        queryChildren<ResolvedClipNode>(newNode);
+      final List<ResolvedClipNode> clipNodesNew =
+          queryChildren<ResolvedClipNode>(newNode);
 
-    expect(clipNodesNew.length, 1);
-  });
+      expect(clipNodesNew.length, 1);
+    },
+  );
 
-  test("Don't resolve ClipNode if intersection of Clip and Path is empty",
-      () async {
-    final Node node = parseAndResolve('''
+  test(
+    "Don't resolve ClipNode if intersection of Clip and Path is empty",
+    () async {
+      final Node node = parseAndResolve('''
 <svg width="200px" height="200x" viewBox="0 0 200 200">
   <defs>
     <clipPath id="a">
@@ -90,27 +93,30 @@ void main() {
 </svg>
 
 ''');
-    final ClippingOptimizer visitor = ClippingOptimizer();
-    final Node newNode = visitor.apply(node);
+      final visitor = ClippingOptimizer();
+      final Node newNode = visitor.apply(node);
 
-    final List<ResolvedClipNode> clipNodesNew =
-        queryChildren<ResolvedClipNode>(newNode);
+      final List<ResolvedClipNode> clipNodesNew =
+          queryChildren<ResolvedClipNode>(newNode);
 
-    expect(clipNodesNew.length, 1);
-  });
+      expect(clipNodesNew.length, 1);
+    },
+  );
 
   test('ParentNode and PathNode count should stay the same', () async {
     final Node node = parseAndResolve(pathAndParent);
 
-    final List<ResolvedPathNode> pathNodesOld =
-        queryChildren<ResolvedPathNode>(node);
+    final List<ResolvedPathNode> pathNodesOld = queryChildren<ResolvedPathNode>(
+      node,
+    );
     final List<ParentNode> parentNodesOld = queryChildren<ParentNode>(node);
 
-    final ClippingOptimizer visitor = ClippingOptimizer();
+    final visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
-    final List<ResolvedPathNode> pathNodesNew =
-        queryChildren<ResolvedPathNode>(newNode);
+    final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
+      newNode,
+    );
     final List<ParentNode> parentNodesNew = queryChildren<ParentNode>(newNode);
 
     expect(pathNodesOld.length, pathNodesNew.length);
@@ -121,10 +127,13 @@ void main() {
     final VectorInstructions instructions = parse(multiClip);
     expect(instructions.paths, <Path>[
       parseSvgPathData(
-          'M 250,75 L 323,301 131,161 369,161 177,301 z', PathFillType.evenOdd),
+        'M 250,75 L 323,301 131,161 369,161 177,301 z',
+        PathFillType.evenOdd,
+      ),
       PathBuilder().addOval(const Rect.fromCircle(400, 200, 150)).toPath(),
-      parseSvgPathData('M 250,75 L 323,301 131,161 369,161 177,301 z')
-          .transformed(AffineMatrix.identity.translated(250, 0)),
+      parseSvgPathData(
+        'M 250,75 L 323,301 131,161 369,161 177,301 z',
+      ).transformed(AffineMatrix.identity.translated(250, 0)),
       PathBuilder().addOval(const Rect.fromCircle(450, 300, 150)).toPath(),
     ]);
     expect(instructions.commands, const <DrawCommand>[
@@ -144,8 +153,10 @@ void main() {
   });
 
   test('Combines clips where possible', () {
-    final VectorInstructions instructions =
-        parse(basicClip, enableClippingOptimizer: false);
+    final VectorInstructions instructions = parse(
+      basicClip,
+      enableClippingOptimizer: false,
+    );
     final VectorInstructions instructionsWithOptimizer = parse(basicClip);
 
     expect(instructionsWithOptimizer.paths, basicClipsForClippingOptimzer);
@@ -165,7 +176,7 @@ void main() {
   });
 
   test('Preserves fill type changes', () {
-    const String svg = '''
+    const svg = '''
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#a)">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M9.99 0C4.47 0 0 4.48 0 10s4.47 10 9.99 10C15.52 20 20 15.52 20 10S15.52 0 9.99 0zM11 11V5H9v6h2zm0 4v-2H9v2h2zm-9-5c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8-8 3.58-8 8z" fill="black" />
@@ -178,9 +189,6 @@ void main() {
 </svg>''';
     final VectorInstructions instructions = parse(svg);
 
-    expect(
-      instructions.paths.single.fillType,
-      PathFillType.evenOdd,
-    );
+    expect(instructions.paths.single.fillType, PathFillType.evenOdd);
   });
 }

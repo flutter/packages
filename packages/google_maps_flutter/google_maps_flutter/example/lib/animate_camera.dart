@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ import 'page.dart';
 
 class AnimateCameraPage extends GoogleMapExampleAppPage {
   const AnimateCameraPage({Key? key})
-      : super(const Icon(Icons.map), 'Camera control, animated', key: key);
+    : super(const Icon(Icons.map), 'Camera control, animated', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +58,9 @@ class AnimateCameraState extends State<AnimateCamera> {
             height: 200.0,
             child: GoogleMap(
               onMapCreated: _onMapCreated,
-              initialCameraPosition:
-                  const CameraPosition(target: LatLng(0.0, 0.0)),
+              initialCameraPosition: const CameraPosition(
+                target: LatLng(0.0, 0.0),
+              ),
             ),
           ),
         ),
@@ -138,10 +139,7 @@ class AnimateCameraState extends State<AnimateCamera> {
                 TextButton(
                   onPressed: () {
                     mapController?.animateCamera(
-                      CameraUpdate.zoomBy(
-                        -0.5,
-                        const Offset(30.0, 20.0),
-                      ),
+                      CameraUpdate.zoomBy(-0.5, const Offset(30.0, 20.0)),
                       duration: _cameraUpdateAnimationDuration,
                     );
                   },
@@ -190,10 +188,7 @@ class AnimateCameraState extends State<AnimateCamera> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'With 10 second duration',
-              textAlign: TextAlign.right,
-            ),
+            const Text('With 10 second duration', textAlign: TextAlign.right),
             const SizedBox(width: 5),
             Switch(
               value: _cameraUpdateAnimationDuration != null,

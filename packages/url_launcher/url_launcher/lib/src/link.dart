@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,7 +114,7 @@ class DefaultLinkDelegate extends StatelessWidget {
       // A uri that doesn't have a scheme is an internal route name. In this
       // case, we push it via Flutter's navigation system instead of letting the
       // browser handle it.
-      final String routeName = link.uri.toString();
+      final routeName = link.uri.toString();
       await pushRouteToFrameworkFunction(context, routeName);
       return;
     }
@@ -133,12 +133,14 @@ class DefaultLinkDelegate extends StatelessWidget {
       success = false;
     }
     if (!success) {
-      FlutterError.reportError(FlutterErrorDetails(
-        exception: 'Could not launch link $url',
-        stack: StackTrace.current,
-        library: 'url_launcher',
-        context: ErrorDescription('during launching a link'),
-      ));
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: 'Could not launch link $url',
+          stack: StackTrace.current,
+          library: 'url_launcher',
+          context: ErrorDescription('during launching a link'),
+        ),
+      );
     }
   }
 

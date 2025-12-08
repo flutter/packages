@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,10 +22,7 @@ final GoRouter _router = GoRouter(
           builder: (BuildContext context, GoRouterState state) {
             return const DetailsScreen();
           },
-          onExit: (
-            BuildContext context,
-            GoRouterState state,
-          ) async {
+          onExit: (BuildContext context, GoRouterState state) async {
             final bool? confirmed = await showDialog<bool>(
               context: context,
               builder: (_) {
@@ -65,9 +62,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-    );
+    return MaterialApp.router(routerConfig: _router);
   }
 }
 
@@ -105,22 +100,23 @@ class DetailsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Details Screen')),
       body: Center(
-          child: Column(
-        children: <Widget>[
-          TextButton(
-            onPressed: () {
-              context.pop();
-            },
-            child: const Text('go back'),
-          ),
-          TextButton(
-            onPressed: () {
-              context.go('/settings');
-            },
-            child: const Text('go to settings'),
-          ),
-        ],
-      )),
+        child: Column(
+          children: <Widget>[
+            TextButton(
+              onPressed: () {
+                context.pop();
+              },
+              child: const Text('go back'),
+            ),
+            TextButton(
+              onPressed: () {
+                context.go('/settings');
+              },
+              child: const Text('go to settings'),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -134,9 +130,7 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Settings Screen')),
-      body: const Center(
-        child: Text('Settings'),
-      ),
+      body: const Center(child: Text('Settings')),
     );
   }
 }

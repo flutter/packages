@@ -1,3 +1,30 @@
+## 1.0.27
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 1.0.26
+
+* Updates to Pigeon 26.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 1.0.25
+
+* Resolves Gradle 9 deprecations.
+
+## 1.0.24
+
+* Updates Java compatibility version to 17.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 1.0.23
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 1.0.22
+
+* Updates kotlin version to 2.2.0 to enable gradle 8.11 support.
+
 ## 1.0.21
 
 * Removes obsolete code related to supporting SDK <21.

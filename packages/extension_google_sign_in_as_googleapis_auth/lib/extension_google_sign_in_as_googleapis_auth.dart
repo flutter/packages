@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,10 +15,8 @@ extension GoogleApisGoogleSignInAuth on GoogleSignInClientAuthorization {
   /// The [scopes] passed here should be the same as the scopes used to request
   /// the authorization. Passing scopes here that have not been authorized will
   /// likely result in API errors when using the client.
-  gapis.AuthClient authClient({
-    required List<String> scopes,
-  }) {
-    final gapis.AccessCredentials credentials = gapis.AccessCredentials(
+  gapis.AuthClient authClient({required List<String> scopes}) {
+    final credentials = gapis.AccessCredentials(
       gapis.AccessToken(
         'Bearer',
         accessToken,

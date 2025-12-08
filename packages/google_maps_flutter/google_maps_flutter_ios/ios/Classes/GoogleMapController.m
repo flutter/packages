@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,10 +7,10 @@
 #import "GoogleMapController.h"
 #import "GoogleMapController_Test.h"
 
+#import "FGMConversionUtils.h"
 #import "FGMGroundOverlayController.h"
 #import "FGMMarkerUserData.h"
 #import "FLTGoogleMapHeatmapController.h"
-#import "FLTGoogleMapJSONConversions.h"
 #import "FLTGoogleMapTileOverlayController.h"
 #import "messages.g.h"
 
@@ -135,7 +135,7 @@
   GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
   options.frame = frame;
   options.camera = camera;
-  NSString *cloudMapId = creationParameters.mapConfiguration.cloudMapId;
+  NSString *cloudMapId = creationParameters.mapConfiguration.mapId;
   if (cloudMapId) {
     options.mapID = [GMSMapID mapIDWithIdentifier:cloudMapId];
   }

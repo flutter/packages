@@ -1,5 +1,11 @@
-## NEXT
+## 0.2.2+1
 
+* Updates minimum supported version to macOS 10.15.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.2.2
+
+* Adds support for `getMultiVideoWithOptions`.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 0.2.1+2

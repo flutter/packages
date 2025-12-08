@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,15 +16,17 @@ class FakeGoogleSignInClientAuthorization extends Fake
 }
 
 void main() {
-  test('authClient returned client contains the expected information',
-      () async {
-    const List<String> scopes = <String>['some-scope', 'another-scope'];
-    final FakeGoogleSignInClientAuthorization signInAuth =
-        FakeGoogleSignInClientAuthorization();
-    final gapis.AuthClient client = signInAuth.authClient(
-      scopes: scopes,
-    );
-    expect(client.credentials.accessToken.data, equals(SOME_FAKE_ACCESS_TOKEN));
-    expect(client.credentials.scopes, equals(scopes));
-  });
+  test(
+    'authClient returned client contains the expected information',
+    () async {
+      const scopes = <String>['some-scope', 'another-scope'];
+      final signInAuth = FakeGoogleSignInClientAuthorization();
+      final gapis.AuthClient client = signInAuth.authClient(scopes: scopes);
+      expect(
+        client.credentials.accessToken.data,
+        equals(SOME_FAKE_ACCESS_TOKEN),
+      );
+      expect(client.credentials.scopes, equals(scopes));
+    },
+  );
 }

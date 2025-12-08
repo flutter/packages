@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,11 +10,7 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 import 'mini_controller.dart';
 
 void main() {
-  runApp(
-    MaterialApp(
-      home: _App(),
-    ),
-  );
+  runApp(MaterialApp(home: _App()));
 }
 
 class _App extends StatelessWidget {
@@ -29,14 +25,8 @@ class _App extends StatelessWidget {
           bottom: const TabBar(
             isScrollable: true,
             tabs: <Widget>[
-              Tab(
-                icon: Icon(Icons.cloud),
-                text: 'Remote mp4',
-              ),
-              Tab(
-                icon: Icon(Icons.favorite),
-                text: 'Remote enc m3u8',
-              ),
+              Tab(icon: Icon(Icons.cloud), text: 'Remote mp4'),
+              Tab(icon: Icon(Icons.favorite), text: 'Remote enc m3u8'),
               Tab(icon: Icon(Icons.insert_drive_file), text: 'Asset mp4'),
             ],
           ),
@@ -63,9 +53,7 @@ class _App extends StatelessWidget {
 }
 
 class _ViewTypeTabBar extends StatefulWidget {
-  const _ViewTypeTabBar({
-    required this.builder,
-  });
+  const _ViewTypeTabBar({required this.builder});
 
   final Widget Function(VideoViewType) builder;
 
@@ -97,14 +85,8 @@ class _ViewTypeTabBarState extends State<_ViewTypeTabBar>
           controller: _tabController,
           isScrollable: true,
           tabs: const <Widget>[
-            Tab(
-              icon: Icon(Icons.texture),
-              text: 'Texture view',
-            ),
-            Tab(
-              icon: Icon(Icons.construction),
-              text: 'Platform view',
-            ),
+            Tab(icon: Icon(Icons.texture), text: 'Texture view'),
+            Tab(icon: Icon(Icons.construction), text: 'Platform view'),
           ],
         ),
         Expanded(
@@ -161,9 +143,7 @@ class _ButterFlyAssetVideoState extends State<_ButterFlyAssetVideo> {
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
-          Container(
-            padding: const EdgeInsets.only(top: 20.0),
-          ),
+          Container(padding: const EdgeInsets.only(top: 20.0)),
           const Text('With assets mp4'),
           Container(
             padding: const EdgeInsets.all(20),
@@ -355,10 +335,7 @@ class _ControlsOverlay extends StatelessWidget {
             itemBuilder: (BuildContext context) {
               return <PopupMenuItem<double>>[
                 for (final double speed in _examplePlaybackRates)
-                  PopupMenuItem<double>(
-                    value: speed,
-                    child: Text('${speed}x'),
-                  )
+                  PopupMenuItem<double>(value: speed, child: Text('${speed}x')),
               ];
             },
             child: Padding(

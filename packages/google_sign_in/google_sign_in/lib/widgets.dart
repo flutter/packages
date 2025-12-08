@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -74,7 +74,7 @@ class GoogleUserCircleAvatar extends StatelessWidget {
     // Placeholder to use when there is no photo URL, and while the photo is
     // loading. Uses the first character of the display name (if it has one),
     // or the first letter of the email address if it does not.
-    final List<String?> placeholderCharSources = <String?>[
+    final placeholderCharSources = <String?>[
       identity.displayName,
       identity.email,
       '-',
@@ -99,30 +99,32 @@ class GoogleUserCircleAvatar extends StatelessWidget {
 
     // Fade the photo in over the top of the placeholder.
     return SizedBox(
-        width: size,
-        height: size,
-        child: ClipOval(
-          child: Stack(fit: StackFit.expand, children: <Widget>[
+      width: size,
+      height: size,
+      child: ClipOval(
+        child: Stack(
+          fit: StackFit.expand,
+          children: <Widget>[
             placeholder,
             FadeInImage.memoryNetwork(
               // This creates a transparent placeholder image, so that
               // [placeholder] shows through.
               placeholder: _transparentImage,
               image: sizedPhotoUrl,
-            )
-          ]),
-        ));
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 
 /// This is an transparent 1x1 gif image.
 ///
 /// Those bytes come from `resources/transparentImage.gif`.
-final Uint8List _transparentImage = Uint8List.fromList(
-  <int>[
-    0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00, //
-    0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0x21, 0xf9, 0x04, 0x01, 0x00, //
-    0x00, 0x00, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, //
-    0x00, 0x02, 0x01, 0x44, 0x00, 0x3B
-  ],
-);
+final Uint8List _transparentImage = Uint8List.fromList(<int>[
+  0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00, //
+  0x00, 0x00, 0x00, 0x00, 0xFF, 0xFF, 0xFF, 0x21, 0xf9, 0x04, 0x01, 0x00, //
+  0x00, 0x00, 0x00, 0x2C, 0x00, 0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, //
+  0x00, 0x02, 0x01, 0x44, 0x00, 0x3B,
+]);

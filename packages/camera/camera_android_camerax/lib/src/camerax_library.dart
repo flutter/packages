@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,17 +37,15 @@ void setUpGenerics({
   );
 
   camerax.CameraInfo.pigeon_setUpMessageHandlers(
-    pigeon_newInstance: (
-      int sensorRotationDegrees,
-      camerax.ExposureState exposureState,
-    ) {
-      return CameraInfo.detached(
-        sensorRotationDegrees: sensorRotationDegrees,
-        exposureState: exposureState,
-        pigeon_binaryMessenger: pigeonBinaryMessenger,
-        pigeon_instanceManager: pigeonInstanceManager,
-      );
-    },
+    pigeon_newInstance:
+        (int sensorRotationDegrees, camerax.ExposureState exposureState) {
+          return CameraInfo.detached(
+            sensorRotationDegrees: sensorRotationDegrees,
+            exposureState: exposureState,
+            pigeon_binaryMessenger: pigeonBinaryMessenger,
+            pigeon_instanceManager: pigeonInstanceManager,
+          );
+        },
   );
 }
 
@@ -169,7 +167,7 @@ class Observer<T> extends camerax.Observer {
     // ignore: non_constant_identifier_names
     super.pigeon_instanceManager,
   }) : _genericOnChanged = onChanged,
-       super(
+       super.pigeon_new(
          onChanged: (camerax.Observer instance, Object value) {
            onChanged(instance as Observer<T>, value as T);
          },

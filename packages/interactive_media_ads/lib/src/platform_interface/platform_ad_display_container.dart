@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -83,8 +83,9 @@ abstract base class PlatformAdDisplayContainer {
       'your own test implementation.',
     );
     final PlatformAdDisplayContainer implementation =
-        InteractiveMediaAdsPlatform.instance!
-            .createPlatformAdDisplayContainer(params);
+        InteractiveMediaAdsPlatform.instance!.createPlatformAdDisplayContainer(
+          params,
+        );
     return implementation;
   }
 

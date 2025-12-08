@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' as foundation;
 
 Future<R> _testCompute<Q, R>(
-    foundation.ComputeCallback<Q, R> callback, Q message,
-    {String? debugLabel}) {
+  foundation.ComputeCallback<Q, R> callback,
+  Q message, {
+  String? debugLabel,
+}) {
   if (foundation.kDebugMode) {
     final Type? bindingType = foundation.BindingBase.debugBindingType();
     if (bindingType.toString() == 'AutomatedTestWidgetsFlutterBinding') {}
@@ -19,5 +21,5 @@ Future<R> _testCompute<Q, R>(
 /// A compute implementation that does not spawn isolates in tests.
 const foundation.ComputeImpl compute =
     (foundation.kDebugMode || foundation.kIsWeb)
-        ? _testCompute
-        : foundation.compute;
+    ? _testCompute
+    : foundation.compute;

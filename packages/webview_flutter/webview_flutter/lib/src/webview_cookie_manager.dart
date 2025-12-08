@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -33,9 +33,9 @@ class WebViewCookieManager {
   /// See [WebViewCookieManager.fromPlatformCreationParams] for setting
   /// parameters for a specific platform.
   WebViewCookieManager()
-      : this.fromPlatformCreationParams(
-          const PlatformWebViewCookieManagerCreationParams(),
-        );
+    : this.fromPlatformCreationParams(
+        const PlatformWebViewCookieManagerCreationParams(),
+      );
 
   /// Constructs a [WebViewCookieManager] from creation params for a specific
   /// platform.

@@ -1,15 +1,12 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-
 import '../platform_interface/platform_interface.dart';
 import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart';
-import 'interactive_media_ads_proxy.dart';
 import 'ios_ad_display_container.dart';
 import 'ios_ads_manager.dart';
 import 'ios_content_progress_provider.dart';
@@ -23,47 +20,40 @@ final class IOSAdsLoaderCreationParams extends PlatformAdsLoaderCreationParams {
     required super.settings,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  })  : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-        super();
+  }) : super();
 
   /// Creates a [IOSAdsLoaderCreationParams] from an instance of
   /// [PlatformAdsLoaderCreationParams].
   factory IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-    PlatformAdsLoaderCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
+    PlatformAdsLoaderCreationParams params,
+  ) {
     return IOSAdsLoaderCreationParams(
       container: params.container,
       settings: params.settings,
       onAdsLoaded: params.onAdsLoaded,
       onAdsLoadError: params.onAdsLoadError,
-      proxy: proxy,
     );
   }
-
-  final InteractiveMediaAdsProxy _proxy;
 }
 
 /// Implementation of [PlatformAdsLoader] for iOS.
 base class IOSAdsLoader extends PlatformAdsLoader {
   /// Constructs an [IOSAdsLoader].
   IOSAdsLoader(super.params)
-      : assert(params.container is IOSAdDisplayContainer),
-        assert(
-          (params.container as IOSAdDisplayContainer).adDisplayContainer !=
-              null,
-          'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
-        ),
-        super.implementation();
+    : assert(params.container is IOSAdDisplayContainer),
+      assert(
+        (params.container as IOSAdDisplayContainer).adDisplayContainer != null,
+        'Ensure the AdDisplayContainer has been added to the Widget tree before creating an AdsLoader.',
+      ),
+      super.implementation();
 
   late final IMAAdsLoader _adsLoader = _initAdsLoader();
   late final IMAAdsLoaderDelegate _delegate = _createAdsLoaderDelegate(
     WeakReference<IOSAdsLoader>(this),
   );
 
-  late final IOSAdsLoaderCreationParams _iosParams = params
-          is IOSAdsLoaderCreationParams
+  late final IOSAdsLoaderCreationParams _iosParams =
+      params is IOSAdsLoaderCreationParams
       ? params as IOSAdsLoaderCreationParams
       : IOSAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(params);
 
@@ -73,16 +63,55 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   }
 
   @override
-  Future<void> requestAds(PlatformAdsRequest request) async {
-    return _adsLoader.requestAds(_iosParams._proxy.newIMAAdsRequest(
-      adTagUrl: request.adTagUrl,
-      adDisplayContainer:
-          (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!,
-      contentPlayhead: request.contentProgressProvider != null
-          ? (request.contentProgressProvider! as IOSContentProgressProvider)
+  Future<void> requestAds(PlatformAdsRequest request) {
+    final IMAAdDisplayContainer adDisplayContainer =
+        (_iosParams.container as IOSAdDisplayContainer).adDisplayContainer!;
+    final IMAContentPlayhead? contentProgressProvider =
+        request.contentProgressProvider != null
+        ? (request.contentProgressProvider! as IOSContentProgressProvider)
               .contentPlayhead
-          : null,
-    ));
+        : null;
+
+    final IMAAdsRequest adsRequest = switch (request) {
+      final PlatformAdsRequestWithAdTagUrl request => IMAAdsRequest(
+        adTagUrl: request.adTagUrl,
+        adDisplayContainer: adDisplayContainer,
+        contentPlayhead: contentProgressProvider,
+      ),
+      PlatformAdsRequestWithAdsResponse() => IMAAdsRequest.withAdsResponse(
+        adsResponse: request.adsResponse,
+        adDisplayContainer: adDisplayContainer,
+        contentPlayhead: contentProgressProvider,
+      ),
+    };
+
+    return Future.wait(<Future<void>>[
+      if (request.adWillAutoPlay case final bool adWillAutoPlay)
+        adsRequest.setAdWillAutoPlay(adWillAutoPlay),
+      if (request.adWillPlayMuted case final bool adWillPlayMuted)
+        adsRequest.setAdWillPlayMuted(adWillPlayMuted),
+      if (request.continuousPlayback case final bool continuousPlayback)
+        adsRequest.setContinuousPlayback(continuousPlayback),
+      if (request.contentDuration case final Duration contentDuration)
+        adsRequest.setContentDuration(
+          contentDuration.inMilliseconds / Duration.millisecondsPerSecond,
+        ),
+      if (request.contentKeywords case final List<String> contentKeywords)
+        adsRequest.setContentKeywords(contentKeywords),
+      if (request.contentTitle case final String contentTitle)
+        adsRequest.setContentTitle(contentTitle),
+      if (request.liveStreamPrefetchMaxWaitTime
+          case final Duration liveStreamPrefetchMaxWaitTime)
+        adsRequest.setLiveStreamPrefetchSeconds(
+          liveStreamPrefetchMaxWaitTime.inMilliseconds /
+              Duration.millisecondsPerSecond,
+        ),
+      if (request.vastLoadTimeout case final Duration vastLoadTimeout)
+        adsRequest.setVastLoadTimeout(
+          vastLoadTimeout.inMilliseconds.toDouble(),
+        ),
+      _adsLoader.requestAds(adsRequest),
+    ]);
   }
 
   // This value is created in a static method because the callback methods for
@@ -91,7 +120,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
   static IMAAdsLoaderDelegate _createAdsLoaderDelegate(
     WeakReference<IOSAdsLoader> interfaceLoader,
   ) {
-    return interfaceLoader.target!._iosParams._proxy.newIMAAdsLoaderDelegate(
+    return IMAAdsLoaderDelegate(
       adLoaderLoadedWith: (_, __, IMAAdsLoadedData adsLoadedData) {
         interfaceLoader.target?._iosParams.onAdsLoaded(
           PlatformOnAdsLoadedData(
@@ -119,7 +148,7 @@ base class IOSAdsLoader extends PlatformAdsLoader {
       _ => IOSImaSettings(_iosParams.settings.params),
     };
 
-    return _iosParams._proxy.newIMAAdsLoader(settings: settings.nativeSettings)
+    return IMAAdsLoader(settings: settings.nativeSettings)
       ..setDelegate(_delegate);
   }
 }

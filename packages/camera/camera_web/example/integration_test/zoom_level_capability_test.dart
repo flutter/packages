@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,12 +17,12 @@ void main() {
 
   group('ZoomLevelCapability', () {
     testWidgets('sets all properties', (WidgetTester tester) async {
-      const double minimum = 100.0;
-      const double maximum = 400.0;
-      final MediaStreamTrack videoTrack =
+      const minimum = 100.0;
+      const maximum = 400.0;
+      final videoTrack =
           createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack;
 
-      final ZoomLevelCapability capability = ZoomLevelCapability(
+      final capability = ZoomLevelCapability(
         minimum: minimum,
         maximum: maximum,
         videoTrack: videoTrack,
@@ -34,7 +34,7 @@ void main() {
     });
 
     testWidgets('supports value equality', (WidgetTester tester) async {
-      final MediaStreamTrack videoTrack =
+      final videoTrack =
           createJSInteropWrapper(MockMediaStreamTrack()) as MediaStreamTrack;
 
       expect(

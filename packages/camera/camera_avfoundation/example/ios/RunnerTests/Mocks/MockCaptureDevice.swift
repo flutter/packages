@@ -1,17 +1,17 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import camera_avfoundation
+@testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
 
 /// A mock implementation of `FLTCaptureDevice` that allows mocking the class
 /// properties.
-class MockCaptureDevice: NSObject, FLTCaptureDevice {
+class MockCaptureDevice: NSObject, CaptureDevice {
   var activeFormatStub: (() -> FLTCaptureDeviceFormat)?
   var setActiveFormatStub: ((FLTCaptureDeviceFormat) -> Void)?
   var getTorchModeStub: (() -> AVCaptureDevice.TorchMode)?
@@ -26,14 +26,15 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
   var setVideoZoomFactorStub: ((CGFloat) -> Void)?
   var lockForConfigurationStub: (() throws -> Void)?
 
-  var device: AVCaptureDevice {
+  var avDevice: AVCaptureDevice {
     preconditionFailure("Attempted to access unimplemented property: device")
   }
 
   var uniqueID = ""
   var position = AVCaptureDevice.Position.unspecified
+  var deviceType = AVCaptureDevice.DeviceType.builtInWideAngleCamera
 
-  var activeFormat: FLTCaptureDeviceFormat {
+  var flutterActiveFormat: FLTCaptureDeviceFormat {
     get {
       activeFormatStub?() ?? MockCaptureDeviceFormat()
     }
@@ -42,7 +43,7 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
     }
   }
 
-  var formats: [FLTCaptureDeviceFormat] = []
+  var flutterFormats: [FLTCaptureDeviceFormat] = []
   var hasFlash = false
   var hasTorch = false
   var isTorchAvailable = false
@@ -77,20 +78,28 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
     return isFocusModeSupportedStub?(mode) ?? false
   }
 
+  var focusMode: AVCaptureDevice.FocusMode {
+    get { .autoFocus }
+    set { setFocusModeStub?(newValue) }
+  }
+
   func setFocusMode(_ focusMode: AVCaptureDevice.FocusMode) {
     setFocusModeStub?(focusMode)
   }
 
-  func setFocusPointOfInterest(_ point: CGPoint) {
-    setFocusPointOfInterestStub?(point)
+  var focusPointOfInterest: CGPoint {
+    get { CGPoint.zero }
+    set { setFocusPointOfInterestStub?(newValue) }
   }
 
-  func setExposureMode(_ exposureMode: AVCaptureDevice.ExposureMode) {
-    setExposureModeStub?(exposureMode)
+  var exposureMode: AVCaptureDevice.ExposureMode {
+    get { .autoExpose }
+    set { setExposureModeStub?(newValue) }
   }
 
-  func setExposurePointOfInterest(_ point: CGPoint) {
-    setExposurePointOfInterestStub?(point)
+  var exposurePointOfInterest: CGPoint {
+    get { CGPoint.zero }
+    set { setExposurePointOfInterestStub?(newValue) }
   }
 
   func setExposureTargetBias(_ bias: Float, completionHandler handler: ((CMTime) -> Void)? = nil) {
@@ -101,17 +110,11 @@ class MockCaptureDevice: NSObject, FLTCaptureDevice {
     return isExposureModeSupportedStub?(mode) ?? false
   }
 
-  func lensAperture() -> Float {
-    return 0
-  }
+  var lensAperture: Float { 0 }
 
-  func exposureDuration() -> CMTime {
-    return CMTime(value: 1, timescale: 1)
-  }
+  var exposureDuration: CMTime { CMTime(value: 1, timescale: 1) }
 
-  func iso() -> Float {
-    return 0
-  }
+  var iso: Float { 0 }
 
   func lockForConfiguration() throws {
     try lockForConfigurationStub?()

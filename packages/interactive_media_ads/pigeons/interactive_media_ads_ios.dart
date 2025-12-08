@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,6 @@ import 'package:pigeon/pigeon.dart';
         'ios/interactive_media_ads/Sources/interactive_media_ads/InteractiveMediaAdsLibrary.g.swift',
   ),
 )
-
 /// Possible error types while loading or playing ads.
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Enums/IMAErrorType.html.
@@ -580,16 +579,15 @@ abstract class IMAAdsLoaderDelegate extends NSObject {
   IMAAdsLoaderDelegate();
 
   /// Called when ads are successfully loaded from the ad servers by the loader.
-  late final void Function(
-    IMAAdsLoader loader,
-    IMAAdsLoadedData adsLoadedData,
-  ) adLoaderLoadedWith;
+  late final void Function(IMAAdsLoader loader, IMAAdsLoadedData adsLoadedData)
+  adLoaderLoadedWith;
 
   /// Error reported by the ads loader when loading or requesting an ad fails.
   late final void Function(
     IMAAdsLoader loader,
     IMAAdLoadingErrorData adErrorData,
-  ) adsLoaderFailedWithErrorData;
+  )
+  adsLoaderFailedWithErrorData;
 }
 
 /// Ad data that is returned when the ads loader loads the ad.
@@ -632,6 +630,12 @@ abstract class IMAAdError extends NSObject {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsManager.html.
 @ProxyApi()
 abstract class IMAAdsManager extends NSObject {
+  /// List of content time offsets at which ad breaks are scheduled.
+  ///
+  /// List of double values in seconds. Empty list for single ads or if no ad
+  /// breaks are scheduled.
+  late List<double> adCuePoints;
+
   /// The `IMAAdsManagerDelegate` to notify with events during ad playback.
   void setDelegate(IMAAdsManagerDelegate? delegate);
 
@@ -666,16 +670,12 @@ abstract class IMAAdsManagerDelegate extends NSObject {
   IMAAdsManagerDelegate();
 
   /// Called when there is an IMAAdEvent.
-  late final void Function(
-    IMAAdsManager adsManager,
-    IMAAdEvent event,
-  ) didReceiveAdEvent;
+  late final void Function(IMAAdsManager adsManager, IMAAdEvent event)
+  didReceiveAdEvent;
 
   /// Called when there was an error playing the ad.
-  late final void Function(
-    IMAAdsManager adsManager,
-    IMAAdError error,
-  ) didReceiveAdError;
+  late final void Function(IMAAdsManager adsManager, IMAAdError error)
+  didReceiveAdError;
 
   /// Called when an ad is ready to play.
   late final void Function(IMAAdsManager adsManager) didRequestContentPause;
@@ -697,6 +697,12 @@ abstract class IMAAdEvent extends NSObject {
 
   /// Extra data about the ad.
   late final Map<String, Object>? adData;
+
+  /// The current ad that is playing or just played.
+  ///
+  /// This will be null except for events where an ad is available (start,
+  /// quartiles, midpoint, complete, and tap).
+  late final IMAAd? ad;
 }
 
 /// Set of properties that influence how ads are rendered.
@@ -793,7 +799,7 @@ abstract class IMACompanionAd extends NSObject {
 ///
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMACompanionAdSlot.
 @ProxyApi()
-abstract class IMACompanionAdSlot {
+abstract class IMACompanionAdSlot extends NSObject {
   /// Initializes an instance of a IMACompanionAdSlot with fluid size.
   IMACompanionAdSlot();
 
@@ -829,10 +835,8 @@ abstract class IMACompanionDelegate extends NSObject {
   IMACompanionDelegate();
 
   /// Called when the slot is either filled or not filled.
-  late void Function(
-    IMACompanionAdSlot slot,
-    bool filled,
-  )? companionAdSlotFilled;
+  late void Function(IMACompanionAdSlot slot, bool filled)?
+  companionAdSlotFilled;
 
   /// Called when the slot is clicked on by the user and will successfully
   /// navigate away.
@@ -845,7 +849,7 @@ abstract class IMACompanionDelegate extends NSObject {
 @ProxyApi(
   swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
 )
-abstract class IMAAdPodInfo {
+abstract class IMAAdPodInfo extends NSObject {
   /// The position of this ad within an ad pod.
   ///
   /// Will be 1 for standalone ads.
@@ -886,4 +890,135 @@ abstract class IMAAdPodInfo {
   ///
   /// Bumpers are short videos used to open and close ad breaks.
   late final bool isBumper;
+}
+
+/// Data object representing a single ad.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAd.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAAd extends NSObject {
+  /// The ad ID as specified in the VAST response.
+  late final String adId;
+
+  /// The ad title from the VAST response.
+  late final String adTitle;
+
+  /// The ad description.
+  late final String adDescription;
+
+  /// The source ad server information included in the ad response.
+  late final String adSystem;
+
+  /// The companion ads specified in the VAST response when using DAI.
+  ///
+  /// Empty for client-side ads.
+  late final List<IMACompanionAd> companionAds;
+
+  /// Content type of the currently selected creative.
+  ///
+  /// For linear creatives returns the content type of the currently selected
+  /// media file. Returns empty string if no creative or media file is selected
+  /// on this ad.
+  late final String contentType;
+
+  /// The duration of the ad from the VAST response.
+  late final double duration;
+
+  /// The UI elements that will be displayed during ad playback.
+  late final List<UIElementType> uiElements;
+
+  /// The width of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual width of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// width.
+  late final int width;
+
+  /// The height of the ad asset.
+  ///
+  /// For non-linear ads, this is the actual height of the ad representation.
+  /// For linear ads, since they scale seamlessly, we currently return 0 for
+  /// height.
+  late final int height;
+
+  /// The width of the selected creative as specified in the VAST response.
+  late final int vastMediaWidth;
+
+  /// The height of the selected creative as specified in the VAST response.
+  late final int vastMediaHeight;
+
+  /// The bitrate of the selected creative as specified in the VAST response.
+  late final int vastMediaBitrate;
+
+  /// Specifies whether the ad is linear or non-linear.
+  late final bool isLinear;
+
+  /// Specifies whether the ad is skippable.
+  late final bool isSkippable;
+
+  /// The number of seconds of playback before the ad becomes skippable.
+  ///
+  /// -1 is returned for non skippable ads or if this is unavailable.
+  late final double skipTimeOffset;
+
+  /// Set of ad podding properties.
+  late final IMAAdPodInfo adPodInfo;
+
+  /// String representing custom trafficking parameters from the VAST response.
+  late final String traffickingParameters;
+
+  /// Returns the ID of the selected creative for the ad.
+  late final String creativeID;
+
+  /// Returns the ISCI (Industry Standard Commercial Identifier) code for an ad.
+  ///
+  /// This is the Ad-ID of the selected creative in the VAST response.
+  late final String creativeAdID;
+
+  /// The list of all UniversalAdIds of the selected creative for this ad.
+  ///
+  /// Returns an empty array if no universal ad IDs are found.
+  late final List<IMAUniversalAdID> universalAdIDs;
+
+  /// The advertiser name as defined by the serving party.
+  late final String advertiserName;
+
+  /// Returns the URL associated with the survey for the given ad.
+  late final String? surveyURL;
+
+  /// Returns the first deal ID present in the wrapper chain for the current ad,
+  /// starting from the top.
+  late final String dealID;
+
+  /// The IDs of the ads, starting with the first wrapper ad.
+  late final List<String> wrapperAdIDs;
+
+  /// The IDs of the ads’ creatives, starting with the first wrapper ad.
+  late final List<String> wrapperCreativeIDs;
+
+  /// Ad systems used for wrapper ads.
+  ///
+  /// The ad systems returned begin with the first wrapper ad and continue to
+  /// each wrapper ad recursively.
+  late final List<String> wrapperSystems;
+}
+
+/// Simple data object containing universal ad ID information.
+///
+/// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAUniversalAdID.html.
+@ProxyApi(
+  swiftOptions: SwiftProxyApiOptions(import: 'GoogleInteractiveMediaAds'),
+)
+abstract class IMAUniversalAdID extends NSObject {
+  /// The universal ad ID value.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  late final String adIDValue;
+
+  /// The universal ad ID registry with which the value is registered.
+  ///
+  /// This will be “unknown” if it isn’t defined by the ad.
+  late final String adIDRegistry;
 }

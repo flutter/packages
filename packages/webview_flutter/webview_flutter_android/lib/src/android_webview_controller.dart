@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,12 +11,46 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
-import 'android_proxy.dart';
 import 'android_ssl_auth_error.dart';
 import 'android_webkit.g.dart' as android_webview;
 import 'android_webkit_constants.dart';
 import 'platform_views_service_proxy.dart';
 import 'weak_reference_utils.dart';
+
+/// Object specifying parameters for loading a local file in a
+/// [AndroidWebViewController].
+@immutable
+base class AndroidLoadFileParams extends LoadFileParams {
+  /// Constructs a [AndroidLoadFileParams], the subclass of a [LoadFileParams].
+  AndroidLoadFileParams({
+    required String absoluteFilePath,
+    this.headers = const <String, String>{},
+  }) : super(
+         absoluteFilePath: absoluteFilePath.startsWith('file://')
+             ? absoluteFilePath
+             : Uri.file(absoluteFilePath).toString(),
+       );
+
+  /// Constructs a [AndroidLoadFileParams] using a [LoadFileParams].
+  factory AndroidLoadFileParams.fromLoadFileParams(
+    LoadFileParams params, {
+    Map<String, String> headers = const <String, String>{},
+  }) {
+    return AndroidLoadFileParams(
+      absoluteFilePath: params.absoluteFilePath,
+      headers: headers,
+    );
+  }
+
+  /// Additional HTTP headers to be included when loading the local file.
+  ///
+  /// If not provided at initialization time, doesn't add any additional headers.
+  ///
+  /// On Android, WebView supports adding headers when loading local or remote
+  /// content. This can be useful for scenarios like authentication,
+  /// content-type overrides, or custom request context.
+  final Map<String, String> headers;
+}
 
 /// Object specifying creation parameters for creating a [AndroidWebViewController].
 ///
@@ -28,32 +62,23 @@ class AndroidWebViewControllerCreationParams
     extends PlatformWebViewControllerCreationParams {
   /// Creates a new [AndroidWebViewControllerCreationParams] instance.
   AndroidWebViewControllerCreationParams({
-    @visibleForTesting this.androidWebViewProxy = const AndroidWebViewProxy(),
     @visibleForTesting android_webview.WebStorage? androidWebStorage,
-  })  : androidWebStorage =
-            androidWebStorage ?? android_webview.WebStorage.instance,
-        super();
+  }) : androidWebStorage =
+           androidWebStorage ?? android_webview.WebStorage.instance,
+       super();
 
   /// Creates a [AndroidWebViewControllerCreationParams] instance based on [PlatformWebViewControllerCreationParams].
   factory AndroidWebViewControllerCreationParams.fromPlatformWebViewControllerCreationParams(
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
     PlatformWebViewControllerCreationParams params, {
-    @visibleForTesting
-    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
     @visibleForTesting android_webview.WebStorage? androidWebStorage,
   }) {
     return AndroidWebViewControllerCreationParams(
-      androidWebViewProxy: androidWebViewProxy,
       androidWebStorage:
           androidWebStorage ?? android_webview.WebStorage.instance,
     );
   }
-
-  /// Handles constructing objects and calling static methods for the Android WebView
-  /// native library.
-  @visibleForTesting
-  final AndroidWebViewProxy androidWebViewProxy;
 
   /// Manages the JavaScript storage APIs provided by the [android_webview.WebView].
   @visibleForTesting
@@ -79,10 +104,13 @@ class AndroidWebViewPermissionResourceType
 class AndroidWebViewController extends PlatformWebViewController {
   /// Creates a new [AndroidWebViewController].
   AndroidWebViewController(PlatformWebViewControllerCreationParams params)
-      : super.implementation(params is AndroidWebViewControllerCreationParams
+    : super.implementation(
+        params is AndroidWebViewControllerCreationParams
             ? params
-            : AndroidWebViewControllerCreationParams
-                .fromPlatformWebViewControllerCreationParams(params)) {
+            : AndroidWebViewControllerCreationParams.fromPlatformWebViewControllerCreationParams(
+                params,
+              ),
+      ) {
     _webView.settings.setDomStorageEnabled(true);
     _webView.settings.setJavaScriptCanOpenWindowsAutomatically(true);
     _webView.settings.setSupportMultipleWindows(true);
@@ -98,33 +126,40 @@ class AndroidWebViewController extends PlatformWebViewController {
       params as AndroidWebViewControllerCreationParams;
 
   /// The native [android_webview.WebView] being controlled.
-  late final android_webview.WebView _webView =
-      _androidWebViewParams.androidWebViewProxy.newWebView(
-          onScrollChanged: withWeakReferenceTo(this,
-              (WeakReference<AndroidWebViewController> weakReference) {
-    return (_, int left, int top, int oldLeft, int oldTop) async {
-      final void Function(ScrollPositionChange)? callback =
-          weakReference.target?._onScrollPositionChangedCallback;
-      callback?.call(ScrollPositionChange(left.toDouble(), top.toDouble()));
-    };
-  }));
+  late final android_webview.WebView _webView = android_webview.WebView(
+    onScrollChanged: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
+      return (_, int left, int top, int oldLeft, int oldTop) async {
+        final void Function(ScrollPositionChange)? callback =
+            weakReference.target?._onScrollPositionChangedCallback;
+        callback?.call(ScrollPositionChange(left.toDouble(), top.toDouble()));
+      };
+    }),
+  );
 
-  late final android_webview.WebChromeClient _webChromeClient =
-      _androidWebViewParams.androidWebViewProxy.newWebChromeClient(
-    onProgressChanged: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
+  late final android_webview.WebChromeClient
+  _webChromeClient = android_webview.WebChromeClient(
+    onProgressChanged: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
       return (_, android_webview.WebView webView, int progress) {
         if (weakReference.target?._currentNavigationDelegate?._onProgress !=
             null) {
-          weakReference
-              .target!._currentNavigationDelegate!._onProgress!(progress);
+          weakReference.target!._currentNavigationDelegate!._onProgress!(
+            progress,
+          );
         }
       };
     }),
-    onGeolocationPermissionsShowPrompt: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
-      return (_, String origin,
-          android_webview.GeolocationPermissionsCallback callback) async {
+    onGeolocationPermissionsShowPrompt: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
+      return (
+        _,
+        String origin,
+        android_webview.GeolocationPermissionsCallback callback,
+      ) async {
         final OnGeolocationPermissionsShowPrompt? onShowPrompt =
             weakReference.target?._onGeolocationPermissionsShowPrompt;
         if (onShowPrompt != null) {
@@ -138,8 +173,9 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
-    onGeolocationPermissionsHidePrompt: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
+    onGeolocationPermissionsHidePrompt: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
       return (android_webview.WebChromeClient instance) {
         final OnGeolocationPermissionsHidePrompt? onHidePrompt =
             weakReference.target?._onGeolocationPermissionsHidePrompt;
@@ -148,10 +184,14 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
-    onShowCustomView: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
-      return (_, android_webview.View view,
-          android_webview.CustomViewCallback callback) {
+    onShowCustomView: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
+      return (
+        _,
+        android_webview.View view,
+        android_webview.CustomViewCallback callback,
+      ) {
         final AndroidWebViewController? webViewController =
             weakReference.target;
         if (webViewController == null) {
@@ -168,15 +208,14 @@ class AndroidWebViewController extends PlatformWebViewController {
           AndroidCustomViewWidget.private(
             controller: webViewController,
             customView: view,
-            // ignore: invalid_use_of_protected_member
-            instanceManager: view.pigeon_instanceManager,
           ),
           () => callback.onCustomViewHidden(),
         );
       };
     }),
-    onHideCustomView: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
+    onHideCustomView: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
       return (android_webview.WebChromeClient instance) {
         final OnHideCustomWidgetCallback? onHideCustomViewCallback =
             weakReference.target?._onHideCustomWidgetCallback;
@@ -185,133 +224,146 @@ class AndroidWebViewController extends PlatformWebViewController {
         }
       };
     }),
-    onShowFileChooser: withWeakReferenceTo(
-      this,
-      (WeakReference<AndroidWebViewController> weakReference) {
-        return (_, android_webview.WebView webView,
-            android_webview.FileChooserParams params) async {
-          if (weakReference.target?._onShowFileSelectorCallback != null) {
-            return weakReference.target!._onShowFileSelectorCallback!(
-              FileSelectorParams._fromFileChooserParams(params),
-            );
+    onShowFileChooser: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
+      return (
+        _,
+        android_webview.WebView webView,
+        android_webview.FileChooserParams params,
+      ) async {
+        if (weakReference.target?._onShowFileSelectorCallback != null) {
+          return weakReference.target!._onShowFileSelectorCallback!(
+            FileSelectorParams._fromFileChooserParams(params),
+          );
+        }
+        return <String>[];
+      };
+    }),
+    onConsoleMessage: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
+      return (
+        android_webview.WebChromeClient webChromeClient,
+        android_webview.ConsoleMessage consoleMessage,
+      ) async {
+        final void Function(JavaScriptConsoleMessage)? callback =
+            weakReference.target?._onConsoleLogCallback;
+        if (callback != null) {
+          JavaScriptLogLevel logLevel;
+          switch (consoleMessage.level) {
+            // Android maps `console.debug` to `MessageLevel.TIP`, it seems
+            // `MessageLevel.DEBUG` if not being used.
+            case android_webview.ConsoleMessageLevel.debug:
+            case android_webview.ConsoleMessageLevel.tip:
+              logLevel = JavaScriptLogLevel.debug;
+            case android_webview.ConsoleMessageLevel.error:
+              logLevel = JavaScriptLogLevel.error;
+            case android_webview.ConsoleMessageLevel.warning:
+              logLevel = JavaScriptLogLevel.warning;
+            case android_webview.ConsoleMessageLevel.unknown:
+            case android_webview.ConsoleMessageLevel.log:
+              logLevel = JavaScriptLogLevel.log;
           }
-          return <String>[];
-        };
-      },
-    ),
-    onConsoleMessage: withWeakReferenceTo(
-      this,
-      (WeakReference<AndroidWebViewController> weakReference) {
-        return (android_webview.WebChromeClient webChromeClient,
-            android_webview.ConsoleMessage consoleMessage) async {
-          final void Function(JavaScriptConsoleMessage)? callback =
-              weakReference.target?._onConsoleLogCallback;
-          if (callback != null) {
-            JavaScriptLogLevel logLevel;
-            switch (consoleMessage.level) {
-              // Android maps `console.debug` to `MessageLevel.TIP`, it seems
-              // `MessageLevel.DEBUG` if not being used.
-              case android_webview.ConsoleMessageLevel.debug:
-              case android_webview.ConsoleMessageLevel.tip:
-                logLevel = JavaScriptLogLevel.debug;
-              case android_webview.ConsoleMessageLevel.error:
-                logLevel = JavaScriptLogLevel.error;
-              case android_webview.ConsoleMessageLevel.warning:
-                logLevel = JavaScriptLogLevel.warning;
-              case android_webview.ConsoleMessageLevel.unknown:
-              case android_webview.ConsoleMessageLevel.log:
-                logLevel = JavaScriptLogLevel.log;
-            }
 
-            callback(JavaScriptConsoleMessage(
+          callback(
+            JavaScriptConsoleMessage(
               level: logLevel,
               message: consoleMessage.message,
-            ));
-          }
-        };
-      },
-    ),
-    onPermissionRequest: withWeakReferenceTo(
-      this,
-      (WeakReference<AndroidWebViewController> weakReference) {
-        return (_, android_webview.PermissionRequest request) async {
-          final void Function(PlatformWebViewPermissionRequest)? callback =
-              weakReference.target?._onPermissionRequestCallback;
-          if (callback == null) {
+            ),
+          );
+        }
+      };
+    }),
+    onPermissionRequest: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
+      return (_, android_webview.PermissionRequest request) async {
+        final void Function(PlatformWebViewPermissionRequest)? callback =
+            weakReference.target?._onPermissionRequestCallback;
+        if (callback == null) {
+          return request.deny();
+        } else {
+          final Set<WebViewPermissionResourceType> types = request
+              .resources
+              .nonNulls
+              .map<WebViewPermissionResourceType?>((String type) {
+                switch (type) {
+                  case PermissionRequestConstants.videoCapture:
+                    return WebViewPermissionResourceType.camera;
+                  case PermissionRequestConstants.audioCapture:
+                    return WebViewPermissionResourceType.microphone;
+                  case PermissionRequestConstants.midiSysex:
+                    return AndroidWebViewPermissionResourceType.midiSysex;
+                  case PermissionRequestConstants.protectedMediaId:
+                    return AndroidWebViewPermissionResourceType
+                        .protectedMediaId;
+                }
+
+                // Type not supported.
+                return null;
+              })
+              .whereType<WebViewPermissionResourceType>()
+              .toSet();
+
+          // If the request didn't contain any permissions recognized by the
+          // implementation, deny by default.
+          if (types.isEmpty) {
             return request.deny();
-          } else {
-            final Set<WebViewPermissionResourceType> types =
-                request.resources.nonNulls
-                    .map<WebViewPermissionResourceType?>((String type) {
-                      switch (type) {
-                        case PermissionRequestConstants.videoCapture:
-                          return WebViewPermissionResourceType.camera;
-                        case PermissionRequestConstants.audioCapture:
-                          return WebViewPermissionResourceType.microphone;
-                        case PermissionRequestConstants.midiSysex:
-                          return AndroidWebViewPermissionResourceType.midiSysex;
-                        case PermissionRequestConstants.protectedMediaId:
-                          return AndroidWebViewPermissionResourceType
-                              .protectedMediaId;
-                      }
-
-                      // Type not supported.
-                      return null;
-                    })
-                    .whereType<WebViewPermissionResourceType>()
-                    .toSet();
-
-            // If the request didn't contain any permissions recognized by the
-            // implementation, deny by default.
-            if (types.isEmpty) {
-              return request.deny();
-            }
-
-            callback(AndroidWebViewPermissionRequest._(
-              types: types,
-              request: request,
-            ));
           }
-        };
-      },
-    ),
-    onJsAlert: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
+
+          callback(
+            AndroidWebViewPermissionRequest._(types: types, request: request),
+          );
+        }
+      };
+    }),
+    onJsAlert: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
       return (_, __, String url, String message) async {
         final Future<void> Function(JavaScriptAlertDialogRequest)? callback =
             weakReference.target?._onJavaScriptAlert;
         if (callback != null) {
-          final JavaScriptAlertDialogRequest request =
-              JavaScriptAlertDialogRequest(message: message, url: url);
+          final request = JavaScriptAlertDialogRequest(
+            message: message,
+            url: url,
+          );
 
           await callback.call(request);
         }
         return;
       };
     }),
-    onJsConfirm: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
+    onJsConfirm: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
       return (_, __, String url, String message) async {
         final Future<bool> Function(JavaScriptConfirmDialogRequest)? callback =
             weakReference.target?._onJavaScriptConfirm;
         if (callback != null) {
-          final JavaScriptConfirmDialogRequest request =
-              JavaScriptConfirmDialogRequest(message: message, url: url);
+          final request = JavaScriptConfirmDialogRequest(
+            message: message,
+            url: url,
+          );
           final bool result = await callback.call(request);
           return result;
         }
         return false;
       };
     }),
-    onJsPrompt: withWeakReferenceTo(this,
-        (WeakReference<AndroidWebViewController> weakReference) {
+    onJsPrompt: withWeakReferenceTo(this, (
+      WeakReference<AndroidWebViewController> weakReference,
+    ) {
       return (_, __, String url, String message, String defaultValue) async {
         final Future<String> Function(JavaScriptTextInputDialogRequest)?
-            callback = weakReference.target?._onJavaScriptPrompt;
+        callback = weakReference.target?._onJavaScriptPrompt;
         if (callback != null) {
-          final JavaScriptTextInputDialogRequest request =
-              JavaScriptTextInputDialogRequest(
-                  message: message, url: url, defaultText: defaultValue);
+          final request = JavaScriptTextInputDialogRequest(
+            message: message,
+            url: url,
+            defaultText: defaultValue,
+          );
           final String result = await callback.call(request);
           return result;
         }
@@ -322,7 +374,7 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// The native [android_webview.FlutterAssetManager] allows managing assets.
   late final android_webview.FlutterAssetManager _flutterAssetManager =
-      _androidWebViewParams.androidWebViewProxy.instanceFlutterAssetManager();
+      android_webview.FlutterAssetManager.instance;
 
   final Map<String, AndroidJavaScriptChannelParams> _javaScriptChannelParams =
       <String, AndroidJavaScriptChannelParams>{};
@@ -330,7 +382,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   AndroidNavigationDelegate? _currentNavigationDelegate;
 
   Future<List<String>> Function(FileSelectorParams)?
-      _onShowFileSelectorCallback;
+  _onShowFileSelectorCallback;
 
   OnGeolocationPermissionsShowPrompt? _onGeolocationPermissionsShowPrompt;
 
@@ -345,14 +397,14 @@ class AndroidWebViewController extends PlatformWebViewController {
   void Function(JavaScriptConsoleMessage consoleMessage)? _onConsoleLogCallback;
 
   Future<void> Function(JavaScriptAlertDialogRequest request)?
-      _onJavaScriptAlert;
+  _onJavaScriptAlert;
   Future<bool> Function(JavaScriptConfirmDialogRequest request)?
-      _onJavaScriptConfirm;
+  _onJavaScriptConfirm;
   Future<String> Function(JavaScriptTextInputDialogRequest request)?
-      _onJavaScriptPrompt;
+  _onJavaScriptPrompt;
 
   void Function(ScrollPositionChange scrollPositionChange)?
-      _onScrollPositionChangedCallback;
+  _onScrollPositionChangedCallback;
 
   /// Sets the file access permission for the web view.
   ///
@@ -364,12 +416,8 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// Whether to enable the platform's webview content debugging tools.
   ///
   /// Defaults to false.
-  static Future<void> enableDebugging(
-    bool enabled, {
-    @visibleForTesting
-    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
-  }) {
-    return webViewProxy.setWebContentsDebuggingEnabledWebView(enabled);
+  static Future<void> enableDebugging(bool enabled) {
+    return android_webview.WebView.setWebContentsDebuggingEnabled(enabled);
   }
 
   /// Identifier used to retrieve the underlying native `WebView`.
@@ -379,37 +427,43 @@ class AndroidWebViewController extends PlatformWebViewController {
   ///
   /// See Java method `WebViewFlutterPlugin.getWebView`.
   int get webViewIdentifier =>
-      // ignore: invalid_use_of_protected_member
-      _webView.pigeon_instanceManager.getIdentifier(_webView)!;
+      android_webview.PigeonInstanceManager.instance.getIdentifier(_webView)!;
 
   @override
-  Future<void> loadFile(
-    String absoluteFilePath,
-  ) {
-    final String url = absoluteFilePath.startsWith('file://')
-        ? absoluteFilePath
-        : Uri.file(absoluteFilePath).toString();
-
-    _webView.settings.setAllowFileAccess(true);
-    return _webView.loadUrl(url, <String, String>{});
+  Future<void> loadFile(String absoluteFilePath) {
+    return loadFileWithParams(
+      AndroidLoadFileParams(absoluteFilePath: absoluteFilePath),
+    );
   }
 
   @override
-  Future<void> loadFlutterAsset(
-    String key,
-  ) async {
-    final String assetFilePath =
-        await _flutterAssetManager.getAssetFilePathByName(key);
+  Future<void> loadFileWithParams(LoadFileParams params) async {
+    switch (params) {
+      case final AndroidLoadFileParams params:
+        await Future.wait(<Future<void>>[
+          _webView.settings.setAllowFileAccess(true),
+          _webView.loadUrl(params.absoluteFilePath, params.headers),
+        ]);
+
+      default:
+        await loadFileWithParams(
+          AndroidLoadFileParams.fromLoadFileParams(params),
+        );
+    }
+  }
+
+  @override
+  Future<void> loadFlutterAsset(String key) async {
+    final String assetFilePath = await _flutterAssetManager
+        .getAssetFilePathByName(key);
     final List<String> pathElements = assetFilePath.split('/');
     final String fileName = pathElements.removeLast();
-    final List<String?> paths =
-        await _flutterAssetManager.list(pathElements.join('/'));
+    final List<String?> paths = await _flutterAssetManager.list(
+      pathElements.join('/'),
+    );
 
     if (!paths.contains(fileName)) {
-      throw ArgumentError(
-        'Asset for key "$key" not found.',
-        'key',
-      );
+      throw ArgumentError('Asset for key "$key" not found.', 'key');
     }
 
     return _webView.loadUrl(
@@ -419,23 +473,12 @@ class AndroidWebViewController extends PlatformWebViewController {
   }
 
   @override
-  Future<void> loadHtmlString(
-    String html, {
-    String? baseUrl,
-  }) {
-    return _webView.loadDataWithBaseUrl(
-      baseUrl,
-      html,
-      'text/html',
-      null,
-      null,
-    );
+  Future<void> loadHtmlString(String html, {String? baseUrl}) {
+    return _webView.loadDataWithBaseUrl(baseUrl, html, 'text/html', null, null);
   }
 
   @override
-  Future<void> loadRequest(
-    LoadRequestParams params,
-  ) {
+  Future<void> loadRequest(LoadRequestParams params) {
     if (!params.uri.hasScheme) {
       throw ArgumentError('WebViewRequest#uri is required to have a scheme.');
     }
@@ -444,7 +487,9 @@ class AndroidWebViewController extends PlatformWebViewController {
         return _webView.loadUrl(params.uri.toString(), params.headers);
       case LoadRequestMethod.post:
         return _webView.postUrl(
-            params.uri.toString(), params.body ?? Uint8List(0));
+          params.uri.toString(),
+          params.body ?? Uint8List(0),
+        );
     }
     // The enum comes from a different package, which could get a new value at
     // any time, so a fallback case is necessary. Since there is no reasonable
@@ -453,9 +498,10 @@ class AndroidWebViewController extends PlatformWebViewController {
     // so that the linter will flag the switch as needing an update.
     // ignore: dead_code
     throw UnimplementedError(
-        'This version of `AndroidWebViewController` currently has no '
-        'implementation for HTTP method ${params.method.serialize()} in '
-        'loadRequest.');
+      'This version of `AndroidWebViewController` currently has no '
+      'implementation for HTTP method ${params.method.serialize()} in '
+      'loadRequest.',
+    );
   }
 
   @override
@@ -485,7 +531,8 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setPlatformNavigationDelegate(
-      covariant AndroidNavigationDelegate handler) async {
+    covariant AndroidNavigationDelegate handler,
+  ) async {
     _currentNavigationDelegate = handler;
     await Future.wait(<Future<void>>[
       handler.setOnLoadRequest(loadRequest),
@@ -520,9 +567,10 @@ class AndroidWebViewController extends PlatformWebViewController {
   ) {
     final AndroidJavaScriptChannelParams androidJavaScriptParams =
         javaScriptChannelParams is AndroidJavaScriptChannelParams
-            ? javaScriptChannelParams
-            : AndroidJavaScriptChannelParams.fromJavaScriptChannelParams(
-                javaScriptChannelParams);
+        ? javaScriptChannelParams
+        : AndroidJavaScriptChannelParams.fromJavaScriptChannelParams(
+            javaScriptChannelParams,
+          );
 
     // When JavaScript channel with the same name exists make sure to remove it
     // before registering the new channel.
@@ -533,8 +581,9 @@ class AndroidWebViewController extends PlatformWebViewController {
     _javaScriptChannelParams[androidJavaScriptParams.name] =
         androidJavaScriptParams;
 
-    return _webView
-        .addJavaScriptChannel(androidJavaScriptParams._javaScriptChannel);
+    return _webView.addJavaScriptChannel(
+      androidJavaScriptParams._javaScriptChannel,
+    );
   }
 
   @override
@@ -560,8 +609,8 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<Offset> getScrollPosition() async {
-    final android_webview.WebViewPoint point =
-        await _webView.getScrollPosition();
+    final android_webview.WebViewPoint point = await _webView
+        .getScrollPosition();
     return Offset(point.x.toDouble(), point.y.toDouble());
   }
 
@@ -571,12 +620,12 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setBackgroundColor(Color color) =>
-      _webView.setBackgroundColor(color.value);
+      _webView.setBackgroundColor(color.toARGB32());
 
   @override
-  Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) =>
-      _webView.settings
-          .setJavaScriptEnabled(javaScriptMode == JavaScriptMode.unrestricted);
+  Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) => _webView
+      .settings
+      .setJavaScriptEnabled(javaScriptMode == JavaScriptMode.unrestricted);
 
   @override
   Future<void> setUserAgent(String? userAgent) =>
@@ -584,8 +633,9 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setOnScrollPositionChange(
-      void Function(ScrollPositionChange scrollPositionChange)?
-          onScrollPositionChange) async {
+    void Function(ScrollPositionChange scrollPositionChange)?
+    onScrollPositionChange,
+  ) async {
     _onScrollPositionChangedCallback = onScrollPositionChange;
   }
 
@@ -623,7 +673,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// selector.
   Future<void> setOnShowFileSelector(
     Future<List<String>> Function(FileSelectorParams params)?
-        onShowFileSelector,
+    onShowFileSelector,
   ) {
     _onShowFileSelectorCallback = onShowFileSelector;
     return _webChromeClient.setSynchronousReturnValueForOnShowFileChooser(
@@ -633,13 +683,9 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   /// Sets a callback that notifies the host application that web content is
   /// requesting permission to access the specified resources.
-  ///
-  /// Only invoked on Android versions 21+.
   @override
   Future<void> setOnPlatformPermissionRequest(
-    void Function(
-      PlatformWebViewPermissionRequest request,
-    ) onPermissionRequest,
+    void Function(PlatformWebViewPermissionRequest request) onPermissionRequest,
   ) async {
     _onPermissionRequestCallback = onPermissionRequest;
   }
@@ -652,8 +698,7 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// The host application should invoke the specified callback with the desired permission state.
   /// See GeolocationPermissions for details.
   ///
-  /// Note that for applications targeting Android N and later SDKs (API level > Build.VERSION_CODES.M)
-  /// this method is only called for requests originating from secure origins such as https.
+  /// This method is only called for requests originating from secure origins such as https.
   /// On non-secure origins geolocation requests are automatically denied.
   ///
   /// Param [onHidePrompt] notifies the host application that a request for Geolocation permissions,
@@ -705,12 +750,13 @@ class AndroidWebViewController extends PlatformWebViewController {
   /// written to the JavaScript console.
   @override
   Future<void> setOnConsoleMessage(
-      void Function(JavaScriptConsoleMessage consoleMessage)
-          onConsoleMessage) async {
+    void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage,
+  ) async {
     _onConsoleLogCallback = onConsoleMessage;
 
     return _webChromeClient.setSynchronousReturnValueForOnConsoleMessage(
-        _onConsoleLogCallback != null);
+      _onConsoleLogCallback != null,
+    );
   }
 
   @override
@@ -718,24 +764,27 @@ class AndroidWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setOnJavaScriptAlertDialog(
-      Future<void> Function(JavaScriptAlertDialogRequest request)
-          onJavaScriptAlertDialog) async {
+    Future<void> Function(JavaScriptAlertDialogRequest request)
+    onJavaScriptAlertDialog,
+  ) async {
     _onJavaScriptAlert = onJavaScriptAlertDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsAlert(true);
   }
 
   @override
   Future<void> setOnJavaScriptConfirmDialog(
-      Future<bool> Function(JavaScriptConfirmDialogRequest request)
-          onJavaScriptConfirmDialog) async {
+    Future<bool> Function(JavaScriptConfirmDialogRequest request)
+    onJavaScriptConfirmDialog,
+  ) async {
     _onJavaScriptConfirm = onJavaScriptConfirmDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsConfirm(true);
   }
 
   @override
   Future<void> setOnJavaScriptTextInputDialog(
-      Future<String> Function(JavaScriptTextInputDialogRequest request)
-          onJavaScriptTextInputDialog) async {
+    Future<String> Function(JavaScriptTextInputDialogRequest request)
+    onJavaScriptTextInputDialog,
+  ) async {
     _onJavaScriptPrompt = onJavaScriptTextInputDialog;
     return _webChromeClient.setSynchronousReturnValueForOnJsPrompt(true);
   }
@@ -755,14 +804,14 @@ class AndroidWebViewController extends PlatformWebViewController {
   Future<void> setOverScrollMode(WebViewOverScrollMode mode) {
     return switch (mode) {
       WebViewOverScrollMode.always => _webView.setOverScrollMode(
-          android_webview.OverScrollMode.always,
-        ),
+        android_webview.OverScrollMode.always,
+      ),
       WebViewOverScrollMode.ifContentScrolls => _webView.setOverScrollMode(
-          android_webview.OverScrollMode.ifContentScrolls,
-        ),
+        android_webview.OverScrollMode.ifContentScrolls,
+      ),
       WebViewOverScrollMode.never => _webView.setOverScrollMode(
-          android_webview.OverScrollMode.never,
-        ),
+        android_webview.OverScrollMode.never,
+      ),
       // This prevents future additions from causing a breaking change.
       // ignore: unreachable_switch_case
       _ => throw UnsupportedError('Android does not support $mode.'),
@@ -781,6 +830,37 @@ class AndroidWebViewController extends PlatformWebViewController {
     };
     return _webView.settings.setMixedContentMode(androidMode);
   }
+
+  /// Checks if a WebView feature is supported on the current device.
+  ///
+  /// This method uses [android_webview.WebViewFeature.isFeatureSupported] to check
+  /// if the specified WebView feature is available on the current device and WebView version.
+  ///
+  /// See [WebViewFeatureType] for available feature constants.
+  Future<bool> isWebViewFeatureSupported(WebViewFeatureType featureType) {
+    final String feature = switch (featureType) {
+      WebViewFeatureType.paymentRequest =>
+        WebViewFeatureConstants.paymentRequest,
+    };
+    return android_webview.WebViewFeature.isFeatureSupported(feature);
+  }
+
+  /// Sets whether the WebView should enable the Payment Request API.
+  ///
+  /// This method uses [android_webview.WebSettingsCompat.setPaymentRequestEnabled]
+  /// to enable or disable the Payment Request API for the WebView.
+  ///
+  /// Before calling this method, you should check if the feature is supported using
+  /// [isWebViewFeatureSupported] with [WebViewFeatureType.paymentRequest].
+  ///
+  /// This feature requires adding queries to the AndroidManifest.xml to allow WebView to query the device for the user's payment applications:
+  /// See https://developer.android.com/reference/androidx/webkit/WebSettingsCompat#setPaymentRequestEnabled(android.webkit.WebSettings,boolean).
+  Future<void> setPaymentRequestEnabled(bool enabled) {
+    return android_webview.WebSettingsCompat.setPaymentRequestEnabled(
+      _webView.settings,
+      enabled,
+    );
+  }
 }
 
 /// Android implementation of [PlatformWebViewPermissionRequest].
@@ -794,23 +874,24 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 
   @override
   Future<void> grant() {
-    return _request
-        .grant(types.map<String>((WebViewPermissionResourceType type) {
-      switch (type) {
-        case WebViewPermissionResourceType.camera:
-          return PermissionRequestConstants.videoCapture;
-        case WebViewPermissionResourceType.microphone:
-          return PermissionRequestConstants.audioCapture;
-        case AndroidWebViewPermissionResourceType.midiSysex:
-          return PermissionRequestConstants.midiSysex;
-        case AndroidWebViewPermissionResourceType.protectedMediaId:
-          return PermissionRequestConstants.protectedMediaId;
-      }
+    return _request.grant(
+      types.map<String>((WebViewPermissionResourceType type) {
+        switch (type) {
+          case WebViewPermissionResourceType.camera:
+            return PermissionRequestConstants.videoCapture;
+          case WebViewPermissionResourceType.microphone:
+            return PermissionRequestConstants.audioCapture;
+          case AndroidWebViewPermissionResourceType.midiSysex:
+            return PermissionRequestConstants.midiSysex;
+          case AndroidWebViewPermissionResourceType.protectedMediaId:
+            return PermissionRequestConstants.protectedMediaId;
+        }
 
-      throw UnsupportedError(
-        'Resource of type `${type.name}` is not supported.',
-      );
-    }).toList());
+        throw UnsupportedError(
+          'Resource of type `${type.name}` is not supported.',
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -820,16 +901,17 @@ class AndroidWebViewPermissionRequest extends PlatformWebViewPermissionRequest {
 }
 
 /// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API.
-typedef OnGeolocationPermissionsShowPrompt
-    = Future<GeolocationPermissionsResponse> Function(
-        GeolocationPermissionsRequestParams request);
+typedef OnGeolocationPermissionsShowPrompt =
+    Future<GeolocationPermissionsResponse> Function(
+      GeolocationPermissionsRequestParams request,
+    );
 
 /// Signature for the `setGeolocationPermissionsPromptCallbacks` callback responsible for request the Geolocation API is cancel.
 typedef OnGeolocationPermissionsHidePrompt = void Function();
 
 /// Signature for the `setCustomWidgetCallbacks` callback responsible for showing the custom view.
-typedef OnShowCustomWidgetCallback = void Function(
-    Widget widget, void Function() onCustomWidgetHidden);
+typedef OnShowCustomWidgetCallback =
+    void Function(Widget widget, void Function() onCustomWidgetHidden);
 
 /// Signature for the `setCustomWidgetCallbacks` callback responsible for hiding the custom view.
 typedef OnHideCustomWidgetCallback = void Function();
@@ -838,9 +920,7 @@ typedef OnHideCustomWidgetCallback = void Function();
 @immutable
 class GeolocationPermissionsRequestParams {
   /// [origin]: The origin for which permissions are set.
-  const GeolocationPermissionsRequestParams({
-    required this.origin,
-  });
+  const GeolocationPermissionsRequestParams({required this.origin});
 
   /// [origin]: The origin for which permissions are set.
   final String origin;
@@ -909,6 +989,16 @@ enum MixedContentMode {
   neverAllow,
 }
 
+/// WebView support library feature types used to query for support on the device.
+///
+/// See https://developer.android.com/reference/androidx/webkit/WebViewFeature#constants_1.
+enum WebViewFeatureType {
+  /// Feature for isFeatureSupported.
+  ///
+  /// This feature covers [WebSettingsCompat.setPaymentRequestEnabled].
+  paymentRequest,
+}
+
 /// Parameters received when the `WebView` should show a file selector.
 @immutable
 class FileSelectorParams {
@@ -967,36 +1057,25 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
   AndroidJavaScriptChannelParams({
     required super.name,
     required super.onMessageReceived,
-    @visibleForTesting
-    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
-  })  : assert(name.isNotEmpty),
-        _javaScriptChannel = webViewProxy.newJavaScriptChannel(
-          channelName: name,
-          postMessage: withWeakReferenceTo(
-            onMessageReceived,
-            (WeakReference<void Function(JavaScriptMessage)> weakReference) {
-              return (_, String message) {
-                if (weakReference.target != null) {
-                  weakReference.target!(
-                    JavaScriptMessage(message: message),
-                  );
-                }
-              };
-            },
-          ),
-        );
+  }) : assert(name.isNotEmpty),
+       _javaScriptChannel = android_webview.JavaScriptChannel(
+         channelName: name,
+         postMessage: withWeakReferenceTo(onMessageReceived, (
+           WeakReference<void Function(JavaScriptMessage)> weakReference,
+         ) {
+           return (_, String message) {
+             if (weakReference.target != null) {
+               weakReference.target!(JavaScriptMessage(message: message));
+             }
+           };
+         }),
+       );
 
   /// Constructs a [AndroidJavaScriptChannelParams] using a
   /// [JavaScriptChannelParams].
   AndroidJavaScriptChannelParams.fromJavaScriptChannelParams(
-    JavaScriptChannelParams params, {
-    @visibleForTesting
-    AndroidWebViewProxy webViewProxy = const AndroidWebViewProxy(),
-  }) : this(
-          name: params.name,
-          onMessageReceived: params.onMessageReceived,
-          webViewProxy: webViewProxy,
-        );
+    JavaScriptChannelParams params,
+  ) : this(name: params.name, onMessageReceived: params.onMessageReceived);
 
   final android_webview.JavaScriptChannel _javaScriptChannel;
 }
@@ -1010,43 +1089,32 @@ class AndroidJavaScriptChannelParams extends JavaScriptChannelParams {
 class AndroidWebViewWidgetCreationParams
     extends PlatformWebViewWidgetCreationParams {
   /// Creates [AndroidWebWidgetCreationParams].
-  AndroidWebViewWidgetCreationParams({
+  const AndroidWebViewWidgetCreationParams({
     super.key,
     required super.controller,
     super.layoutDirection,
     super.gestureRecognizers,
     this.displayWithHybridComposition = false,
-    @visibleForTesting android_webview.PigeonInstanceManager? instanceManager,
     @visibleForTesting
     this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
-  }) : instanceManager =
-            instanceManager ?? android_webview.PigeonInstanceManager.instance;
+  });
 
   /// Constructs a [WebKitWebViewWidgetCreationParams] using a
   /// [PlatformWebViewWidgetCreationParams].
   AndroidWebViewWidgetCreationParams.fromPlatformWebViewWidgetCreationParams(
     PlatformWebViewWidgetCreationParams params, {
     bool displayWithHybridComposition = false,
-    @visibleForTesting android_webview.PigeonInstanceManager? instanceManager,
-    @visibleForTesting PlatformViewsServiceProxy platformViewsServiceProxy =
+    @visibleForTesting
+    PlatformViewsServiceProxy platformViewsServiceProxy =
         const PlatformViewsServiceProxy(),
   }) : this(
-          key: params.key,
-          controller: params.controller,
-          layoutDirection: params.layoutDirection,
-          gestureRecognizers: params.gestureRecognizers,
-          displayWithHybridComposition: displayWithHybridComposition,
-          instanceManager: instanceManager,
-          platformViewsServiceProxy: platformViewsServiceProxy,
-        );
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  ///
-  /// This field is exposed for testing purposes only and should not be used
-  /// outside of tests.
-  @visibleForTesting
-  final android_webview.PigeonInstanceManager instanceManager;
+         key: params.key,
+         controller: params.controller,
+         layoutDirection: params.layoutDirection,
+         gestureRecognizers: params.gestureRecognizers,
+         displayWithHybridComposition: displayWithHybridComposition,
+         platformViewsServiceProxy: platformViewsServiceProxy,
+       );
 
   /// Proxy that provides access to the platform views service.
   ///
@@ -1069,12 +1137,11 @@ class AndroidWebViewWidgetCreationParams
 
   @override
   int get hashCode => Object.hash(
-        controller,
-        layoutDirection,
-        displayWithHybridComposition,
-        platformViewsServiceProxy,
-        instanceManager,
-      );
+    controller,
+    layoutDirection,
+    displayWithHybridComposition,
+    platformViewsServiceProxy,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -1082,8 +1149,7 @@ class AndroidWebViewWidgetCreationParams
         controller == other.controller &&
         layoutDirection == other.layoutDirection &&
         displayWithHybridComposition == other.displayWithHybridComposition &&
-        platformViewsServiceProxy == other.platformViewsServiceProxy &&
-        instanceManager == other.instanceManager;
+        platformViewsServiceProxy == other.platformViewsServiceProxy;
   }
 }
 
@@ -1091,12 +1157,13 @@ class AndroidWebViewWidgetCreationParams
 class AndroidWebViewWidget extends PlatformWebViewWidget {
   /// Constructs a [WebKitWebViewWidget].
   AndroidWebViewWidget(PlatformWebViewWidgetCreationParams params)
-      : super.implementation(
-          params is AndroidWebViewWidgetCreationParams
-              ? params
-              : AndroidWebViewWidgetCreationParams
-                  .fromPlatformWebViewWidgetCreationParams(params),
-        );
+    : super.implementation(
+        params is AndroidWebViewWidgetCreationParams
+            ? params
+            : AndroidWebViewWidgetCreationParams.fromPlatformWebViewWidgetCreationParams(
+                params,
+              ),
+      );
 
   AndroidWebViewWidgetCreationParams get _androidParams =>
       params as AndroidWebViewWidgetCreationParams;
@@ -1107,31 +1174,30 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
     return PlatformViewLink(
       // Setting a default key using `params` ensures the `PlatformViewLink`
       // recreates the PlatformView when changes are made.
-      key: _androidParams.key ??
+      key:
+          _androidParams.key ??
           ValueKey<AndroidWebViewWidgetCreationParams>(
-              params as AndroidWebViewWidgetCreationParams),
+            params as AndroidWebViewWidgetCreationParams,
+          ),
       viewType: 'plugins.flutter.io/webview',
-      surfaceFactory: (
-        BuildContext context,
-        PlatformViewController controller,
-      ) {
-        return AndroidViewSurface(
-          controller: controller as AndroidViewController,
-          gestureRecognizers: _androidParams.gestureRecognizers,
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-        );
-      },
+      surfaceFactory:
+          (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              gestureRecognizers: _androidParams.gestureRecognizers,
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+            );
+          },
       onCreatePlatformView: (PlatformViewCreationParams params) {
         return _initAndroidView(
-          params,
-          displayWithHybridComposition:
-              _androidParams.displayWithHybridComposition,
-          platformViewsServiceProxy: _androidParams.platformViewsServiceProxy,
-          view:
-              (_androidParams.controller as AndroidWebViewController)._webView,
-          instanceManager: _androidParams.instanceManager,
-          layoutDirection: _androidParams.layoutDirection,
-        )
+            params,
+            displayWithHybridComposition:
+                _androidParams.displayWithHybridComposition,
+            platformViewsServiceProxy: _androidParams.platformViewsServiceProxy,
+            view: (_androidParams.controller as AndroidWebViewController)
+                ._webView,
+            layoutDirection: _androidParams.layoutDirection,
+          )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();
       },
@@ -1141,18 +1207,19 @@ class AndroidWebViewWidget extends PlatformWebViewWidget {
   // Attempt to handle custom views with a default implementation if it has not
   // been set.
   void _trySetDefaultOnShowCustomWidgetCallbacks(BuildContext context) {
-    final AndroidWebViewController controller =
-        _androidParams.controller as AndroidWebViewController;
+    final controller = _androidParams.controller as AndroidWebViewController;
 
     if (controller._onShowCustomWidgetCallback == null) {
       controller.setCustomWidgetCallbacks(
         onShowCustomWidget:
             (Widget widget, OnHideCustomWidgetCallback callback) {
-          Navigator.of(context).push(MaterialPageRoute<void>(
-            builder: (BuildContext context) => widget,
-            fullscreenDialog: true,
-          ));
-        },
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (BuildContext context) => widget,
+                  fullscreenDialog: true,
+                ),
+              );
+            },
         onHideCustomWidget: () {
           Navigator.of(context).pop();
         },
@@ -1180,15 +1247,13 @@ class AndroidCustomViewWidget extends StatelessWidget {
   /// This constructor is visible for testing purposes only and should
   /// never be called externally.
   @visibleForTesting
-  AndroidCustomViewWidget.private({
+  const AndroidCustomViewWidget.private({
     super.key,
     required this.controller,
     required this.customView,
-    @visibleForTesting android_webview.PigeonInstanceManager? instanceManager,
     @visibleForTesting
     this.platformViewsServiceProxy = const PlatformViewsServiceProxy(),
-  }) : instanceManager =
-            instanceManager ?? android_webview.PigeonInstanceManager.instance;
+  });
 
   /// The reference to the Android native view that should be shown.
   final android_webview.View customView;
@@ -1196,14 +1261,6 @@ class AndroidCustomViewWidget extends StatelessWidget {
   /// The [PlatformWebViewController] that allows controlling the native web
   /// view.
   final PlatformWebViewController controller;
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  ///
-  /// This field is exposed for testing purposes only and should not be used
-  /// outside of tests.
-  @visibleForTesting
-  final android_webview.PigeonInstanceManager instanceManager;
 
   /// Proxy that provides access to the platform views service.
   ///
@@ -1216,24 +1273,22 @@ class AndroidCustomViewWidget extends StatelessWidget {
     return PlatformViewLink(
       key: key,
       viewType: 'plugins.flutter.io/webview',
-      surfaceFactory: (
-        BuildContext context,
-        PlatformViewController controller,
-      ) {
-        return AndroidViewSurface(
-          controller: controller as AndroidViewController,
-          hitTestBehavior: PlatformViewHitTestBehavior.opaque,
-          gestureRecognizers: const <Factory<OneSequenceGestureRecognizer>>{},
-        );
-      },
+      surfaceFactory:
+          (BuildContext context, PlatformViewController controller) {
+            return AndroidViewSurface(
+              controller: controller as AndroidViewController,
+              hitTestBehavior: PlatformViewHitTestBehavior.opaque,
+              gestureRecognizers:
+                  const <Factory<OneSequenceGestureRecognizer>>{},
+            );
+          },
       onCreatePlatformView: (PlatformViewCreationParams params) {
         return _initAndroidView(
-          params,
-          displayWithHybridComposition: false,
-          platformViewsServiceProxy: platformViewsServiceProxy,
-          view: customView,
-          instanceManager: instanceManager,
-        )
+            params,
+            displayWithHybridComposition: false,
+            platformViewsServiceProxy: platformViewsServiceProxy,
+            view: customView,
+          )
           ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
           ..create();
       },
@@ -1246,10 +1301,10 @@ AndroidViewController _initAndroidView(
   required bool displayWithHybridComposition,
   required PlatformViewsServiceProxy platformViewsServiceProxy,
   required android_webview.View view,
-  required android_webview.PigeonInstanceManager instanceManager,
   TextDirection layoutDirection = TextDirection.ltr,
 }) {
-  final int identifier = instanceManager.getIdentifier(view)!;
+  final int identifier = android_webview.PigeonInstanceManager.instance
+      .getIdentifier(view)!;
 
   if (displayWithHybridComposition) {
     return platformViewsServiceProxy.initExpensiveAndroidView(
@@ -1283,10 +1338,8 @@ class AndroidWebResourceError extends WebResourceError {
     required super.description,
     super.isForMainFrame,
     super.url,
-  })  : failingUrl = url,
-        super(
-          errorType: _errorCodeToErrorType(errorCode),
-        );
+  }) : failingUrl = url,
+       super(errorType: _errorCodeToErrorType(errorCode));
 
   /// Gets the URL for which the failing resource request was made.
   @Deprecated('Please use `url`.')
@@ -1343,27 +1396,16 @@ class AndroidWebResourceError extends WebResourceError {
 class AndroidNavigationDelegateCreationParams
     extends PlatformNavigationDelegateCreationParams {
   /// Creates a new [AndroidNavigationDelegateCreationParams] instance.
-  const AndroidNavigationDelegateCreationParams._({
-    @visibleForTesting this.androidWebViewProxy = const AndroidWebViewProxy(),
-  }) : super();
+  const AndroidNavigationDelegateCreationParams._() : super();
 
   /// Creates a [AndroidNavigationDelegateCreationParams] instance based on [PlatformNavigationDelegateCreationParams].
   factory AndroidNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
-    PlatformNavigationDelegateCreationParams params, {
-    @visibleForTesting
-    AndroidWebViewProxy androidWebViewProxy = const AndroidWebViewProxy(),
-  }) {
-    return AndroidNavigationDelegateCreationParams._(
-      androidWebViewProxy: androidWebViewProxy,
-    );
+    PlatformNavigationDelegateCreationParams params,
+  ) {
+    return const AndroidNavigationDelegateCreationParams._();
   }
-
-  /// Handles constructing objects and calling static methods for the Android WebView
-  /// native library.
-  @visibleForTesting
-  final AndroidWebViewProxy androidWebViewProxy;
 }
 
 /// Android details of the change to a web view's url.
@@ -1380,16 +1422,16 @@ class AndroidUrlChange extends UrlChange {
 class AndroidNavigationDelegate extends PlatformNavigationDelegate {
   /// Creates a new [AndroidNavigationDelegate].
   AndroidNavigationDelegate(PlatformNavigationDelegateCreationParams params)
-      : super.implementation(params is AndroidNavigationDelegateCreationParams
+    : super.implementation(
+        params is AndroidNavigationDelegateCreationParams
             ? params
-            : AndroidNavigationDelegateCreationParams
-                .fromPlatformNavigationDelegateCreationParams(params)) {
-    final WeakReference<AndroidNavigationDelegate> weakThis =
-        WeakReference<AndroidNavigationDelegate>(this);
+            : AndroidNavigationDelegateCreationParams.fromPlatformNavigationDelegateCreationParams(
+                params,
+              ),
+      ) {
+    final weakThis = WeakReference<AndroidNavigationDelegate>(this);
 
-    _webViewClient = (this.params as AndroidNavigationDelegateCreationParams)
-        .androidWebViewProxy
-        .newWebViewClient(
+    _webViewClient = android_webview.WebViewClient(
       onPageFinished: (_, android_webview.WebView webView, String url) {
         final PageEventCallback? callback = weakThis.target?._onPageFinished;
         if (callback != null) {
@@ -1402,194 +1444,178 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
           callback(url);
         }
       },
-      onReceivedHttpError: (
-        _,
-        android_webview.WebView webView,
-        android_webview.WebResourceRequest request,
-        android_webview.WebResourceResponse response,
-      ) {
-        if (weakThis.target?._onHttpError != null) {
-          weakThis.target!._onHttpError!(
-            HttpResponseError(
-              request: WebResourceRequest(
-                uri: Uri.parse(request.url),
-              ),
-              response: WebResourceResponse(
-                uri: null,
-                statusCode: response.statusCode,
-              ),
-            ),
-          );
-        }
-      },
-      onReceivedRequestError: (
-        _,
-        android_webview.WebView webView,
-        android_webview.WebResourceRequest request,
-        android_webview.WebResourceError error,
-      ) {
-        final WebResourceErrorCallback? callback =
-            weakThis.target?._onWebResourceError;
-        if (callback != null) {
-          callback(AndroidWebResourceError._(
-            errorCode: error.errorCode,
-            description: error.description,
-            url: request.url,
-            isForMainFrame: request.isForMainFrame,
-          ));
-        }
-      },
-      onReceivedRequestErrorCompat: (
-        _,
-        android_webview.WebView webView,
-        android_webview.WebResourceRequest request,
-        android_webview.WebResourceErrorCompat error,
-      ) {
-        final WebResourceErrorCallback? callback =
-            weakThis.target?._onWebResourceError;
-        if (callback != null) {
-          callback(AndroidWebResourceError._(
-            errorCode: error.errorCode,
-            description: error.description,
-            url: request.url,
-            isForMainFrame: request.isForMainFrame,
-          ));
-        }
-      },
-      onReceivedError: (
-        _,
-        android_webview.WebView webView,
-        int errorCode,
-        String description,
-        String failingUrl,
-      ) {
-        final WebResourceErrorCallback? callback =
-            weakThis.target?._onWebResourceError;
-        if (callback != null) {
-          callback(AndroidWebResourceError._(
-            errorCode: errorCode,
-            description: description,
-            url: failingUrl,
-            isForMainFrame: true,
-          ));
-        }
-      },
-      requestLoading: (
-        _,
-        android_webview.WebView webView,
-        android_webview.WebResourceRequest request,
-      ) {
-        weakThis.target?._handleNavigation(
-          request.url,
-          headers: request.requestHeaders?.map<String, String>(
-                (String? key, String? value) {
-                  return MapEntry<String, String>(key!, value!);
-                },
-              ) ??
-              <String, String>{},
-          isForMainFrame: request.isForMainFrame,
-        );
-      },
+      onReceivedHttpError:
+          (
+            _,
+            android_webview.WebView webView,
+            android_webview.WebResourceRequest request,
+            android_webview.WebResourceResponse response,
+          ) {
+            if (weakThis.target?._onHttpError != null) {
+              weakThis.target!._onHttpError!(
+                HttpResponseError(
+                  request: WebResourceRequest(uri: Uri.parse(request.url)),
+                  response: WebResourceResponse(
+                    uri: null,
+                    statusCode: response.statusCode,
+                  ),
+                ),
+              );
+            }
+          },
+      onReceivedRequestError:
+          (
+            _,
+            android_webview.WebView webView,
+            android_webview.WebResourceRequest request,
+            android_webview.WebResourceError error,
+          ) {
+            final WebResourceErrorCallback? callback =
+                weakThis.target?._onWebResourceError;
+            if (callback != null) {
+              callback(
+                AndroidWebResourceError._(
+                  errorCode: error.errorCode,
+                  description: error.description,
+                  url: request.url,
+                  isForMainFrame: request.isForMainFrame,
+                ),
+              );
+            }
+          },
+      onReceivedRequestErrorCompat:
+          (
+            _,
+            android_webview.WebView webView,
+            android_webview.WebResourceRequest request,
+            android_webview.WebResourceErrorCompat error,
+          ) {
+            final WebResourceErrorCallback? callback =
+                weakThis.target?._onWebResourceError;
+            if (callback != null) {
+              callback(
+                AndroidWebResourceError._(
+                  errorCode: error.errorCode,
+                  description: error.description,
+                  url: request.url,
+                  isForMainFrame: request.isForMainFrame,
+                ),
+              );
+            }
+          },
+      requestLoading:
+          (
+            _,
+            android_webview.WebView webView,
+            android_webview.WebResourceRequest request,
+          ) {
+            weakThis.target?._handleNavigation(
+              request.url,
+              headers:
+                  request.requestHeaders?.map<String, String>((
+                    String? key,
+                    String? value,
+                  ) {
+                    return MapEntry<String, String>(key!, value!);
+                  }) ??
+                  <String, String>{},
+              isForMainFrame: request.isForMainFrame,
+            );
+          },
       urlLoading: (_, android_webview.WebView webView, String url) {
         weakThis.target?._handleNavigation(url, isForMainFrame: true);
       },
-      doUpdateVisitedHistory: (
-        _,
-        android_webview.WebView webView,
-        String url,
-        bool isReload,
-      ) {
-        final UrlChangeCallback? callback = weakThis.target?._onUrlChange;
-        if (callback != null) {
-          callback(AndroidUrlChange(url: url, isReload: isReload));
-        }
-      },
-      onReceivedHttpAuthRequest: (
-        _,
-        android_webview.WebView webView,
-        android_webview.HttpAuthHandler httpAuthHandler,
-        String host,
-        String realm,
-      ) {
-        final void Function(HttpAuthRequest)? callback =
-            weakThis.target?._onHttpAuthRequest;
-        if (callback != null) {
-          callback(
-            HttpAuthRequest(
-              onProceed: (WebViewCredential credential) {
-                httpAuthHandler.proceed(credential.user, credential.password);
-              },
-              onCancel: () {
-                httpAuthHandler.cancel();
-              },
-              host: host,
-              realm: realm,
-            ),
-          );
-        } else {
-          httpAuthHandler.cancel();
-        }
-      },
+      doUpdateVisitedHistory:
+          (_, android_webview.WebView webView, String url, bool isReload) {
+            final UrlChangeCallback? callback = weakThis.target?._onUrlChange;
+            if (callback != null) {
+              callback(AndroidUrlChange(url: url, isReload: isReload));
+            }
+          },
+      onReceivedHttpAuthRequest:
+          (
+            _,
+            android_webview.WebView webView,
+            android_webview.HttpAuthHandler httpAuthHandler,
+            String host,
+            String realm,
+          ) {
+            final void Function(HttpAuthRequest)? callback =
+                weakThis.target?._onHttpAuthRequest;
+            if (callback != null) {
+              callback(
+                HttpAuthRequest(
+                  onProceed: (WebViewCredential credential) {
+                    httpAuthHandler.proceed(
+                      credential.user,
+                      credential.password,
+                    );
+                  },
+                  onCancel: () {
+                    httpAuthHandler.cancel();
+                  },
+                  host: host,
+                  realm: realm,
+                ),
+              );
+            } else {
+              httpAuthHandler.cancel();
+            }
+          },
       onFormResubmission:
           (_, __, android_webview.AndroidMessage dontResend, ___) {
-        dontResend.sendToTarget();
-      },
-      onReceivedClientCertRequest: (
-        _,
-        __,
-        android_webview.ClientCertRequest request,
-      ) {
-        request.cancel();
-      },
-      onReceivedSslError: (
-        _,
-        __,
-        android_webview.SslErrorHandler handler,
-        android_webview.SslError error,
-      ) async {
-        final void Function(PlatformSslAuthError)? callback =
-            weakThis.target?._onSslAuthError;
+            dontResend.sendToTarget();
+          },
+      onReceivedClientCertRequest:
+          (_, __, android_webview.ClientCertRequest request) {
+            request.cancel();
+          },
+      onReceivedSslError:
+          (
+            _,
+            __,
+            android_webview.SslErrorHandler handler,
+            android_webview.SslError error,
+          ) async {
+            final void Function(PlatformSslAuthError)? callback =
+                weakThis.target?._onSslAuthError;
 
-        if (callback != null) {
-          final AndroidSslAuthError authError =
-              await AndroidSslAuthError.fromNativeCallback(
-            error: error,
-            handler: handler,
-          );
+            if (callback != null) {
+              final AndroidSslAuthError authError =
+                  await AndroidSslAuthError.fromNativeCallback(
+                    error: error,
+                    handler: handler,
+                  );
 
-          callback(authError);
-        } else {
-          await handler.cancel();
-        }
-      },
+              callback(authError);
+            } else {
+              await handler.cancel();
+            }
+          },
     );
 
-    _downloadListener = (this.params as AndroidNavigationDelegateCreationParams)
-        .androidWebViewProxy
-        .newDownloadListener(
-      onDownloadStart: (
-        _,
-        String url,
-        String userAgent,
-        String contentDisposition,
-        String mimetype,
-        int contentLength,
-      ) {
-        if (weakThis.target != null) {
-          weakThis.target?._handleNavigation(url, isForMainFrame: true);
-        }
-      },
+    _downloadListener = android_webview.DownloadListener(
+      onDownloadStart:
+          (
+            _,
+            String url,
+            String userAgent,
+            String contentDisposition,
+            String mimetype,
+            int contentLength,
+          ) {
+            if (weakThis.target != null) {
+              weakThis.target?._handleNavigation(url, isForMainFrame: true);
+            }
+          },
     );
   }
 
-  AndroidNavigationDelegateCreationParams get _androidParams =>
-      params as AndroidNavigationDelegateCreationParams;
-
   late final android_webview.WebChromeClient _webChromeClient =
-      _androidParams.androidWebViewProxy.newWebChromeClient(
-    onJsConfirm: (_, __, ___, ____) async => false,
-    onShowFileChooser: (_, __, ___) async => <String>[],
-  );
+      android_webview.WebChromeClient(
+        onJsConfirm: (_, __, ___, ____) async => false,
+        onShowFileChooser: (_, __, ___) async => <String>[],
+      );
 
   /// Gets the native [android_webview.WebChromeClient] that is bridged by this [AndroidNavigationDelegate].
   ///
@@ -1643,34 +1669,25 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     }
 
     final FutureOr<NavigationDecision> returnValue = onNavigationRequest(
-      NavigationRequest(
-        url: url,
-        isMainFrame: isForMainFrame,
-      ),
+      NavigationRequest(url: url, isMainFrame: isForMainFrame),
     );
 
     if (returnValue is NavigationDecision &&
         returnValue == NavigationDecision.navigate) {
-      onLoadRequest(LoadRequestParams(
-        uri: Uri.parse(url),
-        headers: headers,
-      ));
+      onLoadRequest(LoadRequestParams(uri: Uri.parse(url), headers: headers));
     } else if (returnValue is Future<NavigationDecision>) {
       returnValue.then((NavigationDecision shouldLoadUrl) {
         if (shouldLoadUrl == NavigationDecision.navigate) {
-          onLoadRequest(LoadRequestParams(
-            uri: Uri.parse(url),
-            headers: headers,
-          ));
+          onLoadRequest(
+            LoadRequestParams(uri: Uri.parse(url), headers: headers),
+          );
         }
       });
     }
   }
 
   /// Invoked when loading the url after a navigation request is approved.
-  Future<void> setOnLoadRequest(
-    LoadRequestCallback onLoadRequest,
-  ) async {
+  Future<void> setOnLoadRequest(LoadRequestCallback onLoadRequest) async {
     _onLoadRequest = onLoadRequest;
   }
 
@@ -1679,35 +1696,28 @@ class AndroidNavigationDelegate extends PlatformNavigationDelegate {
     NavigationRequestCallback onNavigationRequest,
   ) async {
     _onNavigationRequest = onNavigationRequest;
-    return _webViewClient
-        .setSynchronousReturnValueForShouldOverrideUrlLoading(true);
+    return _webViewClient.setSynchronousReturnValueForShouldOverrideUrlLoading(
+      true,
+    );
   }
 
   @override
-  Future<void> setOnPageStarted(
-    PageEventCallback onPageStarted,
-  ) async {
+  Future<void> setOnPageStarted(PageEventCallback onPageStarted) async {
     _onPageStarted = onPageStarted;
   }
 
   @override
-  Future<void> setOnPageFinished(
-    PageEventCallback onPageFinished,
-  ) async {
+  Future<void> setOnPageFinished(PageEventCallback onPageFinished) async {
     _onPageFinished = onPageFinished;
   }
 
   @override
-  Future<void> setOnHttpError(
-    HttpResponseErrorCallback onHttpError,
-  ) async {
+  Future<void> setOnHttpError(HttpResponseErrorCallback onHttpError) async {
     _onHttpError = onHttpError;
   }
 
   @override
-  Future<void> setOnProgress(
-    ProgressCallback onProgress,
-  ) async {
+  Future<void> setOnProgress(ProgressCallback onProgress) async {
     _onProgress = onProgress;
   }
 

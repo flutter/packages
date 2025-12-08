@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -82,7 +82,7 @@ class Automator {
   }
 
   Future<void> _handleAppNavigate() async {
-    for (int i = 0; i < 10; ++i) {
+    for (var i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byKey(aboutPageKey));
       await animationStops();
@@ -92,8 +92,9 @@ class Automator {
   }
 
   Future<void> _handleAppScroll() async {
-    final ScrollableState scrollable =
-        Scrollable.of(find.byKey(textKey).evaluate().single);
+    final ScrollableState scrollable = Scrollable.of(
+      find.byKey(textKey).evaluate().single,
+    );
     await scrollable.position.animateTo(
       30000,
       curve: Curves.linear,
@@ -102,7 +103,7 @@ class Automator {
   }
 
   Future<void> _handleAppTap() async {
-    for (int i = 0; i < 10; ++i) {
+    for (var i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byIcon(Icons.add));
       await animationStops();
@@ -120,8 +121,9 @@ class Automator {
   void _handleSimpleBenchmarkPathCheck() {
     // Record whether the URL contains the expected path so we can verify the
     // behavior of setting the `benchmarkPath` on the benchmark server.
-    final bool containsExpectedPath =
-        window.location.toString().contains(testBenchmarkPath);
+    final bool containsExpectedPath = window.location.toString().contains(
+      testBenchmarkPath,
+    );
     profile.extraData['expectedUrl'] = containsExpectedPath ? 1 : 0;
   }
 }
@@ -133,7 +135,7 @@ Future<void> animationStops() async {
     return;
   }
 
-  final Completer<void> stopped = Completer<void>();
+  final stopped = Completer<void>();
 
   Timer.periodic(_animationCheckingInterval, (Timer timer) {
     if (!WidgetsBinding.instance.hasScheduledFrame) {

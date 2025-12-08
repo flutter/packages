@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -99,15 +99,7 @@ class AffineMatrix {
     if (x == 1 && y == 1) {
       return this;
     }
-    return AffineMatrix(
-      a * x,
-      b * x,
-      c * y,
-      d * y,
-      e,
-      f,
-      _m4_10 * x,
-    );
+    return AffineMatrix(a * x, b * x, c * y, d * y, e, f, _m4_10 * x);
   }
 
   /// Creates a new affine matrix, translated along the x and y axis.
@@ -125,28 +117,32 @@ class AffineMatrix {
 
   /// Creates a new affine matrix, skewed along the x axis.
   AffineMatrix xSkewed(double x) {
-    return multiplied(AffineMatrix(
-      identity.a,
-      identity.b,
-      math.tan(x),
-      identity.d,
-      identity.e,
-      identity.f,
-      identity._m4_10,
-    ));
+    return multiplied(
+      AffineMatrix(
+        identity.a,
+        identity.b,
+        math.tan(x),
+        identity.d,
+        identity.e,
+        identity.f,
+        identity._m4_10,
+      ),
+    );
   }
 
   /// Creates a new affine matrix, skewed along the y axis.
   AffineMatrix ySkewed(double y) {
-    return multiplied(AffineMatrix(
-      identity.a,
-      math.tan(y),
-      identity.c,
-      identity.d,
-      identity.e,
-      identity.f,
-      identity._m4_10,
-    ));
+    return multiplied(
+      AffineMatrix(
+        identity.a,
+        math.tan(y),
+        identity.c,
+        identity.d,
+        identity.e,
+        identity.f,
+        identity._m4_10,
+      ),
+    );
   }
 
   /// Creates a new affine matrix of this concatenated with `other`.
@@ -202,7 +198,8 @@ class AffineMatrix {
   }
 
   @override
-  String toString() => '''
+  String toString() =>
+      '''
 [ $a, $c, $e ]
 [ $b, $d, $f ]
 [ 0.0, 0.0, 1.0 ] // _m4_10 = $_m4_10
@@ -218,7 +215,7 @@ class AffineMatrix {
 /// The transformed rect is then projected back into the plane with z equals
 /// 0.0 before computing its bounding rect.
 Rect _transformRect(Float64List transform, Rect rect) {
-  final Float64List storage = transform;
+  final storage = transform;
   final double x = rect.left;
   final double y = rect.top;
   final double w = rect.right - x;
@@ -383,8 +380,8 @@ Rect _transformRect(Float64List transform, Rect rect) {
   final double ry = storage[1] * x + storage[5] * y + storage[13];
 
   if (storage[3] == 0.0 && storage[7] == 0.0 && storage[15] == 1.0) {
-    double left = rx;
-    double right = rx;
+    var left = rx;
+    var right = rx;
     if (wx < 0) {
       left += wx;
     } else {
@@ -396,8 +393,8 @@ Rect _transformRect(Float64List transform, Rect rect) {
       right += hx;
     }
 
-    double top = ry;
-    double bottom = ry;
+    var top = ry;
+    var bottom = ry;
     if (wy < 0) {
       top += wy;
     } else {
@@ -434,13 +431,13 @@ Rect _transformRect(Float64List transform, Rect rect) {
 }
 
 double _min4(double a, double b, double c, double d) {
-  final double e = (a < b) ? a : b;
-  final double f = (c < d) ? c : d;
+  final e = (a < b) ? a : b;
+  final f = (c < d) ? c : d;
   return (e < f) ? e : f;
 }
 
 double _max4(double a, double b, double c, double d) {
-  final double e = (a > b) ? a : b;
-  final double f = (c > d) ? c : d;
+  final e = (a > b) ? a : b;
+  final f = (c > d) ? c : d;
   return (e > f) ? e : f;
 }

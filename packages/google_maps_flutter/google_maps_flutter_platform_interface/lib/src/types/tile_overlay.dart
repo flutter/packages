@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -112,7 +112,7 @@ class TileOverlay implements MapsObject<TileOverlay> {
   /// Converts this object to JSON.
   @override
   Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
+    final json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
       if (value != null) {
@@ -146,6 +146,13 @@ class TileOverlay implements MapsObject<TileOverlay> {
   }
 
   @override
-  int get hashCode => Object.hash(tileOverlayId, fadeIn, tileProvider,
-      transparency, zIndex, visible, tileSize);
+  int get hashCode => Object.hash(
+    tileOverlayId,
+    fadeIn,
+    tileProvider,
+    transparency,
+    zIndex,
+    visible,
+    tileSize,
+  );
 }

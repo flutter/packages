@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,7 +30,7 @@ const int kTotalSampleCount = _kWarmUpSampleCount + kMeasuredSampleCount;
 
 /// Measures the amount of time [action] takes.
 Duration timeAction(VoidCallback action) {
-  final Stopwatch stopwatch = Stopwatch()..start();
+  final stopwatch = Stopwatch()..start();
   action();
   stopwatch.stop();
   return stopwatch.elapsed;
@@ -226,7 +226,7 @@ abstract class SceneBuilderRecorder extends Recorder {
 
   @override
   Future<Profile> run() {
-    final Completer<Profile> profileCompleter = Completer<Profile>();
+    final profileCompleter = Completer<Profile>();
     _profile = Profile(name: name);
 
     PlatformDispatcher.instance.onBeginFrame = (_) {
@@ -242,13 +242,15 @@ abstract class SceneBuilderRecorder extends Recorder {
       final FlutterView? view = PlatformDispatcher.instance.implicitView;
       try {
         _profile.record(BenchmarkMetric.drawFrame.label, () {
-          final SceneBuilder sceneBuilder = SceneBuilder();
+          final sceneBuilder = SceneBuilder();
           onDrawFrame(sceneBuilder);
           _profile.record('sceneBuildDuration', () {
             final Scene scene = sceneBuilder.build();
             _profile.record('windowRenderDuration', () {
-              assert(view != null,
-                  'Cannot profile windowRenderDuration on a null View.');
+              assert(
+                view != null,
+                'Cannot profile windowRenderDuration on a null View.',
+              );
               view!.render(scene);
             }, reported: false);
           }, reported: false);
@@ -340,10 +342,8 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   /// benchmark implementation instead of using a built-in strategy. The
   /// benchmark is expected to call [Profile.stopWarmingUp] to signal that
   /// the warm-up phase is finished.
-  WidgetRecorder({
-    required String name,
-    this.useCustomWarmUp = false,
-  }) : super._(name, true);
+  WidgetRecorder({required String name, this.useCustomWarmUp = false})
+    : super._(name, true);
 
   /// Creates a widget to be benchmarked.
   ///
@@ -405,22 +405,26 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
   @override
   Future<Profile> run() async {
     _runCompleter = Completer<void>();
-    final Profile localProfile =
-        profile = Profile(name: name, useCustomWarmUp: useCustomWarmUp);
+    final Profile localProfile = profile = Profile(
+      name: name,
+      useCustomWarmUp: useCustomWarmUp,
+    );
     final _RecordingWidgetsBinding binding =
         _RecordingWidgetsBinding.ensureInitialized();
     final Widget widget = createWidget();
 
-    registerEngineBenchmarkValueListener(BenchmarkMetric.prerollFrame.label,
-        (num value) {
+    registerEngineBenchmarkValueListener(BenchmarkMetric.prerollFrame.label, (
+      num value,
+    ) {
       localProfile.addDataPoint(
         BenchmarkMetric.prerollFrame.label,
         Duration(microseconds: value.toInt()),
         reported: false,
       );
     });
-    registerEngineBenchmarkValueListener(BenchmarkMetric.applyFrame.label,
-        (num value) {
+    registerEngineBenchmarkValueListener(BenchmarkMetric.applyFrame.label, (
+      num value,
+    ) {
       localProfile.addDataPoint(
         BenchmarkMetric.applyFrame.label,
         Duration(microseconds: value.toInt()),
@@ -430,25 +434,26 @@ abstract class WidgetRecorder extends Recorder implements FrameRecorder {
 
     late void Function(List<FrameTiming> frameTimings) frameTimingsCallback;
     binding.addTimingsCallback(
-        frameTimingsCallback = (List<FrameTiming> frameTimings) {
-      for (final FrameTiming frameTiming in frameTimings) {
-        localProfile.addDataPoint(
-          BenchmarkMetric.flutterFrameTotalTime.label,
-          frameTiming.totalSpan,
-          reported: false,
-        );
-        localProfile.addDataPoint(
-          BenchmarkMetric.flutterFrameBuildTime.label,
-          frameTiming.buildDuration,
-          reported: false,
-        );
-        localProfile.addDataPoint(
-          BenchmarkMetric.flutterFrameRasterTime.label,
-          frameTiming.rasterDuration,
-          reported: false,
-        );
-      }
-    });
+      frameTimingsCallback = (List<FrameTiming> frameTimings) {
+        for (final frameTiming in frameTimings) {
+          localProfile.addDataPoint(
+            BenchmarkMetric.flutterFrameTotalTime.label,
+            frameTiming.totalSpan,
+            reported: false,
+          );
+          localProfile.addDataPoint(
+            BenchmarkMetric.flutterFrameBuildTime.label,
+            frameTiming.buildDuration,
+            reported: false,
+          );
+          localProfile.addDataPoint(
+            BenchmarkMetric.flutterFrameRasterTime.label,
+            frameTiming.rasterDuration,
+            reported: false,
+          );
+        }
+      },
+    );
 
     binding._beginRecording(this, widget);
 
@@ -591,9 +596,7 @@ class _WidgetBuildRecorderHostState extends State<_WidgetBuildRecorderHost> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox.expand(
-      child: widget.recorder._getWidgetForFrame(),
-    );
+    return SizedBox.expand(child: widget.recorder._getWidgetForFrame());
   }
 }
 
@@ -603,7 +606,7 @@ class Profile {
   ///
   /// [name] and [useCustomWarmUp] must not be null.
   Profile({required this.name, this.useCustomWarmUp = false})
-      : _isWarmingUp = useCustomWarmUp;
+    : _isWarmingUp = useCustomWarmUp;
 
   /// The name of the benchmark that produced this profile.
   final String name;
@@ -624,7 +627,8 @@ class Profile {
   void stopWarmingUp() {
     if (!useCustomWarmUp) {
       throw Exception(
-          '`stopWarmingUp` should be used only when `useCustomWarmUp` is true.');
+        '`stopWarmingUp` should be used only when `useCustomWarmUp` is true.',
+      );
     } else if (!_isWarmingUp) {
       throw Exception('Warm-up already stopped.');
     } else {
@@ -677,18 +681,16 @@ class Profile {
 
     // We have recorded something, but do we have enough samples? If every
     // timeseries has collected enough samples, stop the benchmark.
-    return !scoreData.keys
-        .every((String key) => scoreData[key]!.count >= kTotalSampleCount);
+    return !scoreData.keys.every(
+      (String key) => scoreData[key]!.count >= kTotalSampleCount,
+    );
   }
 
   /// Returns a JSON representation of the profile that will be sent to the
   /// server.
   Map<String, dynamic> toJson() {
-    final List<String> scoreKeys = <String>[];
-    final Map<String, dynamic> json = <String, dynamic>{
-      'name': name,
-      'scoreKeys': scoreKeys,
-    };
+    final scoreKeys = <String>[];
+    final json = <String, dynamic>{'name': name, 'scoreKeys': scoreKeys};
 
     for (final String key in scoreData.keys) {
       final Timeseries timeseries = scoreData[key]!;
@@ -721,7 +723,7 @@ class Profile {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     buffer.writeln('name: $name');
     for (final String key in scoreData.keys) {
       final Timeseries timeseries = scoreData[key]!;
@@ -732,7 +734,7 @@ class Profile {
       final dynamic value = extraData[key];
       if (value is List) {
         buffer.writeln('$key:');
-        for (final dynamic item in value) {
+        for (final Object? item in value) {
           buffer.writeln(' - $item');
         }
       } else {
@@ -925,7 +927,8 @@ void startMeasureFrame(Profile profile) {
 void endMeasureFrame() {
   if (!_calledStartMeasureFrame) {
     throw Exception(
-        '`startMeasureFrame` has not been called before calling `endMeasureFrame`');
+      '`startMeasureFrame` has not been called before calling `endMeasureFrame`',
+    );
   }
 
   _calledStartMeasureFrame = false;

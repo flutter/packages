@@ -28,10 +28,7 @@ class _FakePlatformNavigationDelegateCreationParams_0 extends _i1.SmartFake
   _FakePlatformNavigationDelegateCreationParams_0(
     Object parent,
     Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  ) : super(parent, parentInvocation);
 }
 
 /// A class which mocks [PlatformNavigationDelegate].
@@ -46,101 +43,89 @@ class MockPlatformNavigationDelegate extends _i1.Mock
   @override
   _i2.PlatformNavigationDelegateCreationParams get params =>
       (super.noSuchMethod(
-        Invocation.getter(#params),
-        returnValue: _FakePlatformNavigationDelegateCreationParams_0(
-          this,
-          Invocation.getter(#params),
-        ),
-      ) as _i2.PlatformNavigationDelegateCreationParams);
+            Invocation.getter(#params),
+            returnValue: _FakePlatformNavigationDelegateCreationParams_0(
+              this,
+              Invocation.getter(#params),
+            ),
+          )
+          as _i2.PlatformNavigationDelegateCreationParams);
 
   @override
   _i4.Future<void> setOnNavigationRequest(
-          _i3.NavigationRequestCallback? onNavigationRequest) =>
+    _i3.NavigationRequestCallback? onNavigationRequest,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnNavigationRequest,
-          [onNavigationRequest],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnNavigationRequest, [onNavigationRequest]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setOnPageStarted(_i3.PageEventCallback? onPageStarted) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnPageStarted,
-          [onPageStarted],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnPageStarted, [onPageStarted]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setOnPageFinished(_i3.PageEventCallback? onPageFinished) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnPageFinished,
-          [onPageFinished],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnPageFinished, [onPageFinished]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setOnHttpError(_i3.HttpResponseErrorCallback? onHttpError) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnHttpError,
-          [onHttpError],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnHttpError, [onHttpError]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setOnProgress(_i3.ProgressCallback? onProgress) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnProgress,
-          [onProgress],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnProgress, [onProgress]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setOnWebResourceError(
-          _i3.WebResourceErrorCallback? onWebResourceError) =>
+    _i3.WebResourceErrorCallback? onWebResourceError,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnWebResourceError,
-          [onWebResourceError],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnWebResourceError, [onWebResourceError]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setOnUrlChange(_i3.UrlChangeCallback? onUrlChange) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnUrlChange,
-          [onUrlChange],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnUrlChange, [onUrlChange]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setOnHttpAuthRequest(
-          _i3.HttpAuthRequestCallback? onHttpAuthRequest) =>
+    _i3.HttpAuthRequestCallback? onHttpAuthRequest,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setOnHttpAuthRequest,
-          [onHttpAuthRequest],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setOnHttpAuthRequest, [onHttpAuthRequest]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

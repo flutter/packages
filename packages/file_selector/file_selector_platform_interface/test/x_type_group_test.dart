@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,12 +8,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('XTypeGroup', () {
     test('toJSON() creates correct map', () {
-      const List<String> extensions = <String>['txt', 'jpg'];
-      const List<String> mimeTypes = <String>['text/plain'];
-      const List<String> uniformTypeIdentifiers = <String>['public.plain-text'];
-      const List<String> webWildCards = <String>['image/*'];
-      const String label = 'test group';
-      const XTypeGroup group = XTypeGroup(
+      const extensions = <String>['txt', 'jpg'];
+      const mimeTypes = <String>['text/plain'];
+      const uniformTypeIdentifiers = <String>['public.plain-text'];
+      const webWildCards = <String>['image/*'];
+      const label = 'test group';
+      const group = XTypeGroup(
         label: label,
         extensions: extensions,
         mimeTypes: mimeTypes,
@@ -32,9 +32,7 @@ void main() {
     });
 
     test('a wildcard group can be created', () {
-      const XTypeGroup group = XTypeGroup(
-        label: 'Any',
-      );
+      const group = XTypeGroup(label: 'Any');
 
       final Map<String, dynamic> jsonMap = group.toJSON();
       expect(jsonMap['extensions'], null);
@@ -45,7 +43,7 @@ void main() {
     });
 
     test('allowsAny treats empty arrays the same as null', () {
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         label: 'Any',
         extensions: <String>[],
         mimeTypes: <String>[],
@@ -57,14 +55,19 @@ void main() {
     });
 
     test('allowsAny returns false if anything is set', () {
-      const XTypeGroup extensionOnly =
-          XTypeGroup(label: 'extensions', extensions: <String>['txt']);
-      const XTypeGroup mimeOnly =
-          XTypeGroup(label: 'mime', mimeTypes: <String>['text/plain']);
-      const XTypeGroup utiOnly = XTypeGroup(
-          label: 'utis', uniformTypeIdentifiers: <String>['public.text']);
-      const XTypeGroup webOnly =
-          XTypeGroup(label: 'web', webWildCards: <String>['.txt']);
+      const extensionOnly = XTypeGroup(
+        label: 'extensions',
+        extensions: <String>['txt'],
+      );
+      const mimeOnly = XTypeGroup(
+        label: 'mime',
+        mimeTypes: <String>['text/plain'],
+      );
+      const utiOnly = XTypeGroup(
+        label: 'utis',
+        uniformTypeIdentifiers: <String>['public.text'],
+      );
+      const webOnly = XTypeGroup(label: 'web', webWildCards: <String>['.txt']);
 
       expect(extensionOnly.allowsAny, false);
       expect(mimeOnly.allowsAny, false);
@@ -74,76 +77,73 @@ void main() {
 
     group('macUTIs -> uniformTypeIdentifiers transition', () {
       test('passing only macUTIs should fill uniformTypeIdentifiers', () {
-        const List<String> uniformTypeIdentifiers = <String>[
-          'public.plain-text'
-        ];
-        const XTypeGroup group = XTypeGroup(
-          macUTIs: uniformTypeIdentifiers,
-        );
+        const uniformTypeIdentifiers = <String>['public.plain-text'];
+        const group = XTypeGroup(macUTIs: uniformTypeIdentifiers);
 
         expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
       });
 
       test(
-          'passing only uniformTypeIdentifiers should fill uniformTypeIdentifiers',
-          () {
-        const List<String> uniformTypeIdentifiers = <String>[
-          'public.plain-text'
-        ];
-        const XTypeGroup group = XTypeGroup(
-          uniformTypeIdentifiers: uniformTypeIdentifiers,
-        );
+        'passing only uniformTypeIdentifiers should fill uniformTypeIdentifiers',
+        () {
+          const uniformTypeIdentifiers = <String>['public.plain-text'];
+          const group = XTypeGroup(
+            uniformTypeIdentifiers: uniformTypeIdentifiers,
+          );
 
-        expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
-      });
+          expect(group.uniformTypeIdentifiers, uniformTypeIdentifiers);
+        },
+      );
 
       test('macUTIs getter return macUTIs value passed in constructor', () {
-        const List<String> uniformTypeIdentifiers = <String>[
-          'public.plain-text'
-        ];
-        const XTypeGroup group = XTypeGroup(
-          macUTIs: uniformTypeIdentifiers,
-        );
+        const uniformTypeIdentifiers = <String>['public.plain-text'];
+        const group = XTypeGroup(macUTIs: uniformTypeIdentifiers);
 
         expect(group.macUTIs, uniformTypeIdentifiers);
       });
 
       test(
-          'macUTIs getter returns uniformTypeIdentifiers value passed in constructor',
-          () {
-        const List<String> uniformTypeIdentifiers = <String>[
-          'public.plain-text'
-        ];
-        const XTypeGroup group = XTypeGroup(
-          uniformTypeIdentifiers: uniformTypeIdentifiers,
-        );
+        'macUTIs getter returns uniformTypeIdentifiers value passed in constructor',
+        () {
+          const uniformTypeIdentifiers = <String>['public.plain-text'];
+          const group = XTypeGroup(
+            uniformTypeIdentifiers: uniformTypeIdentifiers,
+          );
 
-        expect(group.macUTIs, uniformTypeIdentifiers);
-      });
+          expect(group.macUTIs, uniformTypeIdentifiers);
+        },
+      );
 
       test('passing both uniformTypeIdentifiers and macUTIs should throw', () {
         expect(
-            () => XTypeGroup(
-                macUTIs: const <String>['public.plain-text'],
-                uniformTypeIdentifiers: const <String>['public.plain-images']),
-            throwsA(predicate((Object? e) =>
-                e is AssertionError &&
-                e.message ==
-                    'Only one of uniformTypeIdentifiers or macUTIs can be non-null')));
+          () => XTypeGroup(
+            macUTIs: const <String>['public.plain-text'],
+            uniformTypeIdentifiers: const <String>['public.plain-images'],
+          ),
+          throwsA(
+            predicate(
+              (Object? e) =>
+                  e is AssertionError &&
+                  e.message ==
+                      'Only one of uniformTypeIdentifiers or macUTIs can be non-null',
+            ),
+          ),
+        );
       });
 
       test(
-          'having uniformTypeIdentifiers and macUTIs as null should leave uniformTypeIdentifiers as null',
-          () {
-        const XTypeGroup group = XTypeGroup();
+        'having uniformTypeIdentifiers and macUTIs as null should leave uniformTypeIdentifiers as null',
+        () {
+          const group = XTypeGroup();
 
-        expect(group.uniformTypeIdentifiers, null);
-      });
+          expect(group.uniformTypeIdentifiers, null);
+        },
+      );
     });
 
     test('leading dots are removed from extensions', () {
-      const List<String> extensions = <String>['.txt', '.jpg'];
-      const XTypeGroup group = XTypeGroup(extensions: extensions);
+      const extensions = <String>['.txt', '.jpg'];
+      const group = XTypeGroup(extensions: extensions);
 
       expect(group.extensions, <String>['txt', 'jpg']);
     });

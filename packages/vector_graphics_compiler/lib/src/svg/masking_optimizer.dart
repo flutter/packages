@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,19 +42,25 @@ PathFillType toVectorGraphicsFillType(path_ops.FillType fill) {
 
 /// Converts vector_graphics Path to path_ops Path.
 path_ops.Path toPathOpsPath(Path path) {
-  final path_ops.Path newPath = path_ops.Path(toPathOpsFillTyle(path.fillType));
+  final newPath = path_ops.Path(toPathOpsFillTyle(path.fillType));
 
   for (final PathCommand command in path.commands) {
     switch (command.type) {
       case PathCommandType.line:
-        final LineToCommand lineToCommand = command as LineToCommand;
+        final lineToCommand = command as LineToCommand;
         newPath.lineTo(lineToCommand.x, lineToCommand.y);
       case PathCommandType.cubic:
-        final CubicToCommand cubicToCommand = command as CubicToCommand;
-        newPath.cubicTo(cubicToCommand.x1, cubicToCommand.y1, cubicToCommand.x2,
-            cubicToCommand.y2, cubicToCommand.x3, cubicToCommand.y3);
+        final cubicToCommand = command as CubicToCommand;
+        newPath.cubicTo(
+          cubicToCommand.x1,
+          cubicToCommand.y1,
+          cubicToCommand.x2,
+          cubicToCommand.y2,
+          cubicToCommand.x3,
+          cubicToCommand.y3,
+        );
       case PathCommandType.move:
-        final MoveToCommand moveToCommand = command as MoveToCommand;
+        final moveToCommand = command as MoveToCommand;
         newPath.moveTo(moveToCommand.x, moveToCommand.y);
       case PathCommandType.close:
         newPath.close();
@@ -66,9 +72,9 @@ path_ops.Path toPathOpsPath(Path path) {
 
 /// Converts path_ops Path to VectorGraphicsPath.
 Path toVectorGraphicsPath(path_ops.Path path) {
-  final List<PathCommand> newCommands = <PathCommand>[];
+  final newCommands = <PathCommand>[];
 
-  int index = 0;
+  var index = 0;
   final Float32List points = path.points;
   for (final path_ops.PathVerb verb in path.verbs.toList()) {
     switch (verb) {
@@ -79,30 +85,29 @@ Path toVectorGraphicsPath(path_ops.Path path) {
       case path_ops.PathVerb.quadTo:
         final double cpX = points[index++];
         final double cpY = points[index++];
-        newCommands.add(CubicToCommand(
-          cpX,
-          cpY,
-          cpX,
-          cpY,
-          points[index++],
-          points[index++],
-        ));
+        newCommands.add(
+          CubicToCommand(cpX, cpY, cpX, cpY, points[index++], points[index++]),
+        );
       case path_ops.PathVerb.cubicTo:
-        newCommands.add(CubicToCommand(
-          points[index++],
-          points[index++],
-          points[index++],
-          points[index++],
-          points[index++],
-          points[index++],
-        ));
+        newCommands.add(
+          CubicToCommand(
+            points[index++],
+            points[index++],
+            points[index++],
+            points[index++],
+            points[index++],
+            points[index++],
+          ),
+        );
       case path_ops.PathVerb.close:
         newCommands.add(const CloseCommand());
     }
   }
 
-  final Path newPath = Path(
-      commands: newCommands, fillType: toVectorGraphicsFillType(path.fillType));
+  final newPath = Path(
+    commands: newCommands,
+    fillType: toVectorGraphicsFillType(path.fillType),
+  );
 
   return newPath;
 }
@@ -136,14 +141,21 @@ class MaskingOptimizer extends Visitor<_Result, Node>
 
   /// Applies mask to a path node, and returns resulting path node.
   ResolvedPathNode applyMask(
-      ResolvedPathNode pathNode, ResolvedPathNode maskPathNode) {
+    ResolvedPathNode pathNode,
+    ResolvedPathNode maskPathNode,
+  ) {
     final path_ops.Path maskPathOpsPath = toPathOpsPath(maskPathNode.path);
     final path_ops.Path pathPathOpsPath = toPathOpsPath(pathNode.path);
-    final path_ops.Path intersection =
-        pathPathOpsPath.applyOp(maskPathOpsPath, path_ops.PathOp.intersect);
+    final path_ops.Path intersection = pathPathOpsPath.applyOp(
+      maskPathOpsPath,
+      path_ops.PathOp.intersect,
+    );
     final Path newPath = toVectorGraphicsPath(intersection);
-    final ResolvedPathNode newPathNode = ResolvedPathNode(
-        paint: pathNode.paint, bounds: maskPathNode.bounds, path: newPath);
+    final newPathNode = ResolvedPathNode(
+      paint: pathNode.paint,
+      bounds: maskPathNode.bounds,
+      path: newPath,
+    );
 
     maskPathOpsPath.dispose();
     pathPathOpsPath.dispose();
@@ -155,7 +167,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitEmptyNode(Node node, void data) {
-    final _Result result = _Result(node);
+    final result = _Result(node);
     return result;
   }
 
@@ -171,7 +183,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitParentNode(ParentNode parentNode, Node data) {
-    final List<Node> newChildren = <Node>[];
+    final newChildren = <Node>[];
 
     for (final Node child in parentNode.children) {
       final _Result childResult = child.accept(this, parentNode);
@@ -181,10 +193,13 @@ class MaskingOptimizer extends Visitor<_Result, Node>
       }
     }
 
-    final ParentNode newParentNode = ParentNode(parentNode.attributes,
-        precalculatedTransform: parentNode.transform, children: newChildren);
+    final newParentNode = ParentNode(
+      parentNode.attributes,
+      precalculatedTransform: parentNode.transform,
+      children: newChildren,
+    );
 
-    final _Result result = _Result(newParentNode);
+    final result = _Result(newParentNode);
 
     return result;
   }
@@ -192,7 +207,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitMaskNode(MaskNode maskNode, Node data) {
-    final _Result result = _Result(maskNode);
+    final result = _Result(maskNode);
 
     return result;
   }
@@ -200,14 +215,14 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitPathNode(PathNode pathNode, Node data) {
-    final _Result result = _Result(pathNode);
+    final result = _Result(pathNode);
     return result;
   }
 
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedMaskNode(ResolvedMaskNode maskNode, void data) {
-    _Result result = _Result(maskNode);
+    var result = _Result(maskNode);
     final ResolvedPathNode? singleMaskPathNode = getSingleChild(maskNode.mask);
 
     if (singleMaskPathNode != null) {
@@ -218,18 +233,20 @@ class MaskingOptimizer extends Visitor<_Result, Node>
       if (childResult.deleteMaskNode) {
         result = _Result(childResult.node);
       } else {
-        final ResolvedMaskNode newMaskNode = ResolvedMaskNode(
-            child: childResult.node,
-            mask: maskNode.mask,
-            blendMode: maskNode.blendMode);
+        final newMaskNode = ResolvedMaskNode(
+          child: childResult.node,
+          mask: maskNode.mask,
+          blendMode: maskNode.blendMode,
+        );
         result = _Result(newMaskNode);
       }
     } else {
       final _Result childResult = maskNode.child.accept(this, maskNode);
-      final ResolvedMaskNode newMaskNode = ResolvedMaskNode(
-          child: childResult.node,
-          mask: maskNode.mask,
-          blendMode: maskNode.blendMode);
+      final newMaskNode = ResolvedMaskNode(
+        child: childResult.node,
+        mask: maskNode.mask,
+        blendMode: maskNode.blendMode,
+      );
       result = _Result(newMaskNode);
     }
 
@@ -240,9 +257,11 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   // ignore: library_private_types_in_public_api
   _Result visitResolvedClipNode(ResolvedClipNode clipNode, Node data) {
     final _Result childResult = clipNode.child.accept(this, clipNode);
-    final ResolvedClipNode newClipNode =
-        ResolvedClipNode(clips: clipNode.clips, child: childResult.node);
-    final _Result result = _Result(newClipNode);
+    final newClipNode = ResolvedClipNode(
+      clips: clipNode.clips,
+      child: childResult.node,
+    );
+    final result = _Result(newClipNode);
     result.children.add(childResult.node);
 
     return result;
@@ -251,17 +270,19 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedPath(ResolvedPathNode pathNode, Node data) {
-    _Result result = _Result(pathNode);
+    var result = _Result(pathNode);
 
     if (pathNode.paint.stroke?.width != null) {
       return _Result(pathNode, deleteMaskNode: false);
     }
 
     if (masksToApply.isNotEmpty) {
-      ResolvedPathNode newPathNode = pathNode;
+      var newPathNode = pathNode;
       for (final ResolvedPathNode maskPathNode in masksToApply) {
-        final ResolvedPathNode intersection =
-            applyMask(newPathNode, maskPathNode);
+        final ResolvedPathNode intersection = applyMask(
+          newPathNode,
+          maskPathNode,
+        );
         if (intersection.path.commands.isNotEmpty) {
           newPathNode = intersection;
         } else {
@@ -277,30 +298,35 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedText(ResolvedTextNode textNode, Node data) {
-    final _Result result = _Result(textNode);
+    final result = _Result(textNode);
     return result;
   }
 
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedVerticesNode(
-      ResolvedVerticesNode verticesNode, Node data) {
-    final _Result result = _Result(verticesNode);
+    ResolvedVerticesNode verticesNode,
+    Node data,
+  ) {
+    final result = _Result(verticesNode);
     return result;
   }
 
   @override
   // ignore: library_private_types_in_public_api
   _Result visitSaveLayerNode(SaveLayerNode layerNode, Node data) {
-    final List<Node> newChildren = <Node>[];
+    final newChildren = <Node>[];
     for (final Node child in layerNode.children) {
       final _Result childResult = child.accept(this, layerNode);
       newChildren.add(childResult.node);
     }
-    final SaveLayerNode newLayerNode = SaveLayerNode(layerNode.attributes,
-        paint: layerNode.paint, children: newChildren);
+    final newLayerNode = SaveLayerNode(
+      layerNode.attributes,
+      paint: layerNode.paint,
+      children: newChildren,
+    );
 
-    final _Result result = _Result(newLayerNode);
+    final result = _Result(newLayerNode);
     result.children.addAll(newChildren);
     return result;
   }
@@ -308,13 +334,13 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitViewportNode(ViewportNode viewportNode, void data) {
-    final List<Node> children = <Node>[];
+    final children = <Node>[];
     for (final Node child in viewportNode.children) {
       final _Result childNode = child.accept(this, viewportNode);
       children.add(childNode.node);
     }
 
-    final ViewportNode node = ViewportNode(
+    final node = ViewportNode(
       viewportNode.attributes,
       width: viewportNode.width,
       height: viewportNode.height,
@@ -322,7 +348,7 @@ class MaskingOptimizer extends Visitor<_Result, Node>
       children: children,
     );
 
-    final _Result result = _Result(node);
+    final result = _Result(node);
     result.children.addAll(children);
     return result;
   }
@@ -330,8 +356,10 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedImageNode(
-      ResolvedImageNode resolvedImageNode, Node data) {
-    final _Result result = _Result(resolvedImageNode, deleteMaskNode: false);
+    ResolvedImageNode resolvedImageNode,
+    Node data,
+  ) {
+    final result = _Result(resolvedImageNode, deleteMaskNode: false);
 
     return result;
   }
@@ -345,15 +373,14 @@ class MaskingOptimizer extends Visitor<_Result, Node>
   @override
   // ignore: library_private_types_in_public_api
   _Result visitResolvedTextPositionNode(
-      ResolvedTextPositionNode textPositionNode, void data) {
+    ResolvedTextPositionNode textPositionNode,
+    void data,
+  ) {
     return _Result(
-      ResolvedTextPositionNode(
-        textPositionNode.textPosition,
-        <Node>[
-          for (final Node child in textPositionNode.children)
-            child.accept(this, data).node
-        ],
-      ),
+      ResolvedTextPositionNode(textPositionNode.textPosition, <Node>[
+        for (final Node child in textPositionNode.children)
+          child.accept(this, data).node,
+      ]),
     );
   }
 }

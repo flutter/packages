@@ -3,8 +3,8 @@ description: Demonstrates how to use the local_auth plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.6.0
-  flutter: ">=3.27.0"
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
 
 dependencies:
   flutter:
@@ -16,8 +16,8 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  local_auth_android: ^1.0.0
-  local_auth_darwin: ^1.2.1
+  local_auth_android: ^2.0.0
+  local_auth_darwin: ^2.0.0
 
 dev_dependencies:
   build_runner: ^2.1.10

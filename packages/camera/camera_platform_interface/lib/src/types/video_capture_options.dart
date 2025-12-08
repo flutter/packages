@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,14 +13,16 @@ class VideoCaptureOptions {
   const VideoCaptureOptions(
     this.cameraId, {
     @Deprecated(
-        'This parameter is unused, and will be ignored on all platforms')
+      'This parameter is unused, and will be ignored on all platforms',
+    )
     this.maxDuration,
     this.streamCallback,
     this.streamOptions,
+    this.enablePersistentRecording = true,
   }) : assert(
-          streamOptions == null || streamCallback != null,
-          'Must specify streamCallback if providing streamOptions.',
-        );
+         streamOptions == null || streamCallback != null,
+         'Must specify streamCallback if providing streamOptions.',
+       );
 
   /// The ID of the camera to use for capturing.
   final int cameraId;
@@ -42,6 +44,17 @@ class VideoCaptureOptions {
   /// Should only be set if a streamCallback is also present.
   final CameraImageStreamOptions? streamOptions;
 
+  /// Configures the recording to be a persistent recording.
+  ///
+  /// A persistent recording can only be stopped by explicitly calling [CameraPlatform.stopVideoRecording]
+  /// and will ignore events that would normally cause recording to stop, such as lifecycle events.
+  ///
+  /// On Android, you must set this parameter to `true`
+  /// to avoid cancelling any active recording when calling [CameraPlatform.setDescriptionWhileRecording].
+  ///
+  /// Defaults to `true`.
+  final bool enablePersistentRecording;
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -50,9 +63,15 @@ class VideoCaptureOptions {
           cameraId == other.cameraId &&
           maxDuration == other.maxDuration &&
           streamCallback == other.streamCallback &&
-          streamOptions == other.streamOptions;
+          streamOptions == other.streamOptions &&
+          enablePersistentRecording == other.enablePersistentRecording;
 
   @override
-  int get hashCode =>
-      Object.hash(cameraId, maxDuration, streamCallback, streamOptions);
+  int get hashCode => Object.hash(
+    cameraId,
+    maxDuration,
+    streamCallback,
+    streamOptions,
+    enablePersistentRecording,
+  );
 }

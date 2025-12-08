@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 #include <winstring.h>
@@ -120,14 +120,14 @@ void LocalAuthPlugin::IsDeviceSupported(
 
 void LocalAuthPlugin::Authenticate(
     const std::string& localized_reason,
-    std::function<void(ErrorOr<bool> reply)> result) {
+    std::function<void(ErrorOr<AuthResult> reply)> result) {
   AuthenticateCoroutine(localized_reason, std::move(result));
 }
 
 // Starts authentication process.
 winrt::fire_and_forget LocalAuthPlugin::AuthenticateCoroutine(
     const std::string& localized_reason,
-    std::function<void(ErrorOr<bool> reply)> result) {
+    std::function<void(ErrorOr<AuthResult> reply)> result) {
   std::wstring reason = Utf16FromUtf8(localized_reason);
 
   winrt::Windows::Security::Credentials::UI::UserConsentVerifierAvailability
@@ -137,19 +137,27 @@ winrt::fire_and_forget LocalAuthPlugin::AuthenticateCoroutine(
   if (ucv_availability ==
       winrt::Windows::Security::Credentials::UI::
           UserConsentVerifierAvailability::DeviceNotPresent) {
-    result(FlutterError("NoHardware", "No biometric hardware found"));
+    result(AuthResult::kNoHardware);
     co_return;
   } else if (ucv_availability ==
              winrt::Windows::Security::Credentials::UI::
                  UserConsentVerifierAvailability::NotConfiguredForUser) {
-    result(
-        FlutterError("NotEnrolled", "No biometrics enrolled on this device."));
+    result(AuthResult::kNotEnrolled);
+    co_return;
+  } else if (ucv_availability ==
+             winrt::Windows::Security::Credentials::UI::
+                 UserConsentVerifierAvailability::DeviceBusy) {
+    result(AuthResult::kDeviceBusy);
+    co_return;
+  } else if (ucv_availability ==
+             winrt::Windows::Security::Credentials::UI::
+                 UserConsentVerifierAvailability::DisabledByPolicy) {
+    result(AuthResult::kDisabledByPolicy);
     co_return;
   } else if (ucv_availability !=
              winrt::Windows::Security::Credentials::UI::
                  UserConsentVerifierAvailability::Available) {
-    result(
-        FlutterError("NotAvailable", "Required security features not enabled"));
+    result(AuthResult::kUnavailable);
     co_return;
   }
 
@@ -160,9 +168,11 @@ winrt::fire_and_forget LocalAuthPlugin::AuthenticateCoroutine(
                 reason);
 
     result(consent_result == winrt::Windows::Security::Credentials::UI::
-                                 UserConsentVerificationResult::Verified);
+                                 UserConsentVerificationResult::Verified
+               ? AuthResult::kSuccess
+               : AuthResult::kFailure);
   } catch (...) {
-    result(false);
+    result(AuthResult::kFailure);
   }
 }
 

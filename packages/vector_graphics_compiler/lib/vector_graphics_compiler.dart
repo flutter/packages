@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -65,13 +65,7 @@ VectorInstructions parse(
   bool enableOverdrawOptimizer = true,
   ColorMapper? colorMapper,
 }) {
-  final SvgParser parser = SvgParser(
-    xml,
-    theme,
-    key,
-    warningsAsErrors,
-    colorMapper,
-  );
+  final parser = SvgParser(xml, theme, key, warningsAsErrors, colorMapper);
   parser.enableMaskingOptimizer = enableMaskingOptimizer;
   parser.enableClippingOptimizer = enableClippingOptimizer;
   parser.enableOverdrawOptimizer = enableOverdrawOptimizer;
@@ -102,8 +96,9 @@ void _encodeShader(
       fromY: shader.from.y,
       toX: shader.to.x,
       toY: shader.to.y,
-      colors: Int32List.fromList(
-          <int>[for (final Color color in shader.colors!) color.value]),
+      colors: Int32List.fromList(<int>[
+        for (final Color color in shader.colors!) color.value,
+      ]),
       offsets: Float32List.fromList(shader.offsets!),
       tileMode: shader.tileMode!.index,
     );
@@ -115,8 +110,9 @@ void _encodeShader(
       radius: shader.radius,
       focalX: shader.focalPoint?.x,
       focalY: shader.focalPoint?.y,
-      colors: Int32List.fromList(
-          <int>[for (final Color color in shader.colors!) color.value]),
+      colors: Int32List.fromList(<int>[
+        for (final Color color in shader.colors!) color.value,
+      ]),
       offsets: Float32List.fromList(shader.offsets!),
       tileMode: shader.tileMode!.index,
       transform: _encodeMatrix(shader.transform),
@@ -160,14 +156,14 @@ Uint8List _encodeInstructions(
   VectorInstructions instructions,
   bool useHalfPrecisionControlPoints,
 ) {
-  const VectorGraphicsCodec codec = VectorGraphicsCodec();
-  final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+  const codec = VectorGraphicsCodec();
+  final buffer = VectorGraphicsBuffer();
 
   codec.writeSize(buffer, instructions.width, instructions.height);
 
-  final Map<int, int> fillIds = <int, int>{};
-  final Map<int, int> strokeIds = <int, int>{};
-  final Map<Gradient, int> shaderIds = <Gradient, int>{};
+  final fillIds = <int, int>{};
+  final strokeIds = <int, int>{};
+  final shaderIds = <Gradient, int>{};
 
   for (final ImageData data in instructions.images) {
     codec.writeImage(buffer, data.format, data.data);
@@ -178,7 +174,7 @@ Uint8List _encodeInstructions(
     _encodeShader(paint.stroke?.shader, shaderIds, codec, buffer);
   }
 
-  int nextPaintId = 0;
+  var nextPaintId = 0;
   for (final Paint paint in instructions.paints) {
     final Fill? fill = paint.fill;
     final Stroke? stroke = paint.stroke;
@@ -210,24 +206,24 @@ Uint8List _encodeInstructions(
     nextPaintId += 1;
   }
 
-  final Map<int, int> pathIds = <int, int>{};
-  int nextPathId = 0;
+  final pathIds = <int, int>{};
+  var nextPathId = 0;
   for (final Path path in instructions.paths) {
-    final List<int> controlPointTypes = <int>[];
-    final List<double> controlPoints = <double>[];
+    final controlPointTypes = <int>[];
+    final controlPoints = <double>[];
 
     for (final PathCommand command in path.commands) {
       switch (command.type) {
         case PathCommandType.move:
-          final MoveToCommand move = command as MoveToCommand;
+          final move = command as MoveToCommand;
           controlPointTypes.add(ControlPointTypes.moveTo);
           controlPoints.addAll(<double>[move.x, move.y]);
         case PathCommandType.line:
-          final LineToCommand line = command as LineToCommand;
+          final line = command as LineToCommand;
           controlPointTypes.add(ControlPointTypes.lineTo);
           controlPoints.addAll(<double>[line.x, line.y]);
         case PathCommandType.cubic:
-          final CubicToCommand cubic = command as CubicToCommand;
+          final cubic = command as CubicToCommand;
           controlPointTypes.add(ControlPointTypes.cubicTo);
           controlPoints.addAll(<double>[
             cubic.x1,
@@ -302,7 +298,11 @@ Uint8List _encodeInstructions(
             instructions.vertices[command.objectId!];
         final int fillId = fillIds[command.paintId]!;
         codec.writeDrawVertices(
-            buffer, vertices.vertices, vertices.indices, fillId);
+          buffer,
+          vertices.vertices,
+          vertices.indices,
+          fillId,
+        );
       case DrawCommandType.saveLayer:
         codec.writeSaveLayer(buffer, fillIds[command.paintId]!);
       case DrawCommandType.restore:

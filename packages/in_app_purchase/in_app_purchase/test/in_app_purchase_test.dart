@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 void main() {
   group('InAppPurchase', () {
-    final ProductDetails productDetails = ProductDetails(
+    final productDetails = ProductDetails(
       id: 'id',
       title: 'title',
       description: 'description',
@@ -20,7 +20,7 @@ void main() {
       currencyCode: 'currencyCode',
     );
 
-    final PurchaseDetails purchaseDetails = PurchaseDetails(
+    final purchaseDetails = PurchaseDetails(
       productID: 'productID',
       verificationData: PurchaseVerificationData(
         localVerificationData: 'localVerificationData',
@@ -72,8 +72,8 @@ void main() {
     });
 
     test('queryProductDetails', () async {
-      final ProductDetailsResponse response =
-          await inAppPurchase.queryProductDetails(<String>{});
+      final ProductDetailsResponse response = await inAppPurchase
+          .queryProductDetails(<String>{});
       expect(response.notFoundIDs.isEmpty, true);
       expect(response.productDetails.isEmpty, true);
       expect(fakePlatform.log, <Matcher>[
@@ -83,9 +83,7 @@ void main() {
 
     test('buyNonConsumable', () async {
       final bool result = await inAppPurchase.buyNonConsumable(
-        purchaseParam: PurchaseParam(
-          productDetails: productDetails,
-        ),
+        purchaseParam: PurchaseParam(productDetails: productDetails),
       );
 
       expect(result, true);
@@ -95,24 +93,25 @@ void main() {
     });
 
     test('buyConsumable', () async {
-      final PurchaseParam purchaseParam =
-          PurchaseParam(productDetails: productDetails);
+      final purchaseParam = PurchaseParam(productDetails: productDetails);
       final bool result = await inAppPurchase.buyConsumable(
         purchaseParam: purchaseParam,
       );
 
       expect(result, true);
       expect(fakePlatform.log, <Matcher>[
-        isMethodCall('buyConsumable', arguments: <dynamic, dynamic>{
-          'purchaseParam': purchaseParam,
-          'autoConsume': true,
-        }),
+        isMethodCall(
+          'buyConsumable',
+          arguments: <dynamic, dynamic>{
+            'purchaseParam': purchaseParam,
+            'autoConsume': true,
+          },
+        ),
       ]);
     });
 
     test('buyConsumable with autoConsume=false', () async {
-      final PurchaseParam purchaseParam =
-          PurchaseParam(productDetails: productDetails);
+      final purchaseParam = PurchaseParam(productDetails: productDetails);
       final bool result = await inAppPurchase.buyConsumable(
         purchaseParam: purchaseParam,
         autoConsume: false,
@@ -120,10 +119,13 @@ void main() {
 
       expect(result, true);
       expect(fakePlatform.log, <Matcher>[
-        isMethodCall('buyConsumable', arguments: <dynamic, dynamic>{
-          'purchaseParam': purchaseParam,
-          'autoConsume': false,
-        }),
+        isMethodCall(
+          'buyConsumable',
+          arguments: <dynamic, dynamic>{
+            'purchaseParam': purchaseParam,
+            'autoConsume': false,
+          },
+        ),
       ]);
     });
 
@@ -165,10 +167,12 @@ class MockInAppPurchasePlatform extends Fake
   @override
   Future<ProductDetailsResponse> queryProductDetails(Set<String> identifiers) {
     log.add(const MethodCall('queryProductDetails'));
-    return Future<ProductDetailsResponse>.value(ProductDetailsResponse(
-      productDetails: <ProductDetails>[],
-      notFoundIDs: <String>[],
-    ));
+    return Future<ProductDetailsResponse>.value(
+      ProductDetailsResponse(
+        productDetails: <ProductDetails>[],
+        notFoundIDs: <String>[],
+      ),
+    );
   }
 
   @override
@@ -182,10 +186,12 @@ class MockInAppPurchasePlatform extends Fake
     required PurchaseParam purchaseParam,
     bool autoConsume = true,
   }) {
-    log.add(MethodCall('buyConsumable', <String, Object?>{
-      'purchaseParam': purchaseParam,
-      'autoConsume': autoConsume,
-    }));
+    log.add(
+      MethodCall('buyConsumable', <String, Object?>{
+        'purchaseParam': purchaseParam,
+        'autoConsume': autoConsume,
+      }),
+    );
     return Future<bool>.value(true);
   }
 

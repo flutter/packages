@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -17,31 +17,35 @@ final class TestInteractiveMediaAdsPlatform
   });
 
   PlatformAdsLoader Function(PlatformAdsLoaderCreationParams params)
-      onCreatePlatformAdsLoader;
+  onCreatePlatformAdsLoader;
 
   PlatformAdsManagerDelegate Function(
     PlatformAdsManagerDelegateCreationParams params,
-  ) onCreatePlatformAdsManagerDelegate;
+  )
+  onCreatePlatformAdsManagerDelegate;
 
   PlatformAdDisplayContainer Function(
     PlatformAdDisplayContainerCreationParams params,
-  ) onCreatePlatformAdDisplayContainer;
+  )
+  onCreatePlatformAdDisplayContainer;
 
   PlatformContentProgressProvider Function(
     PlatformContentProgressProviderCreationParams params,
-  ) onCreatePlatformContentProgressProvider;
+  )
+  onCreatePlatformContentProgressProvider;
 
   PlatformAdsRenderingSettings Function(
     PlatformAdsRenderingSettingsCreationParams params,
-  )? onCreatePlatformAdsRenderingSettings;
+  )?
+  onCreatePlatformAdsRenderingSettings;
 
   PlatformCompanionAdSlot Function(
     PlatformCompanionAdSlotCreationParams params,
-  )? onCreatePlatformCompanionAdSlot;
+  )?
+  onCreatePlatformCompanionAdSlot;
 
-  PlatformImaSettings Function(
-    PlatformImaSettingsCreationParams params,
-  )? onCreatePlatformImaSettings;
+  PlatformImaSettings Function(PlatformImaSettingsCreationParams params)?
+  onCreatePlatformImaSettings;
 
   @override
   PlatformAdsLoader createPlatformAdsLoader(
@@ -84,10 +88,7 @@ final class TestInteractiveMediaAdsPlatform
     PlatformCompanionAdSlotCreationParams params,
   ) {
     return onCreatePlatformCompanionAdSlot?.call(params) ??
-        TestCompanionAdSlot(
-          params,
-          onBuildWidget: (_) => Container(),
-        );
+        TestCompanionAdSlot(params, onBuildWidget: (_) => Container());
   }
 
   @override
@@ -99,10 +100,8 @@ final class TestInteractiveMediaAdsPlatform
 }
 
 final class TestPlatformAdDisplayContainer extends PlatformAdDisplayContainer {
-  TestPlatformAdDisplayContainer(
-    super.params, {
-    required this.onBuild,
-  }) : super.implementation();
+  TestPlatformAdDisplayContainer(super.params, {required this.onBuild})
+    : super.implementation();
 
   Widget Function(BuildContext context) onBuild;
 
@@ -148,12 +147,13 @@ class TestAdsManager extends PlatformAdsManager {
     this.onPause,
     this.onResume,
     this.onSkip,
+    super.adCuePoints = const <Duration>[],
   });
 
   Future<void> Function({PlatformAdsRenderingSettings? settings})? onInit;
 
   Future<void> Function(PlatformAdsManagerDelegate delegate)?
-      onSetAdsManagerDelegate;
+  onSetAdsManagerDelegate;
 
   Future<void> Function(AdsManagerStartParams params)? onStart;
 
@@ -211,15 +211,14 @@ class TestAdsManager extends PlatformAdsManager {
 }
 
 class TestContentProgressProvider extends PlatformContentProgressProvider {
-  TestContentProgressProvider(
-    super.params, {
-    this.onSetProgress,
-  }) : super.implementation();
+  TestContentProgressProvider(super.params, {this.onSetProgress})
+    : super.implementation();
 
   Future<void> Function({
     required Duration progress,
     required Duration duration,
-  })? onSetProgress;
+  })?
+  onSetProgress;
 
   @override
   Future<void> setProgress({
@@ -235,10 +234,8 @@ final class TestAdsRenderingSettings extends PlatformAdsRenderingSettings {
 }
 
 final class TestCompanionAdSlot extends PlatformCompanionAdSlot {
-  TestCompanionAdSlot(
-    super.params, {
-    required this.onBuildWidget,
-  }) : super.implementation();
+  TestCompanionAdSlot(super.params, {required this.onBuildWidget})
+    : super.implementation();
 
   Widget Function(BuildWidgetCreationParams params) onBuildWidget;
 

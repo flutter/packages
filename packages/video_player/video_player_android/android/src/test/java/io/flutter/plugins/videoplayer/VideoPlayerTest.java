@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -127,17 +127,6 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void sendsBufferingUpdatesOnDemand() {
-    VideoPlayer videoPlayer = createVideoPlayer();
-
-    when(mockExoPlayer.getBufferedPosition()).thenReturn(10L);
-    videoPlayer.sendBufferingUpdate();
-    verify(mockEvents).onBufferingUpdate(10L);
-
-    videoPlayer.dispose();
-  }
-
-  @Test
   public void togglesLoopingEnablesAndDisablesRepeatMode() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
@@ -177,14 +166,39 @@ public final class VideoPlayerTest {
   }
 
   @Test
-  public void seekAndGetPosition() {
+  public void seekTo() {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     videoPlayer.seekTo(10L);
     verify(mockExoPlayer).seekTo(10);
 
-    when(mockExoPlayer.getCurrentPosition()).thenReturn(20L);
-    assertEquals(20L, videoPlayer.getPosition().longValue());
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void getCurrentPosition() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    final long playbackPosition = 20L;
+    when(mockExoPlayer.getCurrentPosition()).thenReturn(playbackPosition);
+
+    final Long position = videoPlayer.getCurrentPosition();
+    assertEquals(playbackPosition, position.longValue());
+
+    videoPlayer.dispose();
+  }
+
+  @Test
+  public void getBufferedPosition() {
+    VideoPlayer videoPlayer = createVideoPlayer();
+
+    final long bufferedPosition = 10L;
+    when(mockExoPlayer.getBufferedPosition()).thenReturn(bufferedPosition);
+
+    final Long position = videoPlayer.getBufferedPosition();
+    assertEquals(bufferedPosition, position.longValue());
+
+    videoPlayer.dispose();
   }
 
   @Test

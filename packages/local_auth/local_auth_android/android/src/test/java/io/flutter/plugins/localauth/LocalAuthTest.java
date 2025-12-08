@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -32,6 +32,7 @@ import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import io.flutter.plugins.localauth.Messages.AuthClassification;
 import io.flutter.plugins.localauth.Messages.AuthOptions;
 import io.flutter.plugins.localauth.Messages.AuthResult;
+import io.flutter.plugins.localauth.Messages.AuthResultCode;
 import io.flutter.plugins.localauth.Messages.AuthStrings;
 import io.flutter.plugins.localauth.Messages.Result;
 import java.util.List;
@@ -46,14 +47,8 @@ public class LocalAuthTest {
   static final AuthStrings dummyStrings =
       new AuthStrings.Builder()
           .setReason("a reason")
-          .setBiometricHint("a hint")
-          .setBiometricNotRecognized("biometric not recognized")
-          .setBiometricRequiredTitle("biometric required")
+          .setSignInHint("a hint")
           .setCancelButton("cancel")
-          .setDeviceCredentialsRequiredTitle("credentials required")
-          .setDeviceCredentialsSetupDescription("credentials setup description")
-          .setGoToSettingsButton("go")
-          .setGoToSettingsDescription("go to settings description")
           .setSignInTitle("sign in")
           .build();
 
@@ -62,7 +57,6 @@ public class LocalAuthTest {
           .setBiometricOnly(false)
           .setSensitiveTransaction(false)
           .setSticky(false)
-          .setUseErrorDialgs(false)
           .build();
 
   @Test
@@ -74,7 +68,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_ALREADY_IN_PROGRESS, captor.getValue());
+    assertEquals(AuthResultCode.ALREADY_IN_PROGRESS, captor.getValue().getCode());
   }
 
   @Test
@@ -86,7 +80,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_NO_ACTIVITY, captor.getValue());
+    assertEquals(AuthResultCode.NO_ACTIVITY, captor.getValue().getCode());
   }
 
   @Test
@@ -98,7 +92,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_NOT_FRAGMENT_ACTIVITY, captor.getValue());
+    assertEquals(AuthResultCode.NOT_FRAGMENT_ACTIVITY, captor.getValue().getCode());
   }
 
   @Test
@@ -111,7 +105,7 @@ public class LocalAuthTest {
     plugin.authenticate(defaultOptions, dummyStrings, mockResult);
     ArgumentCaptor<AuthResult> captor = ArgumentCaptor.forClass(AuthResult.class);
     verify(mockResult).success(captor.capture());
-    assertEquals(AuthResult.ERROR_NOT_AVAILABLE, captor.getValue());
+    assertEquals(AuthResultCode.NO_CREDENTIALS, captor.getValue().getCode());
   }
 
   @Test
@@ -143,7 +137,6 @@ public class LocalAuthTest {
             .setBiometricOnly(true)
             .setSensitiveTransaction(false)
             .setSticky(false)
-            .setUseErrorDialgs(false)
             .build();
     plugin.authenticate(options, dummyStrings, mockResult);
     assertFalse(allowCredentialsCaptor.getValue());
@@ -282,6 +275,14 @@ public class LocalAuthTest {
   }
 
   @Test
+  public void getEnrolledBiometrics_shouldReturnNullForNoActivity() {
+    final LocalAuthPlugin plugin = new LocalAuthPlugin();
+
+    final List<AuthClassification> enrolled = plugin.getEnrolledBiometrics();
+    assertNull(enrolled);
+  }
+
+  @Test
   public void getEnrolledBiometrics_shouldReturnEmptyList_withoutHardwarePresent() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     setPluginActivity(plugin, buildMockActivityWithContext(mock(Activity.class)));
@@ -341,14 +342,6 @@ public class LocalAuthTest {
   }
 
   @Test
-  @Config(sdk = 22)
-  public void isDeviceSecure_returnsFalseOnBelowApi23() {
-    final LocalAuthPlugin plugin = new LocalAuthPlugin();
-    assertFalse(plugin.isDeviceSecure());
-  }
-
-  @Test
-  @Config(sdk = 23)
   public void isDeviceSecure_returnsTrueIfDeviceIsSecure() {
     final LocalAuthPlugin plugin = new LocalAuthPlugin();
     KeyguardManager mockKeyguardManager = mock(KeyguardManager.class);

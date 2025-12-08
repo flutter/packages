@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,11 +14,11 @@ import 'package:rfw/rfw.dart';
 
 void main() {
   testWidgets('Core widgets', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -248,11 +248,11 @@ void main() {
   });
 
   testWidgets('More core widgets', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         home: RemoteWidget(

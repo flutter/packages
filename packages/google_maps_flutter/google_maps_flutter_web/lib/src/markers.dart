@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,9 +10,9 @@ class MarkersController extends GeometryController {
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
     required ClusterManagersController clusterManagersController,
-  })  : _streamController = stream,
-        _clusterManagersController = clusterManagersController,
-        _markerIdToController = <MarkerId, MarkerController>{};
+  }) : _streamController = stream,
+       _clusterManagersController = clusterManagersController,
+       _markerIdToController = <MarkerId, MarkerController>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
   final Map<MarkerId, MarkerController> _markerIdToController;
@@ -44,7 +44,7 @@ class MarkersController extends GeometryController {
       // we make one...
       if (infoWindowOptions.content != null &&
           infoWindowOptions.content is HTMLElement) {
-        final HTMLElement content = infoWindowOptions.content! as HTMLElement;
+        final content = infoWindowOptions.content! as HTMLElement;
 
         content.onclick = (JSAny? _) {
           _onInfoWindowTap(marker.markerId);
@@ -55,10 +55,12 @@ class MarkersController extends GeometryController {
     final gmaps.Marker? currentMarker =
         _markerIdToController[marker.markerId]?.marker;
 
-    final gmaps.MarkerOptions markerOptions =
-        await _markerOptionsFromMarker(marker, currentMarker);
+    final gmaps.MarkerOptions markerOptions = await _markerOptionsFromMarker(
+      marker,
+      currentMarker,
+    );
 
-    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
+    final gmMarker = gmaps.Marker(markerOptions);
 
     gmMarker.set('markerId', marker.markerId.value.toJS);
 
@@ -68,7 +70,7 @@ class MarkersController extends GeometryController {
       gmMarker.map = googleMap;
     }
 
-    final MarkerController controller = MarkerController(
+    final controller = MarkerController(
       marker: gmMarker,
       clusterManagerId: marker.clusterManagerId,
       infoWindow: gmInfoWindow,
@@ -109,10 +111,7 @@ class MarkersController extends GeometryController {
         await _addMarker(marker);
       } else {
         final gmaps.MarkerOptions markerOptions =
-            await _markerOptionsFromMarker(
-          marker,
-          markerController.marker,
-        );
+            await _markerOptionsFromMarker(marker, markerController.marker);
         final gmaps.InfoWindowOptions? infoWindow =
             _infoWindowOptionsFromMarker(marker);
         markerController.update(
@@ -132,7 +131,9 @@ class MarkersController extends GeometryController {
     final MarkerController? markerController = _markerIdToController[markerId];
     if (markerController?.clusterManagerId != null) {
       _clusterManagersController.removeItem(
-          markerController!.clusterManagerId!, markerController.marker);
+        markerController!.clusterManagerId!,
+        markerController.marker,
+      );
     }
     markerController?.remove();
     _markerIdToController.remove(markerId);
@@ -179,35 +180,31 @@ class MarkersController extends GeometryController {
   }
 
   void _onMarkerDragStart(MarkerId markerId, gmaps.LatLng latLng) {
-    _streamController.add(MarkerDragStartEvent(
-      mapId,
-      gmLatLngToLatLng(latLng),
-      markerId,
-    ));
+    _streamController.add(
+      MarkerDragStartEvent(mapId, gmLatLngToLatLng(latLng), markerId),
+    );
   }
 
   void _onMarkerDrag(MarkerId markerId, gmaps.LatLng latLng) {
-    _streamController.add(MarkerDragEvent(
-      mapId,
-      gmLatLngToLatLng(latLng),
-      markerId,
-    ));
+    _streamController.add(
+      MarkerDragEvent(mapId, gmLatLngToLatLng(latLng), markerId),
+    );
   }
 
   void _onMarkerDragEnd(MarkerId markerId, gmaps.LatLng latLng) {
-    _streamController.add(MarkerDragEndEvent(
-      mapId,
-      gmLatLngToLatLng(latLng),
-      markerId,
-    ));
+    _streamController.add(
+      MarkerDragEndEvent(mapId, gmLatLngToLatLng(latLng), markerId),
+    );
   }
 
   void _hideAllMarkerInfoWindow() {
     _markerIdToController.values
-        .where((MarkerController? controller) =>
-            controller?.infoWindowShown ?? false)
+        .where(
+          (MarkerController? controller) =>
+              controller?.infoWindowShown ?? false,
+        )
         .forEach((MarkerController controller) {
-      controller.hideInfoWindow();
-    });
+          controller.hideInfoWindow();
+        });
   }
 }

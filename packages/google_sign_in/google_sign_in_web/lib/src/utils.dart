@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,7 +20,8 @@ final Codec<Object?, String> jwtCodec = json.fuse(utf8).fuse(base64);
 ///
 /// More info: https://regexr.com/789qc
 final RegExp jwtTokenRegexp = RegExp(
-    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+  r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
+);
 
 /// Decodes the `claims` of a JWT token and returns them as a Map.
 ///
@@ -65,14 +66,17 @@ Map<String, Object?>? getResponsePayload(CredentialResponse? response) {
 /// May return `null`, if the `credentialResponse` is null, or its `credential`
 /// cannot be decoded.
 AuthenticationEvent? gisResponsesToAuthenticationEvent(
-    CredentialResponse? credentialResponse) {
+  CredentialResponse? credentialResponse,
+) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   if (payload == null) {
     return null;
   }
 
-  assert(credentialResponse?.credential != null,
-      'The CredentialResponse cannot be null and have a payload.');
+  assert(
+    credentialResponse?.credential != null,
+    'The CredentialResponse cannot be null and have a payload.',
+  );
 
   return AuthenticationEventSignIn(
     user: GoogleSignInUserData(
@@ -81,8 +85,9 @@ AuthenticationEvent? gisResponsesToAuthenticationEvent(
       displayName: payload['name'] as String?,
       photoUrl: payload['picture'] as String?,
     ),
-    authenticationTokens:
-        AuthenticationTokenData(idToken: credentialResponse!.credential),
+    authenticationTokens: AuthenticationTokenData(
+      idToken: credentialResponse!.credential,
+    ),
   );
 }
 
@@ -91,7 +96,8 @@ AuthenticationEvent? gisResponsesToAuthenticationEvent(
 /// May return `null` if the `credentialResponse` is null, its `credential`
 /// cannot be decoded, or the `exp` field is not set on the JWT payload.
 DateTime? getCredentialResponseExpirationTimestamp(
-    CredentialResponse? credentialResponse) {
+  CredentialResponse? credentialResponse,
+) {
   final Map<String, Object?>? payload = getResponsePayload(credentialResponse);
   // Get the 'exp' field from the payload, if present.
   final int? exp = (payload != null) ? payload['exp'] as int? : null;

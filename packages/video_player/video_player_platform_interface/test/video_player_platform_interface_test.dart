@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,11 +15,29 @@ void main() {
 
   test('default implementation setWebOptions throws unimplemented', () async {
     await expectLater(
-      () => initialInstance.setWebOptions(
-        1,
-        const VideoPlayerWebOptions(),
-      ),
+      () => initialInstance.setWebOptions(1, const VideoPlayerWebOptions()),
       throwsUnimplementedError,
     );
+  });
+
+  test('default implementation getAudioTracks throws unimplemented', () async {
+    await expectLater(
+      () => initialInstance.getAudioTracks(1),
+      throwsUnimplementedError,
+    );
+  });
+
+  test(
+    'default implementation selectAudioTrack throws unimplemented',
+    () async {
+      await expectLater(
+        () => initialInstance.selectAudioTrack(1, 'trackId'),
+        throwsUnimplementedError,
+      );
+    },
+  );
+
+  test('default implementation isAudioTrackSupportAvailable returns false', () {
+    expect(initialInstance.isAudioTrackSupportAvailable(), false);
   });
 }

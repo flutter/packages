@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,14 +22,14 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
     AuthenticationOptions options = const AuthenticationOptions(),
   }) async {
     assert(localizedReason.isNotEmpty);
-    final Map<String, Object> args = <String, Object>{
+    final args = <String, Object>{
       'localizedReason': localizedReason,
       'useErrorDialogs': options.useErrorDialogs,
       'stickyAuth': options.stickyAuth,
       'sensitiveTransaction': options.sensitiveTransaction,
       'biometricOnly': options.biometricOnly,
     };
-    for (final AuthMessages messages in authMessages) {
+    for (final messages in authMessages) {
       args.addAll(messages.args);
     }
     return (await _channel.invokeMethod<bool>('authenticate', args)) ?? false;
@@ -37,12 +37,11 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
 
   @override
   Future<List<BiometricType>> getEnrolledBiometrics() async {
-    final List<String> result = (await _channel.invokeListMethod<String>(
-          'getAvailableBiometrics',
-        )) ??
+    final List<String> result =
+        (await _channel.invokeListMethod<String>('getAvailableBiometrics')) ??
         <String>[];
-    final List<BiometricType> biometrics = <BiometricType>[];
-    for (final String value in result) {
+    final biometrics = <BiometricType>[];
+    for (final value in result) {
       switch (value) {
         case 'face':
           biometrics.add(BiometricType.face);
@@ -62,10 +61,8 @@ class DefaultLocalAuthPlatform extends LocalAuthPlatform {
   @override
   Future<bool> deviceSupportsBiometrics() async {
     final List<String> availableBiometrics =
-        (await _channel.invokeListMethod<String>(
-              'getAvailableBiometrics',
-            )) ??
-            <String>[];
+        (await _channel.invokeListMethod<String>('getAvailableBiometrics')) ??
+        <String>[];
     // If anything, including the 'undefined' sentinel, is returned, then there
     // is device support for biometrics.
     return availableBiometrics.isNotEmpty;

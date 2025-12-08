@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -191,10 +191,7 @@ class FakeMediaDeviceInfo {
 /// A fake [MediaError] that returns the provided error [_code] and [_message].
 @JSExport()
 class FakeMediaError {
-  FakeMediaError(
-    this.code, [
-    this.message = '',
-  ]);
+  FakeMediaError(this.code, [this.message = '']);
 
   final int code;
   final String message;
@@ -208,8 +205,12 @@ class FakeElementStream<T extends web.Event> extends Fake
   final Stream<T> _stream;
 
   @override
-  StreamSubscription<T> listen(void Function(T event)? onData,
-      {Function? onError, void Function()? onDone, bool? cancelOnError}) {
+  StreamSubscription<T> listen(
+    void Function(T event)? onData, {
+    Function? onError,
+    void Function()? onDone,
+    bool? cancelOnError,
+  }) {
     return _stream.listen(
       onData,
       onError: onError,
@@ -230,10 +231,7 @@ class FakeBlobEvent {
 /// A fake [DomException] that returns the provided error [_name] and [_message].
 @JSExport()
 class FakeErrorEvent {
-  FakeErrorEvent(
-    this.type, [
-    this.message = '',
-  ]);
+  FakeErrorEvent(this.type, [this.message = '']);
 
   final String type;
   final String message;
@@ -247,12 +245,12 @@ class FakeErrorEvent {
 /// final videoStream = videoElement.captureStream();
 /// ```
 web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
-  final web.HTMLCanvasElement canvasElement = web.HTMLCanvasElement()
+  final canvasElement = web.HTMLCanvasElement()
     ..width = videoSize.width.toInt()
     ..height = videoSize.height.toInt()
     ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
 
-  final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
+  final videoElement = web.HTMLVideoElement()
     ..srcObject = canvasElement.captureStream();
 
   return videoElement;
@@ -261,32 +259,28 @@ web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
 class MockEventStreamProvider<T extends web.Event> extends Mock
     implements web.EventStreamProvider<T> {
   @override
-  Stream<T> forTarget(
-    web.EventTarget? e, {
-    bool? useCapture = false,
-  }) {
+  Stream<T> forTarget(web.EventTarget? e, {bool? useCapture = false}) {
     return super.noSuchMethod(
-      Invocation.method(
-        #forTarget,
-        <Object?>[e],
-        <Symbol, Object?>{#useCapture: useCapture},
-      ),
-      returnValue: Stream<T>.empty(),
-    ) as Stream<T>;
+          Invocation.method(
+            #forTarget,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: Stream<T>.empty(),
+        )
+        as Stream<T>;
   }
 
   @override
-  ElementStream<T> forElement(
-    web.Element? e, {
-    bool? useCapture = false,
-  }) {
+  ElementStream<T> forElement(web.Element? e, {bool? useCapture = false}) {
     return super.noSuchMethod(
-      Invocation.method(
-        #forElement,
-        <Object?>[e],
-        <Symbol, Object?>{#useCapture: useCapture},
-      ),
-      returnValue: FakeElementStream<T>(Stream<T>.empty()),
-    ) as ElementStream<T>;
+          Invocation.method(
+            #forElement,
+            <Object?>[e],
+            <Symbol, Object?>{#useCapture: useCapture},
+          ),
+          returnValue: FakeElementStream<T>(Stream<T>.empty()),
+        )
+        as ElementStream<T>;
   }
 }

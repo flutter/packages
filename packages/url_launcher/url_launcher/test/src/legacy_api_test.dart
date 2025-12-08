@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ import 'package:url_launcher_platform_interface/url_launcher_platform_interface.
 import '../mocks/mock_url_launcher_platform.dart';
 
 void main() {
-  final MockUrlLauncher mock = MockUrlLauncher();
+  final mock = MockUrlLauncher();
   UrlLauncherPlatform.instance = mock;
 
   test('closeWebView default behavior', () async {
@@ -74,11 +74,12 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launch(
-            'http://flutter.dev/',
-            headers: <String, String>{'key': 'value'},
-          ),
-          isTrue);
+        await launch(
+          'http://flutter.dev/',
+          headers: <String, String>{'key': 'value'},
+        ),
+        isTrue,
+      );
     });
 
     test('force SafariVC', () async {
@@ -113,9 +114,13 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launch('http://flutter.dev/',
-              forceSafariVC: false, universalLinksOnly: true),
-          isTrue);
+        await launch(
+          'http://flutter.dev/',
+          forceSafariVC: false,
+          universalLinksOnly: true,
+        ),
+        isTrue,
+      );
     });
 
     test('force WebView', () async {
@@ -150,9 +155,13 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launch('http://flutter.dev/',
-              forceWebView: true, enableJavaScript: true),
-          isTrue);
+        await launch(
+          'http://flutter.dev/',
+          forceWebView: true,
+          enableJavaScript: true,
+        ),
+        isTrue,
+      );
     });
 
     test('force WebView enable DOM storage', () async {
@@ -170,9 +179,13 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launch('http://flutter.dev/',
-              forceWebView: true, enableDomStorage: true),
-          isTrue);
+        await launch(
+          'http://flutter.dev/',
+          forceWebView: true,
+          enableDomStorage: true,
+        ),
+        isTrue,
+      );
     });
 
     test('force SafariVC to false', () async {
@@ -193,8 +206,10 @@ void main() {
     });
 
     test('cannot launch a non-web in webview', () async {
-      expect(() async => launch('tel:555-555-5555', forceWebView: true),
-          throwsA(isA<PlatformException>()));
+      expect(
+        () async => launch('tel:555-555-5555', forceWebView: true),
+        throwsA(isA<PlatformException>()),
+      );
     });
 
     test('send e-mail', () async {
@@ -211,31 +226,45 @@ void main() {
           showTitle: false,
         )
         ..setResponse(true);
-      expect(await launch('mailto:gmail-noreply@google.com?subject=Hello'),
-          isTrue);
+      expect(
+        await launch('mailto:gmail-noreply@google.com?subject=Hello'),
+        isTrue,
+      );
     });
 
     test('cannot send e-mail with forceSafariVC: true', () async {
       expect(
-          () async => launch('mailto:gmail-noreply@google.com?subject=Hello',
-              forceSafariVC: true),
-          throwsA(isA<PlatformException>()));
+        () async => launch(
+          'mailto:gmail-noreply@google.com?subject=Hello',
+          forceSafariVC: true,
+        ),
+        throwsA(isA<PlatformException>()),
+      );
     });
 
     test('cannot send e-mail with forceWebView: true', () async {
       expect(
-          () async => launch('mailto:gmail-noreply@google.com?subject=Hello',
-              forceWebView: true),
-          throwsA(isA<PlatformException>()));
+        () async => launch(
+          'mailto:gmail-noreply@google.com?subject=Hello',
+          forceWebView: true,
+        ),
+        throwsA(isA<PlatformException>()),
+      );
     });
 
-    test('cannot send e-mail with forceSafariVC: false and forceWebView: true',
-        () async {
-      expect(
-          () async => launch('mailto:gmail-noreply@google.com?subject=Hello',
-              forceSafariVC: false, forceWebView: true),
-          throwsA(isA<PlatformException>()));
-    });
+    test(
+      'cannot send e-mail with forceSafariVC: false and forceWebView: true',
+      () async {
+        expect(
+          () async => launch(
+            'mailto:gmail-noreply@google.com?subject=Hello',
+            forceSafariVC: false,
+            forceWebView: true,
+          ),
+          throwsA(isA<PlatformException>()),
+        );
+      },
+    );
 
     test('controls system UI when changing statusBarBrightness', () async {
       mock
@@ -255,12 +284,15 @@ void main() {
       final TestWidgetsFlutterBinding binding =
           TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-      final RenderView renderView =
-          RenderView(view: binding.platformDispatcher.implicitView!);
+      final renderView = RenderView(
+        view: binding.platformDispatcher.implicitView!,
+      );
       binding.addRenderView(renderView);
       renderView.automaticSystemUiAdjustment = true;
-      final Future<bool> launchResult =
-          launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);
+      final Future<bool> launchResult = launch(
+        'http://flutter.dev/',
+        statusBarBrightness: Brightness.dark,
+      );
 
       // Should take over control of the automaticSystemUiAdjustment while it's
       // pending, then restore it back to normal after the launch finishes.
@@ -288,12 +320,15 @@ void main() {
       final TestWidgetsFlutterBinding binding =
           TestWidgetsFlutterBinding.ensureInitialized();
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      final RenderView renderView =
-          RenderView(view: binding.platformDispatcher.implicitView!);
+      final renderView = RenderView(
+        view: binding.platformDispatcher.implicitView!,
+      );
       binding.addRenderView(renderView);
       expect(renderView.automaticSystemUiAdjustment, true);
-      final Future<bool> launchResult =
-          launch('http://flutter.dev/', statusBarBrightness: Brightness.dark);
+      final Future<bool> launchResult = launch(
+        'http://flutter.dev/',
+        statusBarBrightness: Brightness.dark,
+      );
 
       // The automaticSystemUiAdjustment should be set before the launch
       // and equal to true after the launch result is complete.
@@ -319,25 +354,31 @@ void main() {
         )
         ..setResponse(true);
       expect(
-          await launch(
-              'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1'),
-          isTrue);
+        await launch(
+          'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
+        ),
+        isTrue,
+      );
     });
 
     test('cannot open non-parseable url with forceSafariVC: true', () async {
       expect(
-          () async => launch(
-              'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
-              forceSafariVC: true),
-          throwsA(isA<PlatformException>()));
+        () async => launch(
+          'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
+          forceSafariVC: true,
+        ),
+        throwsA(isA<PlatformException>()),
+      );
     });
 
     test('cannot open non-parseable url with forceWebView: true', () async {
       expect(
-          () async => launch(
-              'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
-              forceWebView: true),
-          throwsA(isA<PlatformException>()));
+        () async => launch(
+          'rdp://full%20address=s:mypc:3389&audiomode=i:2&disable%20themes=i:1',
+          forceWebView: true,
+        ),
+        throwsA(isA<PlatformException>()),
+      );
     });
   });
 }

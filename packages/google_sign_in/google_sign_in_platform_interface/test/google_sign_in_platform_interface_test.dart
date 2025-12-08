@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,17 +37,31 @@ void main() {
       // this behavior, which could be implemented in the subclass.
       expect(ExtendsGoogleSignInPlatform().authenticationEvents, null);
     });
+
+    test(
+      'Default implementation of clearAuthorizationToken throws unimplemented error',
+      () {
+        final platform = ExtendsGoogleSignInPlatform();
+
+        expect(
+          () => platform.clearAuthorizationToken(
+            const ClearAuthorizationTokenParams(accessToken: 'someToken'),
+          ),
+          throwsUnimplementedError,
+        );
+      },
+    );
   });
 
   group('GoogleSignInUserData', () {
     test('can be compared by == operator', () {
-      const GoogleSignInUserData firstInstance = GoogleSignInUserData(
+      const firstInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
         photoUrl: 'photoUrl',
       );
-      const GoogleSignInUserData secondInstance = GoogleSignInUserData(
+      const secondInstance = GoogleSignInUserData(
         email: 'email',
         id: 'id',
         displayName: 'displayName',
@@ -59,24 +73,18 @@ void main() {
 
   group('AuthenticationTokenData', () {
     test('can be compared by == operator', () {
-      const AuthenticationTokenData firstInstance = AuthenticationTokenData(
-        idToken: 'idToken',
-      );
-      const AuthenticationTokenData secondInstance = AuthenticationTokenData(
-        idToken: 'idToken',
-      );
+      const firstInstance = AuthenticationTokenData(idToken: 'idToken');
+      const secondInstance = AuthenticationTokenData(idToken: 'idToken');
       expect(firstInstance == secondInstance, isTrue);
     });
   });
 
   group('ClientAuthorizationTokenData', () {
     test('can be compared by == operator', () {
-      const ClientAuthorizationTokenData firstInstance =
-          ClientAuthorizationTokenData(
+      const firstInstance = ClientAuthorizationTokenData(
         accessToken: 'accessToken',
       );
-      const ClientAuthorizationTokenData secondInstance =
-          ClientAuthorizationTokenData(
+      const secondInstance = ClientAuthorizationTokenData(
         accessToken: 'accessToken',
       );
       expect(firstInstance == secondInstance, isTrue);
@@ -85,12 +93,10 @@ void main() {
 
   group('ServerAuthorizationTokenData', () {
     test('can be compared by == operator', () {
-      const ServerAuthorizationTokenData firstInstance =
-          ServerAuthorizationTokenData(
+      const firstInstance = ServerAuthorizationTokenData(
         serverAuthCode: 'serverAuthCode',
       );
-      const ServerAuthorizationTokenData secondInstance =
-          ServerAuthorizationTokenData(
+      const secondInstance = ServerAuthorizationTokenData(
         serverAuthCode: 'serverAuthCode',
       );
       expect(firstInstance == secondInstance, isTrue);
@@ -108,7 +114,8 @@ class ImplementsGoogleSignInPlatform extends Mock
 class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
   @override
   Future<AuthenticationResults?>? attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) async {
+    AttemptLightweightAuthenticationParameters params,
+  ) async {
     return null;
   }
 
@@ -125,7 +132,8 @@ class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) async {
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
     return null;
   }
 
@@ -137,7 +145,8 @@ class ExtendsGoogleSignInPlatform extends GoogleSignInPlatform {
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) async {
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
     return null;
   }
 

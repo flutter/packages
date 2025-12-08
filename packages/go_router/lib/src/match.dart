@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -48,7 +48,9 @@ abstract class RouteMatchBase with Diagnosticable {
 
   /// Gets the state that represent this route match.
   GoRouterState buildState(
-      RouteConfiguration configuration, RouteMatchList matches);
+    RouteConfiguration configuration,
+    RouteMatchList matches,
+  );
 
   /// Generates a list of [RouteMatchBase] objects by matching the `route` and
   /// its sub-routes with `uri`.
@@ -88,7 +90,7 @@ abstract class RouteMatchBase with Diagnosticable {
   /// The scopedNavigatorKey must not be part of the returned map; otherwise,
   /// it is impossible to order the matches.
   static Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>
-      _matchByNavigatorKey({
+  _matchByNavigatorKey({
     required RouteBase route,
     required String matchedPath, // e.g. /family/:fid
     required String remainingLocation, // e.g. person/p1
@@ -125,8 +127,9 @@ abstract class RouteMatchBase with Diagnosticable {
     // Grab the route matches for the scope navigator key and put it into the
     // matches for `null`.
     if (result.containsKey(scopedNavigatorKey)) {
-      final List<RouteMatchBase> matchesForScopedNavigator =
-          result.remove(scopedNavigatorKey)!;
+      final List<RouteMatchBase> matchesForScopedNavigator = result.remove(
+        scopedNavigatorKey,
+      )!;
       assert(matchesForScopedNavigator.isNotEmpty);
       result
           .putIfAbsent(null, () => <RouteMatchBase>[])
@@ -136,7 +139,7 @@ abstract class RouteMatchBase with Diagnosticable {
   }
 
   static Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>
-      _matchByNavigatorKeyForShellRoute({
+  _matchByNavigatorKeyForShellRoute({
     required ShellRouteBase route,
     required String matchedPath, // e.g. /family/:fid
     required String remainingLocation, // e.g. person/p1
@@ -147,8 +150,8 @@ abstract class RouteMatchBase with Diagnosticable {
   }) {
     final GlobalKey<NavigatorState>? parentKey =
         route.parentNavigatorKey == scopedNavigatorKey
-            ? null
-            : route.parentNavigatorKey;
+        ? null
+        : route.parentNavigatorKey;
     Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>? subRouteMatches;
     late GlobalKey<NavigatorState> navigatorKeyUsed;
     for (final RouteBase subRoute in route.routes) {
@@ -162,8 +165,9 @@ abstract class RouteMatchBase with Diagnosticable {
         uri: uri,
         scopedNavigatorKey: navigatorKeyUsed,
       );
-      assert(!subRouteMatches
-          .containsKey(route.navigatorKeyForSubRoute(subRoute)));
+      assert(
+        !subRouteMatches.containsKey(route.navigatorKeyForSubRoute(subRoute)),
+      );
       if (subRouteMatches.isNotEmpty) {
         break;
       }
@@ -180,16 +184,15 @@ abstract class RouteMatchBase with Diagnosticable {
       pageKey: ValueKey<String>(route.hashCode.toString()),
       navigatorKey: navigatorKeyUsed,
     );
-    subRouteMatches.putIfAbsent(parentKey, () => <RouteMatchBase>[]).insert(
-          0,
-          result,
-        );
+    subRouteMatches
+        .putIfAbsent(parentKey, () => <RouteMatchBase>[])
+        .insert(0, result);
 
     return subRouteMatches;
   }
 
   static Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>
-      _matchByNavigatorKeyForGoRoute({
+  _matchByNavigatorKeyForGoRoute({
     required GoRoute route,
     required String matchedPath, // e.g. /family/:fid
     required String remainingLocation, // e.g. person/p1
@@ -200,25 +203,31 @@ abstract class RouteMatchBase with Diagnosticable {
   }) {
     final GlobalKey<NavigatorState>? parentKey =
         route.parentNavigatorKey == scopedNavigatorKey
-            ? null
-            : route.parentNavigatorKey;
+        ? null
+        : route.parentNavigatorKey;
 
-    final RegExpMatch? regExpMatch =
-        route.matchPatternAsPrefix(remainingLocation);
+    final RegExpMatch? regExpMatch = route.matchPatternAsPrefix(
+      remainingLocation,
+    );
 
     if (regExpMatch == null) {
       return _empty;
     }
-    final Map<String, String> encodedParams =
-        route.extractPathParams(regExpMatch);
+    final Map<String, String> encodedParams = route.extractPathParams(
+      regExpMatch,
+    );
     // A temporary map to hold path parameters. This map is merged into
     // pathParameters only when this route is part of the returned result.
-    final Map<String, String> currentPathParameter =
-        encodedParams.map<String, String>((String key, String value) =>
-            MapEntry<String, String>(key, Uri.decodeComponent(value)));
+    final Map<String, String> currentPathParameter = encodedParams
+        .map<String, String>(
+          (String key, String value) =>
+              MapEntry<String, String>(key, Uri.decodeComponent(value)),
+        );
     final String pathLoc = patternToPath(route.path, encodedParams);
-    final String newMatchedLocation =
-        concatenatePaths(matchedLocation, pathLoc);
+    final String newMatchedLocation = concatenatePaths(
+      matchedLocation,
+      pathLoc,
+    );
     final String newMatchedPath = concatenatePaths(matchedPath, route.path);
 
     final String newMatchedLocationToCompare;
@@ -248,7 +257,8 @@ abstract class RouteMatchBase with Diagnosticable {
     assert(remainingLocation.isNotEmpty);
 
     final String childRestLoc = uri.path.substring(
-        newMatchedLocation.length + (newMatchedLocation == '/' ? 0 : 1));
+      newMatchedLocation.length + (newMatchedLocation == '/' ? 0 : 1),
+    );
 
     Map<GlobalKey<NavigatorState>?, List<RouteMatchBase>>? subRouteMatches;
     for (final RouteBase subRoute in route.routes) {
@@ -272,13 +282,16 @@ abstract class RouteMatchBase with Diagnosticable {
     }
 
     pathParameters.addAll(currentPathParameter);
-    subRouteMatches!.putIfAbsent(parentKey, () => <RouteMatchBase>[]).insert(
-        0,
-        RouteMatch(
-          route: route,
-          matchedLocation: newMatchedLocation,
-          pageKey: ValueKey<String>(newMatchedPath),
-        ));
+    subRouteMatches!
+        .putIfAbsent(parentKey, () => <RouteMatchBase>[])
+        .insert(
+          0,
+          RouteMatch(
+            route: route,
+            matchedLocation: newMatchedLocation,
+            pageKey: ValueKey<String>(newMatchedPath),
+          ),
+        );
     return subRouteMatches;
   }
 
@@ -327,7 +340,9 @@ class RouteMatch extends RouteMatchBase {
 
   @override
   GoRouterState buildState(
-      RouteConfiguration configuration, RouteMatchList matches) {
+    RouteConfiguration configuration,
+    RouteMatchList matches,
+  ) {
     return GoRouterState(
       configuration,
       uri: matches.uri,
@@ -382,7 +397,9 @@ class ShellRouteMatch extends RouteMatchBase {
 
   @override
   GoRouterState buildState(
-      RouteConfiguration configuration, RouteMatchList matches) {
+    RouteConfiguration configuration,
+    RouteMatchList matches,
+  ) {
     // The route related data is stored in the leaf route match.
     final RouteMatch leafMatch = _lastLeaf;
     if (leafMatch is ImperativeRouteMatch) {
@@ -407,9 +424,7 @@ class ShellRouteMatch extends RouteMatchBase {
   // TODO(loic-sharma): Remove meta library prefix.
   // https://github.com/flutter/flutter/issues/171410
   @meta.internal
-  ShellRouteMatch copyWith({
-    required List<RouteMatchBase>? matches,
-  }) {
+  ShellRouteMatch copyWith({required List<RouteMatchBase>? matches}) {
     return ShellRouteMatch(
       matches: matches ?? this.matches,
       route: route,
@@ -436,17 +451,21 @@ class ShellRouteMatch extends RouteMatchBase {
 /// The route match that represent route pushed through [GoRouter.push].
 class ImperativeRouteMatch extends RouteMatch {
   /// Constructor for [ImperativeRouteMatch].
-  ImperativeRouteMatch(
-      {required super.pageKey, required this.matches, required this.completer})
-      : super(
-          route: _getsLastRouteFromMatches(matches),
-          matchedLocation: _getsMatchedLocationFromMatches(matches),
-        );
+  ImperativeRouteMatch({
+    required super.pageKey,
+    required this.matches,
+    required this.completer,
+  }) : super(
+         route: _getsLastRouteFromMatches(matches),
+         matchedLocation: _getsMatchedLocationFromMatches(matches),
+       );
 
   static GoRoute _getsLastRouteFromMatches(RouteMatchList matchList) {
     if (matchList.isError) {
       return GoRoute(
-          path: 'error', builder: (_, __) => throw UnimplementedError());
+        path: 'error',
+        builder: (_, __) => throw UnimplementedError(),
+      );
     }
     return matchList.last.route;
   }
@@ -472,7 +491,9 @@ class ImperativeRouteMatch extends RouteMatch {
 
   @override
   GoRouterState buildState(
-      RouteConfiguration configuration, RouteMatchList matches) {
+    RouteConfiguration configuration,
+    RouteMatchList matches,
+  ) {
     return super.buildState(configuration, this.matches);
   }
 
@@ -506,9 +527,10 @@ class RouteMatchList with Diagnosticable {
 
   /// Constructs an empty matches object.
   static RouteMatchList empty = RouteMatchList(
-      matches: const <RouteMatchBase>[],
-      uri: Uri(),
-      pathParameters: const <String, String>{});
+    matches: const <RouteMatchBase>[],
+    uri: Uri(),
+    pathParameters: const <String, String>{},
+  );
 
   /// The route matches.
   final List<RouteMatchBase> matches;
@@ -570,9 +592,10 @@ class RouteMatchList with Diagnosticable {
   /// [RouteMatchA(), RouteMatchB(), RouteMatchC()]
   /// ```
   static String _generateFullPath(Iterable<RouteMatchBase> matches) {
-    String fullPath = '';
-    for (final RouteMatchBase match in matches
-        .where((RouteMatchBase match) => match is! ImperativeRouteMatch)) {
+    var fullPath = '';
+    for (final RouteMatchBase match in matches.where(
+      (RouteMatchBase match) => match is! ImperativeRouteMatch,
+    )) {
       final String pathSegment;
       if (match is RouteMatch) {
         pathSegment = match.route.path;
@@ -618,24 +641,29 @@ class RouteMatchList with Diagnosticable {
         newMatches.isNotEmpty &&
         otherMatches.last.route == newMatches.last.route) {
       assert(newMatches.last is ShellRouteMatch);
-      final ShellRouteMatch lastShellRouteMatch =
-          newMatches.removeLast() as ShellRouteMatch;
+      final lastShellRouteMatch = newMatches.removeLast() as ShellRouteMatch;
       newMatches.add(
         // Create a new copy of the `lastShellRouteMatch`.
         lastShellRouteMatch.copyWith(
-          matches: _createNewMatchUntilIncompatible(lastShellRouteMatch.matches,
-              (otherMatches.last as ShellRouteMatch).matches, match),
+          matches: _createNewMatchUntilIncompatible(
+            lastShellRouteMatch.matches,
+            (otherMatches.last as ShellRouteMatch).matches,
+            match,
+          ),
         ),
       );
       return newMatches;
     }
-    newMatches
-        .add(_cloneBranchAndInsertImperativeMatch(otherMatches.last, match));
+    newMatches.add(
+      _cloneBranchAndInsertImperativeMatch(otherMatches.last, match),
+    );
     return newMatches;
   }
 
   static RouteMatchBase _cloneBranchAndInsertImperativeMatch(
-      RouteMatchBase branch, ImperativeRouteMatch match) {
+    RouteMatchBase branch,
+    ImperativeRouteMatch match,
+  ) {
     if (branch is ShellRouteMatch) {
       return branch.copyWith(
         matches: <RouteMatchBase>[
@@ -652,17 +680,17 @@ class RouteMatchList with Diagnosticable {
   /// Returns a new instance of RouteMatchList with the input `match` removed
   /// from the current instance.
   RouteMatchList remove(RouteMatchBase match) {
-    final List<RouteMatchBase> newMatches =
-        _removeRouteMatchFromList(matches, match);
+    final List<RouteMatchBase> newMatches = _removeRouteMatchFromList(
+      matches,
+      match,
+    );
     if (newMatches == matches) {
       return this;
     }
 
     final String fullPath = _generateFullPath(newMatches);
     if (this.fullPath == fullPath) {
-      return copyWith(
-        matches: newMatches,
-      );
+      return copyWith(matches: newMatches);
     }
 
     if (newMatches.isEmpty) {
@@ -675,17 +703,21 @@ class RouteMatchList with Diagnosticable {
     }
     newRoute as GoRoute;
     // Need to remove path parameters that are no longer in the fullPath.
-    final List<String> newParameters = <String>[];
-    patternToRegExp(fullPath, newParameters,
-        caseSensitive: newRoute.caseSensitive);
-    final Set<String> validParameters = newParameters.toSet();
-    final Map<String, String> newPathParameters =
-        Map<String, String>.fromEntries(
-      pathParameters.entries.where((MapEntry<String, String> value) =>
-          validParameters.contains(value.key)),
+    final newParameters = <String>[];
+    patternToRegExp(
+      fullPath,
+      newParameters,
+      caseSensitive: newRoute.caseSensitive,
     );
-    final Uri newUri =
-        uri.replace(path: patternToPath(fullPath, newPathParameters));
+    final Set<String> validParameters = newParameters.toSet();
+    final newPathParameters = Map<String, String>.fromEntries(
+      pathParameters.entries.where(
+        (MapEntry<String, String> value) => validParameters.contains(value.key),
+      ),
+    );
+    final Uri newUri = uri.replace(
+      path: patternToPath(fullPath, newPathParameters),
+    );
     return copyWith(
       matches: newMatches,
       uri: newUri,
@@ -705,7 +737,9 @@ class RouteMatchList with Diagnosticable {
   /// If a target is found, the target and every node after the target in tree
   /// order is removed.
   static List<RouteMatchBase> _removeRouteMatchFromList(
-      List<RouteMatchBase> matches, RouteMatchBase target) {
+    List<RouteMatchBase> matches,
+    RouteMatchBase target,
+  ) {
     // Remove is caused by pop; therefore, start searching from the end.
     for (int index = matches.length - 1; index >= 0; index -= 1) {
       final RouteMatchBase match = matches[index];
@@ -721,8 +755,10 @@ class RouteMatchList with Diagnosticable {
         return matches.sublist(0, index);
       }
       if (match is ShellRouteMatch) {
-        final List<RouteMatchBase> newSubMatches =
-            _removeRouteMatchFromList(match.matches, target);
+        final List<RouteMatchBase> newSubMatches = _removeRouteMatchFromList(
+          match.matches,
+          target,
+        );
         if (newSubMatches == match.matches) {
           // Didn't find target in the newSubMatches.
           continue;
@@ -769,7 +805,7 @@ class RouteMatchList with Diagnosticable {
 
   /// The routes for each of the matches.
   List<RouteBase> get routes {
-    final List<RouteBase> result = <RouteBase>[];
+    final result = <RouteBase>[];
     visitRouteMatches((RouteMatchBase match) {
       result.add(match.route);
       return true;
@@ -789,8 +825,10 @@ class RouteMatchList with Diagnosticable {
   }
 
   static bool _visitRouteMatches(
-      List<RouteMatchBase> matches, RouteMatchVisitor visitor) {
-    for (final RouteMatchBase routeMatch in matches) {
+    List<RouteMatchBase> matches,
+    RouteMatchVisitor visitor,
+  ) {
+    for (final routeMatch in matches) {
       if (!visitor(routeMatch)) {
         return false;
       }
@@ -812,11 +850,12 @@ class RouteMatchList with Diagnosticable {
     Map<String, String>? pathParameters,
   }) {
     return RouteMatchList(
-        matches: matches ?? this.matches,
-        uri: uri ?? this.uri,
-        extra: extra,
-        error: error,
-        pathParameters: pathParameters ?? this.pathParameters);
+      matches: matches ?? this.matches,
+      uri: uri ?? this.uri,
+      extra: extra,
+      error: error,
+      pathParameters: pathParameters ?? this.pathParameters,
+    );
   }
 
   @override
@@ -829,8 +868,10 @@ class RouteMatchList with Diagnosticable {
         extra == other.extra &&
         error == other.error &&
         const ListEquality<RouteMatchBase>().equals(matches, other.matches) &&
-        const MapEquality<String, String>()
-            .equals(pathParameters, other.pathParameters);
+        const MapEquality<String, String>().equals(
+          pathParameters,
+          other.pathParameters,
+        );
   }
 
   @override
@@ -841,8 +882,10 @@ class RouteMatchList with Diagnosticable {
       extra,
       error,
       Object.hashAllUnordered(
-        pathParameters.entries.map<int>((MapEntry<String, String> entry) =>
-            Object.hash(entry.key, entry.value)),
+        pathParameters.entries.map<int>(
+          (MapEntry<String, String> entry) =>
+              Object.hash(entry.key, entry.value),
+        ),
       ),
     );
   }
@@ -851,8 +894,9 @@ class RouteMatchList with Diagnosticable {
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
     properties.add(DiagnosticsProperty<Uri>('uri', uri));
-    properties
-        .add(DiagnosticsProperty<List<RouteMatchBase>>('matches', matches));
+    properties.add(
+      DiagnosticsProperty<List<RouteMatchBase>>('matches', matches),
+    );
   }
 }
 
@@ -866,8 +910,8 @@ class RouteMatchList with Diagnosticable {
 class RouteMatchListCodec extends Codec<RouteMatchList, Map<Object?, Object?>> {
   /// Creates a new [RouteMatchListCodec] object.
   RouteMatchListCodec(RouteConfiguration configuration)
-      : decoder = _RouteMatchListDecoder(configuration),
-        encoder = _RouteMatchListEncoder(configuration);
+    : decoder = _RouteMatchListDecoder(configuration),
+      encoder = _RouteMatchListEncoder(configuration);
 
   static const String _locationKey = 'location';
   static const String _extraKey = 'state';
@@ -892,8 +936,7 @@ class _RouteMatchListEncoder
   final RouteConfiguration configuration;
   @override
   Map<Object?, Object?> convert(RouteMatchList input) {
-    final List<ImperativeRouteMatch> imperativeMatches =
-        <ImperativeRouteMatch>[];
+    final imperativeMatches = <ImperativeRouteMatch>[];
     input.visitRouteMatches((RouteMatchBase match) {
       if (match is ImperativeRouteMatch) {
         imperativeMatches.add(match);
@@ -902,23 +945,35 @@ class _RouteMatchListEncoder
     });
     final List<Map<Object?, Object?>> encodedImperativeMatches =
         imperativeMatches
-            .map((ImperativeRouteMatch e) => _toPrimitives(
-                e.matches.uri.toString(), e.matches.extra,
-                pageKey: e.pageKey.value))
+            .map(
+              (ImperativeRouteMatch e) => _toPrimitives(
+                e.matches.uri.toString(),
+                e.matches.extra,
+                pageKey: e.pageKey.value,
+              ),
+            )
             .toList();
 
-    return _toPrimitives(input.uri.toString(), input.extra,
-        imperativeMatches: encodedImperativeMatches);
+    return _toPrimitives(
+      input.uri.toString(),
+      input.extra,
+      imperativeMatches: encodedImperativeMatches,
+    );
   }
 
-  Map<Object?, Object?> _toPrimitives(String location, Object? extra,
-      {List<Map<Object?, Object?>>? imperativeMatches, String? pageKey}) {
+  Map<Object?, Object?> _toPrimitives(
+    String location,
+    Object? extra, {
+    List<Map<Object?, Object?>>? imperativeMatches,
+    String? pageKey,
+  }) {
     Map<String, Object?> encodedExtra;
     if (configuration.extraCodec != null) {
       encodedExtra = <String, Object?>{
         RouteMatchListCodec._codecKey: RouteMatchListCodec._customCodecName,
-        RouteMatchListCodec._encodedKey:
-            configuration.extraCodec?.encode(extra),
+        RouteMatchListCodec._encodedKey: configuration.extraCodec?.encode(
+          extra,
+        ),
       };
     } else {
       String jsonEncodedExtra;
@@ -927,10 +982,11 @@ class _RouteMatchListEncoder
       } on JsonUnsupportedObjectError {
         jsonEncodedExtra = json.encoder.convert(null);
         log(
-            'An extra with complex data type ${extra.runtimeType} is provided '
-            'without a codec. Consider provide a codec to GoRouter to '
-            'prevent extra being dropped during serialization.',
-            level: Level.WARNING);
+          'An extra with complex data type ${extra.runtimeType} is provided '
+          'without a codec. Consider provide a codec to GoRouter to '
+          'prevent extra being dropped during serialization.',
+          level: Level.WARNING,
+        );
       }
       encodedExtra = <String, Object?>{
         RouteMatchListCodec._codecKey: RouteMatchListCodec._jsonCodecName,
@@ -956,33 +1012,38 @@ class _RouteMatchListDecoder
 
   @override
   RouteMatchList convert(Map<Object?, Object?> input) {
-    final String rootLocation =
-        input[RouteMatchListCodec._locationKey]! as String;
-    final Map<Object?, Object?> encodedExtra =
+    final rootLocation = input[RouteMatchListCodec._locationKey]! as String;
+    final encodedExtra =
         input[RouteMatchListCodec._extraKey]! as Map<Object?, Object?>;
     final Object? extra;
 
     if (encodedExtra[RouteMatchListCodec._codecKey] ==
         RouteMatchListCodec._jsonCodecName) {
-      extra = json.decoder
-          .convert(encodedExtra[RouteMatchListCodec._encodedKey]! as String);
+      extra = json.decoder.convert(
+        encodedExtra[RouteMatchListCodec._encodedKey]! as String,
+      );
     } else {
-      extra = configuration.extraCodec
-          ?.decode(encodedExtra[RouteMatchListCodec._encodedKey]);
+      extra = configuration.extraCodec?.decode(
+        encodedExtra[RouteMatchListCodec._encodedKey],
+      );
     }
-    RouteMatchList matchList =
-        configuration.findMatch(Uri.parse(rootLocation), extra: extra);
+    RouteMatchList matchList = configuration.findMatch(
+      Uri.parse(rootLocation),
+      extra: extra,
+    );
 
-    final List<Object?>? imperativeMatches =
+    final imperativeMatches =
         input[RouteMatchListCodec._imperativeMatchesKey] as List<Object?>?;
     if (imperativeMatches != null) {
       for (final Map<Object?, Object?> encodedImperativeMatch
           in imperativeMatches.whereType<Map<Object?, Object?>>()) {
-        final RouteMatchList imperativeMatchList =
-            convert(encodedImperativeMatch);
-        final ValueKey<String> pageKey = ValueKey<String>(
-            encodedImperativeMatch[RouteMatchListCodec._pageKey]! as String);
-        final ImperativeRouteMatch imperativeMatch = ImperativeRouteMatch(
+        final RouteMatchList imperativeMatchList = convert(
+          encodedImperativeMatch,
+        );
+        final pageKey = ValueKey<String>(
+          encodedImperativeMatch[RouteMatchListCodec._pageKey]! as String,
+        );
+        final imperativeMatch = ImperativeRouteMatch(
           pageKey: pageKey,
           // TODO(chunhtai): Figure out a way to preserve future.
           // https://github.com/flutter/flutter/issues/128122.

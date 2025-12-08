@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,9 +38,11 @@ class SharedPreferencesDemo extends StatefulWidget {
 class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   final Future<SharedPreferencesWithCache> _prefs =
       SharedPreferencesWithCache.create(
-          cacheOptions: const SharedPreferencesWithCacheOptions(
-              // This cache will only accept the key 'counter'.
-              allowList: <String>{'counter'}));
+        cacheOptions: const SharedPreferencesWithCacheOptions(
+          // This cache will only accept the key 'counter'.
+          allowList: <String>{'counter'},
+        ),
+      );
   late Future<int> _counter;
   int _externalCounter = 0;
 
@@ -62,7 +64,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   /// Gets external button presses that could occur in another instance, thread,
   /// or via some native system.
   Future<void> _getExternalCounter() async {
-    final SharedPreferencesAsync prefs = SharedPreferencesAsync();
+    final prefs = SharedPreferencesAsync();
     final int externalCounter = (await prefs.getInt('externalCounter')) ?? 0;
     setState(() {
       _externalCounter = externalCounter;
@@ -71,8 +73,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
 
   Future<void> _migratePreferences() async {
     // #docregion migrate
-    const SharedPreferencesOptions sharedPreferencesOptions =
-        SharedPreferencesOptions();
+    const sharedPreferencesOptions = SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
       legacySharedPreferencesInstance: prefs,
@@ -97,9 +98,7 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SharedPreferencesWithCache Demo'),
-      ),
+      appBar: AppBar(title: const Text('SharedPreferencesWithCache Demo')),
       body: Center(
         child: _WaitForInitialization(
           initialized: _preferencesReady.future,

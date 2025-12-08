@@ -1,14 +1,19 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'src/messages.g.dart';
 
 /// An implementation of [FileSelectorPlatform] for macOS.
 class FileSelectorMacOS extends FileSelectorPlatform {
-  final FileSelectorApi _hostApi = FileSelectorApi();
+  /// Creates a new plugin implementation instance.
+  FileSelectorMacOS({@visibleForTesting FileSelectorApi? api})
+    : _hostApi = api ?? FileSelectorApi();
+
+  final FileSelectorApi _hostApi;
 
   /// Registers the macOS implementation.
   static void registerWith() {
@@ -21,16 +26,18 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths =
-        await _hostApi.displayOpenPanel(OpenPanelOptions(
-            allowsMultipleSelection: false,
-            canChooseDirectories: false,
-            canChooseFiles: true,
-            baseOptions: SavePanelOptions(
-              allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
-              directoryPath: initialDirectory,
-              prompt: confirmButtonText,
-            )));
+    final List<String?> paths = await _hostApi.displayOpenPanel(
+      OpenPanelOptions(
+        allowsMultipleSelection: false,
+        canChooseDirectories: false,
+        canChooseFiles: true,
+        baseOptions: SavePanelOptions(
+          allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
+          directoryPath: initialDirectory,
+          prompt: confirmButtonText,
+        ),
+      ),
+    );
     return paths.isEmpty ? null : XFile(paths.first!);
   }
 
@@ -40,16 +47,18 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths =
-        await _hostApi.displayOpenPanel(OpenPanelOptions(
-            allowsMultipleSelection: true,
-            canChooseDirectories: false,
-            canChooseFiles: true,
-            baseOptions: SavePanelOptions(
-              allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
-              directoryPath: initialDirectory,
-              prompt: confirmButtonText,
-            )));
+    final List<String?> paths = await _hostApi.displayOpenPanel(
+      OpenPanelOptions(
+        allowsMultipleSelection: true,
+        canChooseDirectories: false,
+        canChooseFiles: true,
+        baseOptions: SavePanelOptions(
+          allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
+          directoryPath: initialDirectory,
+          prompt: confirmButtonText,
+        ),
+      ),
+    );
     return paths.map((String? path) => XFile(path!)).toList();
   }
 
@@ -61,12 +70,13 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? confirmButtonText,
   }) async {
     final FileSaveLocation? location = await getSaveLocation(
-        acceptedTypeGroups: acceptedTypeGroups,
-        options: SaveDialogOptions(
-          initialDirectory: initialDirectory,
-          suggestedName: suggestedName,
-          confirmButtonText: confirmButtonText,
-        ));
+      acceptedTypeGroups: acceptedTypeGroups,
+      options: SaveDialogOptions(
+        initialDirectory: initialDirectory,
+        suggestedName: suggestedName,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
     return location?.path;
   }
 
@@ -75,12 +85,15 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     List<XTypeGroup>? acceptedTypeGroups,
     SaveDialogOptions options = const SaveDialogOptions(),
   }) async {
-    final String? path = await _hostApi.displaySavePanel(SavePanelOptions(
-      allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
-      directoryPath: options.initialDirectory,
-      nameFieldStringValue: options.suggestedName,
-      prompt: options.confirmButtonText,
-    ));
+    final String? path = await _hostApi.displaySavePanel(
+      SavePanelOptions(
+        allowedFileTypes: _allowedTypesFromTypeGroups(acceptedTypeGroups),
+        directoryPath: options.initialDirectory,
+        nameFieldStringValue: options.suggestedName,
+        prompt: options.confirmButtonText,
+        canCreateDirectories: options.canCreateDirectories,
+      ),
+    );
     return path == null ? null : FileSaveLocation(path);
   }
 
@@ -89,15 +102,28 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths =
-        await _hostApi.displayOpenPanel(OpenPanelOptions(
-            allowsMultipleSelection: false,
-            canChooseDirectories: true,
-            canChooseFiles: false,
-            baseOptions: SavePanelOptions(
-              directoryPath: initialDirectory,
-              prompt: confirmButtonText,
-            )));
+    return getDirectoryPathWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
+    final List<String?> paths = await _hostApi.displayOpenPanel(
+      OpenPanelOptions(
+        allowsMultipleSelection: false,
+        canChooseDirectories: true,
+        canChooseFiles: false,
+        baseOptions: SavePanelOptions(
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
+          canCreateDirectories: options.canCreateDirectories,
+        ),
+      ),
+    );
     return paths.isEmpty ? null : paths.first;
   }
 
@@ -106,15 +132,30 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
-    final List<String?> paths =
-        await _hostApi.displayOpenPanel(OpenPanelOptions(
-            allowsMultipleSelection: true,
-            canChooseDirectories: true,
-            canChooseFiles: false,
-            baseOptions: SavePanelOptions(
-              directoryPath: initialDirectory,
-              prompt: confirmButtonText,
-            )));
+    return getDirectoryPathsWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<List<String>> getDirectoryPathsWithOptions(
+    FileDialogOptions options,
+  ) async {
+    final List<String?> paths = await _hostApi.displayOpenPanel(
+      OpenPanelOptions(
+        allowsMultipleSelection: true,
+        canChooseDirectories: true,
+        canChooseFiles: false,
+        baseOptions: SavePanelOptions(
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
+          canCreateDirectories: options.canCreateDirectories,
+        ),
+      ),
+    );
     return paths.isEmpty ? <String>[] : List<String>.from(paths);
   }
 
@@ -124,7 +165,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     if (typeGroups == null || typeGroups.isEmpty) {
       return null;
     }
-    final AllowedTypes allowedTypes = AllowedTypes(
+    final allowedTypes = AllowedTypes(
       extensions: <String>[],
       mimeTypes: <String>[],
       utis: <String>[],
@@ -139,11 +180,13 @@ class FileSelectorMacOS extends FileSelectorPlatform {
       if ((typeGroup.extensions?.isEmpty ?? true) &&
           (typeGroup.uniformTypeIdentifiers?.isEmpty ?? true) &&
           (typeGroup.mimeTypes?.isEmpty ?? true)) {
-        throw ArgumentError('Provided type group $typeGroup does not allow '
-            'all files, but does not set any of the macOS-supported filter '
-            'categories. At least one of "extensions", '
-            '"uniformTypeIdentifiers", or "mimeTypes" must be non-empty for '
-            'macOS if anything is non-empty.');
+        throw ArgumentError(
+          'Provided type group $typeGroup does not allow '
+          'all files, but does not set any of the macOS-supported filter '
+          'categories. At least one of "extensions", '
+          '"uniformTypeIdentifiers", or "mimeTypes" must be non-empty for '
+          'macOS if anything is non-empty.',
+        );
       }
       allowedTypes.extensions.addAll(typeGroup.extensions ?? <String>[]);
       allowedTypes.mimeTypes.addAll(typeGroup.mimeTypes ?? <String>[]);

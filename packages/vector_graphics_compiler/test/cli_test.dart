@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,8 +12,8 @@ import '../bin/util/isolate_processor.dart';
 import '../bin/vector_graphics_compiler.dart' as cli;
 
 void main() {
-  final File output = File('test_data/example.vec');
-  final File outputDebug = File('test_data/example.vec.debug');
+  final output = File('test_data/example.vec');
+  final outputDebug = File('test_data/example.vec.debug');
 
   test('currentColor/font-size works', () async {
     try {
@@ -42,11 +42,9 @@ void main() {
 
   test('Can run with isolate processor', () async {
     try {
-      final IsolateProcessor processor = IsolateProcessor(null, null, 4);
+      final processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[
-          Pair('test_data/example.svg', output.path),
-        ],
+        <Pair>[Pair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -65,11 +63,9 @@ void main() {
 
   test('Can dump debug format with isolate processor', () async {
     try {
-      final IsolateProcessor processor = IsolateProcessor(null, null, 4);
+      final processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[
-          Pair('test_data/example.svg', output.path),
-        ],
+        <Pair>[Pair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -91,9 +87,9 @@ void main() {
   });
 
   test('out-dir option works', () async {
-    const String inputTestDir = 'test_data';
+    const inputTestDir = 'test_data';
 
-    const String outTestDir = 'output_vec';
+    const outTestDir = 'output_vec';
 
     try {
       await cli.main(<String>[
@@ -103,10 +99,10 @@ void main() {
         outTestDir,
       ]);
 
-      bool passed = false;
+      var passed = false;
 
-      final Directory inputDir = Directory(inputTestDir);
-      final Directory outDir = Directory(outTestDir);
+      final inputDir = Directory(inputTestDir);
+      final outDir = Directory(outTestDir);
 
       if (inputDir.existsSync() && outDir.existsSync()) {
         final List<String> inputTestFiles = inputDir
@@ -120,8 +116,10 @@ void main() {
             .listSync(recursive: true)
             .whereType<File>()
             .where((File element) => element.path.endsWith('vec'))
-            .map((File e) =>
-                p.withoutExtension(p.basenameWithoutExtension(e.path)))
+            .map(
+              (File e) =>
+                  p.withoutExtension(p.basenameWithoutExtension(e.path)),
+            )
             .toList();
 
         if (listEquals(inputTestFiles, outTestFiles)) {

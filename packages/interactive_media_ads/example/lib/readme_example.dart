@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,29 +64,31 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
           final AdsManager manager = data.manager;
           _adsManager = data.manager;
 
-          manager.setAdsManagerDelegate(AdsManagerDelegate(
-            onAdEvent: (AdEvent event) {
-              debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
-              switch (event.type) {
-                case AdEventType.loaded:
-                  manager.start();
-                case AdEventType.contentPauseRequested:
-                  _pauseContent();
-                case AdEventType.contentResumeRequested:
-                  _resumeContent();
-                case AdEventType.allAdsCompleted:
-                  manager.destroy();
-                  _adsManager = null;
-                case AdEventType.clicked:
-                case AdEventType.complete:
-                case _:
-              }
-            },
-            onAdErrorEvent: (AdErrorEvent event) {
-              debugPrint('AdErrorEvent: ${event.error.message}');
-              _resumeContent();
-            },
-          ));
+          manager.setAdsManagerDelegate(
+            AdsManagerDelegate(
+              onAdEvent: (AdEvent event) {
+                debugPrint('OnAdEvent: ${event.type} => ${event.adData}');
+                switch (event.type) {
+                  case AdEventType.loaded:
+                    manager.start();
+                  case AdEventType.contentPauseRequested:
+                    _pauseContent();
+                  case AdEventType.contentResumeRequested:
+                    _resumeContent();
+                  case AdEventType.allAdsCompleted:
+                    manager.destroy();
+                    _adsManager = null;
+                  case AdEventType.clicked:
+                  case AdEventType.complete:
+                  case _:
+                }
+              },
+              onAdErrorEvent: (AdErrorEvent event) {
+                debugPrint('AdErrorEvent: ${event.error.message}');
+                _resumeContent();
+              },
+            ),
+          );
 
           manager.init(settings: AdsRenderingSettings(enablePreloading: true));
         },
@@ -110,21 +112,22 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
     WidgetsBinding.instance.addObserver(this);
 
     // #docregion ad_and_content_players
-    _contentVideoController = VideoPlayerController.networkUrl(
-      Uri.parse(
-        'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
-      ),
-    )
-      ..addListener(() {
-        if (_contentVideoController.value.isCompleted) {
-          _adsLoader.contentComplete();
-        }
-        setState(() {});
-      })
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
+    _contentVideoController =
+        VideoPlayerController.networkUrl(
+            Uri.parse(
+              'https://storage.googleapis.com/gvabox/media/samples/stock.mp4',
+            ),
+          )
+          ..addListener(() {
+            if (_contentVideoController.value.isCompleted) {
+              _adsLoader.contentComplete();
+            }
+            setState(() {});
+          })
+          ..initialize().then((_) {
+            // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+            setState(() {});
+          });
   }
   // #enddocregion ad_and_content_players
 
@@ -153,10 +156,12 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
 
   // #docregion request_ads
   Future<void> _requestAds(AdDisplayContainer container) {
-    return _adsLoader.requestAds(AdsRequest(
-      adTagUrl: _adTagUrl,
-      contentProgressProvider: _contentProgressProvider,
-    ));
+    return _adsLoader.requestAds(
+      AdsRequest(
+        adTagUrl: _adTagUrl,
+        contentProgressProvider: _contentProgressProvider,
+      ),
+    );
   }
 
   Future<void> _resumeContent() async {
@@ -227,7 +232,7 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
                       // ads.
                       _adDisplayContainer,
                       if (_shouldShowContentVideo)
-                        VideoPlayer(_contentVideoController)
+                        VideoPlayer(_contentVideoController),
                     ],
                   ),
                 ),
@@ -235,24 +240,26 @@ class _AdExampleWidgetState extends State<AdExampleWidget>
       ),
       floatingActionButton:
           _contentVideoController.value.isInitialized && _shouldShowContentVideo
-              ? FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      _contentVideoController.value.isPlaying
-                          ? _contentVideoController.pause()
-                          : _contentVideoController.play();
-                    });
-                  },
-                  child: Icon(
-                    _contentVideoController.value.isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow,
-                  ),
-                )
-              : null,
+          ? FloatingActionButton(
+              onPressed: () {
+                setState(() {
+                  _contentVideoController.value.isPlaying
+                      ? _contentVideoController.pause()
+                      : _contentVideoController.play();
+                });
+              },
+              child: Icon(
+                _contentVideoController.value.isPlaying
+                    ? Icons.pause
+                    : Icons.play_arrow,
+              ),
+            )
+          : null,
     );
     // #docregion example_widget
   }
-// #enddocregion widget_build
+
+  // #enddocregion widget_build
 }
+
 // #enddocregion example_widget

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -94,11 +94,11 @@ class FakeUser {
   final String? accessToken;
 
   Map<String, String?> get _asMap => <String, String?>{
-        'id': id,
-        'email': email,
-        'displayName': displayName,
-        'photoUrl': photoUrl,
-        'serverAuthCode': serverAuthCode,
-        'idToken': idToken,
-      };
+    'id': id,
+    'email': email,
+    'displayName': displayName,
+    'photoUrl': photoUrl,
+    'serverAuthCode': serverAuthCode,
+    'idToken': idToken,
+  };
 }

@@ -14,18 +14,15 @@ Basic usage (to create an SVG rendering widget from an asset):
 
 <?code-excerpt "example/lib/readme_excerpts.dart (SimpleAsset)"?>
 ```dart
-const String assetName = 'assets/dart.svg';
-final Widget svg = SvgPicture.asset(
-  assetName,
-  semanticsLabel: 'Dart Logo',
-);
+const assetName = 'assets/dart.svg';
+final Widget svg = SvgPicture.asset(assetName, semanticsLabel: 'Dart Logo');
 ```
 
 You can color/tint the image like so:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (ColorizedAsset)"?>
 ```dart
-const String assetName = 'assets/simple/dash_path.svg';
+const assetName = 'assets/simple/dash_path.svg';
 final Widget svgIcon = SvgPicture.asset(
   assetName,
   colorFilter: const ColorFilter.mode(Colors.red, BlendMode.srcIn),
@@ -66,7 +63,7 @@ class _MyColorMapper extends ColorMapper {
   }
 }
 // ···
-  const String svgString = '''
+  const svgString = '''
 <svg viewBox="0 0 100 100">
   <rect width="50" height="50" fill="#FF0000" />
   <circle cx="75" cy="75" r="25" fill="#00FF00" />
@@ -92,10 +89,8 @@ parsing/loading (normally only relevant for network access).
 <?code-excerpt "example/lib/readme_excerpts.dart (MissingAsset)"?>
 ```dart
 // Will print error messages to the console.
-const String assetName = 'assets/image_that_does_not_exist.svg';
-final Widget svg = SvgPicture.asset(
-  assetName,
-);
+const assetName = 'assets/image_that_does_not_exist.svg';
+final Widget svg = SvgPicture.asset(assetName);
 ```
 
 <?code-excerpt "example/lib/readme_excerpts.dart (AssetWithPlaceholder)"?>
@@ -104,8 +99,9 @@ final Widget networkSvg = SvgPicture.network(
   'https://site-that-takes-a-while.com/image.svg',
   semanticsLabel: 'A shark?!',
   placeholderBuilder: (BuildContext context) => Container(
-      padding: const EdgeInsets.all(30.0),
-      child: const CircularProgressIndicator()),
+    padding: const EdgeInsets.all(30.0),
+    child: const CircularProgressIndicator(),
+  ),
 );
 ```
 
@@ -116,9 +112,11 @@ If you'd like to render the SVG to some other canvas, you can do something like:
 import 'dart:ui' as ui;
 
 // ···
-  const String rawSvg = '''<svg ...>...</svg>''';
-  final PictureInfo pictureInfo =
-      await vg.loadPicture(const SvgStringLoader(rawSvg), null);
+  const rawSvg = '''<svg ...>...</svg>''';
+  final PictureInfo pictureInfo = await vg.loadPicture(
+    const SvgStringLoader(rawSvg),
+    null,
+  );
 
   // You can draw the picture to a canvas:
   canvas.drawPicture(pictureInfo.picture);

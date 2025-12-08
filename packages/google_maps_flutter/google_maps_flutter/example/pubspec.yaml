@@ -3,8 +3,8 @@ description: Demonstrates how to use the google_maps_flutter plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.6.0
-  flutter: ">=3.27.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   cupertino_icons: ^1.0.5
@@ -19,7 +19,7 @@ dependencies:
     # the parent directory to use the current plugin's version.
     path: ../
   google_maps_flutter_android: ^2.16.1
-  google_maps_flutter_platform_interface: ^2.12.1
+  google_maps_flutter_platform_interface: ^2.14.0
 
 dev_dependencies:
   build_runner: ^2.1.10

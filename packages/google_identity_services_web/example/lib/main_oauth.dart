@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,15 +35,14 @@ void main() async {
 
   id.setLogLevel('debug');
 
-  final TokenClientConfig config = TokenClientConfig(
+  final config = TokenClientConfig(
     client_id: 'your-google-client-id-goes-here.apps.googleusercontent.com',
     scope: scopes,
     callback: onTokenResponse,
     error_callback: onError,
   );
 
-  final OverridableTokenClientConfig overridableCfg =
-      OverridableTokenClientConfig(
+  final overridableCfg = OverridableTokenClientConfig(
     scope: scopes + myConnectionsScopes,
   );
 
@@ -98,9 +97,12 @@ Future<void> onTokenResponse(TokenResponse token) async {
 /// Attempts to [jsonDecode] the result.
 Future<Object?> get(TokenResponse token, String url) async {
   final Uri uri = Uri.parse(url);
-  final http.Response response = await http.get(uri, headers: <String, String>{
-    'Authorization': '${token.token_type} ${token.access_token}',
-  });
+  final http.Response response = await http.get(
+    uri,
+    headers: <String, String>{
+      'Authorization': '${token.token_type} ${token.access_token}',
+    },
+  );
 
   if (response.statusCode != 200) {
     throw http.ClientException(response.body, uri);

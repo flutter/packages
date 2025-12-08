@@ -1,3 +1,26 @@
+## 6.2.4
+
+* Updates to Pigeon 26.
+
+## 6.2.3
+
+* Internal restructuring to improve testability.
+
+## 6.2.2
+
+* Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 6.2.1
+
+* Fixes a bug that would cause `serverAuthorizationTokensForScopes` to
+  return null even when called for a user that had just authenticated.
+
+## 6.2.0
+
+* Adds support for the `clearAuthorizationToken` method.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 6.1.0
 
 * Updates to `GoogleSignIn` 9.0.

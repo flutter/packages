@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,9 +19,9 @@ TableSpan getTappableSpan(int index, VoidCallback callback) {
     recognizerFactories: <Type, GestureRecognizerFactory>{
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-        () => TapGestureRecognizer(),
-        (TapGestureRecognizer t) => t.onTap = () => callback(),
-      ),
+            () => TapGestureRecognizer(),
+            (TapGestureRecognizer t) => t.onTap = () => callback(),
+          ),
     },
   );
 }
@@ -42,28 +42,21 @@ TableSpan getMouseTrackingSpan(
 void main() {
   group('TableView.builder', () {
     test('creates correct delegate', () {
-      final TableView tableView = TableView.builder(
+      final tableView = TableView.builder(
         columnCount: 3,
         rowCount: 2,
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cellBuilder: (_, __) => cell,
       );
-      final TableCellBuilderDelegate delegate =
-          tableView.delegate as TableCellBuilderDelegate;
+      final delegate = tableView.delegate as TableCellBuilderDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
       expect(delegate.columnCount, 3);
       expect(delegate.buildColumn(0), span);
       expect(delegate.buildRow(0), span);
-      expect(
-        delegate.builder(
-          _NullBuildContext(),
-          TableVicinity.zero,
-        ),
-        cell,
-      );
+      expect(delegate.builder(_NullBuildContext(), TableVicinity.zero), cell);
     });
 
     test('asserts correct counts', () {
@@ -186,7 +179,7 @@ void main() {
     group('Infinite spans - ', () {
       late ScrollController verticalController;
       late ScrollController horizontalController;
-      const TableSpan largeSpan = TableSpan(extent: FixedTableSpanExtent(200));
+      const largeSpan = TableSpan(extent: FixedTableSpanExtent(200));
 
       setUp(() {
         verticalController = ScrollController();
@@ -220,7 +213,8 @@ void main() {
           rowCount: rowCount,
           pinnedRowCount: pinnedRowCount,
           rowBuilder: rowBuilder ?? (_) => largeSpan,
-          cellBuilder: cellBuilder ??
+          cellBuilder:
+              cellBuilder ??
               (_, TableVicinity vicinity) {
                 return TableViewCell(
                   child: Text('R${vicinity.row}:C${vicinity.column}'),
@@ -229,12 +223,13 @@ void main() {
         );
       }
 
-      testWidgets('infinite rows, columns are finite',
-          (WidgetTester tester) async {
+      testWidgets('infinite rows, columns are finite', (
+        WidgetTester tester,
+      ) async {
         // Nothing pinned ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(columnCount: 10),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(home: getTableView(columnCount: 10)),
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -276,12 +271,11 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            pinnedColumnCount: 1,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(columnCount: 10, pinnedColumnCount: 1),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -323,12 +317,9 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            pinnedRowCount: 1,
-          ),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(home: getTableView(columnCount: 10, pinnedRowCount: 1)),
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -372,13 +363,15 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns and rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            pinnedColumnCount: 1,
-            pinnedRowCount: 1,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              pinnedColumnCount: 1,
+              pinnedRowCount: 1,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -420,12 +413,11 @@ void main() {
         expect(find.text('R10:C0'), findsNothing);
       });
 
-      testWidgets('infinite columns, rows are finite',
-          (WidgetTester tester) async {
+      testWidgets('infinite columns, rows are finite', (
+        WidgetTester tester,
+      ) async {
         // Nothing pinned ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(rowCount: 10),
-        ));
+        await tester.pumpWidget(MaterialApp(home: getTableView(rowCount: 10)));
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -470,9 +462,9 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(rowCount: 10, pinnedColumnCount: 1),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(home: getTableView(rowCount: 10, pinnedColumnCount: 1)),
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -517,9 +509,9 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(rowCount: 10, pinnedRowCount: 1),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(home: getTableView(rowCount: 10, pinnedRowCount: 1)),
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -564,13 +556,15 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns and rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            pinnedRowCount: 1,
-            pinnedColumnCount: 1,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              pinnedRowCount: 1,
+              pinnedColumnCount: 1,
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -615,9 +609,7 @@ void main() {
 
       testWidgets('infinite rows & columns', (WidgetTester tester) async {
         // No pinned ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(),
-        ));
+        await tester.pumpWidget(MaterialApp(home: getTableView()));
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -671,9 +663,9 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(pinnedColumnCount: 1),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(home: getTableView(pinnedColumnCount: 1)),
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -729,9 +721,9 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned Rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(pinnedRowCount: 1),
-        ));
+        await tester.pumpWidget(
+          MaterialApp(home: getTableView(pinnedRowCount: 1)),
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -787,12 +779,11 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns and rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            pinnedRowCount: 1,
-            pinnedColumnCount: 1,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(pinnedRowCount: 1, pinnedColumnCount: 1),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -842,25 +833,28 @@ void main() {
         expect(find.text('R10:C6'), findsNothing);
       });
 
-      testWidgets('infinite rows can null terminate',
-          (WidgetTester tester) async {
+      testWidgets('infinite rows can null terminate', (
+        WidgetTester tester,
+      ) async {
         // Nothing pinned ---
-        bool calledOutOfBounds = false;
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              if (index > 8) {
-                calledOutOfBounds = true;
-              }
-              return largeSpan;
-            },
+        var calledOutOfBounds = false;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                if (index > 8) {
+                  calledOutOfBounds = true;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -909,19 +903,21 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            pinnedColumnCount: 1,
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              pinnedColumnCount: 1,
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -968,19 +964,21 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            pinnedRowCount: 1,
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              pinnedRowCount: 1,
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1029,20 +1027,22 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns and rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            pinnedColumnCount: 1,
-            pinnedRowCount: 1,
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              pinnedColumnCount: 1,
+              pinnedRowCount: 1,
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1089,20 +1089,23 @@ void main() {
         expect(find.text('R8:C0'), findsNothing);
       });
 
-      testWidgets('Null terminated rows will update',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
+      testWidgets('Null terminated rows will update', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         // Change the vertical scroll offset, validate more rows were populated.
         // This exceeds the bounds of the scroll view once the rows have been
@@ -1131,18 +1134,20 @@ void main() {
         expect(find.text('R8:C0'), findsNothing);
 
         // Increase the number of rows
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            rowBuilder: (int index) {
-              // There will only be 16 rows.
-              if (index == 16) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              rowBuilder: (int index) {
+                // There will only be 16 rows.
+                if (index == 16) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
         // The position should not have changed.
@@ -1179,18 +1184,20 @@ void main() {
         expect(horizontalController.position.maxScrollExtent, 1200.0);
 
         // Decrease the number of rows
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnCount: 10,
-            rowBuilder: (int index) {
-              // There will only be 5 rows.
-              if (index == 5) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnCount: 10,
+              rowBuilder: (int index) {
+                // There will only be 5 rows.
+                if (index == 5) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
         // The position should have changed.
@@ -1214,20 +1221,23 @@ void main() {
         expect(find.text('R5:C0'), findsNothing);
       });
 
-      testWidgets('Null terminated columns will update',
-          (WidgetTester tester) async {
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            columnBuilder: (int index) {
-              // There will only be 8 columns.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
+      testWidgets('Null terminated columns will update', (
+        WidgetTester tester,
+      ) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              columnBuilder: (int index) {
+                // There will only be 8 columns.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         // Change the horizontal scroll offset, validate more columns were
         // populated. This exceeds the bounds of the scroll view once the
@@ -1263,18 +1273,20 @@ void main() {
         expect(find.text('R4:C5'), findsOneWidget); // trailing
 
         // Increase the number of rows
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            columnBuilder: (int index) {
-              // There will only be 16 column.
-              if (index == 16) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              columnBuilder: (int index) {
+                // There will only be 16 column.
+                if (index == 16) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
         // The position should not have changed.
@@ -1317,18 +1329,20 @@ void main() {
         expect(horizontalController.position.maxScrollExtent, 2400.0);
 
         // Decrease the number of columns
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            columnBuilder: (int index) {
-              // There will only be 5 columns.
-              if (index == 5) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              columnBuilder: (int index) {
+                // There will only be 5 columns.
+                if (index == 5) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
 
         // The position should have changed.
@@ -1352,25 +1366,28 @@ void main() {
         expect(find.text('R0:C5'), findsNothing);
       });
 
-      testWidgets('infinite columns can null terminate',
-          (WidgetTester tester) async {
+      testWidgets('infinite columns can null terminate', (
+        WidgetTester tester,
+      ) async {
         // Nothing pinned ---
-        bool calledOutOfBounds = false;
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              if (index > 10) {
-                calledOutOfBounds = true;
-              }
-              return largeSpan;
-            },
+        var calledOutOfBounds = false;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                if (index > 10) {
+                  calledOutOfBounds = true;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1426,19 +1443,21 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            pinnedColumnCount: 1,
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              pinnedColumnCount: 1,
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1487,19 +1506,21 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            pinnedRowCount: 1,
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              pinnedRowCount: 1,
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1553,20 +1574,22 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns and rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowCount: 10,
-            pinnedRowCount: 1,
-            pinnedColumnCount: 1,
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowCount: 10,
+              pinnedRowCount: 1,
+              pinnedColumnCount: 1,
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1612,35 +1635,38 @@ void main() {
         expect(find.text('R0:C4'), findsNothing);
         expect(find.text('R0:C10'), findsNothing);
       });
-      testWidgets('infinite rows & columns can null terminate',
-          (WidgetTester tester) async {
+      testWidgets('infinite rows & columns can null terminate', (
+        WidgetTester tester,
+      ) async {
         // Nothing pinned ---
-        bool calledRowOutOfBounds = false;
-        bool calledColumnOutOfBounds = false;
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              if (index > 8) {
-                calledRowOutOfBounds = true;
-              }
-              return largeSpan;
-            },
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              if (index > 10) {
-                calledColumnOutOfBounds = true;
-              }
-              return largeSpan;
-            },
+        var calledRowOutOfBounds = false;
+        var calledColumnOutOfBounds = false;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                if (index > 8) {
+                  calledRowOutOfBounds = true;
+                }
+                return largeSpan;
+              },
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                if (index > 10) {
+                  calledColumnOutOfBounds = true;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1703,25 +1729,27 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
-            pinnedColumnCount: 1,
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+              pinnedColumnCount: 1,
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1781,25 +1809,27 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
-            pinnedRowCount: 1,
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+              pinnedRowCount: 1,
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1861,26 +1891,28 @@ void main() {
         await tester.pumpWidget(Container());
 
         // Pinned columns and rows ---
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowBuilder: (int index) {
-              // There will only be 8 rows.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
-            pinnedRowCount: 1,
-            pinnedColumnCount: 1,
-            columnBuilder: (int index) {
-              // There will only be 10 columns.
-              if (index == 10) {
-                return null;
-              }
-              return largeSpan;
-            },
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowBuilder: (int index) {
+                // There will only be 8 rows.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+              pinnedRowCount: 1,
+              pinnedColumnCount: 1,
+              columnBuilder: (int index) {
+                // There will only be 10 columns.
+                if (index == 10) {
+                  return null;
+                }
+                return largeSpan;
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -1935,8 +1967,9 @@ void main() {
         expect(find.text('R3:C6'), findsNothing);
         expect(find.text('R8:C6'), findsNothing);
       });
-      testWidgets('merged cells work with lazy layout computation',
-          (WidgetTester tester) async {
+      testWidgets('merged cells work with lazy layout computation', (
+        WidgetTester tester,
+      ) async {
         // When columns and rows are finite, the layout is eagerly computed and
         // the children are lazily laid out. This makes computing merged cell
         // layouts easy. In an infinite world, the layout is also lazily
@@ -1944,41 +1977,37 @@ void main() {
         // cell if it extends into an area we have not computed the layout for
         // yet.
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final List<int> mergedRows = List<int>.generate(
-          10,
-          (int index) => index,
-        );
+        final mergedRows = List<int>.generate(10, (int index) => index);
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final List<int> mergedColumns = List<int>.generate(
-          10,
-          (int index) => index + 1,
-        );
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            cellBuilder: (_, TableVicinity vicinity) {
-              // Merged row
-              if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              cellBuilder: (_, TableVicinity vicinity) {
+                // Merged row
+                if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+                  return TableViewCell(
+                    rowMergeStart: rowConfig.start,
+                    rowMergeSpan: rowConfig.span,
+                    child: const Text('R0:C0'),
+                  );
+                }
+                // Merged column
+                if (mergedColumns.contains(vicinity.column) &&
+                    vicinity.row == 0) {
+                  return TableViewCell(
+                    columnMergeStart: columnConfig.start,
+                    columnMergeSpan: columnConfig.span,
+                    child: const Text('R0:C1'),
+                  );
+                }
                 return TableViewCell(
-                  rowMergeStart: rowConfig.start,
-                  rowMergeSpan: rowConfig.span,
-                  child: const Text('R0:C0'),
+                  child: Text('R${vicinity.row}:C${vicinity.column}'),
                 );
-              }
-              // Merged column
-              if (mergedColumns.contains(vicinity.column) &&
-                  vicinity.row == 0) {
-                return TableViewCell(
-                  columnMergeStart: columnConfig.start,
-                  columnMergeSpan: columnConfig.span,
-                  child: const Text('R0:C1'),
-                );
-              }
-              return TableViewCell(
-                child: Text('R${vicinity.row}:C${vicinity.column}'),
-              );
-            },
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpAndSettle();
         expect(verticalController.position.pixels, 0.0);
         expect(horizontalController.position.pixels, 0.0);
@@ -2001,43 +2030,43 @@ void main() {
         );
       });
 
-      testWidgets('merged column that exceeds metrics will assert',
-          (WidgetTester tester) async {
-        final List<Object> exceptions = <Object>[];
+      testWidgets('merged column that exceeds metrics will assert', (
+        WidgetTester tester,
+      ) async {
+        final exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final List<int> mergedColumns = List<int>.generate(
-          10,
-          (int index) => index + 1,
-        );
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            columnBuilder: (int index) {
-              // There will only be 8 columns, but the merge is set up for 10.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
-            cellBuilder: (_, TableVicinity vicinity) {
-              // Merged column
-              if (mergedColumns.contains(vicinity.column) &&
-                  vicinity.row == 0) {
+        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              columnBuilder: (int index) {
+                // There will only be 8 columns, but the merge is set up for 10.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+              cellBuilder: (_, TableVicinity vicinity) {
+                // Merged column
+                if (mergedColumns.contains(vicinity.column) &&
+                    vicinity.row == 0) {
+                  return TableViewCell(
+                    columnMergeStart: columnConfig.start,
+                    columnMergeSpan: columnConfig.span,
+                    child: const Text('R0:C1'),
+                  );
+                }
                 return TableViewCell(
-                  columnMergeStart: columnConfig.start,
-                  columnMergeSpan: columnConfig.span,
-                  child: const Text('R0:C1'),
+                  child: Text('R${vicinity.row}:C${vicinity.column}'),
                 );
-              }
-              return TableViewCell(
-                child: Text('R${vicinity.row}:C${vicinity.column}'),
-              );
-            },
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpWidget(Container());
         FlutterError.onError = oldHandler;
         expect(exceptions.length, 3);
@@ -2052,42 +2081,42 @@ void main() {
         );
       });
 
-      testWidgets('merged row that exceeds metrics will assert',
-          (WidgetTester tester) async {
-        final List<Object> exceptions = <Object>[];
+      testWidgets('merged row that exceeds metrics will assert', (
+        WidgetTester tester,
+      ) async {
+        final exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final List<int> mergedRows = List<int>.generate(
-          10,
-          (int index) => index,
-        );
-        await tester.pumpWidget(MaterialApp(
-          home: getTableView(
-            rowBuilder: (int index) {
-              // There will only be 8 rows, but the merge is set up for 9.
-              if (index == 8) {
-                return null;
-              }
-              return largeSpan;
-            },
-            cellBuilder: (_, TableVicinity vicinity) {
-              // Merged column
-              if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+        final mergedRows = List<int>.generate(10, (int index) => index);
+        await tester.pumpWidget(
+          MaterialApp(
+            home: getTableView(
+              rowBuilder: (int index) {
+                // There will only be 8 rows, but the merge is set up for 9.
+                if (index == 8) {
+                  return null;
+                }
+                return largeSpan;
+              },
+              cellBuilder: (_, TableVicinity vicinity) {
+                // Merged column
+                if (mergedRows.contains(vicinity.row) && vicinity.column == 0) {
+                  return TableViewCell(
+                    rowMergeStart: rowConfig.start,
+                    rowMergeSpan: rowConfig.span,
+                    child: const Text('R0:C0'),
+                  );
+                }
                 return TableViewCell(
-                  rowMergeStart: rowConfig.start,
-                  rowMergeSpan: rowConfig.span,
-                  child: const Text('R0:C0'),
+                  child: Text('R${vicinity.row}:C${vicinity.column}'),
                 );
-              }
-              return TableViewCell(
-                child: Text('R${vicinity.row}:C${vicinity.column}'),
-              );
-            },
+              },
+            ),
           ),
-        ));
+        );
         await tester.pumpWidget(Container());
         FlutterError.onError = oldHandler;
         expect(exceptions.length, 3);
@@ -2106,16 +2135,15 @@ void main() {
 
   group('TableView.list', () {
     test('creates correct delegate', () {
-      final TableView tableView = TableView.list(
+      final tableView = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cells: const <List<TableViewCell>>[
           <TableViewCell>[cell, cell, cell],
-          <TableViewCell>[cell, cell, cell]
+          <TableViewCell>[cell, cell, cell],
         ],
       );
-      final TableCellListDelegate delegate =
-          tableView.delegate as TableCellListDelegate;
+      final delegate = tableView.delegate as TableCellListDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
@@ -2131,7 +2159,7 @@ void main() {
         () {
           tableView = TableView.list(
             cells: const <List<TableViewCell>>[
-              <TableViewCell>[cell]
+              <TableViewCell>[cell],
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -2150,7 +2178,7 @@ void main() {
         () {
           tableView = TableView.list(
             cells: const <List<TableViewCell>>[
-              <TableViewCell>[cell]
+              <TableViewCell>[cell],
             ],
             columnBuilder: (_) => span,
             rowBuilder: (_) => span,
@@ -2170,12 +2198,12 @@ void main() {
   });
 
   group('RenderTableViewport', () {
-    testWidgets('parent data and table vicinities',
-        (WidgetTester tester) async {
-      final Map<TableVicinity, UniqueKey> childKeys =
-          <TableVicinity, UniqueKey>{};
-      const TableSpan span = TableSpan(extent: FixedTableSpanExtent(200));
-      final TableView tableView = TableView.builder(
+    testWidgets('parent data and table vicinities', (
+      WidgetTester tester,
+    ) async {
+      final childKeys = <TableVicinity, UniqueKey>{};
+      const span = TableSpan(extent: FixedTableSpanExtent(200));
+      final tableView = TableView.builder(
         rowCount: 5,
         columnCount: 5,
         columnBuilder: (_) => span,
@@ -2183,10 +2211,7 @@ void main() {
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
           return TableViewCell(
-            child: SizedBox.square(
-              key: childKeys[vicinity],
-              dimension: 200,
-            ),
+            child: SizedBox.square(key: childKeys[vicinity], dimension: 200),
           );
         },
       );
@@ -2203,26 +2228,19 @@ void main() {
       expect(viewport.mainAxis, Axis.vertical);
       // first child
       TableVicinity vicinity = TableVicinity.zero;
-      TableViewParentData parentData = parentDataOf(
-        viewport.firstChild!,
-      );
+      TableViewParentData parentData = parentDataOf(viewport.firstChild!);
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, Offset.zero);
       expect(parentData.isVisible, isTrue);
       // after first child
       vicinity = const TableVicinity(column: 1, row: 0);
 
-      parentData = parentDataOf(
-        viewport.childAfter(viewport.firstChild!)!,
-      );
+      parentData = parentDataOf(viewport.childAfter(viewport.firstChild!)!);
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(200, 0.0));
       expect(parentData.isVisible, isTrue);
       // before first child (none)
-      expect(
-        viewport.childBefore(viewport.firstChild!),
-        isNull,
-      );
+      expect(viewport.childBefore(viewport.firstChild!), isNull);
 
       // last child
       vicinity = const TableVicinity(column: 4, row: 4);
@@ -2231,38 +2249,26 @@ void main() {
       expect(parentData.layoutOffset, const Offset(800.0, 800.0));
       expect(parentData.isVisible, isFalse);
       // after last child (none)
-      expect(
-        viewport.childAfter(viewport.lastChild!),
-        isNull,
-      );
+      expect(viewport.childAfter(viewport.lastChild!), isNull);
       // before last child
       vicinity = const TableVicinity(column: 3, row: 4);
-      parentData = parentDataOf(
-        viewport.childBefore(viewport.lastChild!)!,
-      );
+      parentData = parentDataOf(viewport.childBefore(viewport.lastChild!)!);
       expect(parentData.vicinity, vicinity);
       expect(parentData.layoutOffset, const Offset(600.0, 800.0));
       expect(parentData.isVisible, isFalse);
     });
 
     testWidgets('TableSpanPadding', (WidgetTester tester) async {
-      final Map<TableVicinity, UniqueKey> childKeys =
-          <TableVicinity, UniqueKey>{};
-      const TableSpan columnSpan = TableSpan(
+      final childKeys = <TableVicinity, UniqueKey>{};
+      const columnSpan = TableSpan(
         extent: FixedTableSpanExtent(200),
-        padding: TableSpanPadding(
-          leading: 10.0,
-          trailing: 20.0,
-        ),
+        padding: TableSpanPadding(leading: 10.0, trailing: 20.0),
       );
-      const TableSpan rowSpan = TableSpan(
+      const rowSpan = TableSpan(
         extent: FixedTableSpanExtent(200),
-        padding: TableSpanPadding(
-          leading: 30.0,
-          trailing: 40.0,
-        ),
+        padding: TableSpanPadding(leading: 30.0, trailing: 40.0),
       );
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (_) => columnSpan,
@@ -2270,10 +2276,7 @@ void main() {
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
           return TableViewCell(
-            child: SizedBox.square(
-              key: childKeys[vicinity],
-              dimension: 200,
-            ),
+            child: SizedBox.square(key: childKeys[vicinity], dimension: 200),
           );
         },
       );
@@ -2289,9 +2292,7 @@ void main() {
       );
       // first child
       TableVicinity vicinity = TableVicinity.zero;
-      TableViewParentData parentData = parentDataOf(
-        viewport.firstChild!,
-      );
+      TableViewParentData parentData = parentDataOf(viewport.firstChild!);
       expect(parentData.vicinity, vicinity);
       expect(
         parentData.layoutOffset,
@@ -2303,9 +2304,7 @@ void main() {
       // after first child
       vicinity = const TableVicinity(column: 1, row: 0);
 
-      parentData = parentDataOf(
-        viewport.childAfter(viewport.firstChild!)!,
-      );
+      parentData = parentDataOf(viewport.childAfter(viewport.firstChild!)!);
       expect(parentData.vicinity, vicinity);
       expect(
         parentData.layoutOffset,
@@ -2338,34 +2337,24 @@ void main() {
         cellBuilder: (_, TableVicinity vicinity) {
           childKeys[vicinity] = childKeys[vicinity] ?? UniqueKey();
           return TableViewCell(
-            child: SizedBox.square(
-              key: childKeys[vicinity],
-              dimension: 200,
-            ),
+            child: SizedBox.square(key: childKeys[vicinity], dimension: 200),
           );
         },
       );
 
       await tester.pumpWidget(MaterialApp(home: tableView));
       await tester.pumpAndSettle();
-      viewport = getViewport(
-        tester,
-        childKeys.values.first,
-      );
+      viewport = getViewport(tester, childKeys.values.first);
       // first child
       vicinity = TableVicinity.zero;
-      parentData = parentDataOf(
-        viewport.firstChild!,
-      );
+      parentData = parentDataOf(viewport.firstChild!);
       expect(parentData.vicinity, vicinity);
       // layoutOffset is later corrected for reverse in the paintOffset
       expect(parentData.paintOffset, const Offset(590.0, 370.0));
       // after first child
       vicinity = const TableVicinity(column: 1, row: 0);
 
-      parentData = parentDataOf(
-        viewport.childAfter(viewport.firstChild!)!,
-      );
+      parentData = parentDataOf(viewport.childAfter(viewport.firstChild!)!);
       expect(parentData.vicinity, vicinity);
       expect(parentData.paintOffset, const Offset(360.0, 370.0));
 
@@ -2377,18 +2366,14 @@ void main() {
     });
 
     testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
-      int tapCounter = 0;
+      var tapCounter = 0;
       // Rows
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
-        rowBuilder: (int index) => index.isEven
-            ? getTappableSpan(
-                index,
-                () => tapCounter++,
-              )
-            : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => tapCounter++) : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2429,12 +2414,8 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         rowBuilder: (_) => span,
-        columnBuilder: (int index) => index.isEven
-            ? getTappableSpan(
-                index,
-                () => tapCounter++,
-              )
-            : span,
+        columnBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => tapCounter++) : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2470,22 +2451,15 @@ void main() {
       expect(tapCounter, 8);
 
       // Intersecting - main axis sets precedence
-      int rowTapCounter = 0;
-      int columnTapCounter = 0;
+      var rowTapCounter = 0;
+      var columnTapCounter = 0;
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        rowBuilder: (int index) => index.isEven
-            ? getTappableSpan(
-                index,
-                () => rowTapCounter++,
-              )
-            : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => rowTapCounter++) : span,
         columnBuilder: (int index) => index.isEven
-            ? getTappableSpan(
-                index,
-                () => columnTapCounter++,
-              )
+            ? getTappableSpan(index, () => columnTapCounter++)
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2534,17 +2508,10 @@ void main() {
         mainAxis: Axis.horizontal,
         rowCount: 50,
         columnCount: 50,
-        rowBuilder: (int index) => index.isEven
-            ? getTappableSpan(
-                index,
-                () => rowTapCounter++,
-              )
-            : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => rowTapCounter++) : span,
         columnBuilder: (int index) => index.isEven
-            ? getTappableSpan(
-                index,
-                () => columnTapCounter++,
-              )
+            ? getTappableSpan(index, () => columnTapCounter++)
             : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2570,21 +2537,20 @@ void main() {
       expect(rowTapCounter, 0);
     });
 
-    testWidgets('provides correct details in TableSpanExtentDelegate',
-        (WidgetTester tester) async {
-      final TestTableSpanExtent columnExtent = TestTableSpanExtent();
-      final TestTableSpanExtent rowExtent = TestTableSpanExtent();
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final TableView tableView = TableView.builder(
+    testWidgets('provides correct details in TableSpanExtentDelegate', (
+      WidgetTester tester,
+    ) async {
+      final columnExtent = TestTableSpanExtent();
+      final rowExtent = TestTableSpanExtent();
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final tableView = TableView.builder(
         rowCount: 10,
         columnCount: 10,
         columnBuilder: (_) => TableSpan(extent: columnExtent),
         rowBuilder: (_) => TableSpan(extent: rowExtent),
         cellBuilder: (_, TableVicinity vicinity) {
-          return const TableViewCell(
-            child: SizedBox.square(dimension: 100),
-          );
+          return const TableViewCell(child: SizedBox.square(dimension: 100));
         },
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -2625,11 +2591,12 @@ void main() {
       expect(rowExtent.delegate.viewportExtent, 600.0);
     });
 
-    testWidgets('First row/column layout based on padding',
-        (WidgetTester tester) async {
+    testWidgets('First row/column layout based on padding', (
+      WidgetTester tester,
+    ) async {
       // Huge padding, first span layout
       // Column-wise
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => const TableSpan(
@@ -2695,16 +2662,16 @@ void main() {
       expect(find.text('Row: 2 Column: 1'), findsNothing);
     });
 
-    testWidgets('lazy layout accounts for gradually accrued padding',
-        (WidgetTester tester) async {
+    testWidgets('lazy layout accounts for gradually accrued padding', (
+      WidgetTester tester,
+    ) async {
       // Check with gradually accrued paddings
       // Column-wise
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder: (_) => const TableSpan(
-          extent: FixedTableSpanExtent(200),
-        ),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(200)),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2762,9 +2729,7 @@ void main() {
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        rowBuilder: (_) => const TableSpan(
-          extent: FixedTableSpanExtent(200),
-        ),
+        rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(200)),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2822,9 +2787,9 @@ void main() {
     });
 
     testWidgets('regular layout - no pinning', (WidgetTester tester) async {
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final TableView tableView = TableView.builder(
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -2901,9 +2866,9 @@ void main() {
 
     testWidgets('pinned rows and columns', (WidgetTester tester) async {
       // Just pinned rows
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      TableView tableView = TableView.builder(
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      var tableView = TableView.builder(
         rowCount: 50,
         pinnedRowCount: 1,
         columnCount: 50,
@@ -3143,9 +3108,9 @@ void main() {
     });
 
     testWidgets('only paints visible cells', (WidgetTester tester) async {
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final TableView tableView = TableView.builder(
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -3209,9 +3174,10 @@ void main() {
       expect(cellNeedsPaint('Row: 6 Column: 8'), isTrue); // also in cacheExtent
     });
 
-    testWidgets('paints decorations in correct order',
-        (WidgetTester tester) async {
-      TableView tableView = TableView.builder(
+    testWidgets('paints decorations in correct order', (
+      WidgetTester tester,
+    ) async {
+      var tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (int index) => TableSpan(
@@ -3221,10 +3187,7 @@ void main() {
             consumeSpanPadding: false,
             borderRadius: BorderRadius.circular(10.0),
             border: const TableSpanBorder(
-              trailing: BorderSide(
-                color: Colors.orange,
-                width: 3,
-              ),
+              trailing: BorderSide(color: Colors.orange, width: 3),
             ),
           ),
           backgroundDecoration: TableSpanDecoration(
@@ -3240,10 +3203,7 @@ void main() {
             // consumePadding true by default
             borderRadius: BorderRadius.circular(30.0),
             border: const TableSpanBorder(
-              leading: BorderSide(
-                color: Colors.green,
-                width: 3,
-              ),
+              leading: BorderSide(color: Colors.green, width: 3),
             ),
           ),
           backgroundDecoration: TableSpanDecoration(
@@ -3257,7 +3217,7 @@ void main() {
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3387,10 +3347,7 @@ void main() {
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
             border: TableSpanBorder(
-              trailing: BorderSide(
-                color: Colors.orange,
-                width: 3,
-              ),
+              trailing: BorderSide(color: Colors.orange, width: 3),
             ),
           ),
           backgroundDecoration: TableSpanDecoration(
@@ -3401,10 +3358,7 @@ void main() {
           extent: const FixedTableSpanExtent(200.0),
           foregroundDecoration: const TableSpanDecoration(
             border: TableSpanBorder(
-              leading: BorderSide(
-                color: Colors.green,
-                width: 3,
-              ),
+              leading: BorderSide(color: Colors.green, width: 3),
             ),
           ),
           backgroundDecoration: TableSpanDecoration(
@@ -3416,7 +3370,7 @@ void main() {
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3496,28 +3450,27 @@ void main() {
       );
     });
 
-    testWidgets('child paint rects are correct when reversed and pinned',
-        (WidgetTester tester) async {
+    testWidgets('child paint rects are correct when reversed and pinned', (
+      WidgetTester tester,
+    ) async {
       // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder: (int index) => const TableSpan(
-          extent: FixedTableSpanExtent(200.0),
-        ),
-        rowBuilder: (int index) => const TableSpan(
-          extent: FixedTableSpanExtent(200.0),
-        ),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3554,18 +3507,16 @@ void main() {
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder: (int index) => const TableSpan(
-          extent: FixedTableSpanExtent(200.0),
-        ),
-        rowBuilder: (int index) => const TableSpan(
-          extent: FixedTableSpanExtent(200.0),
-        ),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3596,9 +3547,9 @@ void main() {
     });
 
     testWidgets('mouse handling', (WidgetTester tester) async {
-      int enterCounter = 0;
-      int exitCounter = 0;
-      final TableView tableView = TableView.builder(
+      var enterCounter = 0;
+      var exitCounter = 0;
+      final tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -3656,16 +3607,14 @@ void main() {
       // Regression tests for https://github.com/flutter/flutter/issues/143526
       // These tests all use the same collection of merged pinned cells in a
       // variety of combinations.
-      final Map<TableVicinity, ({int start, int span})> bothMerged =
-          <TableVicinity, ({int start, int span})>{
+      final bothMerged = <TableVicinity, ({int start, int span})>{
         TableVicinity.zero: (start: 0, span: 2),
         const TableVicinity(row: 1, column: 0): (start: 0, span: 2),
         const TableVicinity(row: 0, column: 1): (start: 0, span: 2),
         const TableVicinity(row: 1, column: 1): (start: 0, span: 2),
       };
 
-      final Map<TableVicinity, ({int start, int span})> rowMerged =
-          <TableVicinity, ({int start, int span})>{
+      final rowMerged = <TableVicinity, ({int start, int span})>{
         const TableVicinity(row: 2, column: 0): (start: 2, span: 2),
         const TableVicinity(row: 3, column: 0): (start: 2, span: 2),
         const TableVicinity(row: 4, column: 1): (start: 4, span: 3),
@@ -3673,20 +3622,19 @@ void main() {
         const TableVicinity(row: 6, column: 1): (start: 4, span: 3),
       };
 
-      final Map<TableVicinity, ({int start, int span})> columnMerged =
-          <TableVicinity, ({int start, int span})>{
+      final columnMerged = <TableVicinity, ({int start, int span})>{
         const TableVicinity(row: 0, column: 2): (start: 2, span: 2),
         const TableVicinity(row: 0, column: 3): (start: 2, span: 2),
         const TableVicinity(row: 1, column: 4): (start: 4, span: 3),
         const TableVicinity(row: 1, column: 5): (start: 4, span: 3),
         const TableVicinity(row: 1, column: 6): (start: 4, span: 3),
       };
-      const TableSpan span = TableSpan(extent: FixedTableSpanExtent(75));
+      const span = TableSpan(extent: FixedTableSpanExtent(75));
 
       testWidgets('Normal axes', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,
           ),
@@ -3794,9 +3742,9 @@ void main() {
       });
 
       testWidgets('Vertical reversed', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -3905,9 +3853,9 @@ void main() {
       });
 
       testWidgets('Horizontal reversed', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,
           ),
@@ -4016,9 +3964,9 @@ void main() {
       });
 
       testWidgets('Both reversed', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -4130,72 +4078,74 @@ void main() {
   });
 
   testWidgets(
-      'Merged unpinned cells following pinned cells are laid out correctly',
-      (WidgetTester tester) async {
-    final ScrollController verticalController = ScrollController();
-    final ScrollController horizontalController = ScrollController();
-    final Set<TableVicinity> mergedCell = <TableVicinity>{
-      const TableVicinity(row: 2, column: 2),
-      const TableVicinity(row: 3, column: 2),
-      const TableVicinity(row: 2, column: 3),
-      const TableVicinity(row: 3, column: 3),
-    };
-    final TableView tableView = TableView.builder(
-      columnCount: 10,
-      rowCount: 10,
-      columnBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
-      rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
-      cellBuilder: (BuildContext context, TableVicinity vicinity) {
-        if (mergedCell.contains(vicinity)) {
-          return const TableViewCell(
-            rowMergeStart: 2,
-            rowMergeSpan: 2,
-            columnMergeStart: 2,
-            columnMergeSpan: 2,
-            child: Text('Tile c: 2, r: 2'),
+    'Merged unpinned cells following pinned cells are laid out correctly',
+    (WidgetTester tester) async {
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final mergedCell = <TableVicinity>{
+        const TableVicinity(row: 2, column: 2),
+        const TableVicinity(row: 3, column: 2),
+        const TableVicinity(row: 2, column: 3),
+        const TableVicinity(row: 3, column: 3),
+      };
+      final tableView = TableView.builder(
+        columnCount: 10,
+        rowCount: 10,
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
+        rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        cellBuilder: (BuildContext context, TableVicinity vicinity) {
+          if (mergedCell.contains(vicinity)) {
+            return const TableViewCell(
+              rowMergeStart: 2,
+              rowMergeSpan: 2,
+              columnMergeStart: 2,
+              columnMergeSpan: 2,
+              child: Text('Tile c: 2, r: 2'),
+            );
+          }
+          return TableViewCell(
+            child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
           );
-        }
-        return TableViewCell(
-          child: Text('Tile c: ${vicinity.column}, r: ${vicinity.row}'),
-        );
-      },
-      pinnedRowCount: 1,
-      pinnedColumnCount: 1,
-      verticalDetails: ScrollableDetails.vertical(
-        controller: verticalController,
-      ),
-      horizontalDetails: ScrollableDetails.horizontal(
-        controller: horizontalController,
-      ),
-    );
-    await tester.pumpWidget(MaterialApp(home: tableView));
-    await tester.pumpAndSettle();
+        },
+        pinnedRowCount: 1,
+        pinnedColumnCount: 1,
+        verticalDetails: ScrollableDetails.vertical(
+          controller: verticalController,
+        ),
+        horizontalDetails: ScrollableDetails.horizontal(
+          controller: horizontalController,
+        ),
+      );
+      await tester.pumpWidget(MaterialApp(home: tableView));
+      await tester.pumpAndSettle();
 
-    expect(verticalController.position.pixels, 0.0);
-    expect(horizontalController.position.pixels, 0.0);
-    expect(
-      tester.getRect(find.text('Tile c: 2, r: 2')),
-      const Rect.fromLTWH(200.0, 200.0, 200.0, 200.0),
-    );
+      expect(verticalController.position.pixels, 0.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(
+        tester.getRect(find.text('Tile c: 2, r: 2')),
+        const Rect.fromLTWH(200.0, 200.0, 200.0, 200.0),
+      );
 
-    verticalController.jumpTo(10.0);
-    await tester.pumpAndSettle();
-    expect(verticalController.position.pixels, 10.0);
-    expect(horizontalController.position.pixels, 0.0);
-    expect(
-      tester.getRect(find.text('Tile c: 2, r: 2')),
-      const Rect.fromLTWH(200.0, 190.0, 200.0, 200.0),
-    );
+      verticalController.jumpTo(10.0);
+      await tester.pumpAndSettle();
+      expect(verticalController.position.pixels, 10.0);
+      expect(horizontalController.position.pixels, 0.0);
+      expect(
+        tester.getRect(find.text('Tile c: 2, r: 2')),
+        const Rect.fromLTWH(200.0, 190.0, 200.0, 200.0),
+      );
 
-    horizontalController.jumpTo(10.0);
-    await tester.pumpAndSettle();
-    expect(verticalController.position.pixels, 10.0);
-    expect(horizontalController.position.pixels, 10.0);
-    expect(
-      tester.getRect(find.text('Tile c: 2, r: 2')),
-      const Rect.fromLTWH(190.0, 190.0, 200.0, 200.0),
-    );
-  });
+      horizontalController.jumpTo(10.0);
+      await tester.pumpAndSettle();
+      expect(verticalController.position.pixels, 10.0);
+      expect(horizontalController.position.pixels, 10.0);
+      expect(
+        tester.getRect(find.text('Tile c: 2, r: 2')),
+        const Rect.fromLTWH(190.0, 190.0, 200.0, 200.0),
+      );
+    },
+  );
 }
 
 class _NullBuildContext implements BuildContext, TwoDimensionalChildManager {

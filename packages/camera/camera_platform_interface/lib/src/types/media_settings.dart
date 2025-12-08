@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,11 +19,15 @@ class MediaSettings {
     this.videoBitrate,
     this.audioBitrate,
     this.enableAudio = false,
-  })  : assert(fps == null || fps > 0, 'fps must be null or greater than zero'),
-        assert(videoBitrate == null || videoBitrate > 0,
-            'videoBitrate must be null or greater than zero'),
-        assert(audioBitrate == null || audioBitrate > 0,
-            'audioBitrate must be null or greater than zero');
+  }) : assert(fps == null || fps > 0, 'fps must be null or greater than zero'),
+       assert(
+         videoBitrate == null || videoBitrate > 0,
+         'videoBitrate must be null or greater than zero',
+       ),
+       assert(
+         audioBitrate == null || audioBitrate > 0,
+         'audioBitrate must be null or greater than zero',
+       );
 
   /// [ResolutionPreset] affect the quality of video recording and image capture.
   final ResolutionPreset? resolutionPreset;
@@ -58,12 +62,12 @@ class MediaSettings {
 
   @override
   int get hashCode => Object.hash(
-        resolutionPreset,
-        fps,
-        videoBitrate,
-        audioBitrate,
-        enableAudio,
-      );
+    resolutionPreset,
+    fps,
+    videoBitrate,
+    audioBitrate,
+    enableAudio,
+  );
 
   @override
   String toString() {

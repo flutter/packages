@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -51,10 +51,9 @@ void main() {
     required MockCameraSelector mockCameraSelector,
     required int sensorRotationDegrees,
   }) {
-    final MockProcessCameraProvider mockProcessCameraProvider =
-        MockProcessCameraProvider();
-    final MockCameraInfo mockCameraInfo = MockCameraInfo();
-    final MockCamera mockCamera = MockCamera();
+    final mockProcessCameraProvider = MockProcessCameraProvider();
+    final mockCameraInfo = MockCameraInfo();
+    final mockCamera = MockCamera();
 
     // Mock retrieving available test camera.
     when(
@@ -107,20 +106,26 @@ void main() {
           PigeonInstanceManager? pigeon_instanceManager,
         }) async => mockProcessCameraProvider,
     newCameraSelector: createCameraSelector,
-    newPreview: ({
-      int? targetRotation,
-      ResolutionSelector? resolutionSelector,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      final MockPreview preview = MockPreview();
-      when(
-        preview.surfaceProducerHandlesCropAndRotation(),
-      ).thenAnswer((_) async => handlesCropAndRotation);
-      return preview;
-    },
+    newPreview:
+        ({
+          int? targetRotation,
+          CameraIntegerRange? targetFpsRange,
+          ResolutionSelector? resolutionSelector,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final preview = MockPreview();
+          when(
+            preview.surfaceProducerHandlesCropAndRotation(),
+          ).thenAnswer((_) async => handlesCropAndRotation);
+          when(preview.getResolutionInfo()).thenAnswer(
+            (_) async =>
+                ResolutionInfo.pigeon_detached(resolution: MockCameraSize()),
+          );
+          return preview;
+        },
     newImageCapture:
         ({
           int? targetRotation,
@@ -141,110 +146,123 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) => MockRecorder(),
-    withOutputVideoCapture: ({
-      required VideoOutput videoOutput,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockVideoCapture();
-    },
-    newImageAnalysis: ({
-      int? targetRotation,
-      ResolutionSelector? resolutionSelector,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockImageAnalysis();
-    },
-    newResolutionStrategy: ({
-      required CameraSize boundSize,
-      required ResolutionStrategyFallbackRule fallbackRule,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockResolutionStrategy();
-    },
-    newResolutionSelector: ({
-      AspectRatioStrategy? aspectRatioStrategy,
-      ResolutionStrategy? resolutionStrategy,
-      ResolutionFilter? resolutionFilter,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockResolutionSelector();
-    },
-    lowerQualityOrHigherThanFallbackStrategy: ({
-      required VideoQuality quality,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockFallbackStrategy();
-    },
-    lowerQualityThanFallbackStrategy: ({
-      required VideoQuality quality,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockFallbackStrategy();
-    },
-    fromCamera2CameraInfo: ({
-      required CameraInfo cameraInfo,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      final MockCamera2CameraInfo camera2cameraInfo = MockCamera2CameraInfo();
-      when(
-        camera2cameraInfo.getCameraCharacteristic(any),
-      ).thenAnswer((_) async => 90);
-      return camera2cameraInfo;
-    },
-    fromQualitySelector: ({
-      required VideoQuality quality,
-      FallbackStrategy? fallbackStrategy,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockQualitySelector();
-    },
-    newObserver: <T>({
-      required void Function(Observer<T>, T) onChanged,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return Observer<T>.detached(
-        onChanged: onChanged,
-        pigeon_instanceManager: PigeonInstanceManager(
-          onWeakReferenceRemoved: (_) {},
-        ),
-      );
-    },
-    newSystemServicesManager: ({
-      required void Function(SystemServicesManager, String) onCameraError,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockSystemServicesManager();
-    },
+    withOutputVideoCapture:
+        ({
+          required VideoOutput videoOutput,
+          CameraIntegerRange? targetFpsRange,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockVideoCapture();
+        },
+    newImageAnalysis:
+        ({
+          int? targetRotation,
+          CameraIntegerRange? targetFpsRange,
+          ResolutionSelector? resolutionSelector,
+          int? outputImageFormat,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockImageAnalysis();
+        },
+    newResolutionStrategy:
+        ({
+          required CameraSize boundSize,
+          required ResolutionStrategyFallbackRule fallbackRule,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockResolutionStrategy();
+        },
+    newResolutionSelector:
+        ({
+          AspectRatioStrategy? aspectRatioStrategy,
+          ResolutionStrategy? resolutionStrategy,
+          ResolutionFilter? resolutionFilter,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockResolutionSelector();
+        },
+    lowerQualityOrHigherThanFallbackStrategy:
+        ({
+          required VideoQuality quality,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockFallbackStrategy();
+        },
+    lowerQualityThanFallbackStrategy:
+        ({
+          required VideoQuality quality,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockFallbackStrategy();
+        },
+    fromCamera2CameraInfo:
+        ({
+          required CameraInfo cameraInfo,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final camera2cameraInfo = MockCamera2CameraInfo();
+          when(
+            camera2cameraInfo.getCameraCharacteristic(any),
+          ).thenAnswer((_) async => 90);
+          return camera2cameraInfo;
+        },
+    fromQualitySelector:
+        ({
+          required VideoQuality quality,
+          FallbackStrategy? fallbackStrategy,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockQualitySelector();
+        },
+    newObserver:
+        <T>({
+          required void Function(Observer<T>, T) onChanged,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return Observer<T>.detached(
+            onChanged: onChanged,
+            pigeon_instanceManager: PigeonInstanceManager(
+              onWeakReferenceRemoved: (_) {},
+            ),
+          );
+        },
+    newSystemServicesManager:
+        ({
+          required void Function(SystemServicesManager, String) onCameraError,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockSystemServicesManager();
+        },
     newDeviceOrientationManager:
         ({
           required void Function(DeviceOrientationManager, String)
@@ -254,33 +272,34 @@ void main() {
           // ignore: non_constant_identifier_names
           PigeonInstanceManager? pigeon_instanceManager,
         }) => deviceOrientationManager,
-    newAspectRatioStrategy: ({
-      required AspectRatio preferredAspectRatio,
-      required AspectRatioStrategyFallbackRule fallbackRule,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      final MockAspectRatioStrategy mockAspectRatioStrategy =
-          MockAspectRatioStrategy();
-      when(
-        mockAspectRatioStrategy.getFallbackRule(),
-      ).thenAnswer((_) async => fallbackRule);
-      when(
-        mockAspectRatioStrategy.getPreferredAspectRatio(),
-      ).thenAnswer((_) async => preferredAspectRatio);
-      return mockAspectRatioStrategy;
-    },
-    createWithOnePreferredSizeResolutionFilter: ({
-      required CameraSize preferredSize,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
-      return MockResolutionFilter();
-    },
+    newAspectRatioStrategy:
+        ({
+          required AspectRatio preferredAspectRatio,
+          required AspectRatioStrategyFallbackRule fallbackRule,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          final mockAspectRatioStrategy = MockAspectRatioStrategy();
+          when(
+            mockAspectRatioStrategy.getFallbackRule(),
+          ).thenAnswer((_) async => fallbackRule);
+          when(
+            mockAspectRatioStrategy.getPreferredAspectRatio(),
+          ).thenAnswer((_) async => preferredAspectRatio);
+          return mockAspectRatioStrategy;
+        },
+    createWithOnePreferredSizeResolutionFilter:
+        ({
+          required CameraSize preferredSize,
+          // ignore: non_constant_identifier_names
+          BinaryMessenger? pigeon_binaryMessenger,
+          // ignore: non_constant_identifier_names
+          PigeonInstanceManager? pigeon_instanceManager,
+        }) {
+          return MockResolutionFilter();
+        },
   );
 
   /// Returns CameraXProxy used to mock all calls to native Android in
@@ -304,8 +323,7 @@ void main() {
     required Future<String> Function() getUiOrientation,
     required Future<int> Function() getDefaultDisplayRotation,
   }) {
-    final MockDeviceOrientationManager deviceOrientationManager =
-        MockDeviceOrientationManager();
+    final deviceOrientationManager = MockDeviceOrientationManager();
     when(
       deviceOrientationManager.getUiOrientation(),
     ).thenAnswer((_) => getUiOrientation());
@@ -394,7 +412,7 @@ void main() {
   ///  [ 0.0,  0.0,  1.0,  0.0],
   ///  [ 0.0,  0.0,  0.0,  1.0]]
   void checkXAxisIsMirrored(Matrix4 transformationMatrix) {
-    final Matrix4 mirrorAcrossXMatrix = Matrix4(
+    final mirrorAcrossXMatrix = Matrix4(
       -1.0,
       0.0,
       0.0,
@@ -426,7 +444,7 @@ void main() {
   ///  [ 0.0,  0.0,  1.0,  0.0],
   ///  [ 0.0,  0.0,  0.0,  1.0]]
   void checkYAxisIsMirrored(Matrix4 transformationMatrix) {
-    final Matrix4 mirrorAcrossYMatrix = Matrix4(
+    final mirrorAcrossYMatrix = Matrix4(
       1.0,
       0.0,
       0.0,
@@ -454,7 +472,7 @@ void main() {
   group('when handlesCropAndRotation is true', () {
     // Test that preview rotation responds to initial default display rotation:
     group('initial device orientation is landscapeRight,', () {
-      final MockCameraSelector mockCameraSelector = MockCameraSelector();
+      final mockCameraSelector = MockCameraSelector();
       late AndroidCameraCameraX camera;
       late int cameraId;
       late DeviceOrientation testInitialDeviceOrientation;
@@ -500,21 +518,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async =>
-                    _serializeDeviceOrientation(testInitialDeviceOrientation),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(Surface.rotation0),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(Surface.rotation0),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -554,21 +573,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async =>
-                    _serializeDeviceOrientation(testInitialDeviceOrientation),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(Surface.rotation90),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(Surface.rotation90),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -606,21 +626,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async =>
-                    _serializeDeviceOrientation(testInitialDeviceOrientation),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(Surface.rotation180),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(Surface.rotation180),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -658,21 +679,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async =>
-                    _serializeDeviceOrientation(testInitialDeviceOrientation),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(Surface.rotation270),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(testInitialDeviceOrientation),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(Surface.rotation270),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -705,7 +727,7 @@ void main() {
 
     // Test that preview rotation responds to initial device orientation:
     group('initial default display rotation is 90,', () {
-      final MockCameraSelector mockCameraSelector = MockCameraSelector();
+      final mockCameraSelector = MockCameraSelector();
       late AndroidCameraCameraX camera;
       late int cameraId;
       late int testInitialDefaultDisplayRotation;
@@ -751,21 +773,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async =>
-                    _serializeDeviceOrientation(DeviceOrientation.portraitUp),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(testInitialDefaultDisplayRotation),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.portraitUp),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(testInitialDefaultDisplayRotation),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -803,22 +826,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async => _serializeDeviceOrientation(
-                  DeviceOrientation.landscapeLeft,
-                ),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(testInitialDefaultDisplayRotation),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(testInitialDefaultDisplayRotation),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -856,21 +879,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async =>
-                    _serializeDeviceOrientation(DeviceOrientation.portraitDown),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(testInitialDefaultDisplayRotation),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.portraitDown),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(testInitialDefaultDisplayRotation),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -908,22 +932,22 @@ void main() {
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
-            getUiOrientation:
-                () async => _serializeDeviceOrientation(
-                  DeviceOrientation.landscapeRight,
-                ),
-            getDefaultDisplayRotation:
-                () => Future<int>.value(testInitialDefaultDisplayRotation),
+            getUiOrientation: () async =>
+                _serializeDeviceOrientation(DeviceOrientation.landscapeRight),
+            getDefaultDisplayRotation: () =>
+                Future<int>.value(testInitialDefaultDisplayRotation),
           );
 
           // Get and create test camera.
-          final List<CameraDescription> availableCameras =
-              await camera.availableCameras();
+          final List<CameraDescription> availableCameras = await camera
+              .availableCameras();
           expect(availableCameras.length, 1);
-          await camera.createCameraWithSettings(
-            availableCameras.first,
-            testMediaSettings,
-          );
+          final int flutterSurfaceTextureId = await camera
+              .createCameraWithSettings(
+                availableCameras.first,
+                testMediaSettings,
+              );
+          await camera.initializeCamera(flutterSurfaceTextureId);
 
           // Put camera preview in widget tree and pump one frame so that Future to retrieve
           // the initial default display rotation completes.
@@ -958,14 +982,14 @@ void main() {
     testWidgets(
       'device orientation is portraitDown, then the preview Texture rotates correctly as the default display rotation changes',
       (WidgetTester tester) async {
-        final AndroidCameraCameraX camera = AndroidCameraCameraX();
-        const int cameraId = 11;
+        final camera = AndroidCameraCameraX();
+        const cameraId = 11;
         const DeviceOrientation testDeviceOrientation =
             DeviceOrientation.portraitDown;
 
         // Create and set up mock CameraSelector, mock ProcessCameraProvider, and media settings for test front camera.
         // These settings do not matter for this test.
-        final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+        final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
@@ -982,12 +1006,11 @@ void main() {
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 270,
             );
-        const MediaSettings testMediaSettings = MediaSettings();
+        const testMediaSettings = MediaSettings();
 
         // Tell camera that handlesCropAndRotation is true, set camera initial device orientation
         // to portrait down, set initial default display rotation to 0 degrees clockwise.
-        final MockDeviceOrientationManager mockDeviceOrientationManager =
-            MockDeviceOrientationManager();
+        final mockDeviceOrientationManager = MockDeviceOrientationManager();
         when(mockDeviceOrientationManager.getUiOrientation()).thenAnswer(
           (_) => Future<String>.value(
             _serializeDeviceOrientation(testDeviceOrientation),
@@ -1006,24 +1029,25 @@ void main() {
         );
 
         // Get and create test front camera.
-        final List<CameraDescription> availableCameras =
-            await camera.availableCameras();
+        final List<CameraDescription> availableCameras = await camera
+            .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: counterClockwiseCurrentDefaultDisplayRotation - cameraPreviewPreAppliedRotation,
         // where the cameraPreviewPreAppliedRotation is the clockwise rotation applied by the CameraPreview widget
         // according to the current device orientation (fixed to portraitDown for this test, so it is 180).
-        final Map<int, int> expectedRotationPerDefaultDisplayRotation =
-            <int, int>{
-              Surface.rotation0: _180DegreesClockwise,
-              Surface.rotation90: _90DegreesClockwise,
-              Surface.rotation180: _0DegreesClockwise,
-              Surface.rotation270: _270DegreesClockwise,
-            };
+        final expectedRotationPerDefaultDisplayRotation = <int, int>{
+          Surface.rotation0: _180DegreesClockwise,
+          Surface.rotation90: _90DegreesClockwise,
+          Surface.rotation180: _0DegreesClockwise,
+          Surface.rotation270: _270DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
@@ -1035,8 +1059,9 @@ void main() {
             mockDeviceOrientationManager.getDefaultDisplayRotation(),
           ).thenAnswer((_) => Future<int>.value(currentDefaultDisplayRotation));
 
-          const DeviceOrientationChangedEvent testEvent =
-              DeviceOrientationChangedEvent(testDeviceOrientation);
+          const testEvent = DeviceOrientationChangedEvent(
+            testDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -1049,10 +1074,9 @@ void main() {
           final RotatedBox rotatedBox = tester.widget<RotatedBox>(
             find.byType(RotatedBox),
           );
-          final int clockwiseQuarterTurns =
-              rotatedBox.quarterTurns < 0
-                  ? rotatedBox.quarterTurns + 4
-                  : rotatedBox.quarterTurns;
+          final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
+              ? rotatedBox.quarterTurns + 4
+              : rotatedBox.quarterTurns;
           expect(rotatedBox.child, isA<Texture>());
           expect((rotatedBox.child! as Texture).textureId, cameraId);
           expect(
@@ -1069,13 +1093,13 @@ void main() {
     testWidgets(
       'initial default display rotation is 270 degrees clockwise, then the preview Texture rotates correctly as the device orientation changes',
       (WidgetTester tester) async {
-        final AndroidCameraCameraX camera = AndroidCameraCameraX();
-        const int cameraId = 11;
+        final camera = AndroidCameraCameraX();
+        const cameraId = 11;
         const int testInitialDefaultDisplayRotation = Surface.rotation270;
 
         // Create and set up mock CameraSelector, mock ProcessCameraProvider, and media settings for test front camera.
         // These settings do not matter for this test.
-        final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+        final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
@@ -1092,7 +1116,7 @@ void main() {
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 270,
             );
-        const MediaSettings testMediaSettings = MediaSettings();
+        const testMediaSettings = MediaSettings();
 
         // Tell camera that handlesCropAndRotation is true, set camera initial device orientation
         // to portrait up, set initial default display rotation to 270 degrees clockwise.
@@ -1103,38 +1127,40 @@ void main() {
           getUiOrientation: /* initial device orientation is irrelevant */
               () async =>
                   _serializeDeviceOrientation(DeviceOrientation.portraitUp),
-          getDefaultDisplayRotation:
-              () => Future<int>.value(testInitialDefaultDisplayRotation),
+          getDefaultDisplayRotation: () =>
+              Future<int>.value(testInitialDefaultDisplayRotation),
         );
 
         // Get and create test front camera.
-        final List<CameraDescription> availableCameras =
-            await camera.availableCameras();
+        final List<CameraDescription> availableCameras = await camera
+            .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: counterClockwiseCurrentDefaultDisplayRotation - cameraPreviewPreAppliedRotation,
         // where the cameraPreviewPreAppliedRotation is the clockwise rotation applied by the CameraPreview widget
         // according to the current device orientation. counterClockwiseCurrentDefaultDisplayRotation is fixed to 90 for
         // this test (the counter-clockwise rotation of the clockwise 270 degree default display rotation).
-        final Map<DeviceOrientation, int> expectedRotationPerDeviceOrientation =
-            <DeviceOrientation, int>{
-              DeviceOrientation.portraitUp: _90DegreesClockwise,
-              DeviceOrientation.landscapeRight: _0DegreesClockwise,
-              DeviceOrientation.portraitDown: _270DegreesClockwise,
-              DeviceOrientation.landscapeLeft: _180DegreesClockwise,
-            };
+        final expectedRotationPerDeviceOrientation = <DeviceOrientation, int>{
+          DeviceOrientation.portraitUp: _90DegreesClockwise,
+          DeviceOrientation.landscapeRight: _0DegreesClockwise,
+          DeviceOrientation.portraitDown: _270DegreesClockwise,
+          DeviceOrientation.landscapeLeft: _180DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
 
         for (final DeviceOrientation currentDeviceOrientation
             in expectedRotationPerDeviceOrientation.keys) {
-          final DeviceOrientationChangedEvent testEvent =
-              DeviceOrientationChangedEvent(currentDeviceOrientation);
+          final testEvent = DeviceOrientationChangedEvent(
+            currentDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -1147,10 +1173,9 @@ void main() {
           final RotatedBox rotatedBox = tester.widget<RotatedBox>(
             find.byType(RotatedBox),
           );
-          final int clockwiseQuarterTurns =
-              rotatedBox.quarterTurns < 0
-                  ? rotatedBox.quarterTurns + 4
-                  : rotatedBox.quarterTurns;
+          final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
+              ? rotatedBox.quarterTurns + 4
+              : rotatedBox.quarterTurns;
           expect(rotatedBox.child, isA<Texture>());
           expect((rotatedBox.child! as Texture).textureId, cameraId);
           expect(
@@ -1200,8 +1225,8 @@ void main() {
                 mockCameraSelector: mockFrontCameraSelector,
                 sensorRotationDegrees: 270,
               );
-          proxyGetDefaultDisplayRotation =
-              () => Future<int>.value(Surface.rotation0);
+          proxyGetDefaultDisplayRotation = () =>
+              Future<int>.value(Surface.rotation0);
 
           // Media settings to create camera; irrelevant for test.
           testMediaSettings = const MediaSettings();
@@ -1218,19 +1243,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async =>
-                      _serializeDeviceOrientation(DeviceOrientation.portraitUp),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(DeviceOrientation.portraitUp),
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1248,7 +1274,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1278,20 +1304,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async => _serializeDeviceOrientation(
-                    DeviceOrientation.landscapeRight,
-                  ),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(DeviceOrientation.landscapeRight),
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1309,7 +1335,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1339,20 +1365,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async => _serializeDeviceOrientation(
-                    DeviceOrientation.portraitDown,
-                  ),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(DeviceOrientation.portraitDown),
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1370,7 +1396,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1400,20 +1426,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async => _serializeDeviceOrientation(
-                    DeviceOrientation.landscapeLeft,
-                  ),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1431,7 +1457,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1487,9 +1513,8 @@ void main() {
                 mockCameraSelector: mockFrontCameraSelector,
                 sensorRotationDegrees: 270,
               );
-          proxyGetUiOrientation =
-              () async =>
-                  _serializeDeviceOrientation(DeviceOrientation.landscapeLeft);
+          proxyGetUiOrientation = () async =>
+              _serializeDeviceOrientation(DeviceOrientation.landscapeLeft);
 
           // Media settings to create camera; irrelevant for test.
           testMediaSettings = const MediaSettings();
@@ -1504,20 +1529,22 @@ void main() {
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
-              getDefaultDisplayRotation:
-                  () => Future<int>.value(Surface.rotation0),
+              getDefaultDisplayRotation: () =>
+                  Future<int>.value(Surface.rotation0),
               handlesCropAndRotation: false,
               getUiOrientation: proxyGetUiOrientation,
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1535,7 +1562,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1563,20 +1590,22 @@ void main() {
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
-              getDefaultDisplayRotation:
-                  () => Future<int>.value(Surface.rotation90),
+              getDefaultDisplayRotation: () =>
+                  Future<int>.value(Surface.rotation90),
               handlesCropAndRotation: false,
               getUiOrientation: proxyGetUiOrientation,
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1596,7 +1625,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1626,20 +1655,22 @@ void main() {
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
-              getDefaultDisplayRotation:
-                  () => Future<int>.value(Surface.rotation180),
+              getDefaultDisplayRotation: () =>
+                  Future<int>.value(Surface.rotation180),
               handlesCropAndRotation: false,
               getUiOrientation: proxyGetUiOrientation,
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1657,7 +1688,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1687,20 +1718,22 @@ void main() {
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
-              getDefaultDisplayRotation:
-                  () => Future<int>.value(Surface.rotation270),
+              getDefaultDisplayRotation: () =>
+                  Future<int>.value(Surface.rotation270),
               handlesCropAndRotation: false,
               getUiOrientation: proxyGetUiOrientation,
             );
 
             // Get and create test front camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -1720,7 +1753,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -1747,14 +1780,14 @@ void main() {
     testWidgets(
       'device orientation is landscapeRight, sensor orientation degrees is 270, camera is front facing, then the preview Texture rotates correctly as the default display rotation changes',
       (WidgetTester tester) async {
-        final AndroidCameraCameraX camera = AndroidCameraCameraX();
-        const int cameraId = 11;
+        final camera = AndroidCameraCameraX();
+        const cameraId = 11;
         const DeviceOrientation testDeviceOrientation =
             DeviceOrientation.landscapeRight;
 
         // Create and set up mock front camera CameraSelector, mock ProcessCameraProvider, 270 degree sensor orientation,
         // media settings for test front camera.
-        final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+        final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
           // ignore: non_constant_identifier_names
           BinaryMessenger? pigeon_binaryMessenger,
@@ -1771,12 +1804,11 @@ void main() {
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 270,
             );
-        const MediaSettings testMediaSettings = MediaSettings();
+        const testMediaSettings = MediaSettings();
 
         // Tell camera that handlesCropAndRotation is true, set camera initial device orientation
         // to portrait down, set initial default display rotation to 0 degrees clockwise.
-        final MockDeviceOrientationManager mockDeviceOrientationManager =
-            MockDeviceOrientationManager();
+        final mockDeviceOrientationManager = MockDeviceOrientationManager();
         when(mockDeviceOrientationManager.getUiOrientation()).thenAnswer(
           (_) => Future<String>.value(
             _serializeDeviceOrientation(testDeviceOrientation),
@@ -1794,24 +1826,25 @@ void main() {
         );
 
         // Get and create test front camera.
-        final List<CameraDescription> availableCameras =
-            await camera.availableCameras();
+        final List<CameraDescription> availableCameras = await camera
+            .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: ((270 - counterClockwiseDefaultDisplayRotation * 1 + 360) % 360) - 90.
         // 90 is used in this calculation for the CameraPreview pre-applied rotation because it is the
         // rotation that the CameraPreview widget aapplies based on the landscape right device orientation.
-        final Map<int, int> expectedRotationPerDefaultDisplayRotation =
-            <int, int>{
-              Surface.rotation0: _180DegreesClockwise,
-              Surface.rotation90: _270DegreesClockwise,
-              Surface.rotation180: _0DegreesClockwise,
-              Surface.rotation270: _90DegreesClockwise,
-            };
+        final expectedRotationPerDefaultDisplayRotation = <int, int>{
+          Surface.rotation0: _180DegreesClockwise,
+          Surface.rotation90: _270DegreesClockwise,
+          Surface.rotation180: _0DegreesClockwise,
+          Surface.rotation270: _90DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
@@ -1823,8 +1856,9 @@ void main() {
             mockDeviceOrientationManager.getDefaultDisplayRotation(),
           ).thenAnswer((_) async => currentDefaultDisplayRotation);
 
-          const DeviceOrientationChangedEvent testEvent =
-              DeviceOrientationChangedEvent(testDeviceOrientation);
+          const testEvent = DeviceOrientationChangedEvent(
+            testDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -1843,7 +1877,7 @@ void main() {
           // used.
           expect(rotatedBox.child, isA<Transform>());
 
-          final Transform transformedPreview = rotatedBox.child! as Transform;
+          final transformedPreview = rotatedBox.child! as Transform;
           final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
           // Since the front camera is in landscape mode, we expect the camera
@@ -1851,10 +1885,9 @@ void main() {
           checkXAxisIsMirrored(transformedPreviewMatrix);
           expect((transformedPreview.child! as Texture).textureId, cameraId);
 
-          final int clockwiseQuarterTurns =
-              rotatedBox.quarterTurns < 0
-                  ? rotatedBox.quarterTurns + 4
-                  : rotatedBox.quarterTurns;
+          final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
+              ? rotatedBox.quarterTurns + 4
+              : rotatedBox.quarterTurns;
           expect(
             clockwiseQuarterTurns,
             expectedQuarterTurns,
@@ -1869,12 +1902,12 @@ void main() {
     testWidgets(
       'default display rotation is 90, sensor orientation degrees is 90, camera is front facing, then the preview Texture rotates correctly as the device orientation rotates',
       (WidgetTester tester) async {
-        final AndroidCameraCameraX camera = AndroidCameraCameraX();
-        const int cameraId = 3372;
+        final camera = AndroidCameraCameraX();
+        const cameraId = 3372;
 
         // Create and set up mock CameraSelector and mock ProcessCameraProvider for test front camera
         // with sensor orientation degrees 90.
-        final MockCameraSelector mockFrontCameraSelector = MockCameraSelector();
+        final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
           LensFacing? requireLensFacing,
           CameraInfo? cameraInfoForFilter,
@@ -1893,7 +1926,7 @@ void main() {
             );
 
         // Media settings to create camera; irrelevant for test.
-        const MediaSettings testMediaSettings = MediaSettings();
+        const testMediaSettings = MediaSettings();
 
         // Set up test to use front camera and tell camera that handlesCropAndRotation is false,
         // set camera initial device orientation to landscape left, set initial default display
@@ -1905,37 +1938,39 @@ void main() {
           getUiOrientation: /* initial device orientation irrelevant for test */
               () async =>
                   _serializeDeviceOrientation(DeviceOrientation.landscapeLeft),
-          getDefaultDisplayRotation:
-              () => Future<int>.value(Surface.rotation90),
+          getDefaultDisplayRotation: () =>
+              Future<int>.value(Surface.rotation90),
         );
 
         // Get and create test front camera.
-        final List<CameraDescription> availableCameras =
-            await camera.availableCameras();
+        final List<CameraDescription> availableCameras = await camera
+            .availableCameras();
         expect(availableCameras.length, 1);
-        await camera.createCameraWithSettings(
-          availableCameras.first,
-          testMediaSettings,
-        );
+        final int flutterSurfaceTextureId = await camera
+            .createCameraWithSettings(
+              availableCameras.first,
+              testMediaSettings,
+            );
+        await camera.initializeCamera(flutterSurfaceTextureId);
 
         // Calculated according to: ((90 - 270 * 1 + 360) % 360) - cameraPreviewPreAppliedRotation.
         // 270 is used in this calculation for the device orientation because it is the
         // counter-clockwise degrees of the default display rotation.
-        final Map<DeviceOrientation, int> expectedRotationPerDeviceOrientation =
-            <DeviceOrientation, int>{
-              DeviceOrientation.portraitUp: _180DegreesClockwise,
-              DeviceOrientation.landscapeRight: _90DegreesClockwise,
-              DeviceOrientation.portraitDown: _0DegreesClockwise,
-              DeviceOrientation.landscapeLeft: _270DegreesClockwise,
-            };
+        final expectedRotationPerDeviceOrientation = <DeviceOrientation, int>{
+          DeviceOrientation.portraitUp: _180DegreesClockwise,
+          DeviceOrientation.landscapeRight: _90DegreesClockwise,
+          DeviceOrientation.portraitDown: _0DegreesClockwise,
+          DeviceOrientation.landscapeLeft: _270DegreesClockwise,
+        };
 
         // Put camera preview in widget tree.
         await tester.pumpWidget(camera.buildPreview(cameraId));
 
         for (final DeviceOrientation currentDeviceOrientation
             in expectedRotationPerDeviceOrientation.keys) {
-          final DeviceOrientationChangedEvent testEvent =
-              DeviceOrientationChangedEvent(currentDeviceOrientation);
+          final testEvent = DeviceOrientationChangedEvent(
+            currentDeviceOrientation,
+          );
           AndroidCameraCameraX.deviceOrientationChangedStreamController.add(
             testEvent,
           );
@@ -1954,7 +1989,7 @@ void main() {
           // used.
           expect(rotatedBox.child, isA<Transform>());
 
-          final Transform transformedPreview = rotatedBox.child! as Transform;
+          final transformedPreview = rotatedBox.child! as Transform;
           final Matrix4 transformedPreviewMatrix = transformedPreview.transform;
 
           // When the front camera is in landscape mode, we expect the camera
@@ -1968,10 +2003,9 @@ void main() {
             checkYAxisIsMirrored(transformedPreviewMatrix);
           }
           expect((transformedPreview.child! as Texture).textureId, cameraId);
-          final int clockwiseQuarterTurns =
-              rotatedBox.quarterTurns < 0
-                  ? rotatedBox.quarterTurns + 4
-                  : rotatedBox.quarterTurns;
+          final int clockwiseQuarterTurns = rotatedBox.quarterTurns < 0
+              ? rotatedBox.quarterTurns + 4
+              : rotatedBox.quarterTurns;
           expect(
             clockwiseQuarterTurns,
             expectedQuarterTurns,
@@ -2015,8 +2049,8 @@ void main() {
           mockBackCameraSelector = MockCameraSelector();
           proxyCreateCameraSelectorForBackCamera =
               createCameraSelectorForBackCamera(mockBackCameraSelector);
-          proxyGetDefaultDisplayRotation =
-              () => Future<int>.value(Surface.rotation270);
+          proxyGetDefaultDisplayRotation = () =>
+              Future<int>.value(Surface.rotation270);
 
           testMediaSettings = const MediaSettings();
         });
@@ -2040,19 +2074,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForBackCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async =>
-                      _serializeDeviceOrientation(testInitialDeviceOrientation),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(testInitialDeviceOrientation),
             );
 
             // Get and create test back camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -2099,19 +2134,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForBackCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async =>
-                      _serializeDeviceOrientation(testInitialDeviceOrientation),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(testInitialDeviceOrientation),
             );
 
             // Get and create test back camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -2161,8 +2197,8 @@ void main() {
           testSensorOrientation = 90;
 
           // Create mock for seting initial default display rotation to 180 degrees.
-          proxyGetDefaultDisplayRotation =
-              () => Future<int>.value(Surface.rotation90);
+          proxyGetDefaultDisplayRotation = () =>
+              Future<int>.value(Surface.rotation90);
 
           // Media settings to create camera; irrelevant for test.
           testMediaSettings = const MediaSettings();
@@ -2172,8 +2208,7 @@ void main() {
           'camera is front facing, then the preview Texture is rotated 90 degrees clockwise',
           (WidgetTester tester) async {
             // Set up test front camera with sensor orientation degrees 90.
-            final MockCameraSelector mockFrontCameraSelector =
-                MockCameraSelector();
+            final mockFrontCameraSelector = MockCameraSelector();
             final MockProcessCameraProvider mockProcessCameraProvider =
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockFrontCameraSelector,
@@ -2195,19 +2230,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async =>
-                      _serializeDeviceOrientation(testInitialDeviceOrientation),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(testInitialDeviceOrientation),
             );
 
             // Get and create test camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.
@@ -2227,7 +2263,7 @@ void main() {
             // used.
             expect(rotatedBox.child, isA<Transform>());
 
-            final Transform transformedPreview = rotatedBox.child! as Transform;
+            final transformedPreview = rotatedBox.child! as Transform;
             final Matrix4 transformedPreviewMatrix =
                 transformedPreview.transform;
 
@@ -2250,8 +2286,7 @@ void main() {
           'camera is back facing, then the preview Texture is rotated 270 degrees clockwise',
           (WidgetTester tester) async {
             // Set up test front camera with sensor orientation degrees 90.
-            final MockCameraSelector mockBackCameraSelector =
-                MockCameraSelector();
+            final mockBackCameraSelector = MockCameraSelector();
             final MockProcessCameraProvider mockProcessCameraProvider =
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockBackCameraSelector,
@@ -2274,19 +2309,20 @@ void main() {
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
               handlesCropAndRotation: false,
-              getUiOrientation:
-                  () async =>
-                      _serializeDeviceOrientation(testInitialDeviceOrientation),
+              getUiOrientation: () async =>
+                  _serializeDeviceOrientation(testInitialDeviceOrientation),
             );
 
             // Get and create test camera.
-            final List<CameraDescription> availableCameras =
-                await camera.availableCameras();
+            final List<CameraDescription> availableCameras = await camera
+                .availableCameras();
             expect(availableCameras.length, 1);
-            await camera.createCameraWithSettings(
-              availableCameras.first,
-              testMediaSettings,
-            );
+            final int flutterSurfaceTextureId = await camera
+                .createCameraWithSettings(
+                  availableCameras.first,
+                  testMediaSettings,
+                );
+            await camera.initializeCamera(flutterSurfaceTextureId);
 
             // Put camera preview in widget tree and pump one frame so that Future to retrieve
             // the initial default display rotation completes.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,25 +11,23 @@ import 'package:shared_preferences_platform_interface/types.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
+  const stringKey = 'testString';
+  const boolKey = 'testBool';
+  const intKey = 'testInt';
+  const doubleKey = 'testDouble';
+  const listKey = 'testList';
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
 
-  final SharedPreferencesAsyncFoundationOptions emptyOptions =
-      SharedPreferencesAsyncFoundationOptions();
+  final emptyOptions = SharedPreferencesAsyncFoundationOptions();
 
   SharedPreferencesAsyncFoundation getPreferences() {
-    final _FakeSharedPreferencesApi api = _FakeSharedPreferencesApi();
-    final SharedPreferencesAsyncFoundation preferences =
-        SharedPreferencesAsyncFoundation(api: api);
+    final api = _FakeSharedPreferencesApi();
+    final preferences = SharedPreferencesAsyncFoundation(api: api);
 
     return preferences;
   }
@@ -76,12 +74,13 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
+      preferences.setStringList(listKey, testList, emptyOptions),
     ]);
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
-        const GetPreferencesParameters(filter: PreferencesFilters()),
-        emptyOptions);
+      const GetPreferencesParameters(filter: PreferencesFilters()),
+      emptyOptions,
+    );
 
     expect(gotAll.length, 5);
     expect(gotAll[stringKey], testString);
@@ -98,14 +97,15 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
+      preferences.setStringList(listKey, testList, emptyOptions),
     ]);
 
     final Map<String, Object?> gotAll = await preferences.getPreferences(
-        const GetPreferencesParameters(
-            filter:
-                PreferencesFilters(allowList: <String>{stringKey, boolKey})),
-        emptyOptions);
+      const GetPreferencesParameters(
+        filter: PreferencesFilters(allowList: <String>{stringKey, boolKey}),
+      ),
+      emptyOptions,
+    );
 
     expect(gotAll.length, 2);
     expect(gotAll[stringKey], testString);
@@ -119,7 +119,7 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
+      preferences.setStringList(listKey, testList, emptyOptions),
     ]);
 
     final Set<String> keys = await preferences.getKeys(
@@ -142,7 +142,7 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
+      preferences.setStringList(listKey, testList, emptyOptions),
     ]);
 
     final Set<String> keys = await preferences.getKeys(
@@ -164,11 +164,12 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
+      preferences.setStringList(listKey, testList, emptyOptions),
     ]);
     await preferences.clear(
-        const ClearPreferencesParameters(filter: PreferencesFilters()),
-        emptyOptions);
+      const ClearPreferencesParameters(filter: PreferencesFilters()),
+      emptyOptions,
+    );
     expect(await preferences.getString(stringKey, emptyOptions), null);
     expect(await preferences.getBool(boolKey, emptyOptions), null);
     expect(await preferences.getInt(intKey, emptyOptions), null);
@@ -183,7 +184,7 @@ void main() {
       preferences.setBool(boolKey, testBool, emptyOptions),
       preferences.setInt(intKey, testInt, emptyOptions),
       preferences.setDouble(doubleKey, testDouble, emptyOptions),
-      preferences.setStringList(listKey, testList, emptyOptions)
+      preferences.setStringList(listKey, testList, emptyOptions),
     ]);
     await preferences.clear(
       const ClearPreferencesParameters(
@@ -204,7 +205,9 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<bool> clear(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
+    List<String?>? allowList,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     if (allowList != null) {
       items.removeWhere((String key, _) => allowList.contains(key));
     } else {
@@ -216,8 +219,10 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<Map<String, Object>> getAll(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
-    final Map<String, Object> filteredItems = <String, Object>{...items};
+    List<String?>? allowList,
+    SharedPreferencesPigeonOptions options,
+  ) async {
+    final filteredItems = <String, Object>{...items};
     if (allowList != null) {
       filteredItems.removeWhere((String key, _) => !allowList.contains(key));
     }
@@ -226,7 +231,9 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<List<String>> getKeys(
-      List<String?>? allowList, SharedPreferencesPigeonOptions options) async {
+    List<String?>? allowList,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     final List<String> filteredItems = items.keys.toList();
     if (allowList != null) {
       filteredItems.removeWhere((String key) => !allowList.contains(key));
@@ -236,13 +243,18 @@ class _FakeSharedPreferencesApi implements UserDefaultsApi {
 
   @override
   Future<void> set(
-      String key, Object value, SharedPreferencesPigeonOptions options) async {
+    String key,
+    Object value,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     items[key] = value;
   }
 
   @override
   Future<Object?> getValue(
-      String key, SharedPreferencesPigeonOptions options) async {
+    String key,
+    SharedPreferencesPigeonOptions options,
+  ) async {
     return items[key];
   }
 

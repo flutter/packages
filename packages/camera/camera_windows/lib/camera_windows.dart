@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,7 +16,7 @@ import 'src/messages.g.dart';
 class CameraWindows extends CameraPlatform {
   /// Creates a new Windows [CameraPlatform] implementation instance.
   CameraWindows({@visibleForTesting CameraApi? api})
-      : _hostApi = api ?? CameraApi();
+    : _hostApi = api ?? CameraApi();
 
   /// Registers the Windows implementation of CameraPlatform.
   static void registerWith() {
@@ -43,21 +43,18 @@ class CameraWindows extends CameraPlatform {
       StreamController<CameraEvent>.broadcast();
 
   /// Returns a stream of camera events for the given [cameraId].
-  Stream<CameraEvent> _cameraEvents(int cameraId) =>
-      cameraEventStreamController.stream
-          .where((CameraEvent event) => event.cameraId == cameraId);
+  Stream<CameraEvent> _cameraEvents(int cameraId) => cameraEventStreamController
+      .stream
+      .where((CameraEvent event) => event.cameraId == cameraId);
 
   @override
   Future<List<CameraDescription>> availableCameras() async {
     try {
-      final List<String?> cameras = await _hostApi.getAvailableCameras();
+      final List<String> cameras = await _hostApi.getAvailableCameras();
 
-      return cameras.map((String? cameraName) {
+      return cameras.map((String cameraName) {
         return CameraDescription(
-          // This type is only nullable due to Pigeon limitations, see
-          // https://github.com/flutter/flutter/issues/97848. The native code
-          // will never return null.
-          name: cameraName!,
+          name: cameraName,
           // TODO(stuartmorgan): Implement these; see
           // https://github.com/flutter/flutter/issues/97540.
           lensDirection: CameraLensDirection.front,
@@ -74,13 +71,10 @@ class CameraWindows extends CameraPlatform {
     CameraDescription cameraDescription,
     ResolutionPreset? resolutionPreset, {
     bool enableAudio = false,
-  }) =>
-      createCameraWithSettings(
-          cameraDescription,
-          MediaSettings(
-            resolutionPreset: resolutionPreset,
-            enableAudio: enableAudio,
-          ));
+  }) => createCameraWithSettings(
+    cameraDescription,
+    MediaSettings(resolutionPreset: resolutionPreset, enableAudio: enableAudio),
+  );
 
   @override
   Future<int> createCameraWithSettings(
@@ -90,7 +84,9 @@ class CameraWindows extends CameraPlatform {
     try {
       // If resolutionPreset is not specified, plugin selects the highest resolution possible.
       return await _hostApi.create(
-          cameraDescription.name, _pigeonMediaSettings(mediaSettings));
+        cameraDescription.name,
+        _pigeonMediaSettings(mediaSettings),
+      );
     } on PlatformException catch (e) {
       throw CameraException(e.code, e.message);
     }
@@ -101,8 +97,10 @@ class CameraWindows extends CameraPlatform {
     int cameraId, {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) async {
-    hostCameraHandlers.putIfAbsent(cameraId,
-        () => HostCameraMessageHandler(cameraId, cameraEventStreamController));
+    hostCameraHandlers.putIfAbsent(
+      cameraId,
+      () => HostCameraMessageHandler(cameraId, cameraEventStreamController),
+    );
 
     final PlatformSize reply;
     try {
@@ -198,8 +196,10 @@ class CameraWindows extends CameraPlatform {
   }
 
   @override
-  Future<void> startVideoRecording(int cameraId,
-      {Duration? maxVideoDuration}) async {
+  Future<void> startVideoRecording(
+    int cameraId, {
+    Duration? maxVideoDuration,
+  }) async {
     // Ignore maxVideoDuration, as it is unimplemented and deprecated.
     return startVideoCapturing(VideoCaptureOptions(cameraId));
   }
@@ -208,7 +208,8 @@ class CameraWindows extends CameraPlatform {
   Future<void> startVideoCapturing(VideoCaptureOptions options) async {
     if (options.streamCallback != null || options.streamOptions != null) {
       throw UnimplementedError(
-          'Streaming is not currently supported on Windows');
+        'Streaming is not currently supported on Windows',
+      );
     }
 
     // Currently none of `options` is supported on Windows, so it's not passed.
@@ -225,13 +226,15 @@ class CameraWindows extends CameraPlatform {
   @override
   Future<void> pauseVideoRecording(int cameraId) async {
     throw UnsupportedError(
-        'pauseVideoRecording() is not supported due to Win32 API limitations.');
+      'pauseVideoRecording() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
   Future<void> resumeVideoRecording(int cameraId) async {
     throw UnsupportedError(
-        'resumeVideoRecording() is not supported due to Win32 API limitations.');
+      'resumeVideoRecording() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
@@ -252,7 +255,8 @@ class CameraWindows extends CameraPlatform {
     assert(point == null || point.y >= 0 && point.y <= 1);
 
     throw UnsupportedError(
-        'setExposurePoint() is not supported due to Win32 API limitations.');
+      'setExposurePoint() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
@@ -294,7 +298,8 @@ class CameraWindows extends CameraPlatform {
     assert(point == null || point.y >= 0 && point.y <= 1);
 
     throw UnsupportedError(
-        'setFocusPoint() is not supported due to Win32 API limitations.');
+      'setFocusPoint() is not supported due to Win32 API limitations.',
+    );
   }
 
   @override
@@ -345,7 +350,8 @@ class CameraWindows extends CameraPlatform {
 
   /// Returns a [ResolutionPreset]'s Pigeon representation.
   PlatformResolutionPreset _pigeonResolutionPreset(
-      ResolutionPreset? resolutionPreset) {
+    ResolutionPreset? resolutionPreset,
+  ) {
     if (resolutionPreset == null) {
       // Provide a default if one isn't provided, since the native side needs
       // to set something.

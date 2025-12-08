@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -669,23 +669,14 @@ public class CameraTest {
   }
 
   @Test
-  public void pauseVideoRecording_shouldCallPauseWhenRecordingAndOnAPIN() {
+  public void pauseVideoRecording_shouldCallPauseWhenRecording() {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     camera.mediaRecorder = mockMediaRecorder;
     camera.recordingVideo = true;
-    SdkCapabilityChecker.SDK_VERSION = 24;
 
     camera.pauseVideoRecording();
 
     verify(mockMediaRecorder, times(1)).pause();
-  }
-
-  @Test
-  public void pauseVideoRecording_shouldSendVideoRecordingFailedErrorWhenVersionCodeSmallerThenN() {
-    camera.recordingVideo = true;
-    SdkCapabilityChecker.SDK_VERSION = 23;
-
-    assertThrows(Messages.FlutterError.class, camera::pauseVideoRecording);
   }
 
   @Test
@@ -694,7 +685,6 @@ public class CameraTest {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     camera.mediaRecorder = mockMediaRecorder;
     camera.recordingVideo = true;
-    SdkCapabilityChecker.SDK_VERSION = 24;
 
     IllegalStateException expectedException = new IllegalStateException("Test error message");
 
@@ -711,11 +701,10 @@ public class CameraTest {
   }
 
   @Test
-  public void resumeVideoRecording_shouldCallPauseWhenRecordingAndOnAPIN() {
+  public void resumeVideoRecording_shouldCallPauseWhenRecording() {
     MediaRecorder mockMediaRecorder = mock(MediaRecorder.class);
     camera.mediaRecorder = mockMediaRecorder;
     camera.recordingVideo = true;
-    SdkCapabilityChecker.SDK_VERSION = 24;
 
     camera.resumeVideoRecording();
 
@@ -864,15 +853,6 @@ public class CameraTest {
     assertThrows(
         Messages.FlutterError.class,
         () -> camera.setDescriptionWhileRecording(newCameraProperties));
-  }
-
-  @Test
-  public void
-      resumeVideoRecording_shouldSendVideoRecordingFailedErrorWhenVersionCodeSmallerThanN() {
-    camera.recordingVideo = true;
-    SdkCapabilityChecker.SDK_VERSION = 23;
-
-    assertThrows(Messages.FlutterError.class, camera::resumeVideoRecording);
   }
 
   @Test

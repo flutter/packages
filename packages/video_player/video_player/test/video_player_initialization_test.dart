@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,12 +15,12 @@ void main() {
   late FakeVideoPlayerPlatform fakeVideoPlayerPlatform;
 
   setUp(() {
-    VideoPlayerPlatform.instance =
-        fakeVideoPlayerPlatform = FakeVideoPlayerPlatform();
+    VideoPlayerPlatform.instance = fakeVideoPlayerPlatform =
+        FakeVideoPlayerPlatform();
   });
 
   test('plugin initialized', () async {
-    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+    final controller = VideoPlayerController.networkUrl(
       Uri.parse('https://127.0.0.1'),
     );
     await controller.initialize();
@@ -28,17 +28,15 @@ void main() {
   });
 
   test('web configuration is applied (web only)', () async {
-    const VideoPlayerWebOptions expected = VideoPlayerWebOptions(
+    const expected = VideoPlayerWebOptions(
       allowContextMenu: false,
       allowRemotePlayback: false,
       controls: VideoPlayerWebOptionsControls.enabled(),
     );
 
-    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+    final controller = VideoPlayerController.networkUrl(
       Uri.parse('https://127.0.0.1'),
-      videoPlayerOptions: VideoPlayerOptions(
-        webOptions: expected,
-      ),
+      videoPlayerOptions: VideoPlayerOptions(webOptions: expected),
     );
     await controller.initialize();
 
@@ -61,7 +59,7 @@ void main() {
   test('video view type is applied', () async {
     const VideoViewType expected = VideoViewType.platformView;
 
-    final VideoPlayerController controller = VideoPlayerController.networkUrl(
+    final controller = VideoPlayerController.networkUrl(
       Uri.parse('https://127.0.0.1'),
       viewType: expected,
     );

@@ -8,53 +8,46 @@ part of 'stateful_shell_route_initial_location_example.dart';
 // GoRouterGenerator
 // **************************************************************************
 
-List<RouteBase> get $appRoutes => [
-      $mainShellRouteData,
-    ];
+List<RouteBase> get $appRoutes => [$mainShellRouteData];
 
 RouteBase get $mainShellRouteData => StatefulShellRouteData.$route(
-      factory: $MainShellRouteDataExtension._fromState,
-      branches: [
-        StatefulShellBranchData.$branch(
-          routes: [
-            GoRouteData.$route(
-              path: '/home',
-              factory: _$HomeRouteData._fromState,
-            ),
-          ],
-        ),
-        StatefulShellBranchData.$branch(
-          initialLocation: NotificationsShellBranchData.$initialLocation,
-          routes: [
-            GoRouteData.$route(
-              path: '/notifications/:section',
-              factory: _$NotificationsRouteData._fromState,
-            ),
-          ],
-        ),
-        StatefulShellBranchData.$branch(
-          routes: [
-            GoRouteData.$route(
-              path: '/orders',
-              factory: _$OrdersRouteData._fromState,
-            ),
-          ],
+  factory: $MainShellRouteDataExtension._fromState,
+  branches: [
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(path: '/home', factory: $HomeRouteData._fromState),
+      ],
+    ),
+    StatefulShellBranchData.$branch(
+      initialLocation: NotificationsShellBranchData.$initialLocation,
+      routes: [
+        GoRouteData.$route(
+          path: '/notifications/:section',
+          factory: $NotificationsRouteData._fromState,
         ),
       ],
-    );
+    ),
+    StatefulShellBranchData.$branch(
+      routes: [
+        GoRouteData.$route(
+          path: '/orders',
+          factory: $OrdersRouteData._fromState,
+        ),
+      ],
+    ),
+  ],
+);
 
 extension $MainShellRouteDataExtension on MainShellRouteData {
   static MainShellRouteData _fromState(GoRouterState state) =>
       const MainShellRouteData();
 }
 
-mixin _$HomeRouteData on GoRouteData {
+mixin $HomeRouteData on GoRouteData {
   static HomeRouteData _fromState(GoRouterState state) => const HomeRouteData();
 
   @override
-  String get location => GoRouteData.$location(
-        '/home',
-      );
+  String get location => GoRouteData.$location('/home');
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -70,19 +63,20 @@ mixin _$HomeRouteData on GoRouteData {
   void replace(BuildContext context) => context.replace(location);
 }
 
-mixin _$NotificationsRouteData on GoRouteData {
+mixin $NotificationsRouteData on GoRouteData {
   static NotificationsRouteData _fromState(GoRouterState state) =>
       NotificationsRouteData(
-        section: _$NotificationsPageSectionEnumMap
-            ._$fromName(state.pathParameters['section']!)!,
+        section: _$NotificationsPageSectionEnumMap._$fromName(
+          state.pathParameters['section']!,
+        )!,
       );
 
   NotificationsRouteData get _self => this as NotificationsRouteData;
 
   @override
   String get location => GoRouteData.$location(
-        '/notifications/${Uri.encodeComponent(_$NotificationsPageSectionEnumMap[_self.section]!)}',
-      );
+    '/notifications/${Uri.encodeComponent(_$NotificationsPageSectionEnumMap[_self.section]!)}',
+  );
 
   @override
   void go(BuildContext context) => context.go(location);
@@ -104,14 +98,12 @@ const _$NotificationsPageSectionEnumMap = {
   NotificationsPageSection.archive: 'archive',
 };
 
-mixin _$OrdersRouteData on GoRouteData {
+mixin $OrdersRouteData on GoRouteData {
   static OrdersRouteData _fromState(GoRouterState state) =>
       const OrdersRouteData();
 
   @override
-  String get location => GoRouteData.$location(
-        '/orders',
-      );
+  String get location => GoRouteData.$location('/orders');
 
   @override
   void go(BuildContext context) => context.go(location);

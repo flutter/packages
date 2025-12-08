@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,15 +13,17 @@ import 'src/messages.g.dart';
 /// Android implementation of [GoogleSignInPlatform].
 class GoogleSignInAndroid extends GoogleSignInPlatform {
   /// Creates a new plugin implementation instance.
-  GoogleSignInAndroid({
-    @visibleForTesting GoogleSignInApi? api,
-  }) : _hostApi = api ?? GoogleSignInApi();
+  GoogleSignInAndroid({@visibleForTesting GoogleSignInApi? api})
+    : _hostApi = api ?? GoogleSignInApi();
 
   final GoogleSignInApi _hostApi;
 
   String? _serverClientId;
   String? _hostedDomain;
   String? _nonce;
+  // A cache of accounts that have been successfully authenticated via this
+  // plugin instance, and one of the scopes that has been authorized for it.
+  final Map<String, String> _cachedAccounts = <String, String>{};
 
   /// Registers this class as the default instance of [GoogleSignInPlatform].
   static void registerWith() {
@@ -29,9 +31,15 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   @override
+  Future<void> clearAuthorizationToken(ClearAuthorizationTokenParams params) {
+    return _hostApi.clearAuthorizationToken(params.accessToken);
+  }
+
+  @override
   Future<void> init(InitParameters params) async {
     _hostedDomain = params.hostedDomain;
-    _serverClientId = params.serverClientId ??
+    _serverClientId =
+        params.serverClientId ??
         await _hostApi.getGoogleServicesJsonServerClientId();
     _nonce = params.nonce;
     // The clientId parameter is not supported on Android.
@@ -40,7 +48,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults?> attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) async {
+    AttemptLightweightAuthenticationParameters params,
+  ) async {
     // Attempt to auto-sign-in, for single-account or returning users.
     PlatformGoogleIdTokenCredential? credential = await _authenticate(
       useButtonFlow: false,
@@ -50,14 +59,24 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
       ),
     );
     // If no auto-sign-in is available, potentially prompt for an account via
-    // the bottom sheet flow.
-    credential ??= await _authenticate(
-      useButtonFlow: false,
-      nonButtonFlowOptions: _LightweightAuthenticationOptions(
-        filterToAuthorized: false,
-        autoSelectEnabled: false,
-      ),
-    );
+    // the bottom sheet flow. This is skipped if a hosted domain is set because
+    // the one-tap (non-button) flow does not support hosted domain filterss, so
+    // could result in authorizing with an account that doesn't match the
+    // filter. (The previous should be safe even without a hosted domain filter
+    // because filterToAuthorized will only allow accounts that have previously
+    // signed in to the app, and an app that uses a hosted domain filter is
+    // unlikely to change that filter dynamically.)
+    // TODO(stuartmorgan): Remove this check if the SDK adds support for
+    //  setHostedDomainFilter for one-tap.
+    if (_hostedDomain == null) {
+      credential ??= await _authenticate(
+        useButtonFlow: false,
+        nonButtonFlowOptions: _LightweightAuthenticationOptions(
+          filterToAuthorized: false,
+          autoSelectEnabled: false,
+        ),
+      );
+    }
     return credential == null
         ? null
         : _authenticationResultFromPlatformCredential(credential);
@@ -68,7 +87,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults> authenticate(
-      AuthenticateParameters params) async {
+    AuthenticateParameters params,
+  ) async {
     // Attempt to authorize with minimal interaction.
     final PlatformGoogleIdTokenCredential? credential = await _authenticate(
       useButtonFlow: true,
@@ -83,8 +103,9 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     // no information is available
     if (credential == null) {
       throw const GoogleSignInException(
-          code: GoogleSignInExceptionCode.unknownError,
-          description: 'Authenticate returned no credential without an error');
+        code: GoogleSignInExceptionCode.unknownError,
+        description: 'Authenticate returned no credential without an error',
+      );
     }
     return _authenticationResultFromPlatformCredential(credential);
   }
@@ -96,10 +117,26 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<void> disconnect(DisconnectParams params) async {
-    // TODO(stuartmorgan): Implement this once Credential Manager adds the
-    //  necessary API (or temporarily implement it with the deprecated SDK if
-    //  it becomes a significant issue before the API is added).
-    //  https://github.com/flutter/flutter/issues/169612
+    // AuthorizationClient requires an account, and at least one currently
+    // granted scope, to request revocation. The app-facing API currently
+    // does not take any parameters, and is documented to revoke all authorized
+    // accounts, so disconnect every account that has been authorized.
+    // TODO(stuartmorgan): Consider deprecating the account-less API at the
+    //  app-facing level, and have it instead be an account-level method, to
+    //  better align with the current SDKs.
+    for (final MapEntry<String, String> entry in _cachedAccounts.entries) {
+      // Because revokeAccess removes all authorizations for the app, not just
+      // the scopes provided, (per
+      // https://developer.android.com/identity/authorization#revoke-permissions)
+      // an arbitrary granted scope is used here.
+      await _hostApi.revokeAccess(
+        PlatformRevokeAccessRequest(
+          accountEmail: entry.key,
+          scopes: <String>[entry.value],
+        ),
+      );
+    }
+    _cachedAccounts.clear();
     await signOut(const SignOutParams());
   }
 
@@ -108,9 +145,12 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) async {
-    final (:String? accessToken, :String? serverAuthCode) =
-        await _authorize(params.request, requestOfflineAccess: false);
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
+    final (:String? accessToken, :String? serverAuthCode) = await _authorize(
+      params.request,
+      requestOfflineAccess: false,
+    );
     return accessToken == null
         ? null
         : ClientAuthorizationTokenData(accessToken: accessToken);
@@ -118,9 +158,12 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) async {
-    final (:String? accessToken, :String? serverAuthCode) =
-        await _authorize(params.request, requestOfflineAccess: true);
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
+    final (:String? accessToken, :String? serverAuthCode) = await _authorize(
+      params.request,
+      requestOfflineAccess: true,
+    );
     return serverAuthCode == null
         ? null
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
@@ -139,13 +182,17 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
     bool throwForNoAuth = false,
   }) async {
     final GetCredentialResult authnResult = await _hostApi.getCredential(
-        GetCredentialRequestParams(
-            useButtonFlow: useButtonFlow,
-            googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams(
-                filterToAuthorized: nonButtonFlowOptions.filterToAuthorized,
-                autoSelectEnabled: nonButtonFlowOptions.autoSelectEnabled),
-            serverClientId: _serverClientId,
-            nonce: _nonce));
+      GetCredentialRequestParams(
+        useButtonFlow: useButtonFlow,
+        googleIdOptionParams: GetCredentialRequestGoogleIdOptionParams(
+          filterToAuthorized: nonButtonFlowOptions.filterToAuthorized,
+          autoSelectEnabled: nonButtonFlowOptions.autoSelectEnabled,
+        ),
+        serverClientId: _serverClientId,
+        hostedDomain: _hostedDomain,
+        nonce: _nonce,
+      ),
+    );
     switch (authnResult) {
       case GetCredentialFailure():
         String? message = authnResult.message;
@@ -182,23 +229,35 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
             code = GoogleSignInExceptionCode.unknownError;
         }
         throw GoogleSignInException(
-            code: code, description: message, details: authnResult.details);
+          code: code,
+          description: message,
+          details: authnResult.details,
+        );
       case GetCredentialSuccess():
+        // Store a preliminary entry using the 'openid' scope, which in practice
+        // always seems to be granted at authentication time, so that an account
+        // that is authenticated but never authorized can still be disconnected.
+        _cachedAccounts[authnResult.credential.id] = 'openid';
         return authnResult.credential;
     }
   }
 
   Future<({String? accessToken, String? serverAuthCode})> _authorize(
-      AuthorizationRequestDetails request,
-      {required bool requestOfflineAccess}) async {
+    AuthorizationRequestDetails request, {
+    required bool requestOfflineAccess,
+  }) async {
+    final String? email = request.email;
     final AuthorizeResult result = await _hostApi.authorize(
-        PlatformAuthorizationRequest(
-            scopes: request.scopes,
-            accountEmail: request.email,
-            hostedDomain: _hostedDomain,
-            serverClientIdForForcedRefreshToken:
-                requestOfflineAccess ? _serverClientId : null),
-        promptIfUnauthorized: request.promptIfUnauthorized);
+      PlatformAuthorizationRequest(
+        scopes: request.scopes,
+        accountEmail: email,
+        hostedDomain: _hostedDomain,
+        serverClientIdForForcedRefreshToken: requestOfflineAccess
+            ? _serverClientId
+            : null,
+      ),
+      promptIfUnauthorized: request.promptIfUnauthorized,
+    );
     switch (result) {
       case AuthorizeFailure():
         String? message = result.message;
@@ -220,11 +279,27 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
             code = GoogleSignInExceptionCode.uiUnavailable;
         }
         throw GoogleSignInException(
-            code: code, description: message, details: result.details);
+          code: code,
+          description: message,
+          details: result.details,
+        );
       case PlatformAuthorizationResult():
         final String? accessToken = result.accessToken;
         if (accessToken == null) {
           return (accessToken: null, serverAuthCode: null);
+        }
+        // Update the account entry with a scope that was reported as granted,
+        // just in case for some reason 'openid' isn't valid. If the request
+        // wasn't associated with an account, then it won't be available to
+        // disconnect.
+        // TODO(stuartmorgan): If this becomes an issue, see if there is an
+        //  indirect way to get the associated email address that's not
+        //  deprecated.
+        if (email != null) {
+          final String? scope = result.grantedScopes.firstOrNull;
+          if (scope != null) {
+            _cachedAccounts[email] = scope;
+          }
         }
         return (
           accessToken: accessToken,
@@ -234,7 +309,8 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
   }
 
   AuthenticationResults _authenticationResultFromPlatformCredential(
-      PlatformGoogleIdTokenCredential credential) {
+    PlatformGoogleIdTokenCredential credential,
+  ) {
     // GoogleIdTokenCredential's ID field is documented to return the
     // email address, not what the other platform SDKs call an ID.
     // The account ID returned by other platform SDKs and the legacy
@@ -249,12 +325,14 @@ class GoogleSignInAndroid extends GoogleSignInPlatform {
 
     return AuthenticationResults(
       user: GoogleSignInUserData(
-          email: email,
-          id: userId,
-          displayName: credential.displayName,
-          photoUrl: credential.profilePictureUri),
-      authenticationTokens:
-          AuthenticationTokenData(idToken: credential.idToken),
+        email: email,
+        id: userId,
+        displayName: credential.displayName,
+        photoUrl: credential.profilePictureUri,
+      ),
+      authenticationTokens: AuthenticationTokenData(
+        idToken: credential.idToken,
+      ),
     );
   }
 }
@@ -268,13 +346,14 @@ final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
 ///
 /// See https://stackoverflow.com/a/78064720
 String? _idFromIdToken(String idToken) {
-  final RegExp jwtTokenRegexp = RegExp(
-      r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$');
+  final jwtTokenRegexp = RegExp(
+    r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
+  );
   final RegExpMatch? match = jwtTokenRegexp.firstMatch(idToken);
   final String? payload = match?.namedGroup('payload');
   if (payload != null) {
     try {
-      final Map<String, Object?>? contents =
+      final contents =
           _jwtCodec.decode(base64.normalize(payload)) as Map<String, Object?>?;
       if (contents != null) {
         return contents['sub'] as String?;

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -73,19 +73,20 @@ class HttpRequestFactory {
     Map<String, String>? requestHeaders,
     Uint8List? sendData,
   }) async {
-    final Map<String, String> headers = <String, String>{
+    final headers = <String, String>{
       if (mimeType != null) 'content-type': mimeType,
       ...?requestHeaders,
     };
     return web.window
         .fetch(
-            url.toJS,
-            web.RequestInit(
-              method: method,
-              body: sendData?.toJS,
-              credentials: withCredentials ? 'include' : 'same-origin',
-              headers: headers.jsify()! as web.HeadersInit,
-            ))
+          url.toJS,
+          web.RequestInit(
+            method: method,
+            body: sendData?.toJS,
+            credentials: withCredentials ? 'include' : 'same-origin',
+            headers: headers.jsify()! as web.HeadersInit,
+          ),
+        )
         .toDart;
   }
 }

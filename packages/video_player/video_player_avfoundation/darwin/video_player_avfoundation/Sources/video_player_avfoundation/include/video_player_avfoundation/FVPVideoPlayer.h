@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -36,15 +36,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// A block that will be called when dispose is called.
 @property(nonatomic, nullable, copy) void (^onDisposed)(void);
 
-/// Initializes a new instance of FVPVideoPlayer with the given URL, HTTP headers, AV factory, and
-/// view provider.
-- (instancetype)initWithURL:(NSURL *)url
-                httpHeaders:(nonnull NSDictionary<NSString *, NSString *> *)headers
-                  avFactory:(id<FVPAVFactory>)avFactory
-               viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
-
-/// Disposes the video player and releases any resources it holds.
-- (void)dispose;
+/// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, AV factory, and view
+/// provider.
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+                         avFactory:(id<FVPAVFactory>)avFactory
+                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
 @end
 

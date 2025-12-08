@@ -8,7 +8,7 @@ A Flutter plugin that manages files and interactions with file dialogs.
 
 |             | Android | iOS     | Linux | macOS  | Web | Windows     |
 |-------------|---------|---------|-------|--------|-----|-------------|
-| **Support** | SDK 21+ | iOS 12+ | Any   | 10.14+ | Any | Windows 10+ |
+| **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | Any | Windows 10+ |
 
 ## Setup
 
@@ -35,48 +35,55 @@ Please also take a look at our [example][example] app.
 
 <?code-excerpt "open_image_page.dart (SingleOpen)"?>
 ```dart
-const XTypeGroup typeGroup = XTypeGroup(
+const typeGroup = XTypeGroup(
   label: 'images',
   extensions: <String>['jpg', 'png'],
+  uniformTypeIdentifiers: <String>['public.jpeg', 'public.png'],
 );
-final XFile? file =
-    await openFile(acceptedTypeGroups: <XTypeGroup>[typeGroup]);
+final XFile? file = await openFile(
+  acceptedTypeGroups: <XTypeGroup>[typeGroup],
+);
 ```
 
 #### Open multiple files at once
 
 <?code-excerpt "open_multiple_images_page.dart (MultiOpen)"?>
 ```dart
-const XTypeGroup jpgsTypeGroup = XTypeGroup(
+const jpgsTypeGroup = XTypeGroup(
   label: 'JPEGs',
   extensions: <String>['jpg', 'jpeg'],
+  uniformTypeIdentifiers: <String>['public.jpeg'],
 );
-const XTypeGroup pngTypeGroup = XTypeGroup(
+const pngTypeGroup = XTypeGroup(
   label: 'PNGs',
   extensions: <String>['png'],
+  uniformTypeIdentifiers: <String>['public.png'],
 );
-final List<XFile> files = await openFiles(acceptedTypeGroups: <XTypeGroup>[
-  jpgsTypeGroup,
-  pngTypeGroup,
-]);
+final List<XFile> files = await openFiles(
+  acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
+);
 ```
 
 #### Save a file
 
 <?code-excerpt "readme_standalone_excerpts.dart (Save)"?>
 ```dart
-const String fileName = 'suggested_name.txt';
-final FileSaveLocation? result =
-    await getSaveLocation(suggestedName: fileName);
+const fileName = 'suggested_name.txt';
+final FileSaveLocation? result = await getSaveLocation(
+  suggestedName: fileName,
+);
 if (result == null) {
   // Operation was canceled by the user.
   return;
 }
 
-final Uint8List fileData = Uint8List.fromList('Hello World!'.codeUnits);
-const String mimeType = 'text/plain';
-final XFile textFile =
-    XFile.fromData(fileData, mimeType: mimeType, name: fileName);
+final fileData = Uint8List.fromList('Hello World!'.codeUnits);
+const mimeType = 'text/plain';
+final textFile = XFile.fromData(
+  fileData,
+  mimeType: mimeType,
+  name: fileName,
+);
 await textFile.saveTo(result.path);
 ```
 

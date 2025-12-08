@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,7 +14,7 @@ void expectSetMatch<T>(Iterable<T> actual, Iterable<T> expected) {
 
 // May return null if the credentials file doesn't exist.
 Map<String, dynamic>? getTestGcpCredentialsJson() {
-  final File f = File('secret/test_gcp_credentials.json');
+  final f = File('secret/test_gcp_credentials.json');
   if (!f.existsSync()) {
     return null;
   }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,7 +6,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -26,8 +26,8 @@ enum CameraTestUtils {
       enableAudio: true)
   }
 
-  /// Creates a test `FLTCamConfiguration` with a default mock setup.
-  static func createTestCameraConfiguration() -> FLTCamConfiguration {
+  /// Creates a test `CameraConfiguration` with a default mock setup.
+  static func createTestCameraConfiguration() -> CameraConfiguration {
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
 
     let videoSessionMock = MockCaptureSession()
@@ -47,7 +47,7 @@ enum CameraTestUtils {
     captureDeviceFormatMock2.videoSupportedFrameRateRanges = [frameRateRangeMock2]
 
     let captureDeviceMock = MockCaptureDevice()
-    captureDeviceMock.formats = [captureDeviceFormatMock1, captureDeviceFormatMock2]
+    captureDeviceMock.flutterFormats = [captureDeviceFormatMock1, captureDeviceFormatMock2]
 
     var currentFormat: FLTCaptureDeviceFormat = captureDeviceFormatMock1
 
@@ -56,7 +56,7 @@ enum CameraTestUtils {
       currentFormat = format
     }
 
-    let configuration = FLTCamConfiguration(
+    let configuration = CameraConfiguration(
       mediaSettings: createDefaultMediaSettings(
         resolutionPreset: FCPPlatformResolutionPreset.medium),
       mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper(),
@@ -72,7 +72,7 @@ enum CameraTestUtils {
     configuration.audioCaptureSession = audioSessionMock
     configuration.orientation = .portrait
 
-    configuration.assetWriterFactory = { _, _, _ in MockAssetWriter() }
+    configuration.assetWriterFactory = { _, _ in MockAssetWriter() }
 
     configuration.inputPixelBufferAdaptorFactory = { _, _ in
       MockAssetWriterInputPixelBufferAdaptor()
@@ -81,8 +81,8 @@ enum CameraTestUtils {
     return configuration
   }
 
-  static func createTestCamera(_ configuration: FLTCamConfiguration) -> DefaultCamera {
-    return DefaultCamera(configuration: configuration, error: nil)
+  static func createTestCamera(_ configuration: CameraConfiguration) -> DefaultCamera {
+    return (try? DefaultCamera(configuration: configuration))!
   }
 
   static func createTestCamera() -> DefaultCamera {

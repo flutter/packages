@@ -34,43 +34,25 @@ class _FakePlatformWebViewCookieManager_0 extends _i1.SmartFake
   _FakePlatformWebViewCookieManager_0(
     Object parent,
     Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  ) : super(parent, parentInvocation);
 }
 
 class _FakePlatformNavigationDelegate_1 extends _i1.SmartFake
     implements _i3.PlatformNavigationDelegate {
-  _FakePlatformNavigationDelegate_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePlatformNavigationDelegate_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformWebViewController_2 extends _i1.SmartFake
     implements _i4.PlatformWebViewController {
-  _FakePlatformWebViewController_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePlatformWebViewController_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePlatformWebViewWidget_3 extends _i1.SmartFake
     implements _i5.PlatformWebViewWidget {
-  _FakePlatformWebViewWidget_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePlatformWebViewWidget_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [WebViewPlatform].
@@ -83,69 +65,53 @@ class MockWebViewPlatform extends _i1.Mock implements _i6.WebViewPlatform {
 
   @override
   _i2.PlatformWebViewCookieManager createPlatformCookieManager(
-          _i7.PlatformWebViewCookieManagerCreationParams? params) =>
+    _i7.PlatformWebViewCookieManagerCreationParams? params,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #createPlatformCookieManager,
-          [params],
-        ),
-        returnValue: _FakePlatformWebViewCookieManager_0(
-          this,
-          Invocation.method(
-            #createPlatformCookieManager,
-            [params],
-          ),
-        ),
-      ) as _i2.PlatformWebViewCookieManager);
+            Invocation.method(#createPlatformCookieManager, [params]),
+            returnValue: _FakePlatformWebViewCookieManager_0(
+              this,
+              Invocation.method(#createPlatformCookieManager, [params]),
+            ),
+          )
+          as _i2.PlatformWebViewCookieManager);
 
   @override
   _i3.PlatformNavigationDelegate createPlatformNavigationDelegate(
-          _i7.PlatformNavigationDelegateCreationParams? params) =>
+    _i7.PlatformNavigationDelegateCreationParams? params,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #createPlatformNavigationDelegate,
-          [params],
-        ),
-        returnValue: _FakePlatformNavigationDelegate_1(
-          this,
-          Invocation.method(
-            #createPlatformNavigationDelegate,
-            [params],
-          ),
-        ),
-      ) as _i3.PlatformNavigationDelegate);
+            Invocation.method(#createPlatformNavigationDelegate, [params]),
+            returnValue: _FakePlatformNavigationDelegate_1(
+              this,
+              Invocation.method(#createPlatformNavigationDelegate, [params]),
+            ),
+          )
+          as _i3.PlatformNavigationDelegate);
 
   @override
   _i4.PlatformWebViewController createPlatformWebViewController(
-          _i7.PlatformWebViewControllerCreationParams? params) =>
+    _i7.PlatformWebViewControllerCreationParams? params,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #createPlatformWebViewController,
-          [params],
-        ),
-        returnValue: _FakePlatformWebViewController_2(
-          this,
-          Invocation.method(
-            #createPlatformWebViewController,
-            [params],
-          ),
-        ),
-      ) as _i4.PlatformWebViewController);
+            Invocation.method(#createPlatformWebViewController, [params]),
+            returnValue: _FakePlatformWebViewController_2(
+              this,
+              Invocation.method(#createPlatformWebViewController, [params]),
+            ),
+          )
+          as _i4.PlatformWebViewController);
 
   @override
   _i5.PlatformWebViewWidget createPlatformWebViewWidget(
-          _i7.PlatformWebViewWidgetCreationParams? params) =>
+    _i7.PlatformWebViewWidgetCreationParams? params,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #createPlatformWebViewWidget,
-          [params],
-        ),
-        returnValue: _FakePlatformWebViewWidget_3(
-          this,
-          Invocation.method(
-            #createPlatformWebViewWidget,
-            [params],
-          ),
-        ),
-      ) as _i5.PlatformWebViewWidget);
+            Invocation.method(#createPlatformWebViewWidget, [params]),
+            returnValue: _FakePlatformWebViewWidget_3(
+              this,
+              Invocation.method(#createPlatformWebViewWidget, [params]),
+            ),
+          )
+          as _i5.PlatformWebViewWidget);
 }

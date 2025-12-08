@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,7 +46,7 @@ class NavigationDelegate {
   /// {@endtemplate}
   NavigationDelegate({
     FutureOr<NavigationDecision> Function(NavigationRequest request)?
-        onNavigationRequest,
+    onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
@@ -56,17 +56,17 @@ class NavigationDelegate {
     void Function(HttpResponseError error)? onHttpError,
     void Function(SslAuthError request)? onSslAuthError,
   }) : this.fromPlatformCreationParams(
-          const PlatformNavigationDelegateCreationParams(),
-          onNavigationRequest: onNavigationRequest,
-          onPageStarted: onPageStarted,
-          onPageFinished: onPageFinished,
-          onProgress: onProgress,
-          onWebResourceError: onWebResourceError,
-          onUrlChange: onUrlChange,
-          onHttpAuthRequest: onHttpAuthRequest,
-          onHttpError: onHttpError,
-          onSslAuthError: onSslAuthError,
-        );
+         const PlatformNavigationDelegateCreationParams(),
+         onNavigationRequest: onNavigationRequest,
+         onPageStarted: onPageStarted,
+         onPageFinished: onPageFinished,
+         onProgress: onProgress,
+         onWebResourceError: onWebResourceError,
+         onUrlChange: onUrlChange,
+         onHttpAuthRequest: onHttpAuthRequest,
+         onHttpError: onHttpError,
+         onSslAuthError: onSslAuthError,
+       );
 
   /// Constructs a [NavigationDelegate] from creation params for a specific
   /// platform.
@@ -102,7 +102,7 @@ class NavigationDelegate {
   NavigationDelegate.fromPlatformCreationParams(
     PlatformNavigationDelegateCreationParams params, {
     FutureOr<NavigationDecision> Function(NavigationRequest request)?
-        onNavigationRequest,
+    onNavigationRequest,
     void Function(String url)? onPageStarted,
     void Function(String url)? onPageFinished,
     void Function(int progress)? onProgress,
@@ -112,17 +112,17 @@ class NavigationDelegate {
     void Function(HttpResponseError error)? onHttpError,
     void Function(SslAuthError request)? onSslAuthError,
   }) : this.fromPlatform(
-          PlatformNavigationDelegate(params),
-          onNavigationRequest: onNavigationRequest,
-          onPageStarted: onPageStarted,
-          onPageFinished: onPageFinished,
-          onProgress: onProgress,
-          onWebResourceError: onWebResourceError,
-          onUrlChange: onUrlChange,
-          onHttpAuthRequest: onHttpAuthRequest,
-          onHttpError: onHttpError,
-          onSslAuthError: onSslAuthError,
-        );
+         PlatformNavigationDelegate(params),
+         onNavigationRequest: onNavigationRequest,
+         onPageStarted: onPageStarted,
+         onPageFinished: onPageFinished,
+         onProgress: onProgress,
+         onWebResourceError: onWebResourceError,
+         onUrlChange: onUrlChange,
+         onHttpAuthRequest: onHttpAuthRequest,
+         onHttpError: onHttpError,
+         onSslAuthError: onSslAuthError,
+       );
 
   /// Constructs a [NavigationDelegate] from a specific platform implementation.
   ///
@@ -164,11 +164,9 @@ class NavigationDelegate {
       platform.setOnHttpError(onHttpError);
     }
     if (onSslAuthError != null) {
-      platform.setOnSSlAuthError(
-        (PlatformSslAuthError error) {
-          onSslAuthError(SslAuthError._fromPlatform(error));
-        },
-      );
+      platform.setOnSSlAuthError((PlatformSslAuthError error) {
+        onSslAuthError(SslAuthError._fromPlatform(error));
+      });
     }
   }
 

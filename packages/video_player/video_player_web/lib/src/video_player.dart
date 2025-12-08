@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -42,8 +42,8 @@ class VideoPlayer {
   VideoPlayer({
     required web.HTMLVideoElement videoElement,
     @visibleForTesting StreamController<VideoEvent>? eventController,
-  })  : _videoElement = videoElement,
-        _eventController = eventController ?? StreamController<VideoEvent>();
+  }) : _videoElement = videoElement,
+       _eventController = eventController ?? StreamController<VideoEvent>();
 
   final StreamController<VideoEvent> _eventController;
   final web.HTMLVideoElement _videoElement;
@@ -68,9 +68,7 @@ class VideoPlayer {
   /// `src` attribute is set).
   ///
   /// The `src` parameter is nullable for testing purposes.
-  void initialize({
-    String? src,
-  }) {
+  void initialize({String? src}) {
     _videoElement
       ..autoplay = false
       ..controls = false
@@ -98,25 +96,31 @@ class VideoPlayer {
       // We need to look at the HTMLMediaElement.error.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/error
       final web.MediaError error = _videoElement.error!;
-      _eventController.addError(PlatformException(
-        code: _kErrorValueToErrorName[error.code]!,
-        message: error.message != '' ? error.message : _kDefaultErrorMessage,
-        details: _kErrorValueToErrorDescription[error.code],
-      ));
+      _eventController.addError(
+        PlatformException(
+          code: _kErrorValueToErrorName[error.code]!,
+          message: error.message != '' ? error.message : _kDefaultErrorMessage,
+          details: _kErrorValueToErrorDescription[error.code],
+        ),
+      );
     });
 
     _videoElement.onPlay.listen((dynamic _) {
-      _eventController.add(VideoEvent(
-        eventType: VideoEventType.isPlayingStateUpdate,
-        isPlaying: true,
-      ));
+      _eventController.add(
+        VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: true,
+        ),
+      );
     });
 
     _videoElement.onPause.listen((dynamic _) {
-      _eventController.add(VideoEvent(
-        eventType: VideoEventType.isPlayingStateUpdate,
-        isPlaying: false,
-      ));
+      _eventController.add(
+        VideoEvent(
+          eventType: VideoEventType.isPlayingStateUpdate,
+          isPlaying: false,
+        ),
+      );
     });
 
     _videoElement.onEnded.listen((dynamic _) {
@@ -149,11 +153,10 @@ class VideoPlayer {
       // playback for any reason, such as permission issues.
       // The rejection handler is called with a DOMException.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play
-      final web.DOMException exception = e as web.DOMException;
-      _eventController.addError(PlatformException(
-        code: exception.name,
-        message: exception.message,
-      ));
+      final exception = e as web.DOMException;
+      _eventController.addError(
+        PlatformException(code: exception.name, message: exception.message),
+      );
       return null;
     }, test: (Object e) => e is web.DOMException);
   }
@@ -306,8 +309,9 @@ class VideoPlayer {
 
   // Sends an [VideoEventType.initialized] [VideoEvent] with info about the wrapped video.
   void _sendInitialized() {
-    final Duration? duration =
-        convertNumVideoDurationToPluginDuration(_videoElement.duration);
+    final Duration? duration = convertNumVideoDurationToPluginDuration(
+      _videoElement.duration,
+    );
 
     final Size? size = _videoElement.videoHeight.isFinite
         ? Size(
@@ -333,30 +337,36 @@ class VideoPlayer {
   void setBuffering(bool buffering) {
     if (_isBuffering != buffering) {
       _isBuffering = buffering;
-      _eventController.add(VideoEvent(
-        eventType: _isBuffering
-            ? VideoEventType.bufferingStart
-            : VideoEventType.bufferingEnd,
-      ));
+      _eventController.add(
+        VideoEvent(
+          eventType: _isBuffering
+              ? VideoEventType.bufferingStart
+              : VideoEventType.bufferingEnd,
+        ),
+      );
     }
   }
 
   // Broadcasts the [web.HTMLVideoElement.buffered] status through the [events] stream.
   void _sendBufferingRangesUpdate() {
-    _eventController.add(VideoEvent(
-      buffered: _toDurationRange(_videoElement.buffered),
-      eventType: VideoEventType.bufferingUpdate,
-    ));
+    _eventController.add(
+      VideoEvent(
+        buffered: _toDurationRange(_videoElement.buffered),
+        eventType: VideoEventType.bufferingUpdate,
+      ),
+    );
   }
 
   // Converts from [html.TimeRanges] to our own List<DurationRange>.
   List<DurationRange> _toDurationRange(web.TimeRanges buffered) {
-    final List<DurationRange> durationRange = <DurationRange>[];
-    for (int i = 0; i < buffered.length; i++) {
-      durationRange.add(DurationRange(
-        Duration(milliseconds: (buffered.start(i) * 1000).round()),
-        Duration(milliseconds: (buffered.end(i) * 1000).round()),
-      ));
+    final durationRange = <DurationRange>[];
+    for (var i = 0; i < buffered.length; i++) {
+      durationRange.add(
+        DurationRange(
+          Duration(milliseconds: (buffered.start(i) * 1000).round()),
+          Duration(milliseconds: (buffered.end(i) * 1000).round()),
+        ),
+      );
     }
     return durationRange;
   }

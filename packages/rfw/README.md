@@ -199,6 +199,7 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+
 ```
 
 In this example, the "remote" widgets are hardcoded into the
@@ -323,12 +324,15 @@ class _ExampleState extends State<Example> {
     // server, and decode it with [decodeLibraryBlob] rather than parsing the
     // text version using [parseLibraryFile]. However, to make it easier to
     // play with this sample, this uses the slower text format.
-    _runtime.update(remoteName, parseLibraryFile('''
+    _runtime.update(
+      remoteName,
+      parseLibraryFile('''
       import local;
       widget root = GreenBox(
         child: Hello(name: "World"),
       );
-    '''));
+    '''),
+    );
   }
 
   @override
@@ -343,6 +347,7 @@ class _ExampleState extends State<Example> {
     );
   }
 }
+
 ```
 
 Widgets in local widget libraries are represented by closures that are
@@ -486,8 +491,8 @@ not identify a list):
 'Foo': (BuildContext context, DataSource source) {
   final int length = source.length(<Object>['text']);
   if (length > 0) {
-    final StringBuffer text = StringBuffer();
-    for (int index = 0; index < length; index += 1) {
+    final text = StringBuffer();
+    for (var index = 0; index < length; index += 1) {
       text.write(source.v<String>(<Object>['text', index]));
     }
     return Text(text.toString(), textDirection: TextDirection.ltr);
@@ -757,7 +762,7 @@ function.
 
 Compiling a text `rfwtxt` file to the binary `rfw` format can be done
 by calling
-[`encodeLibraryBlob`](https://pub.dev/documentation/rfw/latest/formats/encodeLibraryBlob.html)
+[`encodeLibraryBlob`](https://pub.dev/documentation/rfw/latest/rfw/encodeLibraryBlob.html)
 on the results of calling `parseLibraryFile`.
 
 The example in `example/remote` has some [elaborate remote
@@ -848,7 +853,7 @@ with the `DynamicContent` under the name `server`.
 > This data is parsed by calling
 > [`parseDataFile`](https://pub.dev/documentation/rfw/latest/formats/parseDataFile.html),
 > which turns it into
-> [`DynamicMap`](https://pub.dev/documentation/rfw/latest/formats/DynamicMap.html).
+> [`DynamicMap`](https://pub.dev/documentation/rfw/latest/rfw/DynamicMap.html).
 > That object is then passed to a
 > [`DynamicContent`](https://pub.dev/documentation/rfw/latest/rfw/DynamicContent-class.html),
 > using
@@ -862,9 +867,9 @@ with the `DynamicContent` under the name `server`.
 >
 > Ideally, rather than dealing with this text form on the client, the
 > data would be turned into a binary form using
-> [`encodeDataBlob`](https://pub.dev/documentation/rfw/latest/formats/encodeDataBlob.html)
+> [`encodeDataBlob`](https://pub.dev/documentation/rfw/latest/rfw/encodeDataBlob.html)
 > on the server, and then parsed on the client using
-> [`decodeDataBlob`](https://pub.dev/documentation/rfw/latest/formats/decodeDataBlob.html).
+> [`decodeDataBlob`](https://pub.dev/documentation/rfw/latest/rfw/decodeDataBlob.html).
 
 First, let's render a plain Flutter `ListView` with the name of each
 product. The `Shop` widget below achieves this:

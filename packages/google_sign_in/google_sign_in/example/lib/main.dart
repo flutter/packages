@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,12 +30,7 @@ const List<String> scopes = <String>[
 // #enddocregion CheckAuthorization
 
 void main() {
-  runApp(
-    const MaterialApp(
-      title: 'Google Sign In',
-      home: SignInDemo(),
-    ),
-  );
+  runApp(const MaterialApp(title: 'Google Sign In', home: SignInDemo()));
 }
 
 /// The SignInDemo app.
@@ -60,35 +55,39 @@ class _SignInDemoState extends State<SignInDemo> {
 
     // #docregion Setup
     final GoogleSignIn signIn = GoogleSignIn.instance;
-    unawaited(signIn
-        .initialize(clientId: clientId, serverClientId: serverClientId)
-        .then((_) {
-      signIn.authenticationEvents
-          .listen(_handleAuthenticationEvent)
-          .onError(_handleAuthenticationError);
+    unawaited(
+      signIn.initialize(clientId: clientId, serverClientId: serverClientId).then((
+        _,
+      ) {
+        signIn.authenticationEvents
+            .listen(_handleAuthenticationEvent)
+            .onError(_handleAuthenticationError);
 
-      /// This example always uses the stream-based approach to determining
-      /// which UI state to show, rather than using the future returned here,
-      /// if any, to conditionally skip directly to the signed-in state.
-      signIn.attemptLightweightAuthentication();
-    }));
+        /// This example always uses the stream-based approach to determining
+        /// which UI state to show, rather than using the future returned here,
+        /// if any, to conditionally skip directly to the signed-in state.
+        signIn.attemptLightweightAuthentication();
+      }),
+    );
     // #enddocregion Setup
   }
 
   Future<void> _handleAuthenticationEvent(
-      GoogleSignInAuthenticationEvent event) async {
+    GoogleSignInAuthenticationEvent event,
+  ) async {
     // #docregion CheckAuthorization
     final GoogleSignInAccount? user = // ...
         // #enddocregion CheckAuthorization
         switch (event) {
-      GoogleSignInAuthenticationEventSignIn() => event.user,
-      GoogleSignInAuthenticationEventSignOut() => null,
-    };
+          GoogleSignInAuthenticationEventSignIn() => event.user,
+          GoogleSignInAuthenticationEventSignOut() => null,
+        };
 
     // Check for existing authorization.
     // #docregion CheckAuthorization
-    final GoogleSignInClientAuthorization? authorization =
-        await user?.authorizationClient.authorizationForScopes(scopes);
+    final GoogleSignInClientAuthorization? authorization = await user
+        ?.authorizationClient
+        .authorizationForScopes(scopes);
     // #enddocregion CheckAuthorization
 
     setState(() {
@@ -119,8 +118,8 @@ class _SignInDemoState extends State<SignInDemo> {
     setState(() {
       _contactText = 'Loading contact info...';
     });
-    final Map<String, String>? headers =
-        await user.authorizationClient.authorizationHeaders(scopes);
+    final Map<String, String>? headers = await user.authorizationClient
+        .authorizationHeaders(scopes);
     if (headers == null) {
       setState(() {
         _contactText = '';
@@ -129,28 +128,31 @@ class _SignInDemoState extends State<SignInDemo> {
       return;
     }
     final http.Response response = await http.get(
-      Uri.parse('https://people.googleapis.com/v1/people/me/connections'
-          '?requestMask.includeField=person.names'),
+      Uri.parse(
+        'https://people.googleapis.com/v1/people/me/connections'
+        '?requestMask.includeField=person.names',
+      ),
       headers: headers,
     );
     if (response.statusCode != 200) {
       if (response.statusCode == 401 || response.statusCode == 403) {
         setState(() {
           _isAuthorized = false;
-          _errorMessage = 'People API gave a ${response.statusCode} response. '
+          _errorMessage =
+              'People API gave a ${response.statusCode} response. '
               'Please re-authorize access.';
         });
       } else {
         print('People API ${response.statusCode} response: ${response.body}');
         setState(() {
-          _contactText = 'People API gave a ${response.statusCode} '
+          _contactText =
+              'People API gave a ${response.statusCode} '
               'response. Check logs for details.';
         });
       }
       return;
     }
-    final Map<String, dynamic> data =
-        json.decode(response.body) as Map<String, dynamic>;
+    final data = json.decode(response.body) as Map<String, dynamic>;
     final String? namedContact = _pickFirstNamedContact(data);
     setState(() {
       if (namedContact != null) {
@@ -162,18 +164,23 @@ class _SignInDemoState extends State<SignInDemo> {
   }
 
   String? _pickFirstNamedContact(Map<String, dynamic> data) {
-    final List<dynamic>? connections = data['connections'] as List<dynamic>?;
-    final Map<String, dynamic>? contact = connections?.firstWhere(
-      (dynamic contact) => (contact as Map<Object?, dynamic>)['names'] != null,
-      orElse: () => null,
-    ) as Map<String, dynamic>?;
+    final connections = data['connections'] as List<dynamic>?;
+    final contact =
+        connections?.firstWhere(
+              (dynamic contact) =>
+                  (contact as Map<Object?, dynamic>)['names'] != null,
+              orElse: () => null,
+            )
+            as Map<String, dynamic>?;
     if (contact != null) {
-      final List<dynamic> names = contact['names'] as List<dynamic>;
-      final Map<String, dynamic>? name = names.firstWhere(
-        (dynamic name) =>
-            (name as Map<Object?, dynamic>)['displayName'] != null,
-        orElse: () => null,
-      ) as Map<String, dynamic>?;
+      final names = contact['names'] as List<dynamic>;
+      final name =
+          names.firstWhere(
+                (dynamic name) =>
+                    (name as Map<Object?, dynamic>)['displayName'] != null,
+                orElse: () => null,
+              )
+              as Map<String, dynamic>?;
       if (name != null) {
         return name['displayName'] as String?;
       }
@@ -189,8 +196,9 @@ class _SignInDemoState extends State<SignInDemo> {
   Future<void> _handleAuthorizeScopes(GoogleSignInAccount user) async {
     try {
       // #docregion RequestScopes
-      final GoogleSignInClientAuthorization authorization =
-          await user.authorizationClient.authorizeScopes(scopes);
+      final GoogleSignInClientAuthorization authorization = await user
+          .authorizationClient
+          .authorizeScopes(scopes);
       // #enddocregion RequestScopes
 
       // The returned tokens are ignored since _handleGetContact uses the
@@ -220,8 +228,9 @@ class _SignInDemoState extends State<SignInDemo> {
   Future<void> _handleGetAuthCode(GoogleSignInAccount user) async {
     try {
       // #docregion RequestServerAuth
-      final GoogleSignInServerAuthorization? serverAuth =
-          await user.authorizationClient.authorizeServer(scopes);
+      final GoogleSignInServerAuthorization? serverAuth = await user
+          .authorizationClient
+          .authorizeServer(scopes);
       // #enddocregion RequestServerAuth
 
       setState(() {
@@ -257,9 +266,7 @@ class _SignInDemoState extends State<SignInDemo> {
     return <Widget>[
       // The user is Authenticated.
       ListTile(
-        leading: GoogleUserCircleAvatar(
-          identity: user,
-        ),
+        leading: GoogleUserCircleAvatar(identity: user),
         title: Text(user.displayName ?? ''),
         subtitle: Text(user.email),
       ),
@@ -286,10 +293,7 @@ class _SignInDemoState extends State<SignInDemo> {
           child: const Text('REQUEST PERMISSIONS'),
         ),
       ],
-      ElevatedButton(
-        onPressed: _handleSignOut,
-        child: const Text('SIGN OUT'),
-      ),
+      ElevatedButton(onPressed: _handleSignOut, child: const Text('SIGN OUT')),
     ];
   }
 
@@ -317,9 +321,10 @@ class _SignInDemoState extends State<SignInDemo> {
         // #enddocregion ExplicitSignIn
         else
           const Text(
-              'This platform does not have a known authentication method')
+            'This platform does not have a known authentication method',
+          ),
         // #docregion ExplicitSignIn
-      ]
+      ],
       // #enddocregion ExplicitSignIn
     ];
   }
@@ -327,13 +332,12 @@ class _SignInDemoState extends State<SignInDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Google Sign In'),
-        ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: _buildBody(),
-        ));
+      appBar: AppBar(title: const Text('Google Sign In')),
+      body: ConstrainedBox(
+        constraints: const BoxConstraints.expand(),
+        child: _buildBody(),
+      ),
+    );
   }
 
   String _errorMessageFromSignInException(GoogleSignInException e) {

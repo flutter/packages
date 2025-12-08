@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -80,24 +80,28 @@ Future<bool> launch(
 
   if (((forceSafariVC ?? false) || forceWebView) && !isWebURL) {
     throw PlatformException(
-        code: 'NOT_A_WEB_SCHEME',
-        message: 'To use webview or safariVC, you need to pass '
-            'in a web URL. This $urlString is not a web URL.');
+      code: 'NOT_A_WEB_SCHEME',
+      message:
+          'To use webview or safariVC, you need to pass '
+          'in a web URL. This $urlString is not a web URL.',
+    );
   }
 
   /// [true] so that ui is automatically computed if [statusBarBrightness] is set.
-  bool previousAutomaticSystemUiAdjustment = true;
+  var previousAutomaticSystemUiAdjustment = true;
   final RenderView? renderViewToAdjust =
       statusBarBrightness != null && defaultTargetPlatform == TargetPlatform.iOS
-          ? _findImplicitRenderView()
-          : null;
+      ? _findImplicitRenderView()
+      : null;
   if (renderViewToAdjust != null) {
     previousAutomaticSystemUiAdjustment =
         renderViewToAdjust.automaticSystemUiAdjustment;
     renderViewToAdjust.automaticSystemUiAdjustment = false;
-    SystemChrome.setSystemUIOverlayStyle(statusBarBrightness == Brightness.light
-        ? SystemUiOverlayStyle.dark
-        : SystemUiOverlayStyle.light);
+    SystemChrome.setSystemUIOverlayStyle(
+      statusBarBrightness == Brightness.light
+          ? SystemUiOverlayStyle.dark
+          : SystemUiOverlayStyle.light,
+    );
   }
 
   final bool result = await UrlLauncherPlatform.instance.launch(

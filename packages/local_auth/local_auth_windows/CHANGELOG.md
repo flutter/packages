@@ -1,6 +1,12 @@
-## NEXT
+## 2.0.1
 
-* Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
+* Updates to Pigeon 26.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.0.0
+
+* Switches to `LocalAuthException` for error reporting.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 1.0.11
 

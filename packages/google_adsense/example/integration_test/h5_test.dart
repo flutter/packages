@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,14 +25,10 @@ void main() {
 
   group('h5GamesAds.adBreak', () {
     testWidgets('can do ad breaks', (WidgetTester tester) async {
-      mockAdsByGoogle(
-        mockAdBreak(),
-      );
+      mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
-        type: BreakType.reward,
-      );
+      final adBreakPlacement = AdBreakPlacement(type: BreakType.reward);
 
       h5GamesAds.adBreak(adBreakPlacement);
 
@@ -45,8 +41,9 @@ void main() {
       expect(lastAdBreakPlacement!.type?.toDart, 'reward');
     });
 
-    testWidgets('can call the adBreakDone callback',
-        (WidgetTester tester) async {
+    testWidgets('can call the adBreakDone callback', (
+      WidgetTester tester,
+    ) async {
       AdBreakDonePlacementInfo? lastPlacementInfo;
 
       void adBreakDoneCallback(AdBreakDonePlacementInfo placementInfo) {
@@ -62,7 +59,7 @@ void main() {
       );
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
+      final adBreakPlacement = AdBreakPlacement(
         type: BreakType.reward,
         adBreakDone: adBreakDoneCallback,
       );
@@ -79,12 +76,10 @@ void main() {
     });
 
     testWidgets('prefixes adBreak name', (WidgetTester tester) async {
-      mockAdsByGoogle(
-        mockAdBreak(),
-      );
+      mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
+      final adBreakPlacement = AdBreakPlacement(
         type: BreakType.reward,
         name: 'my-test-break',
       );
@@ -102,14 +97,12 @@ void main() {
 
   group('h5GamesAds.adConfig', () {
     testWidgets('can set up configuration', (WidgetTester tester) async {
-      bool called = false;
+      var called = false;
       void onReadyCallback() {
         called = true;
       }
 
-      mockAdsByGoogle(
-        mockAdConfig(),
-      );
+      mockAdsByGoogle(mockAdConfig());
       await adSense.initialize('_');
 
       h5GamesAds.adConfig(
