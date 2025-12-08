@@ -2,6 +2,10 @@
 
 * Bumps camerax_version from 1.5.1 to 1.5.2.
 
+## 0.6.26
+
+* Removes internal native library Dart proxy.
+
 ## 0.6.25+1
 
 * Bumps kotlin_version to 2.2.21.
