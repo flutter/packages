@@ -1,3 +1,7 @@
+## 0.6.26+1
+
+* Bumps camerax_version from 1.5.1 to 1.5.2.
+
 ## 0.6.26
 
 * Removes internal native library Dart proxy.
