@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import Flutter
 import XCTest
 
 @testable import file_selector_ios
@@ -16,13 +17,21 @@ final class TestViewPresenter: ViewPresenter {
   }
 }
 
+final class StubViewPresenterProvider: ViewPresenterProvider {
+  var viewPresenter: ViewPresenter?
+
+  init(viewPresenter: ViewPresenter?) {
+    self.viewPresenter = viewPresenter
+  }
+}
+
 class FileSelectorTests: XCTestCase {
   func testPickerPresents() throws {
-    let plugin = FileSelectorPlugin()
-    let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     let presenter = TestViewPresenter()
+    let plugin = FileSelectorPlugin(
+      viewPresenterProvider: StubViewPresenterProvider(viewPresenter: presenter))
+    let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     plugin.documentPickerViewControllerOverride = picker
-    plugin.viewPresenterOverride = presenter
 
     plugin.openFile(
       config: FileSelectorConfig(utis: [], allowMultiSelection: false)
@@ -34,10 +43,10 @@ class FileSelectorTests: XCTestCase {
   }
 
   func testReturnsPickedFiles() throws {
-    let plugin = FileSelectorPlugin()
+    let plugin = FileSelectorPlugin(
+      viewPresenterProvider: StubViewPresenterProvider(viewPresenter: TestViewPresenter()))
     let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     plugin.documentPickerViewControllerOverride = picker
-    plugin.viewPresenterOverride = TestViewPresenter()
     let completionWasCalled = expectation(description: "completion")
 
     plugin.openFile(
@@ -60,10 +69,10 @@ class FileSelectorTests: XCTestCase {
   }
 
   func testCancellingPickerReturnsEmptyList() throws {
-    let plugin = FileSelectorPlugin()
+    let plugin = FileSelectorPlugin(
+      viewPresenterProvider: StubViewPresenterProvider(viewPresenter: TestViewPresenter()))
     let picker = UIDocumentPickerViewController(documentTypes: [], in: UIDocumentPickerMode.import)
     plugin.documentPickerViewControllerOverride = picker
-    plugin.viewPresenterOverride = TestViewPresenter()
     let completionWasCalled = expectation(description: "completion")
 
     plugin.openFile(

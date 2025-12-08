@@ -6,7 +6,7 @@ import 'dart:collection';
 
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/dart/constant/value.dart';
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/nullability_suffix.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:collection/collection.dart';
@@ -57,14 +57,14 @@ class ShellRouteConfig extends RouteBaseConfig {
 
   @override
   Iterable<String> classDeclarations() {
-    if (routeDataClass.unnamedConstructor2 == null) {
+    if (routeDataClass.unnamedConstructor == null) {
       throw InvalidGenerationSourceError(
         'The ShellRouteData "$_className" class must have an unnamed constructor.',
         element: routeDataClass,
       );
     }
 
-    final bool isConst = routeDataClass.unnamedConstructor2!.isConst;
+    final bool isConst = routeDataClass.unnamedConstructor!.isConst;
 
     return <String>[
       '''
@@ -116,7 +116,7 @@ class StatefulShellRouteConfig extends RouteBaseConfig {
   Iterable<String> classDeclarations() => <String>[
     '''
 extension $_extensionName on $_className {
-  static $_className _fromState(GoRouterState state) =>${routeDataClass.unnamedConstructor2!.isConst ? ' const' : ''}   $_className();
+  static $_className _fromState(GoRouterState state) =>${routeDataClass.unnamedConstructor!.isConst ? ' const' : ''}   $_className();
 }
 ''',
   ];
@@ -297,7 +297,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
   }
 
   String _encodeFor(String fieldName) {
-    final PropertyAccessorElement2? field = _field(fieldName);
+    final PropertyAccessorElement? field = _field(fieldName);
     if (field == null) {
       throw InvalidGenerationSourceError(
         'Could not find a field for the path parameter "$fieldName".',
@@ -363,8 +363,8 @@ mixin _GoRouteMixin on RouteBaseConfig {
       )
       .toList();
 
-  ConstructorElement2 get _ctor {
-    final ConstructorElement2? ctor = routeDataClass.unnamedConstructor2;
+  ConstructorElement get _ctor {
+    final ConstructorElement? ctor = routeDataClass.unnamedConstructor;
 
     if (ctor == null) {
       throw InvalidGenerationSourceError(
@@ -465,7 +465,7 @@ class GoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
         getNodeDeclaration<ClassDeclaration>(routeDataClass)
             ?.withClause
             ?.mixinTypes
-            .any((NamedType e) => e.name2.toString() == _mixinName) ??
+            .any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {
@@ -540,7 +540,7 @@ class RelativeGoRouteConfig extends RouteBaseConfig with _GoRouteMixin {
         getNodeDeclaration<ClassDeclaration>(routeDataClass)
             ?.withClause
             ?.mixinTypes
-            .any((NamedType e) => e.name2.toString() == _mixinName) ??
+            .any((NamedType e) => e.name.toString() == _mixinName) ??
         false;
 
     if (!hasMixin) {
@@ -596,7 +596,7 @@ abstract class RouteBaseConfig {
   /// Creates a new [RouteBaseConfig] represented the annotation data in [reader].
   factory RouteBaseConfig.fromAnnotation(
     ConstantReader reader,
-    InterfaceElement2 element,
+    InterfaceElement element,
   ) {
     final definition = RouteBaseConfig._fromAnnotation(reader, element, null);
 
@@ -613,7 +613,7 @@ abstract class RouteBaseConfig {
 
   factory RouteBaseConfig._fromAnnotation(
     ConstantReader reader,
-    InterfaceElement2 element,
+    InterfaceElement element,
     RouteBaseConfig? parent, {
     bool isAncestorRelative = false,
   }) {
@@ -641,8 +641,7 @@ abstract class RouteBaseConfig {
     }
 
     // TODO(kevmoo): validate that this MUST be a subtype of `GoRouteData`
-    // ignore: experimental_member_use
-    final InterfaceElement2 classElement = typeParamType.element3;
+    final InterfaceElement classElement = typeParamType.element;
 
     final RouteBaseConfig value;
     switch (typeName) {
@@ -780,7 +779,7 @@ abstract class RouteBaseConfig {
   final List<RouteBaseConfig> _children = <RouteBaseConfig>[];
 
   /// The `RouteData` class this class represents.
-  final InterfaceElement2 routeDataClass;
+  final InterfaceElement routeDataClass;
 
   /// The parent of this route config.
   final RouteBaseConfig? parent;
@@ -793,11 +792,11 @@ abstract class RouteBaseConfig {
   }
 
   static String? _generateParameterGetterCode(
-    InterfaceElement2 classElement, {
+    InterfaceElement classElement, {
     required String parameterName,
   }) {
-    final String? fieldDisplayName = classElement.fields2
-        .where((FieldElement2 element) {
+    final String? fieldDisplayName = classElement.fields
+        .where((FieldElement element) {
           if (!element.isStatic || element.displayName != parameterName) {
             return false;
           }
@@ -820,17 +819,17 @@ abstract class RouteBaseConfig {
           }
           return true;
         })
-        .map<String>((FieldElement2 e) => e.displayName)
+        .map<String>((FieldElement e) => e.displayName)
         .firstOrNull;
 
     if (fieldDisplayName != null) {
       return '${classElement.displayName}.$fieldDisplayName';
     }
-    final String? methodDisplayName = classElement.methods2
-        .where((MethodElement2 element) {
+    final String? methodDisplayName = classElement.methods
+        .where((MethodElement element) {
           return element.isStatic && element.displayName == parameterName;
         })
-        .map<String>((MethodElement2 e) => e.displayName)
+        .map<String>((MethodElement e) => e.displayName)
         .firstOrNull;
 
     if (methodDisplayName != null) {
@@ -901,12 +900,12 @@ $routeDataClassName.$dataConvertionFunctionName(
 ''';
   }
 
-  PropertyAccessorElement2? _field(String name) =>
-      routeDataClass.getGetter2(name);
+  PropertyAccessorElement? _field(String name) =>
+      routeDataClass.getGetter(name);
 
-  List<ElementAnnotation>? _fieldMetadata(String name) => routeDataClass.fields2
-      .firstWhereOrNull((FieldElement2 element) => element.displayName == name)
-      ?.metadata2
+  List<ElementAnnotation>? _fieldMetadata(String name) => routeDataClass.fields
+      .firstWhereOrNull((FieldElement element) => element.displayName == name)
+      ?.metadata
       .annotations;
 
   /// The name of `RouteData` subclass this configuration represents.
@@ -937,9 +936,8 @@ String _enumMapConst(InterfaceType type) {
 
   final buffer = StringBuffer('const ${enumMapName(type)} = {');
 
-  // ignore: experimental_member_use
-  for (final FieldElement2 enumField in type.element3.fields2.where(
-    (FieldElement2 element) => element.isEnumConstant,
+  for (final FieldElement enumField in type.element.fields.where(
+    (FieldElement element) => element.isEnumConstant,
   )) {
     buffer.writeln(
       '$enumName.${enumField.displayName}: ${escapeDartString(enumField.displayName.kebab)},',
