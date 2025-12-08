@@ -1,6 +1,10 @@
-## 0.6.25+2
+## 0.6.25+3
 
 * Updates pigeon generation to prevent crash when objects call to Dart after a hot restart.
+
+## 0.6.26
+
+* Removes internal native library Dart proxy.
 
 ## 0.6.25+1
 
