@@ -794,28 +794,16 @@
   // The `pickImage` call will attach the observer. Now, simulate dismissal.
   // This needs to happen on the next run loop to ensure the observer is attached.
   dispatch_async(dispatch_get_main_queue(), ^{
-    UIWindow *testWindow = [[UIWindow alloc] init];
+    UIWindow *testWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    testWindow.hidden = NO;
     [testWindow addSubview:controller.view];
+
+    [testWindow setNeedsLayout];
+    [testWindow layoutIfNeeded];
+
+    // Simulate the picker being removed from the window hierarchy
     [controller.view removeFromSuperview];
   });
-  void (^removeCallback)(void) = ^{
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-      if (plugin && plugin.callContext == context && !plugin.isProcessingSelection) {
-        [plugin sendCallResultWithSavedPathList:nil];
-      }
-    });
-  };
-
-  UIWindow *testWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
-  testWindow.hidden = NO;
-  [testWindow addSubview:controllerView];
-
-  [testWindow setNeedsLayout];
-  [testWindow layoutIfNeeded];
-
-  [controllerView removeFromSuperview];
-
-  removeCallback();
 
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
@@ -881,11 +869,13 @@
 
   [plugin picker:mockPickerViewController didFinishPicking:@[ tiffResult ]];
 
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    if (!resultExpectation.inverted) {
-      XCTAssertFalse(emptyResultReceived, @"Observer should not fire when processing selection");
-    }
-  });
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                 dispatch_get_main_queue(), ^{
+                   if (!resultExpectation.inverted) {
+                     XCTAssertFalse(emptyResultReceived,
+                                    @"Observer should not fire when processing selection");
+                   }
+                 });
 
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
@@ -923,13 +913,14 @@
     [controllerView removeFromSuperview];
   }
 
-  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-    XCTAssertLessThanOrEqual(completionCallCount, 1,
-                             @"Observer should not fire after context is cleared");
-    if (completionCallCount == 0) {
-      [resultExpectation fulfill];
-    }
-  });
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                 dispatch_get_main_queue(), ^{
+                   XCTAssertLessThanOrEqual(completionCallCount, 1,
+                                            @"Observer should not fire after context is cleared");
+                   if (completionCallCount == 0) {
+                     [resultExpectation fulfill];
+                   }
+                 });
 
   [self waitForExpectationsWithTimeout:1.0 handler:nil];
 }
@@ -964,10 +955,14 @@
                          [controllerView removeFromSuperview];
                        }
 
-                       dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                         XCTAssertEqual(callCount, 1, @"Observer should not fire after context cleared by cancel");
-                         [resultExpectation fulfill];
-                       });
+                       dispatch_after(
+                           dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                           dispatch_get_main_queue(), ^{
+                             XCTAssertEqual(
+                                 callCount, 1,
+                                 @"Observer should not fire after context cleared by cancel");
+                             [resultExpectation fulfill];
+                           });
                      }
                    }];
 

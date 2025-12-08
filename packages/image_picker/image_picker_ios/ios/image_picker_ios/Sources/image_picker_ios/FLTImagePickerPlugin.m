@@ -202,17 +202,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   FLTImagePickerRemoveObserverView *removeObserverView =
       [[FLTImagePickerRemoveObserverView alloc] initWithRemoveCallback:^{
         __strong typeof(weakSelf) strongSelf = weakSelf;
-        // Add a small delay to ensure delegate methods have a chance to run first
-        // This prevents the observer from firing during normal selection flow
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)),
-                       dispatch_get_main_queue(), ^{
-                         if (strongSelf && strongSelf.callContext == context &&
-                             !strongSelf.isProcessingSelection) {
-                           // Only send result if context is still active and we're not processing a
-                           // selection
-                           [strongSelf sendCallResultWithSavedPathList:nil];
-                         }
-                       });
+        if (strongSelf && strongSelf.callContext == context && !strongSelf.isProcessingSelection) {
+          [strongSelf sendCallResultWithSavedPathList:nil];
+        }
       }];
   [controller.view addSubview:removeObserverView];
 }
@@ -523,6 +515,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 #pragma mark - UIAdaptivePresentationControllerDelegate
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
+  self.isProcessingSelection = YES;
+
   [self sendCallResultWithSavedPathList:nil];
 }
 
@@ -535,7 +529,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     [self sendCallResultWithSavedPathList:nil];
     return;
   }
-  // Mark that we're processing a selection to prevent observer from interfering
   self.isProcessingSelection = YES;
   __block NSOperationQueue *saveQueue = [[NSOperationQueue alloc] init];
   saveQueue.name = @"Flutter Save Image Queue";
@@ -550,17 +543,13 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   NSMutableArray *pathList = [[NSMutableArray alloc] initWithCapacity:results.count];
   __block FlutterError *saveError = nil;
   __weak typeof(self) weakSelf = self;
-  // This operation will be executed on the main queue after
-  // all selected files have been saved.
   NSBlockOperation *sendListOperation = [NSBlockOperation blockOperationWithBlock:^{
     if (saveError != nil) {
       [weakSelf sendCallResultWithError:saveError];
     } else {
       [weakSelf sendCallResultWithSavedPathList:pathList];
     }
-    // Clear the processing flag after sending result
     weakSelf.isProcessingSelection = NO;
-    // Retain queue until here.
     saveQueue = nil;
   }];
 
@@ -585,8 +574,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     [saveQueue addOperation:saveOperation];
   }];
 
-  // Schedule the final Flutter callback on the main queue
-  // to be run after all images have been saved.
   [NSOperationQueue.mainQueue addOperation:sendListOperation];
 }
 
@@ -594,6 +581,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
+  self.isProcessingSelection = YES;
+
   NSURL *videoURL = info[UIImagePickerControllerMediaURL];
   [picker dismissViewControllerAnimated:YES completion:nil];
   // The method dismissViewControllerAnimated does not immediately prevent
@@ -601,6 +590,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   // to prevent below code to be unwantly executed multiple times and cause a
   // crash.
   if (!self.callContext) {
+    self.isProcessingSelection = NO;
     return;
   }
   if (videoURL != nil) {
@@ -681,6 +671,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
+  self.isProcessingSelection = YES;
+
   [picker dismissViewControllerAnimated:YES completion:nil];
   [self sendCallResultWithSavedPathList:nil];
 }
@@ -723,7 +715,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     self.callContext.result(pathList ?: [NSArray array], nil);
   }
   self.callContext = nil;
-  // Reset processing flag
   self.isProcessingSelection = NO;
 }
 
@@ -737,7 +728,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   self.callContext.result(nil, error);
   self.callContext = nil;
-  // Reset processing flag
   self.isProcessingSelection = NO;
 }
 
