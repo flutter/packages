@@ -754,8 +754,7 @@ Future<void> _slideToValue(
   double value, {
   double paddingOffset = 24.0,
 }) async {
-  final Offset zeroPoint =
-      widgetTester.getTopLeft(slider) +
+  final Offset zeroPoint = widgetTester.getTopLeft(slider) +
       Offset(paddingOffset, widgetTester.getSize(slider).height / 2);
   final double totalWidth =
       widgetTester.getSize(slider).width - (2 * paddingOffset);

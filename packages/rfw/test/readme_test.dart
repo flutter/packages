@@ -12,7 +12,7 @@ import 'package:rfw/formats.dart';
 import 'package:rfw/rfw.dart';
 
 const Map<String, String> rawRemoteWidgetSnippets = <String, String>{
-'root': '''
+  'root': '''
 // #docregion root
 import local;
 widget root = GreenBox(
@@ -20,8 +20,7 @@ widget root = GreenBox(
 );
 // #enddocregion root
 ''',
-
-'fruit': '''
+  'fruit': '''
 import local;
 // #docregion fruit
 widget fruit = Foo(
@@ -29,8 +28,7 @@ widget fruit = Foo(
 );
 // #enddocregion fruit
 ''',
-
-'example1': '''
+  'example1': '''
 import local;
 // #docregion example1
 widget example1 = GreenBox(
@@ -40,8 +38,7 @@ widget example1 = GreenBox(
 );
 // #enddocregion example1
 ''',
-
-'example2': '''
+  'example2': '''
 import local;
 // #docregion example2
 widget example2 = GreenBox(
@@ -51,8 +48,7 @@ widget example2 = GreenBox(
 );
 // #enddocregion example2
 ''',
-
-'example3': '''
+  'example3': '''
 import local;
 // #docregion example3
 widget example3 = GreenBox(
@@ -62,8 +58,7 @@ widget example3 = GreenBox(
 );
 // #enddocregion example3
 ''',
-
-'tap': '''
+  'tap': '''
 import local;
 import core;
 widget tap = GestureDetector(
@@ -71,8 +66,7 @@ widget tap = GestureDetector(
   child: SizedBox(),
 );
 ''',
-
-'tapDown': '''
+  'tapDown': '''
 import local;
 import core;
 widget tapDown = GestureDetector(
@@ -80,8 +74,7 @@ widget tapDown = GestureDetector(
   child: SizedBox(),
 );
 ''',
-
-'Shop': '''
+  'Shop': '''
 // #docregion Shop
 import core;
 
@@ -96,8 +89,7 @@ widget Shop = ListView(
 widget Product = Text(text: args.product.name, softWrap: false, overflow: "fade");
 // #enddocregion Shop
 ''',
-
-'MaterialShop': '''
+  'MaterialShop': '''
 // #docregion MaterialShop
 import core;
 import material;
@@ -120,8 +112,7 @@ widget Product = ListTile(
 );
 // #enddocregion MaterialShop
 ''',
-
-'CalculatorPad': '''
+  'CalculatorPad': '''
 import core;
 
 widget CalculatorPad = Column(
@@ -141,8 +132,7 @@ widget CalculatorPad = Column(
   ],
 );
 ''',
-
-'CalculatorButton': '''
+  'CalculatorButton': '''
 import core;
 
 // #docregion CalculatorButton
@@ -162,8 +152,7 @@ widget CalculatorButton = Padding(
 };
 
 // The empty docregion at the end of the following causes the snippet to end with "// ...".
-const String gameData =
-'''
+const String gameData = '''
 // #docregion game-data
 { "games": [
 {"rating": 8.219, "users-rated": 16860, "name": "Twilight Struggle", "rank": 1, "link": "/boardgame/12333/twilight-struggle", "id": 12333},
@@ -179,16 +168,22 @@ const String gameData =
 List<WidgetLibrary> _createLocalWidgets(String region) {
   switch (region) {
     case 'root':
-      return <WidgetLibrary>[LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-        // #docregion defaultLocalWidgets
-        'GreenBox': (BuildContext context, DataSource source) {
-          return ColoredBox(color: const Color(0xFF002211), child: source.child(<Object>['child']));
-        },
-        'Hello': (BuildContext context, DataSource source) {
-          return Center(child: Text('Hello, ${source.v<String>(<Object>["name"])}!', textDirection: TextDirection.ltr));
-        },
-        // #enddocregion defaultLocalWidgets
-      })];
+      return <WidgetLibrary>[
+        LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+          // #docregion defaultLocalWidgets
+          'GreenBox': (BuildContext context, DataSource source) {
+            return ColoredBox(
+                color: const Color(0xFF002211),
+                child: source.child(<Object>['child']));
+          },
+          'Hello': (BuildContext context, DataSource source) {
+            return Center(
+                child: Text('Hello, ${source.v<String>(<Object>["name"])}!',
+                    textDirection: TextDirection.ltr));
+          },
+          // #enddocregion defaultLocalWidgets
+        })
+      ];
     case 'fruit':
       return <WidgetLibrary>[
         LocalWidgetLibrary(<String, LocalWidgetBuilder>{
@@ -202,51 +197,63 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
           // #docregion isList
           'Foo': (BuildContext context, DataSource source) {
             if (source.isList(<Object>['bar', 'quux'])) {
-              return Text('${source.v<String>(<Object>['bar', 'quux', 2])}', textDirection: TextDirection.ltr);
+              return Text('${source.v<String>(<Object>['bar', 'quux', 2])}',
+                  textDirection: TextDirection.ltr);
             }
-            return Text('${source.v<String>(<Object>['baz'])}', textDirection: TextDirection.ltr);
+            return Text('${source.v<String>(<Object>['baz'])}',
+                textDirection: TextDirection.ltr);
           },
           // #enddocregion isList
         }),
       ];
     case 'example1':
     case 'example2':
-      return <WidgetLibrary>[LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-        // #docregion child
-        'GreenBox': (BuildContext context, DataSource source) {
-          return ColoredBox(color: const Color(0xFF002211), child: source.child(<Object>['child']));
-        },
-        // #enddocregion child
-        // #docregion isMap
-        'Foo': (BuildContext context, DataSource source) {
-          if (source.isMap(<Object>['bar'])) {
-            return Text('${source.v<String>(<Object>['bar', 'name'])}', textDirection: TextDirection.ltr);
-          }
-          return Text('${source.v<String>(<Object>['bar'])}', textDirection: TextDirection.ltr);
-        },
-        // #enddocregion isMap
-      })];
-    case 'example3':
-      return <WidgetLibrary>[LocalWidgetLibrary(<String, LocalWidgetBuilder>{
-        // #docregion optionalChild
-        'GreenBox': (BuildContext context, DataSource source) {
-          return ColoredBox(color: const Color(0xFF002211), child: source.optionalChild(<Object>['child']));
-        },
-        // #enddocregion optionalChild
-        // #docregion length
-        'Foo': (BuildContext context, DataSource source) {
-          final int length = source.length(<Object>['text']);
-          if (length > 0) {
-            final text = StringBuffer();
-            for (var index = 0; index < length; index += 1) {
-              text.write(source.v<String>(<Object>['text', index]));
+      return <WidgetLibrary>[
+        LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+          // #docregion child
+          'GreenBox': (BuildContext context, DataSource source) {
+            return ColoredBox(
+                color: const Color(0xFF002211),
+                child: source.child(<Object>['child']));
+          },
+          // #enddocregion child
+          // #docregion isMap
+          'Foo': (BuildContext context, DataSource source) {
+            if (source.isMap(<Object>['bar'])) {
+              return Text('${source.v<String>(<Object>['bar', 'name'])}',
+                  textDirection: TextDirection.ltr);
             }
-            return Text(text.toString(), textDirection: TextDirection.ltr);
-          }
-          return const Text('<empty>', textDirection: TextDirection.ltr);
-        },
-        // #enddocregion length
-      })];
+            return Text('${source.v<String>(<Object>['bar'])}',
+                textDirection: TextDirection.ltr);
+          },
+          // #enddocregion isMap
+        })
+      ];
+    case 'example3':
+      return <WidgetLibrary>[
+        LocalWidgetLibrary(<String, LocalWidgetBuilder>{
+          // #docregion optionalChild
+          'GreenBox': (BuildContext context, DataSource source) {
+            return ColoredBox(
+                color: const Color(0xFF002211),
+                child: source.optionalChild(<Object>['child']));
+          },
+          // #enddocregion optionalChild
+          // #docregion length
+          'Foo': (BuildContext context, DataSource source) {
+            final int length = source.length(<Object>['text']);
+            if (length > 0) {
+              final text = StringBuffer();
+              for (var index = 0; index < length; index += 1) {
+                text.write(source.v<String>(<Object>['text', index]));
+              }
+              return Text(text.toString(), textDirection: TextDirection.ltr);
+            }
+            return const Text('<empty>', textDirection: TextDirection.ltr);
+          },
+          // #enddocregion length
+        })
+      ];
     case 'tap':
       // #docregion onTap
       return <WidgetLibrary>[
@@ -264,14 +271,17 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
           },
         }),
       ];
-      // #enddocregion onTap
+    // #enddocregion onTap
     case 'tapDown':
       return <WidgetLibrary>[
         LocalWidgetLibrary(<String, LocalWidgetBuilder>{
           'GestureDetector': (BuildContext context, DataSource source) {
             // #docregion onTapDown
             return GestureDetector(
-              onTapDown: source.handler(<Object>['onTapDown'], (HandlerTrigger trigger) => (TapDownDetails details) => trigger()),
+              onTapDown: source.handler(
+                  <Object>['onTapDown'],
+                  (HandlerTrigger trigger) =>
+                      (TapDownDetails details) => trigger()),
               child: source.optionalChild(<Object>['child']),
             );
             // #enddocregion onTapDown
@@ -282,10 +292,13 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
             // #docregion onTapDown-long
             return GestureDetector(
               // onTapDown expects a function that takes a TapDownDetails
-              onTapDown: source.handler<GestureTapDownCallback>( // this returns a function that takes a TapDownDetails
+              onTapDown: source.handler<GestureTapDownCallback>(
+                // this returns a function that takes a TapDownDetails
                 <Object>['onTapDown'],
-                (HandlerTrigger trigger) { // "trigger" is the function that will send the event to RemoteWidget.onEvent
-                  return (TapDownDetails details) { // this is the function that is returned by handler() above
+                (HandlerTrigger trigger) {
+                  // "trigger" is the function that will send the event to RemoteWidget.onEvent
+                  return (TapDownDetails details) {
+                    // this is the function that is returned by handler() above
                     trigger(); // the function calls "trigger"
                   };
                 },
@@ -299,11 +312,12 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
           'GestureDetector': (BuildContext context, DataSource source) {
             // #docregion onTapDown-position
             return GestureDetector(
-              onTapDown: source.handler(<Object>['onTapDown'], (HandlerTrigger trigger) {
+              onTapDown: source.handler(<Object>['onTapDown'],
+                  (HandlerTrigger trigger) {
                 return (TapDownDetails details) => trigger(<String, Object>{
-                  'x': details.globalPosition.dx,
-                  'y': details.globalPosition.dy,
-                });
+                      'x': details.globalPosition.dx,
+                      'y': details.globalPosition.dy,
+                    });
               }),
               child: source.optionalChild(<Object>['child']),
             );
@@ -325,7 +339,8 @@ void main() {
   testWidgets('readme snippets', (WidgetTester tester) async {
     final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
-      ..update(const LibraryName(<String>['material']), createMaterialWidgets());
+      ..update(
+          const LibraryName(<String>['material']), createMaterialWidgets());
     addTearDown(runtime.dispose);
     final data = DynamicContent(parseDataFile(gameData));
     for (final String region in rawRemoteWidgetSnippets.keys) {
@@ -340,7 +355,8 @@ void main() {
               runtime: runtime
                 ..update(const LibraryName(<String>['local']), localWidgets),
               data: data,
-              widget: FullyQualifiedWidgetName(LibraryName(<String>[region]), region),
+              widget: FullyQualifiedWidgetName(
+                  LibraryName(<String>[region]), region),
             ),
           ),
         );

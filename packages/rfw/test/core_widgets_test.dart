@@ -23,13 +23,15 @@ void main() {
       RemoteWidget(
         runtime: runtime,
         data: data,
-        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        widget: const FullyQualifiedWidgetName(
+            LibraryName(<String>['test']), 'root'),
         onEvent: (String eventName, DynamicMap eventArguments) {
           eventLog.add('$eventName $eventArguments');
         },
       ),
     );
-    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
+    expect(tester.takeException().toString(),
+        contains('Could not find remote widget named'));
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -59,11 +61,52 @@ void main() {
     await tester.pump();
     expect(find.byType(IntrinsicWidth), findsOneWidget);
 
-    ArgumentDecoders.imageProviderDecoders['beepboop'] = (DataSource source, List<Object> key) {
+    ArgumentDecoders.imageProviderDecoders['beepboop'] =
+        (DataSource source, List<Object> key) {
       return MemoryImage(Uint8List.fromList(<int>[
-        0x47, 0x49, 0x46, 0x38, 0x39, 0x61, 0x01, 0x00,  0x01, 0x00, 0x80, 0xff, 0x00, 0xc0, 0xc0, 0xc0,
-        0x00, 0x00, 0x00, 0x21, 0xf9, 0x04, 0x01, 0x00,  0x00, 0x00, 0x00, 0x2c, 0x00, 0x00, 0x00, 0x00,
-        0x01, 0x00, 0x01, 0x00, 0x00, 0x02, 0x02, 0x44,  0x01, 0x00, 0x3b,
+        0x47,
+        0x49,
+        0x46,
+        0x38,
+        0x39,
+        0x61,
+        0x01,
+        0x00,
+        0x01,
+        0x00,
+        0x80,
+        0xff,
+        0x00,
+        0xc0,
+        0xc0,
+        0xc0,
+        0x00,
+        0x00,
+        0x00,
+        0x21,
+        0xf9,
+        0x04,
+        0x01,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x2c,
+        0x00,
+        0x00,
+        0x00,
+        0x00,
+        0x01,
+        0x00,
+        0x01,
+        0x00,
+        0x00,
+        0x02,
+        0x02,
+        0x44,
+        0x01,
+        0x00,
+        0x3b,
       ]));
     };
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
@@ -113,7 +156,8 @@ void main() {
       );
     '''));
     await tester.pump();
-    expect(tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).onEnd, isNot(isNull));
+    expect(tester.widget<AnimatedOpacity>(find.byType(AnimatedOpacity)).onEnd,
+        isNot(isNull));
     expect(eventLog, isEmpty);
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
@@ -121,16 +165,31 @@ void main() {
       widget root = Directionality(textDirection: "ltr", child: Padding(padding: [12.0]));
     '''));
     await tester.pump();
-    expect(tester.widget<Padding>(find.byType(Padding)).padding.resolve(TextDirection.ltr), const EdgeInsets.all(12.0));
+    expect(
+        tester
+            .widget<Padding>(find.byType(Padding))
+            .padding
+            .resolve(TextDirection.ltr),
+        const EdgeInsets.all(12.0));
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget root = Directionality(textDirection: "ltr", child: Padding(padding: [24.0]));
     '''));
     await tester.pump();
-    expect(tester.widget<Padding>(find.byType(Padding)).padding.resolve(TextDirection.ltr), const EdgeInsets.all(12.0));
+    expect(
+        tester
+            .widget<Padding>(find.byType(Padding))
+            .padding
+            .resolve(TextDirection.ltr),
+        const EdgeInsets.all(12.0));
     await tester.pump(const Duration(seconds: 4));
-    expect(tester.widget<Padding>(find.byType(Padding)).padding.resolve(TextDirection.ltr), const EdgeInsets.all(24.0));
+    expect(
+        tester
+            .widget<Padding>(find.byType(Padding))
+            .padding
+            .resolve(TextDirection.ltr),
+        const EdgeInsets.all(24.0));
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -238,12 +297,18 @@ void main() {
       );
     '''));
     await tester.pump();
-    final Size fractionallySizedBoxSize = tester.getSize(find.byType(FractionallySizedBox));
+    final Size fractionallySizedBoxSize =
+        tester.getSize(find.byType(FractionallySizedBox));
     final Size childSize = tester.getSize(find.text('test'));
     expect(childSize.width, fractionallySizedBoxSize.width * 0.5);
     expect(childSize.height, fractionallySizedBoxSize.height * 0.8);
-    expect(tester.widget<Text>(find.text('test')).textScaler, const TextScaler.linear(3));
-    expect(tester.widget<FractionallySizedBox>(find.byType(FractionallySizedBox)).alignment, Alignment.center);
+    expect(tester.widget<Text>(find.text('test')).textScaler,
+        const TextScaler.linear(3));
+    expect(
+        tester
+            .widget<FractionallySizedBox>(find.byType(FractionallySizedBox))
+            .alignment,
+        Alignment.center);
     imageCache.clear();
   });
 
@@ -258,14 +323,16 @@ void main() {
         home: RemoteWidget(
           runtime: runtime,
           data: data,
-          widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+          widget: const FullyQualifiedWidgetName(
+              LibraryName(<String>['test']), 'root'),
           onEvent: (String eventName, DynamicMap eventArguments) {
             eventLog.add('$eventName $eventArguments');
           },
         ),
       ),
     );
-    expect(tester.takeException().toString(), contains('Could not find remote widget named'));
+    expect(tester.takeException().toString(),
+        contains('Could not find remote widget named'));
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -296,16 +363,18 @@ void main() {
     '''));
     await tester.pump();
     expect(find.byType(ClipRRect), findsOneWidget);
-    final RenderClipRRect renderClip = tester.allRenderObjects.whereType<RenderClipRRect>().first;
+    final RenderClipRRect renderClip =
+        tester.allRenderObjects.whereType<RenderClipRRect>().first;
     expect(renderClip.clipBehavior, equals(Clip.antiAlias));
     expect(renderClip.borderRadius, equals(BorderRadius.zero));
   });
 
-  testWidgets('Flexible widget with default values', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+  testWidgets('Flexible widget with default values',
+      (WidgetTester tester) async {
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -325,21 +394,24 @@ void main() {
       RemoteWidget(
         runtime: runtime,
         data: data,
-        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        widget: const FullyQualifiedWidgetName(
+            LibraryName(<String>['test']), 'root'),
       ),
     );
     await tester.pump();
     expect(find.byType(Flexible), findsOneWidget);
-    final Flexible defaultFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    final Flexible defaultFlexible =
+        tester.widget<Flexible>(find.byType(Flexible));
     expect(defaultFlexible.flex, equals(1));
     expect(defaultFlexible.fit, equals(FlexFit.loose));
   });
 
-  testWidgets('Flexible widget with custom flex value', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+  testWidgets('Flexible widget with custom flex value',
+      (WidgetTester tester) async {
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -360,21 +432,23 @@ void main() {
       RemoteWidget(
         runtime: runtime,
         data: data,
-        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        widget: const FullyQualifiedWidgetName(
+            LibraryName(<String>['test']), 'root'),
       ),
     );
     await tester.pump();
     expect(find.byType(Flexible), findsOneWidget);
-    final Flexible customFlexFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    final Flexible customFlexFlexible =
+        tester.widget<Flexible>(find.byType(Flexible));
     expect(customFlexFlexible.flex, equals(3));
     expect(customFlexFlexible.fit, equals(FlexFit.loose));
   });
 
   testWidgets('Flexible widget with fit tight', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -396,21 +470,23 @@ void main() {
       RemoteWidget(
         runtime: runtime,
         data: data,
-        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        widget: const FullyQualifiedWidgetName(
+            LibraryName(<String>['test']), 'root'),
       ),
     );
     await tester.pump();
     expect(find.byType(Flexible), findsOneWidget);
-    final Flexible tightFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    final Flexible tightFlexible =
+        tester.widget<Flexible>(find.byType(Flexible));
     expect(tightFlexible.flex, equals(2));
     expect(tightFlexible.fit, equals(FlexFit.tight));
   });
 
   testWidgets('Flexible widget with fit loose', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -432,21 +508,24 @@ void main() {
       RemoteWidget(
         runtime: runtime,
         data: data,
-        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        widget: const FullyQualifiedWidgetName(
+            LibraryName(<String>['test']), 'root'),
       ),
     );
     await tester.pump();
     expect(find.byType(Flexible), findsOneWidget);
-    final Flexible looseFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    final Flexible looseFlexible =
+        tester.widget<Flexible>(find.byType(Flexible));
     expect(looseFlexible.flex, equals(4));
     expect(looseFlexible.fit, equals(FlexFit.loose));
   });
 
-  testWidgets('Multiple Flexible widgets in Column', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+  testWidgets('Multiple Flexible widgets in Column',
+      (WidgetTester tester) async {
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -477,13 +556,15 @@ void main() {
       RemoteWidget(
         runtime: runtime,
         data: data,
-        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+        widget: const FullyQualifiedWidgetName(
+            LibraryName(<String>['test']), 'root'),
       ),
     );
     await tester.pump();
     expect(find.byType(Flexible), findsNWidgets(3));
 
-    final List<Flexible> flexibleWidgets = tester.widgetList<Flexible>(find.byType(Flexible)).toList();
+    final List<Flexible> flexibleWidgets =
+        tester.widgetList<Flexible>(find.byType(Flexible)).toList();
     expect(flexibleWidgets[0].flex, equals(1));
     expect(flexibleWidgets[0].fit, equals(FlexFit.loose));
     expect(flexibleWidgets[1].flex, equals(2));
