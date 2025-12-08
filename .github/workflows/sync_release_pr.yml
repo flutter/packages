@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'release-go-router'
+      - 'release-material'
+      - 'release-cupertino'
 
 jobs:
   create_sync_pr:
@@ -22,5 +24,5 @@ jobs:
           commit-message: "sync release branch to main"
           title: "Sync release branch to main"
           body: "This automated PR syncs the changes from the release branch back to the main branch."
-          branch: release
+          branch: ${{ github.ref_name }}
           base: main
