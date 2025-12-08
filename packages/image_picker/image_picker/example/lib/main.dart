@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // Mute the video so it auto-plays in web!
       // This is not needed if the call to .play is the result of user
       // interaction (clicking on a "play" button, for example).
-      const double volume = kIsWeb ? 0.0 : 1.0;
+      const volume = kIsWeb ? 0.0 : 1.0;
       await controller.setVolume(volume);
       await controller.initialize();
       await controller.setLooping(true);
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
           int? limit,
         ) async {
           try {
-            final List<XFile> pickedFileList = <XFile>[];
+            final pickedFileList = <XFile>[];
             final XFile? media = await _picker.pickMedia(
               maxWidth: maxWidth,
               maxHeight: maxHeight,
@@ -286,10 +286,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildInlineVideoPlayer(int index) {
-    final VideoPlayerController controller = VideoPlayerController.file(
+    final controller = VideoPlayerController.file(
       File(_mediaFileList![index].path),
     );
-    const double volume = kIsWeb ? 0.0 : 1.0;
+    const volume = kIsWeb ? 0.0 : 1.0;
     controller.setVolume(volume);
     controller.initialize();
     controller.setLooping(true);
@@ -492,7 +492,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Text? _getRetrieveErrorWidget() {
     if (_retrieveDataError != null) {
-      final Text result = Text(_retrieveDataError!);
+      final result = Text(_retrieveDataError!);
       _retrieveDataError = null;
       return result;
     }

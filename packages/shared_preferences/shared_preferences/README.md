@@ -13,7 +13,7 @@ Supported data types are `int`, `double`, `bool`, `String` and `List<String>`.
 
 |             | Android | iOS   | Linux | macOS  | Web | Windows     |
 |-------------|---------|-------|-------|--------|-----|-------------|
-| **Support** | SDK 21+ | 12.0+ | Any   | 10.14+ | Any | Any         |
+| **Support** | SDK 24+ | 13.0+ | Any   | 10.15+ | Any | Any         |
 
 ## Usage
 
@@ -120,7 +120,7 @@ await prefs.remove('counter');
 ### SharedPreferencesAsync
 <?code-excerpt "readme_excerpts.dart (Async)"?>
 ```dart
-final SharedPreferencesAsync asyncPrefs = SharedPreferencesAsync();
+final asyncPrefs = SharedPreferencesAsync();
 
 await asyncPrefs.setBool('repeat', true);
 await asyncPrefs.setString('action', 'Start');
@@ -173,8 +173,7 @@ This can be run on every launch without data loss as long as the `migrationCompl
 ```dart
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
 // ···
-    const SharedPreferencesOptions sharedPreferencesOptions =
-        SharedPreferencesOptions();
+    const sharedPreferencesOptions = SharedPreferencesOptions();
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
       legacySharedPreferencesInstance: prefs,

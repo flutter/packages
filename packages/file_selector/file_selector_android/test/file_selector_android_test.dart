@@ -61,12 +61,12 @@ void main() {
         ),
       );
 
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
       );
 
-      const XTypeGroup group2 = XTypeGroup(
+      const group2 = XTypeGroup(
         extensions: <String>['jpg'],
         mimeTypes: <String>['image/jpg'],
       );
@@ -120,12 +120,12 @@ void main() {
         ]),
       );
 
-      const XTypeGroup group = XTypeGroup(
+      const group = XTypeGroup(
         extensions: <String>['txt'],
         mimeTypes: <String>['text/plain'],
       );
 
-      const XTypeGroup group2 = XTypeGroup(
+      const group2 = XTypeGroup(
         extensions: <String>['jpg'],
         mimeTypes: <String>['image/jpg'],
       );

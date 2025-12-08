@@ -14,26 +14,28 @@ import 'webview_cookie_manager_test.mocks.dart';
 void main() {
   group('WebViewCookieManager', () {
     test('clearCookies', () async {
-      final MockPlatformWebViewCookieManager mockPlatformWebViewCookieManager =
+      final mockPlatformWebViewCookieManager =
           MockPlatformWebViewCookieManager();
       when(
         mockPlatformWebViewCookieManager.clearCookies(),
       ).thenAnswer((_) => Future<bool>.value(false));
 
-      final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(mockPlatformWebViewCookieManager);
+      final cookieManager = WebViewCookieManager.fromPlatform(
+        mockPlatformWebViewCookieManager,
+      );
 
       await expectLater(cookieManager.clearCookies(), completion(false));
     });
 
     test('setCookie', () async {
-      final MockPlatformWebViewCookieManager mockPlatformWebViewCookieManager =
+      final mockPlatformWebViewCookieManager =
           MockPlatformWebViewCookieManager();
 
-      final WebViewCookieManager cookieManager =
-          WebViewCookieManager.fromPlatform(mockPlatformWebViewCookieManager);
+      final cookieManager = WebViewCookieManager.fromPlatform(
+        mockPlatformWebViewCookieManager,
+      );
 
-      const WebViewCookie cookie = WebViewCookie(
+      const cookie = WebViewCookie(
         name: 'name',
         value: 'value',
         domain: 'domain',
@@ -41,7 +43,7 @@ void main() {
 
       await cookieManager.setCookie(cookie);
 
-      final WebViewCookie capturedCookie =
+      final capturedCookie =
           verify(
                 mockPlatformWebViewCookieManager.setCookie(captureAny),
               ).captured.single

@@ -12,7 +12,7 @@ void main() {
   testWidgets('throws if more than one exception handlers are provided.', (
     WidgetTester tester,
   ) async {
-    bool thrown = false;
+    var thrown = false;
     try {
       GoRouter(
         routes: <RouteBase>[
@@ -125,7 +125,7 @@ void main() {
     testWidgets('can catch errors thrown in redirect callbacks', (
       WidgetTester tester,
     ) async {
-      bool exceptionCaught = false;
+      var exceptionCaught = false;
       String? errorMessage;
 
       final GoRouter router = await createRouter(
@@ -181,7 +181,7 @@ void main() {
     testWidgets('can catch non-GoException errors thrown in redirect callbacks', (
       WidgetTester tester,
     ) async {
-      bool exceptionCaught = false;
+      var exceptionCaught = false;
 
       final GoRouter router = await createRouter(
         <RouteBase>[

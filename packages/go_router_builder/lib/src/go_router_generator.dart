@@ -4,7 +4,7 @@
 
 import 'dart:async';
 
-import 'package:analyzer/dart/element/element2.dart';
+import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/dart/element/type.dart';
 import 'package:build/build.dart';
 import 'package:source_gen/source_gen.dart';
@@ -35,8 +35,8 @@ class GoRouterGenerator extends Generator {
 
   @override
   FutureOr<String> generate(LibraryReader library, BuildStep buildStep) async {
-    final Set<String> values = <String>{};
-    final Set<String> getters = <String>{};
+    final values = <String>{};
+    final getters = <String>{};
 
     generateForAnnotation(library, values, getters);
 
@@ -76,7 +76,7 @@ ${getters.map((String e) => "$e,").join('\n')}
   }
 
   InfoIterable _generateForAnnotatedElement(
-    Element2 element,
+    Element element,
     ConstantReader annotation,
   ) {
     final String typedAnnotation = withoutNullability(
@@ -87,16 +87,14 @@ ${getters.map((String e) => "$e,").join('\n')}
       typedAnnotation.indexOf('<'),
     );
     final String routeData = _annotations[type]!;
-    if (element is! ClassElement2) {
+    if (element is! ClassElement) {
       throw InvalidGenerationSourceError(
         'The @$type annotation can only be applied to classes.',
         element: element,
       );
     }
 
-    final TypeChecker dataChecker = TypeChecker.fromUrl(
-      '$_routeDataUrl#$routeData',
-    );
+    final dataChecker = TypeChecker.fromUrl('$_routeDataUrl#$routeData');
     if (!element.allSupertypes.any(
       (InterfaceType element) => dataChecker.isExactlyType(element),
     )) {

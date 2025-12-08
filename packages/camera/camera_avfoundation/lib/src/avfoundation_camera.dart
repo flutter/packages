@@ -118,7 +118,7 @@ class AVFoundationCamera extends CameraPlatform {
       () => HostCameraMessageHandler(cameraId, cameraEventStreamController),
     );
 
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
 
     unawaited(
       onCameraInitialized(cameraId).first.then((CameraInitializedEvent value) {
@@ -274,7 +274,7 @@ class AVFoundationCamera extends CameraPlatform {
   }
 
   void _startStreamListener() {
-    const EventChannel cameraEventChannel = EventChannel(
+    const cameraEventChannel = EventChannel(
       'plugins.flutter.io/camera_avfoundation/imageStream',
     );
     _platformImageStreamSubscription = cameraEventChannel

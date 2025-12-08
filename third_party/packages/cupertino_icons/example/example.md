@@ -4,7 +4,7 @@ This package is used via [`CupertinoIcons`](https://api.flutter.dev/flutter/cupe
 
 <?code-excerpt "cupertino_icons_test.dart (CupertinoIcon)"?>
 ```dart
-const Icon icon = Icon(
+const icon = Icon(
   CupertinoIcons.heart_fill,
   color: Colors.pink,
   size: 24.0,
