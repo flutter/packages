@@ -2692,7 +2692,26 @@ func deepHash${generatorOptions.fileSpecificClassNameComponent}(value: Any?, has
                       code: "ignore-calls-error",
                       message: "Calls to Dart are being ignored.", details: "")))
                 return''');
-          });
+          }, addTrailingNewline: false);
+
+          final String instanceArgName = _getSafeArgumentName(
+            0,
+            NamedType(name: 'pigeonInstance', type: apiAsTypeDeclaration),
+          );
+          indent.writeScoped(
+            ' else if !pigeonRegistrar.instanceManager.containsInstance($instanceArgName as AnyObject) {',
+            '}',
+            () {
+              indent.format('''
+                completion(
+                  .failure(
+                    ${_getErrorClassName(generatorOptions)}(
+                      code: "missing-instance-error",
+                      message: "Callback to `${api.name}.${method.name}` failed because native instance was not in the instance manager.", details: "")))
+                return''');
+            },
+          );
+
           indent.writeln(
             'let binaryMessenger = pigeonRegistrar.binaryMessenger',
           );

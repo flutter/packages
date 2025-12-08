@@ -1,5 +1,6 @@
-## NEXT
+## 6.3.3
 
+- Replaces use of the deprecated `FontWeight.index`.
 - Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 6.3.2
