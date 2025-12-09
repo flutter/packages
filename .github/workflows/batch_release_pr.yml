@@ -25,9 +25,12 @@ jobs:
           dart ./script/tool/lib/src/main.dart branch-for-batch-release --packages=${{ github.event.client_payload.package }} --branch=${{ env.BRANCH_NAME }} --remote=origin
       - name: Check if branch was created
         id: check-branch-exists
-        uses: GuillaumeFalourd/branch-exists@v1.1
-        with:
-          branch: ${{ env.BRANCH_NAME }}
+        run: |
+          if git show-ref --verify --quiet refs/heads/${{ env.BRANCH_NAME }}; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Create batch release PR
         if: steps.check-branch-exists.outputs.exists == 'true'
