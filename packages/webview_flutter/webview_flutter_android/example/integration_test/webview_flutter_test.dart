@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:webview_flutter_android/src/android_proxy.dart';
 import 'package:webview_flutter_android/src/android_webkit.g.dart'
     as android_webkit;
 import 'package:webview_flutter_android/src/weak_reference_utils.dart';
@@ -62,6 +61,10 @@ Future<void> main() async {
   final secondaryUrl = '$prefixUrl/secondary.txt';
   final headersUrl = '$prefixUrl/headers';
   final basicAuthUrl = '$prefixUrl/http-basic-authentication';
+
+  setUp(() {
+    android_webkit.PigeonOverrides.pigeon_reset();
+  });
 
   testWidgets('loadRequest', (WidgetTester tester) async {
     final pageFinished = Completer<void>();
@@ -130,33 +133,24 @@ Future<void> main() async {
         }
       });
 
+      android_webkit.PigeonOverrides.webView_new =
+          ({
+            void Function(android_webkit.WebView, int, int, int, int)?
+            onScrollChanged,
+          }) {
+            final webView = android_webkit.WebView(
+              onScrollChanged: onScrollChanged,
+            );
+            finalizer.attach(webView, webViewToken);
+            return webView;
+          };
       await tester.pumpWidget(
         Builder(
           builder: (BuildContext context) {
             return PlatformWebViewWidget(
               AndroidWebViewWidgetCreationParams(
                 controller: PlatformWebViewController(
-                  AndroidWebViewControllerCreationParams(
-                    androidWebViewProxy: AndroidWebViewProxy(
-                      newWebView:
-                          ({
-                            void Function(
-                              android_webkit.WebView,
-                              int,
-                              int,
-                              int,
-                              int,
-                            )?
-                            onScrollChanged,
-                          }) {
-                            final webView = android_webkit.WebView(
-                              onScrollChanged: onScrollChanged,
-                            );
-                            finalizer.attach(webView, webViewToken);
-                            return webView;
-                          },
-                    ),
-                  ),
+                  AndroidWebViewControllerCreationParams(),
                 ),
               ),
             ).build(context);

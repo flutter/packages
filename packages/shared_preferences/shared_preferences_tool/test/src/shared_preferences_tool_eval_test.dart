@@ -5,6 +5,7 @@
 import 'dart:async';
 
 import 'package:devtools_app_shared/service.dart';
+import 'package:devtools_app_shared/utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_state.dart';
 import 'package:shared_preferences_tool/src/shared_preferences_tool_eval.dart';

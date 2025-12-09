@@ -278,6 +278,26 @@ void main() {
       );
     });
 
+    test('throws PlatformException for missing view controller', () async {
+      when(
+        api.openUrlInSafariViewController(_webUrl),
+      ).thenAnswer((_) async => InAppLoadResult.noUI);
+      final launcher = UrlLauncherIOS(api: api);
+      await expectLater(
+        launcher.launchUrl(
+          _webUrl,
+          const LaunchOptions(mode: PreferredLaunchMode.inAppWebView),
+        ),
+        throwsA(
+          isA<PlatformException>().having(
+            (PlatformException e) => e.code,
+            'code',
+            'no_ui_available',
+          ),
+        ),
+      );
+    });
+
     test('throws PlatformException for load failure', () async {
       when(
         api.openUrlInSafariViewController(_webUrl),

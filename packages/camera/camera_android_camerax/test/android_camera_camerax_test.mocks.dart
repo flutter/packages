@@ -4,14 +4,12 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
-import 'dart:typed_data' as _i9;
+import 'dart:typed_data' as _i7;
 
 import 'package:camera_android_camerax/src/camerax_library.dart' as _i3;
 import 'package:camera_android_camerax/src/camerax_library.g.dart' as _i2;
-import 'package:camera_android_camerax/src/camerax_proxy.dart' as _i7;
 import 'package:camera_platform_interface/camera_platform_interface.dart'
     as _i4;
-import 'package:flutter/services.dart' as _i8;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 
@@ -28,6 +26,7 @@ import 'package:mockito/src/dummies.dart' as _i6;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
@@ -111,167 +110,155 @@ class _FakeCameraSelector_14 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeCameraIntegerRange_15 extends _i1.SmartFake
-    implements _i2.CameraIntegerRange {
-  _FakeCameraIntegerRange_15(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeObserver_16<T1> extends _i1.SmartFake implements _i3.Observer<T1> {
-  _FakeObserver_16(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeSystemServicesManager_17 extends _i1.SmartFake
-    implements _i2.SystemServicesManager {
-  _FakeSystemServicesManager_17(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeDeviceOrientationManager_18 extends _i1.SmartFake
-    implements _i2.DeviceOrientationManager {
-  _FakeDeviceOrientationManager_18(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakePreview_19 extends _i1.SmartFake implements _i2.Preview {
-  _FakePreview_19(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeVideoCapture_20 extends _i1.SmartFake implements _i2.VideoCapture {
-  _FakeVideoCapture_20(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeRecorder_21 extends _i1.SmartFake implements _i2.Recorder {
-  _FakeRecorder_21(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeVideoRecordEventListener_22 extends _i1.SmartFake
-    implements _i2.VideoRecordEventListener {
-  _FakeVideoRecordEventListener_22(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeImageCapture_23 extends _i1.SmartFake implements _i2.ImageCapture {
-  _FakeImageCapture_23(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeResolutionStrategy_24 extends _i1.SmartFake
-    implements _i2.ResolutionStrategy {
-  _FakeResolutionStrategy_24(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeResolutionSelector_25 extends _i1.SmartFake
-    implements _i2.ResolutionSelector {
-  _FakeResolutionSelector_25(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeImageAnalysis_26 extends _i1.SmartFake implements _i2.ImageAnalysis {
-  _FakeImageAnalysis_26(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeQualitySelector_27 extends _i1.SmartFake
-    implements _i2.QualitySelector {
-  _FakeQualitySelector_27(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeFallbackStrategy_28 extends _i1.SmartFake
-    implements _i2.FallbackStrategy {
-  _FakeFallbackStrategy_28(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeFocusMeteringActionBuilder_29 extends _i1.SmartFake
-    implements _i2.FocusMeteringActionBuilder {
-  _FakeFocusMeteringActionBuilder_29(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeCaptureRequestOptions_30 extends _i1.SmartFake
+class _FakeCaptureRequestOptions_15 extends _i1.SmartFake
     implements _i2.CaptureRequestOptions {
-  _FakeCaptureRequestOptions_30(Object parent, Invocation parentInvocation)
+  _FakeCaptureRequestOptions_15(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeResolutionFilter_31 extends _i1.SmartFake
-    implements _i2.ResolutionFilter {
-  _FakeResolutionFilter_31(Object parent, Invocation parentInvocation)
+class _FakeDeviceOrientationManager_16 extends _i1.SmartFake
+    implements _i2.DeviceOrientationManager {
+  _FakeDeviceOrientationManager_16(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeDisplayOrientedMeteringPointFactory_32 extends _i1.SmartFake
+class _FakeDisplayOrientedMeteringPointFactory_17 extends _i1.SmartFake
     implements _i2.DisplayOrientedMeteringPointFactory {
-  _FakeDisplayOrientedMeteringPointFactory_32(
+  _FakeDisplayOrientedMeteringPointFactory_17(
     Object parent,
     Invocation parentInvocation,
   ) : super(parent, parentInvocation);
 }
 
-class _FakeProcessCameraProvider_33 extends _i1.SmartFake
-    implements _i2.ProcessCameraProvider {
-  _FakeProcessCameraProvider_33(Object parent, Invocation parentInvocation)
+class _FakeMeteringPoint_18 extends _i1.SmartFake implements _i2.MeteringPoint {
+  _FakeMeteringPoint_18(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeCaptureRequestKey_34 extends _i1.SmartFake
-    implements _i2.CaptureRequestKey {
-  _FakeCaptureRequestKey_34(Object parent, Invocation parentInvocation)
+class _FakeCameraIntegerRange_19 extends _i1.SmartFake
+    implements _i2.CameraIntegerRange {
+  _FakeCameraIntegerRange_19(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeMeteringPoint_35 extends _i1.SmartFake implements _i2.MeteringPoint {
-  _FakeMeteringPoint_35(Object parent, Invocation parentInvocation)
+class _FakeFallbackStrategy_20 extends _i1.SmartFake
+    implements _i2.FallbackStrategy {
+  _FakeFallbackStrategy_20(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeFocusMeteringAction_36 extends _i1.SmartFake
+class _FakeFocusMeteringAction_21 extends _i1.SmartFake
     implements _i2.FocusMeteringAction {
-  _FakeFocusMeteringAction_36(Object parent, Invocation parentInvocation)
+  _FakeFocusMeteringAction_21(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeFocusMeteringResult_37 extends _i1.SmartFake
+class _FakeFocusMeteringActionBuilder_22 extends _i1.SmartFake
+    implements _i2.FocusMeteringActionBuilder {
+  _FakeFocusMeteringActionBuilder_22(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeFocusMeteringResult_23 extends _i1.SmartFake
     implements _i2.FocusMeteringResult {
-  _FakeFocusMeteringResult_37(Object parent, Invocation parentInvocation)
+  _FakeFocusMeteringResult_23(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeImageProxy_38 extends _i1.SmartFake implements _i2.ImageProxy {
-  _FakeImageProxy_38(Object parent, Invocation parentInvocation)
+class _FakeImageAnalysis_24 extends _i1.SmartFake implements _i2.ImageAnalysis {
+  _FakeImageAnalysis_24(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePendingRecording_39 extends _i1.SmartFake
+class _FakeImageCapture_25 extends _i1.SmartFake implements _i2.ImageCapture {
+  _FakeImageCapture_25(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeImageProxy_26 extends _i1.SmartFake implements _i2.ImageProxy {
+  _FakeImageProxy_26(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeObserver_27<T> extends _i1.SmartFake implements _i3.Observer<T> {
+  _FakeObserver_27(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakePendingRecording_28 extends _i1.SmartFake
     implements _i2.PendingRecording {
-  _FakePendingRecording_39(Object parent, Invocation parentInvocation)
+  _FakePendingRecording_28(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeRecording_40 extends _i1.SmartFake implements _i2.Recording {
-  _FakeRecording_40(Object parent, Invocation parentInvocation)
+class _FakeRecording_29 extends _i1.SmartFake implements _i2.Recording {
+  _FakeRecording_29(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakePlaneProxy_41 extends _i1.SmartFake implements _i2.PlaneProxy {
-  _FakePlaneProxy_41(Object parent, Invocation parentInvocation)
+class _FakePlaneProxy_30 extends _i1.SmartFake implements _i2.PlaneProxy {
+  _FakePlaneProxy_30(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeVideoOutput_42 extends _i1.SmartFake implements _i2.VideoOutput {
-  _FakeVideoOutput_42(Object parent, Invocation parentInvocation)
+class _FakePreview_31 extends _i1.SmartFake implements _i2.Preview {
+  _FakePreview_31(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeZoomState_43 extends _i1.SmartFake implements _i2.ZoomState {
-  _FakeZoomState_43(Object parent, Invocation parentInvocation)
+class _FakeProcessCameraProvider_32 extends _i1.SmartFake
+    implements _i2.ProcessCameraProvider {
+  _FakeProcessCameraProvider_32(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeQualitySelector_33 extends _i1.SmartFake
+    implements _i2.QualitySelector {
+  _FakeQualitySelector_33(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeRecorder_34 extends _i1.SmartFake implements _i2.Recorder {
+  _FakeRecorder_34(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeResolutionFilter_35 extends _i1.SmartFake
+    implements _i2.ResolutionFilter {
+  _FakeResolutionFilter_35(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeResolutionSelector_36 extends _i1.SmartFake
+    implements _i2.ResolutionSelector {
+  _FakeResolutionSelector_36(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeResolutionStrategy_37 extends _i1.SmartFake
+    implements _i2.ResolutionStrategy {
+  _FakeResolutionStrategy_37(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeSystemServicesManager_38 extends _i1.SmartFake
+    implements _i2.SystemServicesManager {
+  _FakeSystemServicesManager_38(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeVideoOutput_39 extends _i1.SmartFake implements _i2.VideoOutput {
+  _FakeVideoOutput_39(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeVideoCapture_40 extends _i1.SmartFake implements _i2.VideoCapture {
+  _FakeVideoCapture_40(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+class _FakeZoomState_41 extends _i1.SmartFake implements _i2.ZoomState {
+  _FakeZoomState_41(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -920,1422 +907,6 @@ class MockCameraSelector extends _i1.Mock implements _i2.CameraSelector {
           as _i2.CameraSelector);
 }
 
-/// A class which mocks [CameraXProxy].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockCameraXProxy extends _i1.Mock implements _i7.CameraXProxy {
-  @override
-  void Function({
-    _i8.BinaryMessenger? pigeonBinaryMessenger,
-    _i2.PigeonInstanceManager? pigeonInstanceManager,
-  })
-  get setUpGenericsProxy =>
-      (super.noSuchMethod(
-            Invocation.getter(#setUpGenericsProxy),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeonBinaryMessenger,
-                  _i2.PigeonInstanceManager? pigeonInstanceManager,
-                }) {},
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeonBinaryMessenger,
-                  _i2.PigeonInstanceManager? pigeonInstanceManager,
-                }) {},
-          )
-          as void Function({
-            _i8.BinaryMessenger? pigeonBinaryMessenger,
-            _i2.PigeonInstanceManager? pigeonInstanceManager,
-          }));
-
-  @override
-  _i2.CameraSize Function({
-    required int height,
-    required int width,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newCameraSize =>
-      (super.noSuchMethod(
-            Invocation.getter(#newCameraSize),
-            returnValue:
-                ({
-                  required int height,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required int width,
-                }) =>
-                    _FakeCameraSize_10(this, Invocation.getter(#newCameraSize)),
-            returnValueForMissingStub:
-                ({
-                  required int height,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required int width,
-                }) =>
-                    _FakeCameraSize_10(this, Invocation.getter(#newCameraSize)),
-          )
-          as _i2.CameraSize Function({
-            required int height,
-            required int width,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.CameraIntegerRange Function({
-    required int lower,
-    required int upper,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newCameraIntegerRange =>
-      (super.noSuchMethod(
-            Invocation.getter(#newCameraIntegerRange),
-            returnValue:
-                ({
-                  required int lower,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required int upper,
-                }) => _FakeCameraIntegerRange_15(
-                  this,
-                  Invocation.getter(#newCameraIntegerRange),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required int lower,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required int upper,
-                }) => _FakeCameraIntegerRange_15(
-                  this,
-                  Invocation.getter(#newCameraIntegerRange),
-                ),
-          )
-          as _i2.CameraIntegerRange Function({
-            required int lower,
-            required int upper,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i3.Observer<T> Function<T>({
-    required void Function(_i3.Observer<T>, T) onChanged,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newObserver =>
-      (super.noSuchMethod(
-            Invocation.getter(#newObserver),
-            returnValue:
-                <T>({
-                  required void Function(_i3.Observer<T>, T) onChanged,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) =>
-                    _FakeObserver_16<T>(this, Invocation.getter(#newObserver)),
-            returnValueForMissingStub:
-                <T>({
-                  required void Function(_i3.Observer<T>, T) onChanged,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) =>
-                    _FakeObserver_16<T>(this, Invocation.getter(#newObserver)),
-          )
-          as _i3.Observer<T> Function<T>({
-            required void Function(_i3.Observer<T>, T) onChanged,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.CameraSelector Function({
-    _i3.CameraInfo? cameraInfoForFilter,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-    _i2.LensFacing? requireLensFacing,
-  })
-  get newCameraSelector =>
-      (super.noSuchMethod(
-            Invocation.getter(#newCameraSelector),
-            returnValue:
-                ({
-                  _i3.CameraInfo? cameraInfoForFilter,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.LensFacing? requireLensFacing,
-                }) => _FakeCameraSelector_14(
-                  this,
-                  Invocation.getter(#newCameraSelector),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i3.CameraInfo? cameraInfoForFilter,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.LensFacing? requireLensFacing,
-                }) => _FakeCameraSelector_14(
-                  this,
-                  Invocation.getter(#newCameraSelector),
-                ),
-          )
-          as _i2.CameraSelector Function({
-            _i3.CameraInfo? cameraInfoForFilter,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-            _i2.LensFacing? requireLensFacing,
-          }));
-
-  @override
-  _i2.SystemServicesManager Function({
-    required void Function(_i2.SystemServicesManager, String) onCameraError,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newSystemServicesManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#newSystemServicesManager),
-            returnValue:
-                ({
-                  required void Function(_i2.SystemServicesManager, String)
-                  onCameraError,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeSystemServicesManager_17(
-                  this,
-                  Invocation.getter(#newSystemServicesManager),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required void Function(_i2.SystemServicesManager, String)
-                  onCameraError,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeSystemServicesManager_17(
-                  this,
-                  Invocation.getter(#newSystemServicesManager),
-                ),
-          )
-          as _i2.SystemServicesManager Function({
-            required void Function(_i2.SystemServicesManager, String)
-            onCameraError,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.DeviceOrientationManager Function({
-    required void Function(_i2.DeviceOrientationManager, String)
-    onDeviceOrientationChanged,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newDeviceOrientationManager =>
-      (super.noSuchMethod(
-            Invocation.getter(#newDeviceOrientationManager),
-            returnValue:
-                ({
-                  required void Function(_i2.DeviceOrientationManager, String)
-                  onDeviceOrientationChanged,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeDeviceOrientationManager_18(
-                  this,
-                  Invocation.getter(#newDeviceOrientationManager),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required void Function(_i2.DeviceOrientationManager, String)
-                  onDeviceOrientationChanged,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeDeviceOrientationManager_18(
-                  this,
-                  Invocation.getter(#newDeviceOrientationManager),
-                ),
-          )
-          as _i2.DeviceOrientationManager Function({
-            required void Function(_i2.DeviceOrientationManager, String)
-            onDeviceOrientationChanged,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.Preview Function({
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-    _i2.ResolutionSelector? resolutionSelector,
-    _i2.CameraIntegerRange? targetFpsRange,
-    int? targetRotation,
-  })
-  get newPreview =>
-      (super.noSuchMethod(
-            Invocation.getter(#newPreview),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionSelector? resolutionSelector,
-                  _i2.CameraIntegerRange? targetFpsRange,
-                  int? targetRotation,
-                }) => _FakePreview_19(this, Invocation.getter(#newPreview)),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionSelector? resolutionSelector,
-                  _i2.CameraIntegerRange? targetFpsRange,
-                  int? targetRotation,
-                }) => _FakePreview_19(this, Invocation.getter(#newPreview)),
-          )
-          as _i2.Preview Function({
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-            _i2.ResolutionSelector? resolutionSelector,
-            _i2.CameraIntegerRange? targetFpsRange,
-            int? targetRotation,
-          }));
-
-  @override
-  _i2.VideoCapture Function({
-    required _i2.VideoOutput videoOutput,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-    _i2.CameraIntegerRange? targetFpsRange,
-  })
-  get withOutputVideoCapture =>
-      (super.noSuchMethod(
-            Invocation.getter(#withOutputVideoCapture),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.CameraIntegerRange? targetFpsRange,
-                  required _i2.VideoOutput videoOutput,
-                }) => _FakeVideoCapture_20(
-                  this,
-                  Invocation.getter(#withOutputVideoCapture),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.CameraIntegerRange? targetFpsRange,
-                  required _i2.VideoOutput videoOutput,
-                }) => _FakeVideoCapture_20(
-                  this,
-                  Invocation.getter(#withOutputVideoCapture),
-                ),
-          )
-          as _i2.VideoCapture Function({
-            required _i2.VideoOutput videoOutput,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-            _i2.CameraIntegerRange? targetFpsRange,
-          }));
-
-  @override
-  _i2.Recorder Function({
-    int? aspectRatio,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-    _i2.QualitySelector? qualitySelector,
-    int? targetVideoEncodingBitRate,
-  })
-  get newRecorder =>
-      (super.noSuchMethod(
-            Invocation.getter(#newRecorder),
-            returnValue:
-                ({
-                  int? aspectRatio,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.QualitySelector? qualitySelector,
-                  int? targetVideoEncodingBitRate,
-                }) => _FakeRecorder_21(this, Invocation.getter(#newRecorder)),
-            returnValueForMissingStub:
-                ({
-                  int? aspectRatio,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.QualitySelector? qualitySelector,
-                  int? targetVideoEncodingBitRate,
-                }) => _FakeRecorder_21(this, Invocation.getter(#newRecorder)),
-          )
-          as _i2.Recorder Function({
-            int? aspectRatio,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-            _i2.QualitySelector? qualitySelector,
-            int? targetVideoEncodingBitRate,
-          }));
-
-  @override
-  _i2.VideoRecordEventListener Function({
-    required void Function(_i2.VideoRecordEventListener, _i2.VideoRecordEvent)
-    onEvent,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newVideoRecordEventListener =>
-      (super.noSuchMethod(
-            Invocation.getter(#newVideoRecordEventListener),
-            returnValue:
-                ({
-                  required void Function(
-                    _i2.VideoRecordEventListener,
-                    _i2.VideoRecordEvent,
-                  )
-                  onEvent,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeVideoRecordEventListener_22(
-                  this,
-                  Invocation.getter(#newVideoRecordEventListener),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required void Function(
-                    _i2.VideoRecordEventListener,
-                    _i2.VideoRecordEvent,
-                  )
-                  onEvent,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeVideoRecordEventListener_22(
-                  this,
-                  Invocation.getter(#newVideoRecordEventListener),
-                ),
-          )
-          as _i2.VideoRecordEventListener Function({
-            required void Function(
-              _i2.VideoRecordEventListener,
-              _i2.VideoRecordEvent,
-            )
-            onEvent,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.ImageCapture Function({
-    _i2.CameraXFlashMode? flashMode,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-    _i2.ResolutionSelector? resolutionSelector,
-    int? targetRotation,
-  })
-  get newImageCapture =>
-      (super.noSuchMethod(
-            Invocation.getter(#newImageCapture),
-            returnValue:
-                ({
-                  _i2.CameraXFlashMode? flashMode,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionSelector? resolutionSelector,
-                  int? targetRotation,
-                }) => _FakeImageCapture_23(
-                  this,
-                  Invocation.getter(#newImageCapture),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i2.CameraXFlashMode? flashMode,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionSelector? resolutionSelector,
-                  int? targetRotation,
-                }) => _FakeImageCapture_23(
-                  this,
-                  Invocation.getter(#newImageCapture),
-                ),
-          )
-          as _i2.ImageCapture Function({
-            _i2.CameraXFlashMode? flashMode,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-            _i2.ResolutionSelector? resolutionSelector,
-            int? targetRotation,
-          }));
-
-  @override
-  _i2.ResolutionStrategy Function({
-    required _i2.CameraSize boundSize,
-    required _i2.ResolutionStrategyFallbackRule fallbackRule,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newResolutionStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(#newResolutionStrategy),
-            returnValue:
-                ({
-                  required _i2.CameraSize boundSize,
-                  required _i2.ResolutionStrategyFallbackRule fallbackRule,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeResolutionStrategy_24(
-                  this,
-                  Invocation.getter(#newResolutionStrategy),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required _i2.CameraSize boundSize,
-                  required _i2.ResolutionStrategyFallbackRule fallbackRule,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeResolutionStrategy_24(
-                  this,
-                  Invocation.getter(#newResolutionStrategy),
-                ),
-          )
-          as _i2.ResolutionStrategy Function({
-            required _i2.CameraSize boundSize,
-            required _i2.ResolutionStrategyFallbackRule fallbackRule,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.ResolutionSelector Function({
-    _i2.AspectRatioStrategy? aspectRatioStrategy,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-    _i2.ResolutionFilter? resolutionFilter,
-    _i2.ResolutionStrategy? resolutionStrategy,
-  })
-  get newResolutionSelector =>
-      (super.noSuchMethod(
-            Invocation.getter(#newResolutionSelector),
-            returnValue:
-                ({
-                  _i2.AspectRatioStrategy? aspectRatioStrategy,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionFilter? resolutionFilter,
-                  _i2.ResolutionStrategy? resolutionStrategy,
-                }) => _FakeResolutionSelector_25(
-                  this,
-                  Invocation.getter(#newResolutionSelector),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i2.AspectRatioStrategy? aspectRatioStrategy,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionFilter? resolutionFilter,
-                  _i2.ResolutionStrategy? resolutionStrategy,
-                }) => _FakeResolutionSelector_25(
-                  this,
-                  Invocation.getter(#newResolutionSelector),
-                ),
-          )
-          as _i2.ResolutionSelector Function({
-            _i2.AspectRatioStrategy? aspectRatioStrategy,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-            _i2.ResolutionFilter? resolutionFilter,
-            _i2.ResolutionStrategy? resolutionStrategy,
-          }));
-
-  @override
-  _i2.AspectRatioStrategy Function({
-    required _i2.AspectRatioStrategyFallbackRule fallbackRule,
-    required _i2.AspectRatio preferredAspectRatio,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newAspectRatioStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(#newAspectRatioStrategy),
-            returnValue:
-                ({
-                  required _i2.AspectRatioStrategyFallbackRule fallbackRule,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.AspectRatio preferredAspectRatio,
-                }) => _FakeAspectRatioStrategy_2(
-                  this,
-                  Invocation.getter(#newAspectRatioStrategy),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required _i2.AspectRatioStrategyFallbackRule fallbackRule,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.AspectRatio preferredAspectRatio,
-                }) => _FakeAspectRatioStrategy_2(
-                  this,
-                  Invocation.getter(#newAspectRatioStrategy),
-                ),
-          )
-          as _i2.AspectRatioStrategy Function({
-            required _i2.AspectRatioStrategyFallbackRule fallbackRule,
-            required _i2.AspectRatio preferredAspectRatio,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.ImageAnalysis Function({
-    int? outputImageFormat,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-    _i2.ResolutionSelector? resolutionSelector,
-    _i2.CameraIntegerRange? targetFpsRange,
-    int? targetRotation,
-  })
-  get newImageAnalysis =>
-      (super.noSuchMethod(
-            Invocation.getter(#newImageAnalysis),
-            returnValue:
-                ({
-                  int? outputImageFormat,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionSelector? resolutionSelector,
-                  _i2.CameraIntegerRange? targetFpsRange,
-                  int? targetRotation,
-                }) => _FakeImageAnalysis_26(
-                  this,
-                  Invocation.getter(#newImageAnalysis),
-                ),
-            returnValueForMissingStub:
-                ({
-                  int? outputImageFormat,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  _i2.ResolutionSelector? resolutionSelector,
-                  _i2.CameraIntegerRange? targetFpsRange,
-                  int? targetRotation,
-                }) => _FakeImageAnalysis_26(
-                  this,
-                  Invocation.getter(#newImageAnalysis),
-                ),
-          )
-          as _i2.ImageAnalysis Function({
-            int? outputImageFormat,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-            _i2.ResolutionSelector? resolutionSelector,
-            _i2.CameraIntegerRange? targetFpsRange,
-            int? targetRotation,
-          }));
-
-  @override
-  _i2.Analyzer Function({
-    required void Function(_i2.Analyzer, _i2.ImageProxy) analyze,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newAnalyzer =>
-      (super.noSuchMethod(
-            Invocation.getter(#newAnalyzer),
-            returnValue:
-                ({
-                  required void Function(_i2.Analyzer, _i2.ImageProxy) analyze,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeAnalyzer_1(this, Invocation.getter(#newAnalyzer)),
-            returnValueForMissingStub:
-                ({
-                  required void Function(_i2.Analyzer, _i2.ImageProxy) analyze,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeAnalyzer_1(this, Invocation.getter(#newAnalyzer)),
-          )
-          as _i2.Analyzer Function({
-            required void Function(_i2.Analyzer, _i2.ImageProxy) analyze,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.QualitySelector Function({
-    required _i2.VideoQuality quality,
-    _i2.FallbackStrategy? fallbackStrategy,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get fromQualitySelector =>
-      (super.noSuchMethod(
-            Invocation.getter(#fromQualitySelector),
-            returnValue:
-                ({
-                  _i2.FallbackStrategy? fallbackStrategy,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeQualitySelector_27(
-                  this,
-                  Invocation.getter(#fromQualitySelector),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i2.FallbackStrategy? fallbackStrategy,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeQualitySelector_27(
-                  this,
-                  Invocation.getter(#fromQualitySelector),
-                ),
-          )
-          as _i2.QualitySelector Function({
-            required _i2.VideoQuality quality,
-            _i2.FallbackStrategy? fallbackStrategy,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.QualitySelector Function({
-    required List<_i2.VideoQuality> qualities,
-    _i2.FallbackStrategy? fallbackStrategy,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get fromOrderedListQualitySelector =>
-      (super.noSuchMethod(
-            Invocation.getter(#fromOrderedListQualitySelector),
-            returnValue:
-                ({
-                  _i2.FallbackStrategy? fallbackStrategy,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required List<_i2.VideoQuality> qualities,
-                }) => _FakeQualitySelector_27(
-                  this,
-                  Invocation.getter(#fromOrderedListQualitySelector),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i2.FallbackStrategy? fallbackStrategy,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required List<_i2.VideoQuality> qualities,
-                }) => _FakeQualitySelector_27(
-                  this,
-                  Invocation.getter(#fromOrderedListQualitySelector),
-                ),
-          )
-          as _i2.QualitySelector Function({
-            required List<_i2.VideoQuality> qualities,
-            _i2.FallbackStrategy? fallbackStrategy,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.FallbackStrategy Function({
-    required _i2.VideoQuality quality,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get higherQualityOrLowerThanFallbackStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(#higherQualityOrLowerThanFallbackStrategy),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#higherQualityOrLowerThanFallbackStrategy),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#higherQualityOrLowerThanFallbackStrategy),
-                ),
-          )
-          as _i2.FallbackStrategy Function({
-            required _i2.VideoQuality quality,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.FallbackStrategy Function({
-    required _i2.VideoQuality quality,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get higherQualityThanFallbackStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(#higherQualityThanFallbackStrategy),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#higherQualityThanFallbackStrategy),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#higherQualityThanFallbackStrategy),
-                ),
-          )
-          as _i2.FallbackStrategy Function({
-            required _i2.VideoQuality quality,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.FallbackStrategy Function({
-    required _i2.VideoQuality quality,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get lowerQualityOrHigherThanFallbackStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(#lowerQualityOrHigherThanFallbackStrategy),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#lowerQualityOrHigherThanFallbackStrategy),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#lowerQualityOrHigherThanFallbackStrategy),
-                ),
-          )
-          as _i2.FallbackStrategy Function({
-            required _i2.VideoQuality quality,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.FallbackStrategy Function({
-    required _i2.VideoQuality quality,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get lowerQualityThanFallbackStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(#lowerQualityThanFallbackStrategy),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#lowerQualityThanFallbackStrategy),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.VideoQuality quality,
-                }) => _FakeFallbackStrategy_28(
-                  this,
-                  Invocation.getter(#lowerQualityThanFallbackStrategy),
-                ),
-          )
-          as _i2.FallbackStrategy Function({
-            required _i2.VideoQuality quality,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.FocusMeteringActionBuilder Function({
-    required _i2.MeteringPoint point,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newFocusMeteringActionBuilder =>
-      (super.noSuchMethod(
-            Invocation.getter(#newFocusMeteringActionBuilder),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.MeteringPoint point,
-                }) => _FakeFocusMeteringActionBuilder_29(
-                  this,
-                  Invocation.getter(#newFocusMeteringActionBuilder),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.MeteringPoint point,
-                }) => _FakeFocusMeteringActionBuilder_29(
-                  this,
-                  Invocation.getter(#newFocusMeteringActionBuilder),
-                ),
-          )
-          as _i2.FocusMeteringActionBuilder Function({
-            required _i2.MeteringPoint point,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.FocusMeteringActionBuilder Function({
-    required _i2.MeteringMode mode,
-    required _i2.MeteringPoint point,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get withModeFocusMeteringActionBuilder =>
-      (super.noSuchMethod(
-            Invocation.getter(#withModeFocusMeteringActionBuilder),
-            returnValue:
-                ({
-                  required _i2.MeteringMode mode,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.MeteringPoint point,
-                }) => _FakeFocusMeteringActionBuilder_29(
-                  this,
-                  Invocation.getter(#withModeFocusMeteringActionBuilder),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required _i2.MeteringMode mode,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.MeteringPoint point,
-                }) => _FakeFocusMeteringActionBuilder_29(
-                  this,
-                  Invocation.getter(#withModeFocusMeteringActionBuilder),
-                ),
-          )
-          as _i2.FocusMeteringActionBuilder Function({
-            required _i2.MeteringMode mode,
-            required _i2.MeteringPoint point,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.CaptureRequestOptions Function({
-    required Map<_i2.CaptureRequestKey, Object?> options,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newCaptureRequestOptions =>
-      (super.noSuchMethod(
-            Invocation.getter(#newCaptureRequestOptions),
-            returnValue:
-                ({
-                  required Map<_i2.CaptureRequestKey, Object?> options,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeCaptureRequestOptions_30(
-                  this,
-                  Invocation.getter(#newCaptureRequestOptions),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required Map<_i2.CaptureRequestKey, Object?> options,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeCaptureRequestOptions_30(
-                  this,
-                  Invocation.getter(#newCaptureRequestOptions),
-                ),
-          )
-          as _i2.CaptureRequestOptions Function({
-            required Map<_i2.CaptureRequestKey, Object?> options,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.Camera2CameraControl Function({
-    required _i2.CameraControl cameraControl,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get fromCamera2CameraControl =>
-      (super.noSuchMethod(
-            Invocation.getter(#fromCamera2CameraControl),
-            returnValue:
-                ({
-                  required _i2.CameraControl cameraControl,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeCamera2CameraControl_11(
-                  this,
-                  Invocation.getter(#fromCamera2CameraControl),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required _i2.CameraControl cameraControl,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeCamera2CameraControl_11(
-                  this,
-                  Invocation.getter(#fromCamera2CameraControl),
-                ),
-          )
-          as _i2.Camera2CameraControl Function({
-            required _i2.CameraControl cameraControl,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.ResolutionFilter Function({
-    required _i2.CameraSize preferredSize,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get createWithOnePreferredSizeResolutionFilter =>
-      (super.noSuchMethod(
-            Invocation.getter(#createWithOnePreferredSizeResolutionFilter),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.CameraSize preferredSize,
-                }) => _FakeResolutionFilter_31(
-                  this,
-                  Invocation.getter(
-                    #createWithOnePreferredSizeResolutionFilter,
-                  ),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required _i2.CameraSize preferredSize,
-                }) => _FakeResolutionFilter_31(
-                  this,
-                  Invocation.getter(
-                    #createWithOnePreferredSizeResolutionFilter,
-                  ),
-                ),
-          )
-          as _i2.ResolutionFilter Function({
-            required _i2.CameraSize preferredSize,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.Camera2CameraInfo Function({
-    required _i3.CameraInfo cameraInfo,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get fromCamera2CameraInfo =>
-      (super.noSuchMethod(
-            Invocation.getter(#fromCamera2CameraInfo),
-            returnValue:
-                ({
-                  required _i3.CameraInfo cameraInfo,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeCamera2CameraInfo_12(
-                  this,
-                  Invocation.getter(#fromCamera2CameraInfo),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required _i3.CameraInfo cameraInfo,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _FakeCamera2CameraInfo_12(
-                  this,
-                  Invocation.getter(#fromCamera2CameraInfo),
-                ),
-          )
-          as _i2.Camera2CameraInfo Function({
-            required _i3.CameraInfo cameraInfo,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.DisplayOrientedMeteringPointFactory Function({
-    required _i3.CameraInfo cameraInfo,
-    required double height,
-    required double width,
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get newDisplayOrientedMeteringPointFactory =>
-      (super.noSuchMethod(
-            Invocation.getter(#newDisplayOrientedMeteringPointFactory),
-            returnValue:
-                ({
-                  required _i3.CameraInfo cameraInfo,
-                  required double height,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required double width,
-                }) => _FakeDisplayOrientedMeteringPointFactory_32(
-                  this,
-                  Invocation.getter(#newDisplayOrientedMeteringPointFactory),
-                ),
-            returnValueForMissingStub:
-                ({
-                  required _i3.CameraInfo cameraInfo,
-                  required double height,
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                  required double width,
-                }) => _FakeDisplayOrientedMeteringPointFactory_32(
-                  this,
-                  Invocation.getter(#newDisplayOrientedMeteringPointFactory),
-                ),
-          )
-          as _i2.DisplayOrientedMeteringPointFactory Function({
-            required _i3.CameraInfo cameraInfo,
-            required double height,
-            required double width,
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i5.Future<_i2.ProcessCameraProvider> Function({
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get getInstanceProcessCameraProvider =>
-      (super.noSuchMethod(
-            Invocation.getter(#getInstanceProcessCameraProvider),
-            returnValue:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _i5.Future<_i2.ProcessCameraProvider>.value(
-                  _FakeProcessCameraProvider_33(
-                    this,
-                    Invocation.getter(#getInstanceProcessCameraProvider),
-                  ),
-                ),
-            returnValueForMissingStub:
-                ({
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _i5.Future<_i2.ProcessCameraProvider>.value(
-                  _FakeProcessCameraProvider_33(
-                    this,
-                    Invocation.getter(#getInstanceProcessCameraProvider),
-                  ),
-                ),
-          )
-          as _i5.Future<_i2.ProcessCameraProvider> Function({
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i5.Future<_i2.CameraSize?> Function(
-    _i3.CameraInfo,
-    _i2.VideoQuality, {
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get getResolutionQualitySelector =>
-      (super.noSuchMethod(
-            Invocation.getter(#getResolutionQualitySelector),
-            returnValue:
-                (
-                  _i3.CameraInfo __p0,
-                  _i2.VideoQuality __p1, {
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _i5.Future<_i2.CameraSize?>.value(),
-            returnValueForMissingStub:
-                (
-                  _i3.CameraInfo __p0,
-                  _i2.VideoQuality __p1, {
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _i5.Future<_i2.CameraSize?>.value(),
-          )
-          as _i5.Future<_i2.CameraSize?> Function(
-            _i3.CameraInfo,
-            _i2.VideoQuality, {
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  _i2.CameraSelector Function() get defaultBackCameraCameraSelector =>
-      (super.noSuchMethod(
-            Invocation.getter(#defaultBackCameraCameraSelector),
-            returnValue: () => _FakeCameraSelector_14(
-              this,
-              Invocation.getter(#defaultBackCameraCameraSelector),
-            ),
-            returnValueForMissingStub: () => _FakeCameraSelector_14(
-              this,
-              Invocation.getter(#defaultBackCameraCameraSelector),
-            ),
-          )
-          as _i2.CameraSelector Function());
-
-  @override
-  _i2.CameraSelector Function() get defaultFrontCameraCameraSelector =>
-      (super.noSuchMethod(
-            Invocation.getter(#defaultFrontCameraCameraSelector),
-            returnValue: () => _FakeCameraSelector_14(
-              this,
-              Invocation.getter(#defaultFrontCameraCameraSelector),
-            ),
-            returnValueForMissingStub: () => _FakeCameraSelector_14(
-              this,
-              Invocation.getter(#defaultFrontCameraCameraSelector),
-            ),
-          )
-          as _i2.CameraSelector Function());
-
-  @override
-  _i2.ResolutionStrategy Function()
-  get highestAvailableStrategyResolutionStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(#highestAvailableStrategyResolutionStrategy),
-            returnValue: () => _FakeResolutionStrategy_24(
-              this,
-              Invocation.getter(#highestAvailableStrategyResolutionStrategy),
-            ),
-            returnValueForMissingStub: () => _FakeResolutionStrategy_24(
-              this,
-              Invocation.getter(#highestAvailableStrategyResolutionStrategy),
-            ),
-          )
-          as _i2.ResolutionStrategy Function());
-
-  @override
-  _i2.AspectRatioStrategy Function()
-  get ratio_16_9FallbackAutoStrategyAspectRatioStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(
-              #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
-            ),
-            returnValue: () => _FakeAspectRatioStrategy_2(
-              this,
-              Invocation.getter(
-                #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
-              ),
-            ),
-            returnValueForMissingStub: () => _FakeAspectRatioStrategy_2(
-              this,
-              Invocation.getter(
-                #ratio_16_9FallbackAutoStrategyAspectRatioStrategy,
-              ),
-            ),
-          )
-          as _i2.AspectRatioStrategy Function());
-
-  @override
-  _i2.AspectRatioStrategy Function()
-  get ratio_4_3FallbackAutoStrategyAspectRatioStrategy =>
-      (super.noSuchMethod(
-            Invocation.getter(
-              #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
-            ),
-            returnValue: () => _FakeAspectRatioStrategy_2(
-              this,
-              Invocation.getter(
-                #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
-              ),
-            ),
-            returnValueForMissingStub: () => _FakeAspectRatioStrategy_2(
-              this,
-              Invocation.getter(
-                #ratio_4_3FallbackAutoStrategyAspectRatioStrategy,
-              ),
-            ),
-          )
-          as _i2.AspectRatioStrategy Function());
-
-  @override
-  _i2.CaptureRequestKey Function() get controlAELockCaptureRequest =>
-      (super.noSuchMethod(
-            Invocation.getter(#controlAELockCaptureRequest),
-            returnValue: () => _FakeCaptureRequestKey_34(
-              this,
-              Invocation.getter(#controlAELockCaptureRequest),
-            ),
-            returnValueForMissingStub: () => _FakeCaptureRequestKey_34(
-              this,
-              Invocation.getter(#controlAELockCaptureRequest),
-            ),
-          )
-          as _i2.CaptureRequestKey Function());
-
-  @override
-  _i2.CameraCharacteristicsKey Function()
-  get infoSupportedHardwareLevelCameraCharacteristics =>
-      (super.noSuchMethod(
-            Invocation.getter(#infoSupportedHardwareLevelCameraCharacteristics),
-            returnValue: () => _FakeCameraCharacteristicsKey_9(
-              this,
-              Invocation.getter(
-                #infoSupportedHardwareLevelCameraCharacteristics,
-              ),
-            ),
-            returnValueForMissingStub: () => _FakeCameraCharacteristicsKey_9(
-              this,
-              Invocation.getter(
-                #infoSupportedHardwareLevelCameraCharacteristics,
-              ),
-            ),
-          )
-          as _i2.CameraCharacteristicsKey Function());
-
-  @override
-  _i2.CameraCharacteristicsKey Function()
-  get sensorOrientationCameraCharacteristics =>
-      (super.noSuchMethod(
-            Invocation.getter(#sensorOrientationCameraCharacteristics),
-            returnValue: () => _FakeCameraCharacteristicsKey_9(
-              this,
-              Invocation.getter(#sensorOrientationCameraCharacteristics),
-            ),
-            returnValueForMissingStub: () => _FakeCameraCharacteristicsKey_9(
-              this,
-              Invocation.getter(#sensorOrientationCameraCharacteristics),
-            ),
-          )
-          as _i2.CameraCharacteristicsKey Function());
-
-  @override
-  _i5.Future<_i9.Uint8List?> Function(
-    int,
-    int,
-    List<_i2.PlaneProxy>, {
-    _i8.BinaryMessenger? pigeon_binaryMessenger,
-    _i2.PigeonInstanceManager? pigeon_instanceManager,
-  })
-  get getNv21BufferImageProxyUtils =>
-      (super.noSuchMethod(
-            Invocation.getter(#getNv21BufferImageProxyUtils),
-            returnValue:
-                (
-                  int imageWidth,
-                  int imageHeight,
-                  List<_i2.PlaneProxy> planes, {
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _i5.Future<_i9.Uint8List?>.value(),
-            returnValueForMissingStub:
-                (
-                  int imageWidth,
-                  int imageHeight,
-                  List<_i2.PlaneProxy> planes, {
-                  _i8.BinaryMessenger? pigeon_binaryMessenger,
-                  _i2.PigeonInstanceManager? pigeon_instanceManager,
-                }) => _i5.Future<_i9.Uint8List?>.value(),
-          )
-          as _i5.Future<_i9.Uint8List?> Function(
-            int,
-            int,
-            List<_i2.PlaneProxy>, {
-            _i8.BinaryMessenger? pigeon_binaryMessenger,
-            _i2.PigeonInstanceManager? pigeon_instanceManager,
-          }));
-
-  @override
-  set withModeFocusMeteringActionBuilder(
-    _i2.FocusMeteringActionBuilder Function({
-      required _i2.MeteringMode mode,
-      required _i2.MeteringPoint point,
-      _i8.BinaryMessenger? pigeon_binaryMessenger,
-      _i2.PigeonInstanceManager? pigeon_instanceManager,
-    })?
-    _withModeFocusMeteringActionBuilder,
-  ) => super.noSuchMethod(
-    Invocation.setter(
-      #withModeFocusMeteringActionBuilder,
-      _withModeFocusMeteringActionBuilder,
-    ),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  set newCaptureRequestOptions(
-    _i2.CaptureRequestOptions Function({
-      required Map<_i2.CaptureRequestKey, Object?> options,
-      _i8.BinaryMessenger? pigeon_binaryMessenger,
-      _i2.PigeonInstanceManager? pigeon_instanceManager,
-    })?
-    _newCaptureRequestOptions,
-  ) => super.noSuchMethod(
-    Invocation.setter(#newCaptureRequestOptions, _newCaptureRequestOptions),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  set fromCamera2CameraControl(
-    _i2.Camera2CameraControl Function({
-      required _i2.CameraControl cameraControl,
-      _i8.BinaryMessenger? pigeon_binaryMessenger,
-      _i2.PigeonInstanceManager? pigeon_instanceManager,
-    })?
-    _fromCamera2CameraControl,
-  ) => super.noSuchMethod(
-    Invocation.setter(#fromCamera2CameraControl, _fromCamera2CameraControl),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  set newDisplayOrientedMeteringPointFactory(
-    _i2.DisplayOrientedMeteringPointFactory Function({
-      required _i3.CameraInfo cameraInfo,
-      required double height,
-      required double width,
-      _i8.BinaryMessenger? pigeon_binaryMessenger,
-      _i2.PigeonInstanceManager? pigeon_instanceManager,
-    })?
-    _newDisplayOrientedMeteringPointFactory,
-  ) => super.noSuchMethod(
-    Invocation.setter(
-      #newDisplayOrientedMeteringPointFactory,
-      _newDisplayOrientedMeteringPointFactory,
-    ),
-    returnValueForMissingStub: null,
-  );
-
-  @override
-  set controlAELockCaptureRequest(
-    _i2.CaptureRequestKey Function()? _controlAELockCaptureRequest,
-  ) => super.noSuchMethod(
-    Invocation.setter(
-      #controlAELockCaptureRequest,
-      _controlAELockCaptureRequest,
-    ),
-    returnValueForMissingStub: null,
-  );
-}
-
 /// A class which mocks [CaptureRequestOptions].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -2369,11 +940,11 @@ class MockCaptureRequestOptions extends _i1.Mock
   _i2.CaptureRequestOptions pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeCaptureRequestOptions_30(
+            returnValue: _FakeCaptureRequestOptions_15(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeCaptureRequestOptions_30(
+            returnValueForMissingStub: _FakeCaptureRequestOptions_15(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2469,11 +1040,11 @@ class MockDeviceOrientationManager extends _i1.Mock
   _i2.DeviceOrientationManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeDeviceOrientationManager_18(
+            returnValue: _FakeDeviceOrientationManager_16(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeDeviceOrientationManager_18(
+            returnValueForMissingStub: _FakeDeviceOrientationManager_16(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2505,12 +1076,12 @@ class MockDisplayOrientedMeteringPointFactory extends _i1.Mock
   _i2.DisplayOrientedMeteringPointFactory pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeDisplayOrientedMeteringPointFactory_32(
+            returnValue: _FakeDisplayOrientedMeteringPointFactory_17(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
             returnValueForMissingStub:
-                _FakeDisplayOrientedMeteringPointFactory_32(
+                _FakeDisplayOrientedMeteringPointFactory_17(
                   this,
                   Invocation.method(#pigeon_copy, []),
                 ),
@@ -2522,13 +1093,13 @@ class MockDisplayOrientedMeteringPointFactory extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#createPoint, [x, y]),
             returnValue: _i5.Future<_i2.MeteringPoint>.value(
-              _FakeMeteringPoint_35(
+              _FakeMeteringPoint_18(
                 this,
                 Invocation.method(#createPoint, [x, y]),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.MeteringPoint>.value(
-              _FakeMeteringPoint_35(
+              _FakeMeteringPoint_18(
                 this,
                 Invocation.method(#createPoint, [x, y]),
               ),
@@ -2545,13 +1116,13 @@ class MockDisplayOrientedMeteringPointFactory extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#createPointWithSize, [x, y, size]),
             returnValue: _i5.Future<_i2.MeteringPoint>.value(
-              _FakeMeteringPoint_35(
+              _FakeMeteringPoint_18(
                 this,
                 Invocation.method(#createPointWithSize, [x, y, size]),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.MeteringPoint>.value(
-              _FakeMeteringPoint_35(
+              _FakeMeteringPoint_18(
                 this,
                 Invocation.method(#createPointWithSize, [x, y, size]),
               ),
@@ -2568,11 +1139,11 @@ class MockExposureState extends _i1.Mock implements _i2.ExposureState {
   _i2.CameraIntegerRange get exposureCompensationRange =>
       (super.noSuchMethod(
             Invocation.getter(#exposureCompensationRange),
-            returnValue: _FakeCameraIntegerRange_15(
+            returnValue: _FakeCameraIntegerRange_19(
               this,
               Invocation.getter(#exposureCompensationRange),
             ),
-            returnValueForMissingStub: _FakeCameraIntegerRange_15(
+            returnValueForMissingStub: _FakeCameraIntegerRange_19(
               this,
               Invocation.getter(#exposureCompensationRange),
             ),
@@ -2642,11 +1213,11 @@ class MockFallbackStrategy extends _i1.Mock implements _i2.FallbackStrategy {
   _i2.FallbackStrategy pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeFallbackStrategy_28(
+            returnValue: _FakeFallbackStrategy_20(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeFallbackStrategy_28(
+            returnValueForMissingStub: _FakeFallbackStrategy_20(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2709,11 +1280,11 @@ class MockFocusMeteringActionBuilder extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#build, []),
             returnValue: _i5.Future<_i2.FocusMeteringAction>.value(
-              _FakeFocusMeteringAction_36(this, Invocation.method(#build, [])),
+              _FakeFocusMeteringAction_21(this, Invocation.method(#build, [])),
             ),
             returnValueForMissingStub:
                 _i5.Future<_i2.FocusMeteringAction>.value(
-                  _FakeFocusMeteringAction_36(
+                  _FakeFocusMeteringAction_21(
                     this,
                     Invocation.method(#build, []),
                   ),
@@ -2725,11 +1296,11 @@ class MockFocusMeteringActionBuilder extends _i1.Mock
   _i2.FocusMeteringActionBuilder pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeFocusMeteringActionBuilder_29(
+            returnValue: _FakeFocusMeteringActionBuilder_22(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeFocusMeteringActionBuilder_29(
+            returnValueForMissingStub: _FakeFocusMeteringActionBuilder_22(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2770,11 +1341,11 @@ class MockFocusMeteringResult extends _i1.Mock
   _i2.FocusMeteringResult pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeFocusMeteringResult_37(
+            returnValue: _FakeFocusMeteringResult_23(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeFocusMeteringResult_37(
+            returnValueForMissingStub: _FakeFocusMeteringResult_23(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2832,11 +1403,11 @@ class MockImageAnalysis extends _i1.Mock implements _i2.ImageAnalysis {
   _i2.ImageAnalysis pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeImageAnalysis_26(
+            returnValue: _FakeImageAnalysis_24(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeImageAnalysis_26(
+            returnValueForMissingStub: _FakeImageAnalysis_24(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2898,11 +1469,11 @@ class MockImageCapture extends _i1.Mock implements _i2.ImageCapture {
   _i2.ImageCapture pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeImageCapture_23(
+            returnValue: _FakeImageCapture_25(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeImageCapture_23(
+            returnValueForMissingStub: _FakeImageCapture_25(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -2982,11 +1553,11 @@ class MockImageProxy extends _i1.Mock implements _i2.ImageProxy {
   _i2.ImageProxy pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeImageProxy_38(
+            returnValue: _FakeImageProxy_26(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeImageProxy_38(
+            returnValueForMissingStub: _FakeImageProxy_26(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3027,11 +1598,11 @@ class MockObserver extends _i1.Mock implements _i3.Observer<_i2.CameraState> {
   _i3.Observer<_i2.CameraState> pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeObserver_16<_i2.CameraState>(
+            returnValue: _FakeObserver_27<_i2.CameraState>(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeObserver_16<_i2.CameraState>(
+            returnValueForMissingStub: _FakeObserver_27<_i2.CameraState>(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3063,13 +1634,13 @@ class MockPendingRecording extends _i1.Mock implements _i2.PendingRecording {
       (super.noSuchMethod(
             Invocation.method(#withAudioEnabled, [initialMuted]),
             returnValue: _i5.Future<_i2.PendingRecording>.value(
-              _FakePendingRecording_39(
+              _FakePendingRecording_28(
                 this,
                 Invocation.method(#withAudioEnabled, [initialMuted]),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.PendingRecording>.value(
-              _FakePendingRecording_39(
+              _FakePendingRecording_28(
                 this,
                 Invocation.method(#withAudioEnabled, [initialMuted]),
               ),
@@ -3082,13 +1653,13 @@ class MockPendingRecording extends _i1.Mock implements _i2.PendingRecording {
       (super.noSuchMethod(
             Invocation.method(#asPersistentRecording, []),
             returnValue: _i5.Future<_i2.PendingRecording>.value(
-              _FakePendingRecording_39(
+              _FakePendingRecording_28(
                 this,
                 Invocation.method(#asPersistentRecording, []),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.PendingRecording>.value(
-              _FakePendingRecording_39(
+              _FakePendingRecording_28(
                 this,
                 Invocation.method(#asPersistentRecording, []),
               ),
@@ -3101,10 +1672,10 @@ class MockPendingRecording extends _i1.Mock implements _i2.PendingRecording {
       (super.noSuchMethod(
             Invocation.method(#start, [listener]),
             returnValue: _i5.Future<_i2.Recording>.value(
-              _FakeRecording_40(this, Invocation.method(#start, [listener])),
+              _FakeRecording_29(this, Invocation.method(#start, [listener])),
             ),
             returnValueForMissingStub: _i5.Future<_i2.Recording>.value(
-              _FakeRecording_40(this, Invocation.method(#start, [listener])),
+              _FakeRecording_29(this, Invocation.method(#start, [listener])),
             ),
           )
           as _i5.Future<_i2.Recording>);
@@ -3113,11 +1684,11 @@ class MockPendingRecording extends _i1.Mock implements _i2.PendingRecording {
   _i2.PendingRecording pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakePendingRecording_39(
+            returnValue: _FakePendingRecording_28(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakePendingRecording_39(
+            returnValueForMissingStub: _FakePendingRecording_28(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3130,13 +1701,13 @@ class MockPendingRecording extends _i1.Mock implements _i2.PendingRecording {
 /// See the documentation for Mockito's code generation for more information.
 class MockPlaneProxy extends _i1.Mock implements _i2.PlaneProxy {
   @override
-  _i9.Uint8List get buffer =>
+  _i7.Uint8List get buffer =>
       (super.noSuchMethod(
             Invocation.getter(#buffer),
-            returnValue: _i9.Uint8List(0),
-            returnValueForMissingStub: _i9.Uint8List(0),
+            returnValue: _i7.Uint8List(0),
+            returnValueForMissingStub: _i7.Uint8List(0),
           )
-          as _i9.Uint8List);
+          as _i7.Uint8List);
 
   @override
   int get pixelStride =>
@@ -3175,11 +1746,11 @@ class MockPlaneProxy extends _i1.Mock implements _i2.PlaneProxy {
   _i2.PlaneProxy pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakePlaneProxy_41(
+            returnValue: _FakePlaneProxy_30(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakePlaneProxy_41(
+            returnValueForMissingStub: _FakePlaneProxy_30(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3257,11 +1828,11 @@ class MockPreview extends _i1.Mock implements _i2.Preview {
   _i2.Preview pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakePreview_19(
+            returnValue: _FakePreview_31(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakePreview_19(
+            returnValueForMissingStub: _FakePreview_31(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3355,11 +1926,11 @@ class MockProcessCameraProvider extends _i1.Mock
   _i2.ProcessCameraProvider pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeProcessCameraProvider_33(
+            returnValue: _FakeProcessCameraProvider_32(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeProcessCameraProvider_33(
+            returnValueForMissingStub: _FakeProcessCameraProvider_32(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3390,11 +1961,11 @@ class MockQualitySelector extends _i1.Mock implements _i2.QualitySelector {
   _i2.QualitySelector pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeQualitySelector_27(
+            returnValue: _FakeQualitySelector_33(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeQualitySelector_27(
+            returnValueForMissingStub: _FakeQualitySelector_33(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3444,13 +2015,13 @@ class MockRecorder extends _i1.Mock implements _i2.Recorder {
       (super.noSuchMethod(
             Invocation.method(#getQualitySelector, []),
             returnValue: _i5.Future<_i2.QualitySelector>.value(
-              _FakeQualitySelector_27(
+              _FakeQualitySelector_33(
                 this,
                 Invocation.method(#getQualitySelector, []),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.QualitySelector>.value(
-              _FakeQualitySelector_27(
+              _FakeQualitySelector_33(
                 this,
                 Invocation.method(#getQualitySelector, []),
               ),
@@ -3463,13 +2034,13 @@ class MockRecorder extends _i1.Mock implements _i2.Recorder {
       (super.noSuchMethod(
             Invocation.method(#prepareRecording, [path]),
             returnValue: _i5.Future<_i2.PendingRecording>.value(
-              _FakePendingRecording_39(
+              _FakePendingRecording_28(
                 this,
                 Invocation.method(#prepareRecording, [path]),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.PendingRecording>.value(
-              _FakePendingRecording_39(
+              _FakePendingRecording_28(
                 this,
                 Invocation.method(#prepareRecording, [path]),
               ),
@@ -3481,11 +2052,11 @@ class MockRecorder extends _i1.Mock implements _i2.Recorder {
   _i2.Recorder pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeRecorder_21(
+            returnValue: _FakeRecorder_34(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeRecorder_21(
+            returnValueForMissingStub: _FakeRecorder_34(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3516,11 +2087,11 @@ class MockResolutionFilter extends _i1.Mock implements _i2.ResolutionFilter {
   _i2.ResolutionFilter pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeResolutionFilter_31(
+            returnValue: _FakeResolutionFilter_35(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeResolutionFilter_31(
+            returnValueForMissingStub: _FakeResolutionFilter_35(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3572,11 +2143,11 @@ class MockResolutionSelector extends _i1.Mock
   _i2.ResolutionSelector pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeResolutionSelector_25(
+            returnValue: _FakeResolutionSelector_36(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeResolutionSelector_25(
+            returnValueForMissingStub: _FakeResolutionSelector_36(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3631,11 +2202,11 @@ class MockResolutionStrategy extends _i1.Mock
   _i2.ResolutionStrategy pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeResolutionStrategy_24(
+            returnValue: _FakeResolutionStrategy_37(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeResolutionStrategy_24(
+            returnValueForMissingStub: _FakeResolutionStrategy_37(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3702,11 +2273,11 @@ class MockRecording extends _i1.Mock implements _i2.Recording {
   _i2.Recording pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeRecording_40(
+            returnValue: _FakeRecording_29(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeRecording_40(
+            returnValueForMissingStub: _FakeRecording_29(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3786,11 +2357,11 @@ class MockSystemServicesManager extends _i1.Mock
   _i2.SystemServicesManager pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeSystemServicesManager_17(
+            returnValue: _FakeSystemServicesManager_38(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeSystemServicesManager_17(
+            returnValueForMissingStub: _FakeSystemServicesManager_38(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3822,10 +2393,10 @@ class MockVideoCapture extends _i1.Mock implements _i2.VideoCapture {
       (super.noSuchMethod(
             Invocation.method(#getOutput, []),
             returnValue: _i5.Future<_i2.VideoOutput>.value(
-              _FakeVideoOutput_42(this, Invocation.method(#getOutput, [])),
+              _FakeVideoOutput_39(this, Invocation.method(#getOutput, [])),
             ),
             returnValueForMissingStub: _i5.Future<_i2.VideoOutput>.value(
-              _FakeVideoOutput_42(this, Invocation.method(#getOutput, [])),
+              _FakeVideoOutput_39(this, Invocation.method(#getOutput, [])),
             ),
           )
           as _i5.Future<_i2.VideoOutput>);
@@ -3843,11 +2414,11 @@ class MockVideoCapture extends _i1.Mock implements _i2.VideoCapture {
   _i2.VideoCapture pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeVideoCapture_20(
+            returnValue: _FakeVideoCapture_40(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeVideoCapture_20(
+            returnValueForMissingStub: _FakeVideoCapture_40(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -3896,11 +2467,11 @@ class MockZoomState extends _i1.Mock implements _i2.ZoomState {
   _i2.ZoomState pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeZoomState_43(
+            returnValue: _FakeZoomState_41(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeZoomState_43(
+            returnValueForMissingStub: _FakeZoomState_41(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
