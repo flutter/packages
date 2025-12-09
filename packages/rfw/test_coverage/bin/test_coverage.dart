@@ -155,8 +155,8 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  final String coveredPercent =
-      (100.0 * coveredLines / totalLines).toStringAsFixed(1);
+  final String coveredPercent = (100.0 * coveredLines / totalLines)
+      .toStringAsFixed(1);
 
   if (targetLines != null) {
     if (targetLines! < totalLines) {
