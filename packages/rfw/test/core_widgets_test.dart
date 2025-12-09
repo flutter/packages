@@ -302,10 +302,10 @@ void main() {
   });
 
   testWidgets('Flexible widget with default values', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -336,10 +336,10 @@ void main() {
   });
 
   testWidgets('Flexible widget with custom flex value', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -371,10 +371,10 @@ void main() {
   });
 
   testWidgets('Flexible widget with fit tight', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -407,10 +407,10 @@ void main() {
   });
 
   testWidgets('Flexible widget with fit loose', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
@@ -443,10 +443,10 @@ void main() {
   });
 
   testWidgets('Multiple Flexible widgets in Column', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
 
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
