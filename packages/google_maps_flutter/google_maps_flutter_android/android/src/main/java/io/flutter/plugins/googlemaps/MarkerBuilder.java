@@ -4,10 +4,12 @@
 
 package io.flutter.plugins.googlemaps;
 
+import com.google.android.gms.maps.model.AdvancedMarkerOptions;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterItem;
+import io.flutter.plugins.googlemaps.Messages.PlatformMarkerType;
 
 class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
   private final MarkerOptions markerOptions;
@@ -15,8 +17,11 @@ class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
   private String markerId;
   private boolean consumeTapEvents;
 
-  MarkerBuilder(String markerId, String clusterManagerId) {
-    this.markerOptions = new MarkerOptions();
+  MarkerBuilder(String markerId, String clusterManagerId, PlatformMarkerType markerType) {
+    this.markerOptions =
+        markerType == PlatformMarkerType.ADVANCED_MARKER
+            ? new AdvancedMarkerOptions()
+            : new MarkerOptions();
     this.markerId = markerId;
     this.clusterManagerId = clusterManagerId;
   }
@@ -113,6 +118,13 @@ class MarkerBuilder implements MarkerOptionsSink, ClusterItem {
   @Override
   public void setZIndex(float zIndex) {
     markerOptions.zIndex(zIndex);
+  }
+
+  @Override
+  public void setCollisionBehavior(@AdvancedMarkerOptions.CollisionBehavior int collisionBehavior) {
+    if (markerOptions.getClass() == AdvancedMarkerOptions.class) {
+      ((AdvancedMarkerOptions) markerOptions).collisionBehavior(collisionBehavior);
+    }
   }
 
   @Override

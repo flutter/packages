@@ -1,3 +1,7 @@
+## 2.19.0
+
+* Adds support for advanced markers.
+
 ## 2.18.8
 
 * Bumps com.google.maps.android:android-maps-utils from 3.6.0 to 3.19.1.
