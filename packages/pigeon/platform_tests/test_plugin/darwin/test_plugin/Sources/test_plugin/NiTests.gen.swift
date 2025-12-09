@@ -605,7 +605,7 @@ struct NIAllTypes: Hashable {
       anEnum: anEnum,
       anotherEnum: anotherEnum,
       aString: aString as String,
-      anObject: anObject,
+      anObject: _PigeonFfiCodec.readValue(value: anObject)!,
       list: _PigeonFfiCodec.readValue(value: list as NSObject) as! [Any?],
       stringList: _PigeonFfiCodec.readValue(value: stringList as NSObject) as! [String],
       intList: _PigeonFfiCodec.readValue(value: intList as NSObject) as! [Int64],
@@ -929,7 +929,7 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
       anotherNullableEnum: isNullish(anotherNullableEnum)
         ? nil : NIAnotherEnum.init(rawValue: anotherNullableEnum!.intValue),
       aNullableString: aNullableString as String?,
-      aNullableObject: aNullableObject,
+      aNullableObject: _PigeonFfiCodec.readValue(value: aNullableObject),
       list: _PigeonFfiCodec.readValue(value: list as NSObject?) as? [Any?],
       stringList: _PigeonFfiCodec.readValue(value: stringList as NSObject?) as? [String?],
       intList: _PigeonFfiCodec.readValue(value: intList as NSObject?) as? [Int64?],
@@ -1564,7 +1564,8 @@ protocol NIHostIntegrationCoreApi {
   @objc func echoObject(anObject: NSObject, wrappedError: NiTestsError) -> NSObject? {
     do {
       return try _PigeonFfiCodec.writeValue(
-        value: api!.echoObject(anObject: anObject), isObject: true) as? NSObject
+        value: api!.echoObject(anObject: _PigeonFfiCodec.readValue(value: anObject)!),
+        isObject: true) as? NSObject
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message
@@ -2250,7 +2251,8 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       return try _PigeonFfiCodec.writeValue(
-        value: api!.echoNullableObject(aNullableObject: aNullableObject), isObject: true)
+        value: api!.echoNullableObject(
+          aNullableObject: _PigeonFfiCodec.readValue(value: aNullableObject)), isObject: true)
         as? NSObject
     } catch let error as NiTestsError {
       wrappedError.code = error.code

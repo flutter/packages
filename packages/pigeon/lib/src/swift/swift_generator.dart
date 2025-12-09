@@ -962,29 +962,33 @@ if (wrapped == nil) {
     bool forceNullable = false,
   }) {
     final String nullable = type.isNullable ? '?' : '';
+    final String checkNullish =
+        type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : '';
     switch (type.baseName) {
+      case 'Object':
+        return '_PigeonFfiCodec.readValue(value: $varName)${type.isNullable || forceNullable ? '' : '!'}';
       case 'int':
         return type.isNullable || forceNullable
-            ? 'isNullish($varName) ? nil : $varName!.int64Value'
+            ? '$checkNullish$varName!.int64Value'
             : varName;
       case 'double':
         return type.isNullable || forceNullable
-            ? 'isNullish($varName) ? nil : $varName!.doubleValue'
+            ? '$checkNullish$varName!.doubleValue'
             : varName;
       case 'bool':
         return type.isNullable || forceNullable
-            ? 'isNullish($varName) ? nil : $varName!.boolValue'
+            ? '$checkNullish$varName!.boolValue'
             : varName;
       case 'Uint8List':
-        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toUint8Array()${type.isNullable || forceNullable ? '' : '!'}';
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toUint8Array()${type.isNullable || forceNullable ? '' : '!'}';
       case 'Int32List':
-        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toInt32Array()${type.isNullable || forceNullable ? '' : '!'}';
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toInt32Array()${type.isNullable || forceNullable ? '' : '!'}';
       case 'Int64List':
-        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toInt64Array()${type.isNullable || forceNullable ? '' : '!'}';
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toInt64Array()${type.isNullable || forceNullable ? '' : '!'}';
       case 'Float32List':
-        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat32Array()${type.isNullable || forceNullable ? '' : '!'}';
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat32Array()${type.isNullable || forceNullable ? '' : '!'}';
       case 'Float64List':
-        return '${type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : ''}$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat64Array()${type.isNullable || forceNullable ? '' : '!'}';
+        return '$checkNullish$varName${type.isNullable || forceNullable ? '!' : ''}.toFloat64Array()${type.isNullable || forceNullable ? '' : '!'}';
       case 'String':
         return '$varName as String$nullable';
       case 'List':
@@ -993,14 +997,10 @@ if (wrapped == nil) {
       default:
         if (type.isEnum) {
           return type.isNullable || forceNullable
-              ? 'isNullish($varName) ? nil : ${type.baseName}.init(rawValue: $varName!.intValue)'
+              ? '$checkNullish${type.baseName}.init(rawValue: $varName!.intValue)'
               : varName;
         }
         if (type.isClass) {
-          final String checkNullish =
-              type.isNullable || forceNullable
-                  ? 'isNullish($varName) ? nil : '
-                  : '';
           return '$checkNullish$varName${nullable.isEmpty ? '' : '!'}.toSwift()';
         }
         return varName;

@@ -45,7 +45,8 @@ class _ExampleAppState extends State<ExampleApp> {
           NIHostIntegrationCoreApiForNativeInterop.getInstance();
       // api!.noop();
       // api!.echoStringList(stringList);
-      api!.echoAllTypes(genericNIAllTypes);
+      // api!.echoAllTypes(genericNIAllTypes);
+      api!.echoObject(genericNIAllNullableTypesWithoutRecursion);
       // api!.echoAllNullableTypesWithoutRecursion(
       //     genericNIAllNullableTypesWithoutRecursion);
       // final NIAllClassesWrapper classWrapper = classWrapperMaker();

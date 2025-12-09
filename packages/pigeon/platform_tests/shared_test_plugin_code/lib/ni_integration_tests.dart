@@ -415,19 +415,145 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     //       expect(receivedUint8List, sentUint8List);
     //     });
 
-    testWidgets('generic Objects serialize and deserialize correctly', (
+    testWidgets(
+      'strings as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+        const Object sentString = "I'm a computer";
+        final Object receivedString = api!.echoObject(sentString);
+        expect(receivedString, sentString);
+      },
+    );
+
+    testWidgets(
+      'integers as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        const Object sentInt = regularInt;
+        final Object receivedInt = api!.echoObject(sentInt);
+        expect(receivedInt, sentInt);
+      },
+    );
+
+    testWidgets(
+      'booleans as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        const Object sentBool = true;
+        final Object receivedBool = api!.echoObject(sentBool);
+        expect(receivedBool, sentBool);
+      },
+    );
+
+    testWidgets(
+      'double as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        const Object sentDouble = 2.0694;
+        final Object receivedDouble = api!.echoObject(sentDouble);
+        expect(receivedDouble, sentDouble);
+      },
+    );
+
+    testWidgets(
+      'Uint8List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        final Object sentUint8List = Uint8List.fromList(<int>[1, 2, 3]);
+        final Object receivedUint8List = api!.echoObject(sentUint8List);
+        expect(receivedUint8List, sentUint8List);
+      },
+    );
+
+    testWidgets(
+      'Int32List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        final Object sentInt32List = Int32List.fromList(<int>[1, 2, 3]);
+        final Object receivedInt32List = api!.echoObject(sentInt32List);
+        expect(receivedInt32List, sentInt32List);
+      },
+    );
+
+    testWidgets(
+      'Int64List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        final Object sentInt64List = Int64List.fromList(<int>[1, 2, 3]);
+        final Object receivedInt64List = api!.echoObject(sentInt64List);
+        expect(receivedInt64List, sentInt64List);
+      },
+    );
+
+    testWidgets(
+      'class as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        final Object receivedClass = api!.echoObject(
+          genericNIAllNullableTypesWithoutRecursion,
+        );
+        expect(receivedClass, genericNIAllNullableTypesWithoutRecursion);
+      },
+    );
+
+    // testWidgets('Float32List as generic Objects serialize and deserialize correctly', (WidgetTester _) async {
+    //   final NIHostIntegrationCoreApiForNativeInterop? api =
+    //       NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+    //   final Object sentFloat32List = Float32List.fromList(<double>[1.0, 2.0, 3.0]);
+    //   final Object receivedFloat32List = api!.echoObject(sentFloat32List);
+    //   expect(receivedFloat32List, sentFloat32List);
+    // });
+
+    testWidgets(
+      'Float64List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+        final Object sentFloat64List = Float64List.fromList(<double>[
+          1.0,
+          2.0,
+          3.0,
+        ]);
+        final Object receivedFloat64List = api!.echoObject(sentFloat64List);
+        expect(receivedFloat64List, sentFloat64List);
+      },
+    );
+
+    testWidgets('List as generic Objects serialize and deserialize correctly', (
       WidgetTester _,
     ) async {
       final NIHostIntegrationCoreApiForNativeInterop? api =
           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-      const Object sentString = "I'm a computer";
-      final Object receivedString = api!.echoObject(sentString);
-      expect(receivedString, sentString);
 
-      // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = regularInt;
-      final Object receivedInt = api.echoObject(sentInt);
-      expect(receivedInt, sentInt);
+      final Object receivedList = api!.echoObject(list);
+      expect(receivedList, list);
+    });
+
+    testWidgets('Map as generic Objects serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+
+      final Object receivedMap = api!.echoObject(map);
+      expect(receivedMap, map);
     });
 
     testWidgets('lists serialize and deserialize correctly', (
