@@ -220,20 +220,40 @@ class VersionCheckCommand extends PackageLoopingCommand {
     final errors = <String>[];
 
     final CIConfig? ciConfig = package.parseCIConfig();
+    final bool usesBatchRelease = ciConfig?.isBatchRelease ?? false;
+
+    // All packages with batch release enabled should have valid pending changelogs.
+    if (usesBatchRelease) {
+      try {
+        package.getPendingChangelogs();
+      } on FormatException catch (e) {
+        printError('$indentation${e.message}');
+        errors.add(e.message);
+      }
+    } else {
+      if (package.pendingChangelogsDirectory.existsSync()) {
+        printError(
+          '${indentation}Package does not use batch release but has pending changelogs.',
+        );
+        errors.add(
+          'Package does not use batch release but has pending changelogs.',
+        );
+      }
+    }
+
     final _CurrentVersionState versionState = await _getVersionState(
       package,
       pubspec: pubspec,
     );
-    final bool usesBatchRelease = ciConfig?.isBatchRelease ?? false;
     // PR with post release label is going to sync changelog.md and pubspec.yaml
-    // change back to main branch. Proceed with ragular version check.
+    // change back to main branch. Proceed with regular version check.
     final bool hasPostReleaseLabel = _prLabels.contains(
       'post-release-${pubspec.name}',
     );
     bool versionChanged;
 
     if (usesBatchRelease && !hasPostReleaseLabel) {
-      versionChanged = await _validateBatchRelease(
+      versionChanged = await _validatePendingChangeForBatchReleasePackage(
         package: package,
         changedFiles: changedFiles,
         errors: errors,
@@ -646,25 +666,23 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
       } else {
         missingChangelogChange = true;
         final CIConfig? config = package.parseCIConfig();
-        if (config?.isBatchRelease ?? false) {
-          printError(
-            'No new changelog files found in the pending_changelogs folder.\n'
+        const useOverrideChangelogLabel =
             'If this PR needs an exemption from the standard policy of listing '
             'all changes in the CHANGELOG,\n'
             'comment in the PR to explain why the PR is exempt, and add (or '
             'ask your reviewer to add) the\n'
-            '"$_missingChangelogChangeOverrideLabel" label.\n'
+            '"$_missingChangelogChangeOverrideLabel" label.\n';
+        if (config?.isBatchRelease ?? false) {
+          printError(
+            'No new changelog files found in the pending_changelogs folder.\n'
+            '$useOverrideChangelogLabel'
             'Otherwise, please add a changelog entry with version:skip in the pending_changelogs folder as described in '
             'the contributing guide.\n',
           );
         } else {
           printError(
             'No CHANGELOG change found.\n'
-            'If this PR needs an exemption from the standard policy of listing '
-            'all changes in the CHANGELOG,\n'
-            'comment in the PR to explain why the PR is exempt, and add (or '
-            'ask your reviewer to add) the\n'
-            '"$_missingChangelogChangeOverrideLabel" label.\n'
+            '$useOverrideChangelogLabel'
             'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
             'the contributing guide.\n',
           );
@@ -691,7 +709,10 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     return null;
   }
 
-  Future<bool> _validateBatchRelease({
+  /// Validates that the pending changelog files are correct for a batch release.
+  ///
+  /// This should only be called for package that uses batch release.
+  Future<bool> _validatePendingChangeForBatchReleasePackage({
     required RepositoryPackage package,
     required List<String> changedFiles,
     required List<String> errors,

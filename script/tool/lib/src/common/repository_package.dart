@@ -255,23 +255,18 @@ class RepositoryPackage {
       );
     }
 
-    final List<File> allFiles = pendingChangelogsDir
+    final List<File> pendingChangelogFiles = pendingChangelogsDir
         .listSync()
         .whereType<File>()
+        .where((File file) => !PendingChangelogEntry.isTemplate(file))
         .toList();
-
-    final pendingChangelogFiles = <File>[];
-    for (final file in allFiles) {
-      final String basename = p.basename(file.path);
-      if (basename.endsWith('.yaml')) {
-        if (!PendingChangelogEntry.isTemplate(file)) {
-          pendingChangelogFiles.add(file);
-        }
-      } else {
-        throw FormatException(
-          'Found non-YAML file in pending_changelogs: ${file.path}',
-        );
-      }
+    final Iterable<File> unexpectedFiles = pendingChangelogFiles.where(
+      (File file) => !file.basename.endsWith('.yaml'),
+    );
+    if (unexpectedFiles.isNotEmpty) {
+      throw FormatException(
+        'Found non-YAML file(s) in pending_changelogs: ${unexpectedFiles.map((file) => file.path).join(',')}',
+      );
     }
 
     for (final file in pendingChangelogFiles) {

@@ -380,5 +380,27 @@ version: skip
       expect(changelogs, hasLength(1));
       expect(changelogs[0].changelog, 'A');
     });
+
+    test('returns an error for non-YAML files', () {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      package.pendingChangelogsDirectory.createSync();
+      package.pendingChangelogsDirectory
+          .childFile('readme.txt')
+          .writeAsStringSync('This is not a YAML file.');
+
+      expect(
+        () => package.getPendingChangelogs(),
+        throwsA(
+          isA<FormatException>().having(
+            (FormatException e) => e.message,
+            'message',
+            contains('Found non-YAML file(s) in pending_changelogs'),
+          ),
+        ),
+      );
+    });
   });
 }

@@ -1897,6 +1897,100 @@ ${indentation}HTTP response: null
     });
     group('batch release', () {
       test(
+        'fails for batch release package missing pending_changelogs',
+        () async {
+          final RepositoryPackage package = createFakePlugin(
+            'a_package',
+            packagesDir,
+          );
+          package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(
+            runner,
+            <String>['version-check', '--base-sha=main'],
+            errorHandler: (Error e) {
+              commandError = e;
+            },
+          );
+
+          expect(commandError, isA<ToolExit>());
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('No pending_changelogs folder found for a_package.'),
+            ]),
+          );
+        },
+      );
+
+      test(
+        'passes for batch release package with pending_changelogs',
+        () async {
+          final RepositoryPackage package = createFakePlugin(
+            'a_package',
+            packagesDir,
+          );
+          package.ciConfigFile.writeAsStringSync('''
+release:
+  batch: true
+''');
+          package.pendingChangelogsDirectory.createSync();
+
+          gitProcessRunner.mockProcessesForExecutable['git-show'] =
+              <FakeProcessInfo>[
+                FakeProcessInfo(MockProcess(stdout: 'version: 0.0.1')),
+              ];
+
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'version-check',
+            '--base-sha=main',
+          ]);
+
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running for a_package'),
+              contains('No issues found!'),
+            ]),
+          );
+        },
+      );
+
+      test(
+        'fails for non-batch release package with pending_changelogs',
+        () async {
+          final RepositoryPackage package = createFakePlugin(
+            'a_package',
+            packagesDir,
+          );
+          // No ci_config.yaml means batch release is false by default.
+          package.pendingChangelogsDirectory.createSync();
+
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(
+            runner,
+            <String>['version-check', '--base-sha=main'],
+            errorHandler: (Error e) {
+              commandError = e;
+            },
+          );
+
+          expect(commandError, isA<ToolExit>());
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains(
+                'Package does not use batch release but has pending changelogs.',
+              ),
+            ]),
+          );
+        },
+      );
+      test(
         'ignores changelog and pubspec yaml version modifications check with post-release label',
         () async {
           final RepositoryPackage package = createFakePackage(
