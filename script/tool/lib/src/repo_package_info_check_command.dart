@@ -142,31 +142,11 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
 
     // The content of ci_config.yaml must be valid if there is one.
-    CIConfig? config;
     try {
-      config = package.parseCIConfig();
+      package.parseCIConfig();
     } on FormatException catch (e) {
       printError('$indentation${e.message}');
       errors.add(e.message);
-    }
-
-    // All packages with batch release enabled should have valid pending changelogs.
-    if (config?.isBatchRelease ?? false) {
-      try {
-        package.getPendingChangelogs();
-      } on FormatException catch (e) {
-        printError('$indentation${e.message}');
-        errors.add(e.message);
-      }
-    } else {
-      if (package.pendingChangelogsDirectory.existsSync()) {
-        printError(
-          '${indentation}Package does not use batch release but has pending changelogs.',
-        );
-        errors.add(
-          'Package does not use batch release but has pending changelogs.',
-        );
-      }
     }
 
     // All published packages should have a README.md entry.
