@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.PatternItem;
 import com.google.android.gms.maps.model.PinConfig;
 import com.google.android.gms.maps.model.RoundCap;
+import com.google.android.gms.maps.model.RuntimeRemoteException;
 import com.google.android.gms.maps.model.SquareCap;
 import com.google.android.gms.maps.model.Tile;
 import com.google.maps.android.clustering.Cluster;
@@ -50,6 +51,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
@@ -203,7 +205,7 @@ class Convert {
           getPinConfigFromPlatformPinConfig(
               pinConfigBitmap, assetManager, density, bitmapDescriptorFactory);
       return bitmapDescriptorFactory.fromPinConfig(pinConfig);
-    } catch (Exception e) {
+    } catch (IllegalArgumentException | RuntimeRemoteException e) {
       throw new IllegalArgumentException("Unable to interpret pin config as a valid image.", e);
     }
   }
@@ -214,52 +216,53 @@ class Convert {
       AssetManager assetManager,
       float density,
       BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
-    final Integer backgroundColor =
-        pinConfigBitmap.getBackgroundColor() != null
-            ? toInt(pinConfigBitmap.getBackgroundColor())
-            : null;
-    final Integer borderColor =
-        pinConfigBitmap.getBorderColor() != null ? toInt(pinConfigBitmap.getBorderColor()) : null;
-    final String glyphText =
-        pinConfigBitmap.getGlyphText() != null ? pinConfigBitmap.getGlyphText() : null;
-    final Integer glyphTextColor =
-        pinConfigBitmap.getGlyphTextColor() != null
-            ? toInt(pinConfigBitmap.getGlyphTextColor())
-            : null;
-    final Integer glyphColor =
-        pinConfigBitmap.getGlyphColor() != null ? toInt(pinConfigBitmap.getGlyphColor()) : null;
-    final BitmapDescriptor glyphBitmapDescriptor =
-        pinConfigBitmap.getGlyphBitmap() != null
-            ? toBitmapDescriptor(
-                pinConfigBitmap.getGlyphBitmap(), assetManager, density, bitmapDescriptorFactory)
-            : null;
+    final Integer backgroundColor = nullableColor(pinConfigBitmap.getBackgroundColor());
+    final Integer borderColor = nullableColor(pinConfigBitmap.getBorderColor());
+    final PinConfig.Glyph glyph =
+        buildPinGlyph(pinConfigBitmap, assetManager, density, bitmapDescriptorFactory);
 
     final PinConfig.Builder pinConfigBuilder = PinConfig.builder();
-    if (backgroundColor != null) {
-      pinConfigBuilder.setBackgroundColor(backgroundColor);
-    }
-
-    if (borderColor != null) {
-      pinConfigBuilder.setBorderColor(borderColor);
-    }
-
-    PinConfig.Glyph glyph = null;
-    if (glyphText != null) {
-      glyph =
-          glyphTextColor != null
-              ? new PinConfig.Glyph(glyphText, glyphTextColor)
-              : new PinConfig.Glyph(glyphText);
-    } else if (glyphBitmapDescriptor != null) {
-      glyph = new PinConfig.Glyph(glyphBitmapDescriptor);
-    } else if (glyphColor != null) {
-      glyph = new PinConfig.Glyph(glyphColor);
-    }
-
-    if (glyph != null) {
-      pinConfigBuilder.setGlyph(glyph);
-    }
+    applyIfNotNull(backgroundColor, pinConfigBuilder::setBackgroundColor);
+    applyIfNotNull(borderColor, pinConfigBuilder::setBorderColor);
+    applyIfNotNull(glyph, pinConfigBuilder::setGlyph);
 
     return pinConfigBuilder.build();
+  }
+
+  private static @Nullable PinConfig.Glyph buildPinGlyph(
+      Messages.PlatformBitmapPinConfig pinConfigBitmap,
+      AssetManager assetManager,
+      float density,
+      BitmapDescriptorFactoryWrapper bitmapDescriptorFactory) {
+    final String glyphText = pinConfigBitmap.getGlyphText();
+    if (glyphText != null) {
+      final Integer glyphTextColor = nullableColor(pinConfigBitmap.getGlyphTextColor());
+      return glyphTextColor != null
+          ? new PinConfig.Glyph(glyphText, glyphTextColor)
+          : new PinConfig.Glyph(glyphText);
+    }
+
+    final Messages.PlatformBitmap glyphBitmap = pinConfigBitmap.getGlyphBitmap();
+    if (glyphBitmap != null) {
+      return new PinConfig.Glyph(
+          toBitmapDescriptor(glyphBitmap, assetManager, density, bitmapDescriptorFactory));
+    }
+
+    final Integer glyphColor = nullableColor(pinConfigBitmap.getGlyphColor());
+    if (glyphColor != null) {
+      return new PinConfig.Glyph(glyphColor);
+    }
+    return null;
+  }
+
+  private static @Nullable Integer nullableColor(@Nullable Long color) {
+    return color == null ? null : toInt(color);
+  }
+
+  private static <T> void applyIfNotNull(@Nullable T value, Consumer<T> setter) {
+    if (value != null) {
+      setter.accept(value);
+    }
   }
 
   /**
@@ -724,8 +727,15 @@ class Convert {
     return JointType.DEFAULT;
   }
 
+  /**
+   * Converts a Pigeon collision behavior enum to the integer constant defined in {@link
+   * AdvancedMarkerOptions.CollisionBehavior}.
+   *
+   * @param collisionBehavior The Pigeon collision behavior enum to convert.
+   * @return The integer constant corresponding to the collision behavior.
+   */
   static int collisionBehaviorFromPigeon(
-      Messages.PlatformMarkerCollisionBehavior collisionBehavior) {
+      @NonNull Messages.PlatformMarkerCollisionBehavior collisionBehavior) {
     switch (collisionBehavior) {
       case REQUIRED_DISPLAY:
         return AdvancedMarkerOptions.CollisionBehavior.REQUIRED;
