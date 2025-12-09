@@ -29,7 +29,6 @@ void main() {
 
       await tester.pumpWidget(
         DevToolsExtension(
-          requiresRunningApplication: false,
           child: InnerSharedPreferencesStateProvider(
             notifier: notifier,
             child: const SharedPreferencesBody(),
