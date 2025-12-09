@@ -1,3 +1,7 @@
+## 0.6.26+2
+
+* Updates pigeon generation to prevent crash when objects call to Dart after a hot restart.
+
 ## 0.6.26+1
 
 * Bumps camerax_version from 1.5.1 to 1.5.2.
