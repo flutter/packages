@@ -8,6 +8,8 @@ import android.content.Context;
 import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.media3.common.util.UnstableApi;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -16,8 +18,6 @@ import io.flutter.plugins.videoplayer.platformview.PlatformVideoViewFactory;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewVideoPlayer;
 import io.flutter.plugins.videoplayer.texture.TextureVideoPlayer;
 import io.flutter.view.TextureRegistry;
-import androidx.annotation.OptIn;
-import androidx.media3.common.util.UnstableApi;
 
 /** Android platform implementation of the VideoPlayerPlugin. */
 public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
