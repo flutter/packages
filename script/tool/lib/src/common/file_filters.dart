@@ -23,8 +23,8 @@ bool isRepoLevelNonCodeImpactingFile(String path) {
         '.github/labeler.yml',
         '.github/post_merge_labeler.yml',
       ].contains(path) ||
-      // This directory contains github action workflow files. The package repository
-      // does not use github actions for tests.
+      // This directory contains github action workflow files, and the package
+      // repository does not use github actions for tests.
       path.startsWith('.github/workflows/') ||
       // This directory only affects automated code reviews, so cannot affect
       // any package tests.
