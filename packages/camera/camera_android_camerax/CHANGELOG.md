@@ -1,3 +1,27 @@
+## 0.6.26+2
+
+* Updates pigeon generation to prevent crash when objects call to Dart after a hot restart.
+
+## 0.6.26+1
+
+* Bumps camerax_version from 1.5.1 to 1.5.2.
+
+## 0.6.26
+
+* Removes internal native library Dart proxy.
+
+## 0.6.25+1
+
+* Bumps kotlin_version to 2.2.21.
+
+## 0.6.25
+
+* Adds support for `MediaSettings.fps` for camera preview, image streaming, and video recording.
+
+## 0.6.24+4
+
+* Allows for video recording without audio when permission RECORD_AUDIO is denied.
+
 ## 0.6.24+3
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.

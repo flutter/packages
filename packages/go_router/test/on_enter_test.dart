@@ -23,7 +23,7 @@ void main() {
     ) async {
       GoRouterState? capturedCurrentState;
       GoRouterState? capturedNextState;
-      int onEnterCallCount = 0;
+      var onEnterCallCount = 0;
 
       router = GoRouter(
         initialLocation: '/',
@@ -61,8 +61,8 @@ void main() {
     testWidgets('Should block navigation when onEnter returns false', (
       WidgetTester tester,
     ) async {
-      final List<String> navigationAttempts = <String>[];
-      String currentPath = '/';
+      final navigationAttempts = <String>[];
+      var currentPath = '/';
 
       router = GoRouter(
         initialLocation: '/',
@@ -134,7 +134,7 @@ void main() {
     testWidgets('Should allow navigation when onEnter returns true', (
       WidgetTester tester,
     ) async {
-      int onEnterCallCount = 0;
+      var onEnterCallCount = 0;
 
       router = GoRouter(
         initialLocation: '/home',
@@ -192,7 +192,7 @@ void main() {
     testWidgets(
       'Should trigger onException when the redirection limit is exceeded',
       (WidgetTester tester) async {
-        final Completer<void> completer = Completer<void>();
+        final completer = Completer<void>();
         Object? capturedError;
 
         router = GoRouter(
@@ -254,13 +254,12 @@ void main() {
     testWidgets('Should handle `go` usage in onEnter', (
       WidgetTester tester,
     ) async {
-      bool isAuthenticatedResult = false;
+      var isAuthenticatedResult = false;
 
       Future<bool> isAuthenticated() =>
           Future<bool>.value(isAuthenticatedResult);
 
-      final StreamController<({String current, String next})> paramsSink =
-          StreamController<({String current, String next})>();
+      final paramsSink = StreamController<({String current, String next})>();
       final Stream<({String current, String next})> paramsStream = paramsSink
           .stream
           .asBroadcastStream();
@@ -337,7 +336,7 @@ void main() {
     testWidgets('Should handle `goNamed` usage in onEnter', (
       WidgetTester tester,
     ) async {
-      final List<String> navigationAttempts = <String>[];
+      final navigationAttempts = <String>[];
 
       router = GoRouter(
         initialLocation: '/home',
@@ -411,13 +410,12 @@ void main() {
     testWidgets('Should handle `push` usage in onEnter', (
       WidgetTester tester,
     ) async {
-      const bool isAuthenticatedResult = false;
+      const isAuthenticatedResult = false;
 
       Future<bool> isAuthenticated() =>
           Future<bool>.value(isAuthenticatedResult);
 
-      final StreamController<({String current, String next})> paramsSink =
-          StreamController<({String current, String next})>();
+      final paramsSink = StreamController<({String current, String next})>();
       final Stream<({String current, String next})> paramsStream = paramsSink
           .stream
           .asBroadcastStream();
@@ -500,7 +498,7 @@ void main() {
     testWidgets('Should handle `replace` usage in onEnter', (
       WidgetTester tester,
     ) async {
-      final List<String> navigationHistory = <String>[];
+      final navigationHistory = <String>[];
 
       router = GoRouter(
         initialLocation: '/home',
@@ -560,7 +558,7 @@ void main() {
     testWidgets('Should handle `pushReplacement` usage in onEnter', (
       WidgetTester tester,
     ) async {
-      final List<String> navigationLog = <String>[];
+      final navigationLog = <String>[];
 
       router = GoRouter(
         initialLocation: '/home',
@@ -636,13 +634,12 @@ void main() {
       'onEnter should handle protected route redirection with query parameters',
       (WidgetTester tester) async {
         // Test setup
-        bool isAuthenticatedResult = false;
+        var isAuthenticatedResult = false;
         Future<bool> isAuthenticated() =>
             Future<bool>.value(isAuthenticatedResult);
 
         // Stream to capture onEnter calls
-        final StreamController<({String current, String next})> paramsSink =
-            StreamController<({String current, String next})>();
+        final paramsSink = StreamController<({String current, String next})>();
         // Use broadcast stream for potentially multiple listeners/expects if needed,
         // although expectLater handles one listener well.
         final Stream<({String current, String next})> paramsStream = paramsSink
@@ -678,8 +675,7 @@ void main() {
                   next: next.uri.toString(),
                 ));
 
-                final bool isNavigatingToProtected =
-                    next.uri.path == '/protected';
+                final isNavigatingToProtected = next.uri.path == '/protected';
 
                 // Allow navigation if not going to the protected route
                 if (!isNavigatingToProtected) {
@@ -814,8 +810,8 @@ void main() {
     testWidgets('Should handle sequential navigation steps in onEnter', (
       WidgetTester tester,
     ) async {
-      final List<String> navigationChain = <String>[];
-      final Completer<void> navigationComplete = Completer<void>();
+      final navigationChain = <String>[];
+      final navigationComplete = Completer<void>();
 
       router = GoRouter(
         initialLocation: '/start',
@@ -905,7 +901,7 @@ void main() {
     testWidgets('Should call onException when exceptions thrown in onEnter callback', (
       WidgetTester tester,
     ) async {
-      final Completer<void> completer = Completer<void>();
+      final completer = Completer<void>();
       Object? capturedError;
 
       // Set up the router. Note that we short-circuit onEnter for '/fallback'
@@ -966,9 +962,9 @@ void main() {
     testWidgets('onEnter has priority over deprecated redirect', (
       WidgetTester tester,
     ) async {
-      int redirectCallCount = 0;
-      int onEnterCallCount = 0;
-      bool lastOnEnterBlocked = false;
+      var redirectCallCount = 0;
+      var onEnterCallCount = 0;
+      var lastOnEnterBlocked = false;
 
       router = GoRouter(
         initialLocation: '/start',
@@ -997,8 +993,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Record initial counts
-      final int initialRedirectCount = redirectCallCount;
-      final int initialOnEnterCount = onEnterCallCount;
+      final initialRedirectCount = redirectCallCount;
+      final initialOnEnterCount = onEnterCallCount;
 
       // Test blocked route
       router.go('/blocked');
@@ -1013,7 +1009,7 @@ void main() {
       expect(lastOnEnterBlocked, isTrue);
 
       // Test allowed route
-      final int beforeAllowedRedirectCount = redirectCallCount;
+      final beforeAllowedRedirectCount = redirectCallCount;
       router.go('/allowed');
       await tester.pumpAndSettle();
 
@@ -1077,7 +1073,7 @@ void main() {
     testWidgets('pop does not call onEnter but restore does', (
       WidgetTester tester,
     ) async {
-      int onEnterCount = 0;
+      var onEnterCount = 0;
 
       router = GoRouter(
         initialLocation: '/a',
@@ -1121,8 +1117,8 @@ void main() {
     testWidgets('restore navigation calls onEnter for re-validation', (
       WidgetTester tester,
     ) async {
-      int onEnterCount = 0;
-      bool allowNavigation = true;
+      var onEnterCount = 0;
+      var allowNavigation = true;
 
       router = GoRouter(
         initialLocation: '/home',
@@ -1278,7 +1274,7 @@ void main() {
     testWidgets('route-level redirect still runs after onEnter allows', (
       WidgetTester tester,
     ) async {
-      final List<String> seenNextPaths = <String>[];
+      final seenNextPaths = <String>[];
 
       router = GoRouter(
         initialLocation: '/',
@@ -1385,8 +1381,8 @@ void main() {
       // With redirectLimit=1:
       //  - Block.stop() resets history so repeated attempts don't hit the limit.
       //  - Block.then(() => go(...)) keeps history and will exceed the limit.
-      int onExceptionCalls = 0;
-      final Completer<void> exceededCompleter = Completer<void>();
+      var onExceptionCalls = 0;
+      final exceededCompleter = Completer<void>();
 
       router = GoRouter(
         initialLocation: '/start',
@@ -1455,7 +1451,7 @@ void main() {
     testWidgets('restore runs onEnter -> legacy -> route-level redirect', (
       WidgetTester tester,
     ) async {
-      final List<String> calls = <String>[];
+      final calls = <String>[];
 
       router = GoRouter(
         initialLocation: '/home',

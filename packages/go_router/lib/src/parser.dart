@@ -122,7 +122,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           effectiveRoute.uri,
           extra: infoState.extra,
         );
-        final List<RouteMatchList> redirectHistory = <RouteMatchList>[];
+        final redirectHistory = <RouteMatchList>[];
 
         final FutureOr<RouteMatchList> afterLegacy = configuration
             .applyTopLegacyRedirect(

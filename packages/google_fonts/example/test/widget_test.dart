@@ -15,7 +15,7 @@ void main() {
   });
 
   testWidgets('Can specify text theme', (WidgetTester tester) async {
-    final ThemeData baseTheme = ThemeData.dark();
+    final baseTheme = ThemeData.dark();
 
     await tester.pumpWidget(
       MaterialApp(

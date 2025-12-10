@@ -28,7 +28,7 @@ PushFn mockAds(List<MockAdConfig> adConfigs) {
         .querySelectorAll('div[id^=adUnit] ins')
         .toList;
 
-    for (int i = 0; i < foundTargets.length; i++) {
+    for (var i = 0; i < foundTargets.length; i++) {
       final web.HTMLElement adTarget = foundTargets[i];
       if (adTarget.children.length > 0) {
         continue;
@@ -54,8 +54,8 @@ PushFn mockAds(List<MockAdConfig> adConfigs) {
 
 extension on web.NodeList {
   List<web.HTMLElement> get toList {
-    final List<web.HTMLElement> result = <web.HTMLElement>[];
-    for (int i = 0; i < length; i++) {
+    final result = <web.HTMLElement>[];
+    for (var i = 0; i < length; i++) {
       final web.Node? node = item(i);
       if (node != null && node.isA<web.HTMLElement>()) {
         result.add(node as web.HTMLElement);

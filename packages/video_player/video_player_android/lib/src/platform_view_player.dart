@@ -20,9 +20,8 @@ class PlatformViewPlayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String viewType = 'plugins.flutter.dev/video_player_android';
-    final PlatformVideoViewCreationParams creationParams =
-        PlatformVideoViewCreationParams(playerId: playerId);
+    const viewType = 'plugins.flutter.dev/video_player_android';
+    final creationParams = PlatformVideoViewCreationParams(playerId: playerId);
 
     // IgnorePointer so that GestureDetector can be used above the platform view.
     return IgnorePointer(
