@@ -180,7 +180,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final NativeAudioTrackData nativeData = await _playerWith(
       id: playerId,
     ).getAudioTracks();
-    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+    final tracks = <VideoAudioTrack>[];
 
     // Convert asset tracks to VideoAudioTrack
     if (nativeData.assetTracks != null) {
@@ -203,7 +203,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     // Convert media selection tracks to VideoAudioTrack (for HLS streams)
     if (nativeData.mediaSelectionTracks != null) {
       for (final MediaSelectionAudioTrackData track in nativeData.mediaSelectionTracks!) {
-        final String trackId = 'media_selection_${track.index}';
+        final trackId = 'media_selection_${track.index}';
         final String? label = track.commonMetadataTitle ?? track.displayName;
         tracks.add(
           VideoAudioTrack(
