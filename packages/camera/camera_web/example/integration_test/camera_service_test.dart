@@ -713,10 +713,10 @@ void main() {
             'when the facing mode setting is empty and '
             'the facingMode capability is null', (WidgetTester tester) async {
           mockVideoTrack.getSettings = () {
-            return web.MediaTrackSettings(facingMode: '');
+            return createJSInteropWrapper(FakeMediaTrackSettings())
+                as web.MediaTrackSettings;
           }.toJS;
           mockVideoTrack.getCapabilities = () {
-            // Use the fake class that has no facingMode property
             return createJSInteropWrapper(FakeMediaTrackCapabilities())
                 as web.MediaTrackCapabilities;
           }.toJS;
