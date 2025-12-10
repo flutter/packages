@@ -11,6 +11,7 @@ import 'dart:ui';
 // ignore_for_file: implementation_imports
 import 'package:camera_web/src/camera.dart';
 import 'package:camera_web/src/camera_service.dart';
+import 'package:camera_web/src/pkg_web_tweaks.dart';
 import 'package:camera_web/src/shims/dart_js_util.dart';
 import 'package:camera_web/src/types/types.dart';
 import 'package:mockito/annotations.dart';
@@ -283,4 +284,15 @@ class MockEventStreamProvider<T extends web.Event> extends Mock
         )
         as ElementStream<T>;
   }
+}
+
+/// A fake [web.MediaTrackCapabilities] where facingMode is null/undefined.
+///
+/// Used to test null-safe handling when the browser doesn't provide
+/// the facingMode capability.
+@JSExport()
+class FakeMediaTrackCapabilities {
+
+  // Dummy property required by @JSExport
+  bool get dummy => true;
 }
