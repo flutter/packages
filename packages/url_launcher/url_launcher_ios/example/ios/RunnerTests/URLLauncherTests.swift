@@ -13,15 +13,32 @@ private func urlParsingIsStrict() -> Bool {
   return URL(string: "b a d U R L") == nil
 }
 
+final class TestViewPresenter: ViewPresenter {
+  public var presentedController: UIViewController?
+
+  func present(
+    _ viewControllerToPresent: UIViewController, animated: Bool, completion: (() -> Void)? = nil
+  ) {
+    presentedController = viewControllerToPresent
+  }
+}
+
+final class StubViewPresenterProvider: ViewPresenterProvider {
+  var viewPresenter: ViewPresenter?
+
+  init(viewPresenter: ViewPresenter?) {
+    self.viewPresenter = viewPresenter
+  }
+}
+
 final class URLLauncherTests: XCTestCase {
 
-  private func createPlugin() -> URLLauncherPlugin {
-    let launcher = FakeLauncher()
-    return URLLauncherPlugin(launcher: launcher)
-  }
-
-  private func createPlugin(launcher: FakeLauncher) -> URLLauncherPlugin {
-    return URLLauncherPlugin(launcher: launcher)
+  private func createPlugin(
+    launcher: FakeLauncher = FakeLauncher(), viewPresenter: ViewPresenter? = TestViewPresenter()
+  ) -> URLLauncherPlugin {
+    return URLLauncherPlugin(
+      launcher: launcher,
+      viewPresenterProvider: StubViewPresenterProvider(viewPresenter: viewPresenter))
   }
 
   func testCanLaunchSuccess() {
@@ -133,7 +150,8 @@ final class URLLauncherTests: XCTestCase {
 
   func testLaunchSafariViewControllerWithClose() {
     let launcher = FakeLauncher()
-    let plugin = createPlugin(launcher: launcher)
+    let viewPresenter = TestViewPresenter()
+    let plugin = createPlugin(launcher: launcher, viewPresenter: viewPresenter)
 
     let expectation = XCTestExpectation(description: "completion called")
     plugin.openUrlInSafariViewController(url: "https://flutter.dev") { result in
@@ -147,6 +165,23 @@ final class URLLauncherTests: XCTestCase {
     }
     plugin.closeSafariViewController()
     wait(for: [expectation], timeout: 30)
+    XCTAssertNotNil(viewPresenter.presentedController)
+  }
+
+  func testLaunchSafariViewControllerFailureWithNoViewPresenter() {
+    let expectation = XCTestExpectation(description: "completion called")
+    createPlugin(viewPresenter: nil).openUrlInSafariViewController(url: "https://flutter.dev") {
+      result in
+      switch result {
+      case .success(let details):
+        XCTAssertEqual(details, .noUI)
+      case .failure(let error):
+        XCTFail("Unexpected error: \(error)")
+      }
+      expectation.fulfill()
+    }
+
+    wait(for: [expectation], timeout: 1)
   }
 
 }
