@@ -1216,6 +1216,19 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+
+  func throwError() throws -> Any? {
+    throw NiTestsError(code: "code", message: "message", details: "details")
+  }
+
+  func throwErrorFromVoid() throws {
+    throw NiTestsError(code: "code", message: "message", details: "details")
+  }
+
+  func throwFlutterError() throws -> Any? {
+    throw NiTestsError(code: "code", message: "message", details: "details")
+  }
+
   func echoUint8List(aUint8List: [UInt8]) throws -> [UInt8] {
     return aUint8List
   }

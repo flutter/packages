@@ -3497,6 +3497,15 @@ final _objc_msgSend_15qeuct = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObject>,
       )
     >();
+late final _sel_throwErrorWithWrappedError_ = objc.registerName(
+  "throwErrorWithWrappedError:",
+);
+late final _sel_throwErrorFromVoidWithWrappedError_ = objc.registerName(
+  "throwErrorFromVoidWithWrappedError:",
+);
+late final _sel_throwFlutterErrorWithWrappedError_ = objc.registerName(
+  "throwFlutterErrorWithWrappedError:",
+);
 late final _sel_echoIntWithAnInt_wrappedError_ = objc.registerName(
   "echoIntWithAnInt:wrappedError:",
 );
@@ -3925,6 +3934,63 @@ extension NIHostIntegrationCoreApiSetup$Methods
     return _ret.address == 0
         ? null
         : NIAllTypesBridge.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns an error, to test error handling.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSObject? throwErrorWithWrappedError(NiTestsError wrappedError) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.throwErrorWithWrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_1sotr3r(
+      this.ref.pointer,
+      _sel_throwErrorWithWrappedError_,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSObject.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// Returns an error from a void function, to test error handling.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void throwErrorFromVoidWithWrappedError(NiTestsError wrappedError) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.throwErrorFromVoidWithWrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_throwErrorFromVoidWithWrappedError_,
+      wrappedError.ref.pointer,
+    );
+  }
+
+  /// Returns a Flutter error, to test error handling.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSObject? throwFlutterErrorWithWrappedError(NiTestsError wrappedError) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.throwFlutterErrorWithWrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_1sotr3r(
+      this.ref.pointer,
+      _sel_throwFlutterErrorWithWrappedError_,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSObject.castFromPointer(_ret, retain: true, release: true);
   }
 
   /// Returns passed in int.

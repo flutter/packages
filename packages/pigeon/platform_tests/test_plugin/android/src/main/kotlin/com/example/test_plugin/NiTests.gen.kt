@@ -449,6 +449,12 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun noop()
   /** Returns the passed object, to test serialization and deserialization. */
   abstract fun echoAllTypes(everything: NIAllTypes): NIAllTypes
+  /** Returns an error, to test error handling. */
+  abstract fun throwError(): Any?
+  /** Returns an error from a void function, to test error handling. */
+  abstract fun throwErrorFromVoid()
+  /** Returns a Flutter error, to test error handling. */
+  abstract fun throwFlutterError(): Any?
   /** Returns passed in int. */
   abstract fun echoInt(anInt: Long): Long
   /** Returns passed in double. */
@@ -639,6 +645,39 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoAllTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns an error, to test error handling. */
+  override fun throwError(): Any? {
+    api?.let {
+      try {
+        return api!!.throwError()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns an error from a void function, to test error handling. */
+  override fun throwErrorFromVoid() {
+    api?.let {
+      try {
+        return api!!.throwErrorFromVoid()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns a Flutter error, to test error handling. */
+  override fun throwFlutterError(): Any? {
+    api?.let {
+      try {
+        return api!!.throwFlutterError()
       } catch (e: Exception) {
         throw e
       }

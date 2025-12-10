@@ -1238,6 +1238,12 @@ protocol NIHostIntegrationCoreApi {
   func noop() throws
   /// Returns the passed object, to test serialization and deserialization.
   func echoAllTypes(everything: NIAllTypes) throws -> NIAllTypes
+  /// Returns an error, to test error handling.
+  func throwError() throws -> Any?
+  /// Returns an error from a void function, to test error handling.
+  func throwErrorFromVoid() throws
+  /// Returns a Flutter error, to test error handling.
+  func throwFlutterError() throws -> Any?
   /// Returns passed in int.
   func echoInt(anInt: Int64) throws -> Int64
   /// Returns passed in double.
@@ -1408,6 +1414,55 @@ protocol NIHostIntegrationCoreApi {
   {
     do {
       return try NIAllTypesBridge.fromSwift(api!.echoAllTypes(everything: everything.toSwift()))
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns an error, to test error handling.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func throwError(wrappedError: NiTestsError) -> NSObject? {
+    do {
+      return try _PigeonFfiCodec.writeValue(value: api!.throwError(), isObject: true) as? NSObject
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns an error from a void function, to test error handling.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func throwErrorFromVoid(wrappedError: NiTestsError) {
+    do {
+      return try api!.throwErrorFromVoid()
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return
+  }
+  /// Returns a Flutter error, to test error handling.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func throwFlutterError(wrappedError: NiTestsError) -> NSObject? {
+    do {
+      return try _PigeonFfiCodec.writeValue(value: api!.throwFlutterError(), isObject: true)
+        as? NSObject
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

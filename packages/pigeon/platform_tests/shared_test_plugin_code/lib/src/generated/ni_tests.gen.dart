@@ -2026,7 +2026,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           return;
@@ -2058,10 +2061,110 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAllTypes dartTypeRes = NIAllTypes.fromFfi(res)!;
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Object? throwError() {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ObjCObjectBase? res = _ffiApi.throwErrorWithWrappedError(error);
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
+          );
+        } else {
+          final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  void throwErrorFromVoid() {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        _ffiApi.throwErrorFromVoidWithWrappedError(error);
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
+          );
+        } else {
+          return;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  Object? throwFlutterError() {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ObjCObjectBase? res = _ffiApi.throwFlutterErrorWithWrappedError(
+          error,
+        );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
+          );
+        } else {
+          final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
           return dartTypeRes;
         }
       }
@@ -2090,7 +2193,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final int dartTypeRes = res!.longValue;
@@ -2122,7 +2228,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final double dartTypeRes = res!.doubleValue;
@@ -2154,7 +2263,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final bool dartTypeRes = res!.boolValue;
@@ -2186,7 +2298,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final String dartTypeRes = res!.toDartString();
@@ -2221,7 +2336,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Uint8List dartTypeRes =
@@ -2257,7 +2375,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Int32List dartTypeRes =
@@ -2293,7 +2414,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Int64List dartTypeRes =
@@ -2329,7 +2453,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Float64List dartTypeRes =
@@ -2362,7 +2489,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Object dartTypeRes = _PigeonFfiCodec.readValue(res)!;
@@ -2394,7 +2524,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<Object?> dartTypeRes =
@@ -2428,7 +2561,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<String?> dartTypeRes =
@@ -2462,7 +2598,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<int?> dartTypeRes =
@@ -2495,7 +2634,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<double?> dartTypeRes =
@@ -2529,7 +2671,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<bool?> dartTypeRes =
@@ -2562,7 +2707,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAnEnum?> dartTypeRes =
@@ -2598,7 +2746,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAllNullableTypesWithoutRecursion?> dartTypeRes =
@@ -2632,7 +2783,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAnEnum> dartTypeRes =
@@ -2668,7 +2822,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAllNullableTypesWithoutRecursion> dartTypeRes =
@@ -2702,7 +2859,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<Object?, Object?> dartTypeRes =
@@ -2736,7 +2896,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<String?, String?> dartTypeRes =
@@ -2770,7 +2933,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int?, int?> dartTypeRes =
@@ -2804,7 +2970,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<NIAnEnum?, NIAnEnum?> dartTypeRes =
@@ -2840,7 +3009,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int?, NIAllNullableTypesWithoutRecursion?> dartTypeRes =
@@ -2874,7 +3046,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<String, String> dartTypeRes =
@@ -2908,7 +3083,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int, int> dartTypeRes =
@@ -2942,7 +3120,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<NIAnEnum, NIAnEnum> dartTypeRes =
@@ -2978,7 +3159,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int, NIAllNullableTypesWithoutRecursion> dartTypeRes =
@@ -3010,7 +3194,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAllClassesWrapper dartTypeRes = NIAllClassesWrapper.fromFfi(
@@ -3044,7 +3231,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAnEnum dartTypeRes =
@@ -3077,7 +3267,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAnotherEnum dartTypeRes =
@@ -3113,7 +3306,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAllNullableTypesWithoutRecursion? dartTypeRes =
@@ -3146,7 +3342,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final String? dartTypeRes = res?.toDartString();
@@ -3179,7 +3378,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAllClassesWrapper dartTypeRes = NIAllClassesWrapper.fromFfi(
@@ -3222,7 +3424,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAllNullableTypesWithoutRecursion dartTypeRes =
@@ -3264,7 +3469,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAllNullableTypesWithoutRecursion dartTypeRes =
@@ -3297,7 +3505,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final int? dartTypeRes = res?.longValue;
@@ -3329,7 +3540,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final double? dartTypeRes = res?.doubleValue;
@@ -3361,7 +3575,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final bool? dartTypeRes = res?.boolValue;
@@ -3393,7 +3610,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final String? dartTypeRes = res?.toDartString();
@@ -3428,7 +3648,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Uint8List? dartTypeRes =
@@ -3464,7 +3687,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Int32List? dartTypeRes =
@@ -3500,7 +3726,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Int64List? dartTypeRes =
@@ -3536,7 +3765,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Float64List? dartTypeRes =
@@ -3570,7 +3802,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
@@ -3602,7 +3837,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<Object?>? dartTypeRes =
@@ -3636,7 +3874,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAnEnum?>? dartTypeRes =
@@ -3672,7 +3913,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAllNullableTypesWithoutRecursion?>? dartTypeRes =
@@ -3706,7 +3950,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAnEnum>? dartTypeRes =
@@ -3742,7 +3989,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final List<NIAllNullableTypesWithoutRecursion>? dartTypeRes =
@@ -3776,7 +4026,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<Object?, Object?>? dartTypeRes =
@@ -3812,7 +4065,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<String?, String?>? dartTypeRes =
@@ -3846,7 +4102,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int?, int?>? dartTypeRes =
@@ -3882,7 +4141,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<NIAnEnum?, NIAnEnum?>? dartTypeRes =
@@ -3918,7 +4180,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int?, NIAllNullableTypesWithoutRecursion?>? dartTypeRes =
@@ -3955,7 +4220,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<String, String>? dartTypeRes =
@@ -3989,7 +4257,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int, int>? dartTypeRes =
@@ -4025,7 +4296,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<NIAnEnum, NIAnEnum>? dartTypeRes =
@@ -4062,7 +4336,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final Map<int, NIAllNullableTypesWithoutRecursion>? dartTypeRes =
@@ -4096,7 +4373,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAnEnum? dartTypeRes =
@@ -4129,7 +4409,10 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details: error.details.toString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
           );
         } else {
           final NIAnotherEnum? dartTypeRes =
@@ -4272,6 +4555,96 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as NIAllTypes?)!;
+    }
+  }
+
+  /// Returns an error, to test error handling.
+  Future<Object?> throwError() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.throwError();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwError$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return pigeonVar_replyList[0];
+    }
+  }
+
+  /// Returns an error from a void function, to test error handling.
+  Future<void> throwErrorFromVoid() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.throwErrorFromVoid();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwErrorFromVoid$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns a Flutter error, to test error handling.
+  Future<Object?> throwFlutterError() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.throwFlutterError();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwFlutterError$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return pigeonVar_replyList[0];
     }
   }
 

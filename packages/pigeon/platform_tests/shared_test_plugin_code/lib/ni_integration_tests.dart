@@ -182,37 +182,42 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       },
     );
 
-    //     testWidgets('errors are returned correctly', (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('errors are returned correctly', (WidgetTester _) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       expect(() async {
-    //         api!.throwError();
-    //       }, throwsA(isA<PlatformException>()));
-    //     });
+      expect(() async {
+        api!.throwError();
+      }, throwsA(isA<PlatformException>()));
+    });
 
-    //     testWidgets('errors are returned from void methods correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('errors are returned from void methods correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       expect(() async {
-    //         api!.throwErrorFromVoid();
-    //       }, throwsA(isA<PlatformException>()));
-    //     });
+      expect(() async {
+        api!.throwErrorFromVoid();
+      }, throwsA(isA<PlatformException>()));
+    });
 
-    //     // testWidgets('flutter errors are returned correctly',
-    //     //     (WidgetTester _) async {
-    //     //   final NIHostIntegrationCoreApiForNativeInterop? api =
-    //     //       NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //     //   expect(
-    //     //       () => api!.throwFlutterError(),
-    //     //       throwsA((dynamic e) =>
-    //     //           e is PlatformException &&
-    //     //           e.code == 'code' &&
-    //     //           e.message == 'message' &&
-    //     //           e.details == 'details'));
-    //     // });
+    testWidgets('flutter errors are returned correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      expect(
+        () => api!.throwFlutterError(),
+        throwsA(
+          (dynamic e) =>
+              e is PlatformException &&
+              e.code == 'code' &&
+              e.message == 'message' &&
+              e.details == 'details',
+        ),
+      );
+    });
 
     testWidgets('nested objects can be sent correctly', (WidgetTester _) async {
       final NIHostIntegrationCoreApiForNativeInterop? api =
@@ -394,26 +399,27 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedString, sentString);
     });
 
-    //     testWidgets('Uint8List serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final List<int> data = <int>[
-    //         102,
-    //         111,
-    //         114,
-    //         116,
-    //         121,
-    //         45,
-    //         116,
-    //         119,
-    //         111,
-    //         0
-    //       ];
-    //       final Uint8List sentUint8List = Uint8List.fromList(data);
-    //       final Uint8List receivedUint8List = api!.echoUint8List(sentUint8List);
-    //       expect(receivedUint8List, sentUint8List);
-    //     });
+    testWidgets('Uint8List serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0,
+      ];
+      final Uint8List sentUint8List = Uint8List.fromList(data);
+      final Uint8List receivedUint8List = api!.echoUint8List(sentUint8List);
+      expect(receivedUint8List, sentUint8List);
+    });
 
     testWidgets(
       'strings as generic Objects serialize and deserialize correctly',
@@ -928,36 +934,39 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedNullString, null);
     });
 
-    //     testWidgets('Nullable Uint8List serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
-    //       final List<int> data = <int>[
-    //         102,
-    //         111,
-    //         114,
-    //         116,
-    //         121,
-    //         45,
-    //         116,
-    //         119,
-    //         111,
-    //         0
-    //       ];
-    //       final Uint8List sentUint8List = Uint8List.fromList(data);
-    //       final Uint8List? receivedUint8List =
-    //           api!.echoNullableUint8List(sentUint8List);
-    //       expect(receivedUint8List, sentUint8List);
-    //     });
+    testWidgets('Nullable Uint8List serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      final List<int> data = <int>[
+        102,
+        111,
+        114,
+        116,
+        121,
+        45,
+        116,
+        119,
+        111,
+        0,
+      ];
+      final Uint8List sentUint8List = Uint8List.fromList(data);
+      final Uint8List? receivedUint8List = api!.echoNullableUint8List(
+        sentUint8List,
+      );
+      expect(receivedUint8List, sentUint8List);
+    });
 
-    //     testWidgets('Null Uint8List serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('Null Uint8List serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final Uint8List? receivedNullUint8List = api!.echoNullableUint8List(null);
-    //       expect(receivedNullUint8List, null);
-    //     });
+      final Uint8List? receivedNullUint8List = api!.echoNullableUint8List(null);
+      expect(receivedNullUint8List, null);
+    });
 
     testWidgets(
       'generic nullable Objects serialize and deserialize correctly',

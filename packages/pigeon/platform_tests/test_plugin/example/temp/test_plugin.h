@@ -566,6 +566,20 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
                   wrappedError:(NiTestsError* _Nonnull)wrappedError
     SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
         SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns an error, to test error handling.
+- (NSObject* _Nullable)throwErrorWithWrappedError:
+    (NiTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT
+    SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns an error from a void function, to test error handling.
+- (void)throwErrorFromVoidWithWrappedError:(NiTestsError* _Nonnull)wrappedError
+    SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
+/// Returns a Flutter error, to test error handling.
+- (NSObject* _Nullable)throwFlutterErrorWithWrappedError:
+    (NiTestsError* _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT
+    SWIFT_AVAILABILITY(macos, introduced = 16.0.0)
+        SWIFT_AVAILABILITY(ios, introduced = 13);
 /// Returns passed in int.
 - (NSNumber* _Nullable)echoIntWithAnInt:(int64_t)anInt
                            wrappedError:(NiTestsError* _Nonnull)wrappedError

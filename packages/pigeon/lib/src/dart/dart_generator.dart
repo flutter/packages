@@ -1765,7 +1765,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 );
                 indent.writeScoped('if (error.code != null) {', '}', () {
                   indent.writeln(
-                    'throw PlatformException(code: error.code!.toDartString(), message: error.message?.toDartString(), details: error.details.toString());',
+                    'throw PlatformException(code: error.code!.toDartString(), message: error.message?.toDartString(), details: error.details != null && NSString.isInstance(error.details!) ? error.details!.toDartString() : error.details);',
                   );
                 }, addTrailingNewline: false);
                 indent.addScoped(' else {', '}', () {

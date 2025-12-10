@@ -407,18 +407,127 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(receivedUint8List, sentUint8List);
     });
 
-    testWidgets('generic Objects serialize and deserialize correctly', (
+    testWidgets(
+      'strings as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+        const Object sentString = "I'm a computer";
+        final Object receivedString = await api.echoObject(sentString);
+        expect(receivedString, sentString);
+      },
+    );
+
+    testWidgets(
+      'integers as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        const Object sentInt = regularInt;
+        final Object receivedInt = await api.echoObject(sentInt);
+        expect(receivedInt, sentInt);
+      },
+    );
+
+    testWidgets(
+      'booleans as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        const Object sentBool = true;
+        final Object receivedBool = await api.echoObject(sentBool);
+        expect(receivedBool, sentBool);
+      },
+    );
+
+    testWidgets(
+      'double as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        const Object sentDouble = 2.0694;
+        final Object receivedDouble = await api.echoObject(sentDouble);
+        expect(receivedDouble, sentDouble);
+      },
+    );
+
+    testWidgets(
+      'Uint8List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        final Object sentUint8List = Uint8List.fromList(<int>[1, 2, 3]);
+        final Object receivedUint8List = await api.echoObject(sentUint8List);
+        expect(receivedUint8List, sentUint8List);
+      },
+    );
+
+    testWidgets(
+      'Int32List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        final Object sentInt32List = Int32List.fromList(<int>[1, 2, 3]);
+        final Object receivedInt32List = await api.echoObject(sentInt32List);
+        expect(receivedInt32List, sentInt32List);
+      },
+    );
+
+    testWidgets(
+      'Int64List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        final Object sentInt64List = Int64List.fromList(<int>[1, 2, 3]);
+        final Object receivedInt64List = await api.echoObject(sentInt64List);
+        expect(receivedInt64List, sentInt64List);
+      },
+    );
+
+    testWidgets(
+      'class as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        final Object receivedClass = await api.echoObject(
+          genericAllNullableTypesWithoutRecursion,
+        );
+        expect(receivedClass, genericAllNullableTypesWithoutRecursion);
+      },
+    );
+
+    testWidgets(
+      'Float64List as generic Objects serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+        final Object sentFloat64List = Float64List.fromList(<double>[
+          1.0,
+          2.0,
+          3.0,
+        ]);
+        final Object receivedFloat64List = await api.echoObject(
+          sentFloat64List,
+        );
+        expect(receivedFloat64List, sentFloat64List);
+      },
+    );
+
+    testWidgets('List as generic Objects serialize and deserialize correctly', (
       WidgetTester _,
     ) async {
       final HostIntegrationCoreApi api = HostIntegrationCoreApi();
-      const Object sentString = "I'm a computer";
-      final Object receivedString = await api.echoObject(sentString);
-      expect(receivedString, sentString);
 
-      // Echo a second type as well to ensure the handling is generic.
-      const Object sentInt = regularInt;
-      final Object receivedInt = await api.echoObject(sentInt);
-      expect(receivedInt, sentInt);
+      final Object receivedList = await api.echoObject(list);
+      expect(receivedList, list);
+    });
+
+    testWidgets('Map as generic Objects serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+      final Object receivedMap = await api.echoObject(map);
+      expect(receivedMap, map);
     });
 
     testWidgets('lists serialize and deserialize correctly', (
@@ -429,6 +538,43 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       final List<Object?> echoObject = await api.echoList(list);
       expect(listEquals(echoObject, list), true);
     });
+
+    // Currently need set up
+    // testWidgets('string lists serialize and deserialize correctly', (
+    //   WidgetTester _,
+    // ) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+    //   final List<String?> echoObject = await api.echoStringList(stringList);
+    //   expect(listEquals(echoObject, stringList), true);
+    // });
+
+    // testWidgets('int lists serialize and deserialize correctly', (
+    //   WidgetTester _,
+    // ) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+    //   final List<int?> echoObject = await api.echoIntList(intList);
+    //   expect(listEquals(echoObject, intList), true);
+    // });
+
+    // testWidgets('double lists serialize and deserialize correctly', (
+    //   WidgetTester _,
+    // ) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+    //   final List<double?> echoObject = await api.echoDoubleList(doubleList);
+    //   expect(listEquals(echoObject, doubleList), true);
+    // });
+
+    // testWidgets('bool lists serialize and deserialize correctly', (
+    //   WidgetTester _,
+    // ) async {
+    //   final HostIntegrationCoreApi api = HostIntegrationCoreApi();
+
+    //   final List<bool?> echoObject = await api.echoBoolList(boolList);
+    //   expect(listEquals(echoObject, boolList), true);
+    // });
 
     testWidgets('enum lists serialize and deserialize correctly', (
       WidgetTester _,

@@ -293,14 +293,14 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echo(_:)')
   NIAllTypes echoAllTypes(NIAllTypes everything);
 
-  // /// Returns an error, to test error handling.
-  // Object? throwError();
+  /// Returns an error, to test error handling.
+  Object? throwError();
 
-  // /// Returns an error from a void function, to test error handling.
-  // void throwErrorFromVoid();
+  /// Returns an error from a void function, to test error handling.
+  void throwErrorFromVoid();
 
-  // /// Returns a Flutter error, to test error handling.
-  // Object? throwFlutterError();
+  /// Returns a Flutter error, to test error handling.
+  Object? throwFlutterError();
 
   /// Returns passed in int.
   @ObjCSelector('echoInt:')
