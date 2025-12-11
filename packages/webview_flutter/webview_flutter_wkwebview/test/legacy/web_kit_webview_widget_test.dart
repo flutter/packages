@@ -42,6 +42,10 @@ void main() {
     PigeonOverrides.pigeon_reset();
   });
 
+  tearDown(() {
+    debugDefaultTargetPlatformOverride = null;
+  });
+
   group('WebKitWebViewWidget', () {
     _WebViewMocks configureMocks() {
       final mocks = _WebViewMocks(
@@ -220,18 +224,6 @@ void main() {
 
         debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-        await buildWidget(
-          tester,
-          mocks,
-          creationParams: CreationParams(
-            backgroundColor: Colors.red,
-            webSettings: WebSettings(
-              userAgent: const WebSetting<String?>.absent(),
-              hasNavigationDelegate: false,
-            ),
-          ),
-        );
-
         final transparentUiColor = UIColor.pigeon_detached();
         final redUiColor = UIColor.pigeon_detached();
         PigeonOverrides.uIColor_new =
@@ -256,6 +248,18 @@ void main() {
 
               return UIColor.pigeon_detached();
             };
+
+        await buildWidget(
+          tester,
+          mocks,
+          creationParams: CreationParams(
+            backgroundColor: Colors.red,
+            webSettings: WebSettings(
+              userAgent: const WebSetting<String?>.absent(),
+              hasNavigationDelegate: false,
+            ),
+          ),
+        );
 
         verify(mocks.webView.setOpaque(false));
         verify(mocks.webView.setBackgroundColor(transparentUiColor));

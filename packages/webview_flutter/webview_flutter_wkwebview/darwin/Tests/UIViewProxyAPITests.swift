@@ -22,7 +22,8 @@ class UIViewProxyAPITests: XCTestCase {
       let blue = 0.5
       let alpha = 0.5
       try? api.pigeonDelegate.setBackgroundColor(
-        pigeonApi: api, pigeonInstance: instance, value: UIColor(red: red, green: green, blue: blue, alpha: alpha))
+        pigeonApi: api, pigeonInstance: instance,
+        value: UIColor(red: red, green: green, blue: blue, alpha: alpha))
 
       XCTAssertEqual(
         instance.backgroundColor, UIColor(red: red, green: green, blue: blue, alpha: alpha))
