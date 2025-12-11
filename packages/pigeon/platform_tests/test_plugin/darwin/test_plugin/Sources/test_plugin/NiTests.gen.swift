@@ -328,6 +328,55 @@ func deepHashNiTests(value: Any?, hasher: inout Hasher) {
   case justInCase = 0
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct NIUnusedClass: Hashable {
+  var aField: Any? = nil
+
+  static func fromList(_ pigeonVar_list: [Any?]) -> NIUnusedClass? {
+    let aField: Any? = pigeonVar_list[0]
+
+    return NIUnusedClass(
+      aField: aField
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      aField
+    ]
+  }
+  static func == (lhs: NIUnusedClass, rhs: NIUnusedClass) -> Bool {
+    return deepEqualsNiTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashNiTests(value: toList(), hasher: &hasher)
+  }
+}
+
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@available(iOS 13, macOS 16.0.0, *)
+@objc class NIUnusedClassBridge: NSObject {
+  @objc init(
+    aField: NSObject? = nil
+  ) {
+    self.aField = aField
+  }
+  @objc var aField: NSObject? = nil
+
+  static func fromSwift(_ pigeonVar_Class: NIUnusedClass?) -> NIUnusedClassBridge? {
+    if isNullish(pigeonVar_Class) {
+      return nil
+    }
+    return NIUnusedClassBridge(
+      aField: pigeonVar_Class!.aField as! NSObject?,
+    )
+  }
+  func toSwift() -> NIUnusedClass {
+    return NIUnusedClass(
+      aField: _PigeonFfiCodec.readValue(value: aField),
+    )
+  }
+}
+
 /// A class containing all supported types.
 ///
 /// Generated class from Pigeon that represents data sent in messages.
@@ -628,6 +677,418 @@ struct NIAllTypes: Hashable {
 }
 
 /// A class containing all supported nullable types.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+class NIAllNullableTypes: Hashable {
+  init(
+    aNullableBool: Bool? = nil,
+    aNullableInt: Int64? = nil,
+    aNullableInt64: Int64? = nil,
+    aNullableDouble: Double? = nil,
+    aNullableByteArray: [UInt8]? = nil,
+    aNullable4ByteArray: [Int32]? = nil,
+    aNullable8ByteArray: [Int64]? = nil,
+    aNullableFloatArray: [Float64]? = nil,
+    aNullableEnum: NIAnEnum? = nil,
+    anotherNullableEnum: NIAnotherEnum? = nil,
+    aNullableString: String? = nil,
+    aNullableObject: Any? = nil,
+    allNullableTypes: NIAllNullableTypes? = nil,
+    list: [Any?]? = nil,
+    stringList: [String?]? = nil,
+    intList: [Int64?]? = nil,
+    doubleList: [Double?]? = nil,
+    boolList: [Bool?]? = nil,
+    enumList: [NIAnEnum?]? = nil,
+    objectList: [Any?]? = nil,
+    listList: [[Any?]?]? = nil,
+    mapList: [[AnyHashable?: Any?]?]? = nil,
+    recursiveClassList: [NIAllNullableTypes?]? = nil,
+    map: [AnyHashable?: Any?]? = nil,
+    stringMap: [String?: String?]? = nil,
+    intMap: [Int64?: Int64?]? = nil,
+    enumMap: [NIAnEnum?: NIAnEnum?]? = nil,
+    objectMap: [AnyHashable?: Any?]? = nil,
+    listMap: [Int64?: [Any?]?]? = nil,
+    mapMap: [Int64?: [AnyHashable?: Any?]?]? = nil,
+    recursiveClassMap: [Int64?: NIAllNullableTypes?]? = nil
+  ) {
+    self.aNullableBool = aNullableBool
+    self.aNullableInt = aNullableInt
+    self.aNullableInt64 = aNullableInt64
+    self.aNullableDouble = aNullableDouble
+    self.aNullableByteArray = aNullableByteArray
+    self.aNullable4ByteArray = aNullable4ByteArray
+    self.aNullable8ByteArray = aNullable8ByteArray
+    self.aNullableFloatArray = aNullableFloatArray
+    self.aNullableEnum = aNullableEnum
+    self.anotherNullableEnum = anotherNullableEnum
+    self.aNullableString = aNullableString
+    self.aNullableObject = aNullableObject
+    self.allNullableTypes = allNullableTypes
+    self.list = list
+    self.stringList = stringList
+    self.intList = intList
+    self.doubleList = doubleList
+    self.boolList = boolList
+    self.enumList = enumList
+    self.objectList = objectList
+    self.listList = listList
+    self.mapList = mapList
+    self.recursiveClassList = recursiveClassList
+    self.map = map
+    self.stringMap = stringMap
+    self.intMap = intMap
+    self.enumMap = enumMap
+    self.objectMap = objectMap
+    self.listMap = listMap
+    self.mapMap = mapMap
+    self.recursiveClassMap = recursiveClassMap
+  }
+  var aNullableBool: Bool?
+  var aNullableInt: Int64?
+  var aNullableInt64: Int64?
+  var aNullableDouble: Double?
+  var aNullableByteArray: [UInt8]?
+  var aNullable4ByteArray: [Int32]?
+  var aNullable8ByteArray: [Int64]?
+  var aNullableFloatArray: [Float64]?
+  var aNullableEnum: NIAnEnum?
+  var anotherNullableEnum: NIAnotherEnum?
+  var aNullableString: String?
+  var aNullableObject: Any?
+  var allNullableTypes: NIAllNullableTypes?
+  var list: [Any?]?
+  var stringList: [String?]?
+  var intList: [Int64?]?
+  var doubleList: [Double?]?
+  var boolList: [Bool?]?
+  var enumList: [NIAnEnum?]?
+  var objectList: [Any?]?
+  var listList: [[Any?]?]?
+  var mapList: [[AnyHashable?: Any?]?]?
+  var recursiveClassList: [NIAllNullableTypes?]?
+  var map: [AnyHashable?: Any?]?
+  var stringMap: [String?: String?]?
+  var intMap: [Int64?: Int64?]?
+  var enumMap: [NIAnEnum?: NIAnEnum?]?
+  var objectMap: [AnyHashable?: Any?]?
+  var listMap: [Int64?: [Any?]?]?
+  var mapMap: [Int64?: [AnyHashable?: Any?]?]?
+  var recursiveClassMap: [Int64?: NIAllNullableTypes?]?
+
+  static func fromList(_ pigeonVar_list: [Any?]) -> NIAllNullableTypes? {
+    let aNullableBool: Bool? = nilOrValue(pigeonVar_list[0])
+    let aNullableInt: Int64? = nilOrValue(pigeonVar_list[1])
+    let aNullableInt64: Int64? = nilOrValue(pigeonVar_list[2])
+    let aNullableDouble: Double? = nilOrValue(pigeonVar_list[3])
+    let aNullableByteArray: [UInt8]? = nilOrValue(pigeonVar_list[4])
+    let aNullable4ByteArray: [Int32]? = nilOrValue(pigeonVar_list[5])
+    let aNullable8ByteArray: [Int64]? = nilOrValue(pigeonVar_list[6])
+    let aNullableFloatArray: [Float64]? = nilOrValue(pigeonVar_list[7])
+    let aNullableEnum: NIAnEnum? = nilOrValue(pigeonVar_list[8])
+    let anotherNullableEnum: NIAnotherEnum? = nilOrValue(pigeonVar_list[9])
+    let aNullableString: String? = nilOrValue(pigeonVar_list[10])
+    let aNullableObject: Any? = pigeonVar_list[11]
+    let allNullableTypes: NIAllNullableTypes? = nilOrValue(pigeonVar_list[12])
+    let list: [Any?]? = nilOrValue(pigeonVar_list[13])
+    let stringList: [String?]? = nilOrValue(pigeonVar_list[14])
+    let intList: [Int64?]? = nilOrValue(pigeonVar_list[15])
+    let doubleList: [Double?]? = nilOrValue(pigeonVar_list[16])
+    let boolList: [Bool?]? = nilOrValue(pigeonVar_list[17])
+    let enumList: [NIAnEnum?]? = nilOrValue(pigeonVar_list[18])
+    let objectList: [Any?]? = nilOrValue(pigeonVar_list[19])
+    let listList: [[Any?]?]? = nilOrValue(pigeonVar_list[20])
+    let mapList: [[AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[21])
+    let recursiveClassList: [NIAllNullableTypes?]? = nilOrValue(pigeonVar_list[22])
+    let map: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[23])
+    let stringMap: [String?: String?]? = nilOrValue(pigeonVar_list[24])
+    let intMap: [Int64?: Int64?]? = nilOrValue(pigeonVar_list[25])
+    let enumMap: [NIAnEnum?: NIAnEnum?]? = pigeonVar_list[26] as? [NIAnEnum?: NIAnEnum?]
+    let objectMap: [AnyHashable?: Any?]? = nilOrValue(pigeonVar_list[27])
+    let listMap: [Int64?: [Any?]?]? = nilOrValue(pigeonVar_list[28])
+    let mapMap: [Int64?: [AnyHashable?: Any?]?]? = nilOrValue(pigeonVar_list[29])
+    let recursiveClassMap: [Int64?: NIAllNullableTypes?]? = nilOrValue(pigeonVar_list[30])
+
+    return NIAllNullableTypes(
+      aNullableBool: aNullableBool,
+      aNullableInt: aNullableInt,
+      aNullableInt64: aNullableInt64,
+      aNullableDouble: aNullableDouble,
+      aNullableByteArray: aNullableByteArray,
+      aNullable4ByteArray: aNullable4ByteArray,
+      aNullable8ByteArray: aNullable8ByteArray,
+      aNullableFloatArray: aNullableFloatArray,
+      aNullableEnum: aNullableEnum,
+      anotherNullableEnum: anotherNullableEnum,
+      aNullableString: aNullableString,
+      aNullableObject: aNullableObject,
+      allNullableTypes: allNullableTypes,
+      list: list,
+      stringList: stringList,
+      intList: intList,
+      doubleList: doubleList,
+      boolList: boolList,
+      enumList: enumList,
+      objectList: objectList,
+      listList: listList,
+      mapList: mapList,
+      recursiveClassList: recursiveClassList,
+      map: map,
+      stringMap: stringMap,
+      intMap: intMap,
+      enumMap: enumMap,
+      objectMap: objectMap,
+      listMap: listMap,
+      mapMap: mapMap,
+      recursiveClassMap: recursiveClassMap
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
+      aNullableEnum,
+      anotherNullableEnum,
+      aNullableString,
+      aNullableObject,
+      allNullableTypes,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+      objectList,
+      listList,
+      mapList,
+      recursiveClassList,
+      map,
+      stringMap,
+      intMap,
+      enumMap,
+      objectMap,
+      listMap,
+      mapMap,
+      recursiveClassMap,
+    ]
+  }
+  static func == (lhs: NIAllNullableTypes, rhs: NIAllNullableTypes) -> Bool {
+    if lhs === rhs {
+      return true
+    }
+    return deepEqualsNiTests(lhs.toList(), rhs.toList())
+  }
+  func hash(into hasher: inout Hasher) {
+    deepHashNiTests(value: toList(), hasher: &hasher)
+  }
+}
+
+/// A class containing all supported nullable types.
+///
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+@available(iOS 13, macOS 16.0.0, *)
+@objc class NIAllNullableTypesBridge: NSObject {
+  @objc init(
+    aNullableBool: NSNumber? = nil,
+    aNullableInt: NSNumber? = nil,
+    aNullableInt64: NSNumber? = nil,
+    aNullableDouble: NSNumber? = nil,
+    aNullableByteArray: PigeonTypedData? = nil,
+    aNullable4ByteArray: PigeonTypedData? = nil,
+    aNullable8ByteArray: PigeonTypedData? = nil,
+    aNullableFloatArray: PigeonTypedData? = nil,
+    aNullableEnum: NSNumber? = nil,
+    anotherNullableEnum: NSNumber? = nil,
+    aNullableString: NSString? = nil,
+    aNullableObject: NSObject? = nil,
+    allNullableTypes: NIAllNullableTypesBridge? = nil,
+    list: [NSObject]? = nil,
+    stringList: [NSObject]? = nil,
+    intList: [NSObject]? = nil,
+    doubleList: [NSObject]? = nil,
+    boolList: [NSObject]? = nil,
+    enumList: [NSObject]? = nil,
+    objectList: [NSObject]? = nil,
+    listList: [NSObject]? = nil,
+    mapList: [NSObject]? = nil,
+    recursiveClassList: [NSObject]? = nil,
+    map: [NSObject: NSObject]? = nil,
+    stringMap: [NSObject: NSObject]? = nil,
+    intMap: [NSObject: NSObject]? = nil,
+    enumMap: [NSObject: NSObject]? = nil,
+    objectMap: [NSObject: NSObject]? = nil,
+    listMap: [NSObject: NSObject]? = nil,
+    mapMap: [NSObject: NSObject]? = nil,
+    recursiveClassMap: [NSObject: NSObject]? = nil
+  ) {
+    self.aNullableBool = aNullableBool
+    self.aNullableInt = aNullableInt
+    self.aNullableInt64 = aNullableInt64
+    self.aNullableDouble = aNullableDouble
+    self.aNullableByteArray = aNullableByteArray
+    self.aNullable4ByteArray = aNullable4ByteArray
+    self.aNullable8ByteArray = aNullable8ByteArray
+    self.aNullableFloatArray = aNullableFloatArray
+    self.aNullableEnum = aNullableEnum
+    self.anotherNullableEnum = anotherNullableEnum
+    self.aNullableString = aNullableString
+    self.aNullableObject = aNullableObject
+    self.allNullableTypes = allNullableTypes
+    self.list = list
+    self.stringList = stringList
+    self.intList = intList
+    self.doubleList = doubleList
+    self.boolList = boolList
+    self.enumList = enumList
+    self.objectList = objectList
+    self.listList = listList
+    self.mapList = mapList
+    self.recursiveClassList = recursiveClassList
+    self.map = map
+    self.stringMap = stringMap
+    self.intMap = intMap
+    self.enumMap = enumMap
+    self.objectMap = objectMap
+    self.listMap = listMap
+    self.mapMap = mapMap
+    self.recursiveClassMap = recursiveClassMap
+  }
+  @objc var aNullableBool: NSNumber?
+  @objc var aNullableInt: NSNumber?
+  @objc var aNullableInt64: NSNumber?
+  @objc var aNullableDouble: NSNumber?
+  @objc var aNullableByteArray: PigeonTypedData?
+  @objc var aNullable4ByteArray: PigeonTypedData?
+  @objc var aNullable8ByteArray: PigeonTypedData?
+  @objc var aNullableFloatArray: PigeonTypedData?
+  @objc var aNullableEnum: NSNumber?
+  @objc var anotherNullableEnum: NSNumber?
+  @objc var aNullableString: NSString?
+  @objc var aNullableObject: NSObject?
+  @objc var allNullableTypes: NIAllNullableTypesBridge?
+  @objc var list: [NSObject]?
+  @objc var stringList: [NSObject]?
+  @objc var intList: [NSObject]?
+  @objc var doubleList: [NSObject]?
+  @objc var boolList: [NSObject]?
+  @objc var enumList: [NSObject]?
+  @objc var objectList: [NSObject]?
+  @objc var listList: [NSObject]?
+  @objc var mapList: [NSObject]?
+  @objc var recursiveClassList: [NSObject]?
+  @objc var map: [NSObject: NSObject]?
+  @objc var stringMap: [NSObject: NSObject]?
+  @objc var intMap: [NSObject: NSObject]?
+  @objc var enumMap: [NSObject: NSObject]?
+  @objc var objectMap: [NSObject: NSObject]?
+  @objc var listMap: [NSObject: NSObject]?
+  @objc var mapMap: [NSObject: NSObject]?
+  @objc var recursiveClassMap: [NSObject: NSObject]?
+
+  static func fromSwift(_ pigeonVar_Class: NIAllNullableTypes?) -> NIAllNullableTypesBridge? {
+    if isNullish(pigeonVar_Class) {
+      return nil
+    }
+    return NIAllNullableTypesBridge(
+      aNullableBool: isNullish(pigeonVar_Class!.aNullableBool)
+        ? nil : NSNumber(value: pigeonVar_Class!.aNullableBool!),
+      aNullableInt: isNullish(pigeonVar_Class!.aNullableInt)
+        ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt!),
+      aNullableInt64: isNullish(pigeonVar_Class!.aNullableInt64)
+        ? nil : NSNumber(value: pigeonVar_Class!.aNullableInt64!),
+      aNullableDouble: isNullish(pigeonVar_Class!.aNullableDouble)
+        ? nil : NSNumber(value: pigeonVar_Class!.aNullableDouble!),
+      aNullableByteArray: isNullish(pigeonVar_Class!.aNullableByteArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullableByteArray!),
+      aNullable4ByteArray: isNullish(pigeonVar_Class!.aNullable4ByteArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullable4ByteArray!),
+      aNullable8ByteArray: isNullish(pigeonVar_Class!.aNullable8ByteArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullable8ByteArray!),
+      aNullableFloatArray: isNullish(pigeonVar_Class!.aNullableFloatArray)
+        ? nil : PigeonTypedData(pigeonVar_Class!.aNullableFloatArray!),
+      aNullableEnum: isNullish(pigeonVar_Class!.aNullableEnum)
+        ? nil : NSNumber(value: pigeonVar_Class!.aNullableEnum!.rawValue),
+      anotherNullableEnum: isNullish(pigeonVar_Class!.anotherNullableEnum)
+        ? nil : NSNumber(value: pigeonVar_Class!.anotherNullableEnum!.rawValue),
+      aNullableString: pigeonVar_Class!.aNullableString as NSString?,
+      aNullableObject: pigeonVar_Class!.aNullableObject as! NSObject?,
+      allNullableTypes: NIAllNullableTypesBridge.fromSwift(pigeonVar_Class!.allNullableTypes),
+      list: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.list) as? [NSObject],
+      stringList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringList) as? [NSObject],
+      intList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intList) as? [NSObject],
+      doubleList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.doubleList) as? [NSObject],
+      boolList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.boolList) as? [NSObject],
+      enumList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumList) as? [NSObject],
+      objectList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.objectList) as? [NSObject],
+      listList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.listList) as? [NSObject],
+      mapList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.mapList) as? [NSObject],
+      recursiveClassList: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.recursiveClassList)
+        as? [NSObject],
+      map: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.map) as? [NSObject: NSObject],
+      stringMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.stringMap)
+        as? [NSObject: NSObject],
+      intMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.intMap) as? [NSObject: NSObject],
+      enumMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.enumMap) as? [NSObject: NSObject],
+      objectMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.objectMap)
+        as? [NSObject: NSObject],
+      listMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.listMap) as? [NSObject: NSObject],
+      mapMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.mapMap) as? [NSObject: NSObject],
+      recursiveClassMap: _PigeonFfiCodec.writeValue(value: pigeonVar_Class!.recursiveClassMap)
+        as? [NSObject: NSObject],
+    )
+  }
+  func toSwift() -> NIAllNullableTypes {
+    return NIAllNullableTypes(
+      aNullableBool: isNullish(aNullableBool) ? nil : aNullableBool!.boolValue,
+      aNullableInt: isNullish(aNullableInt) ? nil : aNullableInt!.int64Value,
+      aNullableInt64: isNullish(aNullableInt64) ? nil : aNullableInt64!.int64Value,
+      aNullableDouble: isNullish(aNullableDouble) ? nil : aNullableDouble!.doubleValue,
+      aNullableByteArray: isNullish(aNullableByteArray) ? nil : aNullableByteArray!.toUint8Array(),
+      aNullable4ByteArray: isNullish(aNullable4ByteArray)
+        ? nil : aNullable4ByteArray!.toInt32Array(),
+      aNullable8ByteArray: isNullish(aNullable8ByteArray)
+        ? nil : aNullable8ByteArray!.toInt64Array(),
+      aNullableFloatArray: isNullish(aNullableFloatArray)
+        ? nil : aNullableFloatArray!.toFloat64Array(),
+      aNullableEnum: isNullish(aNullableEnum)
+        ? nil : NIAnEnum.init(rawValue: aNullableEnum!.intValue),
+      anotherNullableEnum: isNullish(anotherNullableEnum)
+        ? nil : NIAnotherEnum.init(rawValue: anotherNullableEnum!.intValue),
+      aNullableString: aNullableString as String?,
+      aNullableObject: _PigeonFfiCodec.readValue(value: aNullableObject),
+      allNullableTypes: isNullish(allNullableTypes) ? nil : allNullableTypes!.toSwift(),
+      list: _PigeonFfiCodec.readValue(value: list as NSObject?) as? [Any?],
+      stringList: _PigeonFfiCodec.readValue(value: stringList as NSObject?) as? [String?],
+      intList: _PigeonFfiCodec.readValue(value: intList as NSObject?) as? [Int64?],
+      doubleList: _PigeonFfiCodec.readValue(value: doubleList as NSObject?) as? [Double?],
+      boolList: _PigeonFfiCodec.readValue(value: boolList as NSObject?) as? [Bool?],
+      enumList: _PigeonFfiCodec.readValue(value: enumList as NSObject?) as? [NIAnEnum?],
+      objectList: _PigeonFfiCodec.readValue(value: objectList as NSObject?) as? [Any?],
+      listList: _PigeonFfiCodec.readValue(value: listList as NSObject?) as? [[Any?]?],
+      mapList: _PigeonFfiCodec.readValue(value: mapList as NSObject?) as? [[AnyHashable?: Any?]?],
+      recursiveClassList: _PigeonFfiCodec.readValue(value: recursiveClassList as NSObject?)
+        as? [NIAllNullableTypes?],
+      map: _PigeonFfiCodec.readValue(value: map as NSObject?) as? [AnyHashable?: Any?],
+      stringMap: _PigeonFfiCodec.readValue(value: stringMap as NSObject?) as? [String?: String?],
+      intMap: _PigeonFfiCodec.readValue(value: intMap as NSObject?) as? [Int64?: Int64?],
+      enumMap: _PigeonFfiCodec.readValue(value: enumMap as NSObject?) as? [NIAnEnum?: NIAnEnum?],
+      objectMap: _PigeonFfiCodec.readValue(value: objectMap as NSObject?) as? [AnyHashable?: Any?],
+      listMap: _PigeonFfiCodec.readValue(value: listMap as NSObject?) as? [Int64?: [Any?]?],
+      mapMap: _PigeonFfiCodec.readValue(value: mapMap as NSObject?)
+        as? [Int64?: [AnyHashable?: Any?]?],
+      recursiveClassMap: _PigeonFfiCodec.readValue(value: recursiveClassMap as NSObject?)
+        as? [Int64?: NIAllNullableTypes?],
+    )
+  }
+}
+
 /// The primary purpose for this class is to ensure coverage of Swift structs
 /// with nullable items, as the primary [NIAllNullableTypes] class is being used to
 /// test Swift classes.
@@ -766,7 +1227,6 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
   }
 }
 
-/// A class containing all supported nullable types.
 /// The primary purpose for this class is to ensure coverage of Swift structs
 /// with nullable items, as the primary [NIAllNullableTypes] class is being used to
 /// test Swift classes.
@@ -959,6 +1419,7 @@ struct NIAllNullableTypesWithoutRecursion: Hashable {
 ///
 /// Generated class from Pigeon that represents data sent in messages.
 struct NIAllClassesWrapper: Hashable {
+  var allNullableTypes: NIAllNullableTypes
   var allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = nil
   var allTypes: NIAllTypes? = nil
   var classList: [NIAllTypes?]
@@ -967,16 +1428,18 @@ struct NIAllClassesWrapper: Hashable {
   var nullableClassMap: [Int64?: NIAllNullableTypesWithoutRecursion?]? = nil
 
   static func fromList(_ pigeonVar_list: [Any?]) -> NIAllClassesWrapper? {
+    let allNullableTypes = pigeonVar_list[0] as! NIAllNullableTypes
     let allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = nilOrValue(
-      pigeonVar_list[0])
-    let allTypes: NIAllTypes? = nilOrValue(pigeonVar_list[1])
-    let classList = pigeonVar_list[2] as! [NIAllTypes?]
-    let nullableClassList: [NIAllNullableTypesWithoutRecursion?]? = nilOrValue(pigeonVar_list[3])
-    let classMap = pigeonVar_list[4] as! [Int64?: NIAllTypes?]
+      pigeonVar_list[1])
+    let allTypes: NIAllTypes? = nilOrValue(pigeonVar_list[2])
+    let classList = pigeonVar_list[3] as! [NIAllTypes?]
+    let nullableClassList: [NIAllNullableTypesWithoutRecursion?]? = nilOrValue(pigeonVar_list[4])
+    let classMap = pigeonVar_list[5] as! [Int64?: NIAllTypes?]
     let nullableClassMap: [Int64?: NIAllNullableTypesWithoutRecursion?]? = nilOrValue(
-      pigeonVar_list[5])
+      pigeonVar_list[6])
 
     return NIAllClassesWrapper(
+      allNullableTypes: allNullableTypes,
       allNullableTypesWithoutRecursion: allNullableTypesWithoutRecursion,
       allTypes: allTypes,
       classList: classList,
@@ -987,6 +1450,7 @@ struct NIAllClassesWrapper: Hashable {
   }
   func toList() -> [Any?] {
     return [
+      allNullableTypes,
       allNullableTypesWithoutRecursion,
       allTypes,
       classList,
@@ -1013,6 +1477,7 @@ struct NIAllClassesWrapper: Hashable {
 @available(iOS 13, macOS 16.0.0, *)
 @objc class NIAllClassesWrapperBridge: NSObject {
   @objc init(
+    allNullableTypes: NIAllNullableTypesBridge,
     allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursionBridge? = nil,
     allTypes: NIAllTypesBridge? = nil,
     classList: [NSObject],
@@ -1020,6 +1485,7 @@ struct NIAllClassesWrapper: Hashable {
     classMap: [NSObject: NSObject],
     nullableClassMap: [NSObject: NSObject]? = nil
   ) {
+    self.allNullableTypes = allNullableTypes
     self.allNullableTypesWithoutRecursion = allNullableTypesWithoutRecursion
     self.allTypes = allTypes
     self.classList = classList
@@ -1027,6 +1493,7 @@ struct NIAllClassesWrapper: Hashable {
     self.classMap = classMap
     self.nullableClassMap = nullableClassMap
   }
+  @objc var allNullableTypes: NIAllNullableTypesBridge
   @objc var allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursionBridge? = nil
   @objc var allTypes: NIAllTypesBridge? = nil
   @objc var classList: [NSObject]
@@ -1039,6 +1506,7 @@ struct NIAllClassesWrapper: Hashable {
       return nil
     }
     return NIAllClassesWrapperBridge(
+      allNullableTypes: NIAllNullableTypesBridge.fromSwift(pigeonVar_Class!.allNullableTypes)!,
       allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursionBridge.fromSwift(
         pigeonVar_Class!.allNullableTypesWithoutRecursion),
       allTypes: NIAllTypesBridge.fromSwift(pigeonVar_Class!.allTypes),
@@ -1053,6 +1521,7 @@ struct NIAllClassesWrapper: Hashable {
   }
   func toSwift() -> NIAllClassesWrapper {
     return NIAllClassesWrapper(
+      allNullableTypes: allNullableTypes.toSwift(),
       allNullableTypesWithoutRecursion: isNullish(allNullableTypesWithoutRecursion)
         ? nil : allNullableTypesWithoutRecursion!.toSwift(),
       allTypes: isNullish(allTypes) ? nil : allTypes!.toSwift(),
@@ -1131,8 +1600,12 @@ class _PigeonFfiCodec {
     }
     if value is NSString {
       return value as! NSString
+    } else if value is NIUnusedClassBridge {
+      return (value! as! NIUnusedClassBridge).toSwift()
     } else if value is NIAllTypesBridge {
       return (value! as! NIAllTypesBridge).toSwift()
+    } else if value is NIAllNullableTypesBridge {
+      return (value! as! NIAllNullableTypesBridge).toSwift()
     } else if value is NIAllNullableTypesWithoutRecursionBridge {
       return (value! as! NIAllNullableTypesWithoutRecursionBridge).toSwift()
     } else if value is NIAllClassesWrapperBridge {
@@ -1213,8 +1686,12 @@ class _PigeonFfiCodec {
     }
     if value is String {
       return value as! NSString
+    } else if value is NIUnusedClass {
+      return NIUnusedClassBridge.fromSwift(value as? NIUnusedClass)
     } else if value is NIAllTypes {
       return NIAllTypesBridge.fromSwift(value as? NIAllTypes)
+    } else if value is NIAllNullableTypes {
+      return NIAllNullableTypesBridge.fromSwift(value as? NIAllNullableTypes)
     } else if value is NIAllNullableTypesWithoutRecursion {
       return NIAllNullableTypesWithoutRecursionBridge.fromSwift(
         value as? NIAllNullableTypesWithoutRecursion)
@@ -1309,6 +1786,7 @@ protocol NIHostIntegrationCoreApi {
   /// Returns the passed enum to test serialization and deserialization.
   func echoAnotherEnum(anotherEnum: NIAnotherEnum) throws -> NIAnotherEnum
   /// Returns the passed object, to test serialization and deserialization.
+  func echoAllNullableTypes(everything: NIAllNullableTypes?) throws -> NIAllNullableTypes?
   /// Returns the passed object, to test serialization and deserialization.
   func echoAllNullableTypesWithoutRecursion(everything: NIAllNullableTypesWithoutRecursion?) throws
     -> NIAllNullableTypesWithoutRecursion?
@@ -2043,6 +2521,24 @@ protocol NIHostIntegrationCoreApi {
     return nil
   }
   /// Returns the passed object, to test serialization and deserialization.
+  @available(iOS 13, macOS 16.0.0, *)
+  @objc func echoAllNullableTypes(everything: NIAllNullableTypesBridge?, wrappedError: NiTestsError)
+    -> NIAllNullableTypesBridge?
+  {
+    do {
+      return try NIAllNullableTypesBridge.fromSwift(
+        api!.echoAllNullableTypes(everything: isNullish(everything) ? nil : everything!.toSwift()))
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns the passed object, to test serialization and deserialization.
   @available(iOS 13, macOS 16.0.0, *)
   @objc func echoAllNullableTypesWithoutRecursion(

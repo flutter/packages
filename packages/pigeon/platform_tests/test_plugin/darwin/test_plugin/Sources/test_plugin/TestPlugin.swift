@@ -1216,7 +1216,10 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
-
+    func echoAllNullableTypes(everything: NIAllNullableTypes?) throws -> NIAllNullableTypes? {
+        return everything
+    }
+    
   func throwError() throws -> Any? {
     throw NiTestsError(code: "code", message: "message", details: "details")
   }
@@ -1402,6 +1405,7 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
 
   func createNestedNullableString(nullableString: String?) throws -> NIAllClassesWrapper {
     return NIAllClassesWrapper(
+      allNullableTypes: NIAllNullableTypes(),
       allNullableTypesWithoutRecursion: .init(aNullableString: nullableString), classList: [],
       classMap: [:])
   }

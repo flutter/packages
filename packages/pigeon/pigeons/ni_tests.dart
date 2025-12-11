@@ -19,12 +19,12 @@ enum NIAnEnum { one, two, three, fortyTwo, fourHundredTwentyTwo }
 // replicated without collision.
 enum NIAnotherEnum { justInCase }
 
-// // This exists to show that unused data classes still generate.
-// class NIUnusedClass {
-//   NIUnusedClass({this.aField});
+// This exists to show that unused data classes still generate.
+class NIUnusedClass {
+  NIUnusedClass({this.aField});
 
-//   Object? aField;
-// }
+  Object? aField;
+}
 
 /// A class containing all supported types.
 class NIAllTypes {
@@ -100,84 +100,84 @@ class NIAllTypes {
 }
 
 /// A class containing all supported nullable types.
-// @SwiftClass()
-// class NIAllNullableTypes {
-//   NIAllNullableTypes(
-//     this.aNullableBool,
-//     this.aNullableInt,
-//     this.aNullableInt64,
-//     this.aNullableDouble,
-//     this.aNullableByteArray,
-//     this.aNullable4ByteArray,
-//     this.aNullable8ByteArray,
-//     this.aNullableFloatArray,
-//     this.aNullableEnum,
-//     this.anotherNullableEnum,
-//     this.aNullableString,
-//     this.aNullableObject,
-//     this.allNullableTypes,
+@SwiftClass()
+class NIAllNullableTypes {
+  NIAllNullableTypes(
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableEnum,
+    this.anotherNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
+    this.allNullableTypes,
 
-//     // Lists
-//     // This name is in a different format than the others to ensure that name
-//     // collision with the word 'list' doesn't occur in the generated files.
-//     this.list,
-//     this.stringList,
-//     this.intList,
-//     this.doubleList,
-//     this.boolList,
-//     this.enumList,
-//     this.objectList,
-//     this.listList,
-//     this.mapList,
-//     this.recursiveClassList,
+    // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the word 'list' doesn't occur in the generated files.
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.enumList,
+    this.objectList,
+    this.listList,
+    this.mapList,
+    this.recursiveClassList,
 
-//     // Maps
-//     this.map,
-//     this.stringMap,
-//     this.intMap,
-//     this.enumMap,
-//     this.objectMap,
-//     this.listMap,
-//     this.mapMap,
-//     this.recursiveClassMap,
-// );
+    // Maps
+    this.map,
+    this.stringMap,
+    this.intMap,
+    this.enumMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
+    this.recursiveClassMap,
+  );
 
-// bool? aNullableBool;
-// int? aNullableInt;
-// int? aNullableInt64;
-// double? aNullableDouble;
-//   Uint8List? aNullableByteArray;
-//   Int32List? aNullable4ByteArray;
-//   Int64List? aNullable8ByteArray;
-//   Float64List? aNullableFloatArray;
-//   NIAnEnum? aNullableEnum;
-//   NIAnotherEnum? anotherNullableEnum;
-//   String? aNullableString;
-//   Object? aNullableObject;
-//   NIAllNullableTypes? allNullableTypes;
+  bool? aNullableBool;
+  int? aNullableInt;
+  int? aNullableInt64;
+  double? aNullableDouble;
+  Uint8List? aNullableByteArray;
+  Int32List? aNullable4ByteArray;
+  Int64List? aNullable8ByteArray;
+  Float64List? aNullableFloatArray;
+  NIAnEnum? aNullableEnum;
+  NIAnotherEnum? anotherNullableEnum;
+  String? aNullableString;
+  Object? aNullableObject;
+  NIAllNullableTypes? allNullableTypes;
 
-//   // Lists
-//   List? list;
-//   List<String?>? stringList;
-//   List<int?>? intList;
-//   List<double?>? doubleList;
-//   List<bool?>? boolList;
-//   List<NIAnEnum?>? enumList;
-//   List<Object?>? objectList;
-//   List<List<Object?>?>? listList;
-//   List<Map<Object?, Object?>?>? mapList;
-//   List<NIAllNullableTypes?>? recursiveClassList;
+  // Lists
+  List? list;
+  List<String?>? stringList;
+  List<int?>? intList;
+  List<double?>? doubleList;
+  List<bool?>? boolList;
+  List<NIAnEnum?>? enumList;
+  List<Object?>? objectList;
+  List<List<Object?>?>? listList;
+  List<Map<Object?, Object?>?>? mapList;
+  List<NIAllNullableTypes?>? recursiveClassList;
 
-//   // Maps
-//   Map? map;
-//   Map<String?, String?>? stringMap;
-//   Map<int?, int?>? intMap;
-//   Map<NIAnEnum?, NIAnEnum?>? enumMap;
-//   Map<Object?, Object?>? objectMap;
-//   Map<int?, List<Object?>?>? listMap;
-//   Map<int?, Map<Object?, Object?>?>? mapMap;
-//   Map<int?, NIAllNullableTypes?>? recursiveClassMap;
-// }
+  // Maps
+  Map? map;
+  Map<String?, String?>? stringMap;
+  Map<int?, int?>? intMap;
+  Map<NIAnEnum?, NIAnEnum?>? enumMap;
+  Map<Object?, Object?>? objectMap;
+  Map<int?, List<Object?>?>? listMap;
+  Map<int?, Map<Object?, Object?>?>? mapMap;
+  Map<int?, NIAllNullableTypes?>? recursiveClassMap;
+}
 
 /// The primary purpose for this class is to ensure coverage of Swift structs
 /// with nullable items, as the primary [NIAllNullableTypes] class is being used to
@@ -197,9 +197,9 @@ class NIAllNullableTypesWithoutRecursion {
     this.aNullableString,
     this.aNullableObject,
 
-    //     // Lists
-    //     // This name is in a different format than the others to ensure that name
-    //     // collision with the word 'list' doesn't occur in the generated files.
+    // Lists
+    // This name is in a different format than the others to ensure that name
+    // collision with the word 'list' doesn't occur in the generated files.
     this.list,
     this.stringList,
     this.intList,
@@ -233,7 +233,7 @@ class NIAllNullableTypesWithoutRecursion {
   String? aNullableString;
   Object? aNullableObject;
 
-  //   // Lists
+  // Lists
   List? list;
   List<String?>? stringList;
   List<int?>? intList;
@@ -244,7 +244,7 @@ class NIAllNullableTypesWithoutRecursion {
   List<List<Object?>?>? listList;
   List<Map<Object?, Object?>?>? mapList;
 
-  //   // Maps
+  // Maps
   Map? map;
   Map<String?, String?>? stringMap;
   Map<int?, int?>? intMap;
@@ -261,7 +261,7 @@ class NIAllNullableTypesWithoutRecursion {
 /// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
 class NIAllClassesWrapper {
   NIAllClassesWrapper(
-    // this.allNullableTypes,
+    this.allNullableTypes,
     this.allNullableTypesWithoutRecursion,
     this.allTypes,
     this.classList,
@@ -269,7 +269,7 @@ class NIAllClassesWrapper {
     this.classMap,
     this.nullableClassMap,
   );
-  // NIAllNullableTypes allNullableTypes;
+  NIAllNullableTypes allNullableTypes;
   NIAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
   NIAllTypes? allTypes;
   List<NIAllTypes?> classList;
@@ -478,9 +478,9 @@ abstract class NIHostIntegrationCoreApi {
   // // ========== Synchronous nullable method tests ==========
 
   /// Returns the passed object, to test serialization and deserialization.
-  // @ObjCSelector('echoAllNullableTypes:')
+  @ObjCSelector('echoAllNullableTypes:')
   // @SwiftFunction('echo(_:)')
-  // NIAllNullableTypes? echoAllNullableTypes(NIAllNullableTypes? everything);
+  NIAllNullableTypes? echoAllNullableTypes(NIAllNullableTypes? everything);
 
   /// Returns the passed object, to test serialization and deserialization.
   @ObjCSelector('echoAllNullableTypesWithoutRecursion:')

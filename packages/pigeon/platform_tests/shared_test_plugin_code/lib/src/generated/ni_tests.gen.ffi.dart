@@ -48,8 +48,8 @@ final _objc_msgSend_19nvye5 = objc.msgSendPointer
     >();
 typedef instancetype = ffi.Pointer<objc.ObjCObject>;
 typedef Dartinstancetype = objc.ObjCObjectBase;
-late final _class_NIAllNullableTypesWithoutRecursionBridge = objc.getClass(
-  "test_plugin.NIAllNullableTypesWithoutRecursionBridge",
+late final _class_NIAllNullableTypesBridge = objc.getClass(
+  "test_plugin.NIAllNullableTypesBridge",
 );
 late final _class_PigeonTypedData = objc.getClass(
   "test_plugin.PigeonTypedData",
@@ -485,16 +485,19 @@ extension PigeonTypedData$Methods on PigeonTypedData {
   }
 }
 
-late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_ =
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_allNullableTypes_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_recursiveClassList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_recursiveClassMap_ =
     objc.registerName(
-      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:",
+      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:allNullableTypes:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:recursiveClassList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:recursiveClassMap:",
     );
-final _objc_msgSend_1hm1urt = objc.msgSendPointer
+final _objc_msgSend_etw0ff = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
@@ -530,6 +533,9 @@ final _objc_msgSend_1hm1urt = objc.msgSendPointer
       ffi.Pointer<objc.ObjCObject> Function(
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
@@ -611,6 +617,10 @@ late final _sel_aNullableString = objc.registerName("aNullableString");
 late final _sel_setANullableString_ = objc.registerName("setANullableString:");
 late final _sel_aNullableObject = objc.registerName("aNullableObject");
 late final _sel_setANullableObject_ = objc.registerName("setANullableObject:");
+late final _sel_allNullableTypes = objc.registerName("allNullableTypes");
+late final _sel_setAllNullableTypes_ = objc.registerName(
+  "setAllNullableTypes:",
+);
 late final _sel_list = objc.registerName("list");
 late final _sel_setList_ = objc.registerName("setList:");
 late final _sel_stringList = objc.registerName("stringList");
@@ -629,6 +639,10 @@ late final _sel_listList = objc.registerName("listList");
 late final _sel_setListList_ = objc.registerName("setListList:");
 late final _sel_mapList = objc.registerName("mapList");
 late final _sel_setMapList_ = objc.registerName("setMapList:");
+late final _sel_recursiveClassList = objc.registerName("recursiveClassList");
+late final _sel_setRecursiveClassList_ = objc.registerName(
+  "setRecursiveClassList:",
+);
 late final _sel_map = objc.registerName("map");
 late final _sel_setMap_ = objc.registerName("setMap:");
 late final _sel_stringMap = objc.registerName("stringMap");
@@ -643,8 +657,1230 @@ late final _sel_listMap = objc.registerName("listMap");
 late final _sel_setListMap_ = objc.registerName("setListMap:");
 late final _sel_mapMap = objc.registerName("mapMap");
 late final _sel_setMapMap_ = objc.registerName("setMapMap:");
+late final _sel_recursiveClassMap = objc.registerName("recursiveClassMap");
+late final _sel_setRecursiveClassMap_ = objc.registerName(
+  "setRecursiveClassMap:",
+);
 
 /// A class containing all supported nullable types.
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+///
+/// iOS: introduced 13.0.0
+/// macOS: introduced 16.0.0
+class NIAllNullableTypesBridge extends objc.NSObject {
+  NIAllNullableTypesBridge._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+  }
+
+  /// Constructs a [NIAllNullableTypesBridge] that points to the same underlying object as [other].
+  NIAllNullableTypesBridge.castFrom(objc.ObjCObjectBase other)
+    : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [NIAllNullableTypesBridge] that wraps the given raw object pointer.
+  NIAllNullableTypesBridge.castFromPointer(
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [NIAllNullableTypesBridge].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NIAllNullableTypesBridge,
+    );
+  }
+
+  /// new
+  static NIAllNullableTypesBridge new$() {
+    final _ret = _objc_msgSend_151sglz(
+      _class_NIAllNullableTypesBridge,
+      _sel_new,
+    );
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// allocWithZone:
+  static NIAllNullableTypesBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+      _class_NIAllNullableTypesBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// alloc
+  static NIAllNullableTypesBridge alloc() {
+    final _ret = _objc_msgSend_151sglz(
+      _class_NIAllNullableTypesBridge,
+      _sel_alloc,
+    );
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Returns a new instance of NIAllNullableTypesBridge constructed with the default `new` method.
+  factory NIAllNullableTypesBridge() => new$();
+}
+
+extension NIAllNullableTypesBridge$Methods on NIAllNullableTypesBridge {
+  /// initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:allNullableTypes:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:recursiveClassList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:recursiveClassMap:
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllNullableTypesBridge initWithANullableBool(
+    objc.NSNumber? aNullableBool, {
+    objc.NSNumber? aNullableInt,
+    objc.NSNumber? aNullableInt64,
+    objc.NSNumber? aNullableDouble,
+    PigeonTypedData? aNullableByteArray,
+    PigeonTypedData? aNullable4ByteArray,
+    PigeonTypedData? aNullable8ByteArray,
+    PigeonTypedData? aNullableFloatArray,
+    objc.NSNumber? aNullableEnum,
+    objc.NSNumber? anotherNullableEnum,
+    objc.NSString? aNullableString,
+    objc.NSObject? aNullableObject,
+    NIAllNullableTypesBridge? allNullableTypes,
+    objc.NSArray? list,
+    objc.NSArray? stringList,
+    objc.NSArray? intList,
+    objc.NSArray? doubleList,
+    objc.NSArray? boolList,
+    objc.NSArray? enumList,
+    objc.NSArray? objectList,
+    objc.NSArray? listList,
+    objc.NSArray? mapList,
+    objc.NSArray? recursiveClassList,
+    objc.NSDictionary? map,
+    objc.NSDictionary? stringMap,
+    objc.NSDictionary? intMap,
+    objc.NSDictionary? enumMap,
+    objc.NSDictionary? objectMap,
+    objc.NSDictionary? listMap,
+    objc.NSDictionary? mapMap,
+    objc.NSDictionary? recursiveClassMap,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:allNullableTypes:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:recursiveClassList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:recursiveClassMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_etw0ff(
+      this.ref.retainAndReturnPointer(),
+      _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_allNullableTypes_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_recursiveClassList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_recursiveClassMap_,
+      aNullableBool?.ref.pointer ?? ffi.nullptr,
+      aNullableInt?.ref.pointer ?? ffi.nullptr,
+      aNullableInt64?.ref.pointer ?? ffi.nullptr,
+      aNullableDouble?.ref.pointer ?? ffi.nullptr,
+      aNullableByteArray?.ref.pointer ?? ffi.nullptr,
+      aNullable4ByteArray?.ref.pointer ?? ffi.nullptr,
+      aNullable8ByteArray?.ref.pointer ?? ffi.nullptr,
+      aNullableFloatArray?.ref.pointer ?? ffi.nullptr,
+      aNullableEnum?.ref.pointer ?? ffi.nullptr,
+      anotherNullableEnum?.ref.pointer ?? ffi.nullptr,
+      aNullableString?.ref.pointer ?? ffi.nullptr,
+      aNullableObject?.ref.pointer ?? ffi.nullptr,
+      allNullableTypes?.ref.pointer ?? ffi.nullptr,
+      list?.ref.pointer ?? ffi.nullptr,
+      stringList?.ref.pointer ?? ffi.nullptr,
+      intList?.ref.pointer ?? ffi.nullptr,
+      doubleList?.ref.pointer ?? ffi.nullptr,
+      boolList?.ref.pointer ?? ffi.nullptr,
+      enumList?.ref.pointer ?? ffi.nullptr,
+      objectList?.ref.pointer ?? ffi.nullptr,
+      listList?.ref.pointer ?? ffi.nullptr,
+      mapList?.ref.pointer ?? ffi.nullptr,
+      recursiveClassList?.ref.pointer ?? ffi.nullptr,
+      map?.ref.pointer ?? ffi.nullptr,
+      stringMap?.ref.pointer ?? ffi.nullptr,
+      intMap?.ref.pointer ?? ffi.nullptr,
+      enumMap?.ref.pointer ?? ffi.nullptr,
+      objectMap?.ref.pointer ?? ffi.nullptr,
+      listMap?.ref.pointer ?? ffi.nullptr,
+      mapMap?.ref.pointer ?? ffi.nullptr,
+      recursiveClassMap?.ref.pointer ?? ffi.nullptr,
+    );
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? get aNullableBool {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableBool',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableBool);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableBool(objc.NSNumber? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableBool:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableBool_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? get aNullableInt {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableInt',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableInt);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableInt(objc.NSNumber? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableInt:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableInt_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? get aNullableInt64 {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableInt64',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableInt64);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableInt64(objc.NSNumber? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableInt64:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableInt64_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? get aNullableDouble {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableDouble',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableDouble);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableDouble(objc.NSNumber? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableDouble:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableDouble_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  PigeonTypedData? get aNullableByteArray {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableByteArray',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_aNullableByteArray,
+    );
+    return _ret.address == 0
+        ? null
+        : PigeonTypedData.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableByteArray(PigeonTypedData? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableByteArray:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableByteArray_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  PigeonTypedData? get aNullable4ByteArray {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullable4ByteArray',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_aNullable4ByteArray,
+    );
+    return _ret.address == 0
+        ? null
+        : PigeonTypedData.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullable4ByteArray(PigeonTypedData? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullable4ByteArray:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullable4ByteArray_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  PigeonTypedData? get aNullable8ByteArray {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullable8ByteArray',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_aNullable8ByteArray,
+    );
+    return _ret.address == 0
+        ? null
+        : PigeonTypedData.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullable8ByteArray(PigeonTypedData? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullable8ByteArray:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullable8ByteArray_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  PigeonTypedData? get aNullableFloatArray {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableFloatArray',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_aNullableFloatArray,
+    );
+    return _ret.address == 0
+        ? null
+        : PigeonTypedData.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableFloatArray(PigeonTypedData? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableFloatArray:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableFloatArray_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? get aNullableEnum {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableEnum',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableEnum);
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableEnum(objc.NSNumber? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableEnum:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableEnum_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSNumber? get anotherNullableEnum {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.anotherNullableEnum',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_anotherNullableEnum,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSNumber.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set anotherNullableEnum(objc.NSNumber? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setAnotherNullableEnum:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setAnotherNullableEnum_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSString? get aNullableString {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableString',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableString);
+    return _ret.address == 0
+        ? null
+        : objc.NSString.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableString(objc.NSString? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableString:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableString_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSObject? get aNullableObject {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.aNullableObject',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aNullableObject);
+    return _ret.address == 0
+        ? null
+        : objc.NSObject.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aNullableObject(objc.NSObject? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setANullableObject:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setANullableObject_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllNullableTypesBridge? get allNullableTypes {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.allNullableTypes',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_allNullableTypes);
+    return _ret.address == 0
+        ? null
+        : NIAllNullableTypesBridge.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set allNullableTypes(NIAllNullableTypesBridge? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setAllNullableTypes:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setAllNullableTypes_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get list {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.list',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_list);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set list(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get stringList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.stringList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_stringList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set stringList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setStringList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setStringList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get intList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.intList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_intList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set intList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setIntList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setIntList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get doubleList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.doubleList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_doubleList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set doubleList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setDoubleList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setDoubleList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get boolList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.boolList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_boolList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set boolList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setBoolList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setBoolList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get enumList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.enumList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_enumList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set enumList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setEnumList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setEnumList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get objectList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.objectList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_objectList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set objectList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setObjectList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setObjectList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get listList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.listList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_listList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set listList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setListList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setListList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get mapList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.mapList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_mapList);
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set mapList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setMapList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setMapList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSArray? get recursiveClassList {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.recursiveClassList',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_recursiveClassList,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSArray.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set recursiveClassList(objc.NSArray? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setRecursiveClassList:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setRecursiveClassList_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get map {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.map',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_map);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set map(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get stringMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.stringMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_stringMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set stringMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setStringMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setStringMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get intMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.intMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_intMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set intMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setIntMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setIntMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get enumMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.enumMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_enumMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set enumMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setEnumMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setEnumMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get objectMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.objectMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_objectMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set objectMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setObjectMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setObjectMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get listMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.listMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_listMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set listMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setListMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setListMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get mapMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.mapMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_mapMap);
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set mapMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setMapMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setMapMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSDictionary? get recursiveClassMap {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.recursiveClassMap',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.pointer,
+      _sel_recursiveClassMap,
+    );
+    return _ret.address == 0
+        ? null
+        : objc.NSDictionary.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set recursiveClassMap(objc.NSDictionary? value) {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.setRecursiveClassMap:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setRecursiveClassMap_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// init
+  NIAllNullableTypesBridge init() {
+    objc.checkOsVersionInternal(
+      'NIAllNullableTypesBridge.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// self
+  NIAllNullableTypesBridge self() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
+  }
+
+  /// retain
+  NIAllNullableTypesBridge retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
+  }
+
+  /// autorelease
+  NIAllNullableTypesBridge autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
+  }
+}
+
+late final _class_NIAllNullableTypesWithoutRecursionBridge = objc.getClass(
+  "test_plugin.NIAllNullableTypesWithoutRecursionBridge",
+);
+late final _sel_initWithANullableBool_aNullableInt_aNullableInt64_aNullableDouble_aNullableByteArray_aNullable4ByteArray_aNullable8ByteArray_aNullableFloatArray_aNullableEnum_anotherNullableEnum_aNullableString_aNullableObject_list_stringList_intList_doubleList_boolList_enumList_objectList_listList_mapList_map_stringMap_intMap_enumMap_objectMap_listMap_mapMap_ =
+    objc.registerName(
+      "initWithANullableBool:aNullableInt:aNullableInt64:aNullableDouble:aNullableByteArray:aNullable4ByteArray:aNullable8ByteArray:aNullableFloatArray:aNullableEnum:anotherNullableEnum:aNullableString:aNullableObject:list:stringList:intList:doubleList:boolList:enumList:objectList:listList:mapList:map:stringMap:intMap:enumMap:objectMap:listMap:mapMap:",
+    );
+final _objc_msgSend_1hm1urt = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Pointer<objc.ObjCObject> Function(
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+          ffi.Pointer<objc.ObjCObject>,
+        )
+      >
+    >()
+    .asFunction<
+      ffi.Pointer<objc.ObjCObject> Function(
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+        ffi.Pointer<objc.ObjCObject>,
+      )
+    >();
+
 /// The primary purpose for this class is to ensure coverage of Swift structs
 /// with nullable items, as the primary [NIAllNullableTypes] class is being used to
 /// test Swift classes.
@@ -2855,16 +4091,17 @@ extension NIAllTypesBridge$Methods on NIAllTypesBridge {
   }
 }
 
-late final _sel_initWithAllNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_ =
+late final _sel_initWithAllNullableTypes_allNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_ =
     objc.registerName(
-      "initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:",
+      "initWithAllNullableTypes:allNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:",
     );
-final _objc_msgSend_x153qd = objc.msgSendPointer
+final _objc_msgSend_1387m63 = objc.msgSendPointer
     .cast<
       ffi.NativeFunction<
         ffi.Pointer<objc.ObjCObject> Function(
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
           ffi.Pointer<objc.ObjCObject>,
@@ -2878,6 +4115,7 @@ final _objc_msgSend_x153qd = objc.msgSendPointer
       ffi.Pointer<objc.ObjCObject> Function(
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
         ffi.Pointer<objc.ObjCObject>,
@@ -2995,13 +4233,13 @@ class NIAllClassesWrapperBridge extends objc.NSObject {
 }
 
 extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
-  /// initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:
+  /// initWithAllNullableTypes:allNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:
   ///
   /// iOS: introduced 13.0.0
   /// macOS: introduced 16.0.0
-  NIAllClassesWrapperBridge initWithAllNullableTypesWithoutRecursion(
-    NIAllNullableTypesWithoutRecursionBridge?
-    allNullableTypesWithoutRecursion, {
+  NIAllClassesWrapperBridge initWithAllNullableTypes(
+    NIAllNullableTypesBridge allNullableTypes, {
+    NIAllNullableTypesWithoutRecursionBridge? allNullableTypesWithoutRecursion,
     NIAllTypesBridge? allTypes,
     required objc.NSArray classList,
     objc.NSArray? nullableClassList,
@@ -3009,13 +4247,14 @@ extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
     objc.NSDictionary? nullableClassMap,
   }) {
     objc.checkOsVersionInternal(
-      'NIAllClassesWrapperBridge.initWithAllNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:',
+      'NIAllClassesWrapperBridge.initWithAllNullableTypes:allNullableTypesWithoutRecursion:allTypes:classList:nullableClassList:classMap:nullableClassMap:',
       iOS: (false, (13, 0, 0)),
       macOS: (false, (16, 0, 0)),
     );
-    final _ret = _objc_msgSend_x153qd(
+    final _ret = _objc_msgSend_1387m63(
       this.ref.retainAndReturnPointer(),
-      _sel_initWithAllNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_,
+      _sel_initWithAllNullableTypes_allNullableTypesWithoutRecursion_allTypes_classList_nullableClassList_classMap_nullableClassMap_,
+      allNullableTypes.ref.pointer,
       allNullableTypesWithoutRecursion?.ref.pointer ?? ffi.nullptr,
       allTypes?.ref.pointer ?? ffi.nullptr,
       classList.ref.pointer,
@@ -3027,6 +4266,37 @@ extension NIAllClassesWrapperBridge$Methods on NIAllClassesWrapperBridge {
       _ret,
       retain: false,
       release: true,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllNullableTypesBridge get allNullableTypes {
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.allNullableTypes',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_allNullableTypes);
+    return NIAllNullableTypesBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set allNullableTypes(NIAllNullableTypesBridge value) {
+    objc.checkOsVersionInternal(
+      'NIAllClassesWrapperBridge.setAllNullableTypes:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setAllNullableTypes_,
+      value.ref.pointer,
     );
   }
 
@@ -3685,6 +4955,8 @@ final _objc_msgSend_ladeuy = objc.msgSendPointer
         ffi.Pointer<objc.ObjCObject>,
       )
     >();
+late final _sel_echoAllNullableTypesWithEverything_wrappedError_ = objc
+    .registerName("echoAllNullableTypesWithEverything:wrappedError:");
 late final _sel_echoAllNullableTypesWithoutRecursionWithEverything_wrappedError_ =
     objc.registerName(
       "echoAllNullableTypesWithoutRecursionWithEverything:wrappedError:",
@@ -4718,6 +5990,33 @@ extension NIHostIntegrationCoreApiSetup$Methods
   }
 
   /// Returns the passed object, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIAllNullableTypesBridge? echoAllNullableTypesWithEverything(
+    NIAllNullableTypesBridge? everything, {
+    required NiTestsError wrappedError,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAllNullableTypesWithEverything:wrappedError:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_15qeuct(
+      this.ref.pointer,
+      _sel_echoAllNullableTypesWithEverything_wrappedError_,
+      everything?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+    );
+    return _ret.address == 0
+        ? null
+        : NIAllNullableTypesBridge.castFromPointer(
+            _ret,
+            retain: true,
+            release: true,
+          );
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
@@ -5491,6 +6790,189 @@ extension NIHostIntegrationCoreApiSetup$Methods
   NIHostIntegrationCoreApiSetup autorelease() {
     final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
     return NIHostIntegrationCoreApiSetup.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
+  }
+}
+
+late final _class_NIUnusedClassBridge = objc.getClass(
+  "test_plugin.NIUnusedClassBridge",
+);
+late final _sel_initWithAField_ = objc.registerName("initWithAField:");
+late final _sel_aField = objc.registerName("aField");
+late final _sel_setAField_ = objc.registerName("setAField:");
+
+/// Generated bridge class from Pigeon that moves data from Swift to Objective-C.
+///
+/// iOS: introduced 13.0.0
+/// macOS: introduced 16.0.0
+class NIUnusedClassBridge extends objc.NSObject {
+  NIUnusedClassBridge._(
+    ffi.Pointer<objc.ObjCObject> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) : super.castFromPointer(pointer, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NIUnusedClassBridge',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+  }
+
+  /// Constructs a [NIUnusedClassBridge] that points to the same underlying object as [other].
+  NIUnusedClassBridge.castFrom(objc.ObjCObjectBase other)
+    : this._(other.ref.pointer, retain: true, release: true);
+
+  /// Constructs a [NIUnusedClassBridge] that wraps the given raw object pointer.
+  NIUnusedClassBridge.castFromPointer(
+    ffi.Pointer<objc.ObjCObject> other, {
+    bool retain = false,
+    bool release = false,
+  }) : this._(other, retain: retain, release: release);
+
+  /// Returns whether [obj] is an instance of [NIUnusedClassBridge].
+  static bool isInstance(objc.ObjCObjectBase obj) {
+    return _objc_msgSend_19nvye5(
+      obj.ref.pointer,
+      _sel_isKindOfClass_,
+      _class_NIUnusedClassBridge,
+    );
+  }
+
+  /// new
+  static NIUnusedClassBridge new$() {
+    final _ret = _objc_msgSend_151sglz(_class_NIUnusedClassBridge, _sel_new);
+    return NIUnusedClassBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// allocWithZone:
+  static NIUnusedClassBridge allocWithZone(ffi.Pointer<objc.NSZone> zone) {
+    final _ret = _objc_msgSend_1cwp428(
+      _class_NIUnusedClassBridge,
+      _sel_allocWithZone_,
+      zone,
+    );
+    return NIUnusedClassBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// alloc
+  static NIUnusedClassBridge alloc() {
+    final _ret = _objc_msgSend_151sglz(_class_NIUnusedClassBridge, _sel_alloc);
+    return NIUnusedClassBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Returns a new instance of NIUnusedClassBridge constructed with the default `new` method.
+  factory NIUnusedClassBridge() => new$();
+}
+
+extension NIUnusedClassBridge$Methods on NIUnusedClassBridge {
+  /// initWithAField:
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  NIUnusedClassBridge initWithAField(objc.NSObject? aField) {
+    objc.checkOsVersionInternal(
+      'NIUnusedClassBridge.initWithAField:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_1sotr3r(
+      this.ref.retainAndReturnPointer(),
+      _sel_initWithAField_,
+      aField?.ref.pointer ?? ffi.nullptr,
+    );
+    return NIUnusedClassBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  objc.NSObject? get aField {
+    objc.checkOsVersionInternal(
+      'NIUnusedClassBridge.aField',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_aField);
+    return _ret.address == 0
+        ? null
+        : objc.NSObject.castFromPointer(_ret, retain: true, release: true);
+  }
+
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  set aField(objc.NSObject? value) {
+    objc.checkOsVersionInternal(
+      'NIUnusedClassBridge.setAField:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_xtuoz7(
+      this.ref.pointer,
+      _sel_setAField_,
+      value?.ref.pointer ?? ffi.nullptr,
+    );
+  }
+
+  /// init
+  NIUnusedClassBridge init() {
+    objc.checkOsVersionInternal(
+      'NIUnusedClassBridge.init',
+      iOS: (false, (2, 0, 0)),
+      macOS: (false, (10, 0, 0)),
+    );
+    final _ret = _objc_msgSend_151sglz(
+      this.ref.retainAndReturnPointer(),
+      _sel_init,
+    );
+    return NIUnusedClassBridge.castFromPointer(
+      _ret,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// self
+  NIUnusedClassBridge self() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_self);
+    return NIUnusedClassBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
+  }
+
+  /// retain
+  NIUnusedClassBridge retain() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_retain);
+    return NIUnusedClassBridge.castFromPointer(
+      _ret,
+      retain: true,
+      release: true,
+    );
+  }
+
+  /// autorelease
+  NIUnusedClassBridge autorelease() {
+    final _ret = _objc_msgSend_151sglz(this.ref.pointer, _sel_autorelease);
+    return NIUnusedClassBridge.castFromPointer(
       _ret,
       retain: true,
       release: true,

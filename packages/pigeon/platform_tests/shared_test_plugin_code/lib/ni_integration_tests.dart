@@ -61,28 +61,32 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
       expect(echoObject, genericNIAllTypes);
     });
 
-    //     testWidgets('all nullable datatypes serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('all nullable datatypes serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final NIAllNullableTypes? echoObject =
-    //           api!.echoAllNullableTypes(recursiveNIAllNullableTypes);
+      final NIAllNullableTypes? echoObject = api!.echoAllNullableTypes(
+        recursiveNIAllNullableTypes,
+      );
 
-    //       expect(echoObject, recursiveNIAllNullableTypes);
-    //     });
+      expect(echoObject, recursiveNIAllNullableTypes);
+    });
 
-    //     testWidgets('all null datatypes serialize and deserialize correctly',
-    //         (WidgetTester _) async {
-    //       final NIHostIntegrationCoreApiForNativeInterop? api =
-    //           NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('all null datatypes serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-    //       final NIAllNullableTypes allTypesNull = NIAllNullableTypes();
+      final NIAllNullableTypes allTypesNull = NIAllNullableTypes();
 
-    //       final NIAllNullableTypes? echoNullFilledClass =
-    //           api!.echoAllNullableTypes(allTypesNull);
-    //       expect(allTypesNull, echoNullFilledClass);
-    //     });
+      final NIAllNullableTypes? echoNullFilledClass = api!.echoAllNullableTypes(
+        allTypesNull,
+      );
+      expect(allTypesNull, echoNullFilledClass);
+    });
 
     testWidgets(
       'Classes with list of null serialize and deserialize correctly',

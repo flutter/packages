@@ -92,6 +92,34 @@ enum class NIAnotherEnum(val raw: Int) {
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class NIUnusedClass(val aField: Any? = null) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NIUnusedClass {
+      val aField = pigeonVar_list[0]
+      return NIUnusedClass(aField)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        aField,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is NIUnusedClass) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return NiTestsPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
 /**
  * A class containing all supported types.
  *
@@ -236,9 +264,163 @@ data class NIAllTypes(
 }
 
 /**
- * A class containing all supported nullable types. The primary purpose for this class is to ensure
- * coverage of Swift structs with nullable items, as the primary [NIAllNullableTypes] class is being
- * used to test Swift classes.
+ * A class containing all supported nullable types.
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class NIAllNullableTypes(
+    val aNullableBool: Boolean? = null,
+    val aNullableInt: Long? = null,
+    val aNullableInt64: Long? = null,
+    val aNullableDouble: Double? = null,
+    val aNullableByteArray: ByteArray? = null,
+    val aNullable4ByteArray: IntArray? = null,
+    val aNullable8ByteArray: LongArray? = null,
+    val aNullableFloatArray: DoubleArray? = null,
+    val aNullableEnum: NIAnEnum? = null,
+    val anotherNullableEnum: NIAnotherEnum? = null,
+    val aNullableString: String? = null,
+    val aNullableObject: Any? = null,
+    val allNullableTypes: NIAllNullableTypes? = null,
+    val list: List<Any?>? = null,
+    val stringList: List<String?>? = null,
+    val intList: List<Long?>? = null,
+    val doubleList: List<Double?>? = null,
+    val boolList: List<Boolean?>? = null,
+    val enumList: List<NIAnEnum?>? = null,
+    val objectList: List<Any?>? = null,
+    val listList: List<List<Any?>?>? = null,
+    val mapList: List<Map<Any?, Any?>?>? = null,
+    val recursiveClassList: List<NIAllNullableTypes?>? = null,
+    val map: Map<Any, Any?>? = null,
+    val stringMap: Map<String?, String?>? = null,
+    val intMap: Map<Long?, Long?>? = null,
+    val enumMap: Map<NIAnEnum?, NIAnEnum?>? = null,
+    val objectMap: Map<Any?, Any?>? = null,
+    val listMap: Map<Long?, List<Any?>?>? = null,
+    val mapMap: Map<Long?, Map<Any?, Any?>?>? = null,
+    val recursiveClassMap: Map<Long?, NIAllNullableTypes?>? = null
+) {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NIAllNullableTypes {
+      val aNullableBool = pigeonVar_list[0] as Boolean?
+      val aNullableInt = pigeonVar_list[1] as Long?
+      val aNullableInt64 = pigeonVar_list[2] as Long?
+      val aNullableDouble = pigeonVar_list[3] as Double?
+      val aNullableByteArray = pigeonVar_list[4] as ByteArray?
+      val aNullable4ByteArray = pigeonVar_list[5] as IntArray?
+      val aNullable8ByteArray = pigeonVar_list[6] as LongArray?
+      val aNullableFloatArray = pigeonVar_list[7] as DoubleArray?
+      val aNullableEnum = pigeonVar_list[8] as NIAnEnum?
+      val anotherNullableEnum = pigeonVar_list[9] as NIAnotherEnum?
+      val aNullableString = pigeonVar_list[10] as String?
+      val aNullableObject = pigeonVar_list[11]
+      val allNullableTypes = pigeonVar_list[12] as NIAllNullableTypes?
+      val list = pigeonVar_list[13] as List<Any?>?
+      val stringList = pigeonVar_list[14] as List<String?>?
+      val intList = pigeonVar_list[15] as List<Long?>?
+      val doubleList = pigeonVar_list[16] as List<Double?>?
+      val boolList = pigeonVar_list[17] as List<Boolean?>?
+      val enumList = pigeonVar_list[18] as List<NIAnEnum?>?
+      val objectList = pigeonVar_list[19] as List<Any?>?
+      val listList = pigeonVar_list[20] as List<List<Any?>?>?
+      val mapList = pigeonVar_list[21] as List<Map<Any?, Any?>?>?
+      val recursiveClassList = pigeonVar_list[22] as List<NIAllNullableTypes?>?
+      val map = pigeonVar_list[23] as Map<Any, Any?>?
+      val stringMap = pigeonVar_list[24] as Map<String?, String?>?
+      val intMap = pigeonVar_list[25] as Map<Long?, Long?>?
+      val enumMap = pigeonVar_list[26] as Map<NIAnEnum?, NIAnEnum?>?
+      val objectMap = pigeonVar_list[27] as Map<Any?, Any?>?
+      val listMap = pigeonVar_list[28] as Map<Long?, List<Any?>?>?
+      val mapMap = pigeonVar_list[29] as Map<Long?, Map<Any?, Any?>?>?
+      val recursiveClassMap = pigeonVar_list[30] as Map<Long?, NIAllNullableTypes?>?
+      return NIAllNullableTypes(
+          aNullableBool,
+          aNullableInt,
+          aNullableInt64,
+          aNullableDouble,
+          aNullableByteArray,
+          aNullable4ByteArray,
+          aNullable8ByteArray,
+          aNullableFloatArray,
+          aNullableEnum,
+          anotherNullableEnum,
+          aNullableString,
+          aNullableObject,
+          allNullableTypes,
+          list,
+          stringList,
+          intList,
+          doubleList,
+          boolList,
+          enumList,
+          objectList,
+          listList,
+          mapList,
+          recursiveClassList,
+          map,
+          stringMap,
+          intMap,
+          enumMap,
+          objectMap,
+          listMap,
+          mapMap,
+          recursiveClassMap)
+    }
+  }
+
+  fun toList(): List<Any?> {
+    return listOf(
+        aNullableBool,
+        aNullableInt,
+        aNullableInt64,
+        aNullableDouble,
+        aNullableByteArray,
+        aNullable4ByteArray,
+        aNullable8ByteArray,
+        aNullableFloatArray,
+        aNullableEnum,
+        anotherNullableEnum,
+        aNullableString,
+        aNullableObject,
+        allNullableTypes,
+        list,
+        stringList,
+        intList,
+        doubleList,
+        boolList,
+        enumList,
+        objectList,
+        listList,
+        mapList,
+        recursiveClassList,
+        map,
+        stringMap,
+        intMap,
+        enumMap,
+        objectMap,
+        listMap,
+        mapMap,
+        recursiveClassMap,
+    )
+  }
+
+  override fun equals(other: Any?): Boolean {
+    if (other !is NIAllNullableTypes) {
+      return false
+    }
+    if (this === other) {
+      return true
+    }
+    return NiTestsPigeonUtils.deepEquals(toList(), other.toList())
+  }
+
+  override fun hashCode(): Int = toList().hashCode()
+}
+
+/**
+ * The primary purpose for this class is to ensure coverage of Swift structs with nullable items, as
+ * the primary [NIAllNullableTypes] class is being used to test Swift classes.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
@@ -390,6 +572,7 @@ data class NIAllNullableTypesWithoutRecursion(
  * Generated class from Pigeon that represents data sent in messages.
  */
 data class NIAllClassesWrapper(
+    val allNullableTypes: NIAllNullableTypes,
     val allNullableTypesWithoutRecursion: NIAllNullableTypesWithoutRecursion? = null,
     val allTypes: NIAllTypes? = null,
     val classList: List<NIAllTypes?>,
@@ -399,14 +582,16 @@ data class NIAllClassesWrapper(
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NIAllClassesWrapper {
+      val allNullableTypes = pigeonVar_list[0] as NIAllNullableTypes
       val allNullableTypesWithoutRecursion =
-          pigeonVar_list[0] as NIAllNullableTypesWithoutRecursion?
-      val allTypes = pigeonVar_list[1] as NIAllTypes?
-      val classList = pigeonVar_list[2] as List<NIAllTypes?>
-      val nullableClassList = pigeonVar_list[3] as List<NIAllNullableTypesWithoutRecursion?>?
-      val classMap = pigeonVar_list[4] as Map<Long?, NIAllTypes?>
-      val nullableClassMap = pigeonVar_list[5] as Map<Long?, NIAllNullableTypesWithoutRecursion?>?
+          pigeonVar_list[1] as NIAllNullableTypesWithoutRecursion?
+      val allTypes = pigeonVar_list[2] as NIAllTypes?
+      val classList = pigeonVar_list[3] as List<NIAllTypes?>
+      val nullableClassList = pigeonVar_list[4] as List<NIAllNullableTypesWithoutRecursion?>?
+      val classMap = pigeonVar_list[5] as Map<Long?, NIAllTypes?>
+      val nullableClassMap = pigeonVar_list[6] as Map<Long?, NIAllNullableTypesWithoutRecursion?>?
       return NIAllClassesWrapper(
+          allNullableTypes,
           allNullableTypesWithoutRecursion,
           allTypes,
           classList,
@@ -418,6 +603,7 @@ data class NIAllClassesWrapper(
 
   fun toList(): List<Any?> {
     return listOf(
+        allNullableTypes,
         allNullableTypesWithoutRecursion,
         allTypes,
         classList,
@@ -523,10 +709,9 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoEnum(anEnum: NIAnEnum): NIAnEnum
   /** Returns the passed enum to test serialization and deserialization. */
   abstract fun echoAnotherEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
-  /**
-   * Returns the passed object, to test serialization and deserialization. Returns the passed
-   * object, to test serialization and deserialization.
-   */
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract fun echoAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes?
+  /** Returns the passed object, to test serialization and deserialization. */
   abstract fun echoAllNullableTypesWithoutRecursion(
       everything: NIAllNullableTypesWithoutRecursion?
   ): NIAllNullableTypesWithoutRecursion?
@@ -1022,10 +1207,18 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
-  /**
-   * Returns the passed object, to test serialization and deserialization. Returns the passed
-   * object, to test serialization and deserialization.
-   */
+  /** Returns the passed object, to test serialization and deserialization. */
+  override fun echoAllNullableTypes(everything: NIAllNullableTypes?): NIAllNullableTypes? {
+    api?.let {
+      try {
+        return api!!.echoAllNullableTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
   override fun echoAllNullableTypesWithoutRecursion(
       everything: NIAllNullableTypesWithoutRecursion?
   ): NIAllNullableTypesWithoutRecursion? {

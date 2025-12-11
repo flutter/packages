@@ -670,7 +670,13 @@ class _PigeonFfiCodec {
       );
 
       if (classDefinition.isSwiftClass || useFfi) {
-        _writeClassInit(indent, fields.toList(), objcString, useFfi: useFfi);
+        _writeClassInit(
+          indent,
+          fields.toList(),
+          objcString,
+          useFfi: useFfi,
+          useFfiTypedData: useFfiTypedData,
+        );
       }
 
       for (final NamedType field in fields) {
@@ -947,7 +953,7 @@ if (wrapped == nil) {
           return _numberToObjc(varName, getter: '!.rawValue');
         }
         if (type.isClass) {
-          return '${type.baseName}Bridge.fromSwift($varName)';
+          return '${type.baseName}Bridge.fromSwift($varName)${type.isNullable || forceNullable ? '' : '!'}';
         }
         return varName;
     }
@@ -1054,7 +1060,12 @@ if (wrapped == nil) {
     indent.writeScoped('${objc}init(', ')', () {
       for (int i = 0; i < fields.length; i++) {
         indent.write('');
-        _writeClassField(indent, fields[i], useFfi: useFfi);
+        _writeClassField(
+          indent,
+          fields[i],
+          useFfi: useFfi,
+          useFfiTypedData: useFfiTypedData,
+        );
         if (i == fields.length - 1) {
           indent.newln();
         } else {

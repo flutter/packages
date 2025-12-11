@@ -15,7 +15,9 @@ log_level: all
 classes:
   - 'NIHostIntegrationCoreApi'
   - 'NIHostIntegrationCoreApiRegistrar'
+  - 'NIUnusedClass'
   - 'NIAllTypes'
+  - 'NIAllNullableTypes'
   - 'NIAllNullableTypesWithoutRecursion'
   - 'NIAllClassesWrapper'
   - 'NIAnEnum'

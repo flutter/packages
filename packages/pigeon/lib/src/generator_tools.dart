@@ -569,9 +569,9 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
 
   final Set<String> referencedTypeNames =
       references.map.keys.map((TypeDeclaration e) => e.baseName).toSet();
-  final List<String> classesToCheck = List<String>.from(referencedTypeNames);
+  final Set<String> classesToCheck = Set<String>.from(referencedTypeNames);
   while (classesToCheck.isNotEmpty) {
-    final String next = classesToCheck.removeLast();
+    final String next = classesToCheck.last;
     final Class aClass = classes.firstWhere(
       (Class x) => x.name == next,
       orElse: () => Class(name: '', fields: <NamedType>[]),
@@ -588,6 +588,7 @@ Map<TypeDeclaration, List<int>> getReferencedTypes(
         }
       }
     }
+    classesToCheck.remove(next);
   }
   return references.map;
 }

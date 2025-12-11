@@ -103,9 +103,15 @@ class _PigeonJniCodec {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
+      // } else if (value.isA<jni_bridge.NIUnusedClass>(
+      //     jni_bridge.NIUnusedClass.type)) {
+      //   return NIUnusedClass.fromJni(value.as(jni_bridge.NIUnusedClass.type));
       // } else if (value.isA<jni_bridge.NIAllTypes>(
       //     jni_bridge.NIAllTypes.type)) {
       //   return NIAllTypes.fromJni(value.as(jni_bridge.NIAllTypes.type));
+      // } else if (value.isA<jni_bridge.NIAllNullableTypes>(
+      //     jni_bridge.NIAllNullableTypes.type)) {
+      //   return NIAllNullableTypes.fromJni(value.as(jni_bridge.NIAllNullableTypes.type));
       // } else if (value.isA<jni_bridge.NIAllNullableTypesWithoutRecursion>(
       //     jni_bridge.NIAllNullableTypesWithoutRecursion.type)) {
       //   return NIAllNullableTypesWithoutRecursion.fromJni(value.as(jni_bridge.NIAllNullableTypesWithoutRecursion.type));
@@ -221,6 +227,16 @@ class _PigeonJniCodec {
         res.add(writeValue(entry));
       }
       return res as T;
+      // } else if (value is List<NIAllNullableTypes?> &&
+      //     isTypeOrNullableType<JList<jni_bridge.NIAllNullableTypes?>>(T)) {
+      //   final JList<jni_bridge.NIAllNullableTypes?> res =
+      //       JList<jni_bridge.NIAllNullableTypes?>.array(
+      //         jni_bridge.NIAllNullableTypes.nullableType,
+      //       );
+      //   for (final NIAllNullableTypes? entry in value) {
+      //     res.add(writeValue(entry));
+      //   }
+      //   return res as T;
     } else if (value is List<NIAllNullableTypesWithoutRecursion?> &&
         isTypeOrNullableType<
           JList<jni_bridge.NIAllNullableTypesWithoutRecursion?>
@@ -379,6 +395,17 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
+      // } else if (value is Map<int?, NIAllNullableTypes?> &&
+      //     isTypeOrNullableType<JMap<JLong?, jni_bridge.NIAllNullableTypes?>>(T)) {
+      //   final JMap<JLong?, jni_bridge.NIAllNullableTypes?> res =
+      //       JMap<JLong?, jni_bridge.NIAllNullableTypes?>.hash(
+      //         JLong.nullableType,
+      //         jni_bridge.NIAllNullableTypes.nullableType,
+      //       );
+      //   for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
+      //     res[writeValue(entry.key)] = writeValue(entry.value);
+      //   }
+      //   return res as T;
     } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
         isTypeOrNullableType<
           JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>
@@ -498,7 +525,11 @@ class _PigeonJniCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
+      // } else if (value is NIUnusedClass) {
+      //   return value.toJni() as T;
       // } else if (value is NIAllTypes) {
+      //   return value.toJni() as T;
+      // } else if (value is NIAllNullableTypes) {
       //   return value.toJni() as T;
       // } else if (value is NIAllNullableTypesWithoutRecursion) {
       //   return value.toJni() as T;
@@ -556,8 +587,16 @@ class _PigeonFfiCodec {
       return convertNumberWrapperToDart(
         ffi_bridge.NumberWrapper.castFrom(value),
       );
+    } else if (ffi_bridge.NIUnusedClassBridge.isInstance(value)) {
+      return NIUnusedClass.fromFfi(
+        ffi_bridge.NIUnusedClassBridge.castFrom(value),
+      );
     } else if (ffi_bridge.NIAllTypesBridge.isInstance(value)) {
       return NIAllTypes.fromFfi(ffi_bridge.NIAllTypesBridge.castFrom(value));
+    } else if (ffi_bridge.NIAllNullableTypesBridge.isInstance(value)) {
+      return NIAllNullableTypes.fromFfi(
+        ffi_bridge.NIAllNullableTypesBridge.castFrom(value),
+      );
     } else if (ffi_bridge.NIAllNullableTypesWithoutRecursionBridge.isInstance(
       value,
     )) {
@@ -660,6 +699,17 @@ class _PigeonFfiCodec {
           entry == null
               ? ffi_bridge.PigeonInternalNull()
               : writeValue<ffi_bridge.NIAllTypesBridge>(entry),
+        );
+      }
+      return res as T;
+    } else if (value is List<NIAllNullableTypes?> &&
+        isTypeOrNullableType<NSMutableArray>(T)) {
+      final NSMutableArray res = NSMutableArray();
+      for (final NIAllNullableTypes? entry in value) {
+        res.add(
+          entry == null
+              ? ffi_bridge.PigeonInternalNull()
+              : writeValue<ffi_bridge.NIAllNullableTypesBridge>(entry),
         );
       }
       return res as T;
@@ -812,6 +862,13 @@ class _PigeonFfiCodec {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
+    } else if (value is Map<int?, NIAllNullableTypes?> &&
+        isTypeOrNullableType<NSDictionary>(T)) {
+      final NSMutableDictionary res = NSMutableDictionary();
+      for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
+        res[writeValue(entry.key)] = writeValue(entry.value);
+      }
+      return res as T;
     } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
@@ -879,7 +936,11 @@ class _PigeonFfiCodec {
         );
       }
       return res as T;
+    } else if (value is NIUnusedClass) {
+      return value.toFfi() as T;
     } else if (value is NIAllTypes) {
+      return value.toFfi() as T;
+    } else if (value is NIAllNullableTypes) {
       return value.toFfi() as T;
     } else if (value is NIAllNullableTypesWithoutRecursion) {
       return value.toFfi() as T;
@@ -1087,6 +1148,58 @@ enum NIAnotherEnum {
 
   static NIAnotherEnum? fromNSNumber(NSNumber? ffiEnum) {
     return ffiEnum == null ? null : NIAnotherEnum.values[ffiEnum.intValue];
+  }
+}
+
+class NIUnusedClass {
+  NIUnusedClass({this.aField});
+
+  Object? aField;
+
+  List<Object?> _toList() {
+    return <Object?>[aField];
+  }
+
+  ffi_bridge.NIUnusedClassBridge toFfi() {
+    return ffi_bridge.NIUnusedClassBridge.alloc().initWithAField(
+      _PigeonFfiCodec.writeValue<NSObject>(aField),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NIUnusedClass? fromFfi(ffi_bridge.NIUnusedClassBridge? ffiClass) {
+    return ffiClass == null
+        ? null
+        : NIUnusedClass(aField: _PigeonFfiCodec.readValue(ffiClass.aField));
+  }
+
+  static NIUnusedClass decode(Object result) {
+    result as List<Object?>;
+    return NIUnusedClass(aField: result[0]);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NIUnusedClass || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aField == other.aField;
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
   }
 }
 
@@ -1425,6 +1538,400 @@ class NIAllTypes {
 }
 
 /// A class containing all supported nullable types.
+class NIAllNullableTypes {
+  NIAllNullableTypes({
+    this.aNullableBool,
+    this.aNullableInt,
+    this.aNullableInt64,
+    this.aNullableDouble,
+    this.aNullableByteArray,
+    this.aNullable4ByteArray,
+    this.aNullable8ByteArray,
+    this.aNullableFloatArray,
+    this.aNullableEnum,
+    this.anotherNullableEnum,
+    this.aNullableString,
+    this.aNullableObject,
+    this.allNullableTypes,
+    this.list,
+    this.stringList,
+    this.intList,
+    this.doubleList,
+    this.boolList,
+    this.enumList,
+    this.objectList,
+    this.listList,
+    this.mapList,
+    this.recursiveClassList,
+    this.map,
+    this.stringMap,
+    this.intMap,
+    this.enumMap,
+    this.objectMap,
+    this.listMap,
+    this.mapMap,
+    this.recursiveClassMap,
+  });
+
+  bool? aNullableBool;
+
+  int? aNullableInt;
+
+  int? aNullableInt64;
+
+  double? aNullableDouble;
+
+  Uint8List? aNullableByteArray;
+
+  Int32List? aNullable4ByteArray;
+
+  Int64List? aNullable8ByteArray;
+
+  Float64List? aNullableFloatArray;
+
+  NIAnEnum? aNullableEnum;
+
+  NIAnotherEnum? anotherNullableEnum;
+
+  String? aNullableString;
+
+  Object? aNullableObject;
+
+  NIAllNullableTypes? allNullableTypes;
+
+  List<Object?>? list;
+
+  List<String?>? stringList;
+
+  List<int?>? intList;
+
+  List<double?>? doubleList;
+
+  List<bool?>? boolList;
+
+  List<NIAnEnum?>? enumList;
+
+  List<Object?>? objectList;
+
+  List<List<Object?>?>? listList;
+
+  List<Map<Object?, Object?>?>? mapList;
+
+  List<NIAllNullableTypes?>? recursiveClassList;
+
+  Map<Object?, Object?>? map;
+
+  Map<String?, String?>? stringMap;
+
+  Map<int?, int?>? intMap;
+
+  Map<NIAnEnum?, NIAnEnum?>? enumMap;
+
+  Map<Object?, Object?>? objectMap;
+
+  Map<int?, List<Object?>?>? listMap;
+
+  Map<int?, Map<Object?, Object?>?>? mapMap;
+
+  Map<int?, NIAllNullableTypes?>? recursiveClassMap;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      aNullableBool,
+      aNullableInt,
+      aNullableInt64,
+      aNullableDouble,
+      aNullableByteArray,
+      aNullable4ByteArray,
+      aNullable8ByteArray,
+      aNullableFloatArray,
+      aNullableEnum,
+      anotherNullableEnum,
+      aNullableString,
+      aNullableObject,
+      allNullableTypes,
+      list,
+      stringList,
+      intList,
+      doubleList,
+      boolList,
+      enumList,
+      objectList,
+      listList,
+      mapList,
+      recursiveClassList,
+      map,
+      stringMap,
+      intMap,
+      enumMap,
+      objectMap,
+      listMap,
+      mapMap,
+      recursiveClassMap,
+    ];
+  }
+
+  ffi_bridge.NIAllNullableTypesBridge toFfi() {
+    return ffi_bridge.NIAllNullableTypesBridge.alloc().initWithANullableBool(
+      _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
+      aNullableInt: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
+      aNullableInt64: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt64),
+      aNullableDouble: _PigeonFfiCodec.writeValue<NSNumber?>(aNullableDouble),
+      aNullableByteArray:
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+            aNullableByteArray,
+          ),
+      aNullable4ByteArray:
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+            aNullable4ByteArray,
+          ),
+      aNullable8ByteArray:
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+            aNullable8ByteArray,
+          ),
+      aNullableFloatArray:
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
+            aNullableFloatArray,
+          ),
+      aNullableEnum: _PigeonFfiCodec.writeValue<NSNumber?>(
+        aNullableEnum?.index,
+      ),
+      anotherNullableEnum: _PigeonFfiCodec.writeValue<NSNumber?>(
+        anotherNullableEnum?.index,
+      ),
+      aNullableString: _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
+      aNullableObject: _PigeonFfiCodec.writeValue<NSObject>(aNullableObject),
+      allNullableTypes: allNullableTypes == null
+          ? null
+          : allNullableTypes!.toFfi(),
+      list: _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
+      stringList: _PigeonFfiCodec.writeValue<NSMutableArray?>(stringList),
+      intList: _PigeonFfiCodec.writeValue<NSMutableArray?>(intList),
+      doubleList: _PigeonFfiCodec.writeValue<NSMutableArray?>(doubleList),
+      boolList: _PigeonFfiCodec.writeValue<NSMutableArray?>(boolList),
+      enumList: _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+      objectList: _PigeonFfiCodec.writeValue<NSMutableArray?>(objectList),
+      listList: _PigeonFfiCodec.writeValue<NSMutableArray?>(listList),
+      mapList: _PigeonFfiCodec.writeValue<NSMutableArray?>(mapList),
+      recursiveClassList: _PigeonFfiCodec.writeValue<NSMutableArray?>(
+        recursiveClassList,
+      ),
+      map: _PigeonFfiCodec.writeValue<NSDictionary?>(map),
+      stringMap: _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
+      intMap: _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+      enumMap: _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+      objectMap: _PigeonFfiCodec.writeValue<NSDictionary?>(objectMap),
+      listMap: _PigeonFfiCodec.writeValue<NSDictionary?>(listMap),
+      mapMap: _PigeonFfiCodec.writeValue<NSDictionary?>(mapMap),
+      recursiveClassMap: _PigeonFfiCodec.writeValue<NSDictionary?>(
+        recursiveClassMap,
+      ),
+    );
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NIAllNullableTypes? fromFfi(
+    ffi_bridge.NIAllNullableTypesBridge? ffiClass,
+  ) {
+    return ffiClass == null
+        ? null
+        : NIAllNullableTypes(
+            aNullableBool: ffiClass.aNullableBool?.boolValue,
+            aNullableInt: ffiClass.aNullableInt?.longValue,
+            aNullableInt64: ffiClass.aNullableInt64?.longValue,
+            aNullableDouble: ffiClass.aNullableDouble?.doubleValue,
+            aNullableByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullableByteArray)
+                    as Uint8List?),
+            aNullable4ByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullable4ByteArray)
+                    as Int32List?),
+            aNullable8ByteArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullable8ByteArray)
+                    as Int64List?),
+            aNullableFloatArray:
+                (_PigeonFfiCodec.readValue(ffiClass.aNullableFloatArray)
+                    as Float64List?),
+            aNullableEnum: ffiClass.aNullableEnum == null
+                ? null
+                : NIAnEnum.values[ffiClass.aNullableEnum!.longValue],
+            anotherNullableEnum: ffiClass.anotherNullableEnum == null
+                ? null
+                : NIAnotherEnum.values[ffiClass.anotherNullableEnum!.longValue],
+            aNullableString: ffiClass.aNullableString?.toDartString(),
+            aNullableObject: _PigeonFfiCodec.readValue(
+              ffiClass.aNullableObject,
+            ),
+            allNullableTypes: NIAllNullableTypes.fromFfi(
+              ffiClass.allNullableTypes,
+            ),
+            list: (_PigeonFfiCodec.readValue(ffiClass.list) as List<Object?>?)
+                ?.cast<Object?>(),
+            stringList:
+                (_PigeonFfiCodec.readValue(ffiClass.stringList)
+                        as List<Object?>?)
+                    ?.cast<String?>(),
+            intList:
+                (_PigeonFfiCodec.readValue(ffiClass.intList) as List<Object?>?)
+                    ?.cast<int?>(),
+            doubleList:
+                (_PigeonFfiCodec.readValue(ffiClass.doubleList)
+                        as List<Object?>?)
+                    ?.cast<double?>(),
+            boolList:
+                (_PigeonFfiCodec.readValue(ffiClass.boolList) as List<Object?>?)
+                    ?.cast<bool?>(),
+            enumList:
+                (_PigeonFfiCodec.readValue(ffiClass.enumList) as List<Object?>?)
+                    ?.cast<NIAnEnum?>(),
+            objectList:
+                (_PigeonFfiCodec.readValue(ffiClass.objectList)
+                        as List<Object?>?)
+                    ?.cast<Object?>(),
+            listList:
+                (_PigeonFfiCodec.readValue(ffiClass.listList) as List<Object?>?)
+                    ?.cast<List<Object?>?>(),
+            mapList:
+                (_PigeonFfiCodec.readValue(ffiClass.mapList) as List<Object?>?)
+                    ?.cast<Map<Object?, Object?>?>(),
+            recursiveClassList:
+                (_PigeonFfiCodec.readValue(ffiClass.recursiveClassList)
+                        as List<Object?>?)
+                    ?.cast<NIAllNullableTypes?>(),
+            map:
+                (_PigeonFfiCodec.readValue(ffiClass.map)
+                        as Map<Object?, Object?>?)
+                    ?.cast<Object?, Object?>(),
+            stringMap:
+                (_PigeonFfiCodec.readValue(ffiClass.stringMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<String?, String?>(),
+            intMap:
+                (_PigeonFfiCodec.readValue(ffiClass.intMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, int?>(),
+            enumMap:
+                (_PigeonFfiCodec.readValue(ffiClass.enumMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<NIAnEnum?, NIAnEnum?>(),
+            objectMap:
+                (_PigeonFfiCodec.readValue(ffiClass.objectMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<Object?, Object?>(),
+            listMap:
+                (_PigeonFfiCodec.readValue(ffiClass.listMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, List<Object?>?>(),
+            mapMap:
+                (_PigeonFfiCodec.readValue(ffiClass.mapMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, Map<Object?, Object?>?>(),
+            recursiveClassMap:
+                (_PigeonFfiCodec.readValue(ffiClass.recursiveClassMap)
+                        as Map<Object?, Object?>?)
+                    ?.cast<int?, NIAllNullableTypes?>(),
+          );
+  }
+
+  static NIAllNullableTypes decode(Object result) {
+    result as List<Object?>;
+    return NIAllNullableTypes(
+      aNullableBool: result[0] as bool?,
+      aNullableInt: result[1] as int?,
+      aNullableInt64: result[2] as int?,
+      aNullableDouble: result[3] as double?,
+      aNullableByteArray: result[4] as Uint8List?,
+      aNullable4ByteArray: result[5] as Int32List?,
+      aNullable8ByteArray: result[6] as Int64List?,
+      aNullableFloatArray: result[7] as Float64List?,
+      aNullableEnum: result[8] as NIAnEnum?,
+      anotherNullableEnum: result[9] as NIAnotherEnum?,
+      aNullableString: result[10] as String?,
+      aNullableObject: result[11],
+      allNullableTypes: result[12] as NIAllNullableTypes?,
+      list: result[13] as List<Object?>?,
+      stringList: (result[14] as List<Object?>?)?.cast<String?>(),
+      intList: (result[15] as List<Object?>?)?.cast<int?>(),
+      doubleList: (result[16] as List<Object?>?)?.cast<double?>(),
+      boolList: (result[17] as List<Object?>?)?.cast<bool?>(),
+      enumList: (result[18] as List<Object?>?)?.cast<NIAnEnum?>(),
+      objectList: (result[19] as List<Object?>?)?.cast<Object?>(),
+      listList: (result[20] as List<Object?>?)?.cast<List<Object?>?>(),
+      mapList: (result[21] as List<Object?>?)?.cast<Map<Object?, Object?>?>(),
+      recursiveClassList: (result[22] as List<Object?>?)
+          ?.cast<NIAllNullableTypes?>(),
+      map: result[23] as Map<Object?, Object?>?,
+      stringMap: (result[24] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>(),
+      intMap: (result[25] as Map<Object?, Object?>?)?.cast<int?, int?>(),
+      enumMap: (result[26] as Map<Object?, Object?>?)
+          ?.cast<NIAnEnum?, NIAnEnum?>(),
+      objectMap: (result[27] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>(),
+      listMap: (result[28] as Map<Object?, Object?>?)
+          ?.cast<int?, List<Object?>?>(),
+      mapMap: (result[29] as Map<Object?, Object?>?)
+          ?.cast<int?, Map<Object?, Object?>?>(),
+      recursiveClassMap: (result[30] as Map<Object?, Object?>?)
+          ?.cast<int?, NIAllNullableTypes?>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NIAllNullableTypes || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return aNullableBool == other.aNullableBool &&
+        aNullableInt == other.aNullableInt &&
+        aNullableInt64 == other.aNullableInt64 &&
+        aNullableDouble == other.aNullableDouble &&
+        _deepEquals(aNullableByteArray, other.aNullableByteArray) &&
+        _deepEquals(aNullable4ByteArray, other.aNullable4ByteArray) &&
+        _deepEquals(aNullable8ByteArray, other.aNullable8ByteArray) &&
+        _deepEquals(aNullableFloatArray, other.aNullableFloatArray) &&
+        aNullableEnum == other.aNullableEnum &&
+        anotherNullableEnum == other.anotherNullableEnum &&
+        aNullableString == other.aNullableString &&
+        aNullableObject == other.aNullableObject &&
+        allNullableTypes == other.allNullableTypes &&
+        _deepEquals(list, other.list) &&
+        _deepEquals(stringList, other.stringList) &&
+        _deepEquals(intList, other.intList) &&
+        _deepEquals(doubleList, other.doubleList) &&
+        _deepEquals(boolList, other.boolList) &&
+        _deepEquals(enumList, other.enumList) &&
+        _deepEquals(objectList, other.objectList) &&
+        _deepEquals(listList, other.listList) &&
+        _deepEquals(mapList, other.mapList) &&
+        _deepEquals(recursiveClassList, other.recursiveClassList) &&
+        _deepEquals(map, other.map) &&
+        _deepEquals(stringMap, other.stringMap) &&
+        _deepEquals(intMap, other.intMap) &&
+        _deepEquals(enumMap, other.enumMap) &&
+        _deepEquals(objectMap, other.objectMap) &&
+        _deepEquals(listMap, other.listMap) &&
+        _deepEquals(mapMap, other.mapMap) &&
+        _deepEquals(recursiveClassMap, other.recursiveClassMap);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+
+  @override
+  String toString() {
+    return _toList().toString();
+  }
+}
+
 /// The primary purpose for this class is to ensure coverage of Swift structs
 /// with nullable items, as the primary [NIAllNullableTypes] class is being used to
 /// test Swift classes.
@@ -1797,6 +2304,7 @@ class NIAllNullableTypesWithoutRecursion {
 /// than `NIAllTypes` when testing doesn't require both (ie. testing null classes).
 class NIAllClassesWrapper {
   NIAllClassesWrapper({
+    required this.allNullableTypes,
     this.allNullableTypesWithoutRecursion,
     this.allTypes,
     required this.classList,
@@ -1804,6 +2312,8 @@ class NIAllClassesWrapper {
     required this.classMap,
     this.nullableClassMap,
   });
+
+  NIAllNullableTypes allNullableTypes;
 
   NIAllNullableTypesWithoutRecursion? allNullableTypesWithoutRecursion;
 
@@ -1819,6 +2329,7 @@ class NIAllClassesWrapper {
 
   List<Object?> _toList() {
     return <Object?>[
+      allNullableTypes,
       allNullableTypesWithoutRecursion,
       allTypes,
       classList,
@@ -1830,8 +2341,10 @@ class NIAllClassesWrapper {
 
   ffi_bridge.NIAllClassesWrapperBridge toFfi() {
     return ffi_bridge.NIAllClassesWrapperBridge.alloc()
-        .initWithAllNullableTypesWithoutRecursion(
-          allNullableTypesWithoutRecursion == null
+        .initWithAllNullableTypes(
+          allNullableTypes.toFfi(),
+          allNullableTypesWithoutRecursion:
+              allNullableTypesWithoutRecursion == null
               ? null
               : allNullableTypesWithoutRecursion!.toFfi(),
           allTypes: allTypes == null ? null : allTypes!.toFfi(),
@@ -1856,6 +2369,9 @@ class NIAllClassesWrapper {
     return ffiClass == null
         ? null
         : NIAllClassesWrapper(
+            allNullableTypes: NIAllNullableTypes.fromFfi(
+              ffiClass.allNullableTypes,
+            )!,
             allNullableTypesWithoutRecursion:
                 NIAllNullableTypesWithoutRecursion.fromFfi(
                   ffiClass.allNullableTypesWithoutRecursion,
@@ -1883,15 +2399,16 @@ class NIAllClassesWrapper {
   static NIAllClassesWrapper decode(Object result) {
     result as List<Object?>;
     return NIAllClassesWrapper(
+      allNullableTypes: result[0]! as NIAllNullableTypes,
       allNullableTypesWithoutRecursion:
-          result[0] as NIAllNullableTypesWithoutRecursion?,
-      allTypes: result[1] as NIAllTypes?,
-      classList: (result[2] as List<Object?>?)!.cast<NIAllTypes?>(),
-      nullableClassList: (result[3] as List<Object?>?)
+          result[1] as NIAllNullableTypesWithoutRecursion?,
+      allTypes: result[2] as NIAllTypes?,
+      classList: (result[3] as List<Object?>?)!.cast<NIAllTypes?>(),
+      nullableClassList: (result[4] as List<Object?>?)
           ?.cast<NIAllNullableTypesWithoutRecursion?>(),
-      classMap: (result[4] as Map<Object?, Object?>?)!
+      classMap: (result[5] as Map<Object?, Object?>?)!
           .cast<int?, NIAllTypes?>(),
-      nullableClassMap: (result[5] as Map<Object?, Object?>?)
+      nullableClassMap: (result[6] as Map<Object?, Object?>?)
           ?.cast<int?, NIAllNullableTypesWithoutRecursion?>(),
     );
   }
@@ -1905,7 +2422,8 @@ class NIAllClassesWrapper {
     if (identical(this, other)) {
       return true;
     }
-    return allNullableTypesWithoutRecursion ==
+    return allNullableTypes == other.allNullableTypes &&
+        allNullableTypesWithoutRecursion ==
             other.allNullableTypesWithoutRecursion &&
         allTypes == other.allTypes &&
         _deepEquals(classList, other.classList) &&
@@ -1937,14 +2455,20 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NIAnotherEnum) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    } else if (value is NIAllTypes) {
+    } else if (value is NIUnusedClass) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NIAllNullableTypesWithoutRecursion) {
+    } else if (value is NIAllTypes) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is NIAllClassesWrapper) {
+    } else if (value is NIAllNullableTypes) {
       buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is NIAllNullableTypesWithoutRecursion) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is NIAllClassesWrapper) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1961,10 +2485,14 @@ class _PigeonCodec extends StandardMessageCodec {
         final int? value = readValue(buffer) as int?;
         return value == null ? null : NIAnotherEnum.values[value];
       case 131:
-        return NIAllTypes.decode(readValue(buffer)!);
+        return NIUnusedClass.decode(readValue(buffer)!);
       case 132:
-        return NIAllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+        return NIAllTypes.decode(readValue(buffer)!);
       case 133:
+        return NIAllNullableTypes.decode(readValue(buffer)!);
+      case 134:
+        return NIAllNullableTypesWithoutRecursion.decode(readValue(buffer)!);
+      case 135:
         return NIAllClassesWrapper.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -3275,6 +3803,44 @@ class NIHostIntegrationCoreApiForNativeInterop {
         } else {
           final NIAnotherEnum dartTypeRes =
               (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
+          return dartTypeRes;
+        }
+      }
+    } on JniException catch (e) {
+      throw PlatformException(
+        code: 'PlatformException',
+        message: e.message,
+        stacktrace: e.stackTrace,
+      );
+    } catch (e) {
+      rethrow;
+    }
+    throw Exception("this shouldn't be possible");
+  }
+
+  NIAllNullableTypes? echoAllNullableTypes(NIAllNullableTypes? everything) {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final ffi_bridge.NIAllNullableTypesBridge? res = _ffiApi
+            .echoAllNullableTypesWithEverything(
+              everything == null ? null : everything.toFfi(),
+              wrappedError: error,
+            );
+        if (error.code != null) {
+          throw PlatformException(
+            code: error.code!.toDartString(),
+            message: error.message?.toDartString(),
+            details:
+                error.details != null && NSString.isInstance(error.details!)
+                ? error.details!.toDartString()
+                : error.details,
+          );
+        } else {
+          final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromFfi(
+            res,
+          );
           return dartTypeRes;
         }
       }
@@ -5788,6 +6354,39 @@ class NIHostIntegrationCoreApi {
   }
 
   /// Returns the passed object, to test serialization and deserialization.
+  Future<NIAllNullableTypes?> echoAllNullableTypes(
+    NIAllNullableTypes? everything,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAllNullableTypes(everything);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAllNullableTypes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[everything],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAllNullableTypes?);
+    }
+  }
+
   /// Returns the passed object, to test serialization and deserialization.
   Future<NIAllNullableTypesWithoutRecursion?>
   echoAllNullableTypesWithoutRecursion(
