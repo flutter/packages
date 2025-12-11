@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'cross_file_platform.dart';
+import 'platform_cross_file_entity.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXFile].
 ///
@@ -25,7 +26,7 @@ import 'cross_file_platform.dart';
 ///     extends PlatformXFileCreationParams {
 ///   AndroidPlatformXFileCreationParams({required super.uri, this.platformValue});
 ///
-///   factory AndroidPlatformXFileCreationParams.fromPlatformCreationParams(
+///   factory AndroidPlatformXFileCreationParams.fromCreationParams(
 ///     PlatformXFileCreationParams params, {
 ///     Object? platformValue,
 ///   }) {
@@ -71,8 +72,8 @@ base class PlatformXFileCreationParams {
 mixin PlatformXFileExtension {}
 
 /// Interface for a reference to a local data resource.
-abstract base class PlatformXFile {
-  /// Creates a new [PlatformXFile]
+abstract base class PlatformXFile implements PlatformCrossFileEntity {
+  /// Creates a new [PlatformXFile].
   factory PlatformXFile(PlatformXFileCreationParams params) {
     assert(
       CrossFilePlatform.instance != null,
@@ -108,9 +109,6 @@ abstract base class PlatformXFile {
 
   /// The length of the data represented by this uri, in bytes.
   Future<int> length();
-
-  /// Whether the resource represented by this reference exists.
-  Future<bool> exists();
 
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead();
