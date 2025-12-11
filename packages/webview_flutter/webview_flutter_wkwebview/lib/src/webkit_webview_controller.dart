@@ -82,6 +82,7 @@ class WebKitWebViewControllerCreationParams
     },
     this.allowsInlineMediaPlayback = false,
     this.limitsNavigationsToAppBoundDomains = false,
+    this.javaScriptCanOpenWindowsAutomatically = false,
   }) {
     _configuration = WKWebViewConfiguration();
 
@@ -122,10 +123,13 @@ class WebKitWebViewControllerCreationParams
         },
     bool allowsInlineMediaPlayback = false,
     bool limitsNavigationsToAppBoundDomains = false,
+    bool javaScriptCanOpenWindowsAutomatically = false,
   }) : this(
          mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
          allowsInlineMediaPlayback: allowsInlineMediaPlayback,
          limitsNavigationsToAppBoundDomains: limitsNavigationsToAppBoundDomains,
+         javaScriptCanOpenWindowsAutomatically:
+             javaScriptCanOpenWindowsAutomatically,
        );
 
   late final WKWebViewConfiguration _configuration;
@@ -147,6 +151,14 @@ class WebKitWebViewControllerCreationParams
   /// (Only available for iOS > 14.0)
   /// Defaults to false.
   final bool limitsNavigationsToAppBoundDomains;
+
+  /// Whether JavaScript can open windows without user interaction.
+  ///
+  /// Setting this to `true` allows JavaScript's `window.open()` to create
+  /// new windows automatically without requiring a user gesture.
+  ///
+  /// Defaults to false.
+  final bool javaScriptCanOpenWindowsAutomatically;
 }
 
 /// An implementation of [PlatformWebViewController] with the WebKit api.
@@ -643,6 +655,12 @@ class WebKitWebViewController extends PlatformWebViewController {
         case JavaScriptMode.unrestricted:
           await webpagePreferences.setAllowsContentJavaScript(true);
       }
+      // Set javaScriptCanOpenWindowsAutomatically on WKPreferences
+      final WKPreferences preferences =
+          await _webView.configuration.getPreferences();
+      await preferences.setJavaScriptCanOpenWindowsAutomatically(
+        _webKitParams.javaScriptCanOpenWindowsAutomatically,
+      );
       return;
     } on PlatformException catch (exception) {
       if (exception.code != 'PigeonUnsupportedOperationError') {
@@ -660,6 +678,9 @@ class WebKitWebViewController extends PlatformWebViewController {
       case JavaScriptMode.unrestricted:
         await preferences.setJavaScriptEnabled(true);
     }
+    await preferences.setJavaScriptCanOpenWindowsAutomatically(
+      _webKitParams.javaScriptCanOpenWindowsAutomatically,
+    );
   }
 
   @override

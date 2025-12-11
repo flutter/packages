@@ -1,3 +1,8 @@
+## NEXT
+
+* Adds support for `javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
+  `window.open()` to work without user interaction on iOS and macOS.
+
 ## 3.23.5
 
 * Removes internal native library Dart proxy.

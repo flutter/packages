@@ -23,4 +23,10 @@ class PreferencesProxyAPIDelegate: PigeonApiDelegateWKPreferences {
       pigeonInstance.javaScriptEnabled = enabled
     }
   }
+
+  func setJavaScriptCanOpenWindowsAutomatically(
+    pigeonApi: PigeonApiWKPreferences, pigeonInstance: WKPreferences, enabled: Bool
+  ) throws {
+    pigeonInstance.javaScriptCanOpenWindowsAutomatically = enabled
+  }
 }

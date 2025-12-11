@@ -747,6 +747,14 @@ abstract class WKUserContentController extends NSObject {
 abstract class WKPreferences extends NSObject {
   /// A Boolean value that indicates whether JavaScript is enabled.
   void setJavaScriptEnabled(bool enabled);
+
+  /// A Boolean value that indicates whether JavaScript can open windows without user interaction.
+  ///
+  /// The default value is `false`. Set to `true` to allow JavaScript to open windows automatically
+  /// through `window.open()` calls without requiring user gestures.
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpreferences/1536573-javascriptcanopenwindowsautomati
+  void setJavaScriptCanOpenWindowsAutomatically(bool enabled);
 }
 
 /// An interface for receiving messages from JavaScript code running in a webpage.
