@@ -1,5 +1,6 @@
-## NEXT
+## 1.1.0
 
+* Adds support for the `Flexible` core widget.
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 1.0.32

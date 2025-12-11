@@ -76,10 +76,10 @@ packages/image_picker/image_picker_android/**                 @gmackall
 packages/in_app_purchase/in_app_purchase_android/**           @gmackall
 packages/local_auth/local_auth_android/**                     @mboetger
 packages/path_provider/path_provider_android/**               @camsim99
-packages/quick_actions/quick_actions_android/**               @reidbaker
+packages/quick_actions/quick_actions_android/**               @jesswrd
 packages/shared_preferences/shared_preferences_android/**     @jesswrd
 packages/url_launcher/url_launcher_android/**                 @gmackall
-packages/video_player/video_player_android/**                 @reidbaker
+packages/video_player/video_player_android/**                 @mboetger
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**           @bparrishMines
 
