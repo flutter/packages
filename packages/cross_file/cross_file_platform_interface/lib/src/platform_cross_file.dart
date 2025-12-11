@@ -40,12 +40,9 @@ import 'platform_cross_file_entity.dart';
 /// }
 /// ```
 @immutable
-base class PlatformXFileCreationParams {
+base class PlatformXFileCreationParams extends PlatformCrossFileEntityCreationParams {
   /// Constructs a [PlatformXFileCreationParams].
-  const PlatformXFileCreationParams({required this.uri});
-
-  /// A string used to reference the resource's location.
-  final String uri;
+  const PlatformXFileCreationParams({required super.uri});
 }
 
 /// Base mixin used to provide platform specific features for implementations of
@@ -72,7 +69,7 @@ base class PlatformXFileCreationParams {
 mixin PlatformXFileExtension {}
 
 /// Interface for a reference to a local data resource.
-abstract base class PlatformXFile implements PlatformCrossFileEntity {
+abstract base class PlatformXFile extends PlatformCrossFileEntity {
   /// Creates a new [PlatformXFile].
   factory PlatformXFile(PlatformXFileCreationParams params) {
     assert(
@@ -93,10 +90,12 @@ abstract base class PlatformXFile implements PlatformCrossFileEntity {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformXFile.implementation(this.params);
+  PlatformXFile.implementation(super.params);
 
   /// The parameters used to initialize the [PlatformXFile].
-  final PlatformXFileCreationParams params;
+  @override
+  PlatformXFileCreationParams get params =>
+      super.params as PlatformXFileCreationParams;
 
   /// Extension for providing platform specific features.
   PlatformXFileExtension? get extension => null;
