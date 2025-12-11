@@ -38,6 +38,10 @@ import 'web_kit_webview_widget_test.mocks.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
+  setUp(() {
+    PigeonOverrides.pigeon_reset();
+  });
+
   group('WebKitWebViewWidget', () {
     _WebViewMocks configureMocks() {
       final mocks = _WebViewMocks(
@@ -228,9 +232,34 @@ void main() {
           ),
         );
 
+        final transparentUiColor = UIColor.pigeon_detached();
+        final redUiColor = UIColor.pigeon_detached();
+        PigeonOverrides.uIColor_new =
+            ({
+              required double red,
+              required double green,
+              required double blue,
+              required double alpha,
+              dynamic observeValue,
+            }) {
+              if (red == Colors.transparent.r &&
+                  green == Colors.transparent.g &&
+                  blue == Colors.transparent.b &&
+                  alpha == Colors.transparent.a) {
+                return transparentUiColor;
+              } else if (red == Colors.red.r &&
+                  green == Colors.red.g &&
+                  blue == Colors.red.b &&
+                  alpha == Colors.red.a) {
+                return redUiColor;
+              }
+
+              return UIColor.pigeon_detached();
+            };
+
         verify(mocks.webView.setOpaque(false));
-        verify(mocks.webView.setBackgroundColor(Colors.transparent.toARGB32()));
-        verify(mocks.scrollView.setBackgroundColor(Colors.red.toARGB32()));
+        verify(mocks.webView.setBackgroundColor(transparentUiColor));
+        verify(mocks.scrollView.setBackgroundColor(redUiColor));
 
         debugDefaultTargetPlatformOverride = null;
       });
@@ -500,7 +529,7 @@ void main() {
         await testController.loadFile('/path/to/file.html');
         verify(mocks.webView.loadFileUrl('/path/to/file.html', '/path/to'));
       });
-      //
+
       testWidgets('loadFlutterAsset', (WidgetTester tester) async {
         final _WebViewMocks mocks = configureMocks();
         final WebKitWebViewPlatformController testController =

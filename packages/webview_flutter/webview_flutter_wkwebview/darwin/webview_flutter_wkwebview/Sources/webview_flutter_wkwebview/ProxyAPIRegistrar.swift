@@ -301,4 +301,8 @@ class ProxyAPIDelegate: WebKitLibraryPigeonProxyApiDelegate {
     return PigeonApiSecCertificate(
       pigeonRegistrar: registrar, delegate: SecCertificateProxyAPIDelegate())
   }
+  
+  func pigeonApiUIColor(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIColor {
+    return PigeonApiUIColor(pigeonRegistrar: registrar, delegate: ColorProxyAPIDelegate())
+  }
 }
