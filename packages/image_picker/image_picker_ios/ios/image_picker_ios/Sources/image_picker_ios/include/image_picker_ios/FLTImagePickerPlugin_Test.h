@@ -62,6 +62,9 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// The context of the Flutter method call that is currently being handled, if any.
 @property(strong, nonatomic, nullable) FLTImagePickerMethodCallContext *callContext;
 
+/// Flag to track if we're currently processing a selection (to prevent observer from interfering)
+@property(nonatomic, assign) BOOL isProcessingSelection;
+
 - (UIViewController *)viewControllerWithWindow:(nullable UIWindow *)window;
 
 /// Validates the provided paths list, then sends it via `callContext.result` as the result of the
