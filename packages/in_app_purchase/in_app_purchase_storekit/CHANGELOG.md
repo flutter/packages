@@ -1,3 +1,9 @@
+## 0.4.6+3
+
+* Fixes `finish()` method to always call its completion handler in StoreKit2.
+* `finish()` now returns success when the transaction is not found in unfinished transactions (since it's already complete).
+* Adds `fetchUnfinishedTransaction()` helper for looking up transactions that need to be completed.
+
 ## 0.4.6+2
 
 * Updates to Pigeon 26.
