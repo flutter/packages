@@ -1051,4 +1051,258 @@
   return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
 }
 
+#pragma mark - Audio Track Tests
+
+- (void)testGetAudioTracksWithRegularAssetTracks {
+  // Create mocks
+  id mockPlayer = OCMClassMock([AVPlayer class]);
+  id mockPlayerItem = OCMClassMock([AVPlayerItem class]);
+  id mockAsset = OCMClassMock([AVAsset class]);
+  id mockAVFactory = OCMProtocolMock(@protocol(FVPAVFactory));
+  id mockViewProvider = OCMProtocolMock(@protocol(FVPViewProvider));
+
+  // Set up basic mock relationships
+  OCMStub([mockPlayer currentItem]).andReturn(mockPlayerItem);
+  OCMStub([mockPlayerItem asset]).andReturn(mockAsset);
+  OCMStub([mockAVFactory playerWithPlayerItem:OCMOCK_ANY]).andReturn(mockPlayer);
+
+  // Create player with mocks
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockPlayerItem
+                                                            avFactory:mockAVFactory
+                                                         viewProvider:mockViewProvider];
+
+  // Create mock asset tracks
+  id mockTrack1 = OCMClassMock([AVAssetTrack class]);
+  id mockTrack2 = OCMClassMock([AVAssetTrack class]);
+
+  // Configure track 1
+  OCMStub([mockTrack1 trackID]).andReturn(1);
+  OCMStub([mockTrack1 languageCode]).andReturn(@"en");
+  OCMStub([mockTrack1 estimatedDataRate]).andReturn(128000.0f);
+
+  // Configure track 2
+  OCMStub([mockTrack2 trackID]).andReturn(2);
+  OCMStub([mockTrack2 languageCode]).andReturn(@"es");
+  OCMStub([mockTrack2 estimatedDataRate]).andReturn(96000.0f);
+
+  // Mock empty format descriptions to avoid Core Media crashes in test environment
+  OCMStub([mockTrack1 formatDescriptions]).andReturn(@[]);
+  OCMStub([mockTrack2 formatDescriptions]).andReturn(@[]);
+
+  // Mock the asset to return our tracks
+  NSArray *mockTracks = @[ mockTrack1, mockTrack2 ];
+  OCMStub([mockAsset tracksWithMediaType:AVMediaTypeAudio]).andReturn(mockTracks);
+
+  // Mock no media selection group (regular asset)
+  OCMStub([mockAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible])
+      .andReturn(nil);
+
+  // Test the method
+  FlutterError *error = nil;
+  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+
+  // Verify results
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+  XCTAssertNotNil(result.assetTracks);
+  XCTAssertNil(result.mediaSelectionTracks);
+  XCTAssertEqual(result.assetTracks.count, 2);
+
+  // Verify first track
+  FVPAssetAudioTrackData *track1 = result.assetTracks[0];
+  XCTAssertEqual(track1.trackId, 1);
+  XCTAssertEqualObjects(track1.language, @"en");
+  XCTAssertTrue(track1.isSelected);  // First track should be selected
+  XCTAssertEqualObjects(track1.bitrate, @128000);
+
+  // Verify second track
+  FVPAssetAudioTrackData *track2 = result.assetTracks[1];
+  XCTAssertEqual(track2.trackId, 2);
+  XCTAssertEqualObjects(track2.language, @"es");
+  XCTAssertFalse(track2.isSelected);  // Second track should not be selected
+  XCTAssertEqualObjects(track2.bitrate, @96000);
+
+  [player disposeWithError:&error];
+}
+
+- (void)testGetAudioTracksWithMediaSelectionOptions {
+  // Create mocks
+  id mockPlayer = OCMClassMock([AVPlayer class]);
+  id mockPlayerItem = OCMClassMock([AVPlayerItem class]);
+  id mockAsset = OCMClassMock([AVAsset class]);
+  id mockAVFactory = OCMProtocolMock(@protocol(FVPAVFactory));
+  id mockViewProvider = OCMProtocolMock(@protocol(FVPViewProvider));
+
+  // Set up basic mock relationships
+  OCMStub([mockPlayer currentItem]).andReturn(mockPlayerItem);
+  OCMStub([mockPlayerItem asset]).andReturn(mockAsset);
+  OCMStub([mockAVFactory playerWithPlayerItem:OCMOCK_ANY]).andReturn(mockPlayer);
+
+  // Create player with mocks
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockPlayerItem
+                                                            avFactory:mockAVFactory
+                                                         viewProvider:mockViewProvider];
+
+  // Create mock media selection group and options
+  id mockMediaSelectionGroup = OCMClassMock([AVMediaSelectionGroup class]);
+  id mockOption1 = OCMClassMock([AVMediaSelectionOption class]);
+  id mockOption2 = OCMClassMock([AVMediaSelectionOption class]);
+
+  // Configure option 1
+  OCMStub([mockOption1 displayName]).andReturn(@"English");
+  id mockLocale1 = OCMClassMock([NSLocale class]);
+  OCMStub([mockLocale1 languageCode]).andReturn(@"en");
+  OCMStub([mockOption1 locale]).andReturn(mockLocale1);
+
+  // Configure option 2
+  OCMStub([mockOption2 displayName]).andReturn(@"Español");
+  id mockLocale2 = OCMClassMock([NSLocale class]);
+  OCMStub([mockLocale2 languageCode]).andReturn(@"es");
+  OCMStub([mockOption2 locale]).andReturn(mockLocale2);
+
+  // Mock metadata for option 1
+  id mockMetadataItem = OCMClassMock([AVMetadataItem class]);
+  OCMStub([mockMetadataItem commonKey]).andReturn(AVMetadataCommonKeyTitle);
+  OCMStub([mockMetadataItem stringValue]).andReturn(@"English Audio Track");
+  OCMStub([mockOption1 commonMetadata]).andReturn(@[ mockMetadataItem ]);
+
+  // Configure media selection group
+  NSArray *options = @[ mockOption1, mockOption2 ];
+  OCMStub([(AVMediaSelectionGroup *)mockMediaSelectionGroup options]).andReturn(options);
+  OCMStub([[(AVMediaSelectionGroup *)mockMediaSelectionGroup options] count]).andReturn(2);
+
+  // Mock the asset to return media selection group
+  OCMStub([mockAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible])
+      .andReturn(mockMediaSelectionGroup);
+
+  // Mock current selection for both iOS 11+ and older versions
+  id mockCurrentMediaSelection = OCMClassMock([AVMediaSelection class]);
+  OCMStub([mockPlayerItem currentMediaSelection]).andReturn(mockCurrentMediaSelection);
+  OCMStub(
+      [mockCurrentMediaSelection selectedMediaOptionInMediaSelectionGroup:mockMediaSelectionGroup])
+      .andReturn(mockOption1);
+
+  // Also mock the deprecated method for iOS < 11
+  OCMStub([mockPlayerItem selectedMediaOptionInMediaSelectionGroup:mockMediaSelectionGroup])
+      .andReturn(mockOption1);
+
+  // Test the method
+  FlutterError *error = nil;
+  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+
+  // Verify results
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+  XCTAssertNil(result.assetTracks);
+  XCTAssertNotNil(result.mediaSelectionTracks);
+  XCTAssertEqual(result.mediaSelectionTracks.count, 2);
+
+  // Verify first option
+  FVPMediaSelectionAudioTrackData *option1Data = result.mediaSelectionTracks[0];
+  XCTAssertEqual(option1Data.index, 0);
+  XCTAssertEqualObjects(option1Data.displayName, @"English");
+  XCTAssertEqualObjects(option1Data.languageCode, @"en");
+  XCTAssertTrue(option1Data.isSelected);
+  XCTAssertEqualObjects(option1Data.commonMetadataTitle, @"English Audio Track");
+
+  // Verify second option
+  FVPMediaSelectionAudioTrackData *option2Data = result.mediaSelectionTracks[1];
+  XCTAssertEqual(option2Data.index, 1);
+  XCTAssertEqualObjects(option2Data.displayName, @"Español");
+  XCTAssertEqualObjects(option2Data.languageCode, @"es");
+  XCTAssertFalse(option2Data.isSelected);
+
+  [player disposeWithError:&error];
+}
+
+- (void)testGetAudioTracksCodecDetection {
+  // Create mocks
+  id mockPlayer = OCMClassMock([AVPlayer class]);
+  id mockPlayerItem = OCMClassMock([AVPlayerItem class]);
+  id mockAsset = OCMClassMock([AVAsset class]);
+  id mockAVFactory = OCMProtocolMock(@protocol(FVPAVFactory));
+  id mockViewProvider = OCMProtocolMock(@protocol(FVPViewProvider));
+
+  // Set up basic mock relationships
+  OCMStub([mockPlayer currentItem]).andReturn(mockPlayerItem);
+  OCMStub([mockPlayerItem asset]).andReturn(mockAsset);
+  OCMStub([mockAVFactory playerWithPlayerItem:OCMOCK_ANY]).andReturn(mockPlayer);
+
+  // Create player with mocks
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockPlayerItem
+                                                            avFactory:mockAVFactory
+                                                         viewProvider:mockViewProvider];
+
+  // Create mock asset track with format description
+  id mockTrack = OCMClassMock([AVAssetTrack class]);
+  OCMStub([mockTrack trackID]).andReturn(1);
+  OCMStub([mockTrack languageCode]).andReturn(@"en");
+
+  // Mock empty format descriptions to avoid Core Media crashes in test environment
+  OCMStub([mockTrack formatDescriptions]).andReturn(@[]);
+
+  // Mock the asset
+  OCMStub([mockAsset tracksWithMediaType:AVMediaTypeAudio]).andReturn(@[ mockTrack ]);
+  OCMStub([mockAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible])
+      .andReturn(nil);
+
+  // Test the method
+  FlutterError *error = nil;
+  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+
+  // Verify results
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+  XCTAssertNotNil(result.assetTracks);
+  XCTAssertEqual(result.assetTracks.count, 1);
+
+  FVPAssetAudioTrackData *track = result.assetTracks[0];
+  XCTAssertEqual(track.trackId, 1);
+  XCTAssertEqualObjects(track.language, @"en");
+
+  [player disposeWithError:&error];
+}
+
+- (void)testGetAudioTracksWithEmptyMediaSelectionOptions {
+  // Create mocks
+  id mockPlayer = OCMClassMock([AVPlayer class]);
+  id mockPlayerItem = OCMClassMock([AVPlayerItem class]);
+  id mockAsset = OCMClassMock([AVAsset class]);
+  id mockAVFactory = OCMProtocolMock(@protocol(FVPAVFactory));
+  id mockViewProvider = OCMProtocolMock(@protocol(FVPViewProvider));
+
+  // Set up basic mock relationships
+  OCMStub([mockPlayer currentItem]).andReturn(mockPlayerItem);
+  OCMStub([mockPlayerItem asset]).andReturn(mockAsset);
+  OCMStub([mockAVFactory playerWithPlayerItem:OCMOCK_ANY]).andReturn(mockPlayer);
+
+  // Create player with mocks
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockPlayerItem
+                                                            avFactory:mockAVFactory
+                                                         viewProvider:mockViewProvider];
+
+  // Create mock media selection group with no options
+  id mockMediaSelectionGroup = OCMClassMock([AVMediaSelectionGroup class]);
+  OCMStub([(AVMediaSelectionGroup *)mockMediaSelectionGroup options]).andReturn(@[]);
+  OCMStub([[(AVMediaSelectionGroup *)mockMediaSelectionGroup options] count]).andReturn(0);
+
+  // Mock the asset
+  OCMStub([mockAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible])
+      .andReturn(mockMediaSelectionGroup);
+  OCMStub([mockAsset tracksWithMediaType:AVMediaTypeAudio]).andReturn(@[]);
+
+  // Test the method
+  FlutterError *error = nil;
+  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+
+  // Verify results - should fall back to asset tracks
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+  XCTAssertNotNil(result.assetTracks);
+  XCTAssertNil(result.mediaSelectionTracks);
+  XCTAssertEqual(result.assetTracks.count, 0);
+
+  [player disposeWithError:&error];
+}
+
 @end
