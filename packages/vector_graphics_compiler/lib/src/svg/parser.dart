@@ -1372,21 +1372,40 @@ class SvgParser {
       }
     }
 
-    // handle rgba() colors e.g. rgba(255, 255, 255, 1.0)
-    if (colorString.toLowerCase().startsWith('rgba')) {
-      final List<String> rawColorElements = colorString
+    // handle rgba() colors e.g. rgb(255, 255, 255) and rgba(255, 255, 255, 1.0)
+    // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/rgb
+    if (colorString.toLowerCase().startsWith('rgba') ||
+        colorString.toLowerCase().startsWith('rgb')) {
+      final List<int> rgba = colorString
           .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-          .split(',')
+          .split(RegExp(r'[,/\s]'))
           .map((String rawColor) => rawColor.trim())
+          .where((e) => e.isNotEmpty)
+          .indexed
+          .map((indexedColor) {
+            var (index, rawColor) = indexedColor;
+            if (rawColor.endsWith('%')) {
+              rawColor = rawColor.substring(0, rawColor.length - 1);
+              return (parseDouble(rawColor)! * 2.55).round();
+            }
+            if (index == 3) {
+              // if alpha is not percentage, it means it's a double between 0 and 1
+              final double opacity = parseDouble(rawColor)!;
+              if (opacity < 0 || opacity > 1) {
+                throw StateError('Invalid "opacity": $opacity');
+              }
+              return (opacity * 255).round();
+            }
+            // If rgb is not percentage, it means it's an integer between 0 and 255
+            return int.parse(rawColor);
+          })
           .toList();
 
-      final double opacity = parseDouble(rawColorElements.removeLast())!;
+      if (rgba.length == 3) {
+        rgba.add(255);
+      }
 
-      final List<int> rgb = rawColorElements
-          .map((String rawColor) => int.parse(rawColor))
-          .toList();
-
-      return Color.fromRGBO(rgb[0], rgb[1], rgb[2], opacity);
+      return Color.fromARGB(rgba[3], rgba[0], rgba[1], rgba[2]);
     }
 
     // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
@@ -1454,26 +1473,6 @@ class SvgParser {
         rgb[1].round(),
         rgb[2].round(),
       );
-    }
-
-    // handle rgb() colors e.g. rgb(255, 255, 255)
-    if (colorString.toLowerCase().startsWith('rgb')) {
-      final List<int> rgb = colorString
-          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-          .split(',')
-          .map((String rawColor) {
-            rawColor = rawColor.trim();
-            if (rawColor.endsWith('%')) {
-              rawColor = rawColor.substring(0, rawColor.length - 1);
-              return (parseDouble(rawColor)! * 2.55).round();
-            }
-            return int.parse(rawColor);
-          })
-          .toList();
-
-      // rgba() isn't really in the spec, but Firefox supported it at one point so why not.
-      final int a = rgb.length > 3 ? rgb[3] : 255;
-      return Color.fromARGB(a, rgb[0], rgb[1], rgb[2]);
     }
 
     // handle named colors ('red', 'green', etc.).
