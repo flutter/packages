@@ -1,3 +1,8 @@
+## 2.8.9
+
+* Resolve `tracksWithMediaType:` deprecations.
+* Use `loadTracksWithMediaType:completionHandler:` for iOS 15.0+/macOS 12.0+.
+
 ## 2.8.8
 
 * Refactors Dart internals for maintainability.
