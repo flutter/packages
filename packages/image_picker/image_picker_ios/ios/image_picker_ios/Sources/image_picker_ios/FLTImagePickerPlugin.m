@@ -37,6 +37,8 @@
 /// the array.
 @property(strong, nonatomic)
     NSMutableArray<UIImagePickerController *> *imagePickerControllerOverrides;
+@property(strong, nonatomic) UIWindow *interactionBlockerWindow;
+@property(weak, nonatomic) UIWindow *previousKeyWindow;
 
 @end
 
@@ -323,6 +325,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
       [UIImagePickerController isCameraDeviceAvailable:device]) {
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePickerController.cameraDevice = device;
+    [self addInteractionBlocker];
     [[self viewControllerWithWindow:nil] presentViewController:imagePickerController
                                                       animated:YES
                                                     completion:nil];
@@ -532,7 +535,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
   NSURL *videoURL = info[UIImagePickerControllerMediaURL];
-  [picker dismissViewControllerAnimated:YES completion:nil];
+  __weak typeof(self) weakSelf = self;
+  [picker dismissViewControllerAnimated:YES
+                             completion:^{
+                               [weakSelf removeInteractionBlocker];
+                             }];
   // The method dismissViewControllerAnimated does not immediately prevent
   // further didFinishPickingMediaWithInfo invocations. A nil check is necessary
   // to prevent below code to be unwantly executed multiple times and cause a
@@ -618,7 +625,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-  [picker dismissViewControllerAnimated:YES completion:nil];
+  __weak typeof(self) weakSelf = self;
+  [picker dismissViewControllerAnimated:YES
+                             completion:^{
+                               [weakSelf removeInteractionBlocker];
+                             }];
   [self sendCallResultWithSavedPathList:nil];
 }
 
@@ -672,6 +683,46 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   self.callContext.result(nil, error);
   self.callContext = nil;
+}
+
+- (void)addInteractionBlocker {
+  if (self.interactionBlockerWindow != nil) {
+    return;
+  }
+  UIViewController *topController = [self viewControllerWithWindow:nil];
+  UIWindow *presentingWindow = topController.view.window;
+  if (!presentingWindow) {
+    return;
+  }
+  self.previousKeyWindow = presentingWindow;
+  UIWindow *blockerWindow;
+  if (@available(iOS 13.0, *) && presentingWindow.windowScene) {
+    blockerWindow = [[UIWindow alloc] initWithWindowScene:presentingWindow.windowScene];
+  } else {
+    blockerWindow = [[UIWindow alloc] initWithFrame:presentingWindow.bounds];
+  }
+  blockerWindow.frame = presentingWindow.bounds;
+  blockerWindow.autoresizingMask =
+      UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+  blockerWindow.windowLevel = presentingWindow.windowLevel + 1;
+  UIViewController *vc = [[UIViewController alloc] init];
+  vc.view.backgroundColor = [UIColor clearColor];
+  vc.view.userInteractionEnabled = YES;
+  blockerWindow.rootViewController = vc;
+  [blockerWindow makeKeyAndVisible];
+  self.interactionBlockerWindow = blockerWindow;
+}
+
+- (void)removeInteractionBlocker {
+  if (!self.interactionBlockerWindow) {
+    return;
+  }
+  self.interactionBlockerWindow.hidden = YES;
+  if (self.previousKeyWindow) {
+    [self.previousKeyWindow makeKeyWindow];
+  }
+  self.interactionBlockerWindow = nil;
+  self.previousKeyWindow = nil;
 }
 
 @end
