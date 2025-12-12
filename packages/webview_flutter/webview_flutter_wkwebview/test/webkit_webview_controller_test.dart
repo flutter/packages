@@ -192,9 +192,9 @@ void main() {
           };
       final PlatformWebViewControllerCreationParams controllerCreationParams =
           WebKitWebViewControllerCreationParams(
-        javaScriptCanOpenWindowsAutomatically:
-            javaScriptCanOpenWindowsAutomatically,
-      );
+            javaScriptCanOpenWindowsAutomatically:
+                javaScriptCanOpenWindowsAutomatically,
+          );
 
       final controller = WebKitWebViewController(controllerCreationParams);
 

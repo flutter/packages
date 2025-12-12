@@ -656,8 +656,8 @@ class WebKitWebViewController extends PlatformWebViewController {
           await webpagePreferences.setAllowsContentJavaScript(true);
       }
       // Set javaScriptCanOpenWindowsAutomatically on WKPreferences
-      final WKPreferences preferences =
-          await _webView.configuration.getPreferences();
+      final WKPreferences preferences = await _webView.configuration
+          .getPreferences();
       await preferences.setJavaScriptCanOpenWindowsAutomatically(
         _webKitParams.javaScriptCanOpenWindowsAutomatically,
       );
