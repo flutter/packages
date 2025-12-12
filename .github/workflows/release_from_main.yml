@@ -1,0 +1,12 @@
+name: Main Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release:
+    uses: ./.github/workflows/release.yml
+    with:
+      publish-args: '--all-changed --base-sha=HEAD~ --skip-confirmation --remote=origin'
+      workflow-name: 'Main Release'
+    secrets: inherit

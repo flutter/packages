@@ -96,6 +96,7 @@ RepositoryPackage createFakePlugin(
   String? version = '0.0.1',
   String flutterConstraint = _defaultFlutterConstraint,
   String dartConstraint = _defaultDartConstraint,
+  bool? batchRelease,
 }) {
   final RepositoryPackage package = createFakePackage(
     name,
@@ -117,6 +118,9 @@ RepositoryPackage createFakePlugin(
     flutterConstraint: flutterConstraint,
     dartConstraint: dartConstraint,
   );
+  if (batchRelease != null) {
+    createFakeCiConfig(batchRelease, package);
+  }
 
   return package;
 }
@@ -285,6 +289,18 @@ $pluginSection
 
   package.pubspecFile.createSync();
   package.pubspecFile.writeAsStringSync(yaml);
+}
+
+/// Creates a `ci_config.yaml` file for [package].
+void createFakeCiConfig(bool batchRelease, RepositoryPackage package) {
+  final yaml =
+      '''
+release:
+  batch: $batchRelease
+''';
+
+  package.ciConfigFile.createSync();
+  package.ciConfigFile.writeAsStringSync(yaml);
 }
 
 String _pluginPlatformSection(

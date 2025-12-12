@@ -84,6 +84,10 @@ class PublishCommand extends PackageLoopingCommand {
           'The --packages option is ignored if this is on.',
     );
     argParser.addFlag(
+      _batchReleaseFlag,
+      help: 'only release the packages that opt-in for batch release option.',
+    );
+    argParser.addFlag(
       _dryRunFlag,
       help:
           'Skips the real `pub publish` and `git tag` commands and assumes both commands are successful.\n'
@@ -109,6 +113,7 @@ class PublishCommand extends PackageLoopingCommand {
   static const String _pubFlagsOption = 'pub-publish-flags';
   static const String _remoteOption = 'remote';
   static const String _allChangedFlag = 'all-changed';
+  static const String _batchReleaseFlag = 'batch-release';
   static const String _dryRunFlag = 'dry-run';
   static const String _skipConfirmationFlag = 'skip-confirmation';
   static const String _tagForAutoPublishFlag = 'tag-for-auto-publish';
@@ -196,6 +201,39 @@ class PublishCommand extends PackageLoopingCommand {
           .toList();
 
       for (final pubspecPath in changedPubspecs) {
+        // Read the ci_config.yaml file if it exists
+
+        final String packageName = p.basename(p.dirname(pubspecPath));
+        bool isBatchReleasePackage;
+        try {
+          final File ciConfigFile = packagesDir.fileSystem
+              .file(pubspecPath)
+              .parent
+              .childFile('ci_config.yaml');
+          if (!ciConfigFile.existsSync()) {
+            isBatchReleasePackage = false;
+          } else {
+            final ciConfig =
+                loadYaml(ciConfigFile.readAsStringSync()) as YamlMap?;
+            final dynamic batchValue =
+                (ciConfig?['release'] as YamlMap?)?['batch'];
+            if (batchValue is! bool) {
+              printError(
+                '`release.batch` key is missing or not a boolean in ci_config.yaml for $packageName.',
+              );
+              continue;
+            }
+            isBatchReleasePackage = batchValue;
+          }
+        } catch (e) {
+          printError('Could not parse ci_config.yaml for $packageName: $e');
+          continue;
+        }
+        // Skip the package if batch release flag is not set to match the ci_config.yaml
+        if (getBoolArg(_batchReleaseFlag) != isBatchReleasePackage) {
+          continue;
+        }
+
         // git outputs a relativa, Posix-style path.
         final File pubspecFile = childFileWithSubcomponents(
           packagesDir.fileSystem.directory((await gitDir).path),

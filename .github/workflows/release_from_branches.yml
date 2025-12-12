@@ -1,0 +1,14 @@
+name: Batch Release
+on:
+  push:
+    branches:
+      - 'release-go-router'
+      - 'release-material'
+      - 'release-cupertino'
+jobs:
+  release:
+    uses: ./.github/workflows/release.yml
+    with:
+      publish-args: '--all-changed --batch-release --base-sha=HEAD~ --skip-confirmation --remote=origin'
+      workflow-name: 'Batch Release  ${{ github.ref_name }}'
+    secrets: inherit
