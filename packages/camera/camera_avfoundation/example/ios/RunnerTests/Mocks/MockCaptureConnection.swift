@@ -26,4 +26,5 @@ final class MockCaptureConnection: NSObject, FLTCaptureConnection {
   var inputPorts: [AVCaptureInput.Port] = []
   var isVideoMirroringSupported = false
   var isVideoOrientationSupported = false
+  var preferredVideoStabilizationMode = AVCaptureVideoStabilizationMode.off
 }

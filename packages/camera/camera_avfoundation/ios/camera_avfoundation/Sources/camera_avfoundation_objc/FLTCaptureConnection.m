@@ -46,4 +46,13 @@
   return self.connection.inputPorts;
 }
 
+- (void)setPreferredVideoStabilizationMode:
+    (AVCaptureVideoStabilizationMode)preferredVideoStabilizationMode {
+  self.connection.preferredVideoStabilizationMode = preferredVideoStabilizationMode;
+}
+
+- (AVCaptureVideoStabilizationMode)preferredVideoStabilizationMode {
+  return self.connection.preferredVideoStabilizationMode;
+}
+
 @end

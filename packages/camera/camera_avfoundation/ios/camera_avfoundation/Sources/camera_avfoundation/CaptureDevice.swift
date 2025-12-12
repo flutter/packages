@@ -58,6 +58,10 @@ protocol CaptureDevice: NSObjectProtocol {
   var minAvailableVideoZoomFactor: CGFloat { get }
   var videoZoomFactor: CGFloat { get set }
 
+  // Video Stabilization
+  func isVideoStabilizationModeSupported(_ videoStabilizationMode: AVCaptureVideoStabilizationMode)
+    -> Bool
+
   // Camera Properties
   var lensAperture: Float { get }
   var exposureDuration: CMTime { get }
@@ -99,6 +103,13 @@ extension AVCaptureDevice: CaptureDevice {
   var flutterFormats: [FLTCaptureDeviceFormat] {
     return self.formats.map { FLTDefaultCaptureDeviceFormat.init(format: $0) }
   }
+
+  func isVideoStabilizationModeSupported(_ videoStabilizationMode: AVCaptureVideoStabilizationMode)
+    -> Bool
+  {
+    return self.activeFormat.isVideoStabilizationModeSupported(videoStabilizationMode)
+  }
+
 }
 
 extension AVCaptureInput: CaptureInput {
