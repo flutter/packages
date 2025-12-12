@@ -377,6 +377,8 @@ class RouteConfiguration {
           extra: imperativeMatch.matches.extra,
         ),
         completer: imperativeMatch.completer,
+        // Preserve the refresh key when reparsing.
+        refreshKey: imperativeMatch.refreshKey,
       );
       result = result.push(match);
     }
