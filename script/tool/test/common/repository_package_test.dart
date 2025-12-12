@@ -279,4 +279,128 @@ void main() {
       expect(package.requiresFlutter(), false);
     });
   });
+
+  group('getPendingChangelogs', () {
+    test('returns an error if the directory is missing', () {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+
+      expect(() => package.getPendingChangelogs(), throwsFormatException);
+    });
+
+    test('returns empty lists if the directory is empty', () {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      package.pendingChangelogsDirectory.createSync();
+
+      final List<PendingChangelogEntry> changelogs = package
+          .getPendingChangelogs();
+
+      expect(changelogs, isEmpty);
+    });
+
+    test('returns entries for valid files', () {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      package.pendingChangelogsDirectory.createSync();
+      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync(
+        '''
+changelog: A
+version: patch
+''',
+      );
+      package.pendingChangelogsDirectory.childFile('b.yaml').writeAsStringSync(
+        '''
+changelog: B
+version: minor
+''',
+      );
+
+      final List<PendingChangelogEntry> changelogs = package
+          .getPendingChangelogs();
+
+      expect(changelogs, hasLength(2));
+      expect(changelogs[0].changelog, 'A');
+      expect(changelogs[0].version, VersionChange.patch);
+      expect(changelogs[1].changelog, 'B');
+      expect(changelogs[1].version, VersionChange.minor);
+    });
+
+    test('returns an error for a malformed file', () {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      package.pendingChangelogsDirectory.createSync();
+      final File changelogFile = package.pendingChangelogsDirectory.childFile(
+        'a.yaml',
+      );
+      changelogFile.writeAsStringSync('not yaml');
+
+      expect(
+        () => package.getPendingChangelogs(),
+        throwsA(
+          isA<FormatException>().having(
+            (FormatException e) => e.message,
+            'message',
+            contains('Expected a YAML map, but found String'),
+          ),
+        ),
+      );
+    });
+
+    test('ignores template.yaml', () {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      package.pendingChangelogsDirectory.createSync();
+      package.pendingChangelogsDirectory.childFile('a.yaml').writeAsStringSync(
+        '''
+changelog: A
+version: patch
+''',
+      );
+      package.pendingChangelogsDirectory
+          .childFile('template.yaml')
+          .writeAsStringSync('''
+changelog: TEMPLATE
+version: skip
+''');
+
+      final List<PendingChangelogEntry> changelogs = package
+          .getPendingChangelogs();
+
+      expect(changelogs, hasLength(1));
+      expect(changelogs[0].changelog, 'A');
+    });
+
+    test('returns an error for non-YAML files', () {
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      package.pendingChangelogsDirectory.createSync();
+      package.pendingChangelogsDirectory
+          .childFile('readme.txt')
+          .writeAsStringSync('This is not a YAML file.');
+
+      expect(
+        () => package.getPendingChangelogs(),
+        throwsA(
+          isA<FormatException>().having(
+            (FormatException e) => e.message,
+            'message',
+            contains('Found non-YAML file(s) in pending_changelogs'),
+          ),
+        ),
+      );
+    });
+  });
 }
