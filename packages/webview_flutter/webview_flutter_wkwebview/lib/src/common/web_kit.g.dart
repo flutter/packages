@@ -299,6 +299,22 @@ class PigeonOverrides {
   })?
   uRLCredential_withUser;
 
+  /// Overrides [UIColor.new].
+  static UIColor Function({
+    required double red,
+    required double green,
+    required double blue,
+    required double alpha,
+    void Function(
+      NSObject pigeon_instance,
+      String? keyPath,
+      NSObject? object,
+      Map<KeyValueChangeKey, Object?>? change,
+    )?
+    observeValue,
+  })?
+  uIColor_new;
+
   /// Overrides [WKWebsiteDataStore.defaultDataStore].
   static WKWebsiteDataStore? wKWebsiteDataStore_defaultDataStore;
 
@@ -366,6 +382,7 @@ class PigeonOverrides {
     secTrust_getTrustResult = null;
     secTrust_copyCertificateChain = null;
     secCertificate_copyData = null;
+    uIColor_new = null;
   }
 }
 
@@ -578,6 +595,9 @@ class PigeonInstanceManager {
       pigeon_instanceManager: instanceManager,
     );
     SecCertificate.pigeon_setUpMessageHandlers(
+      pigeon_instanceManager: instanceManager,
+    );
+    UIColor.pigeon_setUpMessageHandlers(
       pigeon_instanceManager: instanceManager,
     );
     return instanceManager;
@@ -3394,7 +3414,7 @@ class UIView extends NSObject {
   }
 
   /// The view’s background color.
-  Future<void> setBackgroundColor(int? value) async {
+  Future<void> setBackgroundColor(UIColor? value) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecUIView;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -9974,6 +9994,174 @@ class SecCertificate extends NSObject {
   @override
   SecCertificate pigeon_copy() {
     return SecCertificate.pigeon_detached(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
+    );
+  }
+}
+
+/// An object that stores color data and sometimes opacity.
+///
+/// See https://developer.apple.com/documentation/uikit/uicolor.
+class UIColor extends NSObject {
+  /// Creates a color object using the specified opacity and RGB component
+  /// values.
+  ///
+  /// The colors are specified in an extended color space, and the input value
+  /// is never clamped.
+  factory UIColor({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    void Function(
+      NSObject pigeon_instance,
+      String? keyPath,
+      NSObject? object,
+      Map<KeyValueChangeKey, Object?>? change,
+    )?
+    observeValue,
+    required double red,
+    required double green,
+    required double blue,
+    required double alpha,
+  }) {
+    if (PigeonOverrides.uIColor_new != null) {
+      return PigeonOverrides.uIColor_new!(
+        observeValue: observeValue,
+        red: red,
+        green: green,
+        blue: blue,
+        alpha: alpha,
+      );
+    }
+    return UIColor.pigeon_new(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      observeValue: observeValue,
+      red: red,
+      green: green,
+      blue: blue,
+      alpha: alpha,
+    );
+  }
+
+  /// Creates a color object using the specified opacity and RGB component
+  /// values.
+  ///
+  /// The colors are specified in an extended color space, and the input value
+  /// is never clamped.
+  @protected
+  UIColor.pigeon_new({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    super.observeValue,
+    required double red,
+    required double green,
+    required double blue,
+    required double alpha,
+  }) : super.pigeon_detached() {
+    final int pigeonVar_instanceIdentifier = pigeon_instanceManager
+        .addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecUIColor;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIColor.pigeon_defaultConstructor';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[pigeonVar_instanceIdentifier, red, green, blue, alpha],
+    );
+    () async {
+      final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  /// Constructs [UIColor] without creating the associated native object.
+  ///
+  /// This should only be used by subclasses created by this library or to
+  /// create copies for an [PigeonInstanceManager].
+  @protected
+  UIColor.pigeon_detached({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    super.observeValue,
+  }) : super.pigeon_detached();
+
+  late final _PigeonInternalProxyApiBaseCodec _pigeonVar_codecUIColor =
+      _PigeonInternalProxyApiBaseCodec(pigeon_instanceManager);
+
+  static void pigeon_setUpMessageHandlers({
+    bool pigeon_clearHandlers = false,
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    UIColor Function()? pigeon_newInstance,
+  }) {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _PigeonInternalProxyApiBaseCodec(
+          pigeon_instanceManager ?? PigeonInstanceManager.instance,
+        );
+    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
+    {
+      final pigeonVar_channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.webview_flutter_wkwebview.UIColor.pigeon_newInstance',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
+      if (pigeon_clearHandlers) {
+        pigeonVar_channel.setMessageHandler(null);
+      } else {
+        pigeonVar_channel.setMessageHandler((Object? message) async {
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIColor.pigeon_newInstance was null.',
+          );
+          final List<Object?> args = (message as List<Object?>?)!;
+          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
+          assert(
+            arg_pigeon_instanceIdentifier != null,
+            'Argument for dev.flutter.pigeon.webview_flutter_wkwebview.UIColor.pigeon_newInstance was null, expected non-null int.',
+          );
+          try {
+            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
+                .addHostCreatedInstance(
+                  pigeon_newInstance?.call() ??
+                      UIColor.pigeon_detached(
+                        pigeon_binaryMessenger: pigeon_binaryMessenger,
+                        pigeon_instanceManager: pigeon_instanceManager,
+                      ),
+                  arg_pigeon_instanceIdentifier!,
+                );
+            return wrapResponse(empty: true);
+          } on PlatformException catch (e) {
+            return wrapResponse(error: e);
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
+          }
+        });
+      }
+    }
+  }
+
+  @override
+  UIColor pigeon_copy() {
+    return UIColor.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       observeValue: observeValue,
