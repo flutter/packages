@@ -2,11 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
-import '../cross_file_platform_interface.dart';
-import 'platform_cross_file_entity.dart';
 import 'cross_file_platform.dart';
+import 'platform_cross_file_entity.dart';
 
 /// Object specifying creation parameters for creating a [PlatformXDirectory].
 ///
@@ -21,15 +22,15 @@ import 'cross_file_platform.dart';
 /// changes.
 ///
 /// ```dart
-/// base class AndroidPlatformXDirectoryCreationParams
+/// base class AndroidXDirectoryCreationParams
 ///     extends PlatformXDirectoryCreationParams {
-///   AndroidPlatformXDirectoryCreationParams({required super.uri, this.platformValue});
+///   AndroidXDirectoryCreationParams({required super.uri, this.platformValue});
 ///
-///   factory AndroidPlatformXDirectoryCreationParams.fromCreationParams(
+///   factory AndroidXDirectoryCreationParams.fromCreationParams(
 ///     PlatformXDirectoryCreationParams params, {
 ///     Object? platformValue,
 ///   }) {
-///     return AndroidPlatformXDirectoryCreationParams(
+///     return AndroidXDirectoryCreationParams(
 ///       uri: params.uri,
 ///       platformValue: platformValue,
 ///     );
@@ -39,12 +40,10 @@ import 'cross_file_platform.dart';
 /// }
 /// ```
 @immutable
-base class PlatformXDirectoryCreationParams {
+base class PlatformXDirectoryCreationParams
+    extends PlatformXFileEntityCreationParams {
   /// Constructs a [PlatformXDirectoryCreationParams].
-  const PlatformXDirectoryCreationParams({required this.uri});
-
-  /// A string used to reference the resource's location.
-  final String uri;
+  const PlatformXDirectoryCreationParams({required super.uri});
 }
 
 /// Base mixin used to provide platform specific features for implementations of
@@ -54,7 +53,7 @@ base class PlatformXDirectoryCreationParams {
 /// this mixin and return an instance with [PlatformXDirectory.extension].
 ///
 /// ```dart
-/// base class AndroidPlatformXDirectory extends PlatformXDirectory with AndroidXFileExtension {
+/// base class AndroidXDirectory extends PlatformXDirectory with AndroidXFileExtension {
 ///   // ...
 ///   @override
 ///   PlatformXDirectoryExtension? get extension => this;
@@ -68,12 +67,16 @@ base class PlatformXDirectoryCreationParams {
 ///   Future<void> platformMethod();
 /// }
 /// ```
-mixin PlatformXDirectoryExtension {}
+mixin PlatformXDirectoryExtension implements PlatformXFileEntityExtension {}
 
 /// A reference to a directory (or folder) on the file system.
-abstract base class PlatformXDirectory implements PlatformCrossFileEntity {
+abstract base class PlatformXDirectory<
+  T extends PlatformXDirectoryCreationParams,
+  S extends PlatformXDirectoryExtension
+>
+    extends PlatformXFileEntity<T, S> {
   /// Creates a new [PlatformXDirectory].
-  factory PlatformXDirectory(PlatformXDirectoryCreationParams params) {
+  factory PlatformXDirectory(T params) {
     assert(
       CrossFilePlatform.instance != null,
       'A platform implementation for `cross_file` has not been set. Please '
@@ -81,9 +84,7 @@ abstract base class PlatformXDirectory implements PlatformCrossFileEntity {
       '`CrossFilePlatform.instance` before use. For unit testing, '
       '`CrossFilePlatform.instance` can be set with your own test implementation.',
     );
-    final PlatformXDirectory file = CrossFilePlatform.instance!
-        .createPlatformXDirectory(params);
-    return file;
+    return CrossFilePlatform.instance!.createPlatformXDirectory(params);
   }
 
   /// Used by the platform implementation to create a new [PlatformXDirectory].
@@ -91,18 +92,18 @@ abstract base class PlatformXDirectory implements PlatformCrossFileEntity {
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformXDirectory.implementation(this.params);
-
-  /// The parameters used to initialize the [PlatformXDirectory].
-  final PlatformXDirectoryCreationParams params;
-
-  /// Extension for providing platform specific features.
-  PlatformXDirectoryExtension? get extension => null;
+  PlatformXDirectory.implementation(super.params);
 
   /// Lists the sub-directories and files of this Directory.
-  Future<Stream<PlatformCrossFileEntity>> list(ListParams params);
+  Stream<
+    PlatformXFileEntity<
+      PlatformXFileEntityCreationParams,
+      PlatformXFileEntityExtension
+    >
+  >
+  list(ListParams params);
 }
 
-class ListParams {
-
-}
+/// Base class for parameters passed to [PlatformXDirectory.list].
+@immutable
+base class ListParams {}

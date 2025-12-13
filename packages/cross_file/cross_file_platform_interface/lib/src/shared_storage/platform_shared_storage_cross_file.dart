@@ -4,30 +4,32 @@
 
 import 'package:flutter/foundation.dart';
 
-import '../../cross_file_platform_interface.dart';
+import '../cross_file_platform.dart';
+import '../platform_cross_file.dart';
 
-/// Object specifying creation parameters for creating a [PlatformXFile].
+
+/// Object specifying creation parameters for creating a [PlatformSharedStorageXFile].
 ///
 /// Platform specific implementations can add additional fields by extending
 /// this class.
 ///
-/// This example demonstrates how to extend the [PlatformXFileCreationParams] to
+/// This example demonstrates how to extend the [PlatformSharedStorageXFileCreationParams] to
 /// provide additional platform specific parameters.
 ///
-/// When extending [PlatformXFileCreationParams] additional parameters
+/// When extending [PlatformSharedStorageXFileCreationParams] additional parameters
 /// should always accept `null` or have a default value to prevent breaking
 /// changes.
 ///
 /// ```dart
-/// base class AndroidPlatformXFileCreationParams
-///     extends PlatformXFileCreationParams {
-///   AndroidPlatformXFileCreationParams({required super.uri, this.platformValue});
+/// base class AndroidSharedStorageXFileCreationParams
+///     extends PlatformSharedStorageXFileCreationParams {
+///   AndroidSharedStorageXFileCreationParams({required super.uri, this.platformValue});
 ///
-///   factory AndroidPlatformXFileCreationParams.fromCreationParams(
-///     PlatformXFileCreationParams params, {
+///   factory AndroidSharedStorageXFileCreationParams.fromCreationParams(
+///     PlatformSharedStorageXFileCreationParams params, {
 ///     Object? platformValue,
 ///   }) {
-///     return AndroidPlatformXFileCreationParams(
+///     return AndroidSharedStorageXFileCreationParams(
 ///       uri: params.uri,
 ///       platformValue: platformValue,
 ///     );
@@ -39,34 +41,41 @@ import '../../cross_file_platform_interface.dart';
 @immutable
 base class PlatformSharedStorageXFileCreationParams
     extends PlatformXFileCreationParams {
-  /// Constructs a [PlatformXFileCreationParams].
+  /// Constructs a [PlatformSharedStorageXFileCreationParams].
   const PlatformSharedStorageXFileCreationParams({required super.uri});
 }
 
 /// Base mixin used to provide platform specific features for implementations of
-/// [PlatformXFile].
+/// [PlatformSharedStorageXFile].
 ///
 /// Platform implementations are expected to declare a mixin that implements
-/// this mixin and return an instance with [PlatformXFile.extension].
+/// this mixin and return an instance with [PlatformSharedStorageXFile.extension].
 ///
 /// ```dart
-/// base class AndroidPlatformXFile extends PlatformXFile with AndroidXFileExtension {
+/// base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile with AndroidXFileExtension {
 ///   // ...
 ///   @override
-///   PlatformXFileExtension? get extension => this;
+///   PlatformSharedStorageXFileExtension? get extension => this;
 ///
 ///   Future<void> platformMethod() {
 ///     // ...
 ///   }
 /// }
 ///
-/// mixin AndroidXFileExtension implements PlatformXFileExtension {
+/// mixin AndroidXFileExtension implements PlatformSharedStorageXFileExtension {
 ///   Future<void> platformMethod();
 /// }
 /// ```
-mixin SharedStoragePlatformXFileExtension implements PlatformXFileExtension {}
+mixin PlatformSharedStorageXFileExtension implements PlatformXFileExtension {}
 
-abstract base class PlatformSharedStorageXFile extends PlatformXFile {
+/// Interface for a reference to a local data resource within a devices
+/// shared storage.
+abstract base class PlatformSharedStorageXFile
+    extends
+        PlatformXFile<
+          PlatformSharedStorageXFileCreationParams,
+          PlatformSharedStorageXFileExtension
+        > {
   /// Creates a new [PlatformSharedStorageXFile]
   factory PlatformSharedStorageXFile(
     PlatformSharedStorageXFileCreationParams params,
@@ -74,30 +83,19 @@ abstract base class PlatformSharedStorageXFile extends PlatformXFile {
     assert(
       CrossFilePlatform.instance != null,
       'A platform implementation for `cross_file` has not been set. Please '
-      'ensure that an implementation of `XFilePlatform` has been set to '
+      'ensure that an implementation of `CrossFilePlatform` has been set to '
       '`CrossFilePlatform.instance` before use. For unit testing, '
       '`CrossFilePlatform.instance` can be set with your own test implementation.',
     );
-    final PlatformSharedStorageXFile file = CrossFilePlatform.instance!
-        .createPlatformSharedStorageXFile(params);
-    return file;
+    return CrossFilePlatform.instance!.createPlatformSharedStorageXFile(params);
   }
 
-  /// Used by the platform implementation to create a new [PlatformXFile].
+  /// Used by the platform implementation to create a new
+  /// [PlatformSharedStorageXFile].
   ///
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
   PlatformSharedStorageXFile.implementation(super.params)
     : super.implementation();
-
-  /// The parameters used to initialize the [PlatformXFile].
-  @override
-  PlatformSharedStorageXFileCreationParams get params =>
-      super.params as PlatformSharedStorageXFileCreationParams;
-
-  /// Extension for providing platform specific features.
-  @override
-  SharedStoragePlatformXFileExtension? get extension =>
-      super.extension as SharedStoragePlatformXFileExtension?;
 }

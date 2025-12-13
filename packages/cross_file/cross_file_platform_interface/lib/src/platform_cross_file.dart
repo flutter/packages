@@ -22,15 +22,15 @@ import 'platform_cross_file_entity.dart';
 /// changes.
 ///
 /// ```dart
-/// base class AndroidPlatformXFileCreationParams
+/// base class AndroidXFileCreationParams
 ///     extends PlatformXFileCreationParams {
-///   AndroidPlatformXFileCreationParams({required super.uri, this.platformValue});
+///   AndroidXFileCreationParams({required super.uri, this.platformValue});
 ///
-///   factory AndroidPlatformXFileCreationParams.fromCreationParams(
+///   factory AndroidXFileCreationParams.fromCreationParams(
 ///     PlatformXFileCreationParams params, {
 ///     Object? platformValue,
 ///   }) {
-///     return AndroidPlatformXFileCreationParams(
+///     return AndroidXFileCreationParams(
 ///       uri: params.uri,
 ///       platformValue: platformValue,
 ///     );
@@ -40,7 +40,8 @@ import 'platform_cross_file_entity.dart';
 /// }
 /// ```
 @immutable
-base class PlatformXFileCreationParams extends PlatformCrossFileEntityCreationParams {
+base class PlatformXFileCreationParams
+    extends PlatformXFileEntityCreationParams {
   /// Constructs a [PlatformXFileCreationParams].
   const PlatformXFileCreationParams({required super.uri});
 }
@@ -52,7 +53,7 @@ base class PlatformXFileCreationParams extends PlatformCrossFileEntityCreationPa
 /// this mixin and return an instance with [PlatformXFile.extension].
 ///
 /// ```dart
-/// base class AndroidPlatformXFile extends PlatformXFile with AndroidXFileExtension {
+/// base class AndroidXFile extends PlatformXFile with AndroidXFileExtension {
 ///   // ...
 ///   @override
 ///   PlatformXFileExtension? get extension => this;
@@ -66,12 +67,16 @@ base class PlatformXFileCreationParams extends PlatformCrossFileEntityCreationPa
 ///   Future<void> platformMethod();
 /// }
 /// ```
-mixin PlatformXFileExtension {}
+mixin PlatformXFileExtension implements PlatformXFileEntityExtension {}
 
 /// Interface for a reference to a local data resource.
-abstract base class PlatformXFile extends PlatformCrossFileEntity {
+abstract base class PlatformXFile<
+  T extends PlatformXFileCreationParams,
+  S extends PlatformXFileExtension
+>
+    extends PlatformXFileEntity<T, S> {
   /// Creates a new [PlatformXFile].
-  factory PlatformXFile(PlatformXFileCreationParams params) {
+  factory PlatformXFile(T params) {
     assert(
       CrossFilePlatform.instance != null,
       'A platform implementation for `cross_file` has not been set. Please '
@@ -79,10 +84,7 @@ abstract base class PlatformXFile extends PlatformCrossFileEntity {
       '`CrossFilePlatform.instance` before use. For unit testing, '
       '`CrossFilePlatform.instance` can be set with your own test implementation.',
     );
-    final PlatformXFile file = CrossFilePlatform.instance!.createPlatformXFile(
-      params,
-    );
-    return file;
+    return CrossFilePlatform.instance!.createPlatformXFile(params);
   }
 
   /// Used by the platform implementation to create a new [PlatformXFile].
@@ -92,14 +94,6 @@ abstract base class PlatformXFile extends PlatformCrossFileEntity {
   @protected
   PlatformXFile.implementation(super.params);
 
-  /// The parameters used to initialize the [PlatformXFile].
-  @override
-  PlatformXFileCreationParams get params =>
-      super.params as PlatformXFileCreationParams;
-
-  /// Extension for providing platform specific features.
-  PlatformXFileExtension? get extension => null;
-
   /// Date and time when the resource was last modified, if the information is
   /// available.
   ///
@@ -107,6 +101,8 @@ abstract base class PlatformXFile extends PlatformCrossFileEntity {
   Future<DateTime> lastModified();
 
   /// The length of the data represented by this uri, in bytes.
+  ///
+  /// Platforms may throw an exception if the information is not available.
   Future<int> length();
 
   /// Whether the resource represented by this reference can be read.
@@ -120,13 +116,19 @@ abstract base class PlatformXFile extends PlatformCrossFileEntity {
   /// If end is present, only bytes up to byte-index end will be read.
   /// Otherwise, until end of file.
   ///
-  /// Platforms can throw an exception if there is an error opening or reading
+  /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
   Stream<List<int>> openRead([int? start, int? end]);
 
   /// Reads the entire resource contents as a list of bytes.
+  ///
+  /// Platforms may throw an exception if there is an error opening or reading
+  /// the resource.
   Future<Uint8List> readAsBytes();
 
   /// Reads the entire resource contents as a string using the given Encoding.
+  ///
+  /// Platforms may throw an exception if there is an error opening or reading
+  /// the resource.
   Future<String> readAsString({Encoding encoding = utf8});
 }
