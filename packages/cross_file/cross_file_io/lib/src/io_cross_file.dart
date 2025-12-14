@@ -7,6 +7,27 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
+import 'package:flutter/foundation.dart';
+
+/// Implementation of [PlatformXFileCreationParams] for dart:io.
+@immutable
+base class IOXFileCreationParams extends PlatformXFileCreationParams {
+  /// Constructs an [IOXFileCreationParams].
+  IOXFileCreationParams({required String uri}) : this.fromFile(File(uri));
+
+  /// Constructs an [IOXFileCreationParams] from a [File].
+  IOXFileCreationParams.fromFile(this.file) : super(uri: file.path);
+
+  /// Constructs an [IOXFileCreationParams] from a [PlatformXFileCreationParams].
+  factory IOXFileCreationParams.fromCreationParams(
+    PlatformXFileCreationParams params,
+  ) {
+    return IOXFileCreationParams(uri: params.uri);
+  }
+
+  /// The underlying [File] for [IOXFile].
+  final File file;
+}
 
 /// Implementation of [PlatformXFile] for dart:io.
 base class IOXFile extends PlatformXFile with IOXFileExtension {
@@ -14,7 +35,13 @@ base class IOXFile extends PlatformXFile with IOXFileExtension {
   IOXFile(super.params) : super.implementation();
 
   @override
-  late final file = File(params.uri);
+  late final IOXFileCreationParams params =
+      super.params is IOXFileCreationParams
+      ? super.params as IOXFileCreationParams
+      : IOXFileCreationParams.fromCreationParams(super.params);
+
+  @override
+  File get file => params.file;
 
   @override
   PlatformXFileExtension? get extension => this;

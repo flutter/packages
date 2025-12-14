@@ -5,8 +5,31 @@
 import 'dart:io';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 
 import 'io_cross_file.dart';
+
+/// Implementation of [PlatformXDirectoryCreationParams] for dart:io.
+@immutable
+base class IOXDirectoryCreationParams extends PlatformXDirectoryCreationParams {
+  /// Constructs an [IOXDirectoryCreationParams].
+  IOXDirectoryCreationParams({required String uri})
+    : this.fromFile(Directory(uri));
+
+  /// Constructs an [IOXDirectoryCreationParams] from a [Directory].
+  IOXDirectoryCreationParams.fromFile(this.directory)
+    : super(uri: directory.path);
+
+  /// Constructs an [IOXDirectoryCreationParams] from a [PlatformXDirectoryCreationParams].
+  factory IOXDirectoryCreationParams.fromCreationParams(
+    PlatformXDirectoryCreationParams params,
+  ) {
+    return IOXDirectoryCreationParams(uri: params.uri);
+  }
+
+  /// The underlying [Directory] for [IOXDirectory].
+  final Directory directory;
+}
 
 /// Implementation of [PlatformXDirectory] for dart:io.
 base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
@@ -14,7 +37,13 @@ base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
   IOXDirectory(super.params) : super.implementation();
 
   @override
-  late final directory = Directory(params.uri);
+  late final IOXDirectoryCreationParams params =
+      super.params is IOXDirectoryCreationParams
+      ? super.params as IOXDirectoryCreationParams
+      : IOXDirectoryCreationParams.fromCreationParams(super.params);
+
+  @override
+  Directory get directory => params.directory;
 
   @override
   IOXDirectoryExtension? get extension => this;

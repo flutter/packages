@@ -15,6 +15,7 @@ dependencies:
     path: ../cross_file_platform_interface
 
 dev_dependencies:
+  path: ^1.9.1
   flutter_test:
     sdk: flutter
 
