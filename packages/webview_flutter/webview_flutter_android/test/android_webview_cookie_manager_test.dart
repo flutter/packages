@@ -23,7 +23,7 @@ void main() {
       mockCookieManager.removeAllCookies(),
     ).thenAnswer((_) => Future<bool>.value(true));
 
-    final AndroidWebViewCookieManagerCreationParams params =
+    final params =
         AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
           const PlatformWebViewCookieManagerCreationParams(),
         );
@@ -38,13 +38,15 @@ void main() {
   });
 
   test('setCookie should throw ArgumentError for cookie with invalid path', () {
-    final AndroidWebViewCookieManagerCreationParams params =
+    final params =
         AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
           const PlatformWebViewCookieManagerCreationParams(),
         );
 
-    final AndroidWebViewCookieManager androidCookieManager =
-        AndroidWebViewCookieManager(params, cookieManager: MockCookieManager());
+    final androidCookieManager = AndroidWebViewCookieManager(
+      params,
+      cookieManager: MockCookieManager(),
+    );
 
     expect(
       () => androidCookieManager.setCookie(
@@ -64,7 +66,7 @@ void main() {
     () {
       final android_webview.CookieManager mockCookieManager =
           MockCookieManager();
-      final AndroidWebViewCookieManagerCreationParams params =
+      final params =
           AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
             const PlatformWebViewCookieManagerCreationParams(),
           );
@@ -83,28 +85,21 @@ void main() {
   );
 
   test('setAcceptThirdPartyCookies', () async {
-    final MockAndroidWebViewController mockController =
-        MockAndroidWebViewController();
+    final mockController = MockAndroidWebViewController();
 
-    final android_webview.PigeonInstanceManager instanceManager =
-        android_webview.PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
-    final android_webview.WebView webView = android_webview
-        .WebView.pigeon_detached(pigeon_instanceManager: instanceManager);
+    final webView = android_webview.WebView.pigeon_detached();
 
-    final int webViewIdentifier = instanceManager.addDartCreatedInstance(
-      webView,
-    );
+    final int webViewIdentifier = android_webview.PigeonInstanceManager.instance
+        .addDartCreatedInstance(webView);
 
     when(mockController.webViewIdentifier).thenReturn(webViewIdentifier);
 
-    final AndroidWebViewCookieManagerCreationParams params =
+    final params =
         AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
           const PlatformWebViewCookieManagerCreationParams(),
         );
 
-    final MockCookieManager mockCookieManager = MockCookieManager();
-    // ignore: invalid_use_of_protected_member
-    when(mockCookieManager.pigeon_instanceManager).thenReturn(instanceManager);
+    final mockCookieManager = MockCookieManager();
 
     await AndroidWebViewCookieManager(
       params,

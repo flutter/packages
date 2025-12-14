@@ -245,12 +245,12 @@ class FakeErrorEvent {
 /// final videoStream = videoElement.captureStream();
 /// ```
 web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
-  final web.HTMLCanvasElement canvasElement = web.HTMLCanvasElement()
+  final canvasElement = web.HTMLCanvasElement()
     ..width = videoSize.width.toInt()
     ..height = videoSize.height.toInt()
     ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
 
-  final web.HTMLVideoElement videoElement = web.HTMLVideoElement()
+  final videoElement = web.HTMLVideoElement()
     ..srcObject = canvasElement.captureStream();
 
   return videoElement;

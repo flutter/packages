@@ -35,15 +35,16 @@ void main() async {
 
   id.setLogLevel('debug');
 
-  final TokenClientConfig config = TokenClientConfig(
+  final config = TokenClientConfig(
     client_id: 'your-google-client-id-goes-here.apps.googleusercontent.com',
     scope: scopes,
     callback: onTokenResponse,
     error_callback: onError,
   );
 
-  final OverridableTokenClientConfig overridableCfg =
-      OverridableTokenClientConfig(scope: scopes + myConnectionsScopes);
+  final overridableCfg = OverridableTokenClientConfig(
+    scope: scopes + myConnectionsScopes,
+  );
 
   final TokenClient client = oauth2.initTokenClient(config);
 

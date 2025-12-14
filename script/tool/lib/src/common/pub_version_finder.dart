@@ -26,8 +26,9 @@ class PubVersionFinder {
   final http.Client httpClient;
 
   /// Get the package version on pub.
-  Future<PubVersionFinderResponse> getPackageVersion(
-      {required String packageName}) async {
+  Future<PubVersionFinderResponse> getPackageVersion({
+    required String packageName,
+  }) async {
     assert(packageName.isNotEmpty);
     final Uri pubHostUri = Uri.parse(pubHost);
     final Uri url = pubHostUri.replace(path: '/packages/$packageName.json');
@@ -35,37 +36,41 @@ class PubVersionFinder {
 
     if (response.statusCode == 404) {
       return PubVersionFinderResponse(
-          versions: <Version>[],
-          result: PubVersionFinderResult.noPackageFound,
-          httpResponse: response);
+        versions: <Version>[],
+        result: PubVersionFinderResult.noPackageFound,
+        httpResponse: response,
+      );
     } else if (response.statusCode != 200) {
       return PubVersionFinderResponse(
-          versions: <Version>[],
-          result: PubVersionFinderResult.fail,
-          httpResponse: response);
+        versions: <Version>[],
+        result: PubVersionFinderResult.fail,
+        httpResponse: response,
+      );
     }
-    final Map<Object?, Object?> responseBody =
-        json.decode(response.body) as Map<Object?, Object?>;
+    final responseBody = json.decode(response.body) as Map<Object?, Object?>;
     final List<Version> versions = (responseBody['versions']! as List<Object?>)
         .cast<String>()
         .map<Version>(
-            (final String versionString) => Version.parse(versionString))
+          (final String versionString) => Version.parse(versionString),
+        )
         .toList();
 
     return PubVersionFinderResponse(
-        versions: versions,
-        result: PubVersionFinderResult.success,
-        httpResponse: response);
+      versions: versions,
+      result: PubVersionFinderResult.success,
+      httpResponse: response,
+    );
   }
 }
 
 /// Represents a response for [PubVersionFinder].
 class PubVersionFinderResponse {
   /// Constructor.
-  PubVersionFinderResponse(
-      {required this.versions,
-      required this.result,
-      required this.httpResponse}) {
+  PubVersionFinderResponse({
+    required this.versions,
+    required this.result,
+    required this.httpResponse,
+  }) {
     if (versions.isNotEmpty) {
       versions.sort((Version a, Version b) {
         // TODO(cyanglaz): Think about how to handle pre-release version with [Version.prioritize].

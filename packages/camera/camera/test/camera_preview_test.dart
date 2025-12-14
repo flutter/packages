@@ -150,7 +150,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -189,7 +189,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -228,7 +228,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -267,7 +267,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -306,7 +306,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -344,7 +344,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -382,7 +382,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -420,7 +420,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -458,7 +458,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -492,7 +492,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -526,7 +526,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -560,7 +560,7 @@ void main() {
       (WidgetTester tester) async {
         debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-        final FakeController controller = FakeController();
+        final controller = FakeController();
         addTearDown(controller.dispose);
 
         controller.value = controller.value.copyWith(
@@ -594,7 +594,7 @@ void main() {
     WidgetTester tester,
   ) async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
-    final FakeController controller = FakeController();
+    final controller = FakeController();
     addTearDown(controller.dispose);
     controller.value = controller.value.copyWith(
       isInitialized: true,

@@ -142,7 +142,7 @@ base class SharedPreferencesAsyncAndroid
     final SharedPreferencesPigeonOptions pigeonOptions =
         convertOptionsToPigeonOptions(options);
     final SharedPreferencesAsyncApi api = getApiForBackend(pigeonOptions);
-    final String stringValue = '$jsonListPrefix${jsonEncode(value)}';
+    final stringValue = '$jsonListPrefix${jsonEncode(value)}';
     return api.setString(key, stringValue, pigeonOptions);
   }
 

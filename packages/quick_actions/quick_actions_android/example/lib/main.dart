@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
 
-    final QuickActionsAndroid quickActions = QuickActionsAndroid();
+    final quickActions = QuickActionsAndroid();
     quickActions.initialize((String shortcutType) {
       setState(() {
         shortcut = '$shortcutType has launched';

@@ -63,8 +63,7 @@ class DartOptions {
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   static DartOptions fromMap(Map<String, Object> map) {
-    final Iterable<dynamic>? copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return DartOptions(
       copyrightHeader: copyrightHeader?.cast<String>(),
       sourceOutPath: map['sourceOutPath'] as String?,
@@ -75,7 +74,7 @@ class DartOptions {
   /// Converts a [DartOptions] to a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{
+    final result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
       if (testOutPath != null) 'testOutPath': testOutPath!,
@@ -138,7 +137,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, omit_obvious_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
     );
     indent.newln();
   }
@@ -211,8 +210,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       classDefinition.documentationComments,
       docCommentSpec,
     );
-    final String sealed = classDefinition.isSealed ? 'sealed ' : '';
-    final String implements = classDefinition.superClassName != null
+    final sealed = classDefinition.isSealed ? 'sealed ' : '';
+    final implements = classDefinition.superClassName != null
         ? 'extends ${classDefinition.superClassName} '
         : '';
 
@@ -270,11 +269,10 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       for (final NamedType field in getFieldsInSerializationOrder(
         classDefinition,
       )) {
-        final String required =
-            !field.type.isNullable && field.defaultValue == null
+        final required = !field.type.isNullable && field.defaultValue == null
             ? 'required '
             : '';
-        final String defaultValueString = field.defaultValue == null
+        final defaultValueString = field.defaultValue == null
             ? ''
             : ' = ${field.defaultValue}';
         indent.writeln('${required}this.${field.name}$defaultValueString,');
@@ -317,16 +315,16 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     void writeValueDecode(NamedType field, int index) {
-      final String resultAt = 'result[$index]';
-      final String castCallPrefix = field.type.isNullable ? '?' : '!';
+      final resultAt = 'result[$index]';
+      final castCallPrefix = field.type.isNullable ? '?' : '!';
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
-      final String nullableTag = field.type.isNullable ? '?' : '';
+      final nullableTag = field.type.isNullable ? '?' : '';
       if (field.type.typeArguments.isNotEmpty) {
         indent.add('($resultAt as $genericType?)$castCallPrefix$castCall');
       } else {
-        final String castCallForcePrefix = field.type.isNullable ? '' : '!';
-        final String castString = field.type.baseName == 'Object'
+        final castCallForcePrefix = field.type.isNullable ? '' : '!';
+        final castString = field.type.baseName == 'Object'
             ? ''
             : ' as $genericType$nullableTag';
 
@@ -403,7 +401,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             indent.writeln('writeValue(buffer, value.index);');
           }
         } else {
-          final String encodeString = customType.type == CustomTypes.customClass
+          final encodeString = customType.type == CustomTypes.customClass
               ? '.encode()'
               : '.index';
           indent.writeln(
@@ -434,7 +432,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             );
           }
         } else if (customType.type == CustomTypes.customEnum) {
-          indent.writeln('final int? value = readValue(buffer) as int?;');
+          indent.writeln('final value = readValue(buffer) as int?;');
           indent.writeln(
             'return value == null ? null : ${customType.name}.values[value];',
           );
@@ -442,7 +440,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       });
     }
 
-    final EnumeratedType overflowClass = EnumeratedType(
+    final overflowClass = EnumeratedType(
       _overflowClassName,
       maximumCodecFieldKey,
       CustomTypes.customClass,
@@ -467,7 +465,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           indent.writeln('buffer.putUint8(4);');
           indent.writeln('buffer.putInt64(value);');
         }, addTrailingNewline: false);
-        int nonSerializedClassCount = 0;
+        var nonSerializedClassCount = 0;
         enumerate(enumeratedTypes, (
           int index,
           final EnumeratedType customType,
@@ -488,8 +486,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.addScoped('{', '}', () {
         indent.write('switch (type) ');
         indent.addScoped('{', '}', () {
-          int nonSerializedClassCount = 0;
-          for (final EnumeratedType customType in enumeratedTypes) {
+          var nonSerializedClassCount = 0;
+          for (final customType in enumeratedTypes) {
             if (customType.associatedClass?.isSealed ?? false) {
               nonSerializedClassCount++;
             } else if (customType.offset(nonSerializedClassCount) <
@@ -617,7 +615,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     required String dartPackageName,
   }) {
     indent.newln();
-    bool first = true;
+    var first = true;
     addDocumentationComments(indent, api.documentationComments, docCommentSpec);
     indent.write('class ${api.name} ');
     indent.addScoped('{', '}', () {
@@ -707,21 +705,21 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     Indent indent, {
     required String dartPackageName,
   }) {
-    final cb.Parameter binaryMessengerParameter = cb.Parameter(
+    final binaryMessengerParameter = cb.Parameter(
       (cb.ParameterBuilder builder) => builder
         ..name = 'binaryMessenger'
         ..type = cb.refer('BinaryMessenger?')
         ..named = true,
     );
 
-    final cb.Field binaryMessengerField = cb.Field(
+    final binaryMessengerField = cb.Field(
       (cb.FieldBuilder builder) => builder
         ..name = '${varNamePrefix}binaryMessenger'
         ..type = cb.refer('BinaryMessenger?')
         ..modifier = cb.FieldModifier.final$,
     );
 
-    final cb.Class instanceManagerApi = cb.Class(
+    final instanceManagerApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = dartInstanceManagerApiClassName
         ..docs.add(
@@ -776,7 +774,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
               ])
               ..body = cb.Block.of(
                 cb.Block((cb.BlockBuilder builder) {
-                  final StringBuffer messageHandlerSink = StringBuffer();
+                  final messageHandlerSink = StringBuffer();
                   writeFlutterMethodMessageHandler(
                     Indent(messageHandlerSink),
                     name: 'removeStrongReferenceName',
@@ -827,7 +825,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                 ),
               )
               ..body = cb.Block((cb.BlockBuilder builder) {
-                final StringBuffer messageCallSink = StringBuffer();
+                final messageCallSink = StringBuffer();
                 writeHostMethodMessageCall(
                   Indent(messageCallSink),
                   addSuffixVariable: false,
@@ -861,7 +859,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
                 '/// This is typically called after a hot restart.',
               ])
               ..body = cb.Block((cb.BlockBuilder builder) {
-                final StringBuffer messageCallSink = StringBuffer();
+                final messageCallSink = StringBuffer();
                 writeHostMethodMessageCall(
                   Indent(messageCallSink),
                   addSuffixVariable: false,
@@ -877,7 +875,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ]),
     );
 
-    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    final emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(
       DartFormatter(
         languageVersion: Version(3, 6, 0),
@@ -902,14 +900,14 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     AstProxyApi api, {
     required String dartPackageName,
   }) {
-    const String codecName = '_${classNamePrefix}ProxyApiBaseCodec';
+    const codecName = '_${classNamePrefix}ProxyApiBaseCodec';
 
     // Each API has a private codec instance used by every host method,
     // constructor, or non-static field.
-    final String codecInstanceName = '_${varNamePrefix}codec${api.name}';
+    final codecInstanceName = '_${varNamePrefix}codec${api.name}';
 
     // AST class used by code_builder to generate the code.
-    final cb.Class proxyApi = cb.Class(
+    final proxyApi = cb.Class(
       (cb.ClassBuilder builder) => builder
         ..name = api.name
         ..extend = api.superClass != null
@@ -1016,7 +1014,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
         ),
     );
 
-    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    final emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(_formatter.format('${proxyApi.accept(emitter)}'));
   }
 
@@ -1031,7 +1029,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     required String dartPackageName,
     required String dartOutputPackageName,
   }) {
-    final Indent indent = Indent(sink);
+    final indent = Indent(sink);
     final String sourceOutPath = generatorOptions.dartOut ?? '';
     final String testOutPath = generatorOptions.testOut ?? '';
     _writeTestPrologue(generatorOptions, root, indent);
@@ -1064,7 +1062,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     );
     for (final AstHostApi api in root.apis.whereType<AstHostApi>()) {
       if (api.dartHostTestHandler != null) {
-        final AstFlutterApi mockApi = AstFlutterApi(
+        final mockApi = AstFlutterApi(
           name: api.dartHostTestHandler!,
           methods: api.methods,
           documentationComments: api.documentationComments,
@@ -1091,7 +1089,7 @@ final BinaryMessenger? ${varNamePrefix}binaryMessenger;
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, no_leading_underscores_for_local_identifiers',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, no_leading_underscores_for_local_identifiers, omit_obvious_local_variable_types',
     );
     indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   }
@@ -1215,7 +1213,7 @@ if (wrapped == null) {
 }
 ''');
         indent.writeScoped('switch (type) {', '}', () {
-          int nonSerializedClassCount = 0;
+          var nonSerializedClassCount = 0;
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
             if (types[i].associatedClass?.isSealed ?? false) {
               nonSerializedClassCount++;
@@ -1275,7 +1273,7 @@ if (wrapped == null) {
     required bool addSuffixVariable,
     bool insideAsyncMethod = true,
   }) {
-    String sendArgument = 'null';
+    var sendArgument = 'null';
     if (parameters.isNotEmpty) {
       final Iterable<String> argExpressions = indexMap(parameters, (
         int index,
@@ -1286,13 +1284,13 @@ if (wrapped == null) {
       });
       sendArgument = '<Object?>[${argExpressions.join(', ')}]';
     }
-    final String channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
-    final String constOrFinal = addSuffixVariable ? 'final' : 'const';
+    final channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
+    final constOrFinal = addSuffixVariable ? 'final' : 'const';
     indent.writeln(
-      "$constOrFinal String ${varNamePrefix}channelName = '$channelName$channelSuffix';",
+      "$constOrFinal ${varNamePrefix}channelName = '$channelName$channelSuffix';",
     );
     indent.writeScoped(
-      'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
+      'final ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       ');',
       () {
         indent.writeln('${varNamePrefix}channelName,');
@@ -1302,22 +1300,22 @@ if (wrapped == null) {
     );
     final String returnTypeName = _makeGenericTypeArguments(returnType);
     final String genericCastCall = _makeGenericCastCall(returnType);
-    const String accessor = '${varNamePrefix}replyList[0]';
+    const accessor = '${varNamePrefix}replyList[0]';
     // Avoid warnings from pointlessly casting to `Object?`.
-    final String nullablyTypedAccessor = returnTypeName == 'Object'
+    final nullablyTypedAccessor = returnTypeName == 'Object'
         ? accessor
         : '($accessor as $returnTypeName?)';
-    final String nullHandler = returnType.isNullable
+    final nullHandler = returnType.isNullable
         ? (genericCastCall.isEmpty ? '' : '?')
         : '!';
-    String returnStatement = 'return';
+    var returnStatement = 'return';
     if (!returnType.isVoid) {
       returnStatement =
           '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
     }
     returnStatement = '$returnStatement;';
 
-    const String sendFutureVar = '${varNamePrefix}sendFuture';
+    const sendFutureVar = '${varNamePrefix}sendFuture';
     indent.writeln(
       'final Future<Object?> $sendFutureVar = ${varNamePrefix}channel.send($sendArgument);',
     );
@@ -1330,8 +1328,7 @@ if (wrapped == null) {
     }
 
     indent.format('''
-final List<Object?>? ${varNamePrefix}replyList =
-\t\tawait $sendFutureVar as List<Object?>?;
+final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
 if (${varNamePrefix}replyList == null) {
 \tthrow _createConnectionError(${varNamePrefix}channelName);
 } else if (${varNamePrefix}replyList.length > 1) {
@@ -1384,16 +1381,14 @@ if (${varNamePrefix}replyList == null) {
     indent.write('');
     indent.addScoped('{', '}', () {
       indent.writeln(
-        'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
+        'final ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
-        final String channelSuffix = addSuffixVariable
-            ? r'$messageChannelSuffix'
-            : '';
+        final channelSuffix = addSuffixVariable ? r'$messageChannelSuffix' : '';
         indent.writeln("'$channelName$channelSuffix', $pigeonChannelCodec,");
         indent.writeln('binaryMessenger: binaryMessenger);');
       });
-      final String messageHandlerSetterWithOpeningParentheses = isMockHandler
+      final messageHandlerSetterWithOpeningParentheses = isMockHandler
           ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${varNamePrefix}channel, '
           : '${varNamePrefix}channel.setMessageHandler(';
       indent.write('if ($nullHandlerExpression) ');
@@ -1407,16 +1402,15 @@ if (${varNamePrefix}replyList == null) {
         );
         indent.addScoped('{', '});', () {
           final String returnTypeString = addGenericTypesNullable(returnType);
-          final bool isAsync = isAsynchronous;
-          const String emptyReturnStatement =
-              'return wrapResponse(empty: true);';
+          final isAsync = isAsynchronous;
+          const emptyReturnStatement = 'return wrapResponse(empty: true);';
           String call;
           if (parameters.isEmpty) {
             call = 'api.$name()';
           } else {
             indent.writeln('assert(message != null,');
             indent.writeln("'Argument for $channelName was null.');");
-            const String argsArray = 'args';
+            const argsArray = 'args';
             indent.writeln(
               'final List<Object?> $argsArray = (message as List<Object?>?)!;',
             );
@@ -1428,7 +1422,7 @@ if (${varNamePrefix}replyList == null) {
               final String genericArgType = _makeGenericTypeArguments(arg.type);
               final String castCall = _makeGenericCastCall(arg.type);
 
-              final String leftHandSide = 'final $argType? $argName';
+              final leftHandSide = 'final $argType? $argName';
 
               indent.writeln(
                 '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};',
@@ -1465,8 +1459,8 @@ if (${varNamePrefix}replyList == null) {
                 indent.writeln('final $returnTypeString output = $call;');
               }
 
-              const String returnExpression = 'output';
-              final String returnStatement = isMockHandler
+              const returnExpression = 'output';
+              final returnStatement = isMockHandler
                   ? 'return <Object?>[$returnExpression];'
                   : 'return wrapResponse(result: $returnExpression);';
               indent.writeln(returnStatement);
@@ -1537,7 +1531,7 @@ String _getMethodParameterSignature(
   Iterable<Parameter> parameters, {
   bool addTrailingComma = false,
 }) {
-  String signature = '';
+  var signature = '';
   if (parameters.isEmpty) {
     return signature;
   }
@@ -1553,13 +1547,11 @@ String _getMethodParameterSignature(
       .toList();
 
   String getParameterString(Parameter p) {
-    final String required = p.isRequired && !p.isPositional ? 'required ' : '';
+    final required = p.isRequired && !p.isPositional ? 'required ' : '';
 
     final String type = addGenericTypesNullable(p.type);
 
-    final String defaultValue = p.defaultValue == null
-        ? ''
-        : ' = ${p.defaultValue}';
+    final defaultValue = p.defaultValue == null ? '' : ' = ${p.defaultValue}';
     return '$required$type ${p.name}$defaultValue';
   }
 
@@ -1577,20 +1569,18 @@ String _getMethodParameterSignature(
   if (requiredPositionalParams.isNotEmpty) {
     signature = baseParameterString;
   }
-  final String trailingComma =
+  final trailingComma =
       optionalPositionalParams.isNotEmpty || namedParams.isNotEmpty ? ',' : '';
-  final String baseParams = signature.isNotEmpty
-      ? '$signature$trailingComma '
-      : '';
+  final baseParams = signature.isNotEmpty ? '$signature$trailingComma ' : '';
   if (optionalPositionalParams.isNotEmpty) {
-    final String trailingComma =
+    final trailingComma =
         requiredPositionalParams.length + optionalPositionalParams.length > 2
         ? ','
         : '';
     return '$baseParams[$optionalParameterString$trailingComma]';
   }
   if (namedParams.isNotEmpty) {
-    final String trailingComma =
+    final trailingComma =
         addTrailingComma ||
             requiredPositionalParams.length + namedParams.length > 2
         ? ', '
@@ -1639,6 +1629,6 @@ String addGenericTypesNullable(TypeDeclaration type) {
 
 /// Converts [inputPath] to a posix absolute path.
 String _posixify(String inputPath) {
-  final path.Context context = path.Context(style: path.Style.posix);
+  final context = path.Context(style: path.Style.posix);
   return context.fromUri(path.toUri(path.absolute(inputPath)));
 }

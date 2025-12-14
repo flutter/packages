@@ -346,14 +346,14 @@ final Codec<Object?, String> _jwtCodec = json.fuse(utf8).fuse(base64);
 ///
 /// See https://stackoverflow.com/a/78064720
 String? _idFromIdToken(String idToken) {
-  final RegExp jwtTokenRegexp = RegExp(
+  final jwtTokenRegexp = RegExp(
     r'^(?<header>[^\.\s]+)\.(?<payload>[^\.\s]+)\.(?<signature>[^\.\s]+)$',
   );
   final RegExpMatch? match = jwtTokenRegexp.firstMatch(idToken);
   final String? payload = match?.namedGroup('payload');
   if (payload != null) {
     try {
-      final Map<String, Object?>? contents =
+      final contents =
           _jwtCodec.decode(base64.normalize(payload)) as Map<String, Object?>?;
       if (contents != null) {
         return contents['sub'] as String?;

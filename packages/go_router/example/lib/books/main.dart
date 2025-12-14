@@ -128,7 +128,7 @@ class Bookstore extends StatelessWidget {
 
   String? _guard(BuildContext context, GoRouterState state) {
     final bool signedIn = _auth.signedIn;
-    final bool signingIn = state.matchedLocation == '/signin';
+    final signingIn = state.matchedLocation == '/signin';
 
     // Go to /signin if the user is not signed in
     if (!signedIn && !signingIn) {

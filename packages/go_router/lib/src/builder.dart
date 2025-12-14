@@ -201,11 +201,9 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
 
   void _updatePages(BuildContext context) {
     assert(_pages == null);
-    final List<Page<Object?>> pages = <Page<Object?>>[];
-    final Map<Page<Object?>, RouteMatchBase> pageToRouteMatchBase =
-        <Page<Object?>, RouteMatchBase>{};
-    final Map<Page<Object?>, GoRouterState> registry =
-        <Page<Object?>, GoRouterState>{};
+    final pages = <Page<Object?>>[];
+    final pageToRouteMatchBase = <Page<Object?>, RouteMatchBase>{};
+    final registry = <Page<Object?>, GoRouterState>{};
     if (widget.matchList.isError) {
       pages.add(_buildErrorPage(context, widget.matchList));
     } else {
@@ -280,7 +278,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
       widget.matchList,
     );
     final GlobalKey<NavigatorState> navigatorKey = match.navigatorKey;
-    final ShellRouteContext shellRouteContext = ShellRouteContext(
+    final shellRouteContext = ShellRouteContext(
       route: match.route,
       routerState: state,
       navigatorKey: navigatorKey,
@@ -443,7 +441,7 @@ class _CustomNavigatorState extends State<_CustomNavigator> {
   }
 
   bool _handlePopPage(Route<Object?> route, Object? result) {
-    final Page<Object?> page = route.settings as Page<Object?>;
+    final page = route.settings as Page<Object?>;
     final RouteMatchBase match = _pageToRouteMatchBase[page]!;
     return widget.onPopPageWithRouteMatch(route, result, match);
   }

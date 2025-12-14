@@ -10,10 +10,10 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('Can set shortcuts', (WidgetTester tester) async {
-    final QuickActionsIos quickActions = QuickActionsIos();
+    final quickActions = QuickActionsIos();
     await quickActions.initialize((String value) {});
 
-    const ShortcutItem shortCutItem = ShortcutItem(
+    const shortCutItem = ShortcutItem(
       type: 'action_one',
       localizedTitle: 'Action one',
       icon: 'AppIcon',

@@ -13,9 +13,11 @@ import 'common/repository_package.dart';
 class DependabotCheckCommand extends PackageLoopingCommand {
   /// Creates Dependabot check command instance.
   DependabotCheckCommand(super.packagesDir, {super.gitDir}) {
-    argParser.addOption(_configPathFlag,
-        help: 'Path to the Dependabot configuration file',
-        defaultsTo: '.github/dependabot.yml');
+    argParser.addOption(
+      _configPathFlag,
+      help: 'Path to the Dependabot configuration file',
+      defaultsTo: '.github/dependabot.yml',
+    );
   }
 
   static const String _configPathFlag = 'config';
@@ -46,22 +48,27 @@ class DependabotCheckCommand extends PackageLoopingCommand {
   Future<void> initializeRun() async {
     _repoRoot = packagesDir.fileSystem.directory((await gitDir).path);
 
-    final YamlMap config = loadYaml(_repoRoot
-        .childFile(getStringArg(_configPathFlag))
-        .readAsStringSync()) as YamlMap;
+    final config =
+        loadYaml(
+              _repoRoot
+                  .childFile(getStringArg(_configPathFlag))
+                  .readAsStringSync(),
+            )
+            as YamlMap;
     final dynamic entries = config['updates'];
     if (entries is! YamlList) {
       return;
     }
 
-    const String typeKey = 'package-ecosystem';
-    const String dirKey = 'directory';
-    const String dirsKey = 'directories';
-    final Iterable<YamlMap> gradleEntries = entries
-        .cast<YamlMap>()
-        .where((YamlMap entry) => entry[typeKey] == 'gradle');
-    final Iterable<String?> directoryEntries =
-        gradleEntries.map((YamlMap entry) => entry[dirKey] as String?);
+    const typeKey = 'package-ecosystem';
+    const dirKey = 'directory';
+    const dirsKey = 'directories';
+    final Iterable<YamlMap> gradleEntries = entries.cast<YamlMap>().where(
+      (YamlMap entry) => entry[typeKey] == 'gradle',
+    );
+    final Iterable<String?> directoryEntries = gradleEntries.map(
+      (YamlMap entry) => entry[dirKey] as String?,
+    );
     final Iterable<String?> directoriesEntries = gradleEntries
         .map((YamlMap entry) => entry[dirsKey] as YamlList?)
         .expand((YamlList? list) => list?.nodes ?? <String>[])
@@ -75,16 +82,18 @@ class DependabotCheckCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    bool skipped = true;
-    final List<String> errors = <String>[];
+    var skipped = true;
+    final errors = <String>[];
 
     final _GradleCoverageResult gradleResult =
         _validateDependabotGradleCoverage(package);
     skipped = skipped && gradleResult.runState == RunState.skipped;
     if (gradleResult.runState == RunState.failed) {
       printError('${indentation}Missing Gradle coverage.');
-      print('${indentation}Add a "gradle" entry to '
-          '${getStringArg(_configPathFlag)} for ${gradleResult.missingPath}');
+      print(
+        '${indentation}Add a "gradle" entry to '
+        '${getStringArg(_configPathFlag)} for ${gradleResult.missingPath}',
+      );
       errors.add('Missing Gradle coverage');
     }
 
@@ -104,20 +113,22 @@ class DependabotCheckCommand extends PackageLoopingCommand {
   /// - failed if it includes gradle and is not covered.
   /// - skipped if it doesn't include gradle.
   _GradleCoverageResult _validateDependabotGradleCoverage(
-      RepositoryPackage package) {
-    final Directory androidDir =
-        package.platformDirectory(FlutterPlatform.android);
+    RepositoryPackage package,
+  ) {
+    final Directory androidDir = package.platformDirectory(
+      FlutterPlatform.android,
+    );
     final Directory appDir = androidDir.childDirectory('app');
     if (appDir.existsSync()) {
       // It's an app, so only check for the app directory to be covered.
-      final String dependabotPath =
+      final dependabotPath =
           '/${getRelativePosixPath(appDir, from: _repoRoot)}';
       return _gradleDirs.contains(dependabotPath)
           ? _GradleCoverageResult(RunState.succeeded)
           : _GradleCoverageResult(RunState.failed, missingPath: dependabotPath);
     } else if (androidDir.existsSync()) {
       // It's a library, so only check for the android directory to be covered.
-      final String dependabotPath =
+      final dependabotPath =
           '/${getRelativePosixPath(androidDir, from: _repoRoot)}';
       return _gradleDirs.contains(dependabotPath)
           ? _GradleCoverageResult(RunState.succeeded)

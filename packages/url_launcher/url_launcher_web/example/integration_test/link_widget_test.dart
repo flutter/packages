@@ -19,7 +19,7 @@ import 'package:web/web.dart' as html;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final List<String> pushedRouteNames = <String>[];
+  final pushedRouteNames = <String>[];
   late Future<ByteData> Function(String) originalPushFunction;
 
   setUp(() {
@@ -176,7 +176,7 @@ void main() {
 
     testWidgets('can be created and disposed', (WidgetTester tester) async {
       final Uri uri = Uri.parse('http://foobar');
-      const int itemCount = 500;
+      const itemCount = 500;
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -1308,10 +1308,10 @@ void main() {
 }
 
 List<html.Element> _findAllAnchors() {
-  final List<html.Element> foundAnchors = <html.Element>[];
+  final foundAnchors = <html.Element>[];
   final html.NodeList anchors = html.document.querySelectorAll('a');
-  for (int i = 0; i < anchors.length; i++) {
-    final html.Element anchor = anchors.item(i)! as html.Element;
+  for (var i = 0; i < anchors.length; i++) {
+    final anchor = anchors.item(i)! as html.Element;
     if (anchor.hasProperty(linkViewIdProperty.toJS).toDart) {
       foundAnchors.add(anchor);
     }
@@ -1331,7 +1331,7 @@ html.MouseEvent _simulateClick(html.Element target, {bool metaKey = false}) {
   //     (html.Event e) {
   //       e.preventDefault();
   //     }.toJS);
-  final html.MouseEvent mouseEvent = html.MouseEvent(
+  final mouseEvent = html.MouseEvent(
     'click',
     html.MouseEventInit(bubbles: true, cancelable: true, metaKey: metaKey),
   );
@@ -1343,7 +1343,7 @@ html.KeyboardEvent _simulateKeydown(
   html.Element target, {
   bool metaKey = false,
 }) {
-  final html.KeyboardEvent keydownEvent = html.KeyboardEvent(
+  final keydownEvent = html.KeyboardEvent(
     'keydown',
     html.KeyboardEventInit(
       bubbles: true,

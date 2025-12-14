@@ -5,9 +5,9 @@
 #import "GoogleMapMarkerController.h"
 #import "GoogleMapMarkerController_Test.h"
 
+#import "FGMConversionUtils.h"
 #import "FGMImageUtils.h"
 #import "FGMMarkerUserData.h"
-#import "FLTGoogleMapJSONConversions.h"
 
 @interface FLTGoogleMapMarkerController ()
 

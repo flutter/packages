@@ -167,7 +167,7 @@ class VectorGraphicsCodec {
       buffer = response._buffer!;
     }
 
-    bool readImage = false;
+    var readImage = false;
     while (buffer.hasRemaining) {
       final int type = buffer.getUint8();
       switch (type) {
@@ -614,7 +614,7 @@ class VectorGraphicsCodec {
     if (fontFamily != null) {
       // Newer versions of Dart will make this a Uint8List and not require the cast.
       // ignore: unnecessary_cast
-      final Uint8List encoded = utf8.encode(fontFamily) as Uint8List;
+      final encoded = utf8.encode(fontFamily) as Uint8List;
       buffer._putUint16(encoded.length);
       buffer._putUint8List(encoded);
     } else {
@@ -624,7 +624,7 @@ class VectorGraphicsCodec {
     // text-value
     // Newer versions of Dart will make this a Uint8List and not require the cast.
     // ignore: unnecessary_cast
-    final Uint8List encoded = utf8.encode(text) as Uint8List;
+    final encoded = utf8.encode(text) as Uint8List;
     buffer._putUint16(encoded.length);
     buffer._putUint8List(encoded);
 
@@ -756,9 +756,9 @@ class VectorGraphicsCodec {
   }
 
   Uint16List _encodeToHalfPrecision(Float32List list) {
-    final Uint16List output = Uint16List(list.length);
-    final ByteData buffer = ByteData(8);
-    for (int i = 0; i < list.length; i++) {
+    final output = Uint16List(list.length);
+    final buffer = ByteData(8);
+    for (var i = 0; i < list.length; i++) {
       buffer.setFloat32(0, list[i]);
       fp16.toHalf(buffer);
       output[i] = buffer.getInt16(0);
@@ -767,9 +767,9 @@ class VectorGraphicsCodec {
   }
 
   Float32List _decodeFromHalfPrecision(Uint16List list) {
-    final Float32List output = Float32List(list.length);
-    final ByteData buffer = ByteData(8);
-    for (int i = 0; i < list.length; i++) {
+    final output = Float32List(list.length);
+    final buffer = ByteData(8);
+    for (var i = 0; i < list.length; i++) {
       buffer.setUint16(0, list[i]);
       output[i] = fp16.toDouble(buffer);
     }
@@ -836,7 +836,7 @@ class VectorGraphicsCodec {
       points = buffer.getFloat32List(pointLength);
     }
     listener?.onPathStart(id, fillType);
-    for (int i = 0, j = 0; i < tagLength; i += 1) {
+    for (var i = 0, j = 0; i < tagLength; i += 1) {
       switch (tags[i]) {
         case ControlPointTypes.moveTo:
           listener?.onPathMoveTo(points[j], points[j + 1]);
@@ -931,7 +931,7 @@ class VectorGraphicsCodec {
     final double dx = buffer.getFloat32();
     final double dy = buffer.getFloat32();
 
-    final bool reset = buffer.getUint8() != 0;
+    final reset = buffer.getUint8() != 0;
     final Float64List? transform = buffer.getTransform();
 
     listener?.onTextPosition(

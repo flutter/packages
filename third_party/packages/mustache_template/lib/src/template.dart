@@ -33,14 +33,14 @@ class Template implements m.Template {
 
   @override
   String renderString(Object? values) {
-    final StringBuffer buf = StringBuffer();
+    final buf = StringBuffer();
     render(values, buf);
     return buf.toString();
   }
 
   @override
   void render(Object? values, StringSink sink) {
-    final Renderer renderer = Renderer(
+    final renderer = Renderer(
       sink,
       <dynamic>[values],
       _lenient,

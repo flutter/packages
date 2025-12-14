@@ -33,7 +33,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final GlobalKey<NavigatorState> key = GlobalKey<NavigatorState>();
+    final key = GlobalKey<NavigatorState>();
 
     return MaterialApp.router(
       routerConfig: _router(key),
@@ -132,7 +132,7 @@ class App extends StatelessWidget {
               case '/protected':
                 {
                   // ignore: prefer_final_locals
-                  bool isLoggedIn = false; // pretend we’re not authenticated
+                  var isLoggedIn = false; // pretend we’re not authenticated
                   if (!isLoggedIn) {
                     // Chaining block: cancel the original nav, then redirect to /login.
                     // This preserves redirection history to detect loops.

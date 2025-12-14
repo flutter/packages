@@ -20,9 +20,7 @@ const MethodChannel _channel = MethodChannel('plugins.flutter.io/camera');
 class MethodChannelCamera extends CameraPlatform {
   /// Construct a new method channel camera instance.
   MethodChannelCamera() {
-    const MethodChannel channel = MethodChannel(
-      'flutter.io/cameraPlugin/device',
-    );
+    const channel = MethodChannel('flutter.io/cameraPlugin/device');
     channel.setMethodCallHandler(
       (MethodCall call) => handleDeviceMethodCall(call),
     );
@@ -127,16 +125,14 @@ class MethodChannelCamera extends CameraPlatform {
     ImageFormatGroup imageFormatGroup = ImageFormatGroup.unknown,
   }) {
     _channels.putIfAbsent(cameraId, () {
-      final MethodChannel channel = MethodChannel(
-        'flutter.io/cameraPlugin/camera$cameraId',
-      );
+      final channel = MethodChannel('flutter.io/cameraPlugin/camera$cameraId');
       channel.setMethodCallHandler(
         (MethodCall call) => handleCameraMethodCall(call, cameraId),
       );
       return channel;
     });
 
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
 
     onCameraInitialized(cameraId).first.then((CameraInitializedEvent value) {
       completer.complete();
@@ -338,7 +334,7 @@ class MethodChannelCamera extends CameraPlatform {
   }
 
   void _startStreamListener() {
-    const EventChannel cameraEventChannel = EventChannel(
+    const cameraEventChannel = EventChannel(
       'plugins.flutter.io/camera/imageStream',
     );
     _platformImageStreamSubscription = cameraEventChannel

@@ -340,7 +340,7 @@ class _WebViewState extends State<WebView> {
   }
 
   void _onWebViewPlatformCreated(WebViewPlatformController? webViewPlatform) {
-    final WebViewController controller = WebViewController._(
+    final controller = WebViewController._(
       widget,
       webViewPlatform!,
       _javascriptChannelRegistry,
@@ -406,7 +406,7 @@ WebSettings _clearUnchangedWebSettings(
   bool? hasNavigationDelegate;
   bool? hasProgressTracking;
   bool? debuggingEnabled;
-  WebSetting<String?> userAgent = const WebSetting<String?>.absent();
+  var userAgent = const WebSetting<String?>.absent();
   bool? zoomEnabled;
   if (currentValue.javascriptMode != newValue.javascriptMode) {
     javascriptMode = newValue.javascriptMode;
@@ -454,7 +454,7 @@ class _PlatformCallbacksHandler implements WebViewPlatformCallbacksHandler {
     required String url,
     required bool isForMainFrame,
   }) async {
-    final NavigationRequest request = NavigationRequest._(
+    final request = NavigationRequest._(
       url: url,
       isForMainFrame: isForMainFrame,
     );

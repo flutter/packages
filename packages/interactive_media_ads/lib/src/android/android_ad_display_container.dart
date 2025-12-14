@@ -12,7 +12,6 @@ import '../platform_interface/platform_interface.dart';
 import 'android_companion_ad_slot.dart';
 import 'android_view_widget.dart';
 import 'interactive_media_ads.g.dart' as ima;
-import 'interactive_media_ads_proxy.dart';
 import 'platform_views_service_proxy.dart';
 
 /// Android implementation of [PlatformAdDisplayContainerCreationParams].
@@ -23,10 +22,8 @@ final class AndroidAdDisplayContainerCreationParams
     super.key,
     required super.onContainerAdded,
     super.companionSlots,
-    @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  }) : _imaProxy = imaProxy ?? const InteractiveMediaAdsProxy(),
-       _platformViewsProxy =
+  }) : _platformViewsProxy =
            platformViewsProxy ?? const PlatformViewsServiceProxy(),
        super();
 
@@ -34,19 +31,16 @@ final class AndroidAdDisplayContainerCreationParams
   /// [PlatformAdDisplayContainerCreationParams].
   factory AndroidAdDisplayContainerCreationParams.fromPlatformAdDisplayContainerCreationParams(
     PlatformAdDisplayContainerCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? imaProxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   }) {
     return AndroidAdDisplayContainerCreationParams(
       key: params.key,
       onContainerAdded: params.onContainerAdded,
       companionSlots: params.companionSlots,
-      imaProxy: imaProxy,
       platformViewsProxy: platformViewsProxy,
     );
   }
 
-  final InteractiveMediaAdsProxy _imaProxy;
   final PlatformViewsServiceProxy _platformViewsProxy;
 }
 
@@ -65,8 +59,7 @@ final class AndroidAdDisplayContainerCreationParams
 base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   /// Constructs an [AndroidAdDisplayContainer].
   AndroidAdDisplayContainer(super.params) : super.implementation() {
-    final WeakReference<AndroidAdDisplayContainer> weakThis =
-        WeakReference<AndroidAdDisplayContainer>(this);
+    final weakThis = WeakReference<AndroidAdDisplayContainer>(this);
     _videoView = _setUpVideoView(weakThis);
     _frameLayout.addView(_videoView);
     _videoAdPlayer = _setUpVideoAdPlayer(weakThis);
@@ -80,8 +73,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
 
   // The `ViewGroup` used to create the native `ima.AdDisplayContainer`. The
   // `View` that handles playing an ad is added as a child to this `ViewGroup`.
-  late final ima.FrameLayout _frameLayout = _androidParams._imaProxy
-      .newFrameLayout();
+  late final ima.FrameLayout _frameLayout = ima.FrameLayout();
 
   // Handles loading and displaying an ad.
   late ima.VideoView _videoView;
@@ -191,12 +183,10 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
       (Timer timer) async {
         final int videoCurrentPosition = await _videoView.getCurrentPosition();
         if (_adDuration case final int adDuration) {
-          final ima.VideoProgressUpdate currentProgress = _androidParams
-              ._imaProxy
-              .newVideoProgressUpdate(
-                currentTimeMs: videoCurrentPosition,
-                durationMs: adDuration,
-              );
+          final currentProgress = ima.VideoProgressUpdate(
+            currentTimeMs: videoCurrentPosition,
+            durationMs: adDuration,
+          );
 
           await Future.wait(<Future<void>>[
             _videoAdPlayer.setAdProgress(currentProgress),
@@ -236,7 +226,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   static ima.VideoView _setUpVideoView(
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
-    return weakThis.target!._androidParams._imaProxy.newVideoView(
+    return ima.VideoView(
       onCompletion: (_, __) {
         final AndroidAdDisplayContainer? container = weakThis.target;
         if (container != null) {
@@ -282,7 +272,7 @@ base class AndroidAdDisplayContainer extends PlatformAdDisplayContainer {
   static ima.VideoAdPlayer _setUpVideoAdPlayer(
     WeakReference<AndroidAdDisplayContainer> weakThis,
   ) {
-    return weakThis.target!._androidParams._imaProxy.newVideoAdPlayer(
+    return ima.VideoAdPlayer(
       addCallback: (_, ima.VideoAdPlayerCallback callback) {
         weakThis.target?.videoAdPlayerCallbacks.add(callback);
       },
@@ -407,11 +397,8 @@ class _AdPlayerState extends State<_AdPlayer> with WidgetsBindingObserver {
           widget.container._androidParams._platformViewsProxy,
       layoutDirection: widget.container._androidParams.layoutDirection,
       onPlatformViewCreated: () async {
-        final ima.AdDisplayContainer nativeContainer = await widget
-            .container
-            ._androidParams
-            ._imaProxy
-            .createAdDisplayContainerImaSdkFactory(
+        final ima.AdDisplayContainer nativeContainer =
+            await ima.ImaSdkFactory.createAdDisplayContainer(
               widget.container._frameLayout,
               widget.container._videoAdPlayer,
             );

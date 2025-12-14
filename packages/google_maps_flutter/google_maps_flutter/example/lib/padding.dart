@@ -34,7 +34,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
 
   @override
   Widget build(BuildContext context) {
-    final GoogleMap googleMap = GoogleMap(
+    final googleMap = GoogleMap(
       onMapCreated: _onMapCreated,
       initialCameraPosition: const CameraPosition(
         target: _kMapCenter,
@@ -43,7 +43,7 @@ class MarkerIconsBodyState extends State<MarkerIconsBody> {
       padding: _padding,
     );
 
-    final List<Widget> columnChildren = <Widget>[
+    final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(

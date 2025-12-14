@@ -8,7 +8,6 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart';
-import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'webkit_webview_cookie_manager_test.mocks.dart';
@@ -17,17 +16,18 @@ import 'webkit_webview_cookie_manager_test.mocks.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
+  setUp(() {
+    PigeonOverrides.pigeon_reset();
+  });
+
   group('WebKitWebViewCookieManager', () {
     test('clearCookies', () {
-      final MockWKWebsiteDataStore mockWKWebsiteDataStore =
-          MockWKWebsiteDataStore();
+      final mockWKWebsiteDataStore = MockWKWebsiteDataStore();
 
-      final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(
-          webKitProxy: WebKitProxy(
-            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-          ),
-        ),
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
+          mockWKWebsiteDataStore;
+      final manager = WebKitWebViewCookieManager(
+        WebKitWebViewCookieManagerCreationParams(),
       );
 
       when(
@@ -46,27 +46,26 @@ void main() {
     });
 
     test('setCookie', () async {
-      final MockWKWebsiteDataStore mockWKWebsiteDataStore =
-          MockWKWebsiteDataStore();
+      final mockWKWebsiteDataStore = MockWKWebsiteDataStore();
 
-      final MockWKHTTPCookieStore mockCookieStore = MockWKHTTPCookieStore();
+      final mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
       Map<HttpCookiePropertyKey, Object?>? cookieProperties;
-      final HTTPCookie cookie = HTTPCookie.pigeon_detached(
-        pigeon_instanceManager: TestInstanceManager(),
-      );
-      final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(
-          webKitProxy: WebKitProxy(
-            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-            newHTTPCookie:
-                ({required Map<HttpCookiePropertyKey, Object> properties}) {
-                  cookieProperties = properties;
-                  return cookie;
-                },
-          ),
-        ),
+      final cookie = HTTPCookie.pigeon_detached();
+
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
+          mockWKWebsiteDataStore;
+      PigeonOverrides.hTTPCookie_new =
+          ({
+            required Map<HttpCookiePropertyKey, Object> properties,
+            dynamic observeValue,
+          }) {
+            cookieProperties = properties;
+            return cookie;
+          };
+      final manager = WebKitWebViewCookieManager(
+        WebKitWebViewCookieManagerCreationParams(),
       );
 
       await manager.setCookie(
@@ -83,18 +82,15 @@ void main() {
     });
 
     test('setCookie throws argument error with invalid path', () async {
-      final MockWKWebsiteDataStore mockWKWebsiteDataStore =
-          MockWKWebsiteDataStore();
+      final mockWKWebsiteDataStore = MockWKWebsiteDataStore();
 
-      final MockWKHTTPCookieStore mockCookieStore = MockWKHTTPCookieStore();
+      final mockCookieStore = MockWKHTTPCookieStore();
       when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
 
-      final WebKitWebViewCookieManager manager = WebKitWebViewCookieManager(
-        WebKitWebViewCookieManagerCreationParams(
-          webKitProxy: WebKitProxy(
-            defaultDataStoreWKWebsiteDataStore: () => mockWKWebsiteDataStore,
-          ),
-        ),
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
+          mockWKWebsiteDataStore;
+      final manager = WebKitWebViewCookieManager(
+        WebKitWebViewCookieManagerCreationParams(),
       );
 
       expect(
@@ -110,9 +106,4 @@ void main() {
       );
     });
   });
-}
-
-// Test InstanceManager that sets `onWeakReferenceRemoved` as a noop.
-class TestInstanceManager extends PigeonInstanceManager {
-  TestInstanceManager() : super(onWeakReferenceRemoved: (_) {});
 }

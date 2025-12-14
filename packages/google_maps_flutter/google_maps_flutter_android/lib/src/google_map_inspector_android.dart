@@ -101,7 +101,7 @@ class GoogleMapsInspectorAndroid extends GoogleMapsInspectorPlatform {
     }
 
     // Create dummy image to represent the image of the ground overlay.
-    final BytesMapBitmap dummyImage = BytesMapBitmap(
+    final dummyImage = BytesMapBitmap(
       Uint8List.fromList(<int>[0]),
       bitmapScaling: MapBitmapScaling.none,
     );

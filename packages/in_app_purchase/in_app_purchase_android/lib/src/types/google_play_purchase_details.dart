@@ -30,19 +30,18 @@ class GooglePlayPurchaseDetails extends PurchaseDetails {
     PurchaseWrapper purchase,
   ) {
     return purchase.products.map((String productId) {
-      final GooglePlayPurchaseDetails purchaseDetails =
-          GooglePlayPurchaseDetails(
-            purchaseID: purchase.orderId,
-            productID: productId,
-            verificationData: PurchaseVerificationData(
-              localVerificationData: purchase.originalJson,
-              serverVerificationData: purchase.purchaseToken,
-              source: kIAPSource,
-            ),
-            transactionDate: purchase.purchaseTime.toString(),
-            billingClientPurchase: purchase,
-            status: purchaseStatusFromWrapper(purchase.purchaseState),
-          );
+      final purchaseDetails = GooglePlayPurchaseDetails(
+        purchaseID: purchase.orderId,
+        productID: productId,
+        verificationData: PurchaseVerificationData(
+          localVerificationData: purchase.originalJson,
+          serverVerificationData: purchase.purchaseToken,
+          source: kIAPSource,
+        ),
+        transactionDate: purchase.purchaseTime.toString(),
+        billingClientPurchase: purchase,
+        status: purchaseStatusFromWrapper(purchase.purchaseState),
+      );
 
       if (purchaseDetails.status == PurchaseStatus.error) {
         purchaseDetails.error = IAPError(

@@ -82,10 +82,10 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
       return;
     }
 
-    final String polygonIdVal = 'polygon_id_$_polygonIdCounter';
-    final PolygonId polygonId = PolygonId(polygonIdVal);
+    final polygonIdVal = 'polygon_id_$_polygonIdCounter';
+    final polygonId = PolygonId(polygonIdVal);
 
-    final Polygon polygon = Polygon(
+    final polygon = Polygon(
       polygonId: polygonId,
       consumeTapEvents: true,
       strokeColor: Colors.orange,
@@ -262,7 +262,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   }
 
   List<LatLng> _createPoints() {
-    final List<LatLng> points = <LatLng>[];
+    final points = <LatLng>[];
     final double offset = _polygonIdCounter.ceilToDouble();
     points.add(_createLatLng(51.2395 + offset, -3.4314));
     points.add(_createLatLng(53.5234 + offset, -3.5314));
@@ -272,17 +272,17 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   }
 
   List<List<LatLng>> _createHoles(PolygonId polygonId) {
-    final List<List<LatLng>> holes = <List<LatLng>>[];
+    final holes = <List<LatLng>>[];
     final double offset = polygonOffsets[polygonId]!;
 
-    final List<LatLng> hole1 = <LatLng>[];
+    final hole1 = <LatLng>[];
     hole1.add(_createLatLng(51.8395 + offset, -3.8814));
     hole1.add(_createLatLng(52.0234 + offset, -3.9914));
     hole1.add(_createLatLng(52.1351 + offset, -4.4435));
     hole1.add(_createLatLng(52.0231 + offset, -4.5829));
     holes.add(hole1);
 
-    final List<LatLng> hole2 = <LatLng>[];
+    final hole2 = <LatLng>[];
     hole2.add(_createLatLng(52.2395 + offset, -3.6814));
     hole2.add(_createLatLng(52.4234 + offset, -3.7914));
     hole2.add(_createLatLng(52.5351 + offset, -4.2435));

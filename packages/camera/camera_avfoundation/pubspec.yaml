@@ -2,7 +2,7 @@ name: camera_avfoundation
 description: iOS implementation of the camera plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/camera/camera_avfoundation
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
-version: 0.9.22+4
+version: 0.9.22+6
 
 environment:
   sdk: ^3.9.0
@@ -29,7 +29,7 @@ dev_dependencies:
     sdk: flutter
   leak_tracker_flutter_testing: any
   mockito: ^5.4.4
-  pigeon: ^22.4.2
+  pigeon: ^26.1.0
 
 topics:
   - camera

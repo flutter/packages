@@ -1,3 +1,11 @@
+## 2.15.8
+
+* Replaces internal use of deprecated methods.
+
+## 2.15.7
+
+* Updates to Pigeon 26.
+
 ## 2.15.6
 
 * Fixes potential flickers of default property values when adding objects to

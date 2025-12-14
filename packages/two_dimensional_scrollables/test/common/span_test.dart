@@ -10,7 +10,7 @@ import 'package:two_dimensional_scrollables/two_dimensional_scrollables.dart';
 void main() {
   group('SpanExtent', () {
     test('FixedSpanExtent', () {
-      FixedSpanExtent extent = const FixedSpanExtent(150);
+      var extent = const FixedSpanExtent(150);
       expect(
         extent.calculateExtent(
           const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -39,7 +39,7 @@ void main() {
     });
 
     test('FractionalSpanExtent', () {
-      FractionalSpanExtent extent = const FractionalSpanExtent(0.5);
+      var extent = const FractionalSpanExtent(0.5);
       expect(
         extent.calculateExtent(
           const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('RemainingSpanExtent', () {
-      const RemainingSpanExtent extent = RemainingSpanExtent();
+      const extent = RemainingSpanExtent();
       expect(
         extent.calculateExtent(
           const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('CombiningSpanExtent', () {
-      final CombiningSpanExtent extent = CombiningSpanExtent(
+      final extent = CombiningSpanExtent(
         const FixedSpanExtent(100),
         const RemainingSpanExtent(),
         (double a, double b) {
@@ -106,10 +106,7 @@ void main() {
     });
 
     test('MaxSpanExtent', () {
-      const MaxSpanExtent extent = MaxSpanExtent(
-        FixedSpanExtent(100),
-        RemainingSpanExtent(),
-      );
+      const extent = MaxSpanExtent(FixedSpanExtent(100), RemainingSpanExtent());
       expect(
         extent.calculateExtent(
           const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -125,10 +122,7 @@ void main() {
     });
 
     test('MinSpanExtent', () {
-      const MinSpanExtent extent = MinSpanExtent(
-        FixedSpanExtent(100),
-        RemainingSpanExtent(),
-      );
+      const extent = MinSpanExtent(FixedSpanExtent(100), RemainingSpanExtent());
       expect(
         extent.calculateExtent(
           const SpanExtentDelegate(precedingExtent: 0, viewportExtent: 0),
@@ -145,20 +139,20 @@ void main() {
   });
 
   test('SpanDecoration', () {
-    SpanDecoration decoration = const SpanDecoration(color: Color(0xffff0000));
-    final TestCanvas canvas = TestCanvas();
-    const Rect rect = Rect.fromLTWH(0, 0, 10, 10);
-    final SpanDecorationPaintDetails details = SpanDecorationPaintDetails(
+    var decoration = const SpanDecoration(color: Color(0xffff0000));
+    final canvas = TestCanvas();
+    const rect = Rect.fromLTWH(0, 0, 10, 10);
+    final details = SpanDecorationPaintDetails(
       canvas: canvas,
       rect: rect,
       axisDirection: AxisDirection.down,
     );
-    final BorderRadius radius = BorderRadius.circular(10.0);
+    final radius = BorderRadius.circular(10.0);
     decoration.paint(details);
     expect(canvas.rect, rect);
     expect(canvas.paint.color, const Color(0xffff0000));
     expect(canvas.paint.isAntiAlias, isFalse);
-    final TestSpanBorder border = TestSpanBorder(leading: const BorderSide());
+    final border = TestSpanBorder(leading: const BorderSide());
     decoration = SpanDecoration(border: border, borderRadius: radius);
     decoration.paint(details);
     expect(border.details, details);

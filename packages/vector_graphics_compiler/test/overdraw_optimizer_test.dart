@@ -12,7 +12,7 @@ import 'test_svg_strings.dart';
 
 Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
-  final ResolvingVisitor visitor = ResolvingVisitor();
+  final visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
 }
 
@@ -32,7 +32,7 @@ void main() {
       final List<ResolvedPathNode> pathNodesOld =
           queryChildren<ResolvedPathNode>(node);
 
-      final OverdrawOptimizer visitor = OverdrawOptimizer();
+      final visitor = OverdrawOptimizer();
       final Node newNode = visitor.apply(node);
 
       final List<ResolvedPathNode> pathNodesNew =
@@ -83,7 +83,7 @@ void main() {
       node,
     );
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -137,7 +137,7 @@ void main() {
     final Node node = parseAndResolve(opacityOverlap);
     final VectorInstructions instructions = parse(opacityOverlap);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -213,7 +213,7 @@ void main() {
     final Node node = parseAndResolve(solidOverTrasnparent);
     final VectorInstructions instructions = parse(solidOverTrasnparent);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -267,7 +267,7 @@ void main() {
     final Node node = parseAndResolve(transparentOverSolid);
     final VectorInstructions instructions = parse(transparentOverSolid);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -365,7 +365,7 @@ void main() {
     final Node node = parseAndResolve(complexOpacityTest);
     final VectorInstructions instructions = parse(complexOpacityTest);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(

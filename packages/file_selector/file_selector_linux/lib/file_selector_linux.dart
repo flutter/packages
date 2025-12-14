@@ -94,6 +94,7 @@ class FileSelectorLinux extends FileSelectorPlatform {
         currentFolderPath: options.initialDirectory,
         currentName: options.suggestedName,
         acceptButtonLabel: options.confirmButtonText,
+        createFolders: options.canCreateDirectories,
       ),
     );
     return paths.isEmpty ? null : FileSaveLocation(paths.first);
@@ -104,11 +105,22 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
     final List<String> paths = await _hostApi.showFileChooser(
       PlatformFileChooserActionType.chooseDirectory,
       PlatformFileChooserOptions(
-        currentFolderPath: initialDirectory,
-        acceptButtonLabel: confirmButtonText,
+        currentFolderPath: options.initialDirectory,
+        acceptButtonLabel: options.confirmButtonText,
+        createFolders: options.canCreateDirectories,
         selectMultiple: false,
       ),
     );
@@ -120,11 +132,24 @@ class FileSelectorLinux extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathsWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<List<String>> getDirectoryPathsWithOptions(
+    FileDialogOptions options,
+  ) async {
     return _hostApi.showFileChooser(
       PlatformFileChooserActionType.chooseDirectory,
       PlatformFileChooserOptions(
-        currentFolderPath: initialDirectory,
-        acceptButtonLabel: confirmButtonText,
+        currentFolderPath: options.initialDirectory,
+        acceptButtonLabel: options.confirmButtonText,
+        createFolders: options.canCreateDirectories,
         selectMultiple: true,
       ),
     );

@@ -1,5 +1,14 @@
-## NEXT
+## 2.4.18
 
+* Bumps kotlin_version to 2.2.21.
+
+## 2.4.17
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.4.16
+
+* Updates to Pigeon 26.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 2.4.15

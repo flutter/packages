@@ -88,7 +88,7 @@ Future<bool> launch(
   }
 
   /// [true] so that ui is automatically computed if [statusBarBrightness] is set.
-  bool previousAutomaticSystemUiAdjustment = true;
+  var previousAutomaticSystemUiAdjustment = true;
   final RenderView? renderViewToAdjust =
       statusBarBrightness != null && defaultTargetPlatform == TargetPlatform.iOS
       ? _findImplicitRenderView()

@@ -1,7 +1,11 @@
-## NEXT
+## 2.5.4
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
-* Updates README to indicate that Andoid SDK <21 is no longer supported.
+* Updates dependencies for the `shared_preferences_tool` DevTools extension and fixes related deprecations.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
 
 ## 2.5.3
 

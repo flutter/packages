@@ -31,4 +31,4 @@ dev_dependencies:
   mockito: ^5.4.4
 
 environment:
-  sdk: ^3.1.0
+  sdk: ^3.8.0

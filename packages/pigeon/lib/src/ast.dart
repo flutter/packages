@@ -91,10 +91,10 @@ class Method extends Node {
 
   @override
   String toString() {
-    final String objcSelectorStr = objcSelector.isEmpty
+    final objcSelectorStr = objcSelector.isEmpty
         ? ''
         : ' objcSelector:$objcSelector';
-    final String swiftFunctionStr = swiftFunction.isEmpty
+    final swiftFunctionStr = swiftFunction.isEmpty
         ? ''
         : ' swiftFunction:$swiftFunction';
     return '(Method name:$name returnType:$returnType parameters:$parameters isAsynchronous:$isAsynchronous$objcSelectorStr$swiftFunctionStr documentationComments:$documentationComments)';
@@ -202,7 +202,7 @@ class AstProxyApi extends Api {
   /// This method also assumes that the type of [superClass] is annotated with
   /// `@ProxyApi`. Otherwise, throws an [ArgumentError].
   Iterable<AstProxyApi> allSuperClasses() {
-    final List<AstProxyApi> superClassChain = <AstProxyApi>[];
+    final superClassChain = <AstProxyApi>[];
 
     if (superClass != null && !superClass!.isProxyApi) {
       throw ArgumentError(
@@ -259,7 +259,7 @@ class AstProxyApi extends Api {
       final Set<AstProxyApi> interfaceApisFromSuperClasses = superClass!
           .associatedProxyApi!
           ._recursiveFindAllInterfaceApis();
-      for (final AstProxyApi proxyApi in interfaceApisFromSuperClasses) {
+      for (final proxyApi in interfaceApisFromSuperClasses) {
         yield* proxyApi.methods.map((Method method) => (method, proxyApi));
       }
     }
@@ -320,7 +320,7 @@ class AstProxyApi extends Api {
   Set<AstProxyApi> _recursiveFindAllInterfaceApis([
     Set<AstProxyApi> seenApis = const <AstProxyApi>{},
   ]) {
-    final Set<AstProxyApi> allInterfaces = <AstProxyApi>{};
+    final allInterfaces = <AstProxyApi>{};
 
     allInterfaces.addAll(
       interfaces.map((TypeDeclaration type) {
@@ -339,9 +339,9 @@ class AstProxyApi extends Api {
 
     // Adds the current api since it would be invalid for it to be an interface
     // of itself.
-    final Set<AstProxyApi> newSeenApis = <AstProxyApi>{...seenApis, this};
+    final newSeenApis = <AstProxyApi>{...seenApis, this};
 
-    for (final AstProxyApi interfaceApi in <AstProxyApi>{...allInterfaces}) {
+    for (final interfaceApi in <AstProxyApi>{...allInterfaces}) {
       allInterfaces.addAll(
         interfaceApi._recursiveFindAllInterfaceApis(newSeenApis),
       );
@@ -397,7 +397,7 @@ class Constructor extends Method {
 
   @override
   String toString() {
-    final String swiftFunctionStr = swiftFunction.isEmpty
+    final swiftFunctionStr = swiftFunction.isEmpty
         ? ''
         : ' swiftFunction:$swiftFunction';
     return '(Constructor name:$name parameters:$parameters $swiftFunctionStr documentationComments:$documentationComments)';
@@ -530,7 +530,7 @@ class TypeDeclaration {
   int get hashCode {
     // This has to be implemented because TypeDeclaration is used as a Key to a
     // Map in generator_tools.dart.
-    int hash = 17;
+    var hash = 17;
     hash = hash * 37 + baseName.hashCode;
     hash = hash * 37 + isNullable.hashCode;
     for (final TypeDeclaration typeArgument in typeArguments) {
@@ -599,7 +599,7 @@ class TypeDeclaration {
 
   @override
   String toString() {
-    final String typeArgumentsStr = typeArguments.isEmpty
+    final typeArgumentsStr = typeArguments.isEmpty
         ? ''
         : ' typeArguments:$typeArguments';
     return '(TypeDeclaration baseName:$baseName isNullable:$isNullable$typeArgumentsStr isEnum:$isEnum isClass:$isClass isProxyApi:$isProxyApi)';

@@ -48,7 +48,7 @@ void main() {
             return delegate;
           };
 
-      final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
+      final adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.ad!.universalAdIds.single.adIdValue, isNull);
@@ -113,7 +113,7 @@ void main() {
             return delegate;
           };
 
-      final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
+      final adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.ad!.companionAds.single.width, isNull);
@@ -175,7 +175,7 @@ void main() {
             return delegate;
           };
 
-      final IOSAdsManagerDelegate adsManagerDelegate = IOSAdsManagerDelegate(
+      final adsManagerDelegate = IOSAdsManagerDelegate(
         IOSAdsManagerDelegateCreationParams(
           onAdEvent: expectAsync1((PlatformAdEvent event) {
             expect(event.ad!.duration, isNull);

@@ -643,7 +643,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
     required BuildContext navigatorContext,
     bool delayForSourceRoute = false,
   }) {
-    final RenderBox navigator =
+    final navigator =
         Navigator.of(
               navigatorContext,
               rootNavigator: useRootNavigator,
@@ -679,8 +679,7 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   Rect _getRect(GlobalKey key, RenderBox ancestor) {
     assert(key.currentContext != null);
     assert(ancestor.hasSize);
-    final RenderBox render =
-        key.currentContext!.findRenderObject()! as RenderBox;
+    final render = key.currentContext!.findRenderObject()! as RenderBox;
     assert(render.hasSize);
     return MatrixUtils.transformRect(
       render.getTransformTo(ancestor),
@@ -689,8 +688,8 @@ class _OpenContainerRoute<T> extends ModalRoute<T> {
   }
 
   bool get _transitionWasInterrupted {
-    bool wasInProgress = false;
-    bool isInProgress = false;
+    var wasInProgress = false;
+    var isInProgress = false;
 
     switch (_currentAnimationStatus) {
       case AnimationStatus.completed:
@@ -884,8 +883,8 @@ class _FlippableTweenSequence<T> extends TweenSequence<T> {
 
   _FlippableTweenSequence<T>? get flipped {
     if (_flipped == null) {
-      final List<TweenSequenceItem<T>> newItems = <TweenSequenceItem<T>>[];
-      for (int i = 0; i < _items.length; i++) {
+      final newItems = <TweenSequenceItem<T>>[];
+      for (var i = 0; i < _items.length; i++) {
         newItems.add(
           TweenSequenceItem<T>(
             tween: _items[i].tween,

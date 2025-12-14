@@ -50,13 +50,13 @@ class Library {
     final Author author = allAuthors.firstWhere(
       (Author author) => author.name == authorName,
       orElse: () {
-        final Author value = Author(id: allAuthors.length, name: authorName);
+        final value = Author(id: allAuthors.length, name: authorName);
         allAuthors.add(value);
         return value;
       },
     );
 
-    final Book book = Book(
+    final book = Book(
       id: allBooks.length,
       title: title,
       isPopular: isPopular,

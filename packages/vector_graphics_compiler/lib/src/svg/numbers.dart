@@ -65,7 +65,7 @@ double? parseDoubleWithUnits(
   bool tryParse = false,
   required SvgTheme theme,
 }) {
-  double unit = 1.0;
+  var unit = 1.0;
 
   // 1 rem unit is equal to the root font size.
   // 1 em unit is equal to the current font size.

@@ -1,5 +1,20 @@
-## NEXT
+## 26.1.4
 
+* [swift][kotlin] Fixes crash that occurs when an object that is removed from the instance manager
+  calls to Dart.
+
+## 26.1.3
+
+* [dart] Fixes error from constructor parameter sharing name with attached field for a ProxyApi.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 26.1.2
+
+* [kotlin] Fixes compilation error with unbounded type parameter for InstanceManager.
+
+## 26.1.1
+
+* Updates supported `analyzer` versions to 8.x or 9.x.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 26.1.0

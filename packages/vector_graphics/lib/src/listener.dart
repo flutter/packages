@@ -68,7 +68,7 @@ Future<PictureInfo> decodeVectorGraphics(
     // real async work gets scheduled in the root zone so that it will not get
     // blocked by microtasks in the fake async zone, but do not unnecessarily
     // create zones outside of tests.
-    bool useZone = false;
+    var useZone = false;
     assert(() {
       _debugLastTextDirection = textDirection;
       _debugLastLocale = locale;
@@ -80,14 +80,13 @@ Future<PictureInfo> decodeVectorGraphics(
 
     @pragma('vm:prefer-inline')
     Future<PictureInfo> process() {
-      final FlutterVectorGraphicsListener listener =
-          FlutterVectorGraphicsListener(
-            id: loader.hashCode,
-            locale: locale,
-            textDirection: textDirection,
-            clipViewbox: clipViewbox,
-            onError: onError,
-          );
+      final listener = FlutterVectorGraphicsListener(
+        id: loader.hashCode,
+        locale: locale,
+        textDirection: textDirection,
+        clipViewbox: clipViewbox,
+        onError: onError,
+      );
       DecodeResponse response = _codec.decode(data, listener);
       if (response.complete) {
         return SynchronousFuture<PictureInfo>(listener.toPicture());
@@ -326,7 +325,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (paintId != null) {
         paint!.shader = _patterns[patternId]!.shader;
       } else {
-        final Paint newPaint = Paint();
+        final newPaint = Paint();
         newPaint.shader = _patterns[patternId]!.shader;
         paint = newPaint;
       }
@@ -343,7 +342,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawVertices(Float32List vertices, Uint16List? indices, int? paintId) {
-    final Vertices vertexData = Vertices.raw(
+    final vertexData = Vertices.raw(
       VertexMode.triangles,
       vertices,
       indices: indices,
@@ -369,7 +368,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     required int? shaderId,
   }) {
     assert(_paints.length == id, 'Expect ID to be ${_paints.length}');
-    final Paint paint = Paint()..color = Color(color);
+    final paint = Paint()..color = Color(color);
     if (blendMode != 0) {
       paint.blendMode = BlendMode.values[blendMode];
     }
@@ -434,7 +433,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     assert(_currentPath == null);
     assert(_paths.length == id, 'Expected Id to be $id');
 
-    final Path path = Path();
+    final path = Path();
     path.fillType = PathFillType.values[fillType];
     _paths.add(path);
     _currentPath = path;
@@ -498,16 +497,15 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     PictureRecorder? patternRecorder,
     Canvas canvas,
   ) {
-    final FlutterVectorGraphicsListener patternListener =
-        FlutterVectorGraphicsListener._(
-          0,
-          _pictureFactory,
-          patternRecorder!,
-          canvas,
-          _locale,
-          _textDirection,
-          _clipViewbox,
-        );
+    final patternListener = FlutterVectorGraphicsListener._(
+      0,
+      _pictureFactory,
+      patternRecorder!,
+      canvas,
+      _locale,
+      _textDirection,
+      _clipViewbox,
+    );
 
     patternListener._size = Size(
       currentPattern!._width,
@@ -521,7 +519,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       currentPattern._height.round(),
     );
 
-    final ImageShader pattern = ImageShader(
+    final pattern = ImageShader(
       image,
       TileMode.repeated,
       TileMode.repeated,
@@ -545,12 +543,12 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   ) {
     assert(_shaders.length == id);
 
-    final Offset from = Offset(fromX, fromY);
-    final Offset to = Offset(toX, toY);
-    final List<Color> colorValues = <Color>[
+    final from = Offset(fromX, fromY);
+    final to = Offset(toX, toY);
+    final colorValues = <Color>[
       for (int i = 0; i < colors.length; i++) Color(colors[i]),
     ];
-    final Gradient gradient = Gradient.linear(
+    final gradient = Gradient.linear(
       from,
       to,
       colorValues,
@@ -575,13 +573,13 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
   ) {
     assert(_shaders.length == id);
 
-    final Offset center = Offset(centerX, centerY);
+    final center = Offset(centerX, centerY);
     final Offset? focal = focalX == null ? null : Offset(focalX, focalY!);
-    final List<Color> colorValues = <Color>[
+    final colorValues = <Color>[
       for (int i = 0; i < colors.length; i++) Color(colors[i]),
     ];
     final bool hasFocal = focal != center && focal != null;
-    final Gradient gradient = Gradient.radial(
+    final gradient = Gradient.radial(
       center,
       radius,
       colorValues,
@@ -613,7 +611,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     int decorationColor,
     int id,
   ) {
-    final List<TextDecoration> decorations = <TextDecoration>[];
+    final decorations = <TextDecoration>[];
     if (decoration & kUnderlineMask != 0) {
       decorations.add(TextDecoration.underline);
     }
@@ -694,7 +692,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
       if (patternId != null) {
         paint.shader = _patterns[patternId]!.shader;
       }
-      final ParagraphBuilder builder = ParagraphBuilder(
+      final builder = ParagraphBuilder(
         ParagraphStyle(textDirection: _textDirection),
       );
       builder.pushStyle(
@@ -753,7 +751,7 @@ class FlutterVectorGraphicsListener extends VectorGraphicsCodecListener {
     Uint8List data, {
     VectorGraphicsErrorListener? onError,
   }) {
-    final Completer<void> completer = Completer<void>();
+    final completer = Completer<void>();
     _pendingImages.add(completer.future);
     final ImageStreamCompleter? cacheCompleter = imageCache.putIfAbsent(
       _createImageKey(imageId, format),

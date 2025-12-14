@@ -131,7 +131,7 @@ class XFile extends XFileBase {
       throw Exception('Safari cannot handle XFiles larger than 4GB.');
     }
 
-    final Completer<Blob> blobCompleter = Completer<Blob>();
+    final blobCompleter = Completer<Blob>();
 
     late XMLHttpRequest request;
     request = XMLHttpRequest()
@@ -183,7 +183,7 @@ class XFile extends XFileBase {
 
   // Converts an html Blob object to a Uint8List, through a FileReader.
   Future<Uint8List> _blobToByteBuffer(Blob blob) async {
-    final FileReader reader = FileReader();
+    final reader = FileReader();
     reader.readAsArrayBuffer(blob);
 
     await reader.onLoadEnd.first;

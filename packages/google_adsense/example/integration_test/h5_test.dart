@@ -28,9 +28,7 @@ void main() {
       mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
-        type: BreakType.reward,
-      );
+      final adBreakPlacement = AdBreakPlacement(type: BreakType.reward);
 
       h5GamesAds.adBreak(adBreakPlacement);
 
@@ -61,7 +59,7 @@ void main() {
       );
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
+      final adBreakPlacement = AdBreakPlacement(
         type: BreakType.reward,
         adBreakDone: adBreakDoneCallback,
       );
@@ -81,7 +79,7 @@ void main() {
       mockAdsByGoogle(mockAdBreak());
       await adSense.initialize('_');
 
-      final AdBreakPlacement adBreakPlacement = AdBreakPlacement(
+      final adBreakPlacement = AdBreakPlacement(
         type: BreakType.reward,
         name: 'my-test-break',
       );
@@ -99,7 +97,7 @@ void main() {
 
   group('h5GamesAds.adConfig', () {
     testWidgets('can set up configuration', (WidgetTester tester) async {
-      bool called = false;
+      var called = false;
       void onReadyCallback() {
         called = true;
       }

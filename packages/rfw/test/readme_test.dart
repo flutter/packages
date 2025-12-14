@@ -237,8 +237,8 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
         'Foo': (BuildContext context, DataSource source) {
           final int length = source.length(<Object>['text']);
           if (length > 0) {
-            final StringBuffer text = StringBuffer();
-            for (int index = 0; index < length; index += 1) {
+            final text = StringBuffer();
+            for (var index = 0; index < length; index += 1) {
               text.write(source.v<String>(<Object>['text', index]));
             }
             return Text(text.toString(), textDirection: TextDirection.ltr);
@@ -323,11 +323,11 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
 
 void main() {
   testWidgets('readme snippets', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['material']), createMaterialWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(parseDataFile(gameData));
+    final data = DynamicContent(parseDataFile(gameData));
     for (final String region in rawRemoteWidgetSnippets.keys) {
       final String body = rawRemoteWidgetSnippets[region]!;
       runtime.update(LibraryName(<String>[region]), parseLibraryFile(body));

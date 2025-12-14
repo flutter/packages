@@ -76,31 +76,31 @@ packages/image_picker/image_picker_android/**                 @gmackall
 packages/in_app_purchase/in_app_purchase_android/**           @gmackall
 packages/local_auth/local_auth_android/**                     @mboetger
 packages/path_provider/path_provider_android/**               @camsim99
-packages/quick_actions/quick_actions_android/**               @reidbaker
+packages/quick_actions/quick_actions_android/**               @jesswrd
 packages/shared_preferences/shared_preferences_android/**     @jesswrd
 packages/url_launcher/url_launcher_android/**                 @gmackall
-packages/video_player/video_player_android/**                 @reidbaker
+packages/video_player/video_player_android/**                 @mboetger
 # Owned by ecosystem team for now during the wrapper evaluation.
 packages/webview_flutter/webview_flutter_android/**           @bparrishMines
 
 # - Darwin
-packages/camera/camera_avfoundation/**                        @hellohuanlin @vashworth
-packages/file_selector/file_selector_ios/**                   @vashworth
-packages/file_selector/file_selector_macos/**                 @vashworth
-packages/google_maps_flutter/google_maps_flutter_ios/**       @vashworth
-packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong
-packages/image_picker/image_picker_ios/**                     @vashworth @louisehsu
-packages/image_picker/image_picker_macos/**                   @vashworth @louisehsu
+packages/camera/camera_avfoundation/**                        @hellohuanlin @louisehsu
+packages/file_selector/file_selector_ios/**                   @okorohelijah @vashworth
+packages/file_selector/file_selector_macos/**                 @okorohelijah @vashworth
+packages/google_maps_flutter/google_maps_flutter_ios/**       @vashworth @LongCatIsLooong
+packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong @okorohelijah
+packages/image_picker/image_picker_ios/**                     @okorohelijah @vashworth
+packages/image_picker/image_picker_macos/**                   @okorohelijah @vashworth
 packages/in_app_purchase/in_app_purchase_storekit/**          @louisehsu @LongCatIsLooong
-packages/local_auth/local_auth_darwin/**                      @vashworth @okorohelijah
-packages/path_provider/path_provider_foundation/**            @vashworth
+packages/local_auth/local_auth_darwin/**                      @louisehsu @okorohelijah
+packages/path_provider/path_provider_foundation/**            @LongCatIsLooong @vashworth
 packages/pointer_interceptor/pointer_interceptor_ios/**       @louisehsu @hellohuanlin
-packages/quick_actions/quick_actions_ios/**                   @LongCatIsLooong @hellohuanlin
+packages/quick_actions/quick_actions_ios/**                   @louisehsu @LongCatIsLooong
 packages/shared_preferences/shared_preferences_foundation/**  @tarrinneal
-packages/url_launcher/url_launcher_ios/**                     @hellohuanlin @LongCatIsLooong
-packages/url_launcher/url_launcher_macos/**                   @hellohuanlin @LongCatIsLooong
-packages/video_player/video_player_avfoundation/**            @LongCatIsLooong @hellohuanlin
-packages/webview_flutter/webview_flutter_wkwebview/**         @louisehsu
+packages/url_launcher/url_launcher_ios/**                     @vashworth @LongCatIsLooong
+packages/url_launcher/url_launcher_macos/**                   @vashworth @LongCatIsLooong
+packages/video_player/video_player_avfoundation/**            @hellohuanlin @louisehsu
+packages/webview_flutter/webview_flutter_wkwebview/**         @LongCatIsLooong @hellohuanlin
 
 # - Linux
 packages/file_selector/file_selector_linux/**                 @robert-ancell @stuartmorgan-g

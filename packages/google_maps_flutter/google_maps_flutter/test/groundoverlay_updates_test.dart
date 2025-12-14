@@ -20,7 +20,7 @@ Widget _mapWithMarkers(Set<GroundOverlay> groundOverlays) {
 }
 
 void main() {
-  final LatLngBounds kGroundOverlayBounds = LatLngBounds(
+  final kGroundOverlayBounds = LatLngBounds(
     southwest: const LatLng(37.77483, -122.41942),
     northeast: const LatLng(37.78183, -122.39105),
   );
@@ -33,7 +33,7 @@ void main() {
   });
 
   testWidgets('Initializing a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -46,7 +46,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -81,7 +81,7 @@ void main() {
   });
 
   testWidgets('Adding a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -94,7 +94,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -130,7 +130,7 @@ void main() {
   });
 
   testWidgets('Removing a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -158,7 +158,7 @@ void main() {
   });
 
   testWidgets('Updating a groundOverlay', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -191,7 +191,7 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    GroundOverlay go1 = GroundOverlay.fromBounds(
+    var go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -204,7 +204,7 @@ void main() {
       zIndex: 10,
     );
 
-    GroundOverlay go2 = GroundOverlay.fromPosition(
+    var go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -221,10 +221,10 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final Set<GroundOverlay> prev = <GroundOverlay>{go1, go2};
+    final prev = <GroundOverlay>{go1, go2};
     go1 = go1.copyWith(visibleParam: false);
     go2 = go2.copyWith(clickableParam: false);
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1, go2};
+    final cur = <GroundOverlay>{go1, go2};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -240,7 +240,7 @@ void main() {
   });
 
   testWidgets('Multi Update', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -253,7 +253,7 @@ void main() {
       zIndex: 10,
     );
 
-    GroundOverlay go2 = GroundOverlay.fromPosition(
+    var go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -270,7 +270,7 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final GroundOverlay go3 = GroundOverlay.fromPosition(
+    final go3 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_3'),
       position: kGroundOverlayBounds.southwest,
       width: 100,
@@ -287,11 +287,11 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final Set<GroundOverlay> prev = <GroundOverlay>{go2, go3};
+    final prev = <GroundOverlay>{go2, go3};
 
     // go1 is added, go2 is updated, go3 is removed.
     go2 = go2.copyWith(clickableParam: false);
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1, go2};
+    final cur = <GroundOverlay>{go1, go2};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -317,7 +317,7 @@ void main() {
   });
 
   testWidgets('Partial Update', (WidgetTester tester) async {
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -330,7 +330,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -347,7 +347,7 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    GroundOverlay go3 = GroundOverlay.fromPosition(
+    var go3 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_3'),
       position: kGroundOverlayBounds.southwest,
       width: 100,
@@ -363,9 +363,9 @@ void main() {
       zIndex: 10,
       zoomLevel: 14.0,
     );
-    final Set<GroundOverlay> prev = <GroundOverlay>{go1, go2, go3};
+    final prev = <GroundOverlay>{go1, go2, go3};
     go3 = go3.copyWith(visibleParam: false);
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1, go2, go3};
+    final cur = <GroundOverlay>{go1, go2, go3};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -384,7 +384,7 @@ void main() {
   });
 
   testWidgets('Update non platform related attr', (WidgetTester tester) async {
-    GroundOverlay go1 = GroundOverlay.fromBounds(
+    var go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -396,9 +396,9 @@ void main() {
       bearing: 10,
       zIndex: 10,
     );
-    final Set<GroundOverlay> prev = <GroundOverlay>{go1};
+    final prev = <GroundOverlay>{go1};
     go1 = go1.copyWith(onTapParam: () {});
-    final Set<GroundOverlay> cur = <GroundOverlay>{go1};
+    final cur = <GroundOverlay>{go1};
 
     await tester.pumpWidget(_mapWithMarkers(prev));
     await tester.pumpWidget(_mapWithMarkers(cur));
@@ -416,7 +416,7 @@ void main() {
   testWidgets('multi-update with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    final GroundOverlay go1 = GroundOverlay.fromBounds(
+    final go1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('go_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -429,7 +429,7 @@ void main() {
       zIndex: 10,
     );
 
-    final GroundOverlay go2 = GroundOverlay.fromPosition(
+    final go2 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_2'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -446,7 +446,7 @@ void main() {
       zoomLevel: 14.0,
     );
 
-    final GroundOverlay go3 = GroundOverlay.fromPosition(
+    final go3 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('go_3'),
       position: kGroundOverlayBounds.southwest,
       width: 100,

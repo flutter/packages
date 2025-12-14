@@ -18,7 +18,7 @@ final class MockCameraDeviceDiscoverer: NSObject, CameraDeviceDiscoverer {
         _ deviceTypes: [AVCaptureDevice.DeviceType],
         _ mediaType: AVMediaType,
         _ position: AVCaptureDevice.Position
-      ) -> [NSObject & FLTCaptureDevice]?
+      ) -> [NSObject & CaptureDevice]?
     )?
 
   /// A stub that replaces the default implementation of
@@ -26,7 +26,7 @@ final class MockCameraDeviceDiscoverer: NSObject, CameraDeviceDiscoverer {
   func discoverySession(
     withDeviceTypes deviceTypes: [AVCaptureDevice.DeviceType], mediaType: AVMediaType,
     position: AVCaptureDevice.Position
-  ) -> [FLTCaptureDevice] {
+  ) -> [CaptureDevice] {
     return discoverySessionStub?(deviceTypes, mediaType, position) ?? []
   }
 }
