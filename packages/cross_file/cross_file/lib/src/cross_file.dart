@@ -8,8 +8,8 @@ import 'package:meta/meta.dart';
 @immutable
 @optionalTypeArgs
 class XFile<T extends PlatformXFileExtension> {
-  XFile(String path)
-    : this.fromPlatformCreationParams(PlatformXFileCreationParams(path: path));
+  XFile(String uri)
+    : this.fromPlatformCreationParams(PlatformXFileCreationParams(uri: uri));
 
   XFile.fromPlatformCreationParams(PlatformXFileCreationParams params)
     : this.fromPlatform(PlatformXFile(params));
@@ -18,7 +18,7 @@ class XFile<T extends PlatformXFileExtension> {
 
   final PlatformXFile platform;
 
-  String get path => platform.params.path;
+  String get uri => platform.params.uri;
 
   /// Provides a nonnull platform class extension.
   ///
