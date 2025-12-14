@@ -70,12 +70,7 @@ mixin SharedStoragePlatformXDirectoryExtension
 
 /// A reference to a directory (or folder) on the file system within a devices
 /// shared storage.
-abstract base class PlatformSharedStorageXDirectory
-    extends
-        PlatformXDirectory<
-          PlatformSharedStorageXDirectoryCreationParams,
-          SharedStoragePlatformXDirectoryExtension
-        > {
+abstract base class PlatformSharedStorageXDirectory extends PlatformXDirectory {
   /// Creates a new [PlatformSharedStorageXDirectory]
   factory PlatformSharedStorageXDirectory(
     PlatformSharedStorageXDirectoryCreationParams params,
@@ -97,6 +92,11 @@ abstract base class PlatformSharedStorageXDirectory
   ///
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
-  PlatformSharedStorageXDirectory.implementation(super.params)
-    : super.implementation();
+  PlatformSharedStorageXDirectory.implementation(
+    PlatformSharedStorageXDirectoryCreationParams super.params,
+  ) : super.implementation();
+
+  @override
+  PlatformSharedStorageXDirectoryCreationParams get params =>
+      super.params as PlatformSharedStorageXDirectoryCreationParams;
 }

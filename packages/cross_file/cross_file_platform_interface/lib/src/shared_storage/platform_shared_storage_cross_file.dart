@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 import '../cross_file_platform.dart';
 import '../platform_cross_file.dart';
 
-
 /// Object specifying creation parameters for creating a [PlatformSharedStorageXFile].
 ///
 /// Platform specific implementations can add additional fields by extending
@@ -70,12 +69,7 @@ mixin PlatformSharedStorageXFileExtension implements PlatformXFileExtension {}
 
 /// Interface for a reference to a local data resource within a devices
 /// shared storage.
-abstract base class PlatformSharedStorageXFile
-    extends
-        PlatformXFile<
-          PlatformSharedStorageXFileCreationParams,
-          PlatformSharedStorageXFileExtension
-        > {
+abstract base class PlatformSharedStorageXFile extends PlatformXFile {
   /// Creates a new [PlatformSharedStorageXFile]
   factory PlatformSharedStorageXFile(
     PlatformSharedStorageXFileCreationParams params,
@@ -96,6 +90,11 @@ abstract base class PlatformSharedStorageXFile
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformSharedStorageXFile.implementation(super.params)
-    : super.implementation();
+  PlatformSharedStorageXFile.implementation(
+    PlatformSharedStorageXFileCreationParams super.params,
+  ) : super.implementation();
+
+  @override
+  PlatformSharedStorageXFileCreationParams get params =>
+      super.params as PlatformSharedStorageXFileCreationParams;
 }

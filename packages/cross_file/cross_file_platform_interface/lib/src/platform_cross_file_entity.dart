@@ -20,18 +20,15 @@ abstract base class PlatformXFileEntityCreationParams {
 mixin PlatformXFileEntityExtension {}
 
 /// The common superclass for [PlatformXFile] and [PlatformXDirectory].
-abstract base class PlatformXFileEntity<
-  T extends PlatformXFileEntityCreationParams,
-  S extends PlatformXFileEntityExtension
-> {
+abstract base class PlatformXFileEntity {
   /// Constructs a [PlatformCrossFileEntity].
   PlatformXFileEntity(this.params);
 
   /// The parameters used to initialize the [PlatformXFileEntity].
-  final T params;
+  final PlatformXFileEntityCreationParams params;
 
   /// Extension for providing platform specific features.
-  S? get extension => null;
+  PlatformXFileEntityExtension? get extension => null;
 
   /// Whether the resource represented by this reference exists.
   Future<bool> exists();

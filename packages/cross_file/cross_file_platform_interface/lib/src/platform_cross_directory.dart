@@ -70,13 +70,9 @@ base class PlatformXDirectoryCreationParams
 mixin PlatformXDirectoryExtension implements PlatformXFileEntityExtension {}
 
 /// A reference to a directory (or folder) on the file system.
-abstract base class PlatformXDirectory<
-  T extends PlatformXDirectoryCreationParams,
-  S extends PlatformXDirectoryExtension
->
-    extends PlatformXFileEntity<T, S> {
+abstract base class PlatformXDirectory extends PlatformXFileEntity {
   /// Creates a new [PlatformXDirectory].
-  factory PlatformXDirectory(T params) {
+  factory PlatformXDirectory(PlatformXDirectoryCreationParams params) {
     assert(
       CrossFilePlatform.instance != null,
       'A platform implementation for `cross_file` has not been set. Please '
@@ -92,16 +88,16 @@ abstract base class PlatformXDirectory<
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformXDirectory.implementation(super.params);
+  PlatformXDirectory.implementation(
+    PlatformXDirectoryCreationParams super.params,
+  );
+
+  @override
+  PlatformXDirectoryCreationParams get params =>
+      super.params as PlatformXDirectoryCreationParams;
 
   /// Lists the sub-directories and files of this Directory.
-  Stream<
-    PlatformXFileEntity<
-      PlatformXFileEntityCreationParams,
-      PlatformXFileEntityExtension
-    >
-  >
-  list(ListParams params);
+  Stream<PlatformXFileEntity> list(ListParams params);
 }
 
 /// Base class for parameters passed to [PlatformXDirectory.list].

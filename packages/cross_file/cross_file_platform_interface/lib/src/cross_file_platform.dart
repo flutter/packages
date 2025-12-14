@@ -18,18 +18,13 @@ abstract base class CrossFilePlatform {
   static CrossFilePlatform? instance;
 
   /// Creates a new [PlatformXFile].
-  @optionalTypeArgs
-  PlatformXFile<T, S> createPlatformXFile<
-    T extends PlatformXFileCreationParams,
-    S extends PlatformXFileExtension
-  >(PlatformXFileCreationParams params);
+  PlatformXFile createPlatformXFile(PlatformXFileCreationParams params);
 
   /// Creates a new [PlatformXDirectory].
   @optionalTypeArgs
-  PlatformXDirectory<T, S> createPlatformXDirectory<
-    T extends PlatformXDirectoryCreationParams,
-    S extends PlatformXDirectoryExtension
-  >(PlatformXDirectoryCreationParams params) {
+  PlatformXDirectory createPlatformXDirectory(
+    PlatformXDirectoryCreationParams params,
+  ) {
     throw UnimplementedError(
       'createPlatformXDirectory is not implemented on the current platform.',
     );

@@ -70,13 +70,9 @@ base class PlatformXFileCreationParams
 mixin PlatformXFileExtension implements PlatformXFileEntityExtension {}
 
 /// Interface for a reference to a local data resource.
-abstract base class PlatformXFile<
-  T extends PlatformXFileCreationParams,
-  S extends PlatformXFileExtension
->
-    extends PlatformXFileEntity<T, S> {
+abstract base class PlatformXFile extends PlatformXFileEntity {
   /// Creates a new [PlatformXFile].
-  factory PlatformXFile(T params) {
+  factory PlatformXFile(PlatformXFileCreationParams params) {
     assert(
       CrossFilePlatform.instance != null,
       'A platform implementation for `cross_file` has not been set. Please '
@@ -92,7 +88,11 @@ abstract base class PlatformXFile<
   /// Should only be used by platform implementations because they can't extend
   /// a class that only contains a factory constructor.
   @protected
-  PlatformXFile.implementation(super.params);
+  PlatformXFile.implementation(PlatformXFileCreationParams super.params);
+
+  @override
+  PlatformXFileCreationParams get params =>
+      super.params as PlatformXFileCreationParams;
 
   /// Date and time when the resource was last modified, if the information is
   /// available.
