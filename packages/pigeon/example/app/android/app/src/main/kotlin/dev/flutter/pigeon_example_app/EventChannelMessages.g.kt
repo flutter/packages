@@ -185,5 +185,9 @@ abstract class StreamEventsStreamHandler :
       EventChannel(messenger, channelName, EventChannelMessagesPigeonMethodCodec)
           .setStreamHandler(internalStreamHandler)
     }
+    // Implement methods from EventChannelMessagesPigeonEventChannelWrapper
+    override open fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
+
+    override open fun onCancel(p0: Any?) {}
   }
 }
