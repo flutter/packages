@@ -1,4 +1,4 @@
-## NEXT
+## 3.24.0
 
 * Adds support for `javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
   `window.open()` to work without user interaction on iOS and macOS.
