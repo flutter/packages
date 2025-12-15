@@ -187,7 +187,7 @@ abstract class StreamEventsStreamHandler :
     }
   }
   // Implement methods from EventChannelMessagesPigeonEventChannelWrapper
-  override open fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
+  override open abstract fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
 
-  override open fun onCancel(p0: Any?) {}
+  override open abstract fun onCancel(p0: Any?) {}
 }
