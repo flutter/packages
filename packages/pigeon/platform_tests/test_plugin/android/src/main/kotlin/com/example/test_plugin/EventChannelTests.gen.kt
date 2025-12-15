@@ -574,11 +574,11 @@ abstract class StreamIntsStreamHandler : EventChannelTestsPigeonEventChannelWrap
       EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
           .setStreamHandler(internalStreamHandler)
     }
-    // Implement methods from EventChannelTestsPigeonEventChannelWrapper
-    override open fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
-
-    override open fun onCancel(p0: Any?) {}
   }
+  // Implement methods from EventChannelTestsPigeonEventChannelWrapper
+  override open fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
+
+  override open fun onCancel(p0: Any?) {}
 }
 
 abstract class StreamEventsStreamHandler :
@@ -598,11 +598,11 @@ abstract class StreamEventsStreamHandler :
       EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
           .setStreamHandler(internalStreamHandler)
     }
-    // Implement methods from EventChannelTestsPigeonEventChannelWrapper
-    override open fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
-
-    override open fun onCancel(p0: Any?) {}
   }
+  // Implement methods from EventChannelTestsPigeonEventChannelWrapper
+  override open fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
+
+  override open fun onCancel(p0: Any?) {}
 }
 
 abstract class StreamConsistentNumbersStreamHandler :
@@ -622,9 +622,9 @@ abstract class StreamConsistentNumbersStreamHandler :
       EventChannel(messenger, channelName, EventChannelTestsPigeonMethodCodec)
           .setStreamHandler(internalStreamHandler)
     }
-    // Implement methods from EventChannelTestsPigeonEventChannelWrapper
-    override open fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
-
-    override open fun onCancel(p0: Any?) {}
   }
+  // Implement methods from EventChannelTestsPigeonEventChannelWrapper
+  override open fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
+
+  override open fun onCancel(p0: Any?) {}
 }
