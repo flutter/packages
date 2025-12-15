@@ -1233,6 +1233,12 @@ if (wrapped == null) {
               val internalStreamHandler = ${generatorOptions.fileSpecificClassNameComponent}PigeonStreamHandler<${_kotlinTypeForDartType(func.returnType)}>(streamHandler)
               EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(internalStreamHandler)
             }
+            // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
+            override
+            open fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
+
+            override
+            open fun onCancel(p0: Any?) {}
           }
         }
       ''');
