@@ -1,7 +1,7 @@
 ## 26.1.5
 
-* [kotlin] Fixes "bridge method" warning that occures when a uses *PigeonEventChannelWrapper as a
-  supertype without implementing all methods.
+* [kotlin] Fixes a "bridge method" warning that occurs when a class uses `*PigeonEventChannelWrapper` as a
+  supertype without implementing all of its methods.
 
 ## 26.1.4
 
