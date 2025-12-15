@@ -1,3 +1,8 @@
+## 26.1.5
+
+* [kotlin] Fixes "bridge method" warning that occures when a uses *PigeonEventChannelWrapper as a
+  supertype without implementing all methods.
+
 ## 26.1.4
 
 * [swift][kotlin] Fixes crash that occurs when an object that is removed from the instance manager
