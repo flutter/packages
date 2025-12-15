@@ -8,7 +8,7 @@ import 'io_cross_directory.dart';
 import 'io_cross_file.dart';
 
 /// Implementation of [CrossFilePlatform] for dart:io.
-final class CrossFileIO extends CrossFilePlatform {
+base class CrossFileIO extends CrossFilePlatform {
   /// Registers this class as the default instance of [CrossFilePlatform].
   static void registerWith() {
     CrossFilePlatform.instance = CrossFileIO();

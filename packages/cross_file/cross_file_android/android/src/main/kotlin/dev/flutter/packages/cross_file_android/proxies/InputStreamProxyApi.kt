@@ -16,9 +16,9 @@ import java.io.InputStream
  */
 class InputStreamProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiInputStream(pigeonRegistrar) {
-  override fun readBytes(pigeon_instance: InputStream, len: Long): InputStreamReadBytesResponse {
+  override fun readBytes(pigeon_instance: InputStream, len: Long, off: Long): InputStreamReadBytesResponse {
     val bytes = ByteArray(len.toInt())
-    return InputStreamReadBytesResponse(pigeon_instance.read(bytes), bytes)
+    return InputStreamReadBytesResponse(pigeon_instance.read(bytes, off.toInt(), bytes.size), bytes)
   }
 
   override fun readAllBytes(pigeon_instance: InputStream): ByteArray {

@@ -40,4 +40,12 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun length(pigeon_instance: DocumentFile): Long {
     return pigeon_instance.length()
   }
+
+  override fun isFile(pigeon_instance: DocumentFile): Boolean {
+    return pigeon_instance.isFile
+  }
+
+  override fun isDirectory(pigeon_instance: DocumentFile): Boolean {
+    return pigeon_instance.isDirectory
+  }
 }

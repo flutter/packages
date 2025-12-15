@@ -2,27 +2,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Platform Implementation for Android
+import 'package:cross_file_io/cross_file_io.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
 import 'android_cross_file.dart';
 
-final class CrossFileAndroid extends CrossFilePlatform {
+/// Implementation of [CrossFilePlatform] for Android.
+base class CrossFileAndroid extends CrossFileIO {
+  /// Registers this class as the default instance of [CrossFilePlatform].
   static void registerWith() {
     CrossFilePlatform.instance = CrossFileAndroid();
   }
 
   @override
-  AndroidXFile createPlatformXFile(PlatformXFileCreationParams params) {
-    return createPlatformSharedStorageXFile(
-      PlatformSharedStorageXFileCreationParams(path: params.path),
-    );
-  }
-
-  @override
-  AndroidXFile createPlatformSharedStorageXFile(
+  AndroidSharedStorageXFile createPlatformSharedStorageXFile(
     PlatformSharedStorageXFileCreationParams params,
   ) {
-    return AndroidXFile(params);
+    return AndroidSharedStorageXFile(params);
   }
 }

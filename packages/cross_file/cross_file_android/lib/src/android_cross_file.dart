@@ -3,16 +3,20 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:cross_file_android/src/document_file.g.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-base class AndroidXFile extends PlatformSharedStorageXFile {
-  AndroidXFile(super.params) : super.implementation();
+import 'android_library.g.dart';
+
+/// Implementation of [PlatformSharedStorageXFile] for Android.
+base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
+  /// Constructs an [AndroidSharedStorageXFile].
+  AndroidSharedStorageXFile(super.params) : super.implementation();
 
   late final DocumentFile _documentFile = DocumentFile.fromSingleUri(
-    path: params.path,
+    path: params.uri,
   );
 
   late final ContentResolver _contentResolver = ContentResolver.instance;
@@ -29,17 +33,28 @@ base class AndroidXFile extends PlatformSharedStorageXFile {
 
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
+    int bytesToRead = (end ?? await length()) - (start ?? 0);
+    assert(bytesToRead >= 0);
+
     final InputStream? inputStream = await _contentResolver.openInputStream(
-      params.path,
+      params.uri,
     );
-    // TODO: add support for start and end.
-    if (inputStream case InputStream inputStream) {
+
+    const int maxByteArrayLen = 4 * 1024;
+
+    if (inputStream case final InputStream inputStream) {
       InputStreamReadBytesResponse response = await inputStream.readBytes(
-        4 * 1024,
+        min(bytesToRead, maxByteArrayLen),
+        start ?? 0,
       );
-      while (response.returnValue != -1) {
+      bytesToRead -= response.returnValue;
+      while (response.returnValue != -1 && bytesToRead > 0) {
         yield response.bytes;
-        response = await inputStream.readBytes(4 * 1024);
+        response = await inputStream.readBytes(
+          min(bytesToRead, maxByteArrayLen),
+          0,
+        );
+        bytesToRead -= response.returnValue;
       }
     } else {
       throw _createNullInputStreamError();
@@ -49,9 +64,9 @@ base class AndroidXFile extends PlatformSharedStorageXFile {
   @override
   Future<Uint8List> readAsBytes() async {
     final InputStream? inputStream = await _contentResolver.openInputStream(
-      params.path,
+      params.uri,
     );
-    if (inputStream case InputStream inputStream) {
+    if (inputStream case final InputStream inputStream) {
       return inputStream.readAllBytes();
     }
 
@@ -67,21 +82,14 @@ base class AndroidXFile extends PlatformSharedStorageXFile {
   Future<bool> canRead() => _documentFile.canRead();
 
   @override
-  Future<bool> exists() {
-    // TODO: shoulc also call _documentFile.isFile
-    return _documentFile.exists();
+  Future<bool> exists() async {
+    return await _documentFile.exists() && await _documentFile.isFile();
   }
 
   UnsupportedError _createNullInputStreamError() {
     return UnsupportedError(
-      'Failed to get native InputStream from file with path: ${params.path}. '
+      'Failed to get native InputStream from file with path: ${params.uri}. '
       'App may not have permissions to access file.',
     );
-  }
-
-  @override
-  Future<void> delete() {
-    // TODO: implement delete
-    throw UnimplementedError();
   }
 }
