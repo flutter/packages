@@ -39,8 +39,12 @@ List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty
 @visibleForTesting
 class PigeonOverrides {
   /// Overrides [DocumentFile.fromSingleUri].
-  static DocumentFile Function({required String path})?
+  static DocumentFile Function({required String singleUri})?
       documentFile_fromSingleUri;
+
+  /// Overrides [DocumentFile.fromTreeUri].
+  static DocumentFile Function({required String treeUri})?
+      documentFile_fromTreeUri;
 
   /// Overrides [ContentResolver.instance].
   static ContentResolver? contentResolver_instance;
@@ -48,6 +52,7 @@ class PigeonOverrides {
   /// Sets all overridden ProxyApi class members to null.
   static void pigeon_reset() {
     documentFile_fromSingleUri = null;
+    documentFile_fromTreeUri = null;
     contentResolver_instance = null;
   }
 }
@@ -446,15 +451,15 @@ class DocumentFile extends PigeonInternalProxyApiBaseClass {
   factory DocumentFile.fromSingleUri({
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    required String path,
+    required String singleUri,
   }) {
     if (PigeonOverrides.documentFile_fromSingleUri != null) {
-      return PigeonOverrides.documentFile_fromSingleUri!(path: path);
+      return PigeonOverrides.documentFile_fromSingleUri!(singleUri: singleUri);
     }
     return DocumentFile.pigeon_fromSingleUri(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
-      path: path,
+      singleUri: singleUri,
     );
   }
 
@@ -463,7 +468,7 @@ class DocumentFile extends PigeonInternalProxyApiBaseClass {
   DocumentFile.pigeon_fromSingleUri({
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
-    required String path,
+    required String singleUri,
   }) {
     final int pigeonVar_instanceIdentifier =
         pigeon_instanceManager.addDartCreatedInstance(this);
@@ -477,8 +482,59 @@ class DocumentFile extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture =
-        pigeonVar_channel.send(<Object?>[pigeonVar_instanceIdentifier, path]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[pigeonVar_instanceIdentifier, singleUri]);
+    () async {
+      final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+      if (pigeonVar_replyList == null) {
+        throw _createConnectionError(pigeonVar_channelName);
+      } else if (pigeonVar_replyList.length > 1) {
+        throw PlatformException(
+          code: pigeonVar_replyList[0]! as String,
+          message: pigeonVar_replyList[1] as String?,
+          details: pigeonVar_replyList[2],
+        );
+      } else {
+        return;
+      }
+    }();
+  }
+
+  factory DocumentFile.fromTreeUri({
+    BinaryMessenger? pigeon_binaryMessenger,
+    PigeonInstanceManager? pigeon_instanceManager,
+    required String treeUri,
+  }) {
+    if (PigeonOverrides.documentFile_fromTreeUri != null) {
+      return PigeonOverrides.documentFile_fromTreeUri!(treeUri: treeUri);
+    }
+    return DocumentFile.pigeon_fromTreeUri(
+      pigeon_binaryMessenger: pigeon_binaryMessenger,
+      pigeon_instanceManager: pigeon_instanceManager,
+      treeUri: treeUri,
+    );
+  }
+
+  @protected
+  DocumentFile.pigeon_fromTreeUri({
+    super.pigeon_binaryMessenger,
+    super.pigeon_instanceManager,
+    required String treeUri,
+  }) {
+    final int pigeonVar_instanceIdentifier =
+        pigeon_instanceManager.addDartCreatedInstance(this);
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecDocumentFile;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_android.DocumentFile.fromTreeUri';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel
+        .send(<Object?>[pigeonVar_instanceIdentifier, treeUri]);
     () async {
       final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
       if (pigeonVar_replyList == null) {
@@ -784,6 +840,73 @@ class DocumentFile extends PigeonInternalProxyApiBaseClass {
       );
     } else {
       return (pigeonVar_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Returns an list of files contained in the directory represented by this
+  /// file.
+  Future<List<DocumentFile>> listFiles() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecDocumentFile;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_android.DocumentFile.listFiles';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<DocumentFile>();
+    }
+  }
+
+  /// A Uri for the underlying document represented by this file.
+  Future<String> getUri() async {
+    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
+        _pigeonVar_codecDocumentFile;
+    final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
+    const pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_android.DocumentFile.getUri';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?)!;
     }
   }
 

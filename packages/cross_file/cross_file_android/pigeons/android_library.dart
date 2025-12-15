@@ -28,7 +28,9 @@ import 'package:pigeon/pigeon.dart';
 )
 abstract class DocumentFile {
   /// Create a DocumentFile representing the single document at the given Uri.
-  DocumentFile.fromSingleUri(String path);
+  DocumentFile.fromSingleUri(String singleUri);
+
+  DocumentFile.fromTreeUri(String treeUri);
 
   /// Indicates whether the current context is allowed to read from this file.
   bool canRead();
@@ -51,6 +53,13 @@ abstract class DocumentFile {
 
   /// Indicates if this file represents a *directory*.
   bool isDirectory();
+
+  /// Returns an list of files contained in the directory represented by this
+  /// file.
+  List<DocumentFile> listFiles();
+
+  /// A Uri for the underlying document represented by this file.
+  String getUri();
 }
 
 /// This class provides applications access to the content model.

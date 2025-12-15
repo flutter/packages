@@ -523,7 +523,9 @@ private open class AndroidLibraryPigeonCodec : StandardMessageCodec() {
 @Suppress("UNCHECKED_CAST")
 abstract class PigeonApiDocumentFile(open val pigeonRegistrar: AndroidLibraryPigeonProxyApiRegistrar) {
   /** Create a DocumentFile representing the single document at the given Uri. */
-  abstract fun fromSingleUri(path: String): androidx.documentfile.provider.DocumentFile
+  abstract fun fromSingleUri(singleUri: String): androidx.documentfile.provider.DocumentFile
+
+  abstract fun fromTreeUri(treeUri: String): androidx.documentfile.provider.DocumentFile
 
   /** Indicates whether the current context is allowed to read from this file. */
   abstract fun canRead(pigeon_instance: androidx.documentfile.provider.DocumentFile): Boolean
@@ -549,6 +551,15 @@ abstract class PigeonApiDocumentFile(open val pigeonRegistrar: AndroidLibraryPig
   /** Indicates if this file represents a *directory*. */
   abstract fun isDirectory(pigeon_instance: androidx.documentfile.provider.DocumentFile): Boolean
 
+  /**
+   * Returns an list of files contained in the directory represented by this
+   * file.
+   */
+  abstract fun listFiles(pigeon_instance: androidx.documentfile.provider.DocumentFile): List<androidx.documentfile.provider.DocumentFile>
+
+  /** A Uri for the underlying document represented by this file. */
+  abstract fun getUri(pigeon_instance: androidx.documentfile.provider.DocumentFile): String
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiDocumentFile?) {
@@ -559,9 +570,28 @@ abstract class PigeonApiDocumentFile(open val pigeonRegistrar: AndroidLibraryPig
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_identifierArg = args[0] as Long
-            val pathArg = args[1] as String
+            val singleUriArg = args[1] as String
             val wrapped: List<Any?> = try {
-              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.fromSingleUri(pathArg), pigeon_identifierArg)
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.fromSingleUri(singleUriArg), pigeon_identifierArg)
+              listOf(null)
+            } catch (exception: Throwable) {
+              AndroidLibraryPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.cross_file_android.DocumentFile.fromTreeUri", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_identifierArg = args[0] as Long
+            val treeUriArg = args[1] as String
+            val wrapped: List<Any?> = try {
+              api.pigeonRegistrar.instanceManager.addDartCreatedInstance(api.fromTreeUri(treeUriArg), pigeon_identifierArg)
               listOf(null)
             } catch (exception: Throwable) {
               AndroidLibraryPigeonUtils.wrapError(exception)
@@ -682,6 +712,40 @@ abstract class PigeonApiDocumentFile(open val pigeonRegistrar: AndroidLibraryPig
             val pigeon_instanceArg = args[0] as androidx.documentfile.provider.DocumentFile
             val wrapped: List<Any?> = try {
               listOf(api.isDirectory(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              AndroidLibraryPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.cross_file_android.DocumentFile.listFiles", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.documentfile.provider.DocumentFile
+            val wrapped: List<Any?> = try {
+              listOf(api.listFiles(pigeon_instanceArg))
+            } catch (exception: Throwable) {
+              AndroidLibraryPigeonUtils.wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.cross_file_android.DocumentFile.getUri", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.documentfile.provider.DocumentFile
+            val wrapped: List<Any?> = try {
+              listOf(api.getUri(pigeon_instanceArg))
             } catch (exception: Throwable) {
               AndroidLibraryPigeonUtils.wrapError(exception)
             }

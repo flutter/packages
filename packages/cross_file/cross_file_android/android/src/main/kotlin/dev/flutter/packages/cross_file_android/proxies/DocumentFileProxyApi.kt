@@ -16,9 +16,13 @@ import dev.flutter.packages.cross_file_android.ProxyApiRegistrar
  */
 class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
     PigeonApiDocumentFile(pigeonRegistrar) {
-  override fun fromSingleUri(path: String): DocumentFile {
+  override fun fromSingleUri(singleUri: String): DocumentFile {
     // Only returns null on platforms below Android 19.
-    return DocumentFile.fromSingleUri(pigeonRegistrar.context, path.toUri())!!
+    return DocumentFile.fromSingleUri(pigeonRegistrar.context, singleUri.toUri())!!
+  }
+
+  override fun fromTreeUri(treeUri: String): DocumentFile {
+    return DocumentFile.fromTreeUri(pigeonRegistrar.context, treeUri.toUri())!!
   }
 
   override fun canRead(pigeon_instance: DocumentFile): Boolean {
@@ -47,5 +51,13 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
 
   override fun isDirectory(pigeon_instance: DocumentFile): Boolean {
     return pigeon_instance.isDirectory
+  }
+
+  override fun listFiles(pigeon_instance: DocumentFile): List<DocumentFile> {
+    return pigeon_instance.listFiles().toList()
+  }
+
+  override fun getUri(pigeon_instance: DocumentFile): String {
+    return pigeon_instance.uri.toString()
   }
 }

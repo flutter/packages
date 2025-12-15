@@ -4,6 +4,7 @@
 
 package dev.flutter.packages.cross_file_android
 
+/** Represents the result of reading bytes from an [java.io.InputStream]. */
 data class InputStreamReadBytesResponse(val returnValue: Int, val bytes: ByteArray) {
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

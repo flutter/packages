@@ -16,7 +16,7 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
   AndroidSharedStorageXFile(super.params) : super.implementation();
 
   late final DocumentFile _documentFile = DocumentFile.fromSingleUri(
-    path: params.uri,
+    singleUri: params.uri,
   );
 
   late final ContentResolver _contentResolver = ContentResolver.instance;

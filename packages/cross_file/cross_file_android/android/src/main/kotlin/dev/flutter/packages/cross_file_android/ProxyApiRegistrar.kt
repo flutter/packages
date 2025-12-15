@@ -21,7 +21,7 @@ import dev.flutter.packages.cross_file_android.proxies.PigeonApiInputStreamReadB
 import io.flutter.plugin.common.BinaryMessenger
 
 /**
- * Implementation of [InteractiveMediaAdsLibraryPigeonProxyApiRegistrar] that provides each ProxyApi
+ * Implementation of [AndroidLibraryPigeonProxyApiRegistrar] that provides each ProxyApi
  * implementation and any additional resources needed by an implementation.
  */
 open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
