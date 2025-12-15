@@ -67,7 +67,7 @@ void main() {
       MockURLRequest Function({required String url, dynamic observeValue})?
       createURLRequest,
       MockWKWebpagePreferences? mockWebpagePreferences,
-      bool javaScriptCanOpenWindowsAutomatically = false,
+      bool? javaScriptCanOpenWindowsAutomatically,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
@@ -893,7 +893,7 @@ void main() {
     );
 
     test(
-      'setJavaScriptMode defaults javaScriptCanOpenWindowsAutomatically to false',
+      'setJavaScriptMode does not set javaScriptCanOpenWindowsAutomatically when null',
       () async {
         final mockPreferences = MockWKPreferences();
         final mockWebpagePreferences = MockWKWebpagePreferences();
@@ -905,7 +905,9 @@ void main() {
 
         await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
-        verify(mockPreferences.setJavaScriptCanOpenWindowsAutomatically(false));
+        verifyNever(
+          mockPreferences.setJavaScriptCanOpenWindowsAutomatically(any),
+        );
       },
     );
 

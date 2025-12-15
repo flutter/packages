@@ -82,7 +82,7 @@ class WebKitWebViewControllerCreationParams
     },
     this.allowsInlineMediaPlayback = false,
     this.limitsNavigationsToAppBoundDomains = false,
-    this.javaScriptCanOpenWindowsAutomatically = false,
+    this.javaScriptCanOpenWindowsAutomatically,
   }) {
     _configuration = WKWebViewConfiguration();
 
@@ -123,7 +123,7 @@ class WebKitWebViewControllerCreationParams
         },
     bool allowsInlineMediaPlayback = false,
     bool limitsNavigationsToAppBoundDomains = false,
-    bool javaScriptCanOpenWindowsAutomatically = false,
+    bool? javaScriptCanOpenWindowsAutomatically,
   }) : this(
          mediaTypesRequiringUserAction: mediaTypesRequiringUserAction,
          allowsInlineMediaPlayback: allowsInlineMediaPlayback,
@@ -157,8 +157,12 @@ class WebKitWebViewControllerCreationParams
   /// Setting this to `true` allows JavaScript's `window.open()` to create
   /// new windows automatically without requiring a user gesture.
   ///
-  /// Defaults to false.
-  final bool javaScriptCanOpenWindowsAutomatically;
+  /// When `null`, the platform's native default is used:
+  /// - iOS: `false`
+  /// - macOS: `true`
+  ///
+  /// See https://developer.apple.com/documentation/webkit/wkpreferences/1536573-javascriptcanopenwindowsautomati
+  final bool? javaScriptCanOpenWindowsAutomatically;
 }
 
 /// An implementation of [PlatformWebViewController] with the WebKit api.
@@ -655,12 +659,16 @@ class WebKitWebViewController extends PlatformWebViewController {
         case JavaScriptMode.unrestricted:
           await webpagePreferences.setAllowsContentJavaScript(true);
       }
-      // Set javaScriptCanOpenWindowsAutomatically on WKPreferences
-      final WKPreferences preferences = await _webView.configuration
-          .getPreferences();
-      await preferences.setJavaScriptCanOpenWindowsAutomatically(
-        _webKitParams.javaScriptCanOpenWindowsAutomatically,
-      );
+      // Set javaScriptCanOpenWindowsAutomatically on WKPreferences only if explicitly set
+      final bool? javaScriptCanOpenWindowsAutomatically =
+          _webKitParams.javaScriptCanOpenWindowsAutomatically;
+      if (javaScriptCanOpenWindowsAutomatically != null) {
+        final WKPreferences preferences =
+            await _webView.configuration.getPreferences();
+        await preferences.setJavaScriptCanOpenWindowsAutomatically(
+          javaScriptCanOpenWindowsAutomatically,
+        );
+      }
       return;
     } on PlatformException catch (exception) {
       if (exception.code != 'PigeonUnsupportedOperationError') {
@@ -670,17 +678,21 @@ class WebKitWebViewController extends PlatformWebViewController {
       rethrow;
     }
 
-    final WKPreferences preferences = await _webView.configuration
-        .getPreferences();
+    final WKPreferences preferences =
+        await _webView.configuration.getPreferences();
     switch (javaScriptMode) {
       case JavaScriptMode.disabled:
         await preferences.setJavaScriptEnabled(false);
       case JavaScriptMode.unrestricted:
         await preferences.setJavaScriptEnabled(true);
     }
-    await preferences.setJavaScriptCanOpenWindowsAutomatically(
-      _webKitParams.javaScriptCanOpenWindowsAutomatically,
-    );
+    final bool? javaScriptCanOpenWindowsAutomatically =
+        _webKitParams.javaScriptCanOpenWindowsAutomatically;
+    if (javaScriptCanOpenWindowsAutomatically != null) {
+      await preferences.setJavaScriptCanOpenWindowsAutomatically(
+        javaScriptCanOpenWindowsAutomatically,
+      );
+    }
   }
 
   @override
