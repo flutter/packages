@@ -1235,9 +1235,9 @@ if (wrapped == null) {
             }
           }
         // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
-        override abstract fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>)
+        override abstract fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
 
-        override abstract fun onCancel(p0: Any?)
+        override abstract fun onCancel(p0: Any?) {}
         }
       ''');
     }

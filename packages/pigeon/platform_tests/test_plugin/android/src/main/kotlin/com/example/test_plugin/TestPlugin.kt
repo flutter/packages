@@ -906,8 +906,6 @@ object SendInts : StreamIntsStreamHandler() {
         }
     handler.postDelayed(r, 10)
   }
-
-  override fun onCancel(p0: Any?) {}
 }
 
 object SendClass : StreamEventsStreamHandler() {
@@ -940,8 +938,6 @@ object SendClass : StreamEventsStreamHandler() {
         }
     handler.postDelayed(r, 10)
   }
-
-  override fun onCancel(p0: Any?) {}
 }
 
 class SendConsistentNumbers(private val numberToSend: Long) :
@@ -966,6 +962,4 @@ class SendConsistentNumbers(private val numberToSend: Long) :
         }
     handler.postDelayed(r, 10)
   }
-
-  override fun onCancel(p0: Any?) {}
 }

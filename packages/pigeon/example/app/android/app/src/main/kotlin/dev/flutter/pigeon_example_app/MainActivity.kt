@@ -64,8 +64,6 @@ class EventListener : StreamEventsStreamHandler() {
     eventSink = sink
   }
 
-  override fun onCancel(p0: Any?) {}
-
   fun onIntEvent(event: Long) {
     eventSink?.success(IntEvent(data = event))
   }
