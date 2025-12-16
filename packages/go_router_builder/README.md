@@ -143,7 +143,7 @@ The code generator aggregates all top-level routes into a single list called
 
 <?code-excerpt "example/lib/readme_excerpts.dart (GoRouter)"?>
 ```dart
-final GoRouter router = GoRouter(routes: $appRoutes);
+final router = GoRouter(routes: $appRoutes);
 ```
 
 ## Error builder
@@ -167,7 +167,7 @@ With this in place, you can provide the `errorBuilder` parameter like so:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (routerWithErrorBuilder)"?>
 ```dart
-final GoRouter routerWithErrorBuilder = GoRouter(
+final routerWithErrorBuilder = GoRouter(
   routes: $appRoutes,
   errorBuilder: (BuildContext context, GoRouterState state) {
     return ErrorRoute(error: state.error!).build(context, state);
@@ -308,7 +308,7 @@ generator:
 ```dart
 redirect: (BuildContext context, GoRouterState state) {
   final bool loggedIn = loginInfo.loggedIn;
-  final bool loggingIn = state.matchedLocation == LoginRoute().location;
+  final loggingIn = state.matchedLocation == LoginRoute().location;
   if (!loggedIn && !loggingIn) {
     return LoginRoute(from: state.matchedLocation).location;
   }
@@ -399,14 +399,15 @@ class FancyRoute extends GoRouteData with $FancyRoute {
     return CustomTransitionPage<void>(
       key: state.pageKey,
       child: const MyPage(),
-      transitionsBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Animation<double> secondaryAnimation,
-        Widget child,
-      ) {
-        return RotationTransition(turns: animation, child: child);
-      },
+      transitionsBuilder:
+          (
+            BuildContext context,
+            Animation<double> animation,
+            Animation<double> secondaryAnimation,
+            Widget child,
+          ) {
+            return RotationTransition(turns: animation, child: child);
+          },
     );
   }
 }

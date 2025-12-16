@@ -184,7 +184,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     required RouteMatchList base,
     Object? extra,
   }) {
-    final Completer<T?> completer = Completer<T?>();
+    final completer = Completer<T?>();
     _setValue(
       location,
       RouteInformationState<T>(
@@ -224,7 +224,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     required RouteMatchList base,
     Object? extra,
   }) {
-    final Completer<T?> completer = Completer<T?>();
+    final completer = Completer<T?>();
     _setValue(
       location,
       RouteInformationState<T>(
@@ -243,7 +243,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     required RouteMatchList base,
     Object? extra,
   }) {
-    final Completer<T?> completer = Completer<T?>();
+    final completer = Completer<T?>();
     _setValue(
       location,
       RouteInformationState<T>(
@@ -278,8 +278,7 @@ class GoRouteInformationProvider extends RouteInformationProvider
     required Uri newLocationUri,
     required Object? newState,
   }) {
-    const DeepCollectionEquality deepCollectionEquality =
-        DeepCollectionEquality();
+    const deepCollectionEquality = DeepCollectionEquality();
     return !deepCollectionEquality.equals(
           _value.uri.path,
           newLocationUri.path,

@@ -4,9 +4,7 @@
 
 import 'dart:async';
 
-import '../messages.g.dart';
-
-InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
+import '../in_app_purchase_apis.dart';
 
 // ignore: avoid_classes_with_only_static_members
 /// This class contains static methods to manage StoreKit receipts.
@@ -19,6 +17,6 @@ class SKReceiptManager {
   /// For more details on how to validate the receipt data, you can refer to Apple's document about [`About Receipt Validation`](https://developer.apple.com/library/archive/releasenotes/General/ValidateAppStoreReceipt/Introduction.html#//apple_ref/doc/uid/TP40010573-CH105-SW1).
   /// If the receipt is invalid or missing, you can use [SKRequestMaker.startRefreshReceiptRequest] to request a new receipt.
   static Future<String> retrieveReceiptData() async {
-    return (await _hostApi.retrieveReceiptData()) ?? '';
+    return (await hostApi.retrieveReceiptData()) ?? '';
   }
 }

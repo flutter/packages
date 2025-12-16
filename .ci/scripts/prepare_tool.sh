@@ -4,8 +4,9 @@
 # found in the LICENSE file.
 set -e
 
-# To set FETCH_HEAD for "git merge-base" to work
+# Ensure that 'main' is present for diffing.
 git fetch origin main
+git branch main origin/main
 
 cd script/tool
 dart pub get

@@ -1,3 +1,41 @@
+## 26.1.4
+
+* [swift][kotlin] Fixes crash that occurs when an object that is removed from the instance manager
+  calls to Dart.
+
+## 26.1.3
+
+* [dart] Fixes error from constructor parameter sharing name with attached field for a ProxyApi.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 26.1.2
+
+* [kotlin] Fixes compilation error with unbounded type parameter for InstanceManager.
+
+## 26.1.1
+
+* Updates supported `analyzer` versions to 8.x or 9.x.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 26.1.0
+
+* Deprecates `dartHostTestHandler` and `dartTestOut`.
+  * If you have a use case where this cannot easily be replaced with a mock or
+    fake of the generated Dart API, please provide details in
+    https://github.com/flutter/flutter/issues/178322.
+
+## 26.0.5
+
+* [kotlin] Serialize custom enums as `Long` instead of `Int` to avoid `ClassCastException` on decoding.
+
+## 26.0.4
+
+* Adds compatibility with `analyzer` 8.x.
+
+## 26.0.3
+
+* [kotlin] Removes all `containsKey` and replaces with `contains`.
+
 ## 26.0.2
 
 * [kotlin] Fixes support for classes that override equals and hashCode for ProxyApis.

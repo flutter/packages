@@ -19,7 +19,7 @@ import 'package:web/web.dart' as html;
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final List<String> pushedRouteNames = <String>[];
+  final pushedRouteNames = <String>[];
   late Future<ByteData> Function(String) originalPushFunction;
 
   setUp(() {
@@ -176,7 +176,7 @@ void main() {
 
     testWidgets('can be created and disposed', (WidgetTester tester) async {
       final Uri uri = Uri.parse('http://foobar');
-      const int itemCount = 500;
+      const itemCount = 500;
       await tester.pumpWidget(
         Directionality(
           textDirection: TextDirection.ltr,
@@ -184,16 +184,14 @@ void main() {
             data: const MediaQueryData(),
             child: ListView.builder(
               itemCount: itemCount,
-              itemBuilder:
-                  (_, int index) => WebLinkDelegate(
-                    TestLinkInfo(
-                      uri: uri,
-                      target: LinkTarget.defaultTarget,
-                      builder:
-                          (BuildContext context, FollowLink? followLink) =>
-                              Text('#$index', textAlign: TextAlign.center),
-                    ),
-                  ),
+              itemBuilder: (_, int index) => WebLinkDelegate(
+                TestLinkInfo(
+                  uri: uri,
+                  target: LinkTarget.defaultTarget,
+                  builder: (BuildContext context, FollowLink? followLink) =>
+                      Text('#$index', textAlign: TextAlign.center),
+                ),
+              ),
             ),
           ),
         ),
@@ -396,10 +394,10 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           routes: <String, WidgetBuilder>{
-            '/foobar1':
-                (BuildContext context) => const Text('Internal route 1'),
-            '/foobar2':
-                (BuildContext context) => const Text('Internal route 2'),
+            '/foobar1': (BuildContext context) =>
+                const Text('Internal route 1'),
+            '/foobar2': (BuildContext context) =>
+                const Text('Internal route 2'),
           },
           home: Column(
             children: <Widget>[
@@ -992,11 +990,10 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-27')
-            ..setAttribute('href', '/foobar');
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-27')
+        ..setAttribute('href', '/foobar');
       semanticsHost.append(semanticsAnchor);
       final html.Element semanticsContainer = html.document.createElement(
         'flt-semantics-container',
@@ -1064,12 +1061,11 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-71')
-            ..setAttribute('href', '/foobar')
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', '/foobar')
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1115,12 +1111,11 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-71')
-            ..setAttribute('href', uri.toString())
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', uri.toString())
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1172,12 +1167,11 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('flt-semantics-identifier', 'test-link-71')
-            ..setAttribute('href', uri.toString())
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('flt-semantics-identifier', 'test-link-71')
+        ..setAttribute('href', uri.toString())
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1229,10 +1223,9 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('href', '#');
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('href', '#');
       semanticsHost.append(semanticsAnchor);
       final html.Element semanticsContainer = html.document.createElement(
         'flt-semantics-container',
@@ -1293,11 +1286,10 @@ void main() {
         'flt-semantics-host',
       );
       html.document.body!.append(semanticsHost);
-      final html.Element semanticsAnchor =
-          html.document.createElement('a')
-            ..setAttribute('id', 'flt-semantic-node-99')
-            ..setAttribute('href', '#')
-            ..textContent = 'My Text Link';
+      final html.Element semanticsAnchor = html.document.createElement('a')
+        ..setAttribute('id', 'flt-semantic-node-99')
+        ..setAttribute('href', '#')
+        ..textContent = 'My Text Link';
       semanticsHost.append(semanticsAnchor);
 
       expect(pushedRouteNames, isEmpty);
@@ -1316,10 +1308,10 @@ void main() {
 }
 
 List<html.Element> _findAllAnchors() {
-  final List<html.Element> foundAnchors = <html.Element>[];
+  final foundAnchors = <html.Element>[];
   final html.NodeList anchors = html.document.querySelectorAll('a');
-  for (int i = 0; i < anchors.length; i++) {
-    final html.Element anchor = anchors.item(i)! as html.Element;
+  for (var i = 0; i < anchors.length; i++) {
+    final anchor = anchors.item(i)! as html.Element;
     if (anchor.hasProperty(linkViewIdProperty.toJS).toDart) {
       foundAnchors.add(anchor);
     }
@@ -1339,7 +1331,7 @@ html.MouseEvent _simulateClick(html.Element target, {bool metaKey = false}) {
   //     (html.Event e) {
   //       e.preventDefault();
   //     }.toJS);
-  final html.MouseEvent mouseEvent = html.MouseEvent(
+  final mouseEvent = html.MouseEvent(
     'click',
     html.MouseEventInit(bubbles: true, cancelable: true, metaKey: metaKey),
   );
@@ -1351,7 +1343,7 @@ html.KeyboardEvent _simulateKeydown(
   html.Element target, {
   bool metaKey = false,
 }) {
-  final html.KeyboardEvent keydownEvent = html.KeyboardEvent(
+  final keydownEvent = html.KeyboardEvent(
     'keydown',
     html.KeyboardEventInit(
       bubbles: true,

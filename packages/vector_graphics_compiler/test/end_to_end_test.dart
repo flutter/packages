@@ -62,7 +62,7 @@ void main() {
   testWidgets('Errors on unsupported image mime type', (
     WidgetTester tester,
   ) async {
-    const String svgInlineImage = r'''
+    const svgInlineImage = r'''
 <svg width="248" height="100" viewBox="0 0 248 100">
 <image id="image0" width="50" height="50" xlink:href="data:image/foobar;base64,iVBORw0I5IAAM1SvoAAAAASUVORK5CYII=">
 </svg>
@@ -82,7 +82,7 @@ void main() {
   });
 
   test('encodeSvg encodes stroke shaders', () async {
-    const String svg = '''
+    const svg = '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
   <defs>
     <linearGradient id="j" x1="69" y1="59" x2="36" y2="84" gradientUnits="userSpaceOnUse">
@@ -103,8 +103,8 @@ void main() {
       enableMaskingOptimizer: false,
       enableOverdrawOptimizer: false,
     );
-    const VectorGraphicsCodec codec = VectorGraphicsCodec();
-    final TestListener listener = TestListener();
+    const codec = VectorGraphicsCodec();
+    final listener = TestListener();
     codec.decode(bytes.buffer.asByteData(), listener);
     expect(listener.commands, <Object>[
       const OnSize(120, 120),
@@ -138,7 +138,7 @@ void main() {
   });
 
   test('Encodes nested tspan for text', () async {
-    const String svg = '''
+    const svg = '''
 <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
 
   <text x="100" y="50"
@@ -167,8 +167,8 @@ void main() {
       enableMaskingOptimizer: false,
       enableOverdrawOptimizer: false,
     );
-    const VectorGraphicsCodec codec = VectorGraphicsCodec();
-    final TestListener listener = TestListener();
+    const codec = VectorGraphicsCodec();
+    final listener = TestListener();
     codec.decode(bytes.buffer.asByteData(), listener);
     expect(listener.commands, <Object>[
       const OnSize(1000, 300),
@@ -270,7 +270,8 @@ void main() {
   });
 
   test('Encodes image elids trivial translation transform', () async {
-    const String svg = '''
+    const svg =
+        '''
 <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g transform="translate(3, 3)">
     <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
@@ -285,8 +286,8 @@ void main() {
       enableMaskingOptimizer: false,
       enableOverdrawOptimizer: false,
     );
-    const VectorGraphicsCodec codec = VectorGraphicsCodec();
-    final TestListener listener = TestListener();
+    const codec = VectorGraphicsCodec();
+    final listener = TestListener();
     final ByteData data = bytes.buffer.asByteData();
     final DecodeResponse response = codec.decode(data, listener);
     codec.decode(data, listener, response: response);
@@ -299,7 +300,8 @@ void main() {
   });
 
   test('Encodes image elids trivial scale transform', () async {
-    const String svg = '''
+    const svg =
+        '''
 <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g transform="scale(2, 2)">
     <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
@@ -314,8 +316,8 @@ void main() {
       enableMaskingOptimizer: false,
       enableOverdrawOptimizer: false,
     );
-    const VectorGraphicsCodec codec = VectorGraphicsCodec();
-    final TestListener listener = TestListener();
+    const codec = VectorGraphicsCodec();
+    final listener = TestListener();
     final ByteData data = bytes.buffer.asByteData();
     final DecodeResponse response = codec.decode(data, listener);
     codec.decode(data, listener, response: response);
@@ -328,7 +330,8 @@ void main() {
   });
 
   test('Encodes image does not elide non-trivial transform', () async {
-    const String svg = '''
+    const svg =
+        '''
 <svg viewBox="0 0 1000 300" xmlns="http://www.w3.org/2000/svg" version="1.1">
   <g transform="matrix(3 1 -1 3 30 40)">
     <image id="image0" width="50" height="50" xlink:href="data:image/png;base64,$kBase64ImageContents"/>
@@ -343,8 +346,8 @@ void main() {
       enableMaskingOptimizer: false,
       enableOverdrawOptimizer: false,
     );
-    const VectorGraphicsCodec codec = VectorGraphicsCodec();
-    final TestListener listener = TestListener();
+    const codec = VectorGraphicsCodec();
+    final listener = TestListener();
     final ByteData data = bytes.buffer.asByteData();
     final DecodeResponse response = codec.decode(data, listener);
     codec.decode(data, listener, response: response);
@@ -1183,7 +1186,7 @@ bool _listEquals<E>(List<E>? left, List<E>? right) {
   if (left.length != right.length) {
     return false;
   }
-  for (int i = 0; i < left.length; i++) {
+  for (var i = 0; i < left.length; i++) {
     if (left[i] != right[i]) {
       return false;
     }

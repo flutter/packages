@@ -3,6 +3,5 @@
 // found in the LICENSE file.
 
 #import "FLTCameraPermissionManager.h"
-#import "FLTCaptureDevice.h"
 #import "QueueUtils.h"
 #import "messages.g.h"

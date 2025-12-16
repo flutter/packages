@@ -11,9 +11,9 @@ import 'test_helpers.dart';
 void main() {
   testWidgets('replace inside shell route', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/134524.
-    final UniqueKey a = UniqueKey();
-    final UniqueKey b = UniqueKey();
-    final List<RouteBase> routes = <RouteBase>[
+    final a = UniqueKey();
+    final b = UniqueKey();
+    final routes = <RouteBase>[
       ShellRoute(
         builder: (_, __, Widget child) {
           return Scaffold(
@@ -22,8 +22,14 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
-          GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+          GoRoute(
+            path: '/a',
+            builder: (_, __) => DummyScreen(key: a),
+          ),
+          GoRoute(
+            path: '/b',
+            builder: (_, __) => DummyScreen(key: b),
+          ),
         ],
       ),
     ];
@@ -45,10 +51,13 @@ void main() {
 
   testWidgets('push from outside of shell route', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/130406.
-    final UniqueKey a = UniqueKey();
-    final UniqueKey b = UniqueKey();
-    final List<RouteBase> routes = <RouteBase>[
-      GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
+    final a = UniqueKey();
+    final b = UniqueKey();
+    final routes = <RouteBase>[
+      GoRoute(
+        path: '/a',
+        builder: (_, __) => DummyScreen(key: a),
+      ),
       ShellRoute(
         builder: (_, __, Widget child) {
           return Scaffold(
@@ -57,7 +66,10 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+          GoRoute(
+            path: '/b',
+            builder: (_, __) => DummyScreen(key: b),
+          ),
         ],
       ),
     ];
@@ -81,9 +93,9 @@ void main() {
     WidgetTester tester,
   ) async {
     // Regression test for https://github.com/flutter/flutter/issues/125752.
-    final UniqueKey home = UniqueKey();
-    final UniqueKey a = UniqueKey();
-    final List<RouteBase> routes = <RouteBase>[
+    final home = UniqueKey();
+    final a = UniqueKey();
+    final routes = <RouteBase>[
       ShellRoute(
         builder: (_, GoRouterState state, Widget child) {
           return Scaffold(
@@ -96,7 +108,10 @@ void main() {
             path: '/',
             builder: (_, __) => DummyScreen(key: home),
             routes: <RouteBase>[
-              GoRoute(path: 'a', builder: (_, __) => DummyScreen(key: a)),
+              GoRoute(
+                path: 'a',
+                builder: (_, __) => DummyScreen(key: a),
+              ),
             ],
           ),
         ],
@@ -128,9 +143,9 @@ void main() {
     WidgetTester tester,
   ) async {
     // Regression test for https://github.com/flutter/flutter/issues/120791.
-    final UniqueKey b = UniqueKey();
-    final UniqueKey a = UniqueKey();
-    final List<RouteBase> routes = <RouteBase>[
+    final b = UniqueKey();
+    final a = UniqueKey();
+    final routes = <RouteBase>[
       ShellRoute(
         builder: (_, __, Widget child) {
           return Scaffold(
@@ -139,7 +154,10 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
+          GoRoute(
+            path: '/a',
+            builder: (_, __) => DummyScreen(key: a),
+          ),
         ],
       ),
       ShellRoute(
@@ -150,7 +168,10 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+          GoRoute(
+            path: '/b',
+            builder: (_, __) => DummyScreen(key: b),
+          ),
         ],
       ),
     ];
@@ -175,9 +196,9 @@ void main() {
     WidgetTester tester,
   ) async {
     // Regression test for https://github.com/flutter/flutter/issues/120665.
-    final UniqueKey inside = UniqueKey();
-    final UniqueKey outside = UniqueKey();
-    final List<RouteBase> routes = <RouteBase>[
+    final inside = UniqueKey();
+    final outside = UniqueKey();
+    final routes = <RouteBase>[
       ShellRoute(
         builder: (_, __, Widget child) {
           return Scaffold(
@@ -186,10 +207,16 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/in', builder: (_, __) => DummyScreen(key: inside)),
+          GoRoute(
+            path: '/in',
+            builder: (_, __) => DummyScreen(key: inside),
+          ),
         ],
       ),
-      GoRoute(path: '/out', builder: (_, __) => DummyScreen(key: outside)),
+      GoRoute(
+        path: '/out',
+        builder: (_, __) => DummyScreen(key: outside),
+      ),
     ];
     final GoRouter router = await createRouter(
       routes,
@@ -215,12 +242,12 @@ void main() {
 
   testWidgets('complex case 1', (WidgetTester tester) async {
     // Regression test for https://github.com/flutter/flutter/issues/113001.
-    final UniqueKey a = UniqueKey();
-    final UniqueKey b = UniqueKey();
-    final UniqueKey c = UniqueKey();
-    final UniqueKey d = UniqueKey();
-    final UniqueKey e = UniqueKey();
-    final List<RouteBase> routes = <RouteBase>[
+    final a = UniqueKey();
+    final b = UniqueKey();
+    final c = UniqueKey();
+    final d = UniqueKey();
+    final e = UniqueKey();
+    final routes = <RouteBase>[
       ShellRoute(
         builder: (_, __, Widget child) {
           return Scaffold(
@@ -229,18 +256,30 @@ void main() {
           );
         },
         routes: <RouteBase>[
-          GoRoute(path: '/a', builder: (_, __) => DummyScreen(key: a)),
-          GoRoute(path: '/c', builder: (_, __) => DummyScreen(key: c)),
+          GoRoute(
+            path: '/a',
+            builder: (_, __) => DummyScreen(key: a),
+          ),
+          GoRoute(
+            path: '/c',
+            builder: (_, __) => DummyScreen(key: c),
+          ),
         ],
       ),
       GoRoute(
         path: '/d',
         builder: (_, __) => DummyScreen(key: d),
         routes: <RouteBase>[
-          GoRoute(path: 'e', builder: (_, __) => DummyScreen(key: e)),
+          GoRoute(
+            path: 'e',
+            builder: (_, __) => DummyScreen(key: e),
+          ),
         ],
       ),
-      GoRoute(path: '/b', builder: (_, __) => DummyScreen(key: b)),
+      GoRoute(
+        path: '/b',
+        builder: (_, __) => DummyScreen(key: b),
+      ),
     ];
     final GoRouter router = await createRouter(
       routes,

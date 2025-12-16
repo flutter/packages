@@ -12,9 +12,14 @@ class GetDirectoryPage extends StatelessWidget {
   const GetDirectoryPage({super.key});
 
   Future<void> _getDirectoryPath(BuildContext context) async {
-    const String confirmButtonText = 'Choose';
+    const confirmButtonText = 'Choose';
     final String? directoryPath = await FileSelectorPlatform.instance
-        .getDirectoryPath(confirmButtonText: confirmButtonText);
+        .getDirectoryPathWithOptions(
+          const FileDialogOptions(
+            confirmButtonText: confirmButtonText,
+            canCreateDirectories: true,
+          ),
+        );
     if (directoryPath == null) {
       // Operation was canceled by the user.
       return;

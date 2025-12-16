@@ -1,3 +1,24 @@
+## 0.3.0+8
+
+* Removes internal native library Dart proxy.
+
+## 0.3.0+7
+
+* Bumps kotlin_version to 2.2.21.
+
+## 0.3.0+6
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 0.3.0+5
+
+* Updates to Pigeon 26.
+
+## 0.3.0+4
+
+* Sets a maximum version on the `GoogleInteractiveMediaAds` dependency to avoid
+  breaking iOS 13-14 support.
+
 ## 0.3.0+3
 
 * Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.37.0 to 3.38.0.

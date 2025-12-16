@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('CameraImageData can be created', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    final CameraImageData cameraImage = CameraImageData(
+    final cameraImage = CameraImageData(
       format: const CameraImageFormat(ImageFormatGroup.jpeg, raw: 42),
       height: 100,
       width: 200,

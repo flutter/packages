@@ -3,11 +3,10 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		40A6CE2A2D499A7800DE3915 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 40A6CE292D499A7800DE3915 /* OCMock */; };
 		5C6F5A6E1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6F5A6D1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.m */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		78A36DA12AF5761E00CBFD43 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7A303C2D1E89D76400B1F19E /* GoogleService-Info.plist */; };
@@ -97,7 +96,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40A6CE2A2D499A7800DE3915 /* OCMock in Frameworks */,
 				C56D3B06A42F3B35C1F47A43 /* libPods-RunnerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -308,7 +306,6 @@
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
 				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
-				40A6CE282D499A7800DE3915 /* XCRemoteSwiftPackageReference "ocmock" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -756,23 +753,7 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		40A6CE282D499A7800DE3915 /* XCRemoteSwiftPackageReference "ocmock" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/erikdoe/ocmock";
-			requirement = {
-				kind = revision;
-				revision = fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		40A6CE292D499A7800DE3915 /* OCMock */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 40A6CE282D499A7800DE3915 /* XCRemoteSwiftPackageReference "ocmock" */;
-			productName = OCMock;
-		};
 		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FlutterGeneratedPluginSwiftPackage;

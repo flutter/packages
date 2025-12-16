@@ -120,19 +120,18 @@ class _Header extends StatelessWidget {
                   context.sharedPreferencesStateNotifier;
               showDialog<void>(
                 context: context,
-                builder:
-                    (BuildContext context) => _ConfirmRemoveDialog(
-                      selectedKey: selectedKey,
-                      notifier: notifier,
-                    ),
+                builder: (BuildContext context) => _ConfirmRemoveDialog(
+                  selectedKey: selectedKey,
+                  notifier: notifier,
+                ),
               );
             },
             label: 'Remove',
           ),
           const SizedBox(width: denseRowSpacing),
           DevToolsButton(
-            onPressed:
-                () => context.sharedPreferencesStateNotifier.startEditing(),
+            onPressed: () =>
+                context.sharedPreferencesStateNotifier.startEditing(),
             label: 'Edit',
           ),
         ],
@@ -345,7 +344,9 @@ class _AddListElement extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: DevToolsButton(icon: Icons.add, onPressed: onPressed));
+    return Center(
+      child: DevToolsButton(icon: Icons.add, onPressed: onPressed),
+    );
   }
 }
 

@@ -20,9 +20,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.content.res.Resources;
+import android.util.FakeActivity;
 import android.view.Display;
 import android.view.OrientationEventListener;
 import android.view.Surface;
+import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import io.flutter.embedding.engine.systemchannels.PlatformChannel.DeviceOrientation;
@@ -198,5 +200,41 @@ public class DeviceOrientationManagerTest {
     Display display = deviceOrientationManager.getDisplay();
 
     assertEquals(mockDisplay, display);
+  }
+
+  @Test
+  public void getDisplay_shouldReturnNull_whenActivityDestroyed() {
+    final DeviceOrientationManager deviceOrientationManager = createManager(true, false);
+    assertNull(deviceOrientationManager.getDisplay());
+    assertEquals(deviceOrientationManager.getDefaultRotation(), Surface.ROTATION_0);
+  }
+
+  @SuppressWarnings("deprecation")
+  private DeviceOrientationManager createManager(boolean destroyed, boolean finishing) {
+    FakeActivity activity = new FakeActivity();
+    activity.setDestroyed(destroyed);
+    activity.setFinishing(finishing);
+
+    WindowManager windowManager = mock(WindowManager.class);
+    when(windowManager.getDefaultDisplay()).thenReturn(mock(Display.class));
+    activity.setWindowManager(windowManager);
+
+    TestProxyApiRegistrar proxy =
+        new TestProxyApiRegistrar() {
+          @NonNull
+          @Override
+          public Context getContext() {
+            return activity;
+          }
+
+          @Nullable
+          @Override
+          public Activity getActivity() {
+            return activity;
+          }
+        };
+    when(mockApi.getPigeonRegistrar()).thenReturn(proxy);
+
+    return new DeviceOrientationManager(mockApi);
   }
 }

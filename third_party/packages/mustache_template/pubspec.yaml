@@ -5,7 +5,7 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 2.0.2
 
 environment:
-  sdk: ^3.7.0
+  sdk: ^3.9.0
 
 dev_dependencies:
   test: ^1.16.5

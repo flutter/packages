@@ -8,7 +8,7 @@ A Flutter plugin for iOS, Android and Web for playing back video on a Widget sur
 
 |             | Android | iOS   | macOS  | Web   |
 |-------------|---------|-------|--------|-------|
-| **Support** | SDK 21+ | 12.0+ | 10.14+ | Any\* |
+| **Support** | SDK 24+ | 13.0+ | 10.15+ | Any\* |
 
 ![The example app running in iOS](https://github.com/flutter/packages/blob/main/packages/video_player/video_player/doc/demo_ipod.gif?raw=true)
 
@@ -77,15 +77,16 @@ class _VideoAppState extends State<VideoApp> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(
-        Uri.parse(
-          'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
-        ),
-      )
-      ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
-        setState(() {});
-      });
+    _controller =
+        VideoPlayerController.networkUrl(
+            Uri.parse(
+              'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+            ),
+          )
+          ..initialize().then((_) {
+            // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
+            setState(() {});
+          });
   }
 
   @override
@@ -94,13 +95,12 @@ class _VideoAppState extends State<VideoApp> {
       title: 'Video Demo',
       home: Scaffold(
         body: Center(
-          child:
-              _controller.value.isInitialized
-                  ? AspectRatio(
-                    aspectRatio: _controller.value.aspectRatio,
-                    child: VideoPlayer(_controller),
-                  )
-                  : Container(),
+          child: _controller.value.isInitialized
+              ? AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                )
+              : Container(),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {

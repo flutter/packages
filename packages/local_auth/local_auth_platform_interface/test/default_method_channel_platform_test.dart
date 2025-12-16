@@ -10,7 +10,7 @@ import 'package:local_auth_platform_interface/local_auth_platform_interface.dart
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const MethodChannel channel = MethodChannel('plugins.flutter.io/local_auth');
+  const channel = MethodChannel('plugins.flutter.io/local_auth');
 
   late List<MethodCall> log;
   late LocalAuthPlatform localAuthentication;
@@ -55,8 +55,8 @@ void main() {
         });
 
     localAuthentication = DefaultLocalAuthPlatform();
-    final bool supportsBiometrics =
-        await localAuthentication.deviceSupportsBiometrics();
+    final bool supportsBiometrics = await localAuthentication
+        .deviceSupportsBiometrics();
     expect(supportsBiometrics, true);
     expect(log, <Matcher>[
       isMethodCall('getAvailableBiometrics', arguments: null),

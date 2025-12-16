@@ -35,8 +35,7 @@ void main() {
     test(
       'Default implementation of purchaseStream should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.purchaseStream,
@@ -48,8 +47,7 @@ void main() {
     test(
       'Default implementation of isAvailable should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.isAvailable(),
@@ -61,8 +59,7 @@ void main() {
     test(
       'Default implementation of queryProductDetails should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.queryProductDetails(<String>{''}),
@@ -74,8 +71,7 @@ void main() {
     test(
       'Default implementation of buyNonConsumable should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.buyNonConsumable(
@@ -89,8 +85,7 @@ void main() {
     test(
       'Default implementation of buyConsumable should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.buyConsumable(
@@ -104,8 +99,7 @@ void main() {
     test(
       'Default implementation of completePurchase should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.completePurchase(MockPurchaseDetails()),
@@ -117,8 +111,7 @@ void main() {
     test(
       'Default implementation of restorePurchases should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.restorePurchases(),
@@ -130,8 +123,7 @@ void main() {
     test(
       'Default implementation of countryCode should throw unimplemented error',
       () {
-        final ExtendsInAppPurchasePlatform inAppPurchasePlatform =
-            ExtendsInAppPurchasePlatform();
+        final inAppPurchasePlatform = ExtendsInAppPurchasePlatform();
 
         expect(
           () => inAppPurchasePlatform.countryCode(),
@@ -162,27 +154,24 @@ void main() {
 
     test('Can not be a `InAppPurchasePlatform`', () {
       expect(
-        () =>
-            InAppPurchasePlatformAddition.instance =
-                ExtendsInAppPurchasePlatformAdditionIsPlatformInterface(),
+        () => InAppPurchasePlatformAddition.instance =
+            ExtendsInAppPurchasePlatformAdditionIsPlatformInterface(),
         throwsAssertionError,
       );
     });
 
     test('Provider can provide', () {
       ImplementsInAppPurchasePlatformAdditionProvider.register();
-      final ImplementsInAppPurchasePlatformAdditionProvider provider =
-          ImplementsInAppPurchasePlatformAdditionProvider();
-      final InAppPurchasePlatformAddition? addition =
-          provider.getPlatformAddition();
+      final provider = ImplementsInAppPurchasePlatformAdditionProvider();
+      final InAppPurchasePlatformAddition? addition = provider
+          .getPlatformAddition();
       expect(addition.runtimeType, ExtendsInAppPurchasePlatformAddition);
     });
 
     test('Provider can provide `null`', () {
-      final ImplementsInAppPurchasePlatformAdditionProvider provider =
-          ImplementsInAppPurchasePlatformAdditionProvider();
-      final InAppPurchasePlatformAddition? addition =
-          provider.getPlatformAddition();
+      final provider = ImplementsInAppPurchasePlatformAdditionProvider();
+      final InAppPurchasePlatformAddition? addition = provider
+          .getPlatformAddition();
       expect(addition, isNull);
     });
   });

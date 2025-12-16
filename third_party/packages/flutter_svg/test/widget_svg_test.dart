@@ -69,14 +69,13 @@ class _TestColorMapper extends ColorMapper {
 }
 
 void main() {
-  final MediaQueryData mediaQueryData = MediaQueryData.fromView(
+  final mediaQueryData = MediaQueryData.fromView(
     PlatformDispatcher.instance.implicitView!,
   );
 
   setUpAll(() {
-    final LocalFileComparator oldComparator =
-        goldenFileComparator as LocalFileComparator;
-    final _TolerantComparator newComparator = _TolerantComparator(
+    final oldComparator = goldenFileComparator as LocalFileComparator;
+    final newComparator = _TolerantComparator(
       Uri.parse('${oldComparator.basedir}test'),
     );
     expect(oldComparator.basedir, newComparator.basedir);
@@ -343,7 +342,7 @@ void main() {
   });
 
   testWidgets('SvgPicture.asset', (WidgetTester tester) async {
-    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
@@ -359,7 +358,7 @@ void main() {
   });
 
   testWidgets('SvgPicture.asset with strategy', (WidgetTester tester) async {
-    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
@@ -379,7 +378,7 @@ void main() {
   });
 
   testWidgets('SvgPicture.asset with colorMapper', (WidgetTester tester) async {
-    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       MediaQuery(
@@ -401,7 +400,7 @@ void main() {
   testWidgets('SvgPicture.asset DefaultAssetBundle', (
     WidgetTester tester,
   ) async {
-    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       Directionality(
@@ -425,7 +424,7 @@ void main() {
   testWidgets('SvgPicture.asset DefaultAssetBundle with strategy', (
     WidgetTester tester,
   ) async {
-    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       Directionality(
@@ -453,7 +452,7 @@ void main() {
   testWidgets('SvgPicture.asset DefaultAssetBundle with colorMapper', (
     WidgetTester tester,
   ) async {
-    final FakeAssetBundle fakeAsset = FakeAssetBundle();
+    final fakeAsset = FakeAssetBundle();
     final GlobalKey key = GlobalKey();
     await tester.pumpWidget(
       Directionality(
@@ -535,7 +534,7 @@ void main() {
 
   testWidgets('SvgPicture.network with headers', (WidgetTester tester) async {
     final GlobalKey key = GlobalKey();
-    final FakeHttpClient client = FakeHttpClient();
+    final client = FakeHttpClient();
     await tester.pumpWidget(
       MediaQuery(
         data: mediaQueryData,
@@ -660,7 +659,7 @@ void main() {
   });
 
   testWidgets('SvgPicture colorFilter with text', (WidgetTester tester) async {
-    const String svgData = '''
+    const svgData = '''
 <svg font-family="arial" font-size="14" height="160" width="88" xmlns="http://www.w3.org/2000/svg">
   <g stroke="#000" stroke-linecap="round" stroke-width="2" stroke-opacity="1" fill-opacity="1" stroke-linejoin="miter">
     <g>
@@ -711,7 +710,7 @@ void main() {
     testWidgets('circle (cx, cy, r)', (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <circle cx="0.5em" cy="0.5em" r="0.5em" fill="orange" />
 </svg>
@@ -736,7 +735,7 @@ void main() {
     ) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <rect x="2em" y="1.5em" width="4em" height="3em" rx="0.5em" ry="0.5em" fill="orange" />
 </svg>
@@ -759,7 +758,7 @@ void main() {
     testWidgets('ellipse (cx, cy, rx, ry)', (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="7em" cy="4em" rx="1em" ry="2em" fill="orange" />
 </svg>
@@ -782,7 +781,7 @@ void main() {
     testWidgets('line (x1, y1, x2, y2)', (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <line x1="0em" y1="6em" x2="4em" y2="0em" stroke="orange" />
   <line x1="4em" y1="0em" x2="8em" y2="6em" stroke="orange" />
@@ -808,7 +807,7 @@ void main() {
     testWidgets('circle (cx, cy, r)', (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <circle cx="0.5ex" cy="0.5ex" r="0.5ex" fill="orange" />
 </svg>
@@ -833,7 +832,7 @@ void main() {
     ) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <rect x="2ex" y="1.5ex" width="4ex" height="3ex" rx="0.5ex" ry="0.5ex" fill="orange" />
 </svg>
@@ -856,7 +855,7 @@ void main() {
     testWidgets('ellipse (cx, cy, rx, ry)', (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <ellipse cx="7ex" cy="4ex" rx="1ex" ry="2ex" fill="orange" />
 </svg>
@@ -879,7 +878,7 @@ void main() {
     testWidgets('line (x1, y1, x2, y2)', (WidgetTester tester) async {
       final GlobalKey key = GlobalKey();
 
-      const String svgStr = '''
+      const svgStr = '''
 <svg width="800px" height="600px" xmlns="http://www.w3.org/2000/svg">
   <line x1="0ex" y1="6ex" x2="4ex" y2="0ex" stroke="orange" />
   <line x1="4ex" y1="0ex" x2="8ex" y2="6ex" stroke="orange" />
@@ -930,7 +929,7 @@ void main() {
   testWidgets('SvgPicture - with cached images', (WidgetTester tester) async {
     // Simple red and blue 10x10 squares.
     // Borrowed from https://gist.github.com/ondrek/7413434?permalink_comment_id=4674255#gistcomment-4674255
-    final Map<String, String> images = <String, String>{
+    final images = <String, String>{
       'red':
           'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAFUlEQVR42mP8z8BQz0AEYBxVSF+FABJADveWkH6oAAAAAElFTkSuQmCC',
       'blue':
@@ -941,7 +940,8 @@ void main() {
     // is used on each iteration.
     for (final String key in images.keys) {
       final String image = images[key]!;
-      final String svgStr = '''
+      final svgStr =
+          '''
 <svg
   xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100">
@@ -990,16 +990,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.string(
             '<!-- invalid svg -->',
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );
@@ -1016,16 +1013,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.memory(
             Uint8List.fromList(utf8.encode('<!-- invalid svg -->')),
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );
@@ -1042,16 +1036,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.asset(
             '/wrong path',
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );
@@ -1066,16 +1057,13 @@ void main() {
           data: mediaQueryData,
           child: SvgPicture.file(
             File('nosuchfile'),
-            errorBuilder: (
-              BuildContext context,
-              Object error,
-              StackTrace stackTrace,
-            ) {
-              return const Directionality(
-                textDirection: TextDirection.ltr,
-                child: Text('image failed'),
-              );
-            },
+            errorBuilder:
+                (BuildContext context, Object error, StackTrace stackTrace) {
+                  return const Directionality(
+                    textDirection: TextDirection.ltr,
+                    child: Text('image failed'),
+                  );
+                },
           ),
         ),
       );

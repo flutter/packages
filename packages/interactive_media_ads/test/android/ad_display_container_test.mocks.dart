@@ -27,6 +27,7 @@ import 'package:mockito/src/dummies.dart' as _i6;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
@@ -50,97 +51,92 @@ class _FakeAdPodInfo_3 extends _i1.SmartFake implements _i2.AdPodInfo {
     : super(parent, parentInvocation);
 }
 
-class _FakeViewGroup_4 extends _i1.SmartFake implements _i2.ViewGroup {
-  _FakeViewGroup_4(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeCompanionAdSlot_5 extends _i1.SmartFake
+class _FakeCompanionAdSlot_4 extends _i1.SmartFake
     implements _i2.CompanionAdSlot {
-  _FakeCompanionAdSlot_5(Object parent, Invocation parentInvocation)
+  _FakeCompanionAdSlot_4(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeFrameLayout_6 extends _i1.SmartFake implements _i2.FrameLayout {
-  _FakeFrameLayout_6(Object parent, Invocation parentInvocation)
+class _FakeFrameLayout_5 extends _i1.SmartFake implements _i2.FrameLayout {
+  _FakeFrameLayout_5(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeImaSdkSettings_7 extends _i1.SmartFake
+class _FakeImaSdkSettings_6 extends _i1.SmartFake
     implements _i2.ImaSdkSettings {
-  _FakeImaSdkSettings_7(Object parent, Invocation parentInvocation)
+  _FakeImaSdkSettings_6(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeAdsLoader_8 extends _i1.SmartFake implements _i2.AdsLoader {
-  _FakeAdsLoader_8(Object parent, Invocation parentInvocation)
+class _FakeAdsLoader_7 extends _i1.SmartFake implements _i2.AdsLoader {
+  _FakeAdsLoader_7(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeAdsRequest_9 extends _i1.SmartFake implements _i2.AdsRequest {
-  _FakeAdsRequest_9(Object parent, Invocation parentInvocation)
+class _FakeAdsRequest_8 extends _i1.SmartFake implements _i2.AdsRequest {
+  _FakeAdsRequest_8(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeAdsRenderingSettings_10 extends _i1.SmartFake
+class _FakeAdsRenderingSettings_9 extends _i1.SmartFake
     implements _i2.AdsRenderingSettings {
-  _FakeAdsRenderingSettings_10(Object parent, Invocation parentInvocation)
+  _FakeAdsRenderingSettings_9(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeImaSdkFactory_11 extends _i1.SmartFake implements _i2.ImaSdkFactory {
-  _FakeImaSdkFactory_11(Object parent, Invocation parentInvocation)
+class _FakeImaSdkFactory_10 extends _i1.SmartFake implements _i2.ImaSdkFactory {
+  _FakeImaSdkFactory_10(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeMediaPlayer_12 extends _i1.SmartFake implements _i2.MediaPlayer {
-  _FakeMediaPlayer_12(Object parent, Invocation parentInvocation)
+class _FakeMediaPlayer_11 extends _i1.SmartFake implements _i2.MediaPlayer {
+  _FakeMediaPlayer_11(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeVideoAdPlayer_13 extends _i1.SmartFake implements _i2.VideoAdPlayer {
-  _FakeVideoAdPlayer_13(Object parent, Invocation parentInvocation)
+class _FakeVideoAdPlayer_12 extends _i1.SmartFake implements _i2.VideoAdPlayer {
+  _FakeVideoAdPlayer_12(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeVideoAdPlayerCallback_14 extends _i1.SmartFake
+class _FakeVideoAdPlayerCallback_13 extends _i1.SmartFake
     implements _i2.VideoAdPlayerCallback {
-  _FakeVideoAdPlayerCallback_14(Object parent, Invocation parentInvocation)
+  _FakeVideoAdPlayerCallback_13(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeVideoProgressUpdate_15 extends _i1.SmartFake
+class _FakeVideoProgressUpdate_14 extends _i1.SmartFake
     implements _i2.VideoProgressUpdate {
-  _FakeVideoProgressUpdate_15(Object parent, Invocation parentInvocation)
+  _FakeVideoProgressUpdate_14(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeVideoView_16 extends _i1.SmartFake implements _i2.VideoView {
-  _FakeVideoView_16(Object parent, Invocation parentInvocation)
+class _FakeVideoView_15 extends _i1.SmartFake implements _i2.VideoView {
+  _FakeVideoView_15(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeOffset_17 extends _i1.SmartFake implements _i3.Offset {
-  _FakeOffset_17(Object parent, Invocation parentInvocation)
+class _FakeOffset_16 extends _i1.SmartFake implements _i3.Offset {
+  _FakeOffset_16(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeSize_18 extends _i1.SmartFake implements _i3.Size {
-  _FakeSize_18(Object parent, Invocation parentInvocation)
+class _FakeSize_17 extends _i1.SmartFake implements _i3.Size {
+  _FakeSize_17(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeExpensiveAndroidViewController_19 extends _i1.SmartFake
+class _FakeExpensiveAndroidViewController_18 extends _i1.SmartFake
     implements _i4.ExpensiveAndroidViewController {
-  _FakeExpensiveAndroidViewController_19(
+  _FakeExpensiveAndroidViewController_18(
     Object parent,
     Invocation parentInvocation,
   ) : super(parent, parentInvocation);
 }
 
-class _FakeSurfaceAndroidViewController_20 extends _i1.SmartFake
+class _FakeSurfaceAndroidViewController_19 extends _i1.SmartFake
     implements _i4.SurfaceAndroidViewController {
-  _FakeSurfaceAndroidViewController_20(
+  _FakeSurfaceAndroidViewController_19(
     Object parent,
     Invocation parentInvocation,
   ) : super(parent, parentInvocation);
@@ -360,17 +356,39 @@ class MockCompanionAdSlot extends _i1.Mock implements _i2.CompanionAdSlot {
           as _i5.Future<void>);
 
   @override
-  _i5.Future<_i2.ViewGroup> getContainer() =>
+  _i5.Future<void> removeClickListener(
+    _i2.CompanionAdSlotClickListener? clickListener,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#getContainer, []),
-            returnValue: _i5.Future<_i2.ViewGroup>.value(
-              _FakeViewGroup_4(this, Invocation.method(#getContainer, [])),
+            Invocation.method(#removeClickListener, [clickListener]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i2.CompanionAdSlot pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeCompanionAdSlot_4(
+              this,
+              Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _i5.Future<_i2.ViewGroup>.value(
-              _FakeViewGroup_4(this, Invocation.method(#getContainer, [])),
+            returnValueForMissingStub: _FakeCompanionAdSlot_4(
+              this,
+              Invocation.method(#pigeon_copy, []),
             ),
           )
-          as _i5.Future<_i2.ViewGroup>);
+          as _i2.CompanionAdSlot);
+
+  @override
+  _i5.Future<_i2.ViewGroup?> getContainer() =>
+      (super.noSuchMethod(
+            Invocation.method(#getContainer, []),
+            returnValue: _i5.Future<_i2.ViewGroup?>.value(),
+            returnValueForMissingStub: _i5.Future<_i2.ViewGroup?>.value(),
+          )
+          as _i5.Future<_i2.ViewGroup?>);
 
   @override
   _i5.Future<int> getHeight() =>
@@ -400,17 +418,6 @@ class MockCompanionAdSlot extends _i1.Mock implements _i2.CompanionAdSlot {
           as _i5.Future<bool>);
 
   @override
-  _i5.Future<void> removeClickListener(
-    _i2.CompanionAdSlotClickListener? clickListener,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#removeClickListener, [clickListener]),
-            returnValue: _i5.Future<void>.value(),
-            returnValueForMissingStub: _i5.Future<void>.value(),
-          )
-          as _i5.Future<void>);
-
-  @override
   _i5.Future<void> setContainer(_i2.ViewGroup? container) =>
       (super.noSuchMethod(
             Invocation.method(#setContainer, [container]),
@@ -436,21 +443,6 @@ class MockCompanionAdSlot extends _i1.Mock implements _i2.CompanionAdSlot {
             returnValueForMissingStub: _i5.Future<void>.value(),
           )
           as _i5.Future<void>);
-
-  @override
-  _i2.CompanionAdSlot pigeon_copy() =>
-      (super.noSuchMethod(
-            Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeCompanionAdSlot_5(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
-            returnValueForMissingStub: _FakeCompanionAdSlot_5(
-              this,
-              Invocation.method(#pigeon_copy, []),
-            ),
-          )
-          as _i2.CompanionAdSlot);
 }
 
 /// A class which mocks [FrameLayout].
@@ -476,11 +468,11 @@ class MockFrameLayout extends _i1.Mock implements _i2.FrameLayout {
   _i2.FrameLayout pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeFrameLayout_6(
+            returnValue: _FakeFrameLayout_5(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeFrameLayout_6(
+            returnValueForMissingStub: _FakeFrameLayout_5(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -530,13 +522,13 @@ class MockImaSdkFactory extends _i1.Mock implements _i2.ImaSdkFactory {
       (super.noSuchMethod(
             Invocation.method(#createCompanionAdSlot, []),
             returnValue: _i5.Future<_i2.CompanionAdSlot>.value(
-              _FakeCompanionAdSlot_5(
+              _FakeCompanionAdSlot_4(
                 this,
                 Invocation.method(#createCompanionAdSlot, []),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.CompanionAdSlot>.value(
-              _FakeCompanionAdSlot_5(
+              _FakeCompanionAdSlot_4(
                 this,
                 Invocation.method(#createCompanionAdSlot, []),
               ),
@@ -549,13 +541,13 @@ class MockImaSdkFactory extends _i1.Mock implements _i2.ImaSdkFactory {
       (super.noSuchMethod(
             Invocation.method(#createImaSdkSettings, []),
             returnValue: _i5.Future<_i2.ImaSdkSettings>.value(
-              _FakeImaSdkSettings_7(
+              _FakeImaSdkSettings_6(
                 this,
                 Invocation.method(#createImaSdkSettings, []),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.ImaSdkSettings>.value(
-              _FakeImaSdkSettings_7(
+              _FakeImaSdkSettings_6(
                 this,
                 Invocation.method(#createImaSdkSettings, []),
               ),
@@ -571,13 +563,13 @@ class MockImaSdkFactory extends _i1.Mock implements _i2.ImaSdkFactory {
       (super.noSuchMethod(
             Invocation.method(#createAdsLoader, [settings, container]),
             returnValue: _i5.Future<_i2.AdsLoader>.value(
-              _FakeAdsLoader_8(
+              _FakeAdsLoader_7(
                 this,
                 Invocation.method(#createAdsLoader, [settings, container]),
               ),
             ),
             returnValueForMissingStub: _i5.Future<_i2.AdsLoader>.value(
-              _FakeAdsLoader_8(
+              _FakeAdsLoader_7(
                 this,
                 Invocation.method(#createAdsLoader, [settings, container]),
               ),
@@ -590,10 +582,10 @@ class MockImaSdkFactory extends _i1.Mock implements _i2.ImaSdkFactory {
       (super.noSuchMethod(
             Invocation.method(#createAdsRequest, []),
             returnValue: _i5.Future<_i2.AdsRequest>.value(
-              _FakeAdsRequest_9(this, Invocation.method(#createAdsRequest, [])),
+              _FakeAdsRequest_8(this, Invocation.method(#createAdsRequest, [])),
             ),
             returnValueForMissingStub: _i5.Future<_i2.AdsRequest>.value(
-              _FakeAdsRequest_9(this, Invocation.method(#createAdsRequest, [])),
+              _FakeAdsRequest_8(this, Invocation.method(#createAdsRequest, [])),
             ),
           )
           as _i5.Future<_i2.AdsRequest>);
@@ -603,14 +595,14 @@ class MockImaSdkFactory extends _i1.Mock implements _i2.ImaSdkFactory {
       (super.noSuchMethod(
             Invocation.method(#createAdsRenderingSettings, []),
             returnValue: _i5.Future<_i2.AdsRenderingSettings>.value(
-              _FakeAdsRenderingSettings_10(
+              _FakeAdsRenderingSettings_9(
                 this,
                 Invocation.method(#createAdsRenderingSettings, []),
               ),
             ),
             returnValueForMissingStub:
                 _i5.Future<_i2.AdsRenderingSettings>.value(
-                  _FakeAdsRenderingSettings_10(
+                  _FakeAdsRenderingSettings_9(
                     this,
                     Invocation.method(#createAdsRenderingSettings, []),
                   ),
@@ -622,11 +614,11 @@ class MockImaSdkFactory extends _i1.Mock implements _i2.ImaSdkFactory {
   _i2.ImaSdkFactory pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeImaSdkFactory_11(
+            returnValue: _FakeImaSdkFactory_10(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeImaSdkFactory_11(
+            returnValueForMissingStub: _FakeImaSdkFactory_10(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -702,11 +694,11 @@ class MockMediaPlayer extends _i1.Mock implements _i2.MediaPlayer {
   _i2.MediaPlayer pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeMediaPlayer_12(
+            returnValue: _FakeMediaPlayer_11(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeMediaPlayer_12(
+            returnValueForMissingStub: _FakeMediaPlayer_11(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -869,11 +861,11 @@ class MockVideoAdPlayer extends _i1.Mock implements _i2.VideoAdPlayer {
   _i2.VideoAdPlayer pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeVideoAdPlayer_13(
+            returnValue: _FakeVideoAdPlayer_12(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeVideoAdPlayer_13(
+            returnValueForMissingStub: _FakeVideoAdPlayer_12(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1004,11 +996,11 @@ class MockVideoAdPlayerCallback extends _i1.Mock
   _i2.VideoAdPlayerCallback pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeVideoAdPlayerCallback_14(
+            returnValue: _FakeVideoAdPlayerCallback_13(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeVideoAdPlayerCallback_14(
+            returnValueForMissingStub: _FakeVideoAdPlayerCallback_13(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1040,11 +1032,11 @@ class MockVideoProgressUpdate extends _i1.Mock
   _i2.VideoProgressUpdate pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeVideoProgressUpdate_15(
+            returnValue: _FakeVideoProgressUpdate_14(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeVideoProgressUpdate_15(
+            returnValueForMissingStub: _FakeVideoProgressUpdate_14(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1125,11 +1117,11 @@ class MockVideoView extends _i1.Mock implements _i2.VideoView {
   _i2.VideoView pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeVideoView_16(
+            returnValue: _FakeVideoView_15(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
-            returnValueForMissingStub: _FakeVideoView_16(
+            returnValueForMissingStub: _FakeVideoView_15(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -1174,9 +1166,9 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.getter(#pointTransformer),
             returnValue: (_i3.Offset position) =>
-                _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
+                _FakeOffset_16(this, Invocation.getter(#pointTransformer)),
             returnValueForMissingStub: (_i3.Offset position) =>
-                _FakeOffset_17(this, Invocation.getter(#pointTransformer)),
+                _FakeOffset_16(this, Invocation.getter(#pointTransformer)),
           )
           as _i4.PointTransformer);
 
@@ -1227,10 +1219,10 @@ class MockSurfaceAndroidViewController extends _i1.Mock
       (super.noSuchMethod(
             Invocation.method(#setSize, [size]),
             returnValue: _i5.Future<_i3.Size>.value(
-              _FakeSize_18(this, Invocation.method(#setSize, [size])),
+              _FakeSize_17(this, Invocation.method(#setSize, [size])),
             ),
             returnValueForMissingStub: _i5.Future<_i3.Size>.value(
-              _FakeSize_18(this, Invocation.method(#setSize, [size])),
+              _FakeSize_17(this, Invocation.method(#setSize, [size])),
             ),
           )
           as _i5.Future<_i3.Size>);
@@ -1321,7 +1313,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
               #creationParamsCodec: creationParamsCodec,
               #onFocus: onFocus,
             }),
-            returnValue: _FakeExpensiveAndroidViewController_19(
+            returnValue: _FakeExpensiveAndroidViewController_18(
               this,
               Invocation.method(#initExpensiveAndroidView, [], {
                 #id: id,
@@ -1332,7 +1324,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
                 #onFocus: onFocus,
               }),
             ),
-            returnValueForMissingStub: _FakeExpensiveAndroidViewController_19(
+            returnValueForMissingStub: _FakeExpensiveAndroidViewController_18(
               this,
               Invocation.method(#initExpensiveAndroidView, [], {
                 #id: id,
@@ -1364,7 +1356,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
               #creationParamsCodec: creationParamsCodec,
               #onFocus: onFocus,
             }),
-            returnValue: _FakeSurfaceAndroidViewController_20(
+            returnValue: _FakeSurfaceAndroidViewController_19(
               this,
               Invocation.method(#initSurfaceAndroidView, [], {
                 #id: id,
@@ -1375,7 +1367,7 @@ class MockPlatformViewsServiceProxy extends _i1.Mock
                 #onFocus: onFocus,
               }),
             ),
-            returnValueForMissingStub: _FakeSurfaceAndroidViewController_20(
+            returnValueForMissingStub: _FakeSurfaceAndroidViewController_19(
               this,
               Invocation.method(#initSurfaceAndroidView, [], {
                 #id: id,

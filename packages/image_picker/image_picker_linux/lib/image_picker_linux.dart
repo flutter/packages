@@ -103,7 +103,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
       case ImageSource.camera:
         return super.getImageFromSource(source: source);
       case ImageSource.gallery:
-        const XTypeGroup typeGroup = XTypeGroup(
+        const typeGroup = XTypeGroup(
           label: 'Images',
           mimeTypes: <String>['image/*'],
         );
@@ -137,7 +137,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
           maxDuration: maxDuration,
         );
       case ImageSource.gallery:
-        const XTypeGroup typeGroup = XTypeGroup(
+        const typeGroup = XTypeGroup(
           label: 'Videos',
           mimeTypes: <String>['video/*'],
         );
@@ -160,7 +160,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
     double? maxHeight,
     int? imageQuality,
   }) async {
-    const XTypeGroup typeGroup = XTypeGroup(
+    const typeGroup = XTypeGroup(
       label: 'Images',
       mimeTypes: <String>['image/*'],
     );
@@ -174,7 +174,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   Future<List<XFile>> getMultiVideoWithOptions({
     MultiVideoPickerOptions options = const MultiVideoPickerOptions(),
   }) async {
-    const XTypeGroup typeGroup = XTypeGroup(
+    const typeGroup = XTypeGroup(
       label: 'Videos',
       mimeTypes: <String>['video/*'],
     );
@@ -189,7 +189,7 @@ class ImagePickerLinux extends CameraDelegatingImagePickerPlatform {
   // ignored.
   @override
   Future<List<XFile>> getMedia({required MediaOptions options}) async {
-    const XTypeGroup typeGroup = XTypeGroup(
+    const typeGroup = XTypeGroup(
       label: 'Images and videos',
       mimeTypes: <String>['image/*', 'video/*'],
     );

@@ -18,7 +18,7 @@ void main() async {
   // #enddocregion use-loader
   id.setLogLevel('debug');
 
-  final IdConfiguration config = IdConfiguration(
+  final config = IdConfiguration(
     client_id: 'your-google-client-id-goes-here.apps.googleusercontent.com',
     callback: onCredentialResponse,
     use_fedcm_for_prompt: true,

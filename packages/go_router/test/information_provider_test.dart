@@ -15,11 +15,10 @@ void main() {
     testWidgets('notifies its listeners when set by the app', (
       WidgetTester tester,
     ) async {
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
-            initialLocation: initialRoute,
-            initialExtra: null,
-          );
+      late final provider = GoRouteInformationProvider(
+        initialLocation: initialRoute,
+        initialExtra: null,
+      );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.go(newRoute);
@@ -28,11 +27,10 @@ void main() {
     testWidgets('notifies its listeners when set by the platform', (
       WidgetTester tester,
     ) async {
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
-            initialLocation: initialRoute,
-            initialExtra: null,
-          );
+      late final provider = GoRouteInformationProvider(
+        initialLocation: initialRoute,
+        initialExtra: null,
+      );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.didPushRouteInformation(
@@ -43,16 +41,14 @@ void main() {
     testWidgets('didPushRouteInformation maintains uri scheme and host', (
       WidgetTester tester,
     ) async {
-      const String expectedScheme = 'https';
-      const String expectedHost = 'www.example.com';
-      const String expectedPath = '/some/path';
-      const String expectedUriString =
-          '$expectedScheme://$expectedHost$expectedPath';
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
-            initialLocation: initialRoute,
-            initialExtra: null,
-          );
+      const expectedScheme = 'https';
+      const expectedHost = 'www.example.com';
+      const expectedPath = '/some/path';
+      const expectedUriString = '$expectedScheme://$expectedHost$expectedPath';
+      late final provider = GoRouteInformationProvider(
+        initialLocation: initialRoute,
+        initialExtra: null,
+      );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.didPushRouteInformation(
@@ -67,16 +63,14 @@ void main() {
     testWidgets('didPushRoute maintains uri scheme and host', (
       WidgetTester tester,
     ) async {
-      const String expectedScheme = 'https';
-      const String expectedHost = 'www.example.com';
-      const String expectedPath = '/some/path';
-      const String expectedUriString =
-          '$expectedScheme://$expectedHost$expectedPath';
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
-            initialLocation: initialRoute,
-            initialExtra: null,
-          );
+      const expectedScheme = 'https';
+      const expectedHost = 'www.example.com';
+      const expectedPath = '/some/path';
+      const expectedUriString = '$expectedScheme://$expectedHost$expectedPath';
+      late final provider = GoRouteInformationProvider(
+        initialLocation: initialRoute,
+        initialExtra: null,
+      );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.didPushRouteInformation(
@@ -91,14 +85,12 @@ void main() {
     testWidgets('Route is correctly neglected when routerNeglect is true', (
       WidgetTester tester,
     ) async {
-      final _SystemChannelsNavigationMock systemChannelsMock =
-          _SystemChannelsNavigationMock();
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
-            initialLocation: initialRoute,
-            initialExtra: null,
-            routerNeglect: true,
-          );
+      final systemChannelsMock = _SystemChannelsNavigationMock();
+      late final provider = GoRouteInformationProvider(
+        initialLocation: initialRoute,
+        initialExtra: null,
+        routerNeglect: true,
+      );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.go(newRoute);
@@ -112,13 +104,11 @@ void main() {
     testWidgets('Route is NOT neglected when routerNeglect is false', (
       WidgetTester tester,
     ) async {
-      final _SystemChannelsNavigationMock systemChannelsMock =
-          _SystemChannelsNavigationMock();
-      late final GoRouteInformationProvider provider =
-          GoRouteInformationProvider(
-            initialLocation: initialRoute,
-            initialExtra: null,
-          );
+      final systemChannelsMock = _SystemChannelsNavigationMock();
+      late final provider = GoRouteInformationProvider(
+        initialLocation: initialRoute,
+        initialExtra: null,
+      );
       addTearDown(provider.dispose);
       provider.addListener(expectAsync0(() {}));
       provider.go(newRoute);
@@ -139,8 +129,7 @@ class _SystemChannelsNavigationMock {
         ) async {
           if (methodCall.method == 'routeInformationUpdated' &&
               methodCall.arguments is Map<String, dynamic>) {
-            final Map<String, dynamic> args =
-                methodCall.arguments as Map<String, dynamic>;
+            final args = methodCall.arguments as Map<String, dynamic>;
             final String? uri =
                 args['location'] as String? ?? args['uri'] as String?;
             uriIsNeglected[uri ?? ''] = args['replace'] as bool;

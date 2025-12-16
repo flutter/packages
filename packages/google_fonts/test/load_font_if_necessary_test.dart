@@ -102,7 +102,7 @@ final GoogleFontsDescriptor fakeDescriptorDifferentFile = GoogleFontsDescriptor(
 List<String> printLog = <String>[];
 
 void overridePrint(Future<void> Function() testFn) => () {
-  final ZoneSpecification spec = ZoneSpecification(
+  final spec = ZoneSpecification(
     print: (_, __, ___, String msg) {
       // Add to log instead of printing to stdout
       printLog.add(msg);
@@ -145,7 +145,7 @@ void main() {
       return http.Response('fake response body - failure', 300);
     });
 
-    final GoogleFontsDescriptor descriptorInAssets = GoogleFontsDescriptor(
+    final descriptorInAssets = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
@@ -168,7 +168,7 @@ void main() {
   });
 
   test('does not call http if config is false', () async {
-    final GoogleFontsDescriptor fakeDescriptor = GoogleFontsDescriptor(
+    final fakeDescriptor = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
@@ -202,7 +202,7 @@ void main() {
 
   test('loadFontIfNecessary method does not make http get request on '
       'subsequent calls', () async {
-    final GoogleFontsDescriptor fakeDescriptor = GoogleFontsDescriptor(
+    final fakeDescriptor = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
@@ -228,7 +228,7 @@ void main() {
 
   test('loadFontIfNecessary does not make more than 1 http get request on '
       'parallel calls', () async {
-    final GoogleFontsDescriptor fakeDescriptor = GoogleFontsDescriptor(
+    final fakeDescriptor = GoogleFontsDescriptor(
       familyWithVariant: const GoogleFontsFamilyWithVariant(
         family: 'Foo',
         googleFontsVariant: GoogleFontsVariant(
@@ -250,7 +250,7 @@ void main() {
   test(
     'loadFontIfNecessary makes second attempt if the first attempt failed ',
     () async {
-      final GoogleFontsDescriptor fakeDescriptor = GoogleFontsDescriptor(
+      final fakeDescriptor = GoogleFontsDescriptor(
         familyWithVariant: const GoogleFontsFamilyWithVariant(
           family: 'Foo',
           googleFontsVariant: GoogleFontsVariant(
@@ -298,9 +298,7 @@ void main() {
     final Directory directoryContents = await getApplicationSupportDirectory();
     expect(directoryContents.listSync().isEmpty, isTrue);
 
-    final File cachedFile = File(
-      '${directoryContents.path}/$expectedCachedFile',
-    );
+    final cachedFile = File('${directoryContents.path}/$expectedCachedFile');
     cachedFile.createSync();
     cachedFile.writeAsStringSync('file contents');
 
@@ -319,9 +317,7 @@ void main() {
     final Directory directoryContents = await getApplicationSupportDirectory();
     expect(directoryContents.listSync().isEmpty, isTrue);
 
-    final File cachedFile = File(
-      '${directoryContents.path}/$expectedCachedFile',
-    );
+    final cachedFile = File('${directoryContents.path}/$expectedCachedFile');
     cachedFile.createSync();
     cachedFile.writeAsStringSync('file contents');
 
@@ -351,7 +347,7 @@ void main() {
       when(mockHttpClient.gets(any)).thenAnswer((_) async {
         return http.Response('malicious intercepted response', 200);
       });
-      final GoogleFontsDescriptor fakeDescriptor = GoogleFontsDescriptor(
+      final fakeDescriptor = GoogleFontsDescriptor(
         familyWithVariant: const GoogleFontsFamilyWithVariant(
           family: 'Foo',
           googleFontsVariant: GoogleFontsVariant(

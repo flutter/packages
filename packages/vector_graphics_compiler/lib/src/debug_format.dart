@@ -12,8 +12,8 @@ import 'paint.dart';
 /// Write an unstable but human readable form of the vector graphics binary
 /// package intended to be used for debugging and development.
 Uint8List dumpToDebugFormat(Uint8List bytes) {
-  const VectorGraphicsCodec codec = VectorGraphicsCodec();
-  final _DebugVectorGraphicsListener listener = _DebugVectorGraphicsListener();
+  const codec = VectorGraphicsCodec();
+  final listener = _DebugVectorGraphicsListener();
   final DecodeResponse response = codec.decode(
     bytes.buffer.asByteData(),
     listener,
@@ -54,8 +54,7 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
 
   @override
   void onDrawPath(int pathId, int? paintId, int? patternId) {
-    final String patternContext =
-        patternId != null ? ', patternId:$patternId' : '';
+    final patternContext = patternId != null ? ', patternId:$patternId' : '';
     buffer.writeln('DrawPath: id:$pathId (paintId:$paintId$patternContext)');
   }
 
@@ -200,7 +199,7 @@ class _DebugVectorGraphicsListener extends VectorGraphicsCodecListener {
     int tileMode,
     int id,
   ) {
-    final bool hasFocal = focalX != null;
+    final hasFocal = focalX != null;
     buffer.writeln(
       'StoreGradient: id:$id Radial(\n'
       'center: ($centerX, $centerY)\n'

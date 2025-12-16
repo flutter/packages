@@ -41,7 +41,7 @@ void main() {
       mockNavigator = MockNavigator();
 
       jsMockWindow = createJSInteropWrapper(mockWindow) as html.Window;
-      final html.Navigator jsMockNavigator =
+      final jsMockNavigator =
           createJSInteropWrapper(mockNavigator) as html.Navigator;
 
       when(mockWindow.navigator).thenReturn(jsMockNavigator);

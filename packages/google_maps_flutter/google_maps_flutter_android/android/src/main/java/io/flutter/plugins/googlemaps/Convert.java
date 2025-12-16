@@ -627,8 +627,8 @@ class Convert {
     sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
     sink.setGeodesic(polygon.getGeodesic());
     sink.setVisible(polygon.getVisible());
-    sink.setFillColor(polygon.getFillColor().intValue());
-    sink.setStrokeColor(polygon.getStrokeColor().intValue());
+    sink.setFillColor(polygon.getFillColor().getArgbValue().intValue());
+    sink.setStrokeColor(polygon.getStrokeColor().getArgbValue().intValue());
     sink.setStrokeWidth(polygon.getStrokeWidth());
     sink.setZIndex(polygon.getZIndex());
     sink.setPoints(pointsFromPigeon(polygon.getPoints()));
@@ -654,7 +654,7 @@ class Convert {
       AssetManager assetManager,
       float density) {
     sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
-    sink.setColor(polyline.getColor().intValue());
+    sink.setColor(polyline.getColor().getArgbValue().intValue());
     sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
     sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
@@ -669,8 +669,8 @@ class Convert {
 
   static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
     sink.setConsumeTapEvents(circle.getConsumeTapEvents());
-    sink.setFillColor(circle.getFillColor().intValue());
-    sink.setStrokeColor(circle.getStrokeColor().intValue());
+    sink.setFillColor(circle.getFillColor().getArgbValue().intValue());
+    sink.setStrokeColor(circle.getStrokeColor().getArgbValue().intValue());
     sink.setStrokeWidth(circle.getStrokeWidth());
     sink.setZIndex(circle.getZIndex().floatValue());
     sink.setCenter(toLatLng(circle.getCenter().toList()));

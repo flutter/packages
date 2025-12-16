@@ -91,10 +91,9 @@ class MapUiBodyState extends State<MapUiBody> {
       ),
       onPressed: () {
         setState(() {
-          _cameraTargetBounds =
-              _cameraTargetBounds.bounds == null
-                  ? CameraTargetBounds(sydneyBounds)
-                  : CameraTargetBounds.unbounded;
+          _cameraTargetBounds = _cameraTargetBounds.bounds == null
+              ? CameraTargetBounds(sydneyBounds)
+              : CameraTargetBounds.unbounded;
         });
       },
     );
@@ -107,10 +106,9 @@ class MapUiBodyState extends State<MapUiBody> {
       ),
       onPressed: () {
         setState(() {
-          _minMaxZoomPreference =
-              _minMaxZoomPreference.minZoom == null
-                  ? const MinMaxZoomPreference(12.0, 16.0)
-                  : MinMaxZoomPreference.unbounded;
+          _minMaxZoomPreference = _minMaxZoomPreference.minZoom == null
+              ? const MinMaxZoomPreference(12.0, 16.0)
+              : MinMaxZoomPreference.unbounded;
         });
       },
     );
@@ -243,8 +241,9 @@ class MapUiBodyState extends State<MapUiBody> {
       child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
       onPressed: () async {
         _nightMode = !_nightMode;
-        final String style =
-            _nightMode ? await _getFileData('assets/night_mode.json') : '';
+        final String style = _nightMode
+            ? await _getFileData('assets/night_mode.json')
+            : '';
         setState(() {
           _mapStyle = style;
         });
@@ -254,7 +253,7 @@ class MapUiBodyState extends State<MapUiBody> {
 
   @override
   Widget build(BuildContext context) {
-    final ExampleGoogleMap googleMap = ExampleGoogleMap(
+    final googleMap = ExampleGoogleMap(
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
       compassEnabled: _compassEnabled,
@@ -274,7 +273,7 @@ class MapUiBodyState extends State<MapUiBody> {
       onCameraMove: _updateCameraPosition,
     );
 
-    final List<Widget> columnChildren = <Widget>[
+    final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(

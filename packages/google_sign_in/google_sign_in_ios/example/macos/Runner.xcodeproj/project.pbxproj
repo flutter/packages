@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -28,7 +28,6 @@
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
 		33CC11132044BFA00003C045 /* MainFlutterWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC11122044BFA00003C045 /* MainFlutterWindow.swift */; };
-		403C71332C66A4F70034A230 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 403C71322C66A4F70034A230 /* OCMock */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		D7B8415A3D20001DE212873D /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A19720E5189178660264EC3F /* Pods_Runner.framework */; };
 		F107B1B7E4ECB85727EC4286 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0BD1DCE969A7E7C76D9CF93C /* Pods_RunnerTests.framework */; };
@@ -99,7 +98,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				403C71332C66A4F70034A230 /* OCMock in Frameworks */,
 				F107B1B7E4ECB85727EC4286 /* Pods_RunnerTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -234,7 +232,6 @@
 			);
 			name = RunnerTests;
 			packageProductDependencies = (
-				403C71322C66A4F70034A230 /* OCMock */,
 			);
 			productName = RunnerTests;
 			productReference = 331C80D5294CF71000263BE5 /* RunnerTests.xctest */;
@@ -304,8 +301,7 @@
 			);
 			mainGroup = 33CC10E42044A3C60003C045;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
-				403C71312C66A4F70034A230 /* XCRemoteSwiftPackageReference "ocmock" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 33CC10EE2044A3C60003C045 /* Products */;
 			projectDirPath = "";
@@ -788,29 +784,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		403C71312C66A4F70034A230 /* XCRemoteSwiftPackageReference "ocmock" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/erikdoe/ocmock";
-			requirement = {
-				kind = revision;
-				revision = fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		403C71322C66A4F70034A230 /* OCMock */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 403C71312C66A4F70034A230 /* XCRemoteSwiftPackageReference "ocmock" */;
-			productName = OCMock;
-		};
 		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FlutterGeneratedPluginSwiftPackage;

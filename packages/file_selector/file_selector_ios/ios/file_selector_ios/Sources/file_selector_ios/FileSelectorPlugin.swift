@@ -45,12 +45,17 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
   var pendingCompletions: Set<PickerCompletionBridge> = []
   /// Overridden document picker, for testing.
   var documentPickerViewControllerOverride: UIDocumentPickerViewController?
-  /// Overridden view presenter, for testing.
-  var viewPresenterOverride: ViewPresenter?
+  /// The view controller provider, for showing the document picker.
+  let viewPresenterProvider: ViewPresenterProvider
 
   public static func register(with registrar: FlutterPluginRegistrar) {
-    let instance = FileSelectorPlugin()
+    let instance = FileSelectorPlugin(
+      viewPresenterProvider: DefaultViewPresenterProvider(registrar: registrar))
     FileSelectorApiSetup.setUp(binaryMessenger: registrar.messenger(), api: instance)
+  }
+
+  init(viewPresenterProvider: ViewPresenterProvider) {
+    self.viewPresenterProvider = viewPresenterProvider
   }
 
   func openFile(config: FileSelectorConfig, completion: @escaping (Result<[String], Error>) -> Void)
@@ -64,14 +69,12 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
     documentPicker.allowsMultipleSelection = config.allowMultiSelection
     documentPicker.delegate = completionBridge
 
-    let presenter =
-      self.viewPresenterOverride ?? UIApplication.shared.delegate?.window??.rootViewController
-    if let presenter = presenter {
+    if let presenter = viewPresenterProvider.viewPresenter {
       pendingCompletions.insert(completionBridge)
       presenter.present(documentPicker, animated: true, completion: nil)
     } else {
       completion(
-        .failure(PigeonError(code: "error", message: "Missing root view controller.", details: nil))
+        .failure(PigeonError(code: "error", message: "No view controller available.", details: nil))
       )
     }
   }

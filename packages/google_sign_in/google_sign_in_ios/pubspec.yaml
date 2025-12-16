@@ -2,7 +2,7 @@ name: google_sign_in_ios
 description: iOS implementation of the google_sign_in plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_ios
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+google_sign_in%22
-version: 6.2.2
+version: 6.2.4
 
 environment:
   sdk: ^3.9.0
@@ -31,7 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
-  pigeon: ^22.4.2
+  pigeon: ^26.1.0
 
 topics:
   - authentication

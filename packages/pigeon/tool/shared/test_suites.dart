@@ -171,9 +171,9 @@ Future<int> _runAndroidKotlinLint({bool ciMode = false}) async {
 }
 
 Future<int> _runAndroidUnitTests(String testPluginPath) async {
-  final String examplePath = './$testPluginPath/example';
-  final String androidProjectPath = '$examplePath/android';
-  final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
+  final examplePath = './$testPluginPath/example';
+  final androidProjectPath = '$examplePath/android';
+  final gradleFile = File(p.join(androidProjectPath, 'gradlew'));
   if (!gradleFile.existsSync()) {
     final int compileCode = await runFlutterBuild(examplePath, 'apk');
     if (compileCode != 0) {
@@ -188,9 +188,9 @@ Future<int> _runAndroidLint({
   required String testPluginName,
   required String testPluginPath,
 }) async {
-  final String examplePath = './$testPluginPath/example';
-  final String androidProjectPath = '$examplePath/android';
-  final File gradleFile = File(p.join(androidProjectPath, 'gradlew'));
+  final examplePath = './$testPluginPath/example';
+  final androidProjectPath = '$examplePath/android';
+  final gradleFile = File(p.join(androidProjectPath, 'gradlew'));
   if (!gradleFile.existsSync()) {
     final int compileCode = await runFlutterBuild(
       examplePath,
@@ -222,7 +222,7 @@ Future<int> _runMobileIntegrationTests(
     return _noDeviceAvailableExitCode;
   }
 
-  final String examplePath = './$testPluginPath/example';
+  final examplePath = './$testPluginPath/example';
   return runFlutterCommand(examplePath, 'test', <String>[
     _integrationTestFileRelativePath,
     '-d',
@@ -244,8 +244,8 @@ Future<int> _runDartUnitTests({bool ciMode = false}) async {
 }
 
 Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
-  final String messagePath = '$flutterUnitTestsPath/lib/message.gen.dart';
-  final String messageTestPath = '$flutterUnitTestsPath/test/message_test.dart';
+  final messagePath = '$flutterUnitTestsPath/lib/message.gen.dart';
+  final messageTestPath = '$flutterUnitTestsPath/test/message_test.dart';
   final int generateTestCode = await runPigeon(
     input: 'pigeons/message.dart',
     dartOut: messagePath,
@@ -271,7 +271,7 @@ Future<int> _analyzeFlutterUnitTests(String flutterUnitTestsPath) async {
 }
 
 Future<int> _runFlutterUnitTests({bool ciMode = false}) async {
-  const String flutterUnitTestsPath = 'platform_tests/shared_test_plugin_code';
+  const flutterUnitTestsPath = 'platform_tests/shared_test_plugin_code';
   final int analyzeCode = await _analyzeFlutterUnitTests(flutterUnitTestsPath);
   if (analyzeCode != 0) {
     return analyzeCode;
@@ -303,8 +303,7 @@ Future<int> _runIOSObjCIntegrationTests({bool ciMode = false}) async {
     return _noDeviceAvailableExitCode;
   }
 
-  const String examplePath =
-      './$_alternateLanguageTestPluginRelativePath/example';
+  const examplePath = './$_alternateLanguageTestPluginRelativePath/example';
   return runFlutterCommand(examplePath, 'test', <String>[
     _integrationTestFileRelativePath,
     '-d',
@@ -313,8 +312,7 @@ Future<int> _runIOSObjCIntegrationTests({bool ciMode = false}) async {
 }
 
 Future<int> _runMacOSObjCIntegrationTests({bool ciMode = false}) async {
-  const String examplePath =
-      './$_alternateLanguageTestPluginRelativePath/example';
+  const examplePath = './$_alternateLanguageTestPluginRelativePath/example';
   return runFlutterCommand(examplePath, 'test', <String>[
     _integrationTestFileRelativePath,
     '-d',
@@ -323,7 +321,7 @@ Future<int> _runMacOSObjCIntegrationTests({bool ciMode = false}) async {
 }
 
 Future<int> _runMacOSSwiftUnitTests({bool ciMode = false}) async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  const examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'macos');
   if (compileCode != 0) {
     return compileCode;
@@ -336,7 +334,7 @@ Future<int> _runMacOSSwiftUnitTests({bool ciMode = false}) async {
 }
 
 Future<int> _runMacOSSwiftIntegrationTests({bool ciMode = false}) async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  const examplePath = './$_testPluginRelativePath/example';
   return runFlutterCommand(examplePath, 'test', <String>[
     _integrationTestFileRelativePath,
     '-d',
@@ -349,7 +347,7 @@ Future<int> _runIOSSwiftUnitTests({bool ciMode = false}) async {
 }
 
 Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
-  final String examplePath = './$testPluginPath/example';
+  final examplePath = './$testPluginPath/example';
   final int compileCode = await runFlutterBuild(
     examplePath,
     'ios',
@@ -359,10 +357,10 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
     return compileCode;
   }
 
-  const String deviceName = 'Pigeon-Test-iPhone';
-  const String deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
-  const String deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-18-2';
-  const String deviceOS = '18.2';
+  const deviceName = 'Pigeon-Test-iPhone';
+  const deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
+  const deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-18-2';
+  const deviceOS = '18.2';
   await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
@@ -380,7 +378,7 @@ Future<int> _createSimulator(
   // Delete any existing simulators with the same name until it fails. It will
   // fail once there are no simulators with the name. Having more than one may
   // cause issues when builds target the device.
-  int deleteResult = 0;
+  var deleteResult = 0;
   while (deleteResult == 0) {
     deleteResult = await _deleteSimulator(deviceName);
   }
@@ -405,18 +403,17 @@ Future<int> _runIOSSwiftIntegrationTests({bool ciMode = false}) async {
 }
 
 Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  const examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'linux');
   if (compileCode != 0) {
     return compileCode;
   }
 
-  const String buildDirBase = '$examplePath/build/linux';
-  const String buildRelativeBinaryPath =
-      'debug/plugins/test_plugin/test_plugin_test';
-  const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
-  const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
-  final String testBinary = File(arm64Path).existsSync() ? arm64Path : x64Path;
+  const buildDirBase = '$examplePath/build/linux';
+  const buildRelativeBinaryPath = 'debug/plugins/test_plugin/test_plugin_test';
+  const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
+  final testBinary = File(arm64Path).existsSync() ? arm64Path : x64Path;
   if (ciMode) {
     // To avoid having all custom tests in the repo run under xvfb, xvfb-run is
     // done here rather than at the CI config level. Ideally, Pigeon tests
@@ -429,7 +426,7 @@ Future<int> _runLinuxUnitTests({bool ciMode = false}) async {
 }
 
 Future<int> _runLinuxIntegrationTests({bool ciMode = false}) async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  const examplePath = './$_testPluginRelativePath/example';
   return runFlutterCommand(
     examplePath,
     'test',
@@ -443,7 +440,7 @@ Future<int> _runLinuxIntegrationTests({bool ciMode = false}) async {
 }
 
 Future<int> _runWindowsUnitTests({bool ciMode = false}) async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  const examplePath = './$_testPluginRelativePath/example';
   final int compileCode = await runFlutterBuild(examplePath, 'windows');
   if (compileCode != 0) {
     return compileCode;
@@ -458,11 +455,11 @@ Future<int> _runWindowsUnitTests({bool ciMode = false}) async {
   // support a version of Flutter without
   // https://github.com/flutter/flutter/issues/129807, and just construct the
   // version of the path with the current architecture.
-  const String buildDirBase = '$examplePath/build/windows';
-  const String buildRelativeBinaryPath =
+  const buildDirBase = '$examplePath/build/windows';
+  const buildRelativeBinaryPath =
       'plugins/test_plugin/Debug/test_plugin_test.exe';
-  const String arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
-  const String x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
+  const arm64Path = '$buildDirBase/arm64/$buildRelativeBinaryPath';
+  const x64Path = '$buildDirBase/x64/$buildRelativeBinaryPath';
   if (File(arm64Path).existsSync()) {
     return runProcess(arm64Path, <String>[]);
   } else {
@@ -471,7 +468,7 @@ Future<int> _runWindowsUnitTests({bool ciMode = false}) async {
 }
 
 Future<int> _runWindowsIntegrationTests({bool ciMode = false}) async {
-  const String examplePath = './$_testPluginRelativePath/example';
+  const examplePath = './$_testPluginRelativePath/example';
   return runFlutterCommand(examplePath, 'test', <String>[
     _integrationTestFileRelativePath,
     '-d',
@@ -482,7 +479,7 @@ Future<int> _runWindowsIntegrationTests({bool ciMode = false}) async {
 Future<int> _runCommandLineTests({bool ciMode = false}) async {
   final Directory tempDir = Directory.systemTemp.createTempSync('pigeon');
   final String tempOutput = p.join(tempDir.path, 'pigeon_output');
-  const String pigeonScript = 'bin/pigeon.dart';
+  const pigeonScript = 'bin/pigeon.dart';
   final String snapshot = p.join(tempDir.path, 'pigeon.dart.dill');
 
   // Precompile to make the repeated calls faster.
@@ -496,7 +493,7 @@ Future<int> _runCommandLineTests({bool ciMode = false}) async {
     return 1;
   }
 
-  final List<List<String>> testArguments = <List<String>>[
+  final testArguments = <List<String>>[
     // Test with no arguments.
     <String>[],
     // Test dartOut in ConfigurePigeon overrides output.
@@ -513,8 +510,8 @@ Future<int> _runCommandLineTests({bool ciMode = false}) async {
     ],
   ];
 
-  int exitCode = 0;
-  for (final List<String> arguments in testArguments) {
+  var exitCode = 0;
+  for (final arguments in testArguments) {
     print('Testing dart $pigeonScript ${arguments.join(', ')}');
     exitCode = await runProcess(
       'dart',

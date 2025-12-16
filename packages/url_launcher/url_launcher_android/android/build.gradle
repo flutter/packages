@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.1'
+        classpath 'com.android.tools.build:gradle:8.13.1'
     }
 }
 
@@ -61,11 +61,11 @@ android {
 dependencies {
 
     // Java language implementation
-    implementation("androidx.core:core:1.13.1")
+    implementation("androidx.core:core:1.17.0")
     implementation("androidx.annotation:annotation:1.9.1")
-    implementation("androidx.browser:browser:1.8.0")
+    implementation("androidx.browser:browser:1.9.0")
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.19.0")
+    testImplementation("org.mockito:mockito-core:5.20.0")
     testImplementation("androidx.test:core:1.7.0")
-    testImplementation("org.robolectric:robolectric:4.15.1")
+    testImplementation("org.robolectric:robolectric:4.16")
 }

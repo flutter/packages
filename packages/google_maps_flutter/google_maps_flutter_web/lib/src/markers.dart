@@ -44,12 +44,11 @@ class MarkersController extends GeometryController {
       // we make one...
       if (infoWindowOptions.content != null &&
           infoWindowOptions.content is HTMLElement) {
-        final HTMLElement content = infoWindowOptions.content! as HTMLElement;
+        final content = infoWindowOptions.content! as HTMLElement;
 
-        content.onclick =
-            (JSAny? _) {
-              _onInfoWindowTap(marker.markerId);
-            }.toJS;
+        content.onclick = (JSAny? _) {
+          _onInfoWindowTap(marker.markerId);
+        }.toJS;
       }
     }
 
@@ -61,7 +60,7 @@ class MarkersController extends GeometryController {
       currentMarker,
     );
 
-    final gmaps.Marker gmMarker = gmaps.Marker(markerOptions);
+    final gmMarker = gmaps.Marker(markerOptions);
 
     gmMarker.set('markerId', marker.markerId.value.toJS);
 
@@ -71,7 +70,7 @@ class MarkersController extends GeometryController {
       gmMarker.map = googleMap;
     }
 
-    final MarkerController controller = MarkerController(
+    final controller = MarkerController(
       marker: gmMarker,
       clusterManagerId: marker.clusterManagerId,
       infoWindow: gmInfoWindow,

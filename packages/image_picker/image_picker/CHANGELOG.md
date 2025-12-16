@@ -1,5 +1,14 @@
 ## NEXT
 
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
+## 1.2.1
+
+* Fixes README description of plugin suggesting that only Android and iOS is supported.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Updates README to reflect that only Android API 24+ is supported.
 

@@ -105,12 +105,11 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
 
   void _onElementCreated(Object element) {
     // Create the `ins` element that is going to contain the actual ad.
-    final web.HTMLElement insElement =
-        (web.document.createElement('ins') as web.HTMLElement)
-          ..className = 'adsbygoogle'
-          ..style.width = '100%'
-          ..style.height = '100%'
-          ..style.display = 'block';
+    final insElement = (web.document.createElement('ins') as web.HTMLElement)
+      ..className = 'adsbygoogle'
+      ..style.width = '100%'
+      ..style.height = '100%'
+      ..style.display = 'block';
 
     // Apply the widget configuration to insElement
     <String, String>{
@@ -121,10 +120,9 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     });
 
     // Adding ins inside of the adUnit
-    final web.HTMLDivElement adUnitDiv =
-        element as web.HTMLDivElement
-          ..id = 'adUnit${_adUnitCounter++}'
-          ..append(insElement);
+    final adUnitDiv = element as web.HTMLDivElement
+      ..id = 'adUnit${_adUnitCounter++}'
+      ..append(insElement);
 
     // Using Resize observer to detect element attached to DOM
     _adSenseResizeObserver.observe(adUnitDiv);
@@ -133,7 +131,7 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
     web.MutationObserver(
       (JSArray<JSObject> entries, web.MutationObserver observer) {
         for (final JSObject entry in entries.toDart) {
-          final web.HTMLElement target =
+          final target =
               (entry as web.MutationRecord).target as web.HTMLElement;
           if (_isLoaded(target)) {
             if (_isFilled(target)) {
@@ -174,15 +172,17 @@ class _AdUnitWidgetWebState extends State<AdUnitWidget>
   }
 
   bool _isLoaded(web.HTMLElement target) {
-    final bool isLoaded =
-        target.dataset.getProperty(_adStatusKey).isDefinedAndNotNull;
+    final bool isLoaded = target.dataset
+        .getProperty(_adStatusKey)
+        .isDefinedAndNotNull;
     debugLog('Ad isLoaded: $isLoaded');
     return isLoaded;
   }
 
   bool _isFilled(web.HTMLElement target) {
-    final String? adStatus =
-        target.dataset.getProperty<JSString?>(_adStatusKey)?.toDart;
+    final String? adStatus = target.dataset
+        .getProperty<JSString?>(_adStatusKey)
+        ?.toDart;
     debugLog('Ad isFilled? $adStatus');
     if (adStatus == AdStatus.FILLED) {
       return true;

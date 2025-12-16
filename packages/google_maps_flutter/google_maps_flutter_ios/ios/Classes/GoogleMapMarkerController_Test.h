@@ -10,6 +10,16 @@
 /// The underlying controlled GMSMarker.
 @property(strong, nonatomic, readonly) GMSMarker *marker;
 
+/// Updates the underlying GMSMarker with the properties from the given FGMPlatformMarker.
+///
+/// Setting the marker to visible will set its map to the given mapView.
++ (void)updateMarker:(GMSMarker *)marker
+           fromPlatformMarker:(FGMPlatformMarker *)platformMarker
+                  withMapView:(GMSMapView *)mapView
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                  screenScale:(CGFloat)screenScale
+    usingOpacityForVisibility:(BOOL)useOpacityForVisibility;
+
 @end
 
 /// Methods exposed for unit testing.

@@ -27,7 +27,7 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatch>[
           RouteMatch(
             route: config.routes.first as GoRoute,
@@ -47,8 +47,7 @@ void main() {
     });
 
     testWidgets('Builds ShellRoute', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> shellNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final shellNavigatorKey = GlobalKey<NavigatorState>();
       final RouteConfiguration config = createRouteConfiguration(
         routes: <RouteBase>[
           ShellRoute(
@@ -73,7 +72,7 @@ void main() {
         navigatorKey: GlobalKey<NavigatorState>(),
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatchBase>[
           ShellRouteMatch(
             route: config.routes.first as ShellRouteBase,
@@ -101,8 +100,7 @@ void main() {
     });
 
     testWidgets('Uses the correct navigatorKey', (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>();
+      final rootNavigatorKey = GlobalKey<NavigatorState>();
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
@@ -119,7 +117,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatch>[
           RouteMatch(
             route: config.routes.first as GoRoute,
@@ -141,10 +139,8 @@ void main() {
     testWidgets('Builds a Navigator for ShellRoute', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
@@ -169,7 +165,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatchBase>[
           ShellRouteMatch(
             route: config.routes.first as ShellRouteBase,
@@ -202,10 +198,8 @@ void main() {
     testWidgets('Builds a Navigator for ShellRoute with parentNavigatorKey', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
@@ -240,7 +234,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatch>[
           RouteMatch(
             route: config.routes.first.routes.first as GoRoute,
@@ -265,10 +259,8 @@ void main() {
     testWidgets('Uses the correct restorationScopeId for ShellRoute', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
       final RouteConfiguration config = createRouteConfiguration(
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
@@ -294,7 +286,7 @@ void main() {
         },
       );
 
-      final RouteMatchList matches = RouteMatchList(
+      final matches = RouteMatchList(
         matches: <RouteMatchBase>[
           ShellRouteMatch(
             route: config.routes.first as ShellRouteBase,
@@ -329,11 +321,9 @@ void main() {
     testWidgets('Uses the correct restorationScopeId for StatefulShellRoute', (
       WidgetTester tester,
     ) async {
-      final GlobalKey<NavigatorState> rootNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'root');
-      final GlobalKey<NavigatorState> shellNavigatorKey =
-          GlobalKey<NavigatorState>(debugLabel: 'shell');
-      final GoRouter goRouter = GoRouter(
+      final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+      final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+      final goRouter = GoRouter(
         initialLocation: '/a',
         navigatorKey: rootNavigatorKey,
         routes: <RouteBase>[
@@ -377,13 +367,12 @@ void main() {
     testWidgets('GoRouter requestFocus defaults to true', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Scaffold(body: Center(child: Text('Home'))),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
         ],
       );
@@ -401,13 +390,12 @@ void main() {
     testWidgets('GoRouter requestFocus can be set to false', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         routes: <RouteBase>[
           GoRoute(
             path: '/',
-            builder:
-                (BuildContext context, GoRouterState state) =>
-                    const Scaffold(body: Center(child: Text('Home'))),
+            builder: (BuildContext context, GoRouterState state) =>
+                const Scaffold(body: Center(child: Text('Home'))),
           ),
         ],
         requestFocus: false,
@@ -434,7 +422,10 @@ class _HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        children: <Widget>[const Text('Home Screen'), Expanded(child: child)],
+        children: <Widget>[
+          const Text('Home Screen'),
+          Expanded(child: child),
+        ],
       ),
     );
   }

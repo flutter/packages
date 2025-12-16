@@ -15,14 +15,11 @@ class OpenMultipleImagesPage extends StatelessWidget {
   const OpenMultipleImagesPage({super.key});
 
   Future<void> _openImageFile(BuildContext context) async {
-    const XTypeGroup jpgsTypeGroup = XTypeGroup(
+    const jpgsTypeGroup = XTypeGroup(
       label: 'JPEGs',
       extensions: <String>['jpg', 'jpeg'],
     );
-    const XTypeGroup pngTypeGroup = XTypeGroup(
-      label: 'PNGs',
-      extensions: <String>['png'],
-    );
+    const pngTypeGroup = XTypeGroup(label: 'PNGs', extensions: <String>['png']);
     final List<XFile> files = await FileSelectorPlatform.instance.openFiles(
       acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
     );
@@ -80,10 +77,9 @@ class MultipleImagesDisplay extends StatelessWidget {
           children: <Widget>[
             ...files.map(
               (XFile file) => Flexible(
-                child:
-                    kIsWeb
-                        ? Image.network(file.path)
-                        : Image.file(File(file.path)),
+                child: kIsWeb
+                    ? Image.network(file.path)
+                    : Image.file(File(file.path)),
               ),
             ),
           ],

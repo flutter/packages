@@ -31,15 +31,14 @@ Future<void> loadJsSdk(
     return;
   }
 
-  final String scriptUrl = '$_URL?client=ca-pub-$adClient';
+  final scriptUrl = '$_URL?client=ca-pub-$adClient';
 
-  final web.HTMLScriptElement script =
-      web.HTMLScriptElement()
-        ..async = true
-        ..crossOrigin = 'anonymous';
+  final script = web.HTMLScriptElement()
+    ..async = true
+    ..crossOrigin = 'anonymous';
 
   if (web.window.nullableTrustedTypes != null) {
-    final String trustedTypePolicyName = 'adsense-dart-$adClient';
+    final trustedTypePolicyName = 'adsense-dart-$adClient';
     try {
       final web.TrustedTypePolicy policy = web.window.trustedTypes.createPolicy(
         trustedTypePolicyName,
@@ -76,7 +75,7 @@ void _applyDataAttributes(
 // [target] can be used to specify a different injection target than
 // `window.document.head`, and is normally used for tests.
 bool _sdkAlreadyLoaded(String adClient, web.HTMLElement? target) {
-  final String selector = 'script[src*=ca-pub-$adClient]';
+  final selector = 'script[src*=ca-pub-$adClient]';
   return adsbygooglePresent ||
       web.document.querySelector(selector) != null ||
       target?.querySelector(selector) != null;

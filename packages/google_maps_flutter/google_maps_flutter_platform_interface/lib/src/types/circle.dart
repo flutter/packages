@@ -111,7 +111,7 @@ class Circle implements MapsObject<Circle> {
   /// Converts this object to something serializable in JSON.
   @override
   Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
+    final json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
       if (value != null) {
@@ -121,10 +121,10 @@ class Circle implements MapsObject<Circle> {
 
     addIfPresent('circleId', circleId.value);
     addIfPresent('consumeTapEvents', consumeTapEvents);
-    addIfPresent('fillColor', fillColor.value);
+    addIfPresent('fillColor', fillColor.toARGB32());
     addIfPresent('center', center.toJson());
     addIfPresent('radius', radius);
-    addIfPresent('strokeColor', strokeColor.value);
+    addIfPresent('strokeColor', strokeColor.toARGB32());
     addIfPresent('strokeWidth', strokeWidth);
     addIfPresent('visible', visible);
     addIfPresent('zIndex', zIndex);

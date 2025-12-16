@@ -249,7 +249,7 @@ Map<String, dynamic> buildErrorMap(SKError error) {
 Map<String, dynamic> buildTransactionMap(
   SKPaymentTransactionWrapper transaction,
 ) {
-  final Map<String, dynamic> map = <String, dynamic>{
+  final map = <String, dynamic>{
     'transactionState': SKPaymentTransactionStateWrapper.values.indexOf(
       SKPaymentTransactionStateWrapper.purchased,
     ),
@@ -267,7 +267,7 @@ Map<String, dynamic> buildTransactionMap(
 Map<String, dynamic> buildTransactionMessage(
   SKPaymentTransactionWrapper transaction,
 ) {
-  final Map<String, dynamic> map = <String, dynamic>{
+  final map = <String, dynamic>{
     'transactionState': SKPaymentTransactionStateWrapper.values.indexOf(
       SKPaymentTransactionStateWrapper.purchased,
     ),

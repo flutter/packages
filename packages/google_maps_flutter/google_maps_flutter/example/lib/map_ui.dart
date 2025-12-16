@@ -89,45 +89,43 @@ class MapUiBodyState extends State<MapUiBody> {
 
   Widget _webCameraControlPositionToggler() {
     return TextButton(
-      onPressed:
-          () => showDialog<void>(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: const Text('Web camera control position'),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    DropdownButton<WebCameraControlPosition>(
-                      hint: const Text('Web camera control position'),
-                      value: _webCameraControlPosition,
-                      items:
-                          WebCameraControlPosition.values
-                              .map(
-                                (WebCameraControlPosition e) =>
-                                    DropdownMenuItem<WebCameraControlPosition>(
-                                      value: e,
-                                      child: Text(e.name),
-                                    ),
-                              )
-                              .toList(),
-                      onChanged: (WebCameraControlPosition? value) {
-                        setState(() {
-                          _webCameraControlPosition = value;
-                        });
-                      },
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Text('Ok'),
-                    ),
-                  ],
+      onPressed: () => showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Web camera control position'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                DropdownButton<WebCameraControlPosition>(
+                  hint: const Text('Web camera control position'),
+                  value: _webCameraControlPosition,
+                  items: WebCameraControlPosition.values
+                      .map(
+                        (WebCameraControlPosition e) =>
+                            DropdownMenuItem<WebCameraControlPosition>(
+                              value: e,
+                              child: Text(e.name),
+                            ),
+                      )
+                      .toList(),
+                  onChanged: (WebCameraControlPosition? value) {
+                    setState(() {
+                      _webCameraControlPosition = value;
+                    });
+                  },
                 ),
-              );
-            },
-          ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Ok'),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
       child: const Text('change web camera control position'),
     );
   }
@@ -163,10 +161,9 @@ class MapUiBodyState extends State<MapUiBody> {
       ),
       onPressed: () {
         setState(() {
-          _cameraTargetBounds =
-              _cameraTargetBounds.bounds == null
-                  ? CameraTargetBounds(sydneyBounds)
-                  : CameraTargetBounds.unbounded;
+          _cameraTargetBounds = _cameraTargetBounds.bounds == null
+              ? CameraTargetBounds(sydneyBounds)
+              : CameraTargetBounds.unbounded;
         });
       },
     );
@@ -179,10 +176,9 @@ class MapUiBodyState extends State<MapUiBody> {
       ),
       onPressed: () {
         setState(() {
-          _minMaxZoomPreference =
-              _minMaxZoomPreference.minZoom == null
-                  ? const MinMaxZoomPreference(12.0, 16.0)
-                  : MinMaxZoomPreference.unbounded;
+          _minMaxZoomPreference = _minMaxZoomPreference.minZoom == null
+              ? const MinMaxZoomPreference(12.0, 16.0)
+              : MinMaxZoomPreference.unbounded;
         });
       },
     );
@@ -317,8 +313,9 @@ class MapUiBodyState extends State<MapUiBody> {
       child: Text('${_nightMode ? 'disable' : 'enable'} night mode'),
       onPressed: () async {
         _nightMode = !_nightMode;
-        final String style =
-            _nightMode ? await _getFileData('assets/night_mode.json') : '';
+        final String style = _nightMode
+            ? await _getFileData('assets/night_mode.json')
+            : '';
         setState(() {
           _mapStyle = style;
         });
@@ -328,7 +325,7 @@ class MapUiBodyState extends State<MapUiBody> {
 
   @override
   Widget build(BuildContext context) {
-    final GoogleMap googleMap = GoogleMap(
+    final googleMap = GoogleMap(
       webCameraControlEnabled: _webCameraControlEnabled,
       webCameraControlPosition: _webCameraControlPosition,
       onMapCreated: onMapCreated,
@@ -351,7 +348,7 @@ class MapUiBodyState extends State<MapUiBody> {
       onCameraMove: _updateCameraPosition,
     );
 
-    final List<Widget> columnChildren = <Widget>[
+    final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(

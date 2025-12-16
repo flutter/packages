@@ -96,8 +96,7 @@ abstract class FileSelectorPlatform extends PlatformInterface {
   /// Opens a file dialog for loading directories and returns a directory path.
   ///
   /// Returns `null` if the user cancels the operation.
-  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
-  // duplicate this to add a parameter.
+  @Deprecated('Use getDirectoryPathWithOptions instead')
   Future<String?> getDirectoryPath({
     String? initialDirectory,
     String? confirmButtonText,
@@ -105,16 +104,42 @@ abstract class FileSelectorPlatform extends PlatformInterface {
     throw UnimplementedError('getDirectoryPath() has not been implemented.');
   }
 
+  /// Opens a file dialog for loading directories and returns a directory path.
+  ///
+  /// The `options` argument controls additional settings that can be passed to
+  /// file dialog. See [FileDialogOptions] for more details.
+  ///
+  /// Returns `null` if the user cancels the operation.
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) {
+    return getDirectoryPath(
+      initialDirectory: options.initialDirectory,
+      confirmButtonText: options.confirmButtonText,
+    );
+  }
+
   /// Opens a file dialog for loading directories and returns multiple directory
   /// paths.
   ///
   /// Returns an empty list if the user cancels the operation.
-  // TODO(stuartmorgan): Switch to FileDialogOptions if we ever need to
-  // duplicate this to add a parameter.
+  @Deprecated('Use getDirectoryPathsWithOptions instead')
   Future<List<String>> getDirectoryPaths({
     String? initialDirectory,
     String? confirmButtonText,
   }) {
     throw UnimplementedError('getDirectoryPaths() has not been implemented.');
+  }
+
+  /// Opens a file dialog for loading directories and returns multiple directory
+  /// paths.
+  ///
+  /// The `options` argument controls additional settings that can be passed to
+  /// the file dialog. See [FileDialogOptions] for more details.
+  ///
+  /// Returns an empty list if the user cancels the operation.
+  Future<List<String>> getDirectoryPathsWithOptions(FileDialogOptions options) {
+    return getDirectoryPaths(
+      initialDirectory: options.initialDirectory,
+      confirmButtonText: options.confirmButtonText,
+    );
   }
 }

@@ -4,7 +4,7 @@ Provides bindings for Espresso tests of Flutter Android apps.
 
 |             | Android |
 |-------------|---------|
-| **Support** | SDK 21+ |
+| **Support** | SDK 24+ |
 
 ## Installation
 

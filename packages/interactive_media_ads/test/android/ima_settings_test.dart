@@ -25,8 +25,8 @@ void main() {
     test('language', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const String language = 'en';
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const language = 'en';
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(language: language),
       );
 
@@ -37,8 +37,8 @@ void main() {
     test('setAutoPlayAdBreaks', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const bool autoPlayAdBreaks = true;
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const autoPlayAdBreaks = true;
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setAutoPlayAdBreaks(autoPlayAdBreaks);
@@ -49,8 +49,8 @@ void main() {
     test('setDebugMode', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const bool debugMode = false;
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const debugMode = false;
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setDebugMode(debugMode);
@@ -61,8 +61,8 @@ void main() {
     test('setFeatureFlags', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const Map<String, String> featureFlags = <String, String>{'a': 'flag'};
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const featureFlags = <String, String>{'a': 'flag'};
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setFeatureFlags(featureFlags);
@@ -73,8 +73,8 @@ void main() {
     test('setMaxRedirects', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const int maxRedirects = 12;
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const maxRedirects = 12;
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setMaxRedirects(maxRedirects);
@@ -85,8 +85,8 @@ void main() {
     test('setPlayerType', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const String playerType = 'playerType';
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const playerType = 'playerType';
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setPlayerType(playerType);
@@ -97,8 +97,8 @@ void main() {
     test('setPlayerVersion', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const String playerVersion = 'playerVersion';
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const playerVersion = 'playerVersion';
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setPlayerVersion(playerVersion);
@@ -109,8 +109,8 @@ void main() {
     test('setPpid', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const String ppid = 'ppid';
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const ppid = 'ppid';
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setPpid(ppid);
@@ -121,8 +121,8 @@ void main() {
     test('setSessionID', () async {
       final MockImaSdkSettings mockImaSdkSettings = _mockImaSdkSettings();
 
-      const String sessionID = 'sessionID';
-      final AndroidImaSettings settings = AndroidImaSettings(
+      const sessionID = 'sessionID';
+      final settings = AndroidImaSettings(
         const PlatformImaSettingsCreationParams(),
       );
       await settings.setSessionID(sessionID);
@@ -133,8 +133,8 @@ void main() {
 }
 
 MockImaSdkSettings _mockImaSdkSettings() {
-  final MockImaSdkFactory mockImaSdkFactory = MockImaSdkFactory();
-  final MockImaSdkSettings mockImaSdkSettings = MockImaSdkSettings();
+  final mockImaSdkFactory = MockImaSdkFactory();
+  final mockImaSdkSettings = MockImaSdkSettings();
   when(
     mockImaSdkFactory.createImaSdkSettings(),
   ).thenAnswer((_) async => mockImaSdkSettings);

@@ -24,59 +24,65 @@ void main() {
         'foo',
       );
       expect(
-        RepositoryPackage(packagesDir
-                .childDirectory('foo')
-                .childDirectory('bar')
-                .childDirectory('baz'))
-            .displayName,
+        RepositoryPackage(
+          packagesDir
+              .childDirectory('foo')
+              .childDirectory('bar')
+              .childDirectory('baz'),
+        ).displayName,
         'foo/bar/baz',
       );
     });
 
     test('handles third_party/packages/', () async {
       expect(
-        RepositoryPackage(packagesDir.parent
-                .childDirectory('third_party')
-                .childDirectory('packages')
-                .childDirectory('foo')
-                .childDirectory('bar')
-                .childDirectory('baz'))
-            .displayName,
+        RepositoryPackage(
+          packagesDir.parent
+              .childDirectory('third_party')
+              .childDirectory('packages')
+              .childDirectory('foo')
+              .childDirectory('bar')
+              .childDirectory('baz'),
+        ).displayName,
         'foo/bar/baz',
       );
     });
 
     test('always uses Posix-style paths', () async {
       final Directory windowsPackagesDir = createPackagesDirectory(
-          MemoryFileSystem(style: FileSystemStyle.windows));
+        MemoryFileSystem(style: FileSystemStyle.windows),
+      );
 
       expect(
         RepositoryPackage(windowsPackagesDir.childDirectory('foo')).displayName,
         'foo',
       );
       expect(
-        RepositoryPackage(windowsPackagesDir
-                .childDirectory('foo')
-                .childDirectory('bar')
-                .childDirectory('baz'))
-            .displayName,
+        RepositoryPackage(
+          windowsPackagesDir
+              .childDirectory('foo')
+              .childDirectory('bar')
+              .childDirectory('baz'),
+        ).displayName,
         'foo/bar/baz',
       );
     });
 
     test('elides group name in grouped federated plugin structure', () async {
       expect(
-        RepositoryPackage(packagesDir
-                .childDirectory('a_plugin')
-                .childDirectory('a_plugin_platform_interface'))
-            .displayName,
+        RepositoryPackage(
+          packagesDir
+              .childDirectory('a_plugin')
+              .childDirectory('a_plugin_platform_interface'),
+        ).displayName,
         'a_plugin_platform_interface',
       );
       expect(
-        RepositoryPackage(packagesDir
-                .childDirectory('a_plugin')
-                .childDirectory('a_plugin_platform_web'))
-            .displayName,
+        RepositoryPackage(
+          packagesDir
+              .childDirectory('a_plugin')
+              .childDirectory('a_plugin_platform_web'),
+        ).displayName,
         'a_plugin_platform_web',
       );
     });
@@ -85,10 +91,9 @@ void main() {
     // with the group folder itself.
     test('does not elide group name for app-facing packages', () async {
       expect(
-        RepositoryPackage(packagesDir
-                .childDirectory('a_plugin')
-                .childDirectory('a_plugin'))
-            .displayName,
+        RepositoryPackage(
+          packagesDir.childDirectory('a_plugin').childDirectory('a_plugin'),
+        ).displayName,
         'a_plugin/a_plugin',
       );
     });
@@ -96,8 +101,10 @@ void main() {
 
   group('getExamples', () {
     test('handles a single Flutter example', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
 
       final List<RepositoryPackage> examples = plugin.getExamples().toList();
 
@@ -107,23 +114,32 @@ void main() {
     });
 
     test('handles multiple Flutter examples', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
-          examples: <String>['example1', 'example2']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>['example1', 'example2'],
+      );
 
       final List<RepositoryPackage> examples = plugin.getExamples().toList();
 
       expect(examples.length, 2);
       expect(examples[0].isExample, isTrue);
       expect(examples[1].isExample, isTrue);
-      expect(examples[0].path,
-          getExampleDir(plugin).childDirectory('example1').path);
-      expect(examples[1].path,
-          getExampleDir(plugin).childDirectory('example2').path);
+      expect(
+        examples[0].path,
+        getExampleDir(plugin).childDirectory('example1').path,
+      );
+      expect(
+        examples[1].path,
+        getExampleDir(plugin).childDirectory('example2').path,
+      );
     });
 
     test('handles a single non-Flutter example', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       final List<RepositoryPackage> examples = package.getExamples().toList();
 
@@ -134,25 +150,33 @@ void main() {
 
     test('handles multiple non-Flutter examples', () async {
       final RepositoryPackage package = createFakePackage(
-          'a_package', packagesDir,
-          examples: <String>['example1', 'example2']);
+        'a_package',
+        packagesDir,
+        examples: <String>['example1', 'example2'],
+      );
 
       final List<RepositoryPackage> examples = package.getExamples().toList();
 
       expect(examples.length, 2);
       expect(examples[0].isExample, isTrue);
       expect(examples[1].isExample, isTrue);
-      expect(examples[0].path,
-          getExampleDir(package).childDirectory('example1').path);
-      expect(examples[1].path,
-          getExampleDir(package).childDirectory('example2').path);
+      expect(
+        examples[0].path,
+        getExampleDir(package).childDirectory('example1').path,
+      );
+      expect(
+        examples[1].path,
+        getExampleDir(package).childDirectory('example2').path,
+      );
     });
   });
 
   group('federated plugin queries', () {
     test('all return false for a simple plugin', () {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
       expect(plugin.isFederated, false);
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, false);
@@ -161,8 +185,10 @@ void main() {
     });
 
     test('handle app-facing packages', () {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir.childDirectory('a_plugin'));
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir.childDirectory('a_plugin'),
+      );
       expect(plugin.isFederated, true);
       expect(plugin.isAppFacing, true);
       expect(plugin.isPlatformInterface, false);
@@ -172,8 +198,9 @@ void main() {
 
     test('handle platform interface packages', () {
       final RepositoryPackage plugin = createFakePlugin(
-          'a_plugin_platform_interface',
-          packagesDir.childDirectory('a_plugin'));
+        'a_plugin_platform_interface',
+        packagesDir.childDirectory('a_plugin'),
+      );
       expect(plugin.isFederated, true);
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, true);
@@ -185,7 +212,9 @@ void main() {
       // A platform interface can end with anything, not just one of the known
       // platform names, because of cases like webview_flutter_wkwebview.
       final RepositoryPackage plugin = createFakePlugin(
-          'a_plugin_foo', packagesDir.childDirectory('a_plugin'));
+        'a_plugin_foo',
+        packagesDir.childDirectory('a_plugin'),
+      );
       expect(plugin.isFederated, true);
       expect(plugin.isAppFacing, false);
       expect(plugin.isPlatformInterface, false);
@@ -196,8 +225,10 @@ void main() {
 
   group('pubspec', () {
     test('file', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
 
       final File pubspecFile = plugin.pubspecFile;
 
@@ -205,8 +236,11 @@ void main() {
     });
 
     test('parsing', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
-          examples: <String>['example1', 'example2']);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>['example1', 'example2'],
+      );
 
       final Pubspec pubspec = plugin.parsePubspec();
 
@@ -216,14 +250,19 @@ void main() {
 
   group('requiresFlutter', () {
     test('returns true for Flutter package', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, isFlutter: true);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        isFlutter: true,
+      );
       expect(package.requiresFlutter(), true);
     });
 
     test('returns true for a dev dependency on Flutter', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       final File pubspecFile = package.pubspecFile;
       final Pubspec pubspec = package.parsePubspec();
       pubspec.devDependencies['flutter'] = SdkDependency('flutter');
@@ -233,8 +272,10 @@ void main() {
     });
 
     test('returns false for non-Flutter package', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       expect(package.requiresFlutter(), false);
     });
   });

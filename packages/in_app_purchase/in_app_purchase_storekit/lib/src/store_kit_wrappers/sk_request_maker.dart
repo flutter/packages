@@ -6,10 +6,9 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 
+import '../in_app_purchase_apis.dart';
 import '../messages.g.dart';
 import 'sk_product_wrapper.dart';
-
-InAppPurchaseAPI _hostApi = InAppPurchaseAPI();
 
 /// A request maker that handles all the requests made by SKRequest subclasses.
 ///
@@ -29,7 +28,7 @@ class SKRequestMaker {
   Future<SkProductResponseWrapper> startProductRequest(
     List<String> productIdentifiers,
   ) async {
-    final SKProductsResponseMessage productResponsePigeon = await _hostApi
+    final SKProductsResponseMessage productResponsePigeon = await hostApi
         .startProductRequest(productIdentifiers);
 
     // should products be null or <String>[] ?
@@ -55,11 +54,11 @@ class SKRequestMaker {
   Future<void> startRefreshReceiptRequest({
     Map<String, Object?>? receiptProperties,
   }) {
-    return _hostApi.refreshReceipt(receiptProperties: receiptProperties);
+    return hostApi.refreshReceipt(receiptProperties: receiptProperties);
   }
 
   /// Check if current device supports StoreKit 2.
   static Future<bool> supportsStoreKit2() async {
-    return _hostApi.supportsStoreKit2();
+    return hostApi.supportsStoreKit2();
   }
 }

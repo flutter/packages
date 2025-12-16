@@ -124,7 +124,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     Iterable<AuthMessages> messagesList,
   ) {
     IOSAuthMessages? messages;
-    for (final AuthMessages entry in messagesList) {
+    for (final entry in messagesList) {
       if (entry is IOSAuthMessages) {
         messages = entry;
         break;
@@ -142,7 +142,7 @@ class LocalAuthDarwin extends LocalAuthPlatform {
     Iterable<AuthMessages> messagesList,
   ) {
     MacOSAuthMessages? messages;
-    for (final AuthMessages entry in messagesList) {
+    for (final entry in messagesList) {
       if (entry is MacOSAuthMessages) {
         messages = entry;
         break;

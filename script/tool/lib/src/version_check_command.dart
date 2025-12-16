@@ -61,22 +61,21 @@ Map<Version, NextVersionType> getAllowedNextVersions(
   Version version, {
   required Version newVersion,
 }) {
-  final Map<Version, NextVersionType> allowedNextVersions =
-      <Version, NextVersionType>{
+  final allowedNextVersions = <Version, NextVersionType>{
     version.nextMajor: NextVersionType.BREAKING_MAJOR,
     version.nextMinor: NextVersionType.MINOR,
     version.nextPatch: NextVersionType.PATCH,
   };
 
   if (version.major < 1 && newVersion.major < 1) {
-    int nextBuildNumber = -1;
+    var nextBuildNumber = -1;
     if (version.build.isEmpty) {
       nextBuildNumber = 1;
     } else {
-      final int currentBuildNumber = version.build.first as int;
+      final currentBuildNumber = version.build.first as int;
       nextBuildNumber = currentBuildNumber + 1;
     }
-    final Version nextBuildVersion = Version(
+    final nextBuildVersion = Version(
       version.major,
       version.minor,
       version.patch,
@@ -100,34 +99,45 @@ class VersionCheckCommand extends PackageLoopingCommand {
     super.platform,
     super.gitDir,
     http.Client? httpClient,
-  }) : _pubVersionFinder =
-            PubVersionFinder(httpClient: httpClient ?? http.Client()) {
+  }) : _pubVersionFinder = PubVersionFinder(
+         httpClient: httpClient ?? http.Client(),
+       ) {
     argParser.addFlag(
       _againstPubFlag,
-      help: 'Whether the version check should run against the version on pub.\n'
+      help:
+          'Whether the version check should run against the version on pub.\n'
           'Defaults to false, which means the version check only run against '
           'the previous version in code.',
     );
-    argParser.addOption(_prLabelsArg,
-        help: 'A comma-separated list of labels associated with this PR, '
-            'if applicable.\n\n'
-            'If supplied, this may be to allow overrides to some version '
-            'checks.');
-    argParser.addFlag(_checkForMissingChanges,
-        help: 'Validates that changes to packages include CHANGELOG and '
-            'version changes unless they meet an established exemption.\n\n'
-            'If used with --$_prLabelsArg, this is should only be '
-            'used in pre-submit CI checks, to  prevent post-submit breakage '
-            'when labels are no longer applicable.',
-        hide: true);
-    argParser.addFlag(_ignorePlatformInterfaceBreaks,
-        help: 'Bypasses the check that platform interfaces do not contain '
-            'breaking changes.\n\n'
-            'This is only intended for use in post-submit CI checks, to '
-            'prevent post-submit breakage when overriding the check with '
-            'labels. Pre-submit checks should always use '
-            '--$_prLabelsArg instead.',
-        hide: true);
+    argParser.addOption(
+      _prLabelsArg,
+      help:
+          'A comma-separated list of labels associated with this PR, '
+          'if applicable.\n\n'
+          'If supplied, this may be to allow overrides to some version '
+          'checks.',
+    );
+    argParser.addFlag(
+      _checkForMissingChanges,
+      help:
+          'Validates that changes to packages include CHANGELOG and '
+          'version changes unless they meet an established exemption.\n\n'
+          'If used with --$_prLabelsArg, this is should only be '
+          'used in pre-submit CI checks, to  prevent post-submit breakage '
+          'when labels are no longer applicable.',
+      hide: true,
+    );
+    argParser.addFlag(
+      _ignorePlatformInterfaceBreaks,
+      help:
+          'Bypasses the check that platform interfaces do not contain '
+          'breaking changes.\n\n'
+          'This is only intended for use in post-submit CI checks, to '
+          'prevent post-submit breakage when overriding the check with '
+          'labels. Pre-submit checks should always use '
+          '--$_prLabelsArg instead.',
+      hide: true,
+    );
   }
 
   static const String _againstPubFlag = 'against-pub';
@@ -191,18 +201,22 @@ class VersionCheckCommand extends PackageLoopingCommand {
 
     final Version? currentPubspecVersion = pubspec.version;
     if (currentPubspecVersion == null) {
-      printError('${indentation}No version found in pubspec.yaml. A package '
-          'that intentionally has no version should be marked '
-          '"publish_to: none".');
+      printError(
+        '${indentation}No version found in pubspec.yaml. A package '
+        'that intentionally has no version should be marked '
+        '"publish_to: none".',
+      );
       // No remaining checks make sense, so fail immediately.
       return PackageResult.fail(<String>['No pubspec.yaml version.']);
     }
 
-    final List<String> errors = <String>[];
+    final errors = <String>[];
 
     bool versionChanged;
-    final _CurrentVersionState versionState =
-        await _getVersionState(package, pubspec: pubspec);
+    final _CurrentVersionState versionState = await _getVersionState(
+      package,
+      pubspec: pubspec,
+    );
     switch (versionState) {
       case _CurrentVersionState.unchanged:
         versionChanged = false;
@@ -218,8 +232,11 @@ class VersionCheckCommand extends PackageLoopingCommand {
         errors.add('Unable to determine previous version.');
     }
 
-    if (!(await _validateChangelogVersion(package,
-        pubspec: pubspec, pubspecVersionState: versionState))) {
+    if (!(await _validateChangelogVersion(
+      package,
+      pubspec: pubspec,
+      pubspecVersionState: versionState,
+    ))) {
       errors.add('CHANGELOG.md failed validation.');
     }
 
@@ -269,8 +286,10 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
   /// Returns the version of [package] from git at the base comparison hash.
   Future<Version?> _getPreviousVersionFromGit(RepositoryPackage package) async {
     final File pubspecFile = package.pubspecFile;
-    final String relativePath =
-        path.relative(pubspecFile.absolute.path, from: (await gitDir).path);
+    final String relativePath = path.relative(
+      pubspecFile.absolute.path,
+      from: (await gitDir).path,
+    );
     // Use Posix-style paths for git.
     final String gitPath = path.style == p.Style.windows
         ? p.posix.joinAll(path.split(relativePath))
@@ -296,7 +315,8 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       }
       if (previousVersion != Version.none) {
         print(
-            '$indentation${pubspec.name}: Current largest version on pub: $previousVersion');
+          '$indentation${pubspec.name}: Current largest version on pub: $previousVersion',
+        );
       }
     } else {
       previousVersionSource = baseSha;
@@ -304,10 +324,13 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
           await _getPreviousVersionFromGit(package) ?? Version.none;
     }
     if (previousVersion == Version.none) {
-      print('${indentation}Unable to find previous version '
-          '${getBoolArg(_againstPubFlag) ? 'on pub server' : 'at git base'}.');
+      print(
+        '${indentation}Unable to find previous version '
+        '${getBoolArg(_againstPubFlag) ? 'on pub server' : 'at git base'}.',
+      );
       logWarning(
-          '${indentation}If this package is not new, something has gone wrong.');
+        '${indentation}If this package is not new, something has gone wrong.',
+      );
       return _CurrentVersionState.newPackage;
     }
 
@@ -322,9 +345,13 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       // to be a revert rather than a typo by checking that the transition
       // from the lower version to the new version would have been valid.
       if (_shouldAllowVersionChange(
-          oldVersion: currentVersion, newVersion: previousVersion)) {
-        logWarning('${indentation}New version is lower than previous version. '
-            'This is assumed to be a revert.');
+        oldVersion: currentVersion,
+        newVersion: previousVersion,
+      )) {
+        logWarning(
+          '${indentation}New version is lower than previous version. '
+          'This is assumed to be a revert.',
+        );
         return _CurrentVersionState.validRevert;
       }
     }
@@ -333,29 +360,36 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
         getAllowedNextVersions(previousVersion, newVersion: currentVersion);
 
     if (_shouldAllowVersionChange(
-        oldVersion: previousVersion, newVersion: currentVersion)) {
+      oldVersion: previousVersion,
+      newVersion: currentVersion,
+    )) {
       print('$indentation$previousVersion -> $currentVersion');
     } else {
-      printError('${indentation}Incorrectly updated version.\n'
-          '${indentation}HEAD: $currentVersion, $previousVersionSource: $previousVersion.\n'
-          '${indentation}Allowed versions: $allowedNextVersions');
+      printError(
+        '${indentation}Incorrectly updated version.\n'
+        '${indentation}HEAD: $currentVersion, $previousVersionSource: $previousVersion.\n'
+        '${indentation}Allowed versions: $allowedNextVersions',
+      );
       return _CurrentVersionState.invalidChange;
     }
 
     // Check whether the version (or for a pre-release, the version that
     // pre-release would eventually be released as) is a breaking change, and
     // if so, validate it.
-    final Version targetReleaseVersion =
-        currentVersion.isPreRelease ? currentVersion.nextPatch : currentVersion;
+    final Version targetReleaseVersion = currentVersion.isPreRelease
+        ? currentVersion.nextPatch
+        : currentVersion;
     if (allowedNextVersions[targetReleaseVersion] ==
             NextVersionType.BREAKING_MAJOR &&
         !_validateBreakingChange(package)) {
-      printError('${indentation}Breaking change detected.\n'
-          '${indentation}Breaking changes to platform interfaces are not '
-          'allowed without explicit justification.\n'
-          '${indentation}See '
-          'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
-          'for more information.');
+      printError(
+        '${indentation}Breaking change detected.\n'
+        '${indentation}Breaking changes to platform interfaces are not '
+        'allowed without explicit justification.\n'
+        '${indentation}See '
+        'https://github.com/flutter/flutter/blob/master/docs/ecosystem/contributing/README.md '
+        'for more information.',
+      );
       return _CurrentVersionState.invalidChange;
     }
 
@@ -390,13 +424,14 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
     String? versionString = firstLineWithText?.split(' ').last;
     String? leadingMarkdown = firstLineWithText?.split(' ').first;
 
-    final String badNextErrorMessage = '${indentation}When bumping the version '
+    final badNextErrorMessage =
+        '${indentation}When bumping the version '
         'for release, the NEXT section should be incorporated into the new '
         "version's release notes.";
 
     // Skip validation for the special NEXT version that's used to accumulate
     // changes that don't warrant publishing on their own.
-    final bool hasNextSection = versionString == 'NEXT';
+    final hasNextSection = versionString == 'NEXT';
     if (hasNextSection) {
       // NEXT should not be present in a commit that increases the version.
       if (pubspecVersionState == _CurrentVersionState.validIncrease ||
@@ -405,7 +440,8 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
         return false;
       }
       print(
-          '${indentation}Found NEXT; validating next version in the CHANGELOG.');
+        '${indentation}Found NEXT; validating next version in the CHANGELOG.',
+      );
       // Ensure that the version in pubspec hasn't changed without updating
       // CHANGELOG. That means the next version entry in the CHANGELOG should
       // pass the normal validation.
@@ -420,12 +456,14 @@ ${indentation}HTTP response: ${pubVersionFinderResponse.httpResponse.body}
       }
     }
 
-    final bool validLeadingMarkdown = leadingMarkdown == '##';
+    final validLeadingMarkdown = leadingMarkdown == '##';
     if (versionString == null || !validLeadingMarkdown) {
       printError('${indentation}Unable to find a version in CHANGELOG.md');
-      print('${indentation}The current version should be on a line starting '
-          'with "## ", either on the first non-empty line or after a "## NEXT" '
-          'section.');
+      print(
+        '${indentation}The current version should be on a line starting '
+        'with "## ", either on the first non-empty line or after a "## NEXT" '
+        'section.',
+      );
       return false;
     }
 
@@ -448,7 +486,7 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
 
     // If NEXT wasn't the first section, it should not exist at all.
     if (!hasNextSection) {
-      final RegExp nextRegex = RegExp(r'^#+\s*NEXT\s*$');
+      final nextRegex = RegExp(r'^#+\s*NEXT\s*$');
       if (lines.any((String line) => nextRegex.hasMatch(line))) {
         printError(badNextErrorMessage);
         return false;
@@ -478,15 +516,17 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
 
     if (getBoolArg(_ignorePlatformInterfaceBreaks)) {
       logWarning(
-          '${indentation}Allowing breaking change to ${package.displayName} '
-          'due to --$_ignorePlatformInterfaceBreaks');
+        '${indentation}Allowing breaking change to ${package.displayName} '
+        'due to --$_ignorePlatformInterfaceBreaks',
+      );
       return true;
     }
 
     if (_prLabels.contains(_breakingChangeOverrideLabel)) {
       logWarning(
-          '${indentation}Allowing breaking change to ${package.displayName} '
-          'due to the "$_breakingChangeOverrideLabel" label.');
+        '${indentation}Allowing breaking change to ${package.displayName} '
+        'due to the "$_breakingChangeOverrideLabel" label.',
+      );
       return true;
     }
 
@@ -504,8 +544,10 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
   }
 
   /// Returns true if the given version transition should be allowed.
-  bool _shouldAllowVersionChange(
-      {required Version oldVersion, required Version newVersion}) {
+  bool _shouldAllowVersionChange({
+    required Version oldVersion,
+    required Version newVersion,
+  }) {
     // Get the non-pre-release next version mapping.
     final Map<Version, NextVersionType> allowedNextVersions =
         getAllowedNextVersions(oldVersion, newVersion: newVersion);
@@ -533,62 +575,76 @@ ${indentation}The first version listed in CHANGELOG.md is $fromChangeLog.
     // Find the relative path to the current package, as it would appear at the
     // beginning of a path reported by changedFiles (which always uses
     // Posix paths).
-    final Directory gitRoot =
-        packagesDir.fileSystem.directory((await gitDir).path);
-    final String relativePackagePath =
-        getRelativePosixPath(package.directory, from: gitRoot);
+    final Directory gitRoot = packagesDir.fileSystem.directory(
+      (await gitDir).path,
+    );
+    final String relativePackagePath = getRelativePosixPath(
+      package.directory,
+      from: gitRoot,
+    );
 
-    final PackageChangeState state = await checkPackageChangeState(package,
-        changedPaths: changedFiles,
-        relativePackagePath: relativePackagePath,
-        git: await retrieveVersionFinder());
+    final PackageChangeState state = await checkPackageChangeState(
+      package,
+      changedPaths: changedFiles,
+      relativePackagePath: relativePackagePath,
+      git: await retrieveVersionFinder(),
+    );
 
     if (!state.hasChanges) {
       return null;
     }
 
-    bool missingVersionChange = false;
-    bool missingChangelogChange = false;
+    var missingVersionChange = false;
+    var missingChangelogChange = false;
     if (state.needsVersionChange) {
       if (_prLabels.contains(_missingVersionChangeOverrideLabel)) {
-        logWarning('Ignoring lack of version change due to the '
-            '"$_missingVersionChangeOverrideLabel" label.');
+        logWarning(
+          'Ignoring lack of version change due to the '
+          '"$_missingVersionChangeOverrideLabel" label.',
+        );
       } else {
         missingVersionChange = true;
         printError(
-            'No version change found, but the change to this package could '
-            'not be verified to be exempt\n'
-            'from version changes according to repository policy.\n'
-            'If this is a false positive, please comment in '
-            'the PR to explain why the PR\n'
-            'is exempt, and add (or ask your reviewer to add) the '
-            '"$_missingVersionChangeOverrideLabel" label.\n');
+          'No version change found, but the change to this package could '
+          'not be verified to be exempt\n'
+          'from version changes according to repository policy.\n'
+          'If this is a false positive, please comment in '
+          'the PR to explain why the PR\n'
+          'is exempt, and add (or ask your reviewer to add) the '
+          '"$_missingVersionChangeOverrideLabel" label.\n',
+        );
       }
     }
 
     if (!state.hasChangelogChange && state.needsChangelogChange) {
       if (_prLabels.contains(_missingChangelogChangeOverrideLabel)) {
-        logWarning('Ignoring lack of CHANGELOG update due to the '
-            '"$_missingChangelogChangeOverrideLabel" label.');
+        logWarning(
+          'Ignoring lack of CHANGELOG update due to the '
+          '"$_missingChangelogChangeOverrideLabel" label.',
+        );
       } else {
         missingChangelogChange = true;
-        printError('No CHANGELOG change found.\n'
-            'If this PR needs an exemption from the standard policy of listing '
-            'all changes in the CHANGELOG,\n'
-            'comment in the PR to explain why the PR is exempt, and add (or '
-            'ask your reviewer to add) the\n'
-            '"$_missingChangelogChangeOverrideLabel" label.\n'
-            'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
-            'the contributing guide.\n');
+        printError(
+          'No CHANGELOG change found.\n'
+          'If this PR needs an exemption from the standard policy of listing '
+          'all changes in the CHANGELOG,\n'
+          'comment in the PR to explain why the PR is exempt, and add (or '
+          'ask your reviewer to add) the\n'
+          '"$_missingChangelogChangeOverrideLabel" label.\n'
+          'Otherwise, please add a NEXT entry in the CHANGELOG as described in '
+          'the contributing guide.\n',
+        );
       }
     }
 
     if (missingVersionChange && missingChangelogChange) {
-      printError('If this PR is not exempt, you can update version and '
-          'CHANGELOG with the "update-release-info" command.\\\n'
-          'See here for an example: '
-          'https://github.com/flutter/packages/blob/main/script/tool/README.md#update-changelog-and-version\\\n'
-          'For more details on versioning, check the contributing guide.');
+      printError(
+        'If this PR is not exempt, you can update version and '
+        'CHANGELOG with the "update-release-info" command.\\\n'
+        'See here for an example: '
+        'https://github.com/flutter/packages/blob/main/script/tool/README.md#update-changelog-and-version\\\n'
+        'For more details on versioning, check the contributing guide.',
+      );
     }
     if (missingVersionChange) {
       return 'Missing version change';

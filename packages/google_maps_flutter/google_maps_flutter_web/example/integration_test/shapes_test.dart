@@ -46,7 +46,7 @@ void main() {
     });
 
     testWidgets('addCircles', (WidgetTester tester) async {
-      final Set<Circle> circles = <Circle>{
+      final circles = <Circle>{
         const Circle(circleId: CircleId('1')),
         const Circle(circleId: CircleId('2')),
       };
@@ -60,14 +60,12 @@ void main() {
     });
 
     testWidgets('changeCircles', (WidgetTester tester) async {
-      final Set<Circle> circles = <Circle>{
-        const Circle(circleId: CircleId('1')),
-      };
+      final circles = <Circle>{const Circle(circleId: CircleId('1'))};
       controller.addCircles(circles);
 
       expect(controller.circles[const CircleId('1')]?.circle?.visible, isTrue);
 
-      final Set<Circle> updatedCircles = <Circle>{
+      final updatedCircles = <Circle>{
         const Circle(circleId: CircleId('1'), visible: false),
       };
       controller.changeCircles(updatedCircles);
@@ -77,7 +75,7 @@ void main() {
     });
 
     testWidgets('removeCircles', (WidgetTester tester) async {
-      final Set<Circle> circles = <Circle>{
+      final circles = <Circle>{
         const Circle(circleId: CircleId('1')),
         const Circle(circleId: CircleId('2')),
         const Circle(circleId: CircleId('3')),
@@ -88,7 +86,7 @@ void main() {
       expect(controller.circles.length, 3);
 
       // Remove some circles...
-      final Set<CircleId> circleIdsToRemove = <CircleId>{
+      final circleIdsToRemove = <CircleId>{
         const CircleId('1'),
         const CircleId('3'),
       };
@@ -102,7 +100,7 @@ void main() {
     });
 
     testWidgets('Converts colors to CSS', (WidgetTester tester) async {
-      final Set<Circle> circles = <Circle>{
+      final circles = <Circle>{
         const Circle(
           circleId: CircleId('1'),
           fillColor: Color(0x7FFABADA),
@@ -129,7 +127,7 @@ void main() {
     testWidgets('addCircles sets clickable according to consumeTapEvents', (
       WidgetTester tester,
     ) async {
-      final Set<Circle> circles = <Circle>{
+      final circles = <Circle>{
         const Circle(circleId: CircleId('1'), consumeTapEvents: true),
         const Circle(circleId: CircleId('2')),
       };
@@ -162,7 +160,7 @@ void main() {
     });
 
     testWidgets('addPolygons', (WidgetTester tester) async {
-      final Set<Polygon> polygons = <Polygon>{
+      final polygons = <Polygon>{
         const Polygon(polygonId: PolygonId('1')),
         const Polygon(polygonId: PolygonId('2')),
       };
@@ -176,9 +174,7 @@ void main() {
     });
 
     testWidgets('changePolygons', (WidgetTester tester) async {
-      final Set<Polygon> polygons = <Polygon>{
-        const Polygon(polygonId: PolygonId('1')),
-      };
+      final polygons = <Polygon>{const Polygon(polygonId: PolygonId('1'))};
       controller.addPolygons(polygons);
 
       expect(
@@ -187,7 +183,7 @@ void main() {
       );
 
       // Update the polygon
-      final Set<Polygon> updatedPolygons = <Polygon>{
+      final updatedPolygons = <Polygon>{
         const Polygon(polygonId: PolygonId('1'), visible: false),
       };
       controller.changePolygons(updatedPolygons);
@@ -200,7 +196,7 @@ void main() {
     });
 
     testWidgets('removePolygons', (WidgetTester tester) async {
-      final Set<Polygon> polygons = <Polygon>{
+      final polygons = <Polygon>{
         const Polygon(polygonId: PolygonId('1')),
         const Polygon(polygonId: PolygonId('2')),
         const Polygon(polygonId: PolygonId('3')),
@@ -211,7 +207,7 @@ void main() {
       expect(controller.polygons.length, 3);
 
       // Remove some polygons...
-      final Set<PolygonId> polygonIdsToRemove = <PolygonId>{
+      final polygonIdsToRemove = <PolygonId>{
         const PolygonId('1'),
         const PolygonId('3'),
       };
@@ -225,7 +221,7 @@ void main() {
     });
 
     testWidgets('Converts colors to CSS', (WidgetTester tester) async {
-      final Set<Polygon> polygons = <Polygon>{
+      final polygons = <Polygon>{
         const Polygon(
           polygonId: PolygonId('1'),
           fillColor: Color(0x7FFABADA),
@@ -250,7 +246,7 @@ void main() {
     });
 
     testWidgets('Handle Polygons with holes', (WidgetTester tester) async {
-      final Set<Polygon> polygons = <Polygon>{
+      final polygons = <Polygon>{
         const Polygon(
           polygonId: PolygonId('BermudaTriangle'),
           points: <LatLng>[
@@ -276,7 +272,7 @@ void main() {
     });
 
     testWidgets('Polygon with hole has a hole', (WidgetTester tester) async {
-      final Set<Polygon> polygons = <Polygon>{
+      final polygons = <Polygon>{
         const Polygon(
           polygonId: PolygonId('BermudaTriangle'),
           points: <LatLng>[
@@ -297,7 +293,7 @@ void main() {
       controller.addPolygons(polygons);
 
       final gmaps.Polygon? polygon = controller.polygons.values.first.polygon;
-      final gmaps.LatLng pointInHole = gmaps.LatLng(28.632, -68.401);
+      final pointInHole = gmaps.LatLng(28.632, -68.401);
 
       expect(geometry.poly.containsLocation(pointInHole, polygon!), false);
     });
@@ -305,7 +301,7 @@ void main() {
     testWidgets('Hole Path gets reversed to display correctly', (
       WidgetTester tester,
     ) async {
-      final Set<Polygon> polygons = <Polygon>{
+      final polygons = <Polygon>{
         const Polygon(
           polygonId: PolygonId('BermudaTriangle'),
           points: <LatLng>[
@@ -336,7 +332,7 @@ void main() {
     testWidgets('addPolygons sets clickable according to consumeTapEvents', (
       WidgetTester tester,
     ) async {
-      final Set<Polygon> polygons = <Polygon>{
+      final polygons = <Polygon>{
         const Polygon(polygonId: PolygonId('1'), consumeTapEvents: true),
         const Polygon(polygonId: PolygonId('2')),
       };
@@ -369,7 +365,7 @@ void main() {
     });
 
     testWidgets('addPolylines', (WidgetTester tester) async {
-      final Set<Polyline> polylines = <Polyline>{
+      final polylines = <Polyline>{
         const Polyline(polylineId: PolylineId('1')),
         const Polyline(polylineId: PolylineId('2')),
       };
@@ -383,14 +379,12 @@ void main() {
     });
 
     testWidgets('changePolylines', (WidgetTester tester) async {
-      final Set<Polyline> polylines = <Polyline>{
-        const Polyline(polylineId: PolylineId('1')),
-      };
+      final polylines = <Polyline>{const Polyline(polylineId: PolylineId('1'))};
       controller.addPolylines(polylines);
 
       expect(controller.lines[const PolylineId('1')]?.line?.visible, isTrue);
 
-      final Set<Polyline> updatedPolylines = <Polyline>{
+      final updatedPolylines = <Polyline>{
         const Polyline(polylineId: PolylineId('1'), visible: false),
       };
       controller.changePolylines(updatedPolylines);
@@ -400,7 +394,7 @@ void main() {
     });
 
     testWidgets('removePolylines', (WidgetTester tester) async {
-      final Set<Polyline> polylines = <Polyline>{
+      final polylines = <Polyline>{
         const Polyline(polylineId: PolylineId('1')),
         const Polyline(polylineId: PolylineId('2')),
         const Polyline(polylineId: PolylineId('3')),
@@ -411,7 +405,7 @@ void main() {
       expect(controller.lines.length, 3);
 
       // Remove some polylines...
-      final Set<PolylineId> polylineIdsToRemove = <PolylineId>{
+      final polylineIdsToRemove = <PolylineId>{
         const PolylineId('1'),
         const PolylineId('3'),
       };
@@ -425,7 +419,7 @@ void main() {
     });
 
     testWidgets('Converts colors to CSS', (WidgetTester tester) async {
-      final Set<Polyline> lines = <Polyline>{
+      final lines = <Polyline>{
         const Polyline(polylineId: PolylineId('1'), color: Color(0x7FFABADA)),
       };
 
@@ -443,7 +437,7 @@ void main() {
     testWidgets('addPolylines sets clickable according to consumeTapEvents', (
       WidgetTester tester,
     ) async {
-      final Set<Polyline> polylines = <Polyline>{
+      final polylines = <Polyline>{
         const Polyline(polylineId: PolylineId('1'), consumeTapEvents: true),
         const Polyline(polylineId: PolylineId('2')),
       };
@@ -468,7 +462,7 @@ void main() {
   group('HeatmapsController', () {
     late HeatmapsController controller;
 
-    const List<WeightedLatLng> heatmapPoints = <WeightedLatLng>[
+    const heatmapPoints = <WeightedLatLng>[
       WeightedLatLng(LatLng(37.782, -122.447)),
       WeightedLatLng(LatLng(37.782, -122.445)),
       WeightedLatLng(LatLng(37.782, -122.443)),
@@ -491,7 +485,7 @@ void main() {
     });
 
     testWidgets('addHeatmaps', (WidgetTester tester) async {
-      final Set<Heatmap> heatmaps = <Heatmap>{
+      final heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,
@@ -513,7 +507,7 @@ void main() {
     });
 
     testWidgets('changeHeatmaps', (WidgetTester tester) async {
-      final Set<Heatmap> heatmaps = <Heatmap>{
+      final heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: <WeightedLatLng>[],
@@ -527,7 +521,7 @@ void main() {
         hasLength(0),
       );
 
-      final Set<Heatmap> updatedHeatmaps = <Heatmap>{
+      final updatedHeatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: <WeightedLatLng>[WeightedLatLng(LatLng(0, 0))],
@@ -544,7 +538,7 @@ void main() {
     });
 
     testWidgets('removeHeatmaps', (WidgetTester tester) async {
-      final Set<Heatmap> heatmaps = <Heatmap>{
+      final heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,
@@ -567,7 +561,7 @@ void main() {
       expect(controller.heatmaps.length, 3);
 
       // Remove some polylines...
-      final Set<HeatmapId> heatmapIdsToRemove = <HeatmapId>{
+      final heatmapIdsToRemove = <HeatmapId>{
         const HeatmapId('1'),
         const HeatmapId('3'),
       };
@@ -581,7 +575,7 @@ void main() {
     });
 
     testWidgets('Converts colors to CSS', (WidgetTester tester) async {
-      final Set<Heatmap> heatmaps = <Heatmap>{
+      final heatmaps = <Heatmap>{
         const Heatmap(
           heatmapId: HeatmapId('1'),
           data: heatmapPoints,

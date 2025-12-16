@@ -1,3 +1,12 @@
+## 1.1.0
+
+* Adds `canCreateDirectories` param to `getSaveLocation`, `getDirectoryPath` and `getDirectoryPaths` to control whether users can create directories during location selection.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
 ## 1.0.4
 
 * Updates the example app and README examples to work on iOS.

@@ -6,10 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('Sanity', () async {
-    final Cache cache = Cache();
+    final cache = Cache();
     expect(cache.maximumSize, 100);
     expect(cache.count, 0);
-    final Completer<ByteData> completer = Completer<ByteData>();
+    final completer = Completer<ByteData>();
     final Future<ByteData> put = cache.putIfAbsent(1, () => completer.future);
     expect(put, completer.future);
     expect(cache.count, 0);
@@ -30,14 +30,11 @@ void main() {
   });
 
   test('LRU', () async {
-    final Cache cache = Cache();
+    final cache = Cache();
     cache.maximumSize = 2;
-    final Completer<ByteData> completerA =
-        Completer<ByteData>()..complete(ByteData(1));
-    final Completer<ByteData> completerB =
-        Completer<ByteData>()..complete(ByteData(2));
-    final Completer<ByteData> completerC =
-        Completer<ByteData>()..complete(ByteData(3));
+    final completerA = Completer<ByteData>()..complete(ByteData(1));
+    final completerB = Completer<ByteData>()..complete(ByteData(2));
+    final completerC = Completer<ByteData>()..complete(ByteData(3));
 
     expect(cache.count, 0);
 
@@ -72,7 +69,7 @@ void main() {
   });
 
   test('Adding beyond max with synchronous futures', () async {
-    final Cache cache = Cache();
+    final cache = Cache();
     cache.maximumSize = 2;
     final Future<ByteData> completerA = SynchronousFuture<ByteData>(
       ByteData(1),
@@ -103,11 +100,11 @@ void main() {
   });
 
   test('Futures completing late/together', () async {
-    final Cache cache = Cache();
+    final cache = Cache();
     cache.maximumSize = 2;
-    final Completer<ByteData> completerA = Completer<ByteData>();
-    final Completer<ByteData> completerB = Completer<ByteData>();
-    final Completer<ByteData> completerC = Completer<ByteData>();
+    final completerA = Completer<ByteData>();
+    final completerB = Completer<ByteData>();
+    final completerC = Completer<ByteData>();
 
     expect(cache.count, 0);
 

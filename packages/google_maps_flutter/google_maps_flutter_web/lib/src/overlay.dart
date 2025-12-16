@@ -25,10 +25,9 @@ class TileOverlayController {
   /// [TileOverlay].
   void update(TileOverlay tileOverlay) {
     _tileOverlay = tileOverlay;
-    _gmMapType =
-        gmaps.MapType()
-          ..tileSize = gmaps.Size(logicalTileSize, logicalTileSize)
-          ..getTile = _getTile;
+    _gmMapType = gmaps.MapType()
+      ..tileSize = gmaps.Size(logicalTileSize, logicalTileSize)
+      ..getTile = _getTile;
   }
 
   /// Renders a Tile for gmaps; delegating to the configured [TileProvider].
@@ -41,8 +40,7 @@ class TileOverlayController {
       return null;
     }
 
-    final HTMLImageElement img =
-        ownerDocument!.createElement('img') as HTMLImageElement;
+    final img = ownerDocument!.createElement('img') as HTMLImageElement;
     img.width = img.height = logicalTileSize;
     img.hidden = true.toJS;
     img.setAttribute('decoding', 'async');
@@ -58,11 +56,10 @@ class TileOverlayController {
             Blob(<JSUint8Array>[tile.data!.toJS].toJS) as JSObject,
           );
           img.src = src;
-          img.onload =
-              (JSAny? _) {
-                img.hidden = false.toJS;
-                URL.revokeObjectURL(src);
-              }.toJS;
+          img.onload = (JSAny? _) {
+            img.hidden = false.toJS;
+            URL.revokeObjectURL(src);
+          }.toJS;
         });
 
     return img;

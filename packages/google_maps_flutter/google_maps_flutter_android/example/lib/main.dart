@@ -98,13 +98,12 @@ Future<AndroidMapRenderer?> initializeMapRenderer() async {
     return _initializedRendererCompleter!.future;
   }
 
-  final Completer<AndroidMapRenderer?> completer =
-      Completer<AndroidMapRenderer?>();
+  final completer = Completer<AndroidMapRenderer?>();
   _initializedRendererCompleter = completer;
 
   WidgetsFlutterBinding.ensureInitialized();
 
-  final GoogleMapsFlutterAndroid platform =
+  final platform =
       GoogleMapsFlutterPlatform.instance as GoogleMapsFlutterAndroid;
   unawaited(
     platform

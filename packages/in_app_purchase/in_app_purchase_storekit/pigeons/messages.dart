@@ -7,7 +7,6 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/test_api.g.dart',
     objcHeaderOut:
         'darwin/in_app_purchase_storekit/Sources/in_app_purchase_storekit_objc/include/in_app_purchase_storekit_objc/messages.g.h',
     objcSourceOut:
@@ -238,7 +237,7 @@ class SKProductSubscriptionPeriodMessage {
 
 enum SKSubscriptionPeriodUnitMessage { day, week, month, year }
 
-@HostApi(dartHostTestHandler: 'TestInAppPurchaseApi')
+@HostApi()
 abstract class InAppPurchaseAPI {
   /// Returns if the current device is able to make payments
   bool canMakePayments();

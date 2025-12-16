@@ -12,7 +12,7 @@ import 'test_svg_strings.dart';
 
 Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
-  final ResolvingVisitor visitor = ResolvingVisitor();
+  final visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
 }
 
@@ -32,7 +32,7 @@ void main() {
       final List<ResolvedPathNode> pathNodesOld =
           queryChildren<ResolvedPathNode>(node);
 
-      final OverdrawOptimizer visitor = OverdrawOptimizer();
+      final visitor = OverdrawOptimizer();
       final Node newNode = visitor.apply(node);
 
       final List<ResolvedPathNode> pathNodesNew =
@@ -83,7 +83,7 @@ void main() {
       node,
     );
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -93,8 +93,14 @@ void main() {
     expect(pathNodesOld.length, pathNodesNew.length);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xffff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff0000ff)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -131,7 +137,7 @@ void main() {
     final Node node = parseAndResolve(opacityOverlap);
     final VectorInstructions instructions = parse(opacityOverlap);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -141,9 +147,18 @@ void main() {
     expect(pathNodesNew.length, 3);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x4c0000ff))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xa58a0075))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x4c0000ff)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xa58a0075)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -198,7 +213,7 @@ void main() {
     final Node node = parseAndResolve(solidOverTrasnparent);
     final VectorInstructions instructions = parse(solidOverTrasnparent);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -208,8 +223,14 @@ void main() {
     expect(pathNodesNew.length, 2);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff0000ff)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -246,7 +267,7 @@ void main() {
     final Node node = parseAndResolve(transparentOverSolid);
     final VectorInstructions instructions = parse(transparentOverSolid);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -256,9 +277,18 @@ void main() {
     expect(pathNodesNew.length, 3);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7f0000ff))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff80007f))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xffff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7f0000ff)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff80007f)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[
@@ -335,7 +365,7 @@ void main() {
     final Node node = parseAndResolve(complexOpacityTest);
     final VectorInstructions instructions = parse(complexOpacityTest);
 
-    final OverdrawOptimizer visitor = OverdrawOptimizer();
+    final visitor = OverdrawOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -345,19 +375,58 @@ void main() {
     expect(pathNodesNew.length, 22);
 
     expect(instructions.paints, const <Paint>[
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff0000ff))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xffff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xccff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x99ff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x66ff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x33ff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xff008000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xbfff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0xbf008000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x7f008000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x3fff0000))),
-      Paint(blendMode: BlendMode.srcOver, fill: Fill(color: Color(0x3f008000))),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff0000ff)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xffff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xccff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x99ff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x66ff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x33ff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xff008000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xbfff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0xbf008000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x7f008000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x3fff0000)),
+      ),
+      Paint(
+        blendMode: BlendMode.srcOver,
+        fill: Fill(color: Color(0x3f008000)),
+      ),
     ]);
 
     expect(instructions.paths, <Path>[

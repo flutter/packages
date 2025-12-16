@@ -19,9 +19,8 @@ void main() {
   test(
     'authClient returned client contains the expected information',
     () async {
-      const List<String> scopes = <String>['some-scope', 'another-scope'];
-      final FakeGoogleSignInClientAuthorization signInAuth =
-          FakeGoogleSignInClientAuthorization();
+      const scopes = <String>['some-scope', 'another-scope'];
+      final signInAuth = FakeGoogleSignInClientAuthorization();
       final gapis.AuthClient client = signInAuth.authClient(scopes: scopes);
       expect(
         client.credentials.accessToken.data,

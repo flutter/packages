@@ -1,3 +1,8 @@
+## 6.3.3
+
+- Replaces use of the deprecated `FontWeight.index`.
+- Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 6.3.2
 
 - Makes a map keyed on FontWeight non-const for compatibility with proposed changes to the engine's implementation of FontWeight.

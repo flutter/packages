@@ -1,0 +1,19 @@
+name: "Creates Batch Release for go_router"
+
+on:
+  workflow_dispatch:
+  # Uncomment the cron schedule when ready.
+  # schedule:
+  #   # Run every Monday at 8:00 AM
+  #   - cron: "0 8 * * 1"
+
+jobs:
+  dispatch_release_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v4
+        with:
+          token: "${{ secrets.GITHUB_TOKEN }}"
+          event-type: batch_release_pr
+          client-payload: '{"package": "go_router"}'

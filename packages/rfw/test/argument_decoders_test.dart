@@ -19,7 +19,7 @@ void main() {
   testWidgets('String example', (WidgetTester tester) async {
     Duration? duration;
     Curve? curve;
-    int buildCount = 0;
+    var buildCount = 0;
     final Widget builder = Builder(
       builder: (BuildContext context) {
         buildCount += 1;
@@ -59,8 +59,8 @@ void main() {
   testWidgets('spot checks', (WidgetTester tester) async {
     Duration? duration;
     Curve? curve;
-    int buildCount = 0;
-    final Runtime runtime = Runtime()
+    var buildCount = 0;
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['builder']), LocalWidgetLibrary(<String, LocalWidgetBuilder>{
         'Test': (BuildContext context, DataSource source) {
@@ -72,8 +72,8 @@ void main() {
       }))
       ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -234,12 +234,12 @@ void main() {
   });
 
   testWidgets('golden checks', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['test']), parseLibraryFile('import core; widget root = SizedBox();'));
       addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.rtl,
@@ -519,7 +519,7 @@ void main() {
       skip: !runGoldens,
     );
 
-    int sawGridDelegateDecoder = 0;
+    var sawGridDelegateDecoder = 0;
     ArgumentDecoders.gridDelegateDecoders['custom'] = (DataSource source, List<Object> key) {
       sawGridDelegateDecoder += 1;
       return null;

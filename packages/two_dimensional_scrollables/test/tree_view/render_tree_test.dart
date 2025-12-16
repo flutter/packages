@@ -87,8 +87,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder:
-                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
+              rowBuilder: (_) =>
+                  const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
@@ -114,8 +114,8 @@ void main() {
             delegate: TreeRowBuilderDelegate(
               rowCount: 0,
               nodeBuilder: (_, __) => const SizedBox(),
-              rowBuilder:
-                  (_) => const TreeRow(extent: FixedTreeRowExtent(40.0)),
+              rowBuilder: (_) =>
+                  const TreeRow(extent: FixedTreeRowExtent(40.0)),
             ),
             activeAnimations: const <UniqueKey, TreeViewNodesAnimation>{},
             rowDepths: const <int, int>{},
@@ -135,9 +135,9 @@ void main() {
     });
 
     testWidgets('TreeRow gesture hit testing', (WidgetTester tester) async {
-      int tapCounter = 0;
-      final List<String> log = <String>[];
-      final TreeView<String> treeView = TreeView<String>(
+      var tapCounter = 0;
+      final log = <String>[];
+      final treeView = TreeView<String>(
         tree: treeNodes,
         treeRowBuilder: (TreeViewNode<String> node) {
           if (node.depth! == 0) {
@@ -165,9 +165,9 @@ void main() {
     });
 
     testWidgets('mouse handling', (WidgetTester tester) async {
-      int enterCounter = 0;
-      int exitCounter = 0;
-      final TreeView<String> treeView = TreeView<String>(
+      var enterCounter = 0;
+      var exitCounter = 0;
+      final treeView = TreeView<String>(
         tree: treeNodes,
         treeRowBuilder: (TreeViewNode<String> node) {
           if (node.depth! == 0) {
@@ -216,12 +216,12 @@ void main() {
     testWidgets('Scrolls when there is enough content', (
       WidgetTester tester,
     ) async {
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final TreeViewController treeController = TreeViewController();
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final treeController = TreeViewController();
       addTearDown(verticalController.dispose);
       addTearDown(horizontalController.dispose);
-      final TreeView<String> treeView = TreeView<String>(
+      final treeView = TreeView<String>(
         controller: treeController,
         verticalDetails: ScrollableDetails.vertical(
           controller: verticalController,
@@ -266,7 +266,7 @@ void main() {
 
       testWidgets('Basic', (WidgetTester tester) async {
         // Default layout, custom indentation values, row extents.
-        TreeView<String> treeView = TreeView<String>(tree: treeNodes);
+        var treeView = TreeView<String>(tree: treeNodes);
         await tester.pumpWidget(MaterialApp(home: treeView));
         await tester.pump();
         expect(find.text('First'), findsOneWidget);
@@ -439,7 +439,7 @@ void main() {
       });
 
       testWidgets('Animating node segment', (WidgetTester tester) async {
-        TreeView<String> treeView = TreeView<String>(tree: treeNodes);
+        var treeView = TreeView<String>(tree: treeNodes);
         await tester.pumpWidget(MaterialApp(home: treeView));
         await tester.pump();
         expect(find.text('alpha'), findsNothing);
@@ -559,7 +559,7 @@ void main() {
       testWidgets('Multiple animating node segments', (
         WidgetTester tester,
       ) async {
-        final TreeViewController controller = TreeViewController();
+        final controller = TreeViewController();
         await tester.pumpWidget(
           MaterialApp(
             home: TreeView<String>(tree: treeNodes, controller: controller),
@@ -669,9 +669,9 @@ void main() {
       });
 
       testWidgets('only paints visible rows', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
+        final verticalController = ScrollController();
         addTearDown(verticalController.dispose);
-        final TreeView<String> treeView = TreeView<String>(
+        final treeView = TreeView<String>(
           treeRowBuilder: (_) => const TreeRow(extent: FixedTreeRowExtent(400)),
           tree: treeNodes,
           verticalDetails: ScrollableDetails.vertical(
@@ -695,23 +695,15 @@ void main() {
       });
 
       testWidgets('paints decorations correctly', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
         addTearDown(verticalController.dispose);
         addTearDown(horizontalController.dispose);
-        const TreeRowDecoration rootForegroundDecoration = TreeRowDecoration(
-          color: Colors.red,
-        );
-        const TreeRowDecoration rootBackgroundDecoration = TreeRowDecoration(
-          color: Colors.blue,
-        );
-        const TreeRowDecoration foregroundDecoration = TreeRowDecoration(
-          color: Colors.orange,
-        );
-        const TreeRowDecoration backgroundDecoration = TreeRowDecoration(
-          color: Colors.green,
-        );
-        final TreeView<String> treeView = TreeView<String>(
+        const rootForegroundDecoration = TreeRowDecoration(color: Colors.red);
+        const rootBackgroundDecoration = TreeRowDecoration(color: Colors.blue);
+        const foregroundDecoration = TreeRowDecoration(color: Colors.orange);
+        const backgroundDecoration = TreeRowDecoration(color: Colors.green);
+        final treeView = TreeView<String>(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,
           ),
@@ -721,14 +713,12 @@ void main() {
           tree: treeNodes,
           treeRowBuilder: (TreeViewNode<String> node) {
             return row.copyWith(
-              backgroundDecoration:
-                  node.depth! == 0
-                      ? rootBackgroundDecoration
-                      : backgroundDecoration,
-              foregroundDecoration:
-                  node.depth! == 0
-                      ? rootForegroundDecoration
-                      : foregroundDecoration,
+              backgroundDecoration: node.depth! == 0
+                  ? rootBackgroundDecoration
+                  : backgroundDecoration,
+              foregroundDecoration: node.depth! == 0
+                  ? rootForegroundDecoration
+                  : foregroundDecoration,
             );
           },
         );
