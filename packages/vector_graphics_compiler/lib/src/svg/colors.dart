@@ -176,165 +176,127 @@ Color parseRgbFunction(String colorString) {
     colorString.indexOf('(') + 1,
     colorString.indexOf(')'),
   );
-  final currentValue = StringBuffer();
-  final values = <String>[];
-  var hasSlash = false;
-  var commaCount = 0;
-  var pendingSpaceSeparator = false;
-  var justSawComma = false;
 
-  void finalizeCurrentValue() {
-    final String trimmed = currentValue.toString().trim();
-    if (trimmed.isNotEmpty) {
-      values.add(trimmed);
-    }
-    currentValue.clear();
-    pendingSpaceSeparator = false;
+  if (content.isEmpty) {
+    throw StateError('Invalid color "$colorString": empty content');
   }
+  final List<String> stringValues;
 
-  // Parse character by character
-  for (var i = 0; i < content.length; i++) {
-    final String char = content[i];
-    final bool isWhitespace =
-        char == ' ' || char == '\t' || char == '\n' || char == '\r';
+  final List<String> commaSplit = content
+      .split(',')
+      .map((String value) => value.trim())
+      .toList();
 
-    if (isWhitespace) {
-      if (currentValue.isNotEmpty) {
-        pendingSpaceSeparator = true;
-      }
-      justSawComma = false;
-      continue;
-    }
+  if (commaSplit.length > 1) {
+    // We are dealing with comma-separated syntax
 
-    if (char == '/') {
-      if (commaCount > 0) {
-        throw StateError(
-          'Invalid color "$colorString": cannot mix comma and slash separators',
-        );
-      }
-      if (hasSlash) {
-        throw StateError(
-          'Invalid color "$colorString": multiple slashes not allowed',
-        );
-      }
-      finalizeCurrentValue();
-      if (values.length != 3) {
-        throw StateError(
-          'Invalid color "$colorString": expected 3 RGB values before slash, '
-          'got ${values.length}',
-        );
-      }
-      hasSlash = true;
-      justSawComma = false;
-      continue;
-    }
-
-    if (char == ',') {
-      if (hasSlash) {
-        throw StateError(
-          'Invalid color "$colorString": cannot mix comma and slash separators',
-        );
-      }
-      final bool hasContent = currentValue.isNotEmpty || pendingSpaceSeparator;
-      if (justSawComma || (commaCount == 0 && !hasContent && values.isEmpty)) {
-        throw StateError(
-          'Invalid color "$colorString": empty value in comma-separated list',
-        );
-      }
-      finalizeCurrentValue();
-      commaCount++;
-      justSawComma = true;
-      continue;
-    }
-
-    // Regular character
-    justSawComma = false;
-    if (pendingSpaceSeparator && currentValue.isNotEmpty) {
-      if (commaCount > 0) {
-        throw StateError(
-          'Invalid color "$colorString": space-separated values not allowed '
-          'after comma',
-        );
-      }
-      finalizeCurrentValue();
-    }
-    currentValue.write(char);
-    pendingSpaceSeparator = false;
-  }
-
-  // Finalize last value
-  final bool hadContent = currentValue.isNotEmpty;
-  finalizeCurrentValue();
-
-  if (justSawComma) {
-    throw StateError(
-      'Invalid color "$colorString": empty value in comma-separated list',
-    );
-  }
-  if (hasSlash && values.length == 3 && !hadContent) {
-    throw StateError(
-      'Invalid color "$colorString": missing alpha value after slash',
-    );
-  }
-
-  // Validate value count
-  if (values.length < 3) {
-    throw StateError(
-      'Invalid color "$colorString": expected at least 3 values, '
-      'got ${values.length}',
-    );
-  }
-  if (values.length > 4) {
-    throw StateError(
-      'Invalid color "$colorString": expected at most 4 values, '
-      'got ${values.length}',
-    );
-  }
-
-  // Validate 4-value syntax rules
-  if (values.length == 4 && !hasSlash && commaCount < 2) {
-    if (commaCount == 0) {
+    // First handle the weird case where "R G, B" and "R G, B, A" are valid
+    final List<String> firstValueSpaceSplit = commaSplit.first
+        .split(' ')
+        .map((String value) => value.trim())
+        .toList();
+    if (firstValueSpaceSplit.length > 2) {
       throw StateError(
-        'Invalid color "$colorString": modern syntax requires "/" '
-        'before alpha value',
-      );
-    } else {
-      throw StateError(
-        'Invalid color "$colorString": legacy syntax with alpha '
-        'requires at least 2 commas',
+        'Invalid color "$colorString": expected at most 2 space-separated values in first value',
       );
     }
-  }
-
-  // Convert a single value to an integer color component
-  int parseComponent(int index, String rawValue) {
-    final isAlpha = index == 3;
-    if (rawValue.endsWith('%')) {
-      final String numPart = rawValue.substring(0, rawValue.length - 1);
-      final double? percent = double.tryParse(numPart);
-      if (percent == null) {
-        throw StateError(
-          'Invalid color "$colorString": invalid percentage "$rawValue"',
-        );
-      }
-      return (percent.clamp(0, 100) * 2.55).round();
-    }
-    final double? value = double.tryParse(rawValue);
-    if (value == null) {
+    stringValues = [...firstValueSpaceSplit, ...commaSplit.skip(1)];
+  } else {
+    final List<String> slashSplit = content
+        .split('/')
+        .map((String value) => value.trim())
+        .toList();
+    if (slashSplit.length > 2) {
       throw StateError(
-        'Invalid color "$colorString": invalid value "$rawValue"',
+        'Invalid color "$colorString": multiple slashes not allowed',
       );
     }
-    if (isAlpha) {
-      return (value.clamp(0, 1) * 255).round();
+    final List<String> rgbSpaceSplit = slashSplit.first
+        .split(' ')
+        .map((String value) => value.trim())
+        .where((String value) => value.isNotEmpty)
+        .toList();
+    if (rgbSpaceSplit.length != 3) {
+      throw StateError(
+        'Invalid color "$colorString": expected 3 space-separated RGB values',
+      );
     }
-    return value.clamp(0, 255).round();
+    stringValues = [...rgbSpaceSplit, ...slashSplit.skip(1)];
   }
 
-  final int r = parseComponent(0, values[0]);
-  final int g = parseComponent(1, values[1]);
-  final int b = parseComponent(2, values[2]);
-  final int a = values.length == 4 ? parseComponent(3, values[3]) : 255;
+  if (stringValues.length < 3 || stringValues.length > 4) {
+    throw StateError(
+      'Invalid color "$colorString": expected 3-4 values, got ${stringValues.length}',
+    );
+  }
+
+  final int r = _parseRgbFunctionComponent(
+    componentIndex: 0,
+    rawComponentValue: stringValues[0],
+    originalColorString: colorString,
+  );
+  final int g = _parseRgbFunctionComponent(
+    componentIndex: 1,
+    rawComponentValue: stringValues[1],
+    originalColorString: colorString,
+  );
+  final int b = _parseRgbFunctionComponent(
+    componentIndex: 2,
+    rawComponentValue: stringValues[2],
+    originalColorString: colorString,
+  );
+  final int a = stringValues.length == 4
+      ? _parseRgbFunctionComponent(
+          componentIndex: 3,
+          rawComponentValue: stringValues[3],
+          originalColorString: colorString,
+        )
+      : 255;
 
   return Color.fromARGB(a, r, g, b);
+}
+
+/// Parses a single RGB/RGBA component value and returns an integer 0-255.
+///
+/// The [componentIndex] indicates which component is being parsed:
+/// - 0, 1, 2: RGB values (red, green, blue)
+/// - 3: Alpha value
+///
+/// The [rawComponentValue] can be:
+/// - A percentage (e.g., "50%") - converted to 0-255 range
+/// - A decimal number (e.g., "128" or "128.5") - clamped to 0-255 for RGB
+/// - For alpha (index 3): decimal 0-1 range, converted to 0-255
+///
+/// Out-of-bounds values are clamped rather than rejected.
+///
+/// Throws [StateError] if the value cannot be parsed as a number.
+int _parseRgbFunctionComponent({
+  required int componentIndex,
+  required String rawComponentValue,
+  required String originalColorString,
+}) {
+  final isAlpha = componentIndex == 3;
+  if (rawComponentValue.endsWith('%')) {
+    final String numPart = rawComponentValue.substring(
+      0,
+      rawComponentValue.length - 1,
+    );
+    final double? percent = double.tryParse(numPart);
+    if (percent == null) {
+      throw StateError(
+        'Invalid color "$originalColorString": invalid percentage "$rawComponentValue"',
+      );
+    }
+    return (percent.clamp(0, 100) * 2.55).round();
+  }
+  final double? value = double.tryParse(rawComponentValue);
+  if (value == null) {
+    throw StateError(
+      'Invalid color "$originalColorString": invalid value "$rawComponentValue"',
+    );
+  }
+  if (isAlpha) {
+    return (value.clamp(0, 1) * 255).round();
+  }
+  return value.clamp(0, 255).round();
 }
