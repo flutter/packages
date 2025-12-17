@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  hooks: ^0.19.3
+  hooks: ^1.0.0
   vector_graphics: any
   vector_graphics_compiler: any
 

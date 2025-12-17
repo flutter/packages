@@ -44,7 +44,7 @@ void main() {
     try {
       final processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[Pair('test_data/example.svg', output.path)],
+        <IOPair>[IOPair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
@@ -65,7 +65,7 @@ void main() {
     try {
       final processor = IsolateProcessor(null, null, 4);
       final bool result = await processor.process(
-        <Pair>[Pair('test_data/example.svg', output.path)],
+        <IOPair>[IOPair('test_data/example.svg', output.path)],
         maskingOptimizerEnabled: false,
         clippingOptimizerEnabled: false,
         overdrawOptimizerEnabled: false,
