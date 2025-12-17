@@ -157,3 +157,184 @@ const Map<String, Color> namedColors = <String, Color>{
   'yellow': Color.fromARGB(255, 255, 255, 0),
   'yellowgreen': Color.fromARGB(255, 154, 205, 50),
 };
+
+/// Parses a CSS `rgb()` or `rgba()` function color string and returns a Color.
+///
+/// The [colorString] should be the full color string including the function
+/// name (`rgb` or `rgba`) and parentheses.
+///
+/// Both `rgb()` and `rgba()` accept the same syntax variations:
+/// - `rgb(R G B)` or `rgba(R G B)` - modern space-separated
+/// - `rgb(R G B / A)` or `rgba(R G B / A)` - modern with slash before alpha
+/// - `rgb(R,G,B)` or `rgba(R,G,B)` - legacy comma-separated
+/// - `rgb(R,G,B,A)` or `rgba(R,G,B,A)` - legacy with alpha
+/// - `rgb(R G,B,A)` or `rgba(R G,B,A)` - mixed: spaces before first comma
+///
+/// Throws [StateError] if the color string is invalid.
+Color parseRgbFunction(String colorString) {
+  final String content = colorString.substring(
+    colorString.indexOf('(') + 1,
+    colorString.indexOf(')'),
+  );
+  final currentValue = StringBuffer();
+  final values = <String>[];
+  var hasSlash = false;
+  var commaCount = 0;
+  var pendingSpaceSeparator = false;
+  var justSawComma = false;
+
+  void finalizeCurrentValue() {
+    final String trimmed = currentValue.toString().trim();
+    if (trimmed.isNotEmpty) {
+      values.add(trimmed);
+    }
+    currentValue.clear();
+    pendingSpaceSeparator = false;
+  }
+
+  // Parse character by character
+  for (var i = 0; i < content.length; i++) {
+    final String char = content[i];
+    final bool isWhitespace =
+        char == ' ' || char == '\t' || char == '\n' || char == '\r';
+
+    if (isWhitespace) {
+      if (currentValue.isNotEmpty) {
+        pendingSpaceSeparator = true;
+      }
+      justSawComma = false;
+      continue;
+    }
+
+    if (char == '/') {
+      if (commaCount > 0) {
+        throw StateError(
+          'Invalid color "$colorString": cannot mix comma and slash separators',
+        );
+      }
+      if (hasSlash) {
+        throw StateError(
+          'Invalid color "$colorString": multiple slashes not allowed',
+        );
+      }
+      finalizeCurrentValue();
+      if (values.length != 3) {
+        throw StateError(
+          'Invalid color "$colorString": expected 3 RGB values before slash, '
+          'got ${values.length}',
+        );
+      }
+      hasSlash = true;
+      justSawComma = false;
+      continue;
+    }
+
+    if (char == ',') {
+      if (hasSlash) {
+        throw StateError(
+          'Invalid color "$colorString": cannot mix comma and slash separators',
+        );
+      }
+      final bool hasContent = currentValue.isNotEmpty || pendingSpaceSeparator;
+      if (justSawComma || (commaCount == 0 && !hasContent && values.isEmpty)) {
+        throw StateError(
+          'Invalid color "$colorString": empty value in comma-separated list',
+        );
+      }
+      finalizeCurrentValue();
+      commaCount++;
+      justSawComma = true;
+      continue;
+    }
+
+    // Regular character
+    justSawComma = false;
+    if (pendingSpaceSeparator && currentValue.isNotEmpty) {
+      if (commaCount > 0) {
+        throw StateError(
+          'Invalid color "$colorString": space-separated values not allowed '
+          'after comma',
+        );
+      }
+      finalizeCurrentValue();
+    }
+    currentValue.write(char);
+    pendingSpaceSeparator = false;
+  }
+
+  // Finalize last value
+  final bool hadContent = currentValue.isNotEmpty;
+  finalizeCurrentValue();
+
+  if (justSawComma) {
+    throw StateError(
+      'Invalid color "$colorString": empty value in comma-separated list',
+    );
+  }
+  if (hasSlash && values.length == 3 && !hadContent) {
+    throw StateError(
+      'Invalid color "$colorString": missing alpha value after slash',
+    );
+  }
+
+  // Validate value count
+  if (values.length < 3) {
+    throw StateError(
+      'Invalid color "$colorString": expected at least 3 values, '
+      'got ${values.length}',
+    );
+  }
+  if (values.length > 4) {
+    throw StateError(
+      'Invalid color "$colorString": expected at most 4 values, '
+      'got ${values.length}',
+    );
+  }
+
+  // Validate 4-value syntax rules
+  if (values.length == 4 && !hasSlash && commaCount < 2) {
+    if (commaCount == 0) {
+      throw StateError(
+        'Invalid color "$colorString": modern syntax requires "/" '
+        'before alpha value',
+      );
+    } else {
+      throw StateError(
+        'Invalid color "$colorString": legacy syntax with alpha '
+        'requires at least 2 commas',
+      );
+    }
+  }
+
+  // Convert a single value to an integer color component
+  int parseComponent(int index, String rawValue) {
+    final isAlpha = index == 3;
+    if (rawValue.endsWith('%')) {
+      final String numPart = rawValue.substring(0, rawValue.length - 1);
+      final double? percent = double.tryParse(numPart);
+      if (percent == null) {
+        throw StateError(
+          'Invalid color "$colorString": invalid percentage "$rawValue"',
+        );
+      }
+      return (percent.clamp(0, 100) * 2.55).round();
+    }
+    final double? value = double.tryParse(rawValue);
+    if (value == null) {
+      throw StateError(
+        'Invalid color "$colorString": invalid value "$rawValue"',
+      );
+    }
+    if (isAlpha) {
+      return (value.clamp(0, 1) * 255).round();
+    }
+    return value.clamp(0, 255).round();
+  }
+
+  final int r = parseComponent(0, values[0]);
+  final int g = parseComponent(1, values[1]);
+  final int b = parseComponent(2, values[2]);
+  final int a = values.length == 4 ? parseComponent(3, values[3]) : 255;
+
+  return Color.fromARGB(a, r, g, b);
+}

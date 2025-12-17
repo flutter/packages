@@ -1374,38 +1374,8 @@ class SvgParser {
 
     // handle rgba() colors e.g. rgb(255, 255, 255) and rgba(255, 255, 255, 1.0)
     // https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Values/color_value/rgb
-    if (colorString.toLowerCase().startsWith('rgba') ||
-        colorString.toLowerCase().startsWith('rgb')) {
-      final List<int> rgba = colorString
-          .substring(colorString.indexOf('(') + 1, colorString.indexOf(')'))
-          .split(RegExp(r'[,/\s]'))
-          .map((String rawColor) => rawColor.trim())
-          .where((e) => e.isNotEmpty)
-          .indexed
-          .map((indexedColor) {
-            var (index, rawColor) = indexedColor;
-            if (rawColor.endsWith('%')) {
-              rawColor = rawColor.substring(0, rawColor.length - 1);
-              return (parseDouble(rawColor)! * 2.55).round();
-            }
-            if (index == 3) {
-              // if alpha is not percentage, it means it's a double between 0 and 1
-              final double opacity = parseDouble(rawColor)!;
-              if (opacity < 0 || opacity > 1) {
-                throw StateError('Invalid "opacity": $opacity');
-              }
-              return (opacity * 255).round();
-            }
-            // If rgb is not percentage, it means it's an integer between 0 and 255
-            return int.parse(rawColor);
-          })
-          .toList();
-
-      if (rgba.length == 3) {
-        rgba.add(255);
-      }
-
-      return Color.fromARGB(rgba[3], rgba[0], rgba[1], rgba[2]);
+    if (colorString.toLowerCase().startsWith('rgb')) {
+      return parseRgbFunction(colorString);
     }
 
     // Conversion code from: https://github.com/MichaelFenwick/Color, thanks :)
