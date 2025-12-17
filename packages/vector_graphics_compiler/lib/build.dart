@@ -32,7 +32,7 @@ Future<void> compileSvgs(
   required Map<String, Uri> nameToFile,
   Options options = const Options(),
 }) async {
-  final IsolateProcessor processor = IsolateProcessor(
+  final processor = IsolateProcessor(
     options.libpathops,
     options.libtessellator,
     options.concurrency ?? Platform.numberOfProcessors,
@@ -63,7 +63,7 @@ Future<void> compileSvgs(
   }
   for (final MapEntry<String, IOPair>(
         key: String name,
-        value: IOPair(output:String outputPath),
+        value: IOPair(output: String outputPath),
       )
       in pairs.entries) {
     output.assets.data.add(
