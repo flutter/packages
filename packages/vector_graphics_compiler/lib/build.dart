@@ -38,10 +38,10 @@ Future<void> compileSvgs(
     options.concurrency ?? Platform.numberOfProcessors,
   );
 
-  final Map<String, Pair> pairs = nameToFile.map(
-    (String name, Uri file) => MapEntry<String, Pair>(
+  final Map<String, IOPair> pairs = nameToFile.map(
+    (String name, Uri file) => MapEntry<String, IOPair>(
       name,
-      Pair(
+      IOPair(
         file.path,
         '${p.join(input.outputDirectory.path, p.basenameWithoutExtension(file.path))}.vec',
       ),
@@ -58,12 +58,12 @@ Future<void> compileSvgs(
     theme: options.theme,
   )) {
     throw ArgumentError(
-      'Did not succeed for ${pairs.map((String name, Pair e) => MapEntry<String, String>(name, '$name: ${e.inputPath} -> ${e.outputPath}')).values}',
+      'Did not succeed for ${pairs.map((String name, IOPair e) => MapEntry<String, String>(name, '$name: ${e.input} -> ${e.output}')).values}',
     );
   }
-  for (final MapEntry<String, Pair>(
+  for (final MapEntry<String, IOPair>(
         key: String name,
-        value: Pair(:String outputPath),
+        value: IOPair(output:String outputPath),
       )
       in pairs.entries) {
     output.assets.data.add(

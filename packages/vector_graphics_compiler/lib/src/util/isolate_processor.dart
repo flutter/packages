@@ -27,11 +27,11 @@ class IsolateProcessor {
   int _total = 0;
   int _current = 0;
 
-  /// Process the provided input/output [Pair] objects into vector graphics.
+  /// Process the provided [IOPair] objects into vector graphics.
   ///
   /// Returns whether all requests were successful.
   Future<bool> process(
-    Iterable<Pair> pairs, {
+    Iterable<IOPair> pairs, {
     SvgTheme theme = const SvgTheme(),
     required bool maskingOptimizerEnabled,
     required bool clippingOptimizerEnabled,
@@ -42,12 +42,11 @@ class IsolateProcessor {
   }) async {
     _total = pairs.length;
     _current = 0;
-    var failure = false;
+    var success = true;
     await Future.wait(eagerError: true, <Future<void>>[
-      for (final Pair pair in pairs)
+      for (final IOPair pair in pairs)
         _process(
-          pair.inputPath,
-          pair.outputPath,
+          pair,
           theme: theme,
           maskingOptimizerEnabled: maskingOptimizerEnabled,
           clippingOptimizerEnabled: clippingOptimizerEnabled,
@@ -59,7 +58,7 @@ class IsolateProcessor {
           libtessellator: _libtessellator,
         ).catchError((dynamic error, [StackTrace? stackTrace]) {
           success = false;
-          stderr.writeln('XXXXXXXXXXX ${pair.inputPath} XXXXXXXXXXXXX');
+          stderr.writeln('XXXXXXXXXXX ${pair.input} XXXXXXXXXXXXX');
           stderr.writeln(error);
           stderr.writeln(stackTrace);
         }),
@@ -87,8 +86,7 @@ class IsolateProcessor {
   }
 
   Future<void> _process(
-    String inputPath,
-    String outputPath, {
+    IOPair pair, {
     required bool maskingOptimizerEnabled,
     required bool clippingOptimizerEnabled,
     required bool overdrawOptimizerEnabled,
@@ -111,10 +109,10 @@ class IsolateProcessor {
         if (tessellate) {
           _loadTessellator(libtessellator);
         }
-        final String inputString = File(inputPath).readAsStringSync();
+        final String inputString = File(pair.input).readAsStringSync();
         final Uint8List bytes = encodeSvg(
           xml: inputString,
-          debugName: p.basename(inputPath),
+          debugName: p.basename(pair.input),
           theme: theme,
           enableMaskingOptimizer: maskingOptimizerEnabled,
           enableClippingOptimizer: clippingOptimizerEnabled,
@@ -122,10 +120,10 @@ class IsolateProcessor {
           useHalfPrecisionControlPoints: useHalfPrecisionControlPoints,
         );
 
-        File(outputPath).writeAsBytesSync(bytes);
+        File(pair.output).writeAsBytesSync(bytes);
         if (dumpDebug) {
           final Uint8List debugBytes = dumpToDebugFormat(bytes);
-          File('$outputPath.debug').writeAsBytesSync(debugBytes);
+          File('${pair.output}.debug').writeAsBytesSync(debugBytes);
         }
       });
       _current++;
@@ -137,15 +135,15 @@ class IsolateProcessor {
 }
 
 /// A combination of an input file and its output file.
-class Pair {
-  /// Create a new [Pair].
-  const Pair(this.inputPath, this.outputPath);
+class IOPair {
+  /// Create a new [IOPair].
+  const IOPair(this.input, this.output);
 
   /// The path the SVG should be read from.
-  final String inputPath;
+  final String input;
 
   /// The path the vector graphic will be written to.
-  final String outputPath;
+  final String output;
 }
 
 class Pool {

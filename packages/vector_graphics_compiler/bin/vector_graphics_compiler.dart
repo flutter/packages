@@ -153,7 +153,7 @@ Future<void> main(List<String> args) async {
   }
   validateOptions(results);
 
-  final pairs = <Pair>[];
+  final pairs = <IOPair>[];
   if (results.wasParsed('input-dir')) {
     final directory = Directory(results['input-dir'] as String);
     if (!directory.existsSync()) {
@@ -178,13 +178,13 @@ Future<void> main(List<String> args) async {
         outputPath = p.join(outDir.path, '${p.basename(file.path)}.vec');
       }
 
-      pairs.add(Pair(file.path, outputPath));
+      pairs.add(IOPair(file.path, outputPath));
     }
   } else {
     final inputFilePath = results['input'] as String;
     final String outputFilePath =
         results['output'] as String? ?? '$inputFilePath.vec';
-    pairs.add(Pair(inputFilePath, outputFilePath));
+    pairs.add(IOPair(inputFilePath, outputFilePath));
   }
 
   final maskingOptimizerEnabled = results['optimize-masks'] == true;
