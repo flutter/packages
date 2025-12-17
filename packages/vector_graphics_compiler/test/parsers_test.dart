@@ -80,7 +80,7 @@ void main() {
         // Mixed separators: spaces before first comma, then commas (decimal alpha)
         '171 205,239, 0.53',
         // Mixed separators: spaces before first comma, then commas (percentage alpha)
-        '171 205,239, 53%',
+        '171   205,239, 53%',
       ];
 
       final List<String> rgbaVariations = [

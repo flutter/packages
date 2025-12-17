@@ -194,6 +194,7 @@ Color parseRgbFunction(String colorString) {
     final List<String> firstValueSpaceSplit = commaSplit.first
         .split(' ')
         .map((String value) => value.trim())
+        .where((String value) => value.isNotEmpty)
         .toList();
     if (firstValueSpaceSplit.length > 2) {
       throw StateError(
