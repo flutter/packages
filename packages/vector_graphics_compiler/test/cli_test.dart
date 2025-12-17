@@ -7,8 +7,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:path/path.dart' as p;
+import 'package:vector_graphics_compiler/src/util/isolate_processor.dart';
 
-import '../bin/util/isolate_processor.dart';
 import '../bin/vector_graphics_compiler.dart' as cli;
 
 void main() {

@@ -1,5 +1,5 @@
 name: example
-description: An example of the vector_graphics package
+description: Example project using hooks.
 publish_to: none
 
 resolution: workspace
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ">=0.13.0 <2.0.0"
+  hooks: ^0.19.3
   vector_graphics: any
   vector_graphics_compiler: any
 
@@ -20,11 +20,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-
-platforms:
-  android:
-  ios:
-  linux:
-  macos:
-  web:
-  windows:

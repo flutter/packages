@@ -9,6 +9,7 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as p;
 import 'package:vector_graphics_compiler/src/svg/colors.dart';
+import 'package:vector_graphics_compiler/src/util/isolate_processor.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
 
 import 'util/isolate_processor.dart';
