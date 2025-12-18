@@ -72,6 +72,7 @@ extension AVCapturePhotoOutput: CapturePhotoOutput {
   }
 
   func connection(with mediaType: AVMediaType) -> CaptureConnection? {
+    // Explicit type is required to access the underlying AVCapturePhotoOutput.connection method
     let connection: AVCaptureConnection? = connection(with: mediaType)
     return connection
   }
