@@ -51,31 +51,14 @@ void downloadObjectUrl(String objectUrl, String? name) {
   addElementToContainerAndClick(target, element);
 }
 
-/// Attempts to download a [blob], suggesting [name] as the filename.
-///
-/// This method creates (and attempts to cleanup) an `objectUrl` for the given
-/// [blob]. Since there's no way to know when the cleanup needs to happen, the
-/// `blob` will seem to "leak" for about 5 minutes, until the `objectUrl` created
-/// by this method is actually cleared.
-Future<void> downloadBlob(Blob blob, String? name) async {
-  final String objectUrl = URL.createObjectURL(blob);
-  // TODO(dit): Is there a better way to revoke the URL that we're creating?
-  Future<void>.delayed(const Duration(minutes: 5), () {
-    // Is this the industry standard?
-    // See: https://github.com/eligrey/FileSaver.js/blob/cea522bc41bfadc364837293d0c4dc585a65ac46/src/FileSaver.js#L163
-    URL.revokeObjectURL(objectUrl);
-  });
-  downloadObjectUrl(objectUrl, name);
-}
-
 /// Converts a [Blob] to [Uint8List] through a [FileReader].
 Future<Uint8List> blobToBytes(Blob blob) async {
-  final FileReader reader = FileReader();
+  final reader = FileReader();
   reader.readAsArrayBuffer(blob);
   await reader.onLoadEnd.first;
 
-  final Uint8List? result =
-  (reader.result as JSArrayBuffer?)?.toDart.asUint8List();
+  final Uint8List? result = (reader.result as JSArrayBuffer?)?.toDart
+      .asUint8List();
   if (result == null) {
     throw Exception('Cannot read bytes from Blob. Is it still available?');
   }

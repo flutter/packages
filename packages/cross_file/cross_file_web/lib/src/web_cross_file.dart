@@ -1,24 +1,59 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 import 'dart:convert';
 
-import 'dart:typed_data';
-
-import 'package:web/web.dart';
-
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
+import 'package:flutter/foundation.dart';
+import 'package:web/web.dart';
 
 import 'web_helpers.dart';
 
-base class WebXFileCreationParams extends PlatformXFileCreationParams {
-  WebXFileCreationParams({required super.path, this.blob});
-
-  final Blob? blob;
+/// Base implementation of [PlatformXFileCreationParams] for web.
+@immutable
+sealed class WebXFileCreationParams extends PlatformXFileCreationParams {
+  /// Constructs a [WebXFileCreationParams].
+  const WebXFileCreationParams({required super.uri});
 }
 
+/// Implementation of [WebXFileCreationParams] with an object url.
+@immutable
+base class UrlWebXFileCreationParams extends WebXFileCreationParams {
+  /// Constructs a [UrlWebXFileCreationParams].
+  const UrlWebXFileCreationParams({required String objectUrl})
+    : super(uri: objectUrl);
+}
+
+/// Implementation of [WebXFileCreationParams] with a [Blob].
+@immutable
+base class BlobWebXFileCreationParams extends WebXFileCreationParams {
+  /// Constructs a [BlobWebXFileCreationParams].
+  BlobWebXFileCreationParams(this.blob, {this.autoRevokeObjectUrl = true})
+    : super(uri: URL.createObjectURL(blob)) {
+    if (autoRevokeObjectUrl) {
+      _finalizer.attach(this, uri);
+    }
+  }
+
+  static final Finalizer<String> _finalizer = Finalizer((String objectUrl) {
+    URL.revokeObjectURL(objectUrl);
+  });
+
+  /// The raw data represented by a [WebXFile].
+  final Blob blob;
+
+  /// Whether the object url obtained from [blob] should be revoked when this
+  /// instance is garbage collected.
+  final bool autoRevokeObjectUrl;
+}
+
+/// Implementation of [PlatformXFile] for web.
 base class WebXFile extends PlatformXFile with WebXFileExtension {
+  /// Constructs a [WebXFile].
   WebXFile(super.params) : super.implementation();
 
   Blob? _cachedBlob;
-  final DateTime defaultLastModified = DateTime.now();
 
   @override
   PlatformXFileExtension? get extension => this;
@@ -27,10 +62,14 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
   late final WebXFileCreationParams params =
       super.params is WebXFileCreationParams
       ? super.params as WebXFileCreationParams
-      : WebXFileCreationParams(path: params.path);
+      : UrlWebXFileCreationParams(objectUrl: params.uri);
 
+  @override
   Future<Blob> getBlob() async {
-    return _cachedBlob ??= params.blob ?? await fetchBlob(params.path);
+    return _cachedBlob ??= switch (params) {
+      UrlWebXFileCreationParams() => await fetchBlob(params.uri),
+      final BlobWebXFileCreationParams params => params.blob,
+    };
   }
 
   @override
@@ -53,7 +92,7 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
       return DateTime.fromMillisecondsSinceEpoch(blob.lastModified);
     }
 
-    return defaultLastModified;
+    return DateTime.now();
   }
 
   @override
@@ -89,12 +128,15 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
       name = blob.name;
     }
 
-    await downloadBlob(blob, name);
+    downloadObjectUrl(params.uri, name);
   }
 }
 
+/// Provides platform specific features for [WebXFile].
 mixin WebXFileExtension implements PlatformXFileExtension {
+  /// The raw data represented by a [WebXFile].
   Future<Blob> getBlob();
 
+  /// Attempts to download a [Blob], with [suggestedName] as the filename.
   Future<void> download([String? suggestedName]);
 }
