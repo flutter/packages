@@ -48,6 +48,7 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
         start ?? 0,
       );
       bytesToRead -= response.returnValue;
+
       while (response.returnValue != -1 && bytesToRead > 0) {
         yield response.bytes;
         response = await inputStream.readBytes(
