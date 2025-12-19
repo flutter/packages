@@ -71,6 +71,13 @@ enum PlatformImageFormatGroup { bgra8888, yuv420 }
 // Pigeon version of ResolutionPreset.
 enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
+enum PlatformVideoStabilizationMode {
+  off,
+  standard,
+  cinematic,
+  cinematicExtended,
+}
+
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
   PlatformCameraDescription({
@@ -284,6 +291,16 @@ abstract class CameraApi {
   @async
   @ObjCSelector('setZoomLevel:')
   void setZoomLevel(double zoom);
+
+  /// Sets the video stabilization mode.
+  @async
+  @ObjCSelector('setVideoStabilizationMode:')
+  void setVideoStabilizationMode(PlatformVideoStabilizationMode mode);
+
+  /// Sets the video stabilization mode.
+  @async
+  @ObjCSelector('isVideoStabilizationModeSupported:')
+  bool isVideoStabilizationModeSupported(PlatformVideoStabilizationMode mode);
 
   /// Pauses streaming of preview frames.
   @async

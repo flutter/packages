@@ -131,6 +131,19 @@ typedef NS_ENUM(NSUInteger, FCPPlatformResolutionPreset) {
 - (instancetype)initWithValue:(FCPPlatformResolutionPreset)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FCPPlatformVideoStabilizationMode) {
+  FCPPlatformVideoStabilizationModeOff = 0,
+  FCPPlatformVideoStabilizationModeStandard = 1,
+  FCPPlatformVideoStabilizationModeCinematic = 2,
+  FCPPlatformVideoStabilizationModeCinematicExtended = 3,
+};
+
+/// Wrapper for FCPPlatformVideoStabilizationMode to allow for nullability.
+@interface FCPPlatformVideoStabilizationModeBox : NSObject
+@property(nonatomic, assign) FCPPlatformVideoStabilizationMode value;
+- (instancetype)initWithValue:(FCPPlatformVideoStabilizationMode)value;
+@end
+
 @class FCPPlatformCameraDescription;
 @class FCPPlatformCameraState;
 @class FCPPlatformMediaSettings;
@@ -283,6 +296,13 @@ NSObject<FlutterMessageCodec> *FCPGetMessagesCodec(void);
 - (void)getMaximumZoomLevel:(void (^)(NSNumber *_Nullable, FlutterError *_Nullable))completion;
 /// Sets the zoom factor.
 - (void)setZoomLevel:(double)zoom completion:(void (^)(FlutterError *_Nullable))completion;
+/// Sets the video stabilization mode.
+- (void)setVideoStabilizationMode:(FCPPlatformVideoStabilizationMode)mode
+                       completion:(void (^)(FlutterError *_Nullable))completion;
+/// Sets the video stabilization mode.
+- (void)isVideoStabilizationModeSupported:(FCPPlatformVideoStabilizationMode)mode
+                               completion:(void (^)(NSNumber *_Nullable,
+                                                    FlutterError *_Nullable))completion;
 /// Pauses streaming of preview frames.
 - (void)pausePreviewWithCompletion:(void (^)(FlutterError *_Nullable))completion;
 /// Resumes a previously paused preview stream.
