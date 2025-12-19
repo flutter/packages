@@ -39,6 +39,14 @@ dev_dependencies:
   vector_graphics: ^1.1.13
   vector_math: ^2.1.2
 
+flutter:
+  config:
+    data-assets: true
+
+topics:
+  - svg
+  - vector-graphics
+
 platforms:
   android:
   ios:
@@ -46,11 +54,3 @@ platforms:
   macos:
   web:
   windows:
-
-topics:
-  - svg
-  - vector-graphics
-
-flutter:
-  config:
-    data-assets: true
