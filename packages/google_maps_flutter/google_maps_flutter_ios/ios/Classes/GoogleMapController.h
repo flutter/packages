@@ -26,9 +26,4 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable GMSCameraPosition *)cameraPosition;
 @end
 
-// Allows the engine to create new Google Map instances.
-@interface FLTGoogleMapFactory : NSObject <FlutterPlatformViewFactory>
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
-@end
-
 NS_ASSUME_NONNULL_END

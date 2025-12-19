@@ -1,3 +1,7 @@
+## 2.15.9
+
+* Converts top-level plugin implementation to Swift.
+
 ## 2.15.8
 
 * Replaces internal use of deprecated methods.
