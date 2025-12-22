@@ -22,14 +22,14 @@ final class MockCapturePhotoOutput: NSObject, CapturePhotoOutput {
     ((_ settings: AVCapturePhotoSettings, _ delegate: AVCapturePhotoCaptureDelegate) -> Void)?
 
   // Stub that is called when the corresponding public method is called.
-  var connectionWithMediaTypeStub: ((_ mediaType: AVMediaType) -> FLTCaptureConnection?)?
+  var connectionWithMediaTypeStub: ((_ mediaType: AVMediaType) -> CaptureConnection?)?
 
   func capturePhoto(with settings: AVCapturePhotoSettings, delegate: AVCapturePhotoCaptureDelegate)
   {
     capturePhotoWithSettingsStub?(settings, delegate)
   }
 
-  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection? {
+  func connection(with mediaType: AVMediaType) -> CaptureConnection? {
     return connectionWithMediaTypeStub?(mediaType)
   }
 }
