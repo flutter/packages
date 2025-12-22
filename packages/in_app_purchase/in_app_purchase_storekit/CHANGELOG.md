@@ -1,3 +1,7 @@
+## NEXT
+
+* Fixes Xcode 26.2 analyzer warnings in example app tests.
+
 ## 0.4.7
 
 * Adds `SK2Transaction.unfinishedTransactions()` method to query only unfinished transactions.
