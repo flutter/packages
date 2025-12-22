@@ -131,6 +131,14 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
 
   options.mapId = configuration.mapId;
 
+  // Convert the color scheme, if any, and set it
+  final gmaps.ColorScheme? jsColorScheme = _gmapTypeColorSchemeForPluginColor(
+    configuration.colorScheme,
+  );
+  if (jsColorScheme != null) {
+    options.colorScheme = jsColorScheme;
+  }
+
   return options;
 }
 
@@ -153,6 +161,23 @@ gmaps.MapTypeId _gmapTypeIDForPluginType(MapType type) {
   // switch as needing an update.
   // ignore: dead_code
   return gmaps.MapTypeId.ROADMAP;
+}
+
+gmaps.ColorScheme? _gmapTypeColorSchemeForPluginColor(MapColorScheme? scheme) {
+  if (scheme == null) {
+    return null;
+  }
+
+  switch (scheme) {
+    case MapColorScheme.dark:
+      return gmaps.ColorScheme.DARK;
+    case MapColorScheme.light:
+      return gmaps.ColorScheme.LIGHT;
+    case MapColorScheme.followSystem:
+      return gmaps.ColorScheme.FOLLOW_SYSTEM;
+  }
+  // ignore: dead_code
+  return gmaps.ColorScheme.FOLLOW_SYSTEM;
 }
 
 gmaps.MapOptions _applyInitialPosition(
