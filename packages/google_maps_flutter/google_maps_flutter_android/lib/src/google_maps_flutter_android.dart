@@ -495,6 +495,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         : _setStyleFailureMessage;
   }
 
+  @override
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) async {
+    return _hostApi(mapId).isAdvancedMarkersAvailable();
+  }
+
   /// Set [GoogleMapsFlutterPlatform] to use [AndroidViewSurface] to build the
   /// Google Maps widget.
   ///
@@ -818,6 +823,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       zIndex: marker.zIndex,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,
+      collisionBehavior: marker is AdvancedMarker
+          ? platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+              marker.collisionBehavior,
+            )
+          : PlatformMarkerCollisionBehavior.requiredDisplay,
     );
   }
 
@@ -1055,6 +1065,36 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
             imagePixelRatio: bytes.imagePixelRatio,
             width: bytes.width,
             height: bytes.height,
+          ),
+        );
+      case final PinConfig pinConfig:
+        final AdvancedMarkerGlyph? glyph = pinConfig.glyph;
+        Color? glyphColor;
+        String? glyphText;
+        Color? glyphTextColor;
+        BitmapDescriptor? glyphBitmapDescriptor;
+        switch (glyph) {
+          case final CircleGlyph circleGlyph:
+            glyphColor = circleGlyph.color;
+          case final TextGlyph textGlyph:
+            glyphText = textGlyph.text;
+            glyphTextColor = textGlyph.textColor;
+          case final BitmapGlyph bitmapGlyph:
+            glyphBitmapDescriptor = bitmapGlyph.bitmap;
+          case null:
+            break;
+        }
+
+        return PlatformBitmap(
+          bitmap: PlatformBitmapPinConfig(
+            backgroundColor: pinConfig.backgroundColor?.value,
+            borderColor: pinConfig.borderColor?.value,
+            glyphColor: glyphColor?.value,
+            glyphText: glyphText,
+            glyphTextColor: glyphTextColor?.value,
+            glyphBitmap: glyphBitmapDescriptor != null
+                ? platformBitmapFromBitmapDescriptor(glyphBitmapDescriptor)
+                : null,
           ),
         );
       default:
@@ -1339,6 +1379,14 @@ PlatformEdgeInsets? _platformEdgeInsetsFromEdgeInsets(EdgeInsets? insets) {
         );
 }
 
+PlatformMarkerType? _platformMarkerTypeFromMarkerType(MarkerType? markerType) {
+  return switch (markerType) {
+    null => null,
+    MarkerType.marker => PlatformMarkerType.marker,
+    MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
+  };
+}
+
 PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
   MapConfiguration config,
 ) {
@@ -1365,6 +1413,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
+    markerType: _platformMarkerTypeFromMarkerType(config.markerType),
     mapId: config.mapId,
     style: config.style,
   );
@@ -1410,7 +1459,8 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
     liteModeEnabled: options['liteModeEnabled'] as bool?,
-    mapId: options['cloudMapId'] as String?,
+    markerType: PlatformMarkerType.marker,
+    mapId: options['mapId'] as String?,
     style: options['style'] as String?,
   );
 }
@@ -1532,6 +1582,23 @@ PlatformPatternItem platformPatternItemFromPatternItem(PatternItem item) {
   // switch as needing an update.
   // ignore: dead_code
   return PlatformPatternItem(type: PlatformPatternItemType.dot);
+}
+
+/// Converts a MarkerCollisionBehavior to Pigeon's
+/// PlatformMarkerCollisionBehavior.
+@visibleForTesting
+PlatformMarkerCollisionBehavior
+platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+  MarkerCollisionBehavior markerCollisionBehavior,
+) {
+  switch (markerCollisionBehavior) {
+    case MarkerCollisionBehavior.requiredDisplay:
+      return PlatformMarkerCollisionBehavior.requiredDisplay;
+    case MarkerCollisionBehavior.optionalAndHidesLowerPriority:
+      return PlatformMarkerCollisionBehavior.optionalAndHidesLowerPriority;
+    case MarkerCollisionBehavior.requiredAndHidesOptional:
+      return PlatformMarkerCollisionBehavior.requiredAndHidesOptional;
+  }
 }
 
 /// Update specification for a set of [TileOverlay]s.
