@@ -2,8 +2,6 @@ name: example
 description: An example of the vector_graphics package
 publish_to: none
 
-resolution: workspace
-
 environment:
   sdk: ^3.8.0
 
@@ -20,6 +18,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+dependency_overrides:
+  vector_graphics:
+    path: ../
+  vector_graphics_codec:
+    path: ../../vector_graphics_codec
+  vector_graphics_compiler:
+    path: ../../vector_graphics_compiler
 
 platforms:
   android:
