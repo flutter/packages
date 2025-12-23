@@ -8,6 +8,11 @@ import Flutter
 /// Completion handler for camera permission requests.
 typealias CameraPermissionRequestCompletionHandler = (FlutterError?) -> Void
 
+private enum Permission {
+  case camera
+  case audio
+}
+
 /// Manages camera and audio permission requests.
 class CameraPermissionManager: NSObject {
   let permissionService: PermissionServicing
@@ -29,7 +34,7 @@ class CameraPermissionManager: NSObject {
   func requestCameraPermission(
     completionHandler handler: @escaping CameraPermissionRequestCompletionHandler
   ) {
-    requestPermission(forAudio: false, handler: handler)
+    requestPermission(permission: .camera, handler: handler)
   }
 
   /// Requests audio access permission.
@@ -44,53 +49,59 @@ class CameraPermissionManager: NSObject {
   func requestAudioPermission(
     completionHandler handler: @escaping CameraPermissionRequestCompletionHandler
   ) {
-    requestPermission(forAudio: true, handler: handler)
+    requestPermission(permission: .audio, handler: handler)
   }
 
   private func requestPermission(
-    forAudio: Bool,
+    permission: Permission,
     handler: @escaping CameraPermissionRequestCompletionHandler
   ) {
-    let mediaType: AVMediaType = forAudio ? .audio : .video
+    let mediaType: AVMediaType =
+      switch permission {
+      case .audio: .audio
+      case .camera: .video
+      }
 
     switch permissionService.authorizationStatus(for: mediaType) {
     case .authorized:
       handler(nil)
 
     case .denied:
-      let flutterError: FlutterError
-      if forAudio {
-        flutterError = FlutterError(
-          code: "AudioAccessDeniedWithoutPrompt",
-          message:
-            "User has previously denied the audio access request. Go to Settings to enable audio access.",
-          details: nil
-        )
-      } else {
-        flutterError = FlutterError(
-          code: "CameraAccessDeniedWithoutPrompt",
-          message:
-            "User has previously denied the camera access request. Go to Settings to enable camera access.",
-          details: nil
-        )
-      }
+      let flutterError =
+        switch permission {
+        case .audio:
+          FlutterError(
+            code: "AudioAccessDeniedWithoutPrompt",
+            message:
+              "User has previously denied the audio access request. Go to Settings to enable audio access.",
+            details: nil
+          )
+        case .camera:
+          FlutterError(
+            code: "CameraAccessDeniedWithoutPrompt",
+            message:
+              "User has previously denied the camera access request. Go to Settings to enable camera access.",
+            details: nil
+          )
+        }
       handler(flutterError)
 
     case .restricted:
-      let flutterError: FlutterError
-      if forAudio {
-        flutterError = FlutterError(
-          code: "AudioAccessRestricted",
-          message: "Audio access is restricted.",
-          details: nil
-        )
-      } else {
-        flutterError = FlutterError(
-          code: "CameraAccessRestricted",
-          message: "Camera access is restricted.",
-          details: nil
-        )
-      }
+      let flutterError =
+        switch permission {
+        case .audio:
+          FlutterError(
+            code: "AudioAccessRestricted",
+            message: "Audio access is restricted.",
+            details: nil
+          )
+        case .camera:
+          FlutterError(
+            code: "CameraAccessRestricted",
+            message: "Camera access is restricted.",
+            details: nil
+          )
+        }
       handler(flutterError)
 
     case .notDetermined:
@@ -99,20 +110,21 @@ class CameraPermissionManager: NSObject {
         if granted {
           handler(nil)
         } else {
-          let flutterError: FlutterError
-          if forAudio {
-            flutterError = FlutterError(
-              code: "AudioAccessDenied",
-              message: "User denied the audio access request.",
-              details: nil
-            )
-          } else {
-            flutterError = FlutterError(
-              code: "CameraAccessDenied",
-              message: "User denied the camera access request.",
-              details: nil
-            )
-          }
+          let flutterError =
+            switch permission {
+            case .audio:
+              FlutterError(
+                code: "AudioAccessDenied",
+                message: "User denied the audio access request.",
+                details: nil
+              )
+            case .camera:
+              FlutterError(
+                code: "CameraAccessDenied",
+                message: "User denied the camera access request.",
+                details: nil
+              )
+            }
           handler(flutterError)
         }
       }

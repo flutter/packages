@@ -10,8 +10,8 @@
 #endif
 
 final class MockCameraPermissionManager: CameraPermissionManager {
-  var requestCameraPermissionStub: ((@escaping (FlutterError?) -> Void) -> Void)?
-  var requestAudioPermissionStub: ((@escaping (FlutterError?) -> Void) -> Void)?
+  var requestCameraPermissionStub: ((@escaping CameraPermissionRequestCompletionHandler) -> Void)?
+  var requestAudioPermissionStub: ((@escaping CameraPermissionRequestCompletionHandler) -> Void)?
 
   init() {
     super.init(permissionService: DefaultPermissionService())
