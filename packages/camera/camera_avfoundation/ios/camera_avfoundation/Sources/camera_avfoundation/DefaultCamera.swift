@@ -73,12 +73,12 @@ final class DefaultCamera: NSObject, Camera {
   private var assetWriterPixelBufferAdaptor: AssetWriterInputPixelBufferAdaptor?
   private var videoAdaptor: AssetWriterInputPixelBufferAdaptor?
 
-  /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
+  /// A dictionary to retain all in-progress SavePhotoDelegates. The key of the dictionary is the
   /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
-  /// FLTSavePhotoDelegate that handles the result of each photo capture operation. Note that photo
+  /// SavePhotoDelegate that handles the result of each photo capture operation. Note that photo
   /// capture operations may overlap, so FLTCam has to keep track of multiple delegates in progress,
   /// instead of just a single delegate reference.
-  private(set) var inProgressSavePhotoDelegates = [Int64: FLTSavePhotoDelegate]()
+  private(set) var inProgressSavePhotoDelegates = [Int64: SavePhotoDelegate]()
 
   private var imageStreamHandler: FLTImageStreamHandler?
 
@@ -682,7 +682,7 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let savePhotoDelegate = FLTSavePhotoDelegate(
+    let savePhotoDelegate = SavePhotoDelegate(
       path: path,
       ioQueue: photoIOQueue,
       completionHandler: { [weak self] path, error in
