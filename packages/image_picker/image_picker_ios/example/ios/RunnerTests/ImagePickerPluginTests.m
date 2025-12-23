@@ -63,7 +63,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -96,7 +97,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -129,7 +131,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -161,7 +164,8 @@
       .andReturn(AVAuthorizationStatusAuthorized);
 
   // Run test
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -184,7 +188,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
@@ -208,7 +213,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
@@ -229,7 +235,8 @@
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
@@ -247,7 +254,8 @@
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
@@ -265,7 +273,8 @@
   id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
   id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin setImagePickerControllerOverrides:@[ mockUIImagePicker ]];
 
   FLTMediaSelectionOptions *mediaSelectionOptions =
@@ -290,7 +299,8 @@
   if ([UIImagePickerController isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]) {
     return;
   }
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   plugin.imagePickerControllerOverrides = @[ controller ];
 
@@ -310,7 +320,8 @@
 #pragma mark - Test video duration
 
 - (void)testPickingVideoWithDuration {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -324,7 +335,8 @@
 }
 
 - (void)testPickingMultiVideoWithDuration {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   [plugin
       pickMultiVideoWithMaxDuration:@(95)
@@ -336,7 +348,8 @@
 }
 
 - (void)testPluginMultiImagePathHasNullItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
   plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
@@ -350,7 +363,8 @@
 }
 
 - (void)testPluginMultiImagePathHasItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   NSArray *pathList = @[ @"test" ];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
@@ -366,7 +380,8 @@
 }
 
 - (void)testPluginMediaPathHasNoItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
   plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
@@ -380,7 +395,8 @@
 }
 
 - (void)testPluginMediaPathConvertsNilToEmptyList {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
   plugin.callContext = [[FLTImagePickerMethodCallContext alloc]
@@ -394,7 +410,8 @@
 }
 
 - (void)testPluginMediaPathHasItem {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   NSArray *pathList = @[ @"test" ];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
@@ -422,7 +439,8 @@
   PHPickerResult *failResult2 = OCMClassMock([PHPickerResult class]);
   OCMStub([failResult2 itemProvider]).andReturn(mockItemProvider);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
@@ -459,7 +477,8 @@
   PHPickerResult *tiffResult = OCMClassMock([PHPickerResult class]);
   OCMStub([tiffResult itemProvider]).andReturn(tiffItemProvider);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
@@ -491,7 +510,8 @@
   PHPickerResult *pngResult = OCMClassMock([PHPickerResult class]);
   OCMStub([pngResult itemProvider]).andReturn(pngItemProvider);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
@@ -515,7 +535,8 @@
   OCMReject([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
                                                             camera:FLTSourceCameraFront]
@@ -534,7 +555,8 @@
   OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *firstCallExpectation = [self expectationWithDescription:@"first call"];
   [plugin pickMultiImageWithMaxSize:[FLTMaxSize makeWithWidth:@100 height:@100]
@@ -562,7 +584,8 @@
   OCMExpect([mockPhotoLibrary requestAuthorizationForAccessLevel:PHAccessLevelReadWrite
                                                          handler:OCMOCK_ANY]);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   FLTMediaSelectionOptions *options =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
@@ -588,7 +611,8 @@
   OCMStub([mockPhotoLibrary authorizationStatusForMediaType:AVMediaTypeVideo])
       .andReturn(AVAuthorizationStatusNotDetermined);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   FLTSourceSpecification *source = [FLTSourceSpecification makeWithType:FLTSourceTypeCamera
                                                                  camera:FLTSourceCameraRear];
@@ -608,7 +632,8 @@
 }
 
 - (void)testPickMultiImageWithLimit {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
                             quality:nil
                        fullMetadata:NO
@@ -620,7 +645,8 @@
 }
 
 - (void)testPickMediaWithLimitAllowsMultiple {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:nil
@@ -637,7 +663,8 @@
 }
 
 - (void)testPickMediaWithLimitMultipleNotAllowed {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:nil
@@ -654,7 +681,8 @@
 }
 
 - (void)testPickMultiImageWithoutLimit {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
                             quality:nil
                        fullMetadata:NO
@@ -666,7 +694,8 @@
 }
 
 - (void)testPickMediaWithoutLimitAllowsMultiple {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   FLTMediaSelectionOptions *mediaSelectionOptions =
       [FLTMediaSelectionOptions makeWithMaxSize:[FLTMaxSize makeWithWidth:@(100) height:@(200)]
                                    imageQuality:nil
@@ -683,7 +712,8 @@
 }
 
 - (void)testPickMultiVideoWithLimit {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin pickMultiVideoWithMaxDuration:nil
                                   limit:@(2)
                              completion:^(NSArray<NSString *> *_Nullable result,
@@ -693,7 +723,8 @@
 }
 
 - (void)testPickMultiVideoWithoutLimit {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   [plugin pickMultiVideoWithMaxDuration:nil
                                   limit:nil
                              completion:^(NSArray<NSString *> *_Nullable result,
