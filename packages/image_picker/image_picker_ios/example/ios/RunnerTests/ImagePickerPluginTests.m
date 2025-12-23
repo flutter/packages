@@ -26,6 +26,19 @@
 
 @end
 
+@interface StubViewProvider : NSObject <FIPViewProvider>
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+@property(nonatomic, nullable) UIViewController *viewController;
+@end
+
+@implementation StubViewProvider
+- (instancetype)initWithViewController:(UIViewController *)viewController {
+  self = [super init];
+  _viewController = viewController;
+  return self;
+}
+@end
+
 @interface ImagePickerPluginTests : XCTestCase
 
 @end
@@ -320,18 +333,6 @@
                          }];
 
   XCTAssertEqual(plugin.callContext.maxDuration, 95);
-}
-
-- (void)testViewController {
-  UIWindow *window = [UIWindow new];
-  MockViewController *vc1 = [MockViewController new];
-  window.rootViewController = vc1;
-
-  UIViewController *vc2 = [UIViewController new];
-  vc1.mockPresented = vc2;
-
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
-  XCTAssertEqual([plugin viewControllerWithWindow:window], vc2);
 }
 
 - (void)testPluginMultiImagePathHasNullItem {
@@ -711,10 +712,10 @@
                 }]])
       .andReturn(mockPickerViewController);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
-  id partialPlugin = OCMPartialMock(plugin);
   id mockViewController = OCMClassMock([UIViewController class]);
-  OCMStub([partialPlugin viewControllerWithWindow:OCMOCK_ANY]).andReturn(mockViewController);
+  StubViewProvider *viewProvider =
+      [[StubViewProvider alloc] initWithViewController:mockViewController];
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] initWithViewProvider:viewProvider];
 
   [plugin pickVideoWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
                                                             camera:FLTSourceCameraRear]
