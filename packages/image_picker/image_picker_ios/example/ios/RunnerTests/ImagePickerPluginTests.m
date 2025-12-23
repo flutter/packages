@@ -725,4 +725,218 @@
   OCMVerifyAll(mockPickerViewController);
 }
 
+#pragma mark - Test immediate picker close detection
+
+- (void)testUIImagePickerImmediateCloseReturnsEmptyArray {
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  // Mock camera access to avoid permission dialogs and device-specific logic.
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+      .andReturn(YES);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]))
+      .andReturn(YES);
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusAuthorized);
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+
+  FLTSourceSpecification *source = [FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                                 camera:FLTSourceCameraRear];
+  [plugin pickImageWithSource:source
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:NO
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error) {
+                     XCTAssertNil(result);
+                     XCTAssertNil(error);
+                     [resultExpectation fulfill];
+                   }];
+
+  // The `pickImage` call will attach the observer. Now, simulate dismissal.
+  // This needs to happen on the next run loop to ensure the observer is attached.
+  dispatch_async(dispatch_get_main_queue(), ^{
+    UIWindow *testWindow = [[UIWindow alloc] initWithFrame:CGRectMake(0, 0, 100, 100)];
+    testWindow.hidden = NO;
+    [testWindow addSubview:controller.view];
+
+    [testWindow setNeedsLayout];
+    [testWindow layoutIfNeeded];
+
+    // Simulate the picker being removed from the window hierarchy
+    [controller.view removeFromSuperview];
+  });
+
+  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+- (void)testPHPickerImmediateCloseReturnsEmptyArray API_AVAILABLE(ios(14)) {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusAuthorized);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+
+  [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
+                            quality:nil
+                       fullMetadata:NO
+                              limit:nil
+                         completion:^(NSArray<NSString *> *_Nullable result,
+                                      FlutterError *_Nullable error) {
+                           XCTAssertNotNil(result);
+                           XCTAssertEqual(result.count, 0);
+                           XCTAssertNil(error);
+                           [resultExpectation fulfill];
+                         }];
+
+  id mockPresentationController = OCMClassMock([UIPresentationController class]);
+  [plugin presentationControllerDidDismiss:mockPresentationController];
+
+  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+- (void)testObserverDoesNotInterfereWhenProcessingSelection API_AVAILABLE(ios(14)) {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusAuthorized);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+  __block BOOL emptyResultReceived = NO;
+
+  [plugin pickMultiImageWithMaxSize:[[FLTMaxSize alloc] init]
+                            quality:nil
+                       fullMetadata:NO
+                              limit:nil
+                         completion:^(NSArray<NSString *> *_Nullable result,
+                                      FlutterError *_Nullable error) {
+                           if (result != nil && result.count > 0) {
+                             emptyResultReceived = NO;
+                             [resultExpectation fulfill];
+                           } else if (result != nil && result.count == 0) {
+                             emptyResultReceived = YES;
+                           }
+                         }];
+
+  NSURL *tiffURL = [[NSBundle bundleForClass:[self class]] URLForResource:@"tiffImage"
+                                                            withExtension:@"tiff"];
+  NSItemProvider *tiffItemProvider = [[NSItemProvider alloc] initWithContentsOfURL:tiffURL];
+  PHPickerResult *tiffResult = OCMClassMock([PHPickerResult class]);
+  OCMStub([tiffResult itemProvider]).andReturn(tiffItemProvider);
+
+  id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
+
+  [plugin picker:mockPickerViewController didFinishPicking:@[ tiffResult ]];
+
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                 dispatch_get_main_queue(), ^{
+                   if (!resultExpectation.inverted) {
+                     XCTAssertFalse(emptyResultReceived,
+                                    @"Observer should not fire when processing selection");
+                   }
+                 });
+
+  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+}
+
+- (void)testObserverRespectsContextClearing {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusAuthorized);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+  __block NSInteger completionCallCount = 0;
+
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:NO
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error) {
+                     completionCallCount++;
+                     [resultExpectation fulfill];
+                   }];
+
+  XCTAssertNotNil(plugin.callContext, @"Context should be set after pickImage call");
+
+  plugin.callContext = nil;
+
+  UIView *controllerView = controller.view;
+  if (controllerView) {
+    UIWindow *testWindow = [[UIWindow alloc] init];
+    [testWindow addSubview:controllerView];
+    [controllerView removeFromSuperview];
+  }
+
+  dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                 dispatch_get_main_queue(), ^{
+                   XCTAssertLessThanOrEqual(completionCallCount, 1,
+                                            @"Observer should not fire after context is cleared");
+                   if (completionCallCount == 0) {
+                     [resultExpectation fulfill];
+                   }
+                 });
+
+  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
+- (void)testObserverDelayAllowsDelegateMethodsToRunFirst {
+  id photoLibrary = OCMClassMock([PHPhotoLibrary class]);
+  OCMStub(ClassMethod([photoLibrary authorizationStatus]))
+      .andReturn(PHAuthorizationStatusAuthorized);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
+  __block NSInteger callCount = 0;
+
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:NO
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error) {
+                     callCount++;
+                     if (callCount == 1) {
+                       XCTAssertNil(result);
+                       XCTAssertNil(error);
+
+                       UIView *controllerView = controller.view;
+                       if (controllerView) {
+                         UIWindow *testWindow = [[UIWindow alloc] init];
+                         [testWindow addSubview:controllerView];
+                         [controllerView removeFromSuperview];
+                       }
+
+                       dispatch_after(
+                           dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.2 * NSEC_PER_SEC)),
+                           dispatch_get_main_queue(), ^{
+                             XCTAssertEqual(
+                                 callCount, 1,
+                                 @"Observer should not fire after context cleared by cancel");
+                             [resultExpectation fulfill];
+                           });
+                     }
+                   }];
+
+  [plugin imagePickerControllerDidCancel:controller];
+
+  [self waitForExpectationsWithTimeout:1.0 handler:nil];
+}
+
 @end
