@@ -1,3 +1,7 @@
+## 0.9.22+9
+
+* Migrates `FLTSavePhotoDelegate` and `FLTWritableData` classes to Swift.
+
 ## 0.9.22+8
 
 * Migrates `FLTPermissionServicing` and `FLTCameraPermissionManager` classes to Swift.
