@@ -25,14 +25,10 @@ flutter:
         pluginClass: TestPluginCApi
 
 dependencies:
+  ffi: ^2.1.4
   flutter:
     sdk: flutter
-  jni: 
-    git:
-      url: https://github.com/dart-lang/native/
-      path: pkgs/jni
-      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
-  ffi: ^2.1.3
+  jni: ^0.15.2
 
 dev_dependencies:
   flutter_test:

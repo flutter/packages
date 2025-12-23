@@ -9,6 +9,7 @@ environment:
 
 dependencies:
   build_runner: ^2.1.10
+  ffi: ^2.1.4
   flutter:
     sdk: flutter
   # These are normal dependencies rather than dev_dependencies because the
@@ -18,18 +19,9 @@ dependencies:
     sdk: flutter
   integration_test:
     sdk: flutter
-  jni: 
-    git:
-      url: https://github.com/dart-lang/native/
-      path: pkgs/jni
-      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
-  ffi: ^2.1.3
+  jni: ^0.15.2
   mockito: ^5.4.4
-  objective_c: 
-    git:
-      url: https://github.com/dart-lang/native/
-      path: pkgs/objective_c
-      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
+  objective_c: ^8.0.0
 
 dev_dependencies:
   leak_tracker: any

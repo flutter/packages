@@ -546,11 +546,11 @@ class _PigeonJniCodec {
 }
 
 class _PigeonFfiCodec {
-  static Object? readValue(ObjCObjectBase? value, [Type? outType]) {
-    if (value == null || ffi_bridge.PigeonInternalNull.isInstance(value)) {
+  static Object? readValue(ObjCObject? value, [Type? outType]) {
+    if (value == null || ffi_bridge.PigeonInternalNull.isA(value)) {
       return null;
     } else if (NSNumber.isInstance(value)) {
-      final NSNumber numValue = NSNumber.castFrom(value);
+      final NSNumber numValue = NSNumber.as(value);
       switch (outType) {
         case const (double):
           return numValue.doubleValue;
@@ -563,62 +563,56 @@ class _PigeonFfiCodec {
         default:
           return numValue.longValue;
       }
-    } else if (NSString.isInstance(value)) {
-      return (NSString.castFrom(value)).toDartString();
+    } else if (NSString.isA(value)) {
+      return (NSString.as(value)).toDartString();
     } else if (value is ffi_bridge.PigeonTypedData ||
-        ffi_bridge.PigeonTypedData.isInstance(value)) {
+        ffi_bridge.PigeonTypedData.isA(value)) {
       return getValueFromPigeonTypedData(value as ffi_bridge.PigeonTypedData);
-    } else if (value is NSArray || NSArray.isInstance(value)) {
-      final NSArray array = NSArray.castFrom(value);
+    } else if (value is NSArray || NSArray.isA(value)) {
+      final NSArray array = NSArray.as(value);
       final List<Object?> res = <Object?>[];
       for (int i = 0; i < array.length; i++) {
         res.add(readValue(array[i]));
       }
       return res;
-    } else if (value is NSDictionary || NSDictionary.isInstance(value)) {
-      final NSDictionary dictionary = NSDictionary.castFrom(value);
+    } else if (value is NSDictionary || NSDictionary.isA(value)) {
+      final NSDictionary dictionary = NSDictionary.as(value);
       final Map<Object?, Object?> res = <Object?, Object?>{};
-      for (final MapEntry<NSCopying?, ObjCObjectBase?> entry
+      for (final MapEntry<NSCopying?, ObjCObject?> entry
           in dictionary.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
       return res;
-    } else if (ffi_bridge.NumberWrapper.isInstance(value)) {
-      return convertNumberWrapperToDart(
-        ffi_bridge.NumberWrapper.castFrom(value),
-      );
-    } else if (ffi_bridge.NIUnusedClassBridge.isInstance(value)) {
-      return NIUnusedClass.fromFfi(
-        ffi_bridge.NIUnusedClassBridge.castFrom(value),
-      );
-    } else if (ffi_bridge.NIAllTypesBridge.isInstance(value)) {
-      return NIAllTypes.fromFfi(ffi_bridge.NIAllTypesBridge.castFrom(value));
-    } else if (ffi_bridge.NIAllNullableTypesBridge.isInstance(value)) {
+    } else if (ffi_bridge.NumberWrapper.isA(value)) {
+      return convertNumberWrapperToDart(ffi_bridge.NumberWrapper.as(value));
+    } else if (ffi_bridge.NIUnusedClassBridge.isA(value)) {
+      return NIUnusedClass.fromFfi(ffi_bridge.NIUnusedClassBridge.as(value));
+    } else if (ffi_bridge.NIAllTypesBridge.isA(value)) {
+      return NIAllTypes.fromFfi(ffi_bridge.NIAllTypesBridge.as(value));
+    } else if (ffi_bridge.NIAllNullableTypesBridge.isA(value)) {
       return NIAllNullableTypes.fromFfi(
-        ffi_bridge.NIAllNullableTypesBridge.castFrom(value),
+        ffi_bridge.NIAllNullableTypesBridge.as(value),
       );
-    } else if (ffi_bridge.NIAllNullableTypesWithoutRecursionBridge.isInstance(
-      value,
-    )) {
+    } else if (ffi_bridge.NIAllNullableTypesWithoutRecursionBridge.isA(value)) {
       return NIAllNullableTypesWithoutRecursion.fromFfi(
-        ffi_bridge.NIAllNullableTypesWithoutRecursionBridge.castFrom(value),
+        ffi_bridge.NIAllNullableTypesWithoutRecursionBridge.as(value),
       );
-    } else if (ffi_bridge.NIAllClassesWrapperBridge.isInstance(value)) {
+    } else if (ffi_bridge.NIAllClassesWrapperBridge.isA(value)) {
       return NIAllClassesWrapper.fromFfi(
-        ffi_bridge.NIAllClassesWrapperBridge.castFrom(value),
+        ffi_bridge.NIAllClassesWrapperBridge.as(value),
       );
 
       // ignore: unnecessary_type_check
-    } else if (value is ObjCObjectBase) {
+    } else if (value is ObjCObject) {
       return null;
     } else {
       throw ArgumentError.value(value);
     }
   }
 
-  static T writeValue<T extends ObjCObjectBase?>(Object? value) {
+  static T writeValue<T extends ObjCObject?>(Object? value) {
     if (value == null) {
-      if (isTypeOrNullableType<T>(ObjCObjectBase) ||
+      if (isTypeOrNullableType<T>(ObjCObject) ||
           isTypeOrNullableType<T>(NSObject)) {
         return ffi_bridge.PigeonInternalNull() as T;
       }
@@ -930,9 +924,9 @@ class _PigeonFfiCodec {
     } else if (value is Map) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
-        NSMutableDictionary$Methods(res).setObject(
+        res.setObject(
           writeValue(entry.value),
-          forKey: NSCopying.castFrom(writeValue(entry.key)),
+          forKey: NSCopying.as(writeValue(entry.key)),
         );
       }
       return res as T;
@@ -2554,8 +2548,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2589,8 +2582,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2616,13 +2608,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final ObjCObjectBase? res = _ffiApi.throwErrorWithWrappedError(error);
+        final ObjCObject? res = _ffiApi.throwErrorWithWrappedError(error);
         if (error.code != null) {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2653,8 +2644,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2679,15 +2669,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final ObjCObjectBase? res = _ffiApi.throwFlutterErrorWithWrappedError(
+        final ObjCObject? res = _ffiApi.throwFlutterErrorWithWrappedError(
           error,
         );
         if (error.code != null) {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2721,8 +2710,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2756,8 +2744,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2791,8 +2778,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2826,8 +2812,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2864,8 +2849,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2903,8 +2887,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2942,8 +2925,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -2981,8 +2963,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3009,7 +2990,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final ObjCObjectBase? res = _ffiApi.echoObjectWithAnObject(
+        final ObjCObject? res = _ffiApi.echoObjectWithAnObject(
           _PigeonFfiCodec.writeValue<NSObject>(anObject),
           wrappedError: error,
         );
@@ -3017,8 +2998,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3052,8 +3032,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3089,8 +3068,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3126,8 +3104,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3162,8 +3139,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3199,8 +3175,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3235,8 +3210,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3274,8 +3248,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3311,8 +3284,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3350,8 +3322,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3387,8 +3358,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3424,8 +3394,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3461,8 +3430,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3498,8 +3466,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3537,8 +3504,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3574,8 +3540,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3611,8 +3576,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3648,8 +3612,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3687,8 +3650,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3722,8 +3684,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3759,8 +3720,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3795,8 +3755,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3832,8 +3791,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3872,8 +3830,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3908,8 +3865,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3944,8 +3900,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -3990,8 +3945,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4035,8 +3989,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4071,8 +4024,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4106,8 +4058,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4141,8 +4092,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4176,8 +4126,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4214,8 +4163,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4253,8 +4201,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4292,8 +4239,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4331,8 +4277,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4359,17 +4304,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final ObjCObjectBase? res = _ffiApi
-            .echoNullableObjectWithANullableObject(
-              _PigeonFfiCodec.writeValue<NSObject>(aNullableObject),
-              wrappedError: error,
-            );
+        final ObjCObject? res = _ffiApi.echoNullableObjectWithANullableObject(
+          _PigeonFfiCodec.writeValue<NSObject>(aNullableObject),
+          wrappedError: error,
+        );
         if (error.code != null) {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4403,8 +4346,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4440,8 +4382,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4479,8 +4420,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4516,8 +4456,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4555,8 +4494,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4592,8 +4530,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4631,8 +4568,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4668,8 +4604,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4707,8 +4642,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4746,8 +4680,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4786,8 +4719,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4823,8 +4755,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4862,8 +4793,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4902,8 +4832,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4939,8 +4868,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
@@ -4975,8 +4903,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
           throw PlatformException(
             code: error.code!.toDartString(),
             message: error.message?.toDartString(),
-            details:
-                error.details != null && NSString.isInstance(error.details!)
+            details: error.details != null && NSString.isA(error.details!)
                 ? error.details!.toDartString()
                 : error.details,
           );
