@@ -1,4 +1,4 @@
-## 2.0.0
+## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Add build hook helper to allow for transforming assets through hooks.
