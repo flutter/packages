@@ -6,10 +6,14 @@ import 'package:file/file.dart';
 import 'package:path/path.dart' as p;
 import 'package:pubspec_parse/pubspec_parse.dart';
 
+import 'ci_config.dart';
 import 'core.dart';
+import 'pending_changelog_entry.dart';
 
 export 'package:pubspec_parse/pubspec_parse.dart' show Pubspec;
+export 'ci_config.dart';
 export 'core.dart' show FlutterPlatform;
+export 'pending_changelog_entry.dart';
 
 /// A package in the repository.
 //
@@ -77,6 +81,10 @@ class RepositoryPackage {
   File get prePublishScript =>
       directory.childDirectory('tool').childFile('pre_publish.dart');
 
+  /// The directory containing pending changelog entries.
+  Directory get pendingChangelogsDirectory =>
+      directory.childDirectory('pending_changelogs');
+
   /// Returns the directory containing support for [platform].
   Directory platformDirectory(FlutterPlatform platform) {
     late final String directoryName;
@@ -115,6 +123,15 @@ class RepositoryPackage {
   ///
   /// Caches for future use.
   Pubspec parsePubspec() => _parsedPubspec;
+
+  late final CIConfig? _parsedCIConfig = ciConfigFile.existsSync()
+      ? CIConfig.parse(ciConfigFile.readAsStringSync())
+      : null;
+
+  /// Returns the parsed [ciConfigFile], or null if it does not exist.
+  ///
+  /// Throws if the file exists but is not a valid ci_config.yaml.
+  CIConfig? parseCIConfig() => _parsedCIConfig;
 
   /// Returns true if the package depends on Flutter.
   bool requiresFlutter() {
@@ -219,5 +236,48 @@ class RepositoryPackage {
   /// Returns true if the package is not marked as "publish_to: none".
   bool isPublishable() {
     return parsePubspec().publishTo != 'none';
+  }
+
+  /// Returns the parsed changelog entries for the package.
+  ///
+  /// This method reads through the files in the pending_changelogs folder
+  /// and parses each file as a changelog entry.
+  ///
+  /// Throws if the folder does not exist, or if any of the files are not
+  /// valid changelog entries.
+  List<PendingChangelogEntry> getPendingChangelogs() {
+    final entries = <PendingChangelogEntry>[];
+
+    final Directory pendingChangelogsDir = pendingChangelogsDirectory;
+    if (!pendingChangelogsDir.existsSync()) {
+      throw FormatException(
+        'No pending_changelogs folder found for $displayName.',
+      );
+    }
+
+    final List<File> pendingChangelogFiles = pendingChangelogsDir
+        .listSync()
+        .whereType<File>()
+        .where((File file) => !PendingChangelogEntry.isTemplate(file))
+        .toList();
+    final Iterable<File> unexpectedFiles = pendingChangelogFiles.where(
+      (File file) => !file.basename.endsWith('.yaml'),
+    );
+    if (unexpectedFiles.isNotEmpty) {
+      throw FormatException(
+        'Found non-YAML file(s) in pending_changelogs: ${unexpectedFiles.map((file) => file.path).join(',')}',
+      );
+    }
+
+    for (final file in pendingChangelogFiles) {
+      try {
+        entries.add(PendingChangelogEntry.parse(file.readAsStringSync(), file));
+      } on FormatException catch (e) {
+        throw FormatException(
+          'Malformed pending changelog file: ${file.path}\n$e',
+        );
+      }
+    }
+    return entries;
   }
 }

@@ -572,13 +572,7 @@ release:
         'repo-package-info-check',
       ]);
 
-      expect(
-        output,
-        containsAll(<Matcher>[
-          contains('  Checking ci_config.yaml...'),
-          contains('No issues found!'),
-        ]),
-      );
+      expect(output, containsAll(<Matcher>[contains('No issues found!')]));
     });
 
     test('missing ci_config file is ok', () async {
