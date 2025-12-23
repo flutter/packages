@@ -1,5 +1,8 @@
 ## NEXT
 
+## 0.4.7+1
+
+* Fixes StoreKit 2 consumable purchases being reported as restored, which left transactions unfinished and blocked repeat buys.
 * Fixes Xcode 26.2 analyzer warnings in example app tests.
 
 ## 0.4.7
