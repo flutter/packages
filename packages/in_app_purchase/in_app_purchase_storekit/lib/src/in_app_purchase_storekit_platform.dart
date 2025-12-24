@@ -194,7 +194,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
             PurchaseStatus.purchased, // won't reach here
         };
 
-        final SK2PurchaseDetails details = SK2PurchaseDetails(
+        final details = SK2PurchaseDetails(
           productID: purchaseParam.productDetails.id,
           purchaseID: null,
           verificationData: PurchaseVerificationData(
