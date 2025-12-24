@@ -88,10 +88,11 @@ class FileSelectorWindows extends FileSelectorPlatform {
     return result.paths.isEmpty
         ? null
         : FileSaveLocation(
-          result.paths.first,
-          activeFilter:
-              groupIndex == null ? null : acceptedTypeGroups?[groupIndex],
-        );
+            result.paths.first,
+            activeFilter: groupIndex == null
+                ? null
+                : acceptedTypeGroups?[groupIndex],
+          );
   }
 
   @override

@@ -12,7 +12,7 @@ void main() {
       WidgetTester tester, {
       Listenable? refreshListenable,
     }) async {
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         initialLocation: '/',
         routes: <GoRoute>[
           GoRoute(
@@ -52,12 +52,11 @@ class _MyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed:
-          () => context.replaceNamed(
-            'page-0',
-            pathParameters: <String, String>{'tab': 'settings'},
-            queryParameters: <String, String>{'search': 'notification'},
-          ),
+      onPressed: () => context.replaceNamed(
+        'page-0',
+        pathParameters: <String, String>{'tab': 'settings'},
+        queryParameters: <String, String>{'search': 'notification'},
+      ),
       child: const Text('Settings'),
     );
   }

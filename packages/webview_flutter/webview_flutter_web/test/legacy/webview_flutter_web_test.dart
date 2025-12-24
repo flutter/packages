@@ -28,7 +28,7 @@ void main() {
   group('WebWebViewPlatform', () {
     test('build returns a HtmlElementView', () {
       // Setup
-      final WebWebViewPlatform platform = WebWebViewPlatform();
+      final platform = WebWebViewPlatform();
       // Run
       final Widget widget = platform.build(
         context: MockBuildContext(),
@@ -44,9 +44,8 @@ void main() {
   group('WebWebViewPlatformController', () {
     test('loadUrl sets url on iframe src attribute', () {
       // Setup
-      final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
-      final WebWebViewPlatformController controller =
-          WebWebViewPlatformController(fakeIFrame);
+      final fakeIFrame = web.HTMLIFrameElement();
+      final controller = WebWebViewPlatformController(fakeIFrame);
       // Run
       controller.loadUrl('http://example.com/', null);
       // Verify
@@ -56,9 +55,8 @@ void main() {
     group('loadHtmlString', () {
       test('loadHtmlString loads html into iframe', () {
         // Setup
-        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
-        final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final fakeIFrame = web.HTMLIFrameElement();
+        final controller = WebWebViewPlatformController(fakeIFrame);
         // Run
         controller.loadHtmlString('test html');
         // Verify
@@ -70,9 +68,8 @@ void main() {
 
       test('loadHtmlString escapes "#" correctly', () {
         // Setup
-        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
-        final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final fakeIFrame = web.HTMLIFrameElement();
+        final controller = WebWebViewPlatformController(fakeIFrame);
         // Run
         controller.loadHtmlString('#');
         // Verify
@@ -83,9 +80,8 @@ void main() {
     group('loadRequest', () {
       test('loadRequest throws ArgumentError on missing scheme', () {
         // Setup
-        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
-        final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final fakeIFrame = web.HTMLIFrameElement();
+        final controller = WebWebViewPlatformController(fakeIFrame);
 
         // Run & Verify
         expect(
@@ -103,11 +99,10 @@ void main() {
         'loadRequest makes request and loads response into iframe',
         () async {
           // Setup
-          final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
-          final WebWebViewPlatformController controller =
-              WebWebViewPlatformController(fakeIFrame);
+          final fakeIFrame = web.HTMLIFrameElement();
+          final controller = WebWebViewPlatformController(fakeIFrame);
 
-          final web.Response fakeResponse = web.Response(
+          final fakeResponse = web.Response(
             'test data'.toJS,
             <String, Object>{
                   'headers': <String, Object>{'content-type': 'text/plain'},
@@ -115,8 +110,7 @@ void main() {
                 as web.ResponseInit,
           );
 
-          final MockHttpRequestFactory mockHttpRequestFactory =
-              MockHttpRequestFactory();
+          final mockHttpRequestFactory = MockHttpRequestFactory();
           when(
             mockHttpRequestFactory.request(
               any,
@@ -156,11 +150,10 @@ void main() {
 
       test('loadRequest escapes "#" correctly', () async {
         // Setup
-        final web.HTMLIFrameElement fakeIFrame = web.HTMLIFrameElement();
-        final WebWebViewPlatformController controller =
-            WebWebViewPlatformController(fakeIFrame);
+        final fakeIFrame = web.HTMLIFrameElement();
+        final controller = WebWebViewPlatformController(fakeIFrame);
 
-        final web.Response fakeResponse = web.Response(
+        final fakeResponse = web.Response(
           '#'.toJS,
           <String, Object>{
                 'headers': <String, Object>{'content-type': 'text/html'},
@@ -168,8 +161,7 @@ void main() {
               as web.ResponseInit,
         );
 
-        final MockHttpRequestFactory mockHttpRequestFactory =
-            MockHttpRequestFactory();
+        final mockHttpRequestFactory = MockHttpRequestFactory();
         when(
           mockHttpRequestFactory.request(
             any,

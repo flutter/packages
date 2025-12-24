@@ -3,6 +3,14 @@
 * Implements `getAudioTracks()` and `selectAudioTrack()` methods.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
+## 2.8.8
+
+* Refactors Dart internals for maintainability.
+
+## 2.8.7
+
+* Updates to Pigeon 26.
+
 ## 2.8.6
 
 * Fixes a bug where the video player fails to initialize when `AVFoundation` reports a duration of zero.

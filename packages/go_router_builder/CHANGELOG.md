@@ -1,3 +1,13 @@
+## 4.1.3
+
+* Requires `analyzer` 8.2 or higher, to avoid experimental APIs.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 4.1.2
+
+* Updates supported analyzer versions to 8.x or 9.x.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 4.1.1
 
 - Allow `analyzer: '>=7.4.0 <9.0.0'`.

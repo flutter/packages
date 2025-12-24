@@ -28,47 +28,72 @@ class AnalyzeCommand extends PackageLoopingCommand {
     // Platform options.
     // By default, only Dart analysis is run.
     argParser.addFlag(_dartFlag, help: "Runs 'dart analyze'", defaultsTo: true);
-    argParser.addFlag(platformAndroid,
-        help: "Runs 'gradle lint' on Android code");
-    argParser.addFlag(platformIOS,
-        help: "Runs 'xcodebuild analyze' on iOS code");
-    argParser.addFlag(platformMacOS,
-        help: "Runs 'xcodebuild analyze' on macOS code");
+    argParser.addFlag(
+      platformAndroid,
+      help: "Runs 'gradle lint' on Android code",
+    );
+    argParser.addFlag(
+      platformIOS,
+      help: "Runs 'xcodebuild analyze' on iOS code",
+    );
+    argParser.addFlag(
+      platformMacOS,
+      help: "Runs 'xcodebuild analyze' on macOS code",
+    );
 
     // Dart options.
-    argParser.addMultiOption(_customAnalysisFlag,
-        help:
-            'Directories (comma separated) that are allowed to have their own '
-            'analysis options.\n\n'
-            'Alternately, a list of one or more YAML files that contain a list '
-            'of allowed directories.',
-        defaultsTo: <String>[]);
-    argParser.addOption(_analysisSdk,
-        valueHelp: 'dart-sdk',
-        help: 'An optional path to a Dart SDK; this is used to override the '
-            'SDK used to provide analysis.');
-    argParser.addFlag(_downgradeFlag,
-        help: 'Runs "flutter pub downgrade" before analysis to verify that '
-            'the minimum constraints are sufficiently new for APIs used.');
-    argParser.addFlag(_libOnlyFlag,
-        help: 'Only analyze the lib/ directory of the main package, not the '
-            'entire package.');
-    argParser.addFlag(_skipIfResolvingFailsFlag,
-        help: 'If resolution fails, skip the package. This is only '
-            'intended to be used with pathified analysis, where a resolver '
-            'failure indicates that no out-of-band failure can result anyway.',
-        hide: true);
+    argParser.addMultiOption(
+      _customAnalysisFlag,
+      help:
+          'Directories (comma separated) that are allowed to have their own '
+          'analysis options.\n\n'
+          'Alternately, a list of one or more YAML files that contain a list '
+          'of allowed directories.',
+      defaultsTo: <String>[],
+    );
+    argParser.addOption(
+      _analysisSdk,
+      valueHelp: 'dart-sdk',
+      help:
+          'An optional path to a Dart SDK; this is used to override the '
+          'SDK used to provide analysis.',
+    );
+    argParser.addFlag(
+      _downgradeFlag,
+      help:
+          'Runs "flutter pub downgrade" before analysis to verify that '
+          'the minimum constraints are sufficiently new for APIs used.',
+    );
+    argParser.addFlag(
+      _libOnlyFlag,
+      help:
+          'Only analyze the lib/ directory of the main package, not the '
+          'entire package.',
+    );
+    argParser.addFlag(
+      _skipIfResolvingFailsFlag,
+      help:
+          'If resolution fails, skip the package. This is only '
+          'intended to be used with pathified analysis, where a resolver '
+          'failure indicates that no out-of-band failure can result anyway.',
+      hide: true,
+    );
 
     // Xcode options.
-    argParser.addOption(_minIOSVersionArg,
-        help: 'Sets the minimum iOS deployment version to use when compiling, '
-            'overriding the default minimum version. This can be used to find '
-            'deprecation warnings that will affect the plugin in the future.');
-    argParser.addOption(_minMacOSVersionArg,
-        help:
-            'Sets the minimum macOS deployment version to use when compiling, '
-            'overriding the default minimum version. This can be used to find '
-            'deprecation warnings that will affect the plugin in the future.');
+    argParser.addOption(
+      _minIOSVersionArg,
+      help:
+          'Sets the minimum iOS deployment version to use when compiling, '
+          'overriding the default minimum version. This can be used to find '
+          'deprecation warnings that will affect the plugin in the future.',
+    );
+    argParser.addOption(
+      _minMacOSVersionArg,
+      help:
+          'Sets the minimum macOS deployment version to use when compiling, '
+          'overriding the default minimum version. This can be used to find '
+          'deprecation warnings that will affect the plugin in the future.',
+    );
   }
 
   static const String _dartFlag = 'dart';
@@ -88,33 +113,46 @@ class AnalyzeCommand extends PackageLoopingCommand {
   final String name = 'analyze';
 
   @override
-  final String description = 'Analyzes all packages using dart analyze.\n\n'
+  final String description =
+      'Analyzes all packages using dart analyze.\n\n'
       'This command requires "dart" and "flutter" to be in your path.';
 
   /// Checks that there are no unexpected analysis_options.yaml files.
   bool _hasUnexpectedAnalysisOptions(RepositoryPackage package) {
-    final List<FileSystemEntity> files =
-        package.directory.listSync(recursive: true, followLinks: false);
-    for (final FileSystemEntity file in files) {
+    final List<FileSystemEntity> files = package.directory.listSync(
+      recursive: true,
+      followLinks: false,
+    );
+    for (final file in files) {
       if (file.basename != 'analysis_options.yaml' &&
           file.basename != '.analysis_options') {
         continue;
       }
 
+      // Skip anything checked out inside of .dart_tool/.
+      if (file.path.contains('/.dart_tool/')) {
+        continue;
+      }
+
       final bool allowed = _allowedCustomAnalysisDirectories.any(
-          (String directory) =>
-              directory.isNotEmpty &&
-              path.isWithin(
-                  packagesDir.childDirectory(directory).path, file.path));
+        (String directory) =>
+            directory.isNotEmpty &&
+            path.isWithin(
+              packagesDir.childDirectory(directory).path,
+              file.path,
+            ),
+      );
       if (allowed) {
         continue;
       }
 
       printError(
-          'Found an extra analysis_options.yaml at ${file.absolute.path}.');
+        'Found an extra analysis_options.yaml at ${file.absolute.path}.',
+      );
       printError(
-          'If this was deliberate, pass the package to the analyze command '
-          'with the --$_customAnalysisFlag flag and try again.');
+        'If this was deliberate, pass the package to the analyze command '
+        'with the --$_customAnalysisFlag flag and try again.',
+      );
       return true;
     }
     return false;
@@ -155,14 +193,15 @@ class AnalyzeCommand extends PackageLoopingCommand {
     _allowedCustomAnalysisDirectories = getYamlListArg(_customAnalysisFlag);
 
     // Use the Dart SDK override if one was passed in.
-    final String? dartSdk = argResults![_analysisSdk] as String?;
-    _dartBinaryPath =
-        dartSdk == null ? 'dart' : path.join(dartSdk, 'bin', 'dart');
+    final dartSdk = argResults![_analysisSdk] as String?;
+    _dartBinaryPath = dartSdk == null
+        ? 'dart'
+        : path.join(dartSdk, 'bin', 'dart');
   }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final Map<String, PackageResult> subResults = <String, PackageResult>{};
+    final subResults = <String, PackageResult>{};
     if (getBoolArg(_dartFlag)) {
       _printSectionHeading('Running dart analyze.');
       subResults['Dart'] = await _runDartAnalysisForPackage(package);
@@ -208,28 +247,32 @@ class AnalyzeCommand extends PackageLoopingCommand {
       return subResults.values.first;
     }
     // Otherwise, aggregate the messages, with the least positive status.
-    final Map<String, PackageResult> failedResults =
-        Map<String, PackageResult>.of(subResults)
-          ..removeWhere((String key, PackageResult value) =>
-              value.state != RunState.failed);
-    final Map<String, PackageResult> skippedResults =
-        Map<String, PackageResult>.of(subResults)
-          ..removeWhere((String key, PackageResult value) =>
-              value.state != RunState.skipped);
+    final failedResults = Map<String, PackageResult>.of(subResults)
+      ..removeWhere(
+        (String key, PackageResult value) => value.state != RunState.failed,
+      );
+    final skippedResults = Map<String, PackageResult>.of(subResults)
+      ..removeWhere(
+        (String key, PackageResult value) => value.state != RunState.skipped,
+      );
     // If anything failed, collect all the failure messages, prefixed by type.
     if (failedResults.isNotEmpty) {
       return PackageResult.fail(<String>[
         for (final MapEntry<String, PackageResult> entry
             in failedResults.entries)
-          '${entry.key}${entry.value.details.isEmpty ? '' : ': ${entry.value.details.join(', ')}'}'
+          '${entry.key}${entry.value.details.isEmpty ? '' : ': ${entry.value.details.join(', ')}'}',
       ]);
     }
     // If everything was skipped, mark as skipped with all of the explanations.
     if (skippedResults.length == subResults.length) {
-      return PackageResult.skip(skippedResults.entries
-          .map((MapEntry<String, PackageResult> entry) =>
-              '${entry.key}: ${entry.value.details.first}')
-          .join(', '));
+      return PackageResult.skip(
+        skippedResults.entries
+            .map(
+              (MapEntry<String, PackageResult> entry) =>
+                  '${entry.key}: ${entry.value.details.first}',
+            )
+            .join(', '),
+      );
     }
     // For all succes, or a mix of success and skip, log any skips but mark as
     // success.
@@ -247,7 +290,8 @@ class AnalyzeCommand extends PackageLoopingCommand {
   /// Runs Dart analysis for the given package, and returns the result that
   /// applies to that analysis.
   Future<PackageResult> _runDartAnalysisForPackage(
-      RepositoryPackage package) async {
+    RepositoryPackage package,
+  ) async {
     final bool libOnly = getBoolArg(_libOnlyFlag);
 
     if (libOnly && !package.libDirectory.existsSync()) {
@@ -265,24 +309,26 @@ class AnalyzeCommand extends PackageLoopingCommand {
     // analyzing. `example` packages can be skipped since 'flutter pub get'
     // automatically runs `pub get` in examples as part of handling the parent
     // directory.
-    final List<RepositoryPackage> packagesToGet = <RepositoryPackage>[
+    final packagesToGet = <RepositoryPackage>[
       package,
       if (!libOnly) ...package.getSubpackages(),
     ];
-    for (final RepositoryPackage packageToGet in packagesToGet) {
+    for (final packageToGet in packagesToGet) {
       if (packageToGet.directory.basename != 'example' ||
-          !RepositoryPackage(packageToGet.directory.parent)
-              .pubspecFile
-              .existsSync()) {
+          !RepositoryPackage(
+            packageToGet.directory.parent,
+          ).pubspecFile.existsSync()) {
         if (!await _runPubCommand(packageToGet, 'get')) {
           if (getBoolArg(_skipIfResolvingFailsFlag)) {
             // Re-run, capturing output, to see if the failure was a resolver
             // failure. (This is slightly inefficient, but this should be a
             // very rare case.)
-            const String resolverFailureMessage = 'version solving failed';
+            const resolverFailureMessage = 'version solving failed';
             final io.ProcessResult result = await processRunner.run(
-                flutterCommand, <String>['pub', 'get'],
-                workingDir: packageToGet.directory);
+              flutterCommand,
+              <String>['pub', 'get'],
+              workingDir: packageToGet.directory,
+            );
             if ((result.stderr as String).contains(resolverFailureMessage) ||
                 (result.stdout as String).contains(resolverFailureMessage)) {
               logWarning('Skipping package due to pub resolution failure.');
@@ -297,9 +343,11 @@ class AnalyzeCommand extends PackageLoopingCommand {
     if (_hasUnexpectedAnalysisOptions(package)) {
       return PackageResult.fail(<String>['Unexpected local analysis options']);
     }
-    final int exitCode = await processRunner.runAndStream(_dartBinaryPath,
-        <String>['analyze', '--fatal-infos', if (libOnly) 'lib'],
-        workingDir: package.directory);
+    final int exitCode = await processRunner.runAndStream(
+      _dartBinaryPath,
+      <String>['analyze', '--fatal-infos', if (libOnly) 'lib'],
+      workingDir: package.directory,
+    );
     if (exitCode != 0) {
       return PackageResult.fail();
     }
@@ -308,28 +356,42 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
   Future<bool> _runPubCommand(RepositoryPackage package, String command) async {
     final int exitCode = await processRunner.runAndStream(
-        flutterCommand, <String>['pub', command],
-        workingDir: package.directory);
+      flutterCommand,
+      <String>['pub', command],
+      workingDir: package.directory,
+    );
     return exitCode == 0;
   }
 
   /// Runs Gradle lint analysis for the given package, and returns the result
   /// that applies to that analysis.
   Future<PackageResult> _runGradleLintForPackage(
-      RepositoryPackage package) async {
-    if (!pluginSupportsPlatform(platformAndroid, package,
-        requiredMode: PlatformSupport.inline)) {
+    RepositoryPackage package,
+  ) async {
+    if (!pluginSupportsPlatform(
+      platformAndroid,
+      package,
+      requiredMode: PlatformSupport.inline,
+    )) {
       return PackageResult.skip(
-          'Package does not contain native Android plugin code');
+        'Package does not contain native Android plugin code',
+      );
     }
 
     for (final RepositoryPackage example in package.getExamples()) {
-      final GradleProject project = GradleProject(example,
-          processRunner: processRunner, platform: platform);
+      final project = GradleProject(
+        example,
+        processRunner: processRunner,
+        platform: platform,
+      );
 
       if (!project.isConfigured()) {
         final bool buildSuccess = await runConfigOnlyBuild(
-            example, processRunner, platform, FlutterPlatform.android);
+          example,
+          processRunner,
+          platform,
+          FlutterPlatform.android,
+        );
         if (!buildSuccess) {
           printError('Unable to configure Gradle project.');
           return PackageResult.fail(<String>['Unable to configure Gradle.']);
@@ -360,16 +422,21 @@ class AnalyzeCommand extends PackageLoopingCommand {
     FlutterPlatform targetPlatform, {
     List<String> extraFlags = const <String>[],
   }) async {
-    final String platformString =
-        targetPlatform == FlutterPlatform.ios ? 'iOS' : 'macOS';
-    if (!pluginSupportsPlatform(targetPlatform.name, package,
-        requiredMode: PlatformSupport.inline)) {
+    final platformString = targetPlatform == FlutterPlatform.ios
+        ? 'iOS'
+        : 'macOS';
+    if (!pluginSupportsPlatform(
+      targetPlatform.name,
+      package,
+      requiredMode: PlatformSupport.inline,
+    )) {
       return PackageResult.skip(
-          'Package does not contain native $platformString plugin code');
+        'Package does not contain native $platformString plugin code',
+      );
     }
 
-    final Xcode xcode = Xcode(processRunner: processRunner, log: true);
-    final List<String> errors = <String>[];
+    final xcode = Xcode(processRunner: processRunner, log: true);
+    final errors = <String>[];
     for (final RepositoryPackage example in package.getExamples()) {
       // See https://github.com/flutter/flutter/issues/172427 for discussion of
       // why this is currently necessary.
@@ -390,13 +457,16 @@ class AnalyzeCommand extends PackageLoopingCommand {
       if (!buildSuccess) {
         printError('Unable to prepare native project files.');
         errors.add(
-            'Unable to build ${getRelativePosixPath(example.directory, from: package.directory)}.');
+          'Unable to build ${getRelativePosixPath(example.directory, from: package.directory)}.',
+        );
         continue;
       }
 
       // Running tests and static analyzer.
-      final String examplePath = getRelativePosixPath(example.directory,
-          from: package.directory.parent);
+      final String examplePath = getRelativePosixPath(
+        example.directory,
+        from: package.directory.parent,
+      );
       print('Running $platformString tests and analyzer for $examplePath...');
       final int exitCode = await xcode.runXcodeBuild(
         example.directory,
@@ -408,17 +478,15 @@ class AnalyzeCommand extends PackageLoopingCommand {
         scheme: 'Runner',
         configuration: 'Debug',
         hostPlatform: platform,
-        extraFlags: <String>[
-          ...extraFlags,
-          'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
-        ],
+        extraFlags: <String>[...extraFlags, 'GCC_TREAT_WARNINGS_AS_ERRORS=YES'],
       );
       if (exitCode == 0) {
         printSuccess('$examplePath ($platformString) passed analysis.');
       } else {
         printError('$examplePath ($platformString) failed analysis.');
         errors.add(
-            '${getRelativePosixPath(example.directory, from: package.directory)} failed analysis.');
+          '${getRelativePosixPath(example.directory, from: package.directory)} failed analysis.',
+        );
       }
 
       print('Removing Swift Package Manager override...');

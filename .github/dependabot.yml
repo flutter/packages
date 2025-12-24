@@ -115,9 +115,11 @@ updates:
           - "junit:junit"
           - "org.mockito:*"
           - "org.robolectric:*"
-      gradle-plugin:
+      kotlin-gradle-plugin:
         patterns:
           - "org.jetbrains.kotlin:kotlin-gradle-plugin"
+      gradle-plugin:
+        patterns:
           - "com.android.tools.build:gradle"
       androidx:
         patterns:

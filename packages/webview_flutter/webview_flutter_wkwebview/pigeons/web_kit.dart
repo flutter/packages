@@ -602,6 +602,9 @@ abstract class WKWebsiteDataStore extends NSObject {
 )
 abstract class UIView extends NSObject {
   /// The view’s background color.
+  // TODO(bparrishMines): Using an int here is lossy, and should be replaced
+  //  with a full color representation. See
+  //  https://github.com/flutter/flutter/issues/178870.
   void setBackgroundColor(int? value);
 
   /// A Boolean value that determines whether the view is opaque.

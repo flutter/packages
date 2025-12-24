@@ -117,18 +117,14 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
   }
 
   return _GoRouteParameters(
-    builder:
-        (BuildContext context, GoRouterState state) =>
-            factoryImpl(state).build(context, state),
-    pageBuilder:
-        (BuildContext context, GoRouterState state) =>
-            factoryImpl(state).buildPage(context, state),
-    redirect:
-        (BuildContext context, GoRouterState state) =>
-            factoryImpl(state).redirect(context, state),
-    onExit:
-        (BuildContext context, GoRouterState state) =>
-            factoryImpl(state).onExit(context, state),
+    builder: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).build(context, state),
+    pageBuilder: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).buildPage(context, state),
+    redirect: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).redirect(context, state),
+    onExit: (BuildContext context, GoRouterState state) =>
+        factoryImpl(state).onExit(context, state),
   );
 }
 
@@ -382,10 +378,9 @@ abstract class StatefulShellRouteData extends RouteData {
     BuildContext context,
     GoRouterState state,
     StatefulNavigationShell navigationShell,
-  ) =>
-      throw UnimplementedError(
-        'One of `builder` or `pageBuilder` must be implemented.',
-      );
+  ) => throw UnimplementedError(
+    'One of `builder` or `pageBuilder` must be implemented.',
+  );
 
   /// A helper function used by generated code.
   ///

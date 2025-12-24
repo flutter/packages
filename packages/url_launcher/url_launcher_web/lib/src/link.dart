@@ -142,17 +142,15 @@ class WebLinkDelegateState extends State<WebLinkDelegate> {
               ..setUri(widget.link.uri)
               ..setTarget(widget.link.target);
           },
-          surfaceFactory: (
-            BuildContext context,
-            PlatformViewController controller,
-          ) {
-            return PlatformViewSurface(
-              controller: controller,
-              gestureRecognizers:
-                  const <Factory<OneSequenceGestureRecognizer>>{},
-              hitTestBehavior: PlatformViewHitTestBehavior.transparent,
-            );
-          },
+          surfaceFactory:
+              (BuildContext context, PlatformViewController controller) {
+                return PlatformViewSurface(
+                  controller: controller,
+                  gestureRecognizers:
+                      const <Factory<OneSequenceGestureRecognizer>>{},
+                  hitTestBehavior: PlatformViewHitTestBehavior.transparent,
+                );
+              },
         ),
       ),
     );
@@ -348,10 +346,7 @@ class LinkViewController extends PlatformViewController {
     String semanticsIdentifier,
   ) {
     final int viewId = params.id;
-    final LinkViewController controller = LinkViewController(
-      viewId,
-      semanticsIdentifier,
-    );
+    final controller = LinkViewController(viewId, semanticsIdentifier);
     controller._initialize().then((_) {
       /// Because _initialize is async, it can happen that [LinkViewController.dispose]
       /// may get called before this `then` callback.
@@ -525,10 +520,7 @@ class LinkViewController extends PlatformViewController {
     _element.setAttribute('aria-hidden', 'true');
     _element.setAttribute('tabIndex', '-1');
 
-    final Map<String, dynamic> args = <String, dynamic>{
-      'id': viewId,
-      'viewType': linkViewType,
-    };
+    final args = <String, dynamic>{'id': viewId, 'viewType': linkViewType};
     await SystemChannels.platform_views.invokeMethod<void>('create', args);
   }
 
@@ -562,7 +554,7 @@ class LinkViewController extends PlatformViewController {
     // Internal links are pushed through Flutter's navigation system instead of
     // letting the browser handle it.
     mouseEvent?.preventDefault();
-    final String routeName = controller._uri.toString();
+    final routeName = controller._uri.toString();
     pushRouteToFrameworkFunction(routeName);
   }
 

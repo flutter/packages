@@ -56,8 +56,8 @@ class _SnapshotBodyState extends State<_SnapshotBody> {
           TextButton(
             child: const Text('Take a snapshot'),
             onPressed: () async {
-              final Uint8List? imageBytes =
-                  await _mapController?.takeSnapshot();
+              final Uint8List? imageBytes = await _mapController
+                  ?.takeSnapshot();
               setState(() {
                 _imageBytes = imageBytes;
               });

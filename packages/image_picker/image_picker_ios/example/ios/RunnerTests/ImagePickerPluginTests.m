@@ -701,4 +701,28 @@
   XCTAssertEqual(plugin.callContext.maxItemCount, 0);
 }
 
+- (void)testPickVideoSetsCurrentRepresentationMode API_AVAILABLE(ios(14)) {
+  id mockPickerViewController = OCMClassMock([PHPickerViewController class]);
+  OCMStub(ClassMethod([mockPickerViewController alloc])).andReturn(mockPickerViewController);
+  OCMExpect([mockPickerViewController
+                initWithConfiguration:[OCMArg checkWithBlock:^BOOL(PHPickerConfiguration *config) {
+                  return config.preferredAssetRepresentationMode ==
+                         PHPickerConfigurationAssetRepresentationModeCurrent;
+                }]])
+      .andReturn(mockPickerViewController);
+
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  id partialPlugin = OCMPartialMock(plugin);
+  id mockViewController = OCMClassMock([UIViewController class]);
+  OCMStub([partialPlugin viewControllerWithWindow:OCMOCK_ANY]).andReturn(mockViewController);
+
+  [plugin pickVideoWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeGallery
+                                                            camera:FLTSourceCameraRear]
+                  maxDuration:nil
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
+                   }];
+
+  OCMVerifyAll(mockPickerViewController);
+}
+
 @end

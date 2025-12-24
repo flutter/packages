@@ -11,12 +11,12 @@ import 'package:shared_preferences_platform_interface/types.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
-  const Map<String, Object> testValues = <String, Object>{
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
+  const testValues = <String, Object>{
     'flutter.String': testString,
     'flutter.bool': testBool,
     'flutter.int': testInt,
@@ -24,12 +24,12 @@ void main() {
     'flutter.List': testList,
   };
 
-  const String testString2 = 'goodbye world';
-  const bool testBool2 = false;
-  const int testInt2 = 1337;
-  const double testDouble2 = 2.71828;
-  const List<String> testList2 = <String>['baz', 'qux'];
-  const Map<String, dynamic> testValues2 = <String, dynamic>{
+  const testString2 = 'goodbye world';
+  const testBool2 = false;
+  const testInt2 = 1337;
+  const testDouble2 = 2.71828;
+  const testList2 = <String>['baz', 'qux'];
+  const testValues2 = <String, dynamic>{
     'flutter.String': testString2,
     'flutter.bool': testBool2,
     'flutter.int': testInt2,
@@ -102,7 +102,7 @@ void main() {
   });
 
   test('removing', () async {
-    const String key = 'testKey';
+    const key = 'testKey';
     await preferences.remove(key);
     expect(
       store.log,
@@ -115,7 +115,7 @@ void main() {
   });
 
   test('containsKey', () async {
-    const String key = 'testKey';
+    const key = 'testKey';
 
     expect(false, preferences.containsKey(key));
 
@@ -160,8 +160,8 @@ void main() {
   });
 
   group('mocking', () {
-    const String key = 'dummy';
-    const String prefixedKey = 'flutter.$key';
+    const key = 'dummy';
+    const prefixedKey = 'flutter.$key';
 
     test('test 1', () async {
       SharedPreferences.setMockInitialValues(<String, Object>{
@@ -183,7 +183,7 @@ void main() {
   });
 
   test('writing copy of strings list', () async {
-    final List<String> myList = <String>[];
+    final myList = <String>[];
     await preferences.setStringList('myList', myList);
     myList.add('foobar');
 
@@ -213,7 +213,7 @@ void main() {
   });
 
   test('calling setPrefix after getInstance throws', () async {
-    const String newPrefix = 'newPrefix';
+    const newPrefix = 'newPrefix';
 
     await SharedPreferences.getInstance();
     Object? err;
@@ -226,7 +226,7 @@ void main() {
   });
 
   test('using setPrefix allows setting and getting', () async {
-    const String newPrefix = 'newPrefix';
+    const newPrefix = 'newPrefix';
 
     SharedPreferences.resetStatic();
     SharedPreferences.setPrefix(newPrefix);
@@ -248,7 +248,7 @@ void main() {
   });
 
   test('allowList only gets allowed items', () async {
-    const Set<String> allowList = <String>{'stringKey', 'boolKey'};
+    const allowList = <String>{'stringKey', 'boolKey'};
 
     SharedPreferences.resetStatic();
     SharedPreferences.setPrefix('', allowList: allowList);
@@ -272,7 +272,7 @@ void main() {
   });
 
   test('using reload after setPrefix properly reloads the cache', () async {
-    const String newPrefix = 'newPrefix';
+    const newPrefix = 'newPrefix';
 
     SharedPreferences.resetStatic();
     SharedPreferences.setPrefix(newPrefix);
@@ -290,8 +290,7 @@ void main() {
   });
 
   test('unimplemented errors in withParameters methods are updated', () async {
-    final UnimplementedSharedPreferencesStore localStore =
-        UnimplementedSharedPreferencesStore();
+    final localStore = UnimplementedSharedPreferencesStore();
     SharedPreferencesStorePlatform.instance = localStore;
     SharedPreferences.resetStatic();
     SharedPreferences.setPrefix('');
@@ -312,8 +311,7 @@ void main() {
   test(
     'non-Unimplemented errors pass through withParameters methods correctly',
     () async {
-      final ThrowingSharedPreferencesStore localStore =
-          ThrowingSharedPreferencesStore();
+      final localStore = ThrowingSharedPreferencesStore();
       SharedPreferencesStorePlatform.instance = localStore;
       SharedPreferences.resetStatic();
       SharedPreferences.setPrefix('');

@@ -44,7 +44,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
   /// Creates a [GoRouteInformationParser].
   GoRouteInformationParser({
     required this.configuration,
-    required GoRouter router,
+    required this.router,
     required this.onParserException,
   }) : _routeMatchListCodec = RouteMatchListCodec(configuration),
        _onEnterHandler = _OnEnterHandler(
@@ -55,6 +55,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
 
   /// The route configuration used for parsing [RouteInformation]s.
   final RouteConfiguration configuration;
+
+  /// The router instance.
+  final GoRouter router;
 
   /// Exception handler for parser errors.
   final ParserExceptionHandler? onParserException;
@@ -119,7 +122,7 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           effectiveRoute.uri,
           extra: infoState.extra,
         );
-        final List<RouteMatchList> redirectHistory = <RouteMatchList>[];
+        final redirectHistory = <RouteMatchList>[];
 
         final FutureOr<RouteMatchList> afterLegacy = configuration
             .applyTopLegacyRedirect(
@@ -158,7 +161,13 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
         });
       },
       onCanNotEnter: () {
-        // If blocked, "stay" on last successful match if available.
+        // If blocked, stay on the current route by restoring the last known good configuration.
+        if (router.routerDelegate.currentConfiguration.isNotEmpty) {
+          return SynchronousFuture<RouteMatchList>(
+            router.routerDelegate.currentConfiguration,
+          );
+        }
+
         if (_lastMatchList != null) {
           return SynchronousFuture<RouteMatchList>(_lastMatchList!);
         }
@@ -172,10 +181,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
           ),
           extra: infoState.extra,
         );
-        final RouteMatchList resolved =
-            onParserException != null
-                ? onParserException!(context, blocked)
-                : blocked;
+        final RouteMatchList resolved = onParserException != null
+            ? onParserException!(context, blocked)
+            : blocked;
         return SynchronousFuture<RouteMatchList>(resolved);
       },
     );
@@ -226,40 +234,41 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     // Only route-level redirects from here on out.
     final FutureOr<RouteMatchList> redirected = afterRouteLevel(baseMatches);
 
-    return debugParserFuture = (redirected is RouteMatchList
-            ? SynchronousFuture<RouteMatchList>(redirected)
-            : redirected)
-        .then((RouteMatchList matchList) {
-          if (matchList.isError && onParserException != null) {
-            if (!context.mounted) {
-              return matchList;
-            }
-            return onParserException!(context, matchList);
-          }
+    return debugParserFuture =
+        (redirected is RouteMatchList
+                ? SynchronousFuture<RouteMatchList>(redirected)
+                : redirected)
+            .then((RouteMatchList matchList) {
+              if (matchList.isError && onParserException != null) {
+                if (!context.mounted) {
+                  return matchList;
+                }
+                return onParserException!(context, matchList);
+              }
 
-          // Validate that redirect-only routes actually perform a redirection.
-          assert(() {
-            if (matchList.isNotEmpty) {
-              assert(
-                !matchList.last.route.redirectOnly,
-                'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
+              // Validate that redirect-only routes actually perform a redirection.
+              assert(() {
+                if (matchList.isNotEmpty) {
+                  assert(
+                    !matchList.last.route.redirectOnly,
+                    'A redirect-only route must redirect to location different from itself.\n The offending route: ${matchList.last.route}',
+                  );
+                }
+                return true;
+              }());
+
+              // Update the route match list based on the navigation type.
+              final RouteMatchList updated = _updateRouteMatchList(
+                matchList,
+                baseRouteMatchList: infoState.baseRouteMatchList,
+                completer: infoState.completer,
+                type: infoState.type,
               );
-            }
-            return true;
-          }());
 
-          // Update the route match list based on the navigation type.
-          final RouteMatchList updated = _updateRouteMatchList(
-            matchList,
-            baseRouteMatchList: infoState.baseRouteMatchList,
-            completer: infoState.completer,
-            type: infoState.type,
-          );
-
-          // Cache the successful match list.
-          _lastMatchList = updated;
-          return updated;
-        });
+              // Cache the successful match list.
+              _lastMatchList = updated;
+              return updated;
+            });
   }
 
   @override
@@ -459,10 +468,9 @@ class _OnEnterHandler {
     // Get the current state from the router delegate.
     final RouteMatchList currentMatchList =
         _router.routerDelegate.currentConfiguration;
-    final GoRouterState currentState =
-        currentMatchList.isNotEmpty
-            ? _buildTopLevelGoRouterState(currentMatchList)
-            : nextState;
+    final GoRouterState currentState = currentMatchList.isNotEmpty
+        ? _buildTopLevelGoRouterState(currentMatchList)
+        : nextState;
 
     // Execute the onEnter callback in a try-catch to capture synchronous exceptions.
     Future<OnEnterResult> onEnterResultFuture;
@@ -474,10 +482,9 @@ class _OnEnterHandler {
         _router,
       );
       // Convert FutureOr to Future
-      onEnterResultFuture =
-          result is OnEnterResult
-              ? SynchronousFuture<OnEnterResult>(result)
-              : result;
+      onEnterResultFuture = result is OnEnterResult
+          ? SynchronousFuture<OnEnterResult>(result)
+          : result;
     } catch (error) {
       final RouteMatchList errorMatchList = _errorRouteMatchList(
         routeInformation.uri,
@@ -489,10 +496,9 @@ class _OnEnterHandler {
 
       final bool canHandleException =
           _onParserException != null && context.mounted;
-      final RouteMatchList handledMatchList =
-          canHandleException
-              ? _onParserException(context, errorMatchList)
-              : errorMatchList;
+      final RouteMatchList handledMatchList = canHandleException
+          ? _onParserException(context, errorMatchList)
+          : errorMatchList;
 
       return SynchronousFuture<RouteMatchList>(handledMatchList);
     }

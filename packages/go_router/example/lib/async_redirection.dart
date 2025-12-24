@@ -39,13 +39,13 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
       ),
       GoRoute(
         path: '/login',
-        builder:
-            (BuildContext context, GoRouterState state) => const LoginScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const LoginScreen(),
       ),
     ],
 
@@ -55,7 +55,7 @@ class App extends StatelessWidget {
       // cause go_router to reparse current route if StreamAuth has new sign-in
       // information.
       final bool loggedIn = await StreamAuthScope.of(context).isSignedIn();
-      final bool loggingIn = state.matchedLocation == '/login';
+      final loggingIn = state.matchedLocation == '/login';
       if (!loggedIn) {
         return '/login';
       }
@@ -89,12 +89,11 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..addListener(() {
-      setState(() {});
-    });
+    controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 1))
+          ..addListener(() {
+            setState(() {});
+          });
     controller.repeat();
   }
 

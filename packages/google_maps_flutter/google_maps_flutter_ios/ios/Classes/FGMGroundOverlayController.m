@@ -3,9 +3,10 @@
 // found in the LICENSE file.
 
 #import "FGMGroundOverlayController.h"
+#import "FGMGroundOverlayController_Test.h"
 
+#import "FGMConversionUtils.h"
 #import "FGMImageUtils.h"
-#import "FLTGoogleMapJSONConversions.h"
 
 @interface FGMGroundOverlayController ()
 
@@ -34,67 +35,46 @@
   self.groundOverlay.map = nil;
 }
 
-- (void)setConsumeTapEvents:(BOOL)consumes {
-  self.groundOverlay.tappable = consumes;
-}
-
-- (void)setVisible:(BOOL)visible {
-  self.groundOverlay.map = visible ? self.mapView : nil;
-}
-
-- (void)setZIndex:(int)zIndex {
-  self.groundOverlay.zIndex = zIndex;
-}
-
-- (void)setAnchor:(CGPoint)anchor {
-  self.groundOverlay.anchor = anchor;
-}
-
-- (void)setBearing:(CLLocationDirection)bearing {
-  self.groundOverlay.bearing = bearing;
-}
-
-- (void)setTransparency:(float)transparency {
-  float opacity = 1.0 - transparency;
-  self.groundOverlay.opacity = opacity;
-}
-
-- (void)setPositionFromBounds:(GMSCoordinateBounds *)bounds {
-  self.groundOverlay.bounds = bounds;
-}
-
-- (void)setPositionFromCoordinates:(CLLocationCoordinate2D)coordinates {
-  self.groundOverlay.position = coordinates;
-}
-
-- (void)setIcon:(UIImage *)icon {
-  self.groundOverlay.icon = icon;
-}
-
 - (void)updateFromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)groundOverlay
                               registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                             screenScale:(CGFloat)screenScale {
-  [self setConsumeTapEvents:groundOverlay.clickable];
-  [self setZIndex:(int)groundOverlay.zIndex];
-  [self setAnchor:CGPointMake(groundOverlay.anchor.x, groundOverlay.anchor.y)];
-  UIImage *image = FGMIconFromBitmap(groundOverlay.image, registrar, screenScale);
-  [self setIcon:image];
-  [self setBearing:groundOverlay.bearing];
-  [self setTransparency:groundOverlay.transparency];
-  if ([self isCreatedWithBounds]) {
-    [self setPositionFromBounds:[[GMSCoordinateBounds alloc]
-                                    initWithCoordinate:CLLocationCoordinate2DMake(
-                                                           groundOverlay.bounds.northeast.latitude,
-                                                           groundOverlay.bounds.northeast.longitude)
-                                            coordinate:CLLocationCoordinate2DMake(
-                                                           groundOverlay.bounds.southwest.latitude,
-                                                           groundOverlay.bounds.southwest
-                                                               .longitude)]];
+  [FGMGroundOverlayController updateGroundOverlay:self.groundOverlay
+                        fromPlatformGroundOverlay:groundOverlay
+                                      withMapView:self.mapView
+                                        registrar:registrar
+                                      screenScale:screenScale
+                                      usingBounds:self.createdWithBounds];
+}
+
++ (void)updateGroundOverlay:(GMSGroundOverlay *)groundOverlay
+    fromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)platformGroundOverlay
+                  withMapView:(GMSMapView *)mapView
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                  screenScale:(CGFloat)screenScale
+                  usingBounds:(BOOL)useBounds {
+  groundOverlay.tappable = platformGroundOverlay.clickable;
+  groundOverlay.zIndex = (int)platformGroundOverlay.zIndex;
+  groundOverlay.anchor =
+      CGPointMake(platformGroundOverlay.anchor.x, platformGroundOverlay.anchor.y);
+  UIImage *image = FGMIconFromBitmap(platformGroundOverlay.image, registrar, screenScale);
+  groundOverlay.icon = image;
+  groundOverlay.bearing = platformGroundOverlay.bearing;
+  groundOverlay.opacity = 1.0 - platformGroundOverlay.transparency;
+  if (useBounds) {
+    groundOverlay.bounds = [[GMSCoordinateBounds alloc]
+        initWithCoordinate:CLLocationCoordinate2DMake(
+                               platformGroundOverlay.bounds.northeast.latitude,
+                               platformGroundOverlay.bounds.northeast.longitude)
+                coordinate:CLLocationCoordinate2DMake(
+                               platformGroundOverlay.bounds.southwest.latitude,
+                               platformGroundOverlay.bounds.southwest.longitude)];
   } else {
-    [self setPositionFromCoordinates:CLLocationCoordinate2DMake(groundOverlay.position.latitude,
-                                                                groundOverlay.position.longitude)];
+    groundOverlay.position = CLLocationCoordinate2DMake(platformGroundOverlay.position.latitude,
+                                                        platformGroundOverlay.position.longitude);
   }
-  [self setVisible:groundOverlay.visible];
+
+  // This must be done last, to avoid visual flickers of default property values.
+  groundOverlay.map = platformGroundOverlay.visible ? mapView : nil;
 }
 
 @end

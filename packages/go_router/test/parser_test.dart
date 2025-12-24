@@ -22,7 +22,7 @@ void main() {
     int redirectLimit = 5,
     GoRouterRedirect? redirect,
   }) async {
-    final GoRouter router = GoRouter(
+    final router = GoRouter(
       routes: routes,
       redirectLimit: redirectLimit,
       redirect: redirect,
@@ -35,7 +35,7 @@ void main() {
   testWidgets('GoRouteInformationParser can parse route', (
     WidgetTester tester,
   ) async {
-    final List<GoRoute> routes = <GoRoute>[
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
         builder: (_, __) => const Placeholder(),
@@ -65,7 +65,7 @@ void main() {
     expect(matches[0].matchedLocation, '/');
     expect(matches[0].route, routes[0]);
 
-    final Object extra = Object();
+    final extra = Object();
     matchesObj = await parser.parseRouteInformationWithDependencies(
       createRouteInformation('/abc?def=ghi', extra),
       context,
@@ -84,7 +84,7 @@ void main() {
   testWidgets(
     'GoRouteInformationParser can handle empty path for non http uri',
     (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: (_, __) => const Placeholder(),
@@ -116,7 +116,7 @@ void main() {
   testWidgets('GoRouteInformationParser cleans up uri', (
     WidgetTester tester,
   ) async {
-    final List<GoRoute> routes = <GoRoute>[
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
         builder: (_, __) => const Placeholder(),
@@ -147,13 +147,13 @@ void main() {
   testWidgets(
     "GoRouteInformationParser can parse deeplink root route and maintain uri's scheme, host, query and fragment",
     (WidgetTester tester) async {
-      const String expectedScheme = 'https';
-      const String expectedHost = 'www.example.com';
-      const String expectedQuery = 'abc=def';
-      const String expectedFragment = 'abc';
-      const String expectedUriString =
+      const expectedScheme = 'https';
+      const expectedHost = 'www.example.com';
+      const expectedQuery = 'abc=def';
+      const expectedFragment = 'abc';
+      const expectedUriString =
           '$expectedScheme://$expectedHost/?$expectedQuery#$expectedFragment';
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(path: '/', builder: (_, __) => const Placeholder()),
       ];
       final GoRouteInformationParser parser = await createParser(
@@ -186,14 +186,14 @@ void main() {
   testWidgets(
     "GoRouteInformationParser can parse deeplink route with a path and maintain uri's scheme, host, query and fragment",
     (WidgetTester tester) async {
-      const String expectedScheme = 'https';
-      const String expectedHost = 'www.example.com';
-      const String expectedPath = '/abc';
-      const String expectedQuery = 'abc=def';
-      const String expectedFragment = 'abc';
-      const String expectedUriString =
+      const expectedScheme = 'https';
+      const expectedHost = 'www.example.com';
+      const expectedPath = '/abc';
+      const expectedQuery = 'abc=def';
+      const expectedFragment = 'abc';
+      const expectedUriString =
           '$expectedScheme://$expectedHost$expectedPath?$expectedQuery#$expectedFragment';
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: (_, __) => const Placeholder(),
@@ -236,8 +236,8 @@ void main() {
   testWidgets(
     'GoRouteInformationParser can restore full route matches if optionURLReflectsImperativeAPIs is true',
     (WidgetTester tester) async {
-      final GlobalKey<NavigatorState> navKey = GlobalKey<NavigatorState>();
-      final List<GoRoute> routes = <GoRoute>[
+      final navKey = GlobalKey<NavigatorState>();
+      final routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: (_, __) => const Placeholder(),
@@ -263,8 +263,9 @@ void main() {
       expect(matchList.uri.toString(), '/abc');
       expect(matchList.matches.length, 3);
 
-      final RouteInformation restoredRouteInformation =
-          router.routeInformationParser.restoreRouteInformation(matchList)!;
+      final RouteInformation restoredRouteInformation = router
+          .routeInformationParser
+          .restoreRouteInformation(matchList)!;
       expect(restoredRouteInformation.uri.path, '/');
 
       // Can restore back to original RouteMatchList.
@@ -282,7 +283,7 @@ void main() {
   );
 
   test('GoRouteInformationParser can retrieve route by name', () async {
-    final List<GoRoute> routes = <GoRoute>[
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
         builder: (_, __) => const Placeholder(),
@@ -338,7 +339,7 @@ void main() {
   test(
     'GoRouteInformationParser can retrieve route by name with query parameters',
     () async {
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: (_, __) => const Placeholder(),
@@ -375,7 +376,7 @@ void main() {
   testWidgets('GoRouteInformationParser returns error when unknown route', (
     WidgetTester tester,
   ) async {
-    final List<GoRoute> routes = <GoRoute>[
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
         builder: (_, __) => const Placeholder(),
@@ -412,7 +413,7 @@ void main() {
     'GoRouteInformationParser calls redirector with correct uri when unknown route',
     (WidgetTester tester) async {
       String? lastRedirectLocation;
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: (_, __) => const Placeholder(),
@@ -443,7 +444,7 @@ void main() {
   testWidgets('GoRouteInformationParser can work with route parameters', (
     WidgetTester tester,
   ) async {
-    final List<GoRoute> routes = <GoRoute>[
+    final routes = <GoRoute>[
       GoRoute(
         path: '/',
         builder: (_, __) => const Placeholder(),
@@ -484,7 +485,7 @@ void main() {
   testWidgets(
     'GoRouteInformationParser processes top level redirect when there is no match',
     (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: (_, __) => const Placeholder(),
@@ -527,7 +528,7 @@ void main() {
   testWidgets(
     'GoRouteInformationParser can do route level redirect when there is a match',
     (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/',
           builder: (_, __) => const Placeholder(),
@@ -570,7 +571,7 @@ void main() {
   testWidgets(
     'GoRouteInformationParser throws an exception when route is malformed',
     (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(path: '/abc', builder: (_, __) => const Placeholder()),
       ];
       final GoRouteInformationParser parser = await createParser(
@@ -593,13 +594,12 @@ void main() {
   testWidgets(
     'GoRouteInformationParser returns an error if a redirect is detected.',
     (WidgetTester tester) async {
-      final List<GoRoute> routes = <GoRoute>[
+      final routes = <GoRoute>[
         GoRoute(
           path: '/abc',
           builder: (_, __) => const Placeholder(),
-          redirect:
-              (BuildContext context, GoRouterState state) =>
-                  state.uri.toString(),
+          redirect: (BuildContext context, GoRouterState state) =>
+              state.uri.toString(),
         ),
       ];
       final GoRouteInformationParser parser = await createParser(
@@ -622,7 +622,7 @@ void main() {
   );
 
   testWidgets('Creates a match for ShellRoute', (WidgetTester tester) async {
-    final List<RouteBase> routes = <RouteBase>[
+    final routes = <RouteBase>[
       ShellRoute(
         builder: (BuildContext context, GoRouterState state, Widget child) {
           return Scaffold(body: child);
@@ -658,7 +658,7 @@ void main() {
     final List<RouteMatchBase> matches = matchesObj.matches;
 
     expect(matches, hasLength(1));
-    final ShellRouteMatch match = matches.first as ShellRouteMatch;
+    final match = matches.first as ShellRouteMatch;
     expect(match.matches, hasLength(1));
     expect(matchesObj.error, isNull);
   });

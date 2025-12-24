@@ -23,10 +23,9 @@ class SaveTextPage extends StatelessWidget {
     // only be done in cases where the application can likely predict where the
     // file will be saved. In most cases, this parameter should not be provided,
     // and in the web, path_provider shouldn't even be called.
-    final String? initialDirectory =
-        kIsWeb
-            ? null
-            : (await path_provider.getApplicationDocumentsDirectory()).path;
+    final String? initialDirectory = kIsWeb
+        ? null
+        : (await path_provider.getApplicationDocumentsDirectory()).path;
     final FileSaveLocation? result = await getSaveLocation(
       initialDirectory: initialDirectory,
       suggestedName: fileName,
@@ -37,9 +36,9 @@ class SaveTextPage extends StatelessWidget {
     }
 
     final String text = _contentController.text;
-    final Uint8List fileData = Uint8List.fromList(text.codeUnits);
-    const String fileMimeType = 'text/plain';
-    final XFile textFile = XFile.fromData(
+    final fileData = Uint8List.fromList(text.codeUnits);
+    const fileMimeType = 'text/plain';
+    final textFile = XFile.fromData(
       fileData,
       mimeType: fileMimeType,
       name: fileName,

@@ -1,3 +1,27 @@
+## 4.10.11
+
+* Removes internal native library Dart proxy.
+
+## 4.10.10
+
+* Bumps kotlin_version to 2.2.21.
+
+## 4.10.9
+
+* Fixes a compatibility issue with Kotlin 1.8.
+
+## 4.10.8
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 4.10.7
+
+* Replaces use of deprecated Color.value.
+
+## 4.10.6
+
+* Updates to Pigeon 26.
+
 ## 4.10.5
 
 * Resolves Gradle 9 deprecations.

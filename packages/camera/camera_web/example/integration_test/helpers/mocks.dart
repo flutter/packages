@@ -81,10 +81,9 @@ class MockScreen {
 @JSExport()
 class MockScreenOrientation {
   /// JSPromise<JSAny?> Function(web.OrientationLockType orientation)
-  JSFunction lock =
-      (web.OrientationLockType orientation) {
-        return Future<void>.value().toJS;
-      }.toJS;
+  JSFunction lock = (web.OrientationLockType orientation) {
+    return Future<void>.value().toJS;
+  }.toJS;
 
   /// void Function()
   late JSFunction unlock;
@@ -99,10 +98,9 @@ class MockDocument {
 @JSExport()
 class MockElement {
   /// JSPromise<JSAny?> Function([FullscreenOptions options])
-  JSFunction requestFullscreen =
-      ([web.FullscreenOptions? options]) {
-        return Future<void>.value().toJS;
-      }.toJS;
+  JSFunction requestFullscreen = ([web.FullscreenOptions? options]) {
+    return Future<void>.value().toJS;
+  }.toJS;
 }
 
 @JSExport()
@@ -128,10 +126,9 @@ class MockMediaStreamTrack {
   late JSFunction getCapabilities;
 
   /// web.MediaTrackSettings Function()
-  JSFunction getSettings =
-      () {
-        return web.MediaTrackSettings();
-      }.toJS;
+  JSFunction getSettings = () {
+    return web.MediaTrackSettings();
+  }.toJS;
 
   /// JSPromise<JSAny?> Function([web.MediaTrackConstraints? constraints])
   late JSFunction applyConstraints;
@@ -248,14 +245,13 @@ class FakeErrorEvent {
 /// final videoStream = videoElement.captureStream();
 /// ```
 web.HTMLVideoElement getVideoElementWithBlankStream(Size videoSize) {
-  final web.HTMLCanvasElement canvasElement =
-      web.HTMLCanvasElement()
-        ..width = videoSize.width.toInt()
-        ..height = videoSize.height.toInt()
-        ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
+  final canvasElement = web.HTMLCanvasElement()
+    ..width = videoSize.width.toInt()
+    ..height = videoSize.height.toInt()
+    ..context2D.fillRect(0, 0, videoSize.width, videoSize.height);
 
-  final web.HTMLVideoElement videoElement =
-      web.HTMLVideoElement()..srcObject = canvasElement.captureStream();
+  final videoElement = web.HTMLVideoElement()
+    ..srcObject = canvasElement.captureStream();
 
   return videoElement;
 }

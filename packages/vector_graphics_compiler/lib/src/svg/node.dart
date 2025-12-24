@@ -260,19 +260,17 @@ class TextPositionNode extends ParentNode {
         (computedTransform.encodableInRect && (hasXY || hasDxDy));
 
     if (hasXY) {
-      final Point baseline =
-          consumeTransform
-              ? computedTransform.transformPoint(Point(x, y))
-              : Point(x, y);
+      final Point baseline = consumeTransform
+          ? computedTransform.transformPoint(Point(x, y))
+          : Point(x, y);
       x = baseline.x;
       y = baseline.y;
     }
 
     if (hasDxDy) {
-      final Point baseline =
-          consumeTransform
-              ? computedTransform.transformPoint(Point(dx, dy))
-              : Point(dx, dy);
+      final Point baseline = consumeTransform
+          ? computedTransform.transformPoint(Point(dx, dy))
+          : Point(dx, dy);
       dx = baseline.x;
       dy = baseline.y;
     }
@@ -537,13 +535,9 @@ class TextNode extends AttributedNode {
     SvgAttributes newAttributes, {
     bool replace = false,
   }) {
-    final SvgAttributes resolvedAttributes =
-        replace
-            ? newAttributes.applyParent(
-              attributes,
-              transformOverride: transform,
-            )
-            : attributes.applyParent(newAttributes);
+    final SvgAttributes resolvedAttributes = replace
+        ? newAttributes.applyParent(attributes, transformOverride: transform)
+        : attributes.applyParent(newAttributes);
     return TextNode(text, resolvedAttributes);
   }
 

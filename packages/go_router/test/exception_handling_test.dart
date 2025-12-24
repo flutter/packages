@@ -12,7 +12,7 @@ void main() {
   testWidgets('throws if more than one exception handlers are provided.', (
     WidgetTester tester,
   ) async {
-    bool thrown = false;
+    var thrown = false;
     try {
       GoRouter(
         routes: <RouteBase>[
@@ -70,14 +70,13 @@ void main() {
         <RouteBase>[
           GoRoute(
             path: '/error',
-            builder:
-                (_, GoRouterState state) => Text('redirected ${state.extra}'),
+            builder: (_, GoRouterState state) =>
+                Text('redirected ${state.extra}'),
           ),
         ],
         tester,
-        onException:
-            (_, GoRouterState state, GoRouter router) =>
-                router.go('/error', extra: state.uri.toString()),
+        onException: (_, GoRouterState state, GoRouter router) =>
+            router.go('/error', extra: state.uri.toString()),
       );
       expect(find.text('redirected /'), findsOneWidget);
 
@@ -95,9 +94,8 @@ void main() {
           ),
         ],
         tester,
-        onException:
-            (_, GoRouterState state, GoRouter router) =>
-                router.go('/error', extra: state.extra),
+        onException: (_, GoRouterState state, GoRouter router) =>
+            router.go('/error', extra: state.extra),
       );
       expect(find.text('extra: null'), findsOneWidget);
 
@@ -127,7 +125,7 @@ void main() {
     testWidgets('can catch errors thrown in redirect callbacks', (
       WidgetTester tester,
     ) async {
-      bool exceptionCaught = false;
+      var exceptionCaught = false;
       String? errorMessage;
 
       final GoRouter router = await createRouter(
@@ -138,14 +136,13 @@ void main() {
           ),
           GoRoute(
             path: '/error-page',
-            builder:
-                (_, GoRouterState state) =>
-                    Text('error handled: ${state.extra}'),
+            builder: (_, GoRouterState state) =>
+                Text('error handled: ${state.extra}'),
           ),
           GoRoute(
             path: '/trigger-error',
-            builder:
-                (_, GoRouterState state) => const Text('should not reach here'),
+            builder: (_, GoRouterState state) =>
+                const Text('should not reach here'),
           ),
         ],
         tester,
@@ -156,15 +153,12 @@ void main() {
           }
           return null;
         },
-        onException: (
-          BuildContext context,
-          GoRouterState state,
-          GoRouter router,
-        ) {
-          exceptionCaught = true;
-          errorMessage = 'Caught exception for ${state.uri}';
-          router.go('/error-page', extra: errorMessage);
-        },
+        onException:
+            (BuildContext context, GoRouterState state, GoRouter router) {
+              exceptionCaught = true;
+              errorMessage = 'Caught exception for ${state.uri}';
+              router.go('/error-page', extra: errorMessage);
+            },
       );
 
       expect(find.text('home'), findsOneWidget);
@@ -187,7 +181,7 @@ void main() {
     testWidgets('can catch non-GoException errors thrown in redirect callbacks', (
       WidgetTester tester,
     ) async {
-      bool exceptionCaught = false;
+      var exceptionCaught = false;
 
       final GoRouter router = await createRouter(
         <RouteBase>[
@@ -197,13 +191,13 @@ void main() {
           ),
           GoRoute(
             path: '/error-page',
-            builder:
-                (_, GoRouterState state) => const Text('generic error handled'),
+            builder: (_, GoRouterState state) =>
+                const Text('generic error handled'),
           ),
           GoRoute(
             path: '/trigger-runtime-error',
-            builder:
-                (_, GoRouterState state) => const Text('should not reach here'),
+            builder: (_, GoRouterState state) =>
+                const Text('should not reach here'),
           ),
         ],
         tester,
@@ -214,14 +208,11 @@ void main() {
           }
           return null;
         },
-        onException: (
-          BuildContext context,
-          GoRouterState state,
-          GoRouter router,
-        ) {
-          exceptionCaught = true;
-          router.go('/error-page');
-        },
+        onException:
+            (BuildContext context, GoRouterState state, GoRouter router) {
+              exceptionCaught = true;
+              router.go('/error-page');
+            },
       );
 
       expect(find.text('home'), findsOneWidget);

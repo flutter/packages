@@ -12,12 +12,12 @@ import 'test_svg_strings.dart';
 
 Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
-  final ResolvingVisitor visitor = ResolvingVisitor();
+  final visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
 }
 
 List<T> queryChildren<T extends Node>(Node node) {
-  final List<T> children = <T>[];
+  final children = <T>[];
   void visitor(Node child) {
     if (child is T) {
       children.add(child);
@@ -48,7 +48,7 @@ void main() {
   <circle cx="100" cy="100" r="100" clip-path="url(#a)" fill="white" />
 </svg>''');
 
-    final ClippingOptimizer visitor = ClippingOptimizer();
+    final visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedClipNode> clipNodesNew = queryChildren<ResolvedClipNode>(
@@ -69,7 +69,7 @@ void main() {
   <path d="M2, 5L8,6" stroke="black" stroke-linecap="round" stroke-width="2" clip-path="url(#clip0)" />
 </svg>''');
 
-      final ClippingOptimizer visitor = ClippingOptimizer();
+      final visitor = ClippingOptimizer();
       final Node newNode = visitor.apply(node);
 
       final List<ResolvedClipNode> clipNodesNew =
@@ -93,7 +93,7 @@ void main() {
 </svg>
 
 ''');
-      final ClippingOptimizer visitor = ClippingOptimizer();
+      final visitor = ClippingOptimizer();
       final Node newNode = visitor.apply(node);
 
       final List<ResolvedClipNode> clipNodesNew =
@@ -111,7 +111,7 @@ void main() {
     );
     final List<ParentNode> parentNodesOld = queryChildren<ParentNode>(node);
 
-    final ClippingOptimizer visitor = ClippingOptimizer();
+    final visitor = ClippingOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -176,7 +176,7 @@ void main() {
   });
 
   test('Preserves fill type changes', () {
-    const String svg = '''
+    const svg = '''
 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g clip-path="url(#a)">
         <path fill-rule="evenodd" clip-rule="evenodd" d="M9.99 0C4.47 0 0 4.48 0 10s4.47 10 9.99 10C15.52 20 20 15.52 20 10S15.52 0 9.99 0zM11 11V5H9v6h2zm0 4v-2H9v2h2zm-9-5c0 4.42 3.58 8 8 8s8-3.58 8-8-3.58-8-8-8-8 3.58-8 8z" fill="black" />

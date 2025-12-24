@@ -135,8 +135,7 @@ class _WebViewExampleState extends State<WebViewExample> {
       params = const PlatformWebViewControllerCreationParams();
     }
 
-    final WebViewController controller =
-        WebViewController.fromPlatformCreationParams(params);
+    final controller = WebViewController.fromPlatformCreationParams(params);
     // #enddocregion platform_features
 
     controller
@@ -238,10 +237,8 @@ Page resource error:
   }
 
   Future<void> openDialog(HttpAuthRequest httpRequest) async {
-    final TextEditingController usernameTextController =
-        TextEditingController();
-    final TextEditingController passwordTextController =
-        TextEditingController();
+    final usernameTextController = TextEditingController();
+    final passwordTextController = TextEditingController();
 
     return showDialog(
       context: context,
@@ -356,70 +353,69 @@ class SampleMenu extends StatelessWidget {
             _promptForUrl(context);
         }
       },
-      itemBuilder:
-          (BuildContext context) => <PopupMenuItem<MenuOptions>>[
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.showUserAgent,
-              child: Text('Show user agent'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.listCookies,
-              child: Text('List cookies'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.clearCookies,
-              child: Text('Clear cookies'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.addToCache,
-              child: Text('Add to cache'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.listCache,
-              child: Text('List cache'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.clearCache,
-              child: Text('Clear cache'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.navigationDelegate,
-              child: Text('Navigation Delegate example'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.doPostRequest,
-              child: Text('Post Request'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.loadHtmlString,
-              child: Text('Load HTML string'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.loadLocalFile,
-              child: Text('Load local file'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.loadFlutterAsset,
-              child: Text('Load Flutter Asset'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              key: ValueKey<String>('ShowTransparentBackgroundExample'),
-              value: MenuOptions.transparentBackground,
-              child: Text('Transparent background example'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.setCookie,
-              child: Text('Set cookie'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.logExample,
-              child: Text('Log example'),
-            ),
-            const PopupMenuItem<MenuOptions>(
-              value: MenuOptions.basicAuthentication,
-              child: Text('Basic Authentication Example'),
-            ),
-          ],
+      itemBuilder: (BuildContext context) => <PopupMenuItem<MenuOptions>>[
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.showUserAgent,
+          child: Text('Show user agent'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.listCookies,
+          child: Text('List cookies'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.clearCookies,
+          child: Text('Clear cookies'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.addToCache,
+          child: Text('Add to cache'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.listCache,
+          child: Text('List cache'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.clearCache,
+          child: Text('Clear cache'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.navigationDelegate,
+          child: Text('Navigation Delegate example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.doPostRequest,
+          child: Text('Post Request'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.loadHtmlString,
+          child: Text('Load HTML string'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.loadLocalFile,
+          child: Text('Load local file'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.loadFlutterAsset,
+          child: Text('Load Flutter Asset'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          key: ValueKey<String>('ShowTransparentBackgroundExample'),
+          value: MenuOptions.transparentBackground,
+          child: Text('Transparent background example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.setCookie,
+          child: Text('Set cookie'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.logExample,
+          child: Text('Log example'),
+        ),
+        const PopupMenuItem<MenuOptions>(
+          value: MenuOptions.basicAuthentication,
+          child: Text('Basic Authentication Example'),
+        ),
+      ],
     );
   }
 
@@ -432,7 +428,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _onListCookies(BuildContext context) async {
-    final String cookies =
+    final cookies =
         await webViewController.runJavaScriptReturningResult('document.cookie')
             as String;
     if (context.mounted) {
@@ -480,7 +476,7 @@ class SampleMenu extends StatelessWidget {
 
   Future<void> _onClearCookies(BuildContext context) async {
     final bool hadCookies = await cookieManager.clearCookies();
-    String message = 'There were cookies. Now, they are gone!';
+    var message = 'There were cookies. Now, they are gone!';
     if (!hadCookies) {
       message = 'There are no cookies.';
     }
@@ -557,7 +553,7 @@ class SampleMenu extends StatelessWidget {
 
   static Future<String> _prepareLocalFile() async {
     final String tmpDir = (await getTemporaryDirectory()).path;
-    final File indexFile = File(
+    final indexFile = File(
       <String>{tmpDir, 'www', 'index.html'}.join(Platform.pathSeparator),
     );
 
@@ -580,7 +576,7 @@ class SampleMenu extends StatelessWidget {
   }
 
   Future<void> _promptForUrl(BuildContext context) {
-    final TextEditingController urlTextController = TextEditingController();
+    final urlTextController = TextEditingController();
 
     return showDialog<String>(
       context: context,

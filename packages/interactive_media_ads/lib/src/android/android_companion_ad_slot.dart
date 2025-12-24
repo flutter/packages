@@ -10,7 +10,6 @@ import '../platform_interface/companion_ad_slot_size.dart';
 import '../platform_interface/platform_companion_ad_slot.dart';
 import 'android_view_widget.dart';
 import 'interactive_media_ads.g.dart' as ima;
-import 'interactive_media_ads_proxy.dart';
 import 'platform_views_service_proxy.dart';
 
 /// Android implementation of [PlatformCompanionAdSlotCreationParams].
@@ -20,10 +19,8 @@ final class AndroidCompanionAdSlotCreationParams
   const AndroidCompanionAdSlotCreationParams({
     required super.size,
     super.onClicked,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
-  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-       _platformViewsProxy =
+  }) : _platformViewsProxy =
            platformViewsProxy ?? const PlatformViewsServiceProxy(),
        super();
 
@@ -31,18 +28,15 @@ final class AndroidCompanionAdSlotCreationParams
   /// [PlatformCompanionAdSlotCreationParams].
   factory AndroidCompanionAdSlotCreationParams.fromPlatformCompanionAdSlotCreationParamsSize(
     PlatformCompanionAdSlotCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
     @visibleForTesting PlatformViewsServiceProxy? platformViewsProxy,
   }) {
     return AndroidCompanionAdSlotCreationParams(
       size: params.size,
       onClicked: params.onClicked,
-      proxy: proxy,
       platformViewsProxy: platformViewsProxy,
     );
   }
 
-  final InteractiveMediaAdsProxy _proxy;
   final PlatformViewsServiceProxy _platformViewsProxy;
 }
 
@@ -55,8 +49,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
       _initAndroidParams(params);
 
   // ViewGroup used to display the Ad.
-  late final ima.ViewGroup _frameLayout = _androidParams._proxy
-      .newFrameLayout();
+  late final ima.ViewGroup _frameLayout = ima.FrameLayout();
 
   late final Future<ima.CompanionAdSlot> _adSlotFuture = _initCompanionAdSlot();
 
@@ -87,8 +80,7 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   }
 
   Future<ima.CompanionAdSlot> _initCompanionAdSlot() async {
-    final ima.CompanionAdSlot adSlot = await _androidParams._proxy
-        .instanceImaSdkFactory()
+    final ima.CompanionAdSlot adSlot = await ima.ImaSdkFactory.instance
         .createCompanionAdSlot();
 
     await Future.wait(<Future<void>>[
@@ -117,11 +109,10 @@ base class AndroidCompanionAdSlot extends PlatformCompanionAdSlot {
   static ima.CompanionAdSlotClickListener _createAdSlotClickListener(
     WeakReference<AndroidCompanionAdSlot> weakThis,
   ) {
-    return weakThis.target!._androidParams._proxy
-        .newCompanionAdSlotClickListener(
-          onCompanionAdClick: (_) {
-            weakThis.target?.params.onClicked!.call();
-          },
-        );
+    return ima.CompanionAdSlotClickListener(
+      onCompanionAdClick: (_) {
+        weakThis.target?.params.onClicked!.call();
+      },
+    );
   }
 }

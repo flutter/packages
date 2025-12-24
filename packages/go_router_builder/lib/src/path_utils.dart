@@ -28,8 +28,8 @@ Set<String> pathParametersFromPattern(String pattern) => <String>{
 /// final path = patternToPath(pattern, {'id': 'family-id'}); // '/family/family-id'
 /// ```
 String patternToPath(String pattern, Map<String, String> pathParameters) {
-  final StringBuffer buffer = StringBuffer();
-  int start = 0;
+  final buffer = StringBuffer();
+  var start = 0;
   for (final RegExpMatch match in _parameterRegExp.allMatches(pattern)) {
     if (match.start > start) {
       buffer.write(pattern.substring(start, match.start));

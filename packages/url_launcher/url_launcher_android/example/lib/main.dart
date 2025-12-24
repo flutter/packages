@@ -151,7 +151,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _makePhoneCall(String phoneNumber) async {
     // Use `Uri` to ensure that `phoneNumber` is properly URL-encoded.
     // Just using 'tel:$phoneNumber' would create invalid URLs in some cases.
-    final Uri launchUri = Uri(scheme: 'tel', path: phoneNumber);
+    final launchUri = Uri(scheme: 'tel', path: phoneNumber);
     await launcher.launchUrl(launchUri.toString(), const LaunchOptions());
   }
 
@@ -159,7 +159,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     // onPressed calls using this URL are not gated on a 'canLaunch' check
     // because the assumption is that every device can launch a web URL.
-    const String toLaunch = 'https://www.cylog.org/headers/';
+    const toLaunch = 'https://www.cylog.org/headers/';
     return Scaffold(
       appBar: AppBar(title: Text(widget.title)),
       body: ListView(

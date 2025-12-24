@@ -24,7 +24,7 @@ void testValidPackages() {
     List<ResourceRecord> result = decodeMDnsResponse(package1)!;
     expect(result, isNotNull);
     expect(result.length, 1);
-    IPAddressResourceRecord ipResult = result[0] as IPAddressResourceRecord;
+    var ipResult = result[0] as IPAddressResourceRecord;
     expect(ipResult.name, 'raspberrypi.local');
     expect(ipResult.address.address, '192.168.1.191');
 
@@ -129,8 +129,9 @@ void testValidPackages() {
 
   // Fixes https://github.com/flutter/flutter/issues/31854
   test('Can decode packages with question, answer and additional', () {
-    final List<ResourceRecord> result =
-        decodeMDnsResponse(packetWithQuestionAnArCount)!;
+    final List<ResourceRecord> result = decodeMDnsResponse(
+      packetWithQuestionAnArCount,
+    )!;
     expect(result, isNotNull);
     expect(result.length, 2);
     expect(result, <ResourceRecord>[
@@ -151,8 +152,9 @@ void testValidPackages() {
   test(
     'Can decode packages without question and with answer and additional',
     () {
-      final List<ResourceRecord> result =
-          decodeMDnsResponse(packetWithoutQuestionWithAnArCount)!;
+      final List<ResourceRecord> result = decodeMDnsResponse(
+        packetWithoutQuestionWithAnArCount,
+      )!;
       expect(result, isNotNull);
       expect(result.length, 2);
       expect(result, <ResourceRecord>[
@@ -191,8 +193,8 @@ void testValidPackages() {
 
 void testBadPackages() {
   test('Returns null for invalid packets', () {
-    for (final List<int> p in <List<int>>[package1, package2, package3]) {
-      for (int i = 0; i < p.length; i++) {
+    for (final p in <List<int>>[package1, package2, package3]) {
+      for (var i = 0; i < p.length; i++) {
         expect(decodeMDnsResponse(p.sublist(0, i)), isNull);
       }
     }
@@ -224,7 +226,7 @@ void testNonUtf8DomainName() {
     final List<ResourceRecord> result = decodeMDnsResponse(nonUtf8Package)!;
     expect(result, isNotNull);
     expect(result[0] is TxtResourceRecord, isTrue);
-    final TxtResourceRecord txt = result[0] as TxtResourceRecord;
+    final txt = result[0] as TxtResourceRecord;
     expect(txt.name, contains('�'));
   });
 }

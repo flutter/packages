@@ -22,7 +22,7 @@ void main() {
     ).thenAnswer((Invocation realInvocation) async {
       final Object input = MultipleArityHostApi.pigeonChannelCodec
           .decodeMessage(realInvocation.positionalArguments[1] as ByteData?)!;
-      final List<Object?> args = input as List<Object?>;
+      final args = input as List<Object?>;
       final int x = (args[0] as int?)!;
       final int y = (args[1] as int?)!;
       return MultipleArityHostApi.pigeonChannelCodec.encodeMessage(<Object>[
@@ -30,9 +30,7 @@ void main() {
       ]);
     });
 
-    final MultipleArityHostApi api = MultipleArityHostApi(
-      binaryMessenger: mockMessenger,
-    );
+    final api = MultipleArityHostApi(binaryMessenger: mockMessenger);
     final int result = await api.subtract(30, 10);
     expect(result, 20);
   });

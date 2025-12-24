@@ -40,13 +40,13 @@ class TemplateException implements m.TemplateException {
 
   @override
   String toString() {
-    final List<Object?> list = <Object?>[];
+    final list = <Object?>[];
     if (templateName != null) {
       list.add(templateName);
     }
     list.add(line);
     list.add(column);
-    final String location = list.isEmpty ? '' : ' (${list.join(':')})';
+    final location = list.isEmpty ? '' : ' (${list.join(':')})';
     return '$message$location\n$context';
   }
 
@@ -64,10 +64,10 @@ class TemplateException implements m.TemplateException {
     }
 
     // Find line and character column.
-    int lineNum = 1;
-    int lineStart = 0;
-    bool lastWasCR = false;
-    for (int i = 0; i < offset!; i++) {
+    var lineNum = 1;
+    var lineStart = 0;
+    var lastWasCR = false;
+    for (var i = 0; i < offset!; i++) {
       final int char = source!.codeUnitAt(i);
       if (char == 0x0a) {
         if (lineStart != i || !lastWasCR) {
@@ -95,10 +95,10 @@ class TemplateException implements m.TemplateException {
       }
     }
     final int length = lineEnd - lineStart;
-    int start = lineStart;
-    int end = lineEnd;
-    String prefix = '';
-    String postfix = '';
+    var start = lineStart;
+    var end = lineEnd;
+    var prefix = '';
+    var postfix = '';
     if (length > 78) {
       // Can't show entire line. Try to anchor at the nearest end, if
       // one is within reach.

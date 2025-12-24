@@ -16,9 +16,9 @@ class MockCaptureVideoDataOutput: NSObject, CaptureVideoDataOutput {
   var alwaysDiscardsLateVideoFrames = false
   var videoSettings: [String: Any]! = [:]
 
-  var connectionWithMediaTypeStub: ((AVMediaType) -> FLTCaptureConnection?)?
+  var connectionWithMediaTypeStub: ((AVMediaType) -> CaptureConnection?)?
 
-  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection? {
+  func connection(with mediaType: AVMediaType) -> CaptureConnection? {
     return connectionWithMediaTypeStub?(mediaType)
   }
 

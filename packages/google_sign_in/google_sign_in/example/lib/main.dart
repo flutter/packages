@@ -77,11 +77,11 @@ class _SignInDemoState extends State<SignInDemo> {
   ) async {
     // #docregion CheckAuthorization
     final GoogleSignInAccount? user = // ...
-    // #enddocregion CheckAuthorization
-    switch (event) {
-      GoogleSignInAuthenticationEventSignIn() => event.user,
-      GoogleSignInAuthenticationEventSignOut() => null,
-    };
+        // #enddocregion CheckAuthorization
+        switch (event) {
+          GoogleSignInAuthenticationEventSignIn() => event.user,
+          GoogleSignInAuthenticationEventSignOut() => null,
+        };
 
     // Check for existing authorization.
     // #docregion CheckAuthorization
@@ -107,10 +107,9 @@ class _SignInDemoState extends State<SignInDemo> {
     setState(() {
       _currentUser = null;
       _isAuthorized = false;
-      _errorMessage =
-          e is GoogleSignInException
-              ? _errorMessageFromSignInException(e)
-              : 'Unknown error: $e';
+      _errorMessage = e is GoogleSignInException
+          ? _errorMessageFromSignInException(e)
+          : 'Unknown error: $e';
     });
   }
 
@@ -153,8 +152,7 @@ class _SignInDemoState extends State<SignInDemo> {
       }
       return;
     }
-    final Map<String, dynamic> data =
-        json.decode(response.body) as Map<String, dynamic>;
+    final data = json.decode(response.body) as Map<String, dynamic>;
     final String? namedContact = _pickFirstNamedContact(data);
     setState(() {
       if (namedContact != null) {
@@ -166,8 +164,8 @@ class _SignInDemoState extends State<SignInDemo> {
   }
 
   String? _pickFirstNamedContact(Map<String, dynamic> data) {
-    final List<dynamic>? connections = data['connections'] as List<dynamic>?;
-    final Map<String, dynamic>? contact =
+    final connections = data['connections'] as List<dynamic>?;
+    final contact =
         connections?.firstWhere(
               (dynamic contact) =>
                   (contact as Map<Object?, dynamic>)['names'] != null,
@@ -175,8 +173,8 @@ class _SignInDemoState extends State<SignInDemo> {
             )
             as Map<String, dynamic>?;
     if (contact != null) {
-      final List<dynamic> names = contact['names'] as List<dynamic>;
-      final Map<String, dynamic>? name =
+      final names = contact['names'] as List<dynamic>;
+      final name =
           names.firstWhere(
                 (dynamic name) =>
                     (name as Map<Object?, dynamic>)['displayName'] != null,

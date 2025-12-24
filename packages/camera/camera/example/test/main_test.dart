@@ -20,7 +20,7 @@ void main() {
   ) async {
     WidgetsFlutterBinding.ensureInitialized();
     // Adds 10 fake camera descriptions.
-    for (int i = 0; i < 10; i++) {
+    for (var i = 0; i < 10; i++) {
       cameras.add(
         CameraDescription(
           name: 'camera_$i',

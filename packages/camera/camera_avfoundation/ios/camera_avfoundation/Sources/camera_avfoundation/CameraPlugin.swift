@@ -15,10 +15,10 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
   private let deviceDiscoverer: CameraDeviceDiscoverer
-  private let permissionManager: FLTCameraPermissionManager
+  private let permissionManager: CameraPermissionManager
   private let captureDeviceFactory: VideoCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
-  private let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  private let captureDeviceInputFactory: CaptureDeviceInputFactory
 
   /// All FLTCam's state access and capture session related operations should be on run on this queue.
   private let captureSessionQueue: DispatchQueue
@@ -32,14 +32,14 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       messenger: registrar.messenger(),
       globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
       deviceDiscoverer: DefaultCameraDeviceDiscoverer(),
-      permissionManager: FLTCameraPermissionManager(
-        permissionService: FLTDefaultPermissionService()),
+      permissionManager: CameraPermissionManager(
+        permissionService: DefaultPermissionService()),
       deviceFactory: { name in
         // TODO(RobertOdrowaz) Implement better error handling and remove non-null assertion
-        FLTDefaultCaptureDevice(device: AVCaptureDevice(uniqueID: name)!)
+        AVCaptureDevice(uniqueID: name)!
       },
-      captureSessionFactory: { FLTDefaultCaptureSession(captureSession: AVCaptureSession()) },
-      captureDeviceInputFactory: FLTDefaultCaptureDeviceInputFactory(),
+      captureSessionFactory: { AVCaptureSession() },
+      captureDeviceInputFactory: DefaultCaptureDeviceInputFactory(),
       captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
 
@@ -51,10 +51,10 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     messenger: FlutterBinaryMessenger,
     globalAPI: FCPCameraGlobalEventApi,
     deviceDiscoverer: CameraDeviceDiscoverer,
-    permissionManager: FLTCameraPermissionManager,
+    permissionManager: CameraPermissionManager,
     deviceFactory: @escaping VideoCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
-    captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
+    captureDeviceInputFactory: CaptureDeviceInputFactory,
     captureSessionQueue: DispatchQueue
   ) {
     self.registry = registry
@@ -159,8 +159,7 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  private func platformLensDirection(for device: FLTCaptureDevice) -> FCPPlatformCameraLensDirection
-  {
+  private func platformLensDirection(for device: CaptureDevice) -> FCPPlatformCameraLensDirection {
     switch device.position {
     case .back:
       return .back
@@ -173,7 +172,7 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  private func platformLensType(for device: FLTCaptureDevice) -> FCPPlatformCameraLensType {
+  private func platformLensType(for device: CaptureDevice) -> FCPPlatformCameraLensType {
     switch device.deviceType {
     case .builtInWideAngleCamera:
       return .wide
@@ -255,9 +254,7 @@ extension CameraPlugin: FCPCameraApi {
       mediaSettings: settings,
       mediaSettingsWrapper: mediaSettingsAVWrapper,
       captureDeviceFactory: captureDeviceFactory,
-      audioCaptureDeviceFactory: {
-        FLTDefaultCaptureDevice(device: AVCaptureDevice.default(for: .audio)!)
-      },
+      audioCaptureDeviceFactory: { AVCaptureDevice.default(for: .audio)! },
       captureSessionFactory: captureSessionFactory,
       captureSessionQueue: captureSessionQueue,
       captureDeviceInputFactory: captureDeviceInputFactory,

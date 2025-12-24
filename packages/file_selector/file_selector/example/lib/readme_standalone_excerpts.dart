@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> saveFile() async {
     // #docregion Save
-    const String fileName = 'suggested_name.txt';
+    const fileName = 'suggested_name.txt';
     final FileSaveLocation? result = await getSaveLocation(
       suggestedName: fileName,
     );
@@ -45,9 +45,9 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    final Uint8List fileData = Uint8List.fromList('Hello World!'.codeUnits);
-    const String mimeType = 'text/plain';
-    final XFile textFile = XFile.fromData(
+    final fileData = Uint8List.fromList('Hello World!'.codeUnits);
+    const mimeType = 'text/plain';
+    final textFile = XFile.fromData(
       fileData,
       mimeType: mimeType,
       name: fileName,

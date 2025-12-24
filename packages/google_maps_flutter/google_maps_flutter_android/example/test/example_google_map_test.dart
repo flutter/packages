@@ -40,10 +40,10 @@ void main() {
   testWidgets('circle updates with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const Circle c1 = Circle(circleId: CircleId('circle_1'));
-    const Circle c2 = Circle(circleId: CircleId('circle_2'));
-    const Circle c3 = Circle(circleId: CircleId('circle_3'), radius: 1);
-    const Circle c3updated = Circle(circleId: CircleId('circle_3'), radius: 10);
+    const c1 = Circle(circleId: CircleId('circle_1'));
+    const c2 = Circle(circleId: CircleId('circle_2'));
+    const c3 = Circle(circleId: CircleId('circle_3'), radius: 1);
+    const c3updated = Circle(circleId: CircleId('circle_3'), radius: 10);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(circles: <Circle>{c1, c2}));
@@ -72,13 +72,10 @@ void main() {
   testWidgets('marker updates with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const Marker m1 = Marker(markerId: MarkerId('marker_1'));
-    const Marker m2 = Marker(markerId: MarkerId('marker_2'));
-    const Marker m3 = Marker(markerId: MarkerId('marker_3'));
-    const Marker m3updated = Marker(
-      markerId: MarkerId('marker_3'),
-      draggable: true,
-    );
+    const m1 = Marker(markerId: MarkerId('marker_1'));
+    const m2 = Marker(markerId: MarkerId('marker_2'));
+    const m3 = Marker(markerId: MarkerId('marker_3'));
+    const m3updated = Marker(markerId: MarkerId('marker_3'), draggable: true);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(markers: <Marker>{m1, m2}));
@@ -107,13 +104,10 @@ void main() {
   testWidgets('polygon updates with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const Polygon p1 = Polygon(polygonId: PolygonId('polygon_1'));
-    const Polygon p2 = Polygon(polygonId: PolygonId('polygon_2'));
-    const Polygon p3 = Polygon(
-      polygonId: PolygonId('polygon_3'),
-      strokeWidth: 1,
-    );
-    const Polygon p3updated = Polygon(
+    const p1 = Polygon(polygonId: PolygonId('polygon_1'));
+    const p2 = Polygon(polygonId: PolygonId('polygon_2'));
+    const p3 = Polygon(polygonId: PolygonId('polygon_3'), strokeWidth: 1);
+    const p3updated = Polygon(
       polygonId: PolygonId('polygon_3'),
       strokeWidth: 2,
     );
@@ -147,16 +141,10 @@ void main() {
   testWidgets('polyline updates with delays', (WidgetTester tester) async {
     platform.simulatePlatformDelay = true;
 
-    const Polyline p1 = Polyline(polylineId: PolylineId('polyline_1'));
-    const Polyline p2 = Polyline(polylineId: PolylineId('polyline_2'));
-    const Polyline p3 = Polyline(
-      polylineId: PolylineId('polyline_3'),
-      width: 1,
-    );
-    const Polyline p3updated = Polyline(
-      polylineId: PolylineId('polyline_3'),
-      width: 2,
-    );
+    const p1 = Polyline(polylineId: PolylineId('polyline_1'));
+    const p2 = Polyline(polylineId: PolylineId('polyline_2'));
+    const p3 = Polyline(polylineId: PolylineId('polyline_3'), width: 1);
+    const p3updated = Polyline(polylineId: PolylineId('polyline_3'), width: 2);
 
     // First remove one and add another, then update the new one.
     await tester.pumpWidget(_mapWithObjects(polylines: <Polyline>{p1, p2}));

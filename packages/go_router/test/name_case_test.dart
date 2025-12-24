@@ -9,7 +9,7 @@ import 'package:go_router/go_router.dart';
 void main() {
   testWidgets('Route names are case sensitive', (WidgetTester tester) async {
     // config router with 2 routes with the same name but different case (Name, name)
-    final GoRouter router = GoRouter(
+    final router = GoRouter(
       routes: <GoRoute>[
         GoRoute(path: '/', name: 'Name', builder: (_, __) => const ScreenA()),
         GoRoute(

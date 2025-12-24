@@ -94,6 +94,13 @@ static GtkFileChooserNative* create_dialog(
     }
   }
 
+  const gboolean* create_folders =
+      ffs_platform_file_chooser_options_get_create_folders(options);
+  if (create_folders != nullptr) {
+    gtk_file_chooser_set_create_folders(GTK_FILE_CHOOSER(dialog),
+                                        *create_folders);
+  }
+
   return GTK_FILE_CHOOSER_NATIVE(g_object_ref(dialog));
 }
 

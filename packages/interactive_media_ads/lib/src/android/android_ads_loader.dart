@@ -4,8 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/widgets.dart';
-
 import '../platform_interface/platform_interface.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_manager.dart';
@@ -13,7 +11,6 @@ import 'android_content_progress_provider.dart';
 import 'android_ima_settings.dart';
 import 'enum_converter_utils.dart';
 import 'interactive_media_ads.g.dart' as ima;
-import 'interactive_media_ads_proxy.dart';
 
 /// Android implementation of [PlatformAdsLoaderCreationParams].
 final class AndroidAdsLoaderCreationParams
@@ -24,26 +21,20 @@ final class AndroidAdsLoaderCreationParams
     required super.container,
     required super.onAdsLoaded,
     required super.onAdsLoadError,
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) : _proxy = proxy ?? const InteractiveMediaAdsProxy(),
-       super();
+  }) : super();
 
   /// Creates a [AndroidAdsLoaderCreationParams] from an instance of
   /// [PlatformAdsLoaderCreationParams].
   factory AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-    PlatformAdsLoaderCreationParams params, {
-    @visibleForTesting InteractiveMediaAdsProxy? proxy,
-  }) {
+    PlatformAdsLoaderCreationParams params,
+  ) {
     return AndroidAdsLoaderCreationParams(
       settings: params.settings,
       container: params.container,
       onAdsLoaded: params.onAdsLoaded,
       onAdsLoadError: params.onAdsLoadError,
-      proxy: proxy,
     );
   }
-
-  final InteractiveMediaAdsProxy _proxy;
 }
 
 /// Android implementation of [PlatformAdsLoader].
@@ -60,8 +51,7 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     _adsLoaderFuture = _createAdsLoader();
   }
 
-  late final ima.ImaSdkFactory _sdkFactory = _androidParams._proxy
-      .instanceImaSdkFactory();
+  late final ima.ImaSdkFactory _sdkFactory = ima.ImaSdkFactory.instance;
   late Future<ima.AdsLoader> _adsLoaderFuture;
 
   late final AndroidAdsLoaderCreationParams _androidParams =
@@ -150,25 +140,20 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     WeakReference<AndroidAdsLoader> weakThis,
     ima.AdsLoader adsLoader,
   ) {
-    final InteractiveMediaAdsProxy proxy =
-        weakThis.target!._androidParams._proxy;
     adsLoader
       ..addAdsLoadedListener(
-        proxy.newAdsLoadedListener(
+        ima.AdsLoadedListener(
           onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
             weakThis.target?.params.onAdsLoaded(
               PlatformOnAdsLoadedData(
-                manager: AndroidAdsManager(
-                  event.manager,
-                  proxy: weakThis.target?._androidParams._proxy,
-                ),
+                manager: AndroidAdsManager(event.manager),
               ),
             );
           },
         ),
       )
       ..addAdErrorListener(
-        proxy.newAdErrorListener(
+        ima.AdErrorListener(
           onAdError: (_, ima.AdErrorEvent event) {
             weakThis.target?.params.onAdsLoadError(
               AdsLoadErrorData(

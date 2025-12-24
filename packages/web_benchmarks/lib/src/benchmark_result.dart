@@ -11,9 +11,9 @@ class BenchmarkScore {
 
   /// Deserializes a JSON object to create a [BenchmarkScore] object.
   factory BenchmarkScore.parse(Map<String, Object?> json) {
-    final String metric = json[metricKey]! as String;
+    final metric = json[metricKey]! as String;
     final double value = (json[valueKey]! as num).toDouble();
-    final num? delta = json[deltaKey] as num?;
+    final delta = json[deltaKey] as num?;
     return BenchmarkScore(metric: metric, value: value, delta: delta);
   }
 
@@ -59,8 +59,7 @@ class BenchmarkResults {
 
   /// Deserializes a JSON object to create a [BenchmarkResults] object.
   factory BenchmarkResults.parse(Map<String, Object?> json) {
-    final Map<String, List<BenchmarkScore>> results =
-        <String, List<BenchmarkScore>>{};
+    final results = <String, List<BenchmarkScore>>{};
     for (final String key in json.keys) {
       final List<BenchmarkScore> scores = (json[key]! as List<Object?>)
           .cast<Map<String, Object?>>()

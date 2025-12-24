@@ -24,9 +24,9 @@ class SaveTextPage extends StatelessWidget {
       return;
     }
     final String text = _contentController.text;
-    final Uint8List fileData = Uint8List.fromList(text.codeUnits);
-    const String fileMimeType = 'text/plain';
-    final XFile textFile = XFile.fromData(
+    final fileData = Uint8List.fromList(text.codeUnits);
+    const fileMimeType = 'text/plain';
+    final textFile = XFile.fromData(
       fileData,
       mimeType: fileMimeType,
       name: fileName,

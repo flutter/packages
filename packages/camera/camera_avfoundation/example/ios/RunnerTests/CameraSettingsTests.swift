@@ -39,23 +39,23 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     videoSettingsExpectation = test.expectation(description: "videoSettingsExpectation")
   }
 
-  override func lockDevice(_ captureDevice: FLTCaptureDevice) throws {
+  override func lockDevice(_ captureDevice: CaptureDevice) throws {
     lockExpectation.fulfill()
   }
 
-  override func unlockDevice(_ captureDevice: FLTCaptureDevice) {
+  override func unlockDevice(_ captureDevice: CaptureDevice) {
     unlockExpectation.fulfill()
   }
 
-  override func beginConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  override func beginConfiguration(for videoCaptureSession: CaptureSession) {
     beginConfigurationExpectation.fulfill()
   }
 
-  override func commitConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  override func commitConfiguration(for videoCaptureSession: CaptureSession) {
     commitConfigurationExpectation.fulfill()
   }
 
-  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     // FLTCam allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
@@ -63,7 +63,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     }
   }
 
-  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     // FLTCam allows to set frame rate with 1/10 precision.
     let expectedDuration = CMTimeMake(value: 10, timescale: Int32(testFramesPerSecond * 10))
     if duration == expectedDuration {
@@ -72,7 +72,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
     if let bitrate = outputSettings?[AVEncoderBitRateKey] as? Int, bitrate == testAudioBitrate {
       audioSettingsExpectation.fulfill()
@@ -81,7 +81,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
     if let compressionProperties = outputSettings?[AVVideoCompressionPropertiesKey]
       as? [String: Any],
@@ -101,7 +101,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     return MockAssetWriterInput()
   }
 
-  override func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
+  override func addInput(_ writerInput: AssetWriterInput, to writer: AssetWriter) {
     // No-op.
   }
 
@@ -161,7 +161,7 @@ final class CameraSettingsTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { mockSession },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -203,7 +203,7 @@ final class CameraSettingsTests: XCTestCase {
     configuration.mediaSettings = settings
     let camera = CameraTestUtils.createTestCamera(configuration)
 
-    let range = camera.captureDevice.activeFormat.videoSupportedFrameRateRanges[0]
+    let range = camera.captureDevice.flutterActiveFormat.flutterVideoSupportedFrameRateRanges[0]
     XCTAssertLessThanOrEqual(range.minFrameRate, 60)
     XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60)
   }

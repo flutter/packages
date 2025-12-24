@@ -25,7 +25,7 @@ void main() {
         return NavigationDecision.navigate;
       }
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onNavigationRequest: onNavigationRequest,
       );
 
@@ -37,9 +37,7 @@ void main() {
 
       void onPageStarted(String url) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
-        onPageStarted: onPageStarted,
-      );
+      final delegate = NavigationDelegate(onPageStarted: onPageStarted);
 
       verify(delegate.platform.setOnPageStarted(onPageStarted));
     });
@@ -49,9 +47,7 @@ void main() {
 
       void onPageFinished(String url) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
-        onPageFinished: onPageFinished,
-      );
+      final delegate = NavigationDelegate(onPageFinished: onPageFinished);
 
       verify(delegate.platform.setOnPageFinished(onPageFinished));
     });
@@ -61,9 +57,7 @@ void main() {
 
       void onProgress(int progress) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
-        onProgress: onProgress,
-      );
+      final delegate = NavigationDelegate(onProgress: onProgress);
 
       verify(delegate.platform.setOnProgress(onProgress));
     });
@@ -73,7 +67,7 @@ void main() {
 
       void onWebResourceError(WebResourceError error) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onWebResourceError: onWebResourceError,
       );
 
@@ -85,9 +79,7 @@ void main() {
 
       void onUrlChange(UrlChange change) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
-        onUrlChange: onUrlChange,
-      );
+      final delegate = NavigationDelegate(onUrlChange: onUrlChange);
 
       verify(delegate.platform.setOnUrlChange(onUrlChange));
     });
@@ -97,9 +89,7 @@ void main() {
 
       void onHttpAuthRequest(HttpAuthRequest request) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
-        onHttpAuthRequest: onHttpAuthRequest,
-      );
+      final delegate = NavigationDelegate(onHttpAuthRequest: onHttpAuthRequest);
 
       verify(delegate.platform.setOnHttpAuthRequest(onHttpAuthRequest));
     });
@@ -109,9 +99,7 @@ void main() {
 
       void onHttpError(HttpResponseError error) {}
 
-      final NavigationDelegate delegate = NavigationDelegate(
-        onHttpError: onHttpError,
-      );
+      final delegate = NavigationDelegate(onHttpError: onHttpError);
 
       verify(delegate.platform.setOnHttpError(onHttpError));
     });
@@ -119,21 +107,20 @@ void main() {
     test('onSslAuthError', () async {
       WebViewPlatform.instance = TestWebViewPlatform();
 
-      final NavigationDelegate delegate = NavigationDelegate(
+      final delegate = NavigationDelegate(
         onSslAuthError: expectAsync1((SslAuthError error) {
           error.proceed();
         }),
       );
 
-      final void Function(PlatformSslAuthError) callback =
+      final callback =
           verify(
                 (delegate.platform as MockPlatformNavigationDelegate)
                     .setOnSSlAuthError(captureAny),
               ).captured.single
               as void Function(PlatformSslAuthError);
 
-      final MockPlatformSslAuthError mockPlatformError =
-          MockPlatformSslAuthError();
+      final mockPlatformError = MockPlatformSslAuthError();
       callback(mockPlatformError);
 
       verify(mockPlatformError.proceed());

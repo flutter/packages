@@ -1,3 +1,7 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
 ## 2.7.0
 
 * Adds `canCreateDirectories` parameter to `FileDialogOptions` to control whether directory creation is enabled during path selection.

@@ -8,7 +8,7 @@ import 'package:video_player/src/closed_caption_file.dart';
 void main() {
   group('ClosedCaptionFile', () {
     test('toString()', () {
-      const Caption caption = Caption(
+      const caption = Caption(
         number: 1,
         start: Duration(seconds: 1),
         end: Duration(seconds: 2),

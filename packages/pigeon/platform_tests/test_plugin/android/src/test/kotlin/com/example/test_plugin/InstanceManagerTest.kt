@@ -145,7 +145,7 @@ class InstanceManagerTest {
     instanceManager.clearFinalizedWeakReferencesInterval = 1000
     instanceManager.stopFinalizationListener()
 
-    assertNull(instanceManager.getInstance<Any?>(0))
+    assertNull(instanceManager.getInstance(0))
     assertFalse(finalizerRan)
   }
 

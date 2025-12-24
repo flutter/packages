@@ -78,8 +78,7 @@ class SharedPreferences {
   /// performance-sensitive blocks.
   static Future<SharedPreferences> getInstance() async {
     if (_completer == null) {
-      final Completer<SharedPreferences> completer =
-          Completer<SharedPreferences>();
+      final completer = Completer<SharedPreferences>();
       _completer = completer;
       try {
         final Map<String, Object> preferencesMap =
@@ -135,7 +134,7 @@ class SharedPreferences {
   /// Reads a set of string values from persistent storage, throwing an
   /// exception if it's not a string list.
   List<String>? getStringList(String key) {
-    List<dynamic>? list = _preferenceCache[key] as List<dynamic>?;
+    var list = _preferenceCache[key] as List<dynamic>?;
     list = list?.cast<String>();
     // Make a copy of the list so that later mutations won't propagate
     return list?.toList() as List<String>?;
@@ -170,14 +169,14 @@ class SharedPreferences {
 
   /// Removes an entry from persistent storage.
   Future<bool> remove(String key) {
-    final String prefixedKey = '$_prefix$key';
+    final prefixedKey = '$_prefix$key';
     _preferenceCache.remove(key);
     return _store.remove(prefixedKey);
   }
 
   Future<bool> _setValue(String valueType, String key, Object value) {
     ArgumentError.checkNotNull(value, 'value');
-    final String prefixedKey = '$_prefix$key';
+    final prefixedKey = '$_prefix$key';
     if (value is List<String>) {
       // Make a copy of the list so that later mutations won't propagate
       _preferenceCache[key] = value.toList();
@@ -229,7 +228,7 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
   }
 
   static Future<Map<String, Object>> _getSharedPreferencesMap() async {
-    final Map<String, Object> fromSystem = <String, Object>{};
+    final fromSystem = <String, Object>{};
     if (_prefixHasBeenChanged) {
       try {
         fromSystem.addAll(
@@ -258,7 +257,7 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
       return fromSystem;
     }
     // Strip the prefix from the returned preferences.
-    final Map<String, Object> preferencesMap = <String, Object>{};
+    final preferencesMap = <String, Object>{};
     for (final String key in fromSystem.keys) {
       assert(key.startsWith(_prefix));
       preferencesMap[key.substring(_prefix.length)] = fromSystem[key]!;
@@ -275,14 +274,14 @@ Either update the implementation to support setPrefix, or do not call setPrefix.
       String key,
       Object value,
     ) {
-      String newKey = key;
+      var newKey = key;
       if (!key.startsWith(_prefix)) {
         newKey = '$_prefix$key';
       }
       return MapEntry<String, Object>(newKey, value);
     });
-    SharedPreferencesStorePlatform
-        .instance = InMemorySharedPreferencesStore.withData(newValues);
+    SharedPreferencesStorePlatform.instance =
+        InMemorySharedPreferencesStore.withData(newValues);
     _completer = null;
   }
 }

@@ -40,10 +40,9 @@ class AnimateCameraState extends State<AnimateCamera> {
 
   void _toggleAnimationDuration() {
     setState(() {
-      _cameraUpdateAnimationDuration =
-          _cameraUpdateAnimationDuration != null
-              ? null
-              : const Duration(seconds: _durationSeconds);
+      _cameraUpdateAnimationDuration = _cameraUpdateAnimationDuration != null
+          ? null
+          : const Duration(seconds: _durationSeconds);
     });
   }
 
@@ -193,12 +192,11 @@ class AnimateCameraState extends State<AnimateCamera> {
             const SizedBox(width: 5),
             Switch(
               value: _cameraUpdateAnimationDuration != null,
-              onChanged:
-                  kIsWeb
-                      ? null
-                      : (bool value) {
-                        _toggleAnimationDuration();
-                      },
+              onChanged: kIsWeb
+                  ? null
+                  : (bool value) {
+                      _toggleAnimationDuration();
+                    },
             ),
           ],
         ),

@@ -327,10 +327,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.32.8"
+      channel: "3.35.7"
       env_variables: >-
         {
-          "CHANNEL": "3.32.8"
+          "CHANNEL": "3.35.7"
         }
 
   - name: Linux analyze_legacy N-2
@@ -338,10 +338,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.29.3"
+      channel: "3.32.8"
       env_variables: >-
         {
-          "CHANNEL": "3.29.3"
+          "CHANNEL": "3.32.8"
         }
 
   - name: Linux_android custom_package_tests master

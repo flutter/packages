@@ -10,23 +10,23 @@ import 'package:shared_preferences_platform_interface/shared_preferences_async_p
 import 'package:shared_preferences_platform_interface/types.dart';
 
 void main() {
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
+  const stringKey = 'testString';
+  const boolKey = 'testBool';
+  const intKey = 'testInt';
+  const doubleKey = 'testDouble';
+  const listKey = 'testList';
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
 
   group('Async', () {
     (SharedPreferencesAsync, FakeSharedPreferencesAsync) getPreferences() {
-      final FakeSharedPreferencesAsync store = FakeSharedPreferencesAsync();
+      final store = FakeSharedPreferencesAsync();
       SharedPreferencesAsyncPlatform.instance = store;
-      final SharedPreferencesAsync preferences = SharedPreferencesAsync();
+      final preferences = SharedPreferencesAsync();
       return (preferences, store);
     }
 
@@ -155,7 +155,7 @@ void main() {
         SharedPreferencesAsync preferences,
         FakeSharedPreferencesAsync store,
       ) = getPreferences();
-      const String key = 'testKey';
+      const key = 'testKey';
       await preferences.remove(key);
       expect(
         store.log,
@@ -208,7 +208,7 @@ void main() {
 
     test('containsKey', () async {
       final (SharedPreferencesAsync preferences, _) = getPreferences();
-      const String key = 'testKey';
+      const key = 'testKey';
 
       expect(false, await preferences.containsKey(key));
 
@@ -274,8 +274,8 @@ void main() {
       )
     >
     getPreferences() async {
-      final Map<String, Object?> cache = <String, Object?>{};
-      final FakeSharedPreferencesAsync store = FakeSharedPreferencesAsync();
+      final cache = <String, Object?>{};
+      final store = FakeSharedPreferencesAsync();
       SharedPreferencesAsyncPlatform.instance = store;
       final SharedPreferencesWithCache preferences =
           await SharedPreferencesWithCache.create(
@@ -381,7 +381,7 @@ void main() {
     test('containsKey', () async {
       final (SharedPreferencesWithCache preferences, _, _) =
           await getPreferences();
-      const String key = 'testKey';
+      const key = 'testKey';
 
       expect(false, preferences.containsKey(key));
 
@@ -416,7 +416,7 @@ void main() {
         FakeSharedPreferencesAsync store,
         _,
       ) = await getPreferences();
-      const String key = 'testKey';
+      const key = 'testKey';
       await preferences.remove(key);
       expect(
         store.log,
@@ -463,8 +463,8 @@ void main() {
       )
     >
     getPreferences() async {
-      final Map<String, Object?> cache = <String, Object?>{};
-      final FakeSharedPreferencesAsync store = FakeSharedPreferencesAsync();
+      final cache = <String, Object?>{};
+      final store = FakeSharedPreferencesAsync();
       SharedPreferencesAsyncPlatform.instance = store;
       final SharedPreferencesWithCache preferences =
           await SharedPreferencesWithCache.create(
@@ -577,7 +577,7 @@ void main() {
     test('throws ArgumentError if key is not included in filter', () async {
       final (SharedPreferencesWithCache preferences, _, _) =
           await getPreferences();
-      const String key = 'testKey';
+      const key = 'testKey';
 
       expect(
         () async => preferences.setString(key, 'test'),

@@ -10,15 +10,15 @@ import 'package:test/test.dart';
 void main() {
   group('Scanner', () {
     test('scan text', () {
-      const String source = 'abc';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = 'abc';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[Token(TokenType.text, 'abc', 0, 3)]);
     });
 
     test('scan tag', () {
-      const String source = 'abc{{foo}}def';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = 'abc{{foo}}def';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.text, 'abc', 0, 3),
@@ -30,8 +30,8 @@ void main() {
     });
 
     test('scan tag whitespace', () {
-      const String source = 'abc{{ foo }}def';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = 'abc{{ foo }}def';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.text, 'abc', 0, 3),
@@ -45,8 +45,8 @@ void main() {
     });
 
     test('scan tag sigil', () {
-      const String source = 'abc{{ # foo }}def';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = 'abc{{ # foo }}def';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.text, 'abc', 0, 3),
@@ -62,8 +62,8 @@ void main() {
     });
 
     test('scan tag dot', () {
-      const String source = 'abc{{ foo.bar }}def';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = 'abc{{ foo.bar }}def';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.text, 'abc', 0, 3),
@@ -79,8 +79,8 @@ void main() {
     });
 
     test('scan triple mustache', () {
-      const String source = 'abc{{{foo}}}def';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = 'abc{{{foo}}}def';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.text, 'abc', 0, 3),
@@ -92,8 +92,8 @@ void main() {
     });
 
     test('scan triple mustache whitespace', () {
-      const String source = 'abc{{{ foo }}}def';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = 'abc{{{ foo }}}def';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.text, 'abc', 0, 3),
@@ -107,8 +107,8 @@ void main() {
     });
 
     test('scan tag with equals', () {
-      const String source = '{{foo=bar}}';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = '{{foo=bar}}';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.openDelimiter, '{{', 0, 2),
@@ -118,8 +118,8 @@ void main() {
     });
 
     test('scan comment with equals', () {
-      const String source = '{{!foo=bar}}';
-      final Scanner scanner = Scanner(source, 'foo', '{{ }}');
+      const source = '{{!foo=bar}}';
+      final scanner = Scanner(source, 'foo', '{{ }}');
       final List<Token> tokens = scanner.scan();
       expectTokens(tokens, <Token>[
         Token(TokenType.openDelimiter, '{{', 0, 2),
@@ -132,8 +132,8 @@ void main() {
 
   group('Parser', () {
     test('parse variable', () {
-      const String source = 'abc{{foo}}def';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc{{foo}}def';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc', 0, 3),
@@ -143,8 +143,8 @@ void main() {
     });
 
     test('parse variable whitespace', () {
-      const String source = 'abc{{ foo }}def';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc{{ foo }}def';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc', 0, 3),
@@ -154,8 +154,8 @@ void main() {
     });
 
     test('parse section', () {
-      const String source = 'abc{{#foo}}def{{/foo}}ghi';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc{{#foo}}def{{/foo}}ghi';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc', 0, 3),
@@ -168,8 +168,8 @@ void main() {
     });
 
     test('parse section standalone tag whitespace', () {
-      const String source = 'abc\n{{#foo}}\ndef\n{{/foo}}\nghi';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc\n{{#foo}}\ndef\n{{/foo}}\nghi';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc\n', 0, 4),
@@ -182,9 +182,9 @@ void main() {
     });
 
     test('parse section standalone tag whitespace consecutive', () {
-      const String source =
+      const source =
           'abc\n{{#foo}}\ndef\n{{/foo}}\n{{#foo}}\ndef\n{{/foo}}\nghi';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc\n', 0, 4),
@@ -198,8 +198,8 @@ void main() {
     });
 
     test('parse section standalone tag whitespace on first line', () {
-      const String source = '  {{#foo}}  \ndef\n{{/foo}}\nghi';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = '  {{#foo}}  \ndef\n{{/foo}}\nghi';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         SectionNode('foo', 2, 10, '{{ }}'),
@@ -211,8 +211,8 @@ void main() {
     });
 
     test('parse section standalone tag whitespace on last line', () {
-      const String source = '{{#foo}}def\n  {{/foo}}  ';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = '{{#foo}}def\n  {{/foo}}  ';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[SectionNode('foo', 0, 8, '{{ }}')]);
       expectNodes((nodes[0] as SectionNode).children, <Node>[
@@ -221,8 +221,8 @@ void main() {
     });
 
     test('parse variable newline', () {
-      const String source = 'abc\n\n{{foo}}def';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc\n\n{{foo}}def';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc\n\n', 0, 5),
@@ -232,8 +232,8 @@ void main() {
     });
 
     test('parse section standalone tag whitespace v2', () {
-      const String source = 'abc\n\n{{#foo}}\ndef\n{{/foo}}\nghi';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc\n\n{{#foo}}\ndef\n{{/foo}}\nghi';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc\n\n', 0, 5),
@@ -246,15 +246,15 @@ void main() {
     });
 
     test('parse whitespace', () {
-      const String source = 'abc\n   ';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc\n   ';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[TextNode('abc\n   ', 0, 7)]);
     });
 
     test('parse partial', () {
-      const String source = 'abc\n   {{>foo}}def';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'abc\n   {{>foo}}def';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('abc\n   ', 0, 7),
@@ -264,8 +264,8 @@ void main() {
     });
 
     test('parse change delimiters', () {
-      const String source = '{{= | | =}}<|#lambda|-|/lambda|>';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = '{{= | | =}}<|#lambda|-|/lambda|>';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         TextNode('<', 11, 12),
@@ -279,8 +279,8 @@ void main() {
     });
 
     test('corner case strict', () {
-      const String source = '{{{ #foo }}} {{{ /foo }}}';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = '{{{ #foo }}} {{{ /foo }}}';
+      final parser = Parser(source, 'foo', '{{ }}');
       try {
         parser.parse();
         // TODO(stuartmorgan): Restructure test to use throwsA.
@@ -292,8 +292,8 @@ void main() {
     });
 
     test('corner case lenient', () {
-      const String source = '{{{ #foo }}} {{{ /foo }}}';
-      final Parser parser = Parser(source, 'foo', '{{ }}', lenient: true);
+      const source = '{{{ #foo }}} {{{ /foo }}}';
+      final parser = Parser(source, 'foo', '{{ }}', lenient: true);
       final List<Node> nodes = parser.parse();
       expectNodes(nodes, <Node>[
         VariableNode('#foo', 0, 12, escape: false),
@@ -303,8 +303,8 @@ void main() {
     });
 
     test('emoji', () {
-      const String source = 'Hello! 🖖👍🏽🏳️‍🌈\nEmoji';
-      final Parser parser = Parser(source, 'foo', '{{ }}');
+      const source = 'Hello! 🖖👍🏽🏳️‍🌈\nEmoji';
+      final parser = Parser(source, 'foo', '{{ }}');
       final List<Node> nodes = parser.parse();
       // End offset includes emoji sizes
       expectNodes(nodes, <Node>[TextNode('Hello! 🖖👍🏽🏳️‍🌈\nEmoji', 0, 20)]);
@@ -320,21 +320,16 @@ void main() {
     });
 
     test('exception', () {
-      const String source =
+      const source =
           "'{{ foo }} sdfffffffffffffffffffffffffffffffffffffffffffff "
           'dsfsdf sdfdsa fdsfads fsdfdsfadsf dsfasdfsdf sdfdsfsadf sdfadsfsdf ';
-      final TemplateException ex = TemplateException(
-        'boom!',
-        'foo.mustache',
-        source,
-        2,
-      );
+      final ex = TemplateException('boom!', 'foo.mustache', source, 2);
       ex.toString();
     });
 
     Exception parseFail(String source) {
       try {
-        final Parser parser = Parser(source, 'foo', '{{ }}');
+        final parser = Parser(source, 'foo', '{{ }}');
         parser.parse();
         // TODO(stuartmorgan): Restructure test to use throwsA.
         // ignore: use_test_throws_matchers
@@ -437,14 +432,14 @@ bool tokenEqual(Token a, Token b) {
 
 void expectTokens(List<Token> a, List<Token> b) {
   expect(a.length, equals(b.length), reason: '$a != $b');
-  for (int i = 0; i < a.length; i++) {
+  for (var i = 0; i < a.length; i++) {
     expect(tokenEqual(a[i], b[i]), isTrue, reason: '$a != $b');
   }
 }
 
 void expectNodes(List<Node> a, List<Node> b) {
   expect(a.length, equals(b.length), reason: '$a != $b');
-  for (int i = 0; i < a.length; i++) {
+  for (var i = 0; i < a.length; i++) {
     expect(nodeEqual(a[i], b[i]), isTrue, reason: '$a != $b');
   }
 }
