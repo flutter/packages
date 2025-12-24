@@ -522,7 +522,6 @@ class _MyHomePageState extends State<MyHomePage> {
                     ? int.parse(limitController.text)
                     : null;
                 onPick(width, height, quality, limit);
-                Navigator.of(context).pop();
               },
             ),
           ],
