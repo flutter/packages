@@ -37,7 +37,14 @@
 /// the array.
 @property(strong, nonatomic)
     NSMutableArray<UIImagePickerController *> *imagePickerControllerOverrides;
+
+/// A temporary UIWindow placed above Flutter's window to swallow all user
+/// interactions while UIImagePickerController is dismissing. This prevents
+/// stray taps from leaking to the Flutter view during the dismissal animation.
 @property(strong, nonatomic) UIWindow *interactionBlockerWindow;
+
+/// The previously active key window before the interactionBlockerWindow is
+/// shown. Stored so we can restore the original key window after dismissal.
 @property(weak, nonatomic) UIWindow *previousKeyWindow;
 
 @end
@@ -685,6 +692,17 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   self.callContext = nil;
 }
 
+/// Why a separate UIWindow for the touch blocker?
+/// Flutter renders inside a UIWindow owned by FlutterViewController. UIImagePickerController is
+/// presented in that same window and dismisses with an animation; during that brief transition,
+/// taps can “leak” to the Flutter view underneath.
+///
+/// A view-based blocker (added to the host view hierarchy) isn’t reliable because the host view’s
+/// bounds/constraints/rotation/transitions can change during presentation/dismissal, causing the
+/// blocker to move or be removed.
+///
+/// Instead we create a dedicated UIWindow (windowLevel + 1) with its own root VC to swallow all
+/// touches during the dismissal window, then restore the previous key window afterward.
 - (void)addInteractionBlocker {
   if (self.interactionBlockerWindow != nil) {
     return;
@@ -713,6 +731,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   self.interactionBlockerWindow = blockerWindow;
 }
 
+/// Removes the temporary interaction-blocking window and restores the previous
+/// key window. This is called after UIImagePickerController has fully dismissed,
+/// once it is safe for Flutter to receive user input again.
 - (void)removeInteractionBlocker {
   if (!self.interactionBlockerWindow) {
     return;
