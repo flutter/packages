@@ -608,27 +608,40 @@ dev_dependencies:
 
   group('Android dependencies', () {
     group('gradle', () {
-      test('throws if version format is invalid', () async {
-        Error? commandError;
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'update-dependency',
-          '--android-dependency',
-          'gradle',
-          '--version',
-          '83',
-        ], errorHandler: (Error e) {
-          commandError = e;
-        });
+      final List<String> invalidGradleVersionsFormat = <String>[
+        '81',
+        '811.1',
+        '8.123',
+        '8.12.12'
+      ];
 
-        expect(commandError, isA<ToolExit>());
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains(
-                'A version with a valid format (maximum 2-3 numbers separated by period) must be provided.'),
-          ]),
-        );
-      });
+      for (final String gradleVersion in invalidGradleVersionsFormat) {
+        test('throws because gradleVersion: $gradleVersion is invalid',
+            () async {
+          Error? commandError;
+          final List<String> output = await runCapturingPrint(runner, <String>[
+            'update-dependency',
+            '--android-dependency',
+            'gradle',
+            '--version',
+            gradleVersion,
+          ], errorHandler: (Error e) {
+            commandError = e;
+          });
+
+          expect(commandError, isA<ToolExit>());
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('''
+A version with a valid format (maximum 2-3 numbers separated by 1-2 periods) must be provided.
+            1. The first number must have one or two digits
+            2. The second number must have one or two digits
+            3. If present, the third number must have a single digit'''),
+            ]),
+          );
+        });
+      }
 
       test('skips if example app does not run on Android', () async {
         final RepositoryPackage package =

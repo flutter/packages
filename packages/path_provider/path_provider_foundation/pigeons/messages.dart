@@ -9,7 +9,6 @@ import 'package:pigeon/pigeon.dart';
     swiftOut:
         'darwin/path_provider_foundation/Sources/path_provider_foundation/messages.g.swift',
     dartOut: 'lib/messages.g.dart',
-    dartTestOut: 'test/messages_test.g.dart',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
@@ -22,7 +21,7 @@ enum DirectoryType {
   applicationCache,
 }
 
-@HostApi(dartHostTestHandler: 'TestPathProviderApi')
+@HostApi()
 abstract class PathProviderApi {
   String? getDirectoryPath(DirectoryType type);
   String? getContainerPath(String appGroupIdentifier);

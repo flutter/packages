@@ -23,6 +23,7 @@ import io.flutter.view.TextureRegistry.SurfaceProducer;
  * displaying the video in the app.
  */
 public class PlatformViewVideoPlayer extends VideoPlayer {
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   @VisibleForTesting
   public PlatformViewVideoPlayer(
@@ -42,6 +43,7 @@ public class PlatformViewVideoPlayer extends VideoPlayer {
    * @param options options for playback.
    * @return a video player instance.
    */
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   @NonNull
   public static PlatformViewVideoPlayer create(

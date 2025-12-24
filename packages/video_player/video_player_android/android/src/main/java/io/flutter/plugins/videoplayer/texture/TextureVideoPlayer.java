@@ -40,6 +40,7 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
    * @param options options for playback.
    * @return a video player instance.
    */
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   @NonNull
   public static TextureVideoPlayer create(
@@ -64,6 +65,7 @@ public final class TextureVideoPlayer extends VideoPlayer implements SurfaceProd
         });
   }
 
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
   @UnstableApi
   @VisibleForTesting
   public TextureVideoPlayer(

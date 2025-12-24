@@ -4,6 +4,8 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math show max;
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -186,7 +188,7 @@ class VideoPlayerValue {
 
   /// The total duration of the video.
   ///
-  /// The duration is [Duration.zero] if the video hasn't been initialized.
+  /// The value is only meaningful when [isInitialized] is true.
   final Duration duration;
 
   /// The current playback position.
@@ -537,7 +539,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _lifeCycleObserver?.initialize();
     _creatingCompleter = Completer<void>();
 
-    late DataSource dataSourceDescription;
+    final DataSource dataSourceDescription;
     switch (dataSourceType) {
       case DataSourceType.asset:
         dataSourceDescription = DataSource(
@@ -571,9 +573,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
-      await _videoPlayerPlatform.setMixWithOthers(
-        videoPlayerOptions!.mixWithOthers,
-      );
+      await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
     _playerId =
@@ -634,10 +634,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: false);
         case VideoEventType.isPlayingStateUpdate:
           if (event.isPlaying ?? false) {
-            value = value.copyWith(
-              isPlaying: event.isPlaying,
-              isCompleted: false,
-            );
+            value = value.copyWith(isPlaying: event.isPlaying, isCompleted: false);
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
@@ -728,9 +725,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       await _videoPlayerPlatform.play(_playerId);
 
       _timer?.cancel();
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (
-        Timer timer,
-      ) async {
+      _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) async {
         if (_isDisposed) {
           return;
         }
@@ -852,10 +847,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// * >0: The caption will have a negative offset. So you will get caption text from the past.
   /// * <0: The caption will have a positive offset. So you will get caption text from the future.
   void setCaptionOffset(Duration offset) {
-    value = value.copyWith(
-      captionOffset: offset,
-      caption: _getCaptionAt(value.position),
-    );
+    value = value.copyWith(captionOffset: offset, caption: _getCaptionAt(value.position));
   }
 
   /// The closed caption based on the current [position] in the video.
@@ -889,9 +881,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Sets a closed caption file.
   ///
   /// If [closedCaptionFile] is null, closed captions will be removed.
-  Future<void> setClosedCaptionFile(
-    Future<ClosedCaptionFile>? closedCaptionFile,
-  ) async {
+  Future<void> setClosedCaptionFile(Future<ClosedCaptionFile>? closedCaptionFile) async {
     await _updateClosedCaptionWithFuture(closedCaptionFile);
     _closedCaptionFileFuture = closedCaptionFile;
   }
@@ -1027,20 +1017,15 @@ class VideoPlayer extends StatefulWidget {
 }
 
 class _VideoPlayerState extends State<VideoPlayer> {
-  _VideoPlayerState() {
-    _listener = () {
-      final int newPlayerId = widget.controller.playerId;
-      if (newPlayerId != _playerId) {
-        setState(() {
-          _playerId = newPlayerId;
-        });
-      }
-    };
-  }
-
-  late VoidCallback _listener;
-
   late int _playerId;
+  void _controllerDidUpdateValue() {
+    final int newPlayerId = widget.controller.playerId;
+    if (newPlayerId != _playerId) {
+      setState(() {
+        _playerId = newPlayerId;
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -1048,21 +1033,21 @@ class _VideoPlayerState extends State<VideoPlayer> {
     _playerId = widget.controller.playerId;
     // Need to listen for initialization events since the actual widget ID
     // becomes available after asynchronous initialization finishes.
-    widget.controller.addListener(_listener);
+    widget.controller.addListener(_controllerDidUpdateValue);
   }
 
   @override
   void didUpdateWidget(VideoPlayer oldWidget) {
     super.didUpdateWidget(oldWidget);
-    oldWidget.controller.removeListener(_listener);
+    oldWidget.controller.removeListener(_controllerDidUpdateValue);
     _playerId = widget.controller.playerId;
-    widget.controller.addListener(_listener);
+    widget.controller.addListener(_controllerDidUpdateValue);
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
-    widget.controller.removeListener(_listener);
+  void dispose() {
+    widget.controller.removeListener(_controllerDidUpdateValue);
+    super.dispose();
   }
 
   @override
@@ -1140,11 +1125,7 @@ class VideoScrubber extends StatefulWidget {
   ///
   /// [controller] is the [VideoPlayerController] that will be controlled by
   /// this scrubber.
-  const VideoScrubber({
-    super.key,
-    required this.child,
-    required this.controller,
-  });
+  const VideoScrubber({super.key, required this.child, required this.controller});
 
   /// The widget that will be displayed inside the gesture detector.
   final Widget child;
@@ -1253,58 +1234,52 @@ class VideoProgressIndicator extends StatefulWidget {
 }
 
 class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
-  _VideoProgressIndicatorState() {
-    listener = () {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    };
-  }
-
-  late VoidCallback listener;
-
   VideoPlayerController get controller => widget.controller;
 
   VideoProgressColors get colors => widget.colors;
 
-  @override
-  void initState() {
-    super.initState();
-    controller.addListener(listener);
+  void _didUpdateControllerValue() {
+    setState(() {
+      // The build method reads from controller.value.
+    });
   }
 
   @override
-  void deactivate() {
-    controller.removeListener(listener);
-    super.deactivate();
+  void initState() {
+    super.initState();
+    controller.addListener(_didUpdateControllerValue);
+  }
+
+  @override
+  void dispose() {
+    controller.removeListener(_didUpdateControllerValue);
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget progressIndicator;
+    final Widget progressIndicator;
     if (controller.value.isInitialized) {
       final int duration = controller.value.duration.inMilliseconds;
       final int position = controller.value.position.inMilliseconds;
 
-      int maxBuffering = 0;
-      for (final DurationRange range in controller.value.buffered) {
-        final int end = range.end.inMilliseconds;
-        if (end > maxBuffering) {
-          maxBuffering = end;
-        }
-      }
-
+      final double maxBuffering =
+          duration == 0.0
+              ? 0.0
+              : controller.value.buffered
+                      .map((DurationRange range) => range.end.inMilliseconds)
+                      .fold(0, math.max) /
+                  duration;
       progressIndicator = Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
           LinearProgressIndicator(
-            value: maxBuffering / duration,
+            value: maxBuffering,
             valueColor: AlwaysStoppedAnimation<Color>(colors.bufferedColor),
             backgroundColor: colors.backgroundColor,
           ),
           LinearProgressIndicator(
-            value: position / duration,
+            value: duration == 0.0 ? 0.0 : position / duration,
             valueColor: AlwaysStoppedAnimation<Color>(colors.playedColor),
             backgroundColor: Colors.transparent,
           ),
@@ -1321,10 +1296,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       child: progressIndicator,
     );
     if (widget.allowScrubbing) {
-      return VideoScrubber(
-        controller: controller,
-        child: paddedProgressIndicator,
-      );
+      return VideoScrubber(controller: controller, child: paddedProgressIndicator);
     } else {
       return paddedProgressIndicator;
     }
@@ -1376,9 +1348,7 @@ class ClosedCaption extends StatelessWidget {
 
     final TextStyle effectiveTextStyle =
         textStyle ??
-        DefaultTextStyle.of(
-          context,
-        ).style.copyWith(fontSize: 36.0, color: Colors.white);
+        DefaultTextStyle.of(context).style.copyWith(fontSize: 36.0, color: Colors.white);
 
     return Align(
       alignment: Alignment.bottomCenter,

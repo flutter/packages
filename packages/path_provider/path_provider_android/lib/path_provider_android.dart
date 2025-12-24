@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 import 'messages.g.dart' as messages;
 
@@ -36,7 +37,11 @@ messages.StorageDirectory _convertStorageDirectory(
 
 /// The Android implementation of [PathProviderPlatform].
 class PathProviderAndroid extends PathProviderPlatform {
-  final messages.PathProviderApi _api = messages.PathProviderApi();
+  /// Creates an instance of [PathProviderAndroid].
+  PathProviderAndroid({@visibleForTesting messages.PathProviderApi? api})
+    : _api = api ?? messages.PathProviderApi();
+
+  final messages.PathProviderApi _api;
 
   /// Registers this class as the default instance of [PathProviderPlatform].
   static void registerWith() {

@@ -9,6 +9,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
@@ -26,10 +27,10 @@ import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 import androidx.media3.exoplayer.trackselection.DefaultTrackSelector;
 import com.google.common.collect.ImmutableList;
-import java.lang.reflect.Field;
-import java.util.List;
 import io.flutter.plugins.videoplayer.platformview.PlatformViewExoPlayerEventListener;
 import io.flutter.view.TextureRegistry.SurfaceProducer;
+import java.lang.reflect.Field;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -491,13 +492,11 @@ public final class VideoPlayerTest {
     // Mock audio group with 2 tracks
     setGroupLength(mockAudioGroup, 2);
     when(mockAudioGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup.getTrackFormat(0)).thenReturn(audioFormat);
-    when(mockAudioGroup.getTrackFormat(1)).thenReturn(audioFormat);
     when(mockAudioGroup.getMediaTrackGroup()).thenReturn(trackGroup);
 
     ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
-    
+
     // Set up track selector BEFORE creating VideoPlayer
     when(mockExoPlayer.getTrackSelector()).thenReturn(mockTrackSelector);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
@@ -521,13 +520,10 @@ public final class VideoPlayerTest {
 
   @Test
   public void testSelectAudioTrack_nullTrackSelector() {
+    // Track selector is null by default in mock
     VideoPlayer videoPlayer = createVideoPlayer();
 
-    // Track selector should be null by default in mock
-    when(mockExoPlayer.getTrackSelector()).thenReturn(null);
-
-    // Should not throw, just log warning
-    videoPlayer.selectAudioTrack(0, 0);
+    assertThrows(IllegalStateException.class, () -> videoPlayer.selectAudioTrack(0, 0));
 
     videoPlayer.dispose();
   }
@@ -541,11 +537,6 @@ public final class VideoPlayerTest {
     Format audioFormat =
         new Format.Builder().setId("audio_track_1").setLabel("English").setLanguage("en").build();
 
-    // Mock audio group
-    setGroupLength(mockAudioGroup, 1);
-    when(mockAudioGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup.getTrackFormat(0)).thenReturn(audioFormat);
-
     ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
@@ -554,10 +545,7 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     // Test with invalid group index (only 1 group exists at index 0)
-    videoPlayer.selectAudioTrack(5, 0);
-
-    // Verify track selector was NOT called
-    verify(mockTrackSelector, never()).setParameters(any(DefaultTrackSelector.Parameters.class));
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(5, 0));
 
     videoPlayer.dispose();
   }
@@ -574,7 +562,6 @@ public final class VideoPlayerTest {
     // Mock audio group with only 1 track
     setGroupLength(mockAudioGroup, 1);
     when(mockAudioGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup.getTrackFormat(0)).thenReturn(audioFormat);
 
     ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
@@ -584,10 +571,7 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     // Test with invalid track index (only 1 track exists at index 0)
-    videoPlayer.selectAudioTrack(0, 5);
-
-    // Verify track selector was NOT called
-    verify(mockTrackSelector, never()).setParameters(any(DefaultTrackSelector.Parameters.class));
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(0, 5));
 
     videoPlayer.dispose();
   }
@@ -610,10 +594,7 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     // Test selecting from a non-audio group
-    videoPlayer.selectAudioTrack(0, 0);
-
-    // Verify track selector was NOT called
-    verify(mockTrackSelector, never()).setParameters(any(DefaultTrackSelector.Parameters.class));
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(0, 0));
 
     videoPlayer.dispose();
   }
@@ -627,11 +608,6 @@ public final class VideoPlayerTest {
     Format audioFormat =
         new Format.Builder().setId("audio_track_1").setLabel("English").setLanguage("en").build();
 
-    // Mock audio group
-    setGroupLength(mockAudioGroup, 1);
-    when(mockAudioGroup.getType()).thenReturn(C.TRACK_TYPE_AUDIO);
-    when(mockAudioGroup.getTrackFormat(0)).thenReturn(audioFormat);
-
     ImmutableList<Tracks.Group> groups = ImmutableList.of(mockAudioGroup);
     when(mockTracks.getGroups()).thenReturn(groups);
     when(mockExoPlayer.getCurrentTracks()).thenReturn(mockTracks);
@@ -640,10 +616,7 @@ public final class VideoPlayerTest {
     VideoPlayer videoPlayer = createVideoPlayer();
 
     // Test with negative indices - should be caught by bounds checking
-    videoPlayer.selectAudioTrack(-1, 0);
-
-    // Verify track selector was NOT called
-    verify(mockTrackSelector, never()).setParameters(any(DefaultTrackSelector.Parameters.class));
+    assertThrows(IllegalArgumentException.class, () -> videoPlayer.selectAudioTrack(-1, 0));
 
     videoPlayer.dispose();
   }
