@@ -198,7 +198,7 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
         final SK2PurchaseDetails details = SK2PurchaseDetails(
           productID: purchaseParam.productDetails.id,
           purchaseID: null,
-          verificationData: const PurchaseVerificationData(
+          verificationData: PurchaseVerificationData(
             localVerificationData: '',
             serverVerificationData: '',
             source: kIAPSource,
