@@ -1,7 +1,5 @@
 ## NEXT
 
-## 0.4.7+2
-
 * Fixes StoreKit 2 purchase flow to send cancelled/pending/unverified results to `purchaseStream`.
 * Fixes StoreKit 2 consumable purchases being reported as restored, which left transactions unfinished and blocked repeat buys.
 
