@@ -186,7 +186,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
       // For non-success results, manually send update to the stream
       // since native side only sends transaction for success case
       if (result != SK2ProductPurchaseResult.success) {
-        
         final PurchaseStatus status = switch (result) {
           SK2ProductPurchaseResult.userCancelled => PurchaseStatus.canceled,
           SK2ProductPurchaseResult.pending => PurchaseStatus.pending,
@@ -215,8 +214,9 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           );
         }
 
-        _sk2transactionObserver.transactionsCreatedController
-            .add(<PurchaseDetails>[details]);
+        _sk2transactionObserver.transactionsCreatedController.add(
+          <PurchaseDetails>[details],
+        );
       }
 
       return true;
