@@ -8,12 +8,20 @@ import XCTest
 @testable import in_app_purchase_storekit
 
 final class FakeIAP2Callback: InAppPurchase2CallbackAPIProtocol {
+  var receivedTransactions: [in_app_purchase_storekit.SK2TransactionMessage] = []
+
   func onTransactionsUpdated(
     newTransactions newTransactionsArg: [in_app_purchase_storekit.SK2TransactionMessage],
     completion: @escaping (Result<Void, in_app_purchase_storekit.PigeonError>) -> Void
   ) {
     // We should only write to a flutter channel from the main thread.
     XCTAssertTrue(Thread.isMainThread)
+    receivedTransactions.append(contentsOf: newTransactionsArg)
+    completion(.success(()))
+  }
+
+  func reset() {
+    receivedTransactions = []
   }
 }
 
@@ -512,6 +520,84 @@ final class InAppPurchase2PluginTests: XCTestCase {
     }
 
     await fulfillment(of: [expectation], timeout: 5)
+  }
+
+  // MARK: - Tests for restoring flag correctness (Commit 2fcc79db3)
+
+  func testNewPurchaseHasRestoringFalse() async throws {
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+
+    let callback = plugin.transactionCallbackAPI as! FakeIAP2Callback
+    callback.reset()
+
+    plugin.purchase(id: "consumable", options: nil) { result in
+      switch result {
+      case .success:
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
+
+    // Give some time for the transaction callback to be called
+    try await Task.sleep(nanoseconds: 500_000_000)
+
+    XCTAssertFalse(
+      callback.receivedTransactions.isEmpty, "Should have received transaction updates")
+    for transaction in callback.receivedTransactions {
+      XCTAssertFalse(
+        transaction.restoring,
+        "New purchase should have restoring = false, but got restoring = \(transaction.restoring)"
+      )
+    }
+  }
+
+  func testRestoredPurchaseHasRestoringTrue() async throws {
+    // First make a purchase
+    let purchaseExpectation = self.expectation(description: "Purchase should succeed")
+
+    plugin.purchase(id: "subscription_silver", options: nil) { result in
+      switch result {
+      case .success:
+        purchaseExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Purchase should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [purchaseExpectation], timeout: 5)
+
+    // Reset callback to clear purchase transactions
+    let callback = plugin.transactionCallbackAPI as! FakeIAP2Callback
+    callback.reset()
+
+    // Now restore purchases
+    let restoreExpectation = self.expectation(description: "Restore should succeed")
+
+    plugin.restorePurchases { result in
+      switch result {
+      case .success:
+        restoreExpectation.fulfill()
+      case .failure(let error):
+        XCTFail("Restore should NOT fail. Failed with \(error)")
+      }
+    }
+
+    await fulfillment(of: [restoreExpectation], timeout: 5)
+
+    // Give some time for the transaction callback to be called
+    try await Task.sleep(nanoseconds: 500_000_000)
+
+    XCTAssertFalse(
+      callback.receivedTransactions.isEmpty, "Should have received restored transaction updates")
+    for transaction in callback.receivedTransactions {
+      XCTAssertTrue(
+        transaction.restoring,
+        "Restored purchase should have restoring = true, but got restoring = \(transaction.restoring)"
+      )
+    }
   }
 
 }
