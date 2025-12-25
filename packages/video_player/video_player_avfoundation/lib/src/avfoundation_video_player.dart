@@ -183,7 +183,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final NativeAudioTrackData nativeData = await _playerWith(
       id: playerId,
     ).getAudioTracks();
-    final List<VideoAudioTrack> tracks = <VideoAudioTrack>[];
+    final tracks = <VideoAudioTrack>[];
 
     // Convert asset tracks to VideoAudioTrack
     if (nativeData.assetTracks != null) {
@@ -207,7 +207,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     if (nativeData.mediaSelectionTracks != null) {
       for (final MediaSelectionAudioTrackData track
           in nativeData.mediaSelectionTracks!) {
-        final String trackId = 'media_selection_${track.index}';
+        final trackId = 'media_selection_${track.index}';
         final String? label = track.commonMetadataTitle ?? track.displayName;
         tracks.add(
           VideoAudioTrack(
@@ -319,6 +319,11 @@ class _PlayerInstance {
   Future<Duration> getPosition() async {
     return Duration(milliseconds: await _api.getPosition());
   }
+
+  Future<NativeAudioTrackData> getAudioTracks() => _api.getAudioTracks();
+
+  Future<void> selectAudioTrack(String trackType, int trackId) =>
+      _api.selectAudioTrack(trackType, trackId);
 
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(

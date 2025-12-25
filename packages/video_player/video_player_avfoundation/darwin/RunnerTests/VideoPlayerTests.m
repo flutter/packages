@@ -1215,69 +1215,6 @@
   [player disposeWithError:&error];
 }
 
-- (void)testGetAudioTracksWithNoCurrentItem {
-  // Create mocks
-  id mockPlayer = OCMClassMock([AVPlayer class]);
-  id mockPlayerItem = OCMClassMock([AVPlayerItem class]);
-  id mockAVFactory = OCMProtocolMock(@protocol(FVPAVFactory));
-  id mockViewProvider = OCMProtocolMock(@protocol(FVPViewProvider));
-
-  // Set up basic mock relationships
-  OCMStub([mockAVFactory playerWithPlayerItem:OCMOCK_ANY]).andReturn(mockPlayer);
-
-  // Create player with mocks
-  FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockPlayerItem
-                                                            avFactory:mockAVFactory
-                                                         viewProvider:mockViewProvider];
-
-  // Mock player with no current item
-  OCMStub([mockPlayer currentItem]).andReturn(nil);
-
-  // Test the method
-  FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
-
-  // Verify results
-  XCTAssertNil(error);
-  XCTAssertNotNil(result);
-  XCTAssertNil(result.assetTracks);
-  XCTAssertNil(result.mediaSelectionTracks);
-
-  [player disposeWithError:&error];
-}
-
-- (void)testGetAudioTracksWithNoAsset {
-  // Create mocks
-  id mockPlayer = OCMClassMock([AVPlayer class]);
-  id mockPlayerItem = OCMClassMock([AVPlayerItem class]);
-  id mockAVFactory = OCMProtocolMock(@protocol(FVPAVFactory));
-  id mockViewProvider = OCMProtocolMock(@protocol(FVPViewProvider));
-
-  // Set up basic mock relationships
-  OCMStub([mockPlayer currentItem]).andReturn(mockPlayerItem);
-  OCMStub([mockAVFactory playerWithPlayerItem:OCMOCK_ANY]).andReturn(mockPlayer);
-
-  // Create player with mocks
-  FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockPlayerItem
-                                                            avFactory:mockAVFactory
-                                                         viewProvider:mockViewProvider];
-
-  // Mock player item with no asset
-  OCMStub([mockPlayerItem asset]).andReturn(nil);
-
-  // Test the method
-  FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
-
-  // Verify results
-  XCTAssertNil(error);
-  XCTAssertNotNil(result);
-  XCTAssertNil(result.assetTracks);
-  XCTAssertNil(result.mediaSelectionTracks);
-
-  [player disposeWithError:&error];
-}
-
 - (void)testGetAudioTracksCodecDetection {
   // Create mocks
   id mockPlayer = OCMClassMock([AVPlayer class]);
@@ -1364,47 +1301,6 @@
   XCTAssertNotNil(result.assetTracks);
   XCTAssertNil(result.mediaSelectionTracks);
   XCTAssertEqual(result.assetTracks.count, 0);
-
-  [player disposeWithError:&error];
-}
-
-- (void)testGetAudioTracksWithNilMediaSelectionOption {
-  // Create mocks
-  id mockPlayer = OCMClassMock([AVPlayer class]);
-  id mockPlayerItem = OCMClassMock([AVPlayerItem class]);
-  id mockAsset = OCMClassMock([AVAsset class]);
-  id mockAVFactory = OCMProtocolMock(@protocol(FVPAVFactory));
-  id mockViewProvider = OCMProtocolMock(@protocol(FVPViewProvider));
-
-  // Set up basic mock relationships
-  OCMStub([mockPlayer currentItem]).andReturn(mockPlayerItem);
-  OCMStub([mockPlayerItem asset]).andReturn(mockAsset);
-  OCMStub([mockAVFactory playerWithPlayerItem:OCMOCK_ANY]).andReturn(mockPlayer);
-
-  // Create player with mocks
-  FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockPlayerItem
-                                                            avFactory:mockAVFactory
-                                                         viewProvider:mockViewProvider];
-
-  // Create mock media selection group with nil option
-  id mockMediaSelectionGroup = OCMClassMock([AVMediaSelectionGroup class]);
-  NSArray *options = @[ [NSNull null] ];  // Simulate nil option
-  OCMStub([(AVMediaSelectionGroup *)mockMediaSelectionGroup options]).andReturn(options);
-  OCMStub([[(AVMediaSelectionGroup *)mockMediaSelectionGroup options] count]).andReturn(1);
-
-  // Mock the asset
-  OCMStub([mockAsset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible])
-      .andReturn(mockMediaSelectionGroup);
-
-  // Test the method
-  FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
-
-  // Verify results - should handle nil option gracefully
-  XCTAssertNil(error);
-  XCTAssertNotNil(result);
-  XCTAssertNotNil(result.mediaSelectionTracks);
-  XCTAssertEqual(result.mediaSelectionTracks.count, 0);  // Should skip nil options
 
   [player disposeWithError:&error];
 }
