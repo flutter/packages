@@ -9,9 +9,8 @@ import 'dart:io';
 import 'package:args/args.dart';
 import 'package:path/path.dart' as p;
 import 'package:vector_graphics_compiler/src/svg/colors.dart';
+import 'package:vector_graphics_compiler/src/util/isolate_processor.dart';
 import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
-
-import 'util/isolate_processor.dart';
 
 final ArgParser argParser = ArgParser()
   ..addOption(
@@ -152,7 +151,7 @@ Future<void> main(List<String> args) async {
   }
   validateOptions(results);
 
-  final pairs = <Pair>[];
+  final pairs = <IOPair>[];
   if (results.wasParsed('input-dir')) {
     final directory = Directory(results['input-dir'] as String);
     if (!directory.existsSync()) {
@@ -177,13 +176,13 @@ Future<void> main(List<String> args) async {
         outputPath = p.join(outDir.path, '${p.basename(file.path)}.vec');
       }
 
-      pairs.add(Pair(file.path, outputPath));
+      pairs.add(IOPair(file.path, outputPath));
     }
   } else {
     final inputFilePath = results['input'] as String;
     final String outputFilePath =
         results['output'] as String? ?? '$inputFilePath.vec';
-    pairs.add(Pair(inputFilePath, outputFilePath));
+    pairs.add(IOPair(inputFilePath, outputFilePath));
   }
 
   final maskingOptimizerEnabled = results['optimize-masks'] == true;

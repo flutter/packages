@@ -2,15 +2,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, public_member_api_docs
 
 import 'dart:async';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
 
-import 'package:vector_graphics_compiler/src/debug_format.dart';
-import 'package:vector_graphics_compiler/vector_graphics_compiler.dart';
+import 'package:path/path.dart' as p;
+
+import '../../vector_graphics_compiler.dart';
+import '../debug_format.dart';
 
 /// The isolate processor distributes SVG compilation across multiple isolates.
 class IsolateProcessor {
@@ -25,11 +27,11 @@ class IsolateProcessor {
   int _total = 0;
   int _current = 0;
 
-  /// Process the provided input/output [Pair] objects into vector graphics.
+  /// Process the provided [IOPair] objects into vector graphics.
   ///
   /// Returns whether all requests were successful.
   Future<bool> process(
-    List<Pair> pairs, {
+    Iterable<IOPair> pairs, {
     SvgTheme theme = const SvgTheme(),
     required bool maskingOptimizerEnabled,
     required bool clippingOptimizerEnabled,
@@ -40,9 +42,9 @@ class IsolateProcessor {
   }) async {
     _total = pairs.length;
     _current = 0;
-    var failure = false;
+    var success = true;
     await Future.wait(eagerError: true, <Future<void>>[
-      for (final Pair pair in pairs)
+      for (final IOPair pair in pairs)
         _process(
           pair,
           theme: theme,
@@ -55,16 +57,16 @@ class IsolateProcessor {
           libpathops: _libpathops,
           libtessellator: _libtessellator,
         ).catchError((dynamic error, [StackTrace? stackTrace]) {
-          failure = true;
-          print('XXXXXXXXXXX ${pair.inputPath} XXXXXXXXXXXXX');
-          print(error);
-          print(stackTrace);
+          success = false;
+          stderr.writeln('XXXXXXXXXXX ${pair.input} XXXXXXXXXXXXX');
+          stderr.writeln(error);
+          stderr.writeln(stackTrace);
         }),
     ]);
-    if (failure) {
-      print('Some targets failed.');
+    if (!success) {
+      stderr.writeln('Some targets failed.');
     }
-    return !failure;
+    return success;
   }
 
   static void _loadPathOps(String? libpathops) {
@@ -84,7 +86,7 @@ class IsolateProcessor {
   }
 
   Future<void> _process(
-    Pair pair, {
+    IOPair pair, {
     required bool maskingOptimizerEnabled,
     required bool clippingOptimizerEnabled,
     required bool overdrawOptimizerEnabled,
@@ -107,20 +109,21 @@ class IsolateProcessor {
         if (tessellate) {
           _loadTessellator(libtessellator);
         }
-
+        final String inputString = File(pair.input).readAsStringSync();
         final Uint8List bytes = encodeSvg(
-          xml: File(pair.inputPath).readAsStringSync(),
-          debugName: pair.inputPath,
+          xml: inputString,
+          debugName: p.basename(pair.input),
           theme: theme,
           enableMaskingOptimizer: maskingOptimizerEnabled,
           enableClippingOptimizer: clippingOptimizerEnabled,
           enableOverdrawOptimizer: overdrawOptimizerEnabled,
           useHalfPrecisionControlPoints: useHalfPrecisionControlPoints,
         );
-        File(pair.outputPath).writeAsBytesSync(bytes);
+
+        File(pair.output).writeAsBytesSync(bytes);
         if (dumpDebug) {
           final Uint8List debugBytes = dumpToDebugFormat(bytes);
-          File('${pair.outputPath}.debug').writeAsBytesSync(debugBytes);
+          File('${pair.output}.debug').writeAsBytesSync(debugBytes);
         }
       });
       _current++;
@@ -132,15 +135,15 @@ class IsolateProcessor {
 }
 
 /// A combination of an input file and its output file.
-class Pair {
-  /// Create a new [Pair].
-  const Pair(this.inputPath, this.outputPath);
+class IOPair {
+  /// Create a new [IOPair].
+  const IOPair(this.input, this.output);
 
   /// The path the SVG should be read from.
-  final String inputPath;
+  final String input;
 
   /// The path the vector graphic will be written to.
-  final String outputPath;
+  final String output;
 }
 
 class Pool {
