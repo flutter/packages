@@ -183,16 +183,15 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
         options: options,
       );
 
-      // For non-success results, manually send update to the stream
-      // since native side only sends transaction for success case
-      if (result != SK2ProductPurchaseResult.success) {
-        final PurchaseStatus status = switch (result) {
-          SK2ProductPurchaseResult.userCancelled => PurchaseStatus.canceled,
-          SK2ProductPurchaseResult.pending => PurchaseStatus.pending,
-          SK2ProductPurchaseResult.unverified => PurchaseStatus.error,
-          SK2ProductPurchaseResult.success =>
-            PurchaseStatus.purchased, // won't reach here
-        };
+      // For userCancelled and pending results, manually send update to the stream
+      // since native side only sends transaction for success cases (both verified and unverified).
+      // Note: unverified is handled by native side as it's part of .success case in StoreKit.
+      if (result == SK2ProductPurchaseResult.userCancelled ||
+          result == SK2ProductPurchaseResult.pending) {
+        final PurchaseStatus status =
+            result == SK2ProductPurchaseResult.userCancelled
+            ? PurchaseStatus.canceled
+            : PurchaseStatus.pending;
 
         final details = SK2PurchaseDetails(
           productID: purchaseParam.productDetails.id,
@@ -205,14 +204,6 @@ class InAppPurchaseStoreKitPlatform extends InAppPurchasePlatform {
           transactionDate: null,
           status: status,
         );
-
-        if (status == PurchaseStatus.error) {
-          details.error = IAPError(
-            source: kIAPSource,
-            code: kPurchaseErrorCode,
-            message: 'Purchase verification failed',
-          );
-        }
 
         _sk2transactionObserver.transactionsCreatedController.add(
           <PurchaseDetails>[details],
