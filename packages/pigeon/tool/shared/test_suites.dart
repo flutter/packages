@@ -359,8 +359,8 @@ Future<int> _runIOSPluginUnitTests(String testPluginPath) async {
 
   const deviceName = 'Pigeon-Test-iPhone';
   const deviceType = 'com.apple.CoreSimulator.SimDeviceType.iPhone-14';
-  const deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-18-2';
-  const deviceOS = '18.2';
+  const deviceRuntime = 'com.apple.CoreSimulator.SimRuntime.iOS-26-2';
+  const deviceOS = '26.2';
   await _createSimulator(deviceName, deviceType, deviceRuntime);
   return runXcodeBuild(
     '$examplePath/ios',
