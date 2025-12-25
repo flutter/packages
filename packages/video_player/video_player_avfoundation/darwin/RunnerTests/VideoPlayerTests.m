@@ -1095,8 +1095,8 @@
 // Tests getAudioTracks with an HLS stream using real AVFoundation.
 // HLS streams use media selection groups for audio track selection.
 - (void)testGetAudioTracksWithRealHLSStream {
-  NSURL *hlsURL =
-      [NSURL URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
+  NSURL *hlsURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
   XCTAssertNotNil(hlsURL);
 
   FVPVideoPlayer *player =
@@ -1139,8 +1139,8 @@
 
 // Tests that getAudioTracks returns valid data for audio-only files.
 - (void)testGetAudioTracksWithRealAudioFile {
-  NSURL *audioURL =
-      [NSURL URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
+  NSURL *audioURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
   XCTAssertNotNil(audioURL);
 
   FVPVideoPlayer *player =
