@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart';
+import 'package:video_player_platform_interface/video_player_platform_interface.dart'
+    as platform_interface;
 
 import 'src/closed_caption_file.dart';
 
@@ -24,6 +26,112 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
         VideoViewType;
 
 export 'src/closed_caption_file.dart';
+
+/// Represents an audio track in a video with its metadata.
+@immutable
+class VideoAudioTrack {
+  /// Constructs an instance of [VideoAudioTrack].
+  const VideoAudioTrack({
+    required this.id,
+    required this.label,
+    required this.language,
+    required this.isSelected,
+    this.bitrate,
+    this.sampleRate,
+    this.channelCount,
+    this.codec,
+  });
+
+  /// Unique identifier for the audio track.
+  final String id;
+
+  /// Human-readable label for the track.
+  final String label;
+
+  /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  final String language;
+
+  /// Whether this track is currently selected.
+  final bool isSelected;
+
+  /// Bitrate of the audio track in bits per second.
+  /// May be null if not available from the platform.
+  final int? bitrate;
+
+  /// Sample rate of the audio track in Hz.
+  /// May be null if not available from the platform.
+  final int? sampleRate;
+
+  /// Number of audio channels.
+  /// May be null if not available from the platform.
+  final int? channelCount;
+
+  /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  /// May be null if not available from the platform.
+  final String? codec;
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        other is VideoAudioTrack &&
+            runtimeType == other.runtimeType &&
+            id == other.id &&
+            label == other.label &&
+            language == other.language &&
+            isSelected == other.isSelected &&
+            bitrate == other.bitrate &&
+            sampleRate == other.sampleRate &&
+            channelCount == other.channelCount &&
+            codec == other.codec;
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    label,
+    language,
+    isSelected,
+    bitrate,
+    sampleRate,
+    channelCount,
+    codec,
+  );
+
+  @override
+  String toString() =>
+      'VideoAudioTrack('
+      'id: $id, '
+      'label: $label, '
+      'language: $language, '
+      'isSelected: $isSelected, '
+      'bitrate: $bitrate, '
+      'sampleRate: $sampleRate, '
+      'channelCount: $channelCount, '
+      'codec: $codec)';
+}
+
+/// Converts a platform interface [VideoAudioTrack] to the public API type.
+///
+/// This internal method is used to decouple the public API from the
+/// platform interface implementation.
+///
+/// Normalizes null values from the platform to provide a consistent API:
+/// - null label becomes 'Unknown'
+/// - null language becomes 'und' (undefined)
+VideoAudioTrack _convertPlatformAudioTrack(
+  platform_interface.VideoAudioTrack platformTrack,
+) {
+  return VideoAudioTrack(
+    id: platformTrack.id,
+    label: platformTrack.label ?? 'Unknown',
+    language: platformTrack.language ?? 'und',
+    isSelected: platformTrack.isSelected,
+    bitrate: platformTrack.bitrate,
+    sampleRate: platformTrack.sampleRate,
+    channelCount: platformTrack.channelCount,
+    codec: platformTrack.codec,
+  );
+}
 
 VideoPlayerPlatform? _lastVideoPlayerPlatform;
 
@@ -464,9 +572,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
-      await _videoPlayerPlatform.setMixWithOthers(
-        videoPlayerOptions!.mixWithOthers,
-      );
+      await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
     }
 
     _playerId =
@@ -527,10 +633,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: false);
         case VideoEventType.isPlayingStateUpdate:
           if (event.isPlaying ?? false) {
-            value = value.copyWith(
-              isPlaying: event.isPlaying,
-              isCompleted: false,
-            );
+            value = value.copyWith(isPlaying: event.isPlaying, isCompleted: false);
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
@@ -621,9 +724,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       await _videoPlayerPlatform.play(_playerId);
 
       _timer?.cancel();
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (
-        Timer timer,
-      ) async {
+      _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) async {
         if (_isDisposed) {
           return;
         }
@@ -745,10 +846,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// * >0: The caption will have a negative offset. So you will get caption text from the past.
   /// * <0: The caption will have a positive offset. So you will get caption text from the future.
   void setCaptionOffset(Duration offset) {
-    value = value.copyWith(
-      captionOffset: offset,
-      caption: _getCaptionAt(value.position),
-    );
+    value = value.copyWith(captionOffset: offset, caption: _getCaptionAt(value.position));
   }
 
   /// The closed caption based on the current [position] in the video.
@@ -782,9 +880,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Sets a closed caption file.
   ///
   /// If [closedCaptionFile] is null, closed captions will be removed.
-  Future<void> setClosedCaptionFile(
-    Future<ClosedCaptionFile>? closedCaptionFile,
-  ) async {
+  Future<void> setClosedCaptionFile(Future<ClosedCaptionFile>? closedCaptionFile) async {
     await _updateClosedCaptionWithFuture(closedCaptionFile);
     _closedCaptionFileFuture = closedCaptionFile;
   }
@@ -817,6 +913,63 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (!_isDisposed) {
       super.removeListener(listener);
     }
+  }
+
+  /// Gets the available audio tracks for the video.
+  ///
+  /// Returns a list of [VideoAudioTrack] objects containing metadata about
+  /// each available audio track. The list may be empty if no audio tracks
+  /// are available or if the video is not initialized.
+  ///
+  /// Throws an exception if the video player is disposed.
+  Future<List<VideoAudioTrack>> getAudioTracks() async {
+    if (_isDisposed) {
+      throw Exception('VideoPlayerController is disposed');
+    }
+    if (!value.isInitialized) {
+      return <VideoAudioTrack>[];
+    }
+    final List<platform_interface.VideoAudioTrack> platformTracks =
+        await _videoPlayerPlatform.getAudioTracks(_playerId);
+    return platformTracks.map(_convertPlatformAudioTrack).toList();
+  }
+
+  /// Selects which audio track is chosen for playback from its [trackId]
+  ///
+  /// The [trackId] should match the ID of one of the tracks returned by
+  /// [getAudioTracks]. If the track ID is not found or invalid, the
+  /// platform may ignore the request or throw an exception.
+  ///
+  /// Throws an exception if the video player is disposed or not initialized.
+  Future<void> selectAudioTrack(String trackId) async {
+    if (_isDisposedOrNotInitialized) {
+      throw Exception('VideoPlayerController is disposed or not initialized');
+    }
+    // The platform implementation (e.g., Android) will wait for the track
+    // selection to complete by listening to platform-specific events
+    await _videoPlayerPlatform.selectAudioTrack(_playerId, trackId);
+  }
+
+  /// Returns whether audio track selection is supported on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports audio track selection functionality. This is useful
+  /// for platforms like web where audio track selection may not be available.
+  ///
+  /// Returns `true` if [getAudioTracks] and [selectAudioTrack] are supported,
+  /// `false` otherwise.
+  ///
+  /// Example usage:
+  /// ```dart
+  /// if (controller.isAudioTrackSupportAvailable()) {
+  ///   final tracks = await controller.getAudioTracks();
+  ///   // Show audio track selection UI
+  /// } else {
+  ///   // Hide audio track selection UI or show unsupported message
+  /// }
+  /// ```
+  bool isAudioTrackSupportAvailable() {
+    return _videoPlayerPlatform.isAudioTrackSupportAvailable();
   }
 
   bool get _isDisposedOrNotInitialized => _isDisposed || !value.isInitialized;
@@ -971,11 +1124,7 @@ class VideoScrubber extends StatefulWidget {
   ///
   /// [controller] is the [VideoPlayerController] that will be controlled by
   /// this scrubber.
-  const VideoScrubber({
-    super.key,
-    required this.child,
-    required this.controller,
-  });
+  const VideoScrubber({super.key, required this.child, required this.controller});
 
   /// The widget that will be displayed inside the gesture detector.
   final Widget child;
@@ -1145,10 +1294,7 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       child: progressIndicator,
     );
     if (widget.allowScrubbing) {
-      return VideoScrubber(
-        controller: controller,
-        child: paddedProgressIndicator,
-      );
+      return VideoScrubber(controller: controller, child: paddedProgressIndicator);
     } else {
       return paddedProgressIndicator;
     }
@@ -1200,9 +1346,7 @@ class ClosedCaption extends StatelessWidget {
 
     final TextStyle effectiveTextStyle =
         textStyle ??
-        DefaultTextStyle.of(
-          context,
-        ).style.copyWith(fontSize: 36.0, color: Colors.white);
+        DefaultTextStyle.of(context).style.copyWith(fontSize: 36.0, color: Colors.white);
 
     return Align(
       alignment: Alignment.bottomCenter,
