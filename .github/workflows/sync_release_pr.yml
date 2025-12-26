@@ -1,0 +1,28 @@
+name: "Sync Release to Main"
+
+on:
+  push:
+    branches:
+      - 'release-go-router'
+      - 'release-material'
+      - 'release-cupertino'
+
+jobs:
+  create_sync_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+        with:
+          # Fetch all history for all branches
+          fetch-depth: 0
+
+     - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "sync release branch to main"
+          title: "Sync release branch to main"
+          body: "This automated PR syncs the changes from the release branch back to the main branch."
+          branch: ${{ github.ref_name }}
+          base: main
