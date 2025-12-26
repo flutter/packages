@@ -3,6 +3,10 @@
 - Fixes an issue where `onEnter` blocking causes navigation stack loss (stale state restoration).
 - Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
+## 17.0.1
+
+- Fixes an issue where `GoRouter.refresh()` did not trigger a widget rebuild.
+
 ## 17.0.0
 
 - **BREAKING CHANGE**
