@@ -7,8 +7,7 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    kotlinOut:
-        'android/src/main/kotlin/io/flutter/plugins/videoplayer/Messages.kt',
+    kotlinOut: 'android/src/main/kotlin/io/flutter/plugins/videoplayer/Messages.kt',
     kotlinOptions: KotlinOptions(package: 'io.flutter.plugins.videoplayer'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
@@ -57,6 +56,16 @@ class IsPlayingStateEvent extends PlatformVideoEvent {
 /// Corresponds to ExoPlayer's onTracksChanged.
 class AudioTrackChangedEvent extends PlatformVideoEvent {
   /// The ID of the newly selected audio track, if any.
+  late final String? selectedTrackId;
+}
+
+/// Sent when video tracks change.
+///
+/// This includes when the selected video track changes after calling selectVideoTrack.
+/// Corresponds to ExoPlayer's onTracksChanged.
+class VideoTrackChangedEvent extends PlatformVideoEvent {
+  /// The ID of the newly selected video track, if any.
+  /// Will be null when auto quality selection is enabled.
   late final String? selectedTrackId;
 }
 
@@ -148,6 +157,39 @@ class NativeAudioTrackData {
   List<ExoPlayerAudioTrackData>? exoPlayerTracks;
 }
 
+/// Raw video track data from ExoPlayer Format objects.
+class ExoPlayerVideoTrackData {
+  ExoPlayerVideoTrackData({
+    required this.groupIndex,
+    required this.trackIndex,
+    this.label,
+    required this.isSelected,
+    this.bitrate,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+  });
+
+  int groupIndex;
+  int trackIndex;
+  String? label;
+  bool isSelected;
+  int? bitrate;
+  int? width;
+  int? height;
+  double? frameRate;
+  String? codec;
+}
+
+/// Container for raw video track data from Android ExoPlayer.
+class NativeVideoTrackData {
+  NativeVideoTrackData({this.exoPlayerTracks});
+
+  /// ExoPlayer-based tracks
+  List<ExoPlayerVideoTrackData>? exoPlayerTracks;
+}
+
 @HostApi()
 abstract class AndroidVideoPlayerApi {
   void initialize();
@@ -192,6 +234,13 @@ abstract class VideoPlayerInstanceApi {
 
   /// Selects which audio track is chosen for playback from its [groupIndex] and [trackIndex]
   void selectAudioTrack(int groupIndex, int trackIndex);
+
+  /// Gets the available video tracks for the video.
+  NativeVideoTrackData getVideoTracks();
+
+  /// Selects which video track is chosen for playback from its [groupIndex] and [trackIndex].
+  /// Pass -1 for both indices to enable auto quality selection.
+  void selectVideoTrack(int groupIndex, int trackIndex);
 }
 
 @EventChannelApi()

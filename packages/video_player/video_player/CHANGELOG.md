@@ -5,6 +5,7 @@
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Adds video track (quality) selection support via `getVideoTracks()`, `selectVideoTrack()`, and `isVideoTrackSupportAvailable()` methods.
 
 ## 2.10.1
 
