@@ -21,8 +21,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new AVFoundation-based video player implementation instance.
   AVFoundationVideoPlayer({
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
-    @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
+    @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
   }) : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
        _playerApiProvider = playerApiProvider ?? _productionApiProvider;
 
@@ -71,9 +70,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
         if (asset == null) {
-          throw ArgumentError(
-            '"asset" must be non-null for an asset data source',
-          );
+          throw ArgumentError('"asset" must be non-null for an asset data source');
         }
         uri = await _api.getAssetUrl(asset, dataSource.package);
         if (uri == null) {
@@ -179,6 +176,87 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<List<VideoTrack>> getVideoTracks(int playerId) async {
+    final NativeVideoTrackData nativeData = await _playerWith(
+      id: playerId,
+    ).getVideoTracks();
+    final tracks = <VideoTrack>[];
+
+    // Convert HLS variant tracks (iOS 15+)
+    if (nativeData.mediaSelectionTracks != null) {
+      for (final MediaSelectionVideoTrackData track in nativeData.mediaSelectionTracks!) {
+        // Use bitrate as the track ID for HLS variants
+        final String trackId = 'variant_${track.bitrate ?? track.variantIndex}';
+        // Generate label from resolution if not provided
+        final String? label =
+            track.label ??
+            (track.width != null && track.height != null ? '${track.height}p' : null);
+        tracks.add(
+          VideoTrack(
+            id: trackId,
+            isSelected: track.isSelected,
+            label: label,
+            bitrate: track.bitrate,
+            width: track.width,
+            height: track.height,
+            frameRate: track.frameRate,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    // Convert asset tracks (for regular videos)
+    if (nativeData.assetTracks != null) {
+      for (final AssetVideoTrackData track in nativeData.assetTracks!) {
+        final String trackId = 'asset_${track.trackId}';
+        // Generate label from resolution if not provided
+        final String? label =
+            track.label ??
+            (track.width != null && track.height != null ? '${track.height}p' : null);
+        tracks.add(
+          VideoTrack(
+            id: trackId,
+            isSelected: track.isSelected,
+            label: label,
+            bitrate: null,
+            width: track.width,
+            height: track.height,
+            frameRate: track.frameRate,
+            codec: track.codec,
+          ),
+        );
+      }
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectVideoTrack(int playerId, VideoTrack? track) async {
+    if (track == null) {
+      // Auto quality - pass 0 to clear preferredPeakBitRate
+      await _playerWith(id: playerId).selectVideoTrack(0);
+      return;
+    }
+
+    // Use bitrate directly from the track for HLS quality selection
+    if (track.bitrate != null) {
+      await _playerWith(id: playerId).selectVideoTrack(track.bitrate!);
+      return;
+    }
+
+    // For asset tracks without bitrate, we can't really select them differently
+    // Just ignore the selection for non-HLS content
+  }
+
+  @override
+  bool isVideoTrackSupportAvailable() {
+    // iOS with AVFoundation supports video track selection
+    return true;
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
@@ -189,9 +267,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) => Texture(
-        textureId: textureId,
-      ),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
     };
   }
@@ -218,11 +294,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 /// An instance of a video player, corresponding to a single player ID in
 /// [AVFoundationVideoPlayer].
 class _PlayerInstance {
-  _PlayerInstance(
-    this._api,
-    this.viewState, {
-    required EventChannel eventChannel,
-  }) : _eventChannel = eventChannel;
+  _PlayerInstance(this._api, this.viewState, {required EventChannel eventChannel})
+    : _eventChannel = eventChannel;
 
   final VideoPlayerInstanceApi _api;
   final VideoPlayerViewState viewState;
@@ -258,6 +331,14 @@ class _PlayerInstance {
     );
 
     return _eventStreamController.stream;
+  }
+
+  Future<NativeVideoTrackData> getVideoTracks() {
+    return _api.getVideoTracks();
+  }
+
+  Future<void> selectVideoTrack(int bitrate) {
+    return _api.selectVideoTrack(bitrate);
   }
 
   Future<void> dispose() async {

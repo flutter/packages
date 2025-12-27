@@ -1051,4 +1051,226 @@
   return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
 }
 
+#pragma mark - Video Track Tests
+
+// Tests getVideoTracks with a regular MP4 video file using real AVFoundation.
+// Regular MP4 files don't have HLS variants, so we expect empty media selection tracks.
+- (void)testGetVideoTracksWithRealMP4Video {
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getVideoTracks
+  XCTestExpectation *tracksExpectation =
+      [self expectationWithDescription:@"getVideoTracks completes"];
+  [player
+      getVideoTracks:^(FVPNativeVideoTrackData *_Nullable result, FlutterError *_Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(result);
+        // For regular MP4 files, media selection tracks should be nil (no HLS variants)
+        // The method returns empty data for non-HLS content
+        [tracksExpectation fulfill];
+      }];
+
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  FlutterError *disposeError;
+  [player disposeWithError:&disposeError];
+}
+
+// Tests getVideoTracks with an HLS stream using real AVFoundation.
+// HLS streams use AVAssetVariant API (iOS 15+) for video track selection.
+- (void)testGetVideoTracksWithRealHLSStream {
+  NSURL *hlsURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
+  XCTAssertNotNil(hlsURL);
+
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:hlsURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getVideoTracks
+  XCTestExpectation *tracksExpectation =
+      [self expectationWithDescription:@"getVideoTracks completes"];
+  [player
+      getVideoTracks:^(FVPNativeVideoTrackData *_Nullable result, FlutterError *_Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(result);
+
+        // For HLS streams on iOS 15+, we may have media selection tracks (variants)
+        if (@available(iOS 15.0, macOS 12.0, *)) {
+          // The bee.m3u8 stream may or may not have multiple video variants.
+          // We verify the method returns valid data without crashing.
+          if (result.mediaSelectionTracks) {
+            // If media selection tracks exist, they should have valid structure
+            for (FVPMediaSelectionVideoTrackData *track in result.mediaSelectionTracks) {
+              XCTAssertGreaterThanOrEqual(track.variantIndex, 0);
+              // Bitrate should be positive if present
+              if (track.bitrate) {
+                XCTAssertGreaterThan(track.bitrate.integerValue, 0);
+              }
+            }
+          }
+        }
+        [tracksExpectation fulfill];
+      }];
+
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  FlutterError *disposeError;
+  [player disposeWithError:&disposeError];
+}
+
+// Tests selectVideoTrack sets preferredPeakBitRate correctly.
+- (void)testSelectVideoTrackSetsBitrate {
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  FlutterError *error;
+  // Set a specific bitrate
+  [player selectVideoTrackWithBitrate:5000000 error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(player.player.currentItem.preferredPeakBitRate, 5000000);
+
+  [player disposeWithError:&error];
+}
+
+// Tests selectVideoTrack with 0 bitrate enables auto quality selection.
+- (void)testSelectVideoTrackAutoQuality {
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  FlutterError *error;
+  // First set a specific bitrate
+  [player selectVideoTrackWithBitrate:5000000 error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(player.player.currentItem.preferredPeakBitRate, 5000000);
+
+  // Then set to auto quality (0)
+  [player selectVideoTrackWithBitrate:0 error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(player.player.currentItem.preferredPeakBitRate, 0);
+
+  [player disposeWithError:&error];
+}
+
+// Tests that getVideoTracks works correctly through the plugin API with a real video.
+- (void)testGetVideoTracksViaPluginWithRealVideo {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}];
+  FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
+                                                                                 error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(identifiers);
+
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
+  XCTAssertNotNil(player);
+
+  // Wait for player item to become ready
+  AVPlayerItem *item = player.player.currentItem;
+  [self keyValueObservingExpectationForObject:(id)item
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusReadyToPlay)];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getVideoTracks
+  XCTestExpectation *tracksExpectation =
+      [self expectationWithDescription:@"getVideoTracks completes"];
+  [player
+      getVideoTracks:^(FVPNativeVideoTrackData *_Nullable result, FlutterError *_Nullable error) {
+        XCTAssertNil(error);
+        XCTAssertNotNil(result);
+        [tracksExpectation fulfill];
+      }];
+
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  [player disposeWithError:&error];
+}
+
+// Tests selectVideoTrack via plugin API with HLS stream.
+- (void)testSelectVideoTrackViaPluginWithHLSStream {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+
+  // Use HLS stream which supports adaptive bitrate
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+      httpHeaders:@{}];
+  FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
+                                                                                 error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(identifiers);
+
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
+  XCTAssertNotNil(player);
+
+  // Wait for player item to become ready
+  AVPlayerItem *item = player.player.currentItem;
+  [self keyValueObservingExpectationForObject:(id)item
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusReadyToPlay)];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Test setting a specific bitrate
+  [player selectVideoTrackWithBitrate:1000000 error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(player.player.currentItem.preferredPeakBitRate, 1000000);
+
+  // Test setting auto quality
+  [player selectVideoTrackWithBitrate:0 error:&error];
+  XCTAssertNil(error);
+  XCTAssertEqual(player.player.currentItem.preferredPeakBitRate, 0);
+
+  [player disposeWithError:&error];
+}
+
 @end

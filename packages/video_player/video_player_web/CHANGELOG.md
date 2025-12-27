@@ -1,6 +1,7 @@
 ## NEXT
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Adds stub implementation for video track selection (not supported on web).
 
 ## 2.4.0
 

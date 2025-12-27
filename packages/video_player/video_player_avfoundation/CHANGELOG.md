@@ -1,3 +1,8 @@
+## NEXT
+
+* Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using AVFoundation.
+* Video track selection requires iOS 15+ / macOS 12+ for HLS streams.
+
 ## 2.8.8
 
 * Refactors Dart internals for maintainability.
