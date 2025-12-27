@@ -102,7 +102,8 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
       (int viewId) => videoElement,
     );
 
-    final player = VideoPlayer(videoElement: videoElement)..initialize(src: uri);
+    final player = VideoPlayer(videoElement: videoElement)
+      ..initialize(src: uri);
 
     _videoPlayers[playerId] = player;
 

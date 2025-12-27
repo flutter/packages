@@ -331,8 +331,7 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     Format newFormat = trackGroup.getFormat((int) trackIndex);
     boolean dimensionsChanged =
         currentFormat != null
-            && (currentFormat.width != newFormat.width
-                || currentFormat.height != newFormat.height);
+            && (currentFormat.width != newFormat.width || currentFormat.height != newFormat.height);
 
     // When video dimensions change, we need to force a complete renderer reset to avoid
     // surface rendering issues. We do this by temporarily disabling the video track type,

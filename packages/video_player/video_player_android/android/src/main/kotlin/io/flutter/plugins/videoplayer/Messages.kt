@@ -12,10 +12,11 @@ import io.flutter.plugin.common.BasicMessageChannel
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MessageCodec
-import io.flutter.plugin.common.StandardMethodCodec
 import io.flutter.plugin.common.StandardMessageCodec
+import io.flutter.plugin.common.StandardMethodCodec
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
+
 private object MessagesPigeonUtils {
 
   fun wrapResult(result: Any?): List<Any?> {
@@ -24,61 +25,53 @@ private object MessagesPigeonUtils {
 
   fun wrapError(exception: Throwable): List<Any?> {
     return if (exception is FlutterError) {
-      listOf(
-        exception.code,
-        exception.message,
-        exception.details
-      )
+      listOf(exception.code, exception.message, exception.details)
     } else {
       listOf(
-        exception.javaClass.simpleName,
-        exception.toString(),
-        "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception)
-      )
+          exception.javaClass.simpleName,
+          exception.toString(),
+          "Cause: " + exception.cause + ", Stacktrace: " + Log.getStackTraceString(exception))
     }
   }
+
   fun deepEquals(a: Any?, b: Any?): Boolean {
     if (a is ByteArray && b is ByteArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is IntArray && b is IntArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is LongArray && b is LongArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is DoubleArray && b is DoubleArray) {
-        return a.contentEquals(b)
+      return a.contentEquals(b)
     }
     if (a is Array<*> && b is Array<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is List<*> && b is List<*>) {
-      return a.size == b.size &&
-          a.indices.all{ deepEquals(a[it], b[it]) }
+      return a.size == b.size && a.indices.all { deepEquals(a[it], b[it]) }
     }
     if (a is Map<*, *> && b is Map<*, *>) {
-      return a.size == b.size && a.all {
-          (b as Map<Any?, Any?>).contains(it.key) &&
-          deepEquals(it.value, b[it.key])
-      }
+      return a.size == b.size &&
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
-      
 }
 
 /**
  * Error class for passing custom error details to Flutter via a thrown PlatformException.
+ *
  * @property code The error code.
  * @property message The error message.
  * @property details The error details. Must be a datatype supported by the api codec.
  */
-class FlutterError (
-  val code: String,
-  override val message: String? = null,
-  val details: Any? = null
+class FlutterError(
+    val code: String,
+    override val message: String? = null,
+    val details: Any? = null
 ) : Throwable()
 
 /** Pigeon equivalent of video_platform_interface's VideoFormat. */
@@ -113,26 +106,25 @@ enum class PlatformPlaybackState(val raw: Int) {
 }
 
 /**
- * Generated class from Pigeon that represents data sent in messages.
- * This class should not be extended by any user class outside of the generated file.
+ * Generated class from Pigeon that represents data sent in messages. This class should not be
+ * extended by any user class outside of the generated file.
  */
-sealed class PlatformVideoEvent 
+sealed class PlatformVideoEvent
 /**
  * Sent when the video is initialized and ready to play.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class InitializationEvent (
-  /** The video duration in milliseconds. */
-  val duration: Long,
-  /** The width of the video in pixels. */
-  val width: Long,
-  /** The height of the video in pixels. */
-  val height: Long,
-  /** The rotation that should be applied during playback. */
-  val rotationCorrection: Long
-) : PlatformVideoEvent()
- {
+data class InitializationEvent(
+    /** The video duration in milliseconds. */
+    val duration: Long,
+    /** The width of the video in pixels. */
+    val width: Long,
+    /** The height of the video in pixels. */
+    val height: Long,
+    /** The rotation that should be applied during playback. */
+    val rotationCorrection: Long
+) : PlatformVideoEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): InitializationEvent {
       val duration = pigeonVar_list[0] as Long
@@ -142,14 +134,16 @@ data class InitializationEvent (
       return InitializationEvent(duration, width, height, rotationCorrection)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      duration,
-      width,
-      height,
-      rotationCorrection,
+        duration,
+        width,
+        height,
+        rotationCorrection,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is InitializationEvent) {
       return false
@@ -157,7 +151,8 @@ data class InitializationEvent (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -169,21 +164,20 @@ data class InitializationEvent (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlaybackStateChangeEvent (
-  val state: PlatformPlaybackState
-) : PlatformVideoEvent()
- {
+data class PlaybackStateChangeEvent(val state: PlatformPlaybackState) : PlatformVideoEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlaybackStateChangeEvent {
       val state = pigeonVar_list[0] as PlatformPlaybackState
       return PlaybackStateChangeEvent(state)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      state,
+        state,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is PlaybackStateChangeEvent) {
       return false
@@ -191,7 +185,8 @@ data class PlaybackStateChangeEvent (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -203,21 +198,20 @@ data class PlaybackStateChangeEvent (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class IsPlayingStateEvent (
-  val isPlaying: Boolean
-) : PlatformVideoEvent()
- {
+data class IsPlayingStateEvent(val isPlaying: Boolean) : PlatformVideoEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): IsPlayingStateEvent {
       val isPlaying = pigeonVar_list[0] as Boolean
       return IsPlayingStateEvent(isPlaying)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      isPlaying,
+        isPlaying,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is IsPlayingStateEvent) {
       return false
@@ -225,7 +219,8 @@ data class IsPlayingStateEvent (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -233,27 +228,28 @@ data class IsPlayingStateEvent (
 /**
  * Sent when audio tracks change.
  *
- * This includes when the selected audio track changes after calling selectAudioTrack.
- * Corresponds to ExoPlayer's onTracksChanged.
+ * This includes when the selected audio track changes after calling selectAudioTrack. Corresponds
+ * to ExoPlayer's onTracksChanged.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AudioTrackChangedEvent (
-  /** The ID of the newly selected audio track, if any. */
-  val selectedTrackId: String? = null
-) : PlatformVideoEvent()
- {
+data class AudioTrackChangedEvent(
+    /** The ID of the newly selected audio track, if any. */
+    val selectedTrackId: String? = null
+) : PlatformVideoEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AudioTrackChangedEvent {
       val selectedTrackId = pigeonVar_list[0] as String?
       return AudioTrackChangedEvent(selectedTrackId)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      selectedTrackId,
+        selectedTrackId,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is AudioTrackChangedEvent) {
       return false
@@ -261,7 +257,8 @@ data class AudioTrackChangedEvent (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -269,30 +266,31 @@ data class AudioTrackChangedEvent (
 /**
  * Sent when video tracks change.
  *
- * This includes when the selected video track changes after calling selectVideoTrack.
- * Corresponds to ExoPlayer's onTracksChanged.
+ * This includes when the selected video track changes after calling selectVideoTrack. Corresponds
+ * to ExoPlayer's onTracksChanged.
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class VideoTrackChangedEvent (
-  /**
-   * The ID of the newly selected video track, if any.
-   * Will be null when auto quality selection is enabled.
-   */
-  val selectedTrackId: String? = null
-) : PlatformVideoEvent()
- {
+data class VideoTrackChangedEvent(
+    /**
+     * The ID of the newly selected video track, if any. Will be null when auto quality selection is
+     * enabled.
+     */
+    val selectedTrackId: String? = null
+) : PlatformVideoEvent() {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): VideoTrackChangedEvent {
       val selectedTrackId = pigeonVar_list[0] as String?
       return VideoTrackChangedEvent(selectedTrackId)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      selectedTrackId,
+        selectedTrackId,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is VideoTrackChangedEvent) {
       return false
@@ -300,7 +298,8 @@ data class VideoTrackChangedEvent (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -310,21 +309,20 @@ data class VideoTrackChangedEvent (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class PlatformVideoViewCreationParams (
-  val playerId: Long
-)
- {
+data class PlatformVideoViewCreationParams(val playerId: Long) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlatformVideoViewCreationParams {
       val playerId = pigeonVar_list[0] as Long
       return PlatformVideoViewCreationParams(playerId)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      playerId,
+        playerId,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is PlatformVideoViewCreationParams) {
       return false
@@ -332,19 +330,19 @@ data class PlatformVideoViewCreationParams (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class CreationOptions (
-  val uri: String,
-  val formatHint: PlatformVideoFormat? = null,
-  val httpHeaders: Map<String, String>,
-  val userAgent: String? = null
-)
- {
+data class CreationOptions(
+    val uri: String,
+    val formatHint: PlatformVideoFormat? = null,
+    val httpHeaders: Map<String, String>,
+    val userAgent: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): CreationOptions {
       val uri = pigeonVar_list[0] as String
@@ -354,14 +352,16 @@ data class CreationOptions (
       return CreationOptions(uri, formatHint, httpHeaders, userAgent)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      uri,
-      formatHint,
-      httpHeaders,
-      userAgent,
+        uri,
+        formatHint,
+        httpHeaders,
+        userAgent,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is CreationOptions) {
       return false
@@ -369,17 +369,14 @@ data class CreationOptions (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class TexturePlayerIds (
-  val playerId: Long,
-  val textureId: Long
-)
- {
+data class TexturePlayerIds(val playerId: Long, val textureId: Long) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): TexturePlayerIds {
       val playerId = pigeonVar_list[0] as Long
@@ -387,12 +384,14 @@ data class TexturePlayerIds (
       return TexturePlayerIds(playerId, textureId)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      playerId,
-      textureId,
+        playerId,
+        textureId,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is TexturePlayerIds) {
       return false
@@ -400,19 +399,19 @@ data class TexturePlayerIds (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class PlaybackState (
-  /** The current playback position, in milliseconds. */
-  val playPosition: Long,
-  /** The current buffer position, in milliseconds. */
-  val bufferPosition: Long
-)
- {
+data class PlaybackState(
+    /** The current playback position, in milliseconds. */
+    val playPosition: Long,
+    /** The current buffer position, in milliseconds. */
+    val bufferPosition: Long
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): PlaybackState {
       val playPosition = pigeonVar_list[0] as Long
@@ -420,12 +419,14 @@ data class PlaybackState (
       return PlaybackState(playPosition, bufferPosition)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      playPosition,
-      bufferPosition,
+        playPosition,
+        bufferPosition,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is PlaybackState) {
       return false
@@ -433,7 +434,8 @@ data class PlaybackState (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -443,17 +445,16 @@ data class PlaybackState (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class AudioTrackMessage (
-  val id: String,
-  val label: String,
-  val language: String,
-  val isSelected: Boolean,
-  val bitrate: Long? = null,
-  val sampleRate: Long? = null,
-  val channelCount: Long? = null,
-  val codec: String? = null
-)
- {
+data class AudioTrackMessage(
+    val id: String,
+    val label: String,
+    val language: String,
+    val isSelected: Boolean,
+    val bitrate: Long? = null,
+    val sampleRate: Long? = null,
+    val channelCount: Long? = null,
+    val codec: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): AudioTrackMessage {
       val id = pigeonVar_list[0] as String
@@ -464,21 +465,24 @@ data class AudioTrackMessage (
       val sampleRate = pigeonVar_list[5] as Long?
       val channelCount = pigeonVar_list[6] as Long?
       val codec = pigeonVar_list[7] as String?
-      return AudioTrackMessage(id, label, language, isSelected, bitrate, sampleRate, channelCount, codec)
+      return AudioTrackMessage(
+          id, label, language, isSelected, bitrate, sampleRate, channelCount, codec)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      id,
-      label,
-      language,
-      isSelected,
-      bitrate,
-      sampleRate,
-      channelCount,
-      codec,
+        id,
+        label,
+        language,
+        isSelected,
+        bitrate,
+        sampleRate,
+        channelCount,
+        codec,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is AudioTrackMessage) {
       return false
@@ -486,7 +490,8 @@ data class AudioTrackMessage (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -496,18 +501,17 @@ data class AudioTrackMessage (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class ExoPlayerAudioTrackData (
-  val groupIndex: Long,
-  val trackIndex: Long,
-  val label: String? = null,
-  val language: String? = null,
-  val isSelected: Boolean,
-  val bitrate: Long? = null,
-  val sampleRate: Long? = null,
-  val channelCount: Long? = null,
-  val codec: String? = null
-)
- {
+data class ExoPlayerAudioTrackData(
+    val groupIndex: Long,
+    val trackIndex: Long,
+    val label: String? = null,
+    val language: String? = null,
+    val isSelected: Boolean,
+    val bitrate: Long? = null,
+    val sampleRate: Long? = null,
+    val channelCount: Long? = null,
+    val codec: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ExoPlayerAudioTrackData {
       val groupIndex = pigeonVar_list[0] as Long
@@ -519,22 +523,33 @@ data class ExoPlayerAudioTrackData (
       val sampleRate = pigeonVar_list[6] as Long?
       val channelCount = pigeonVar_list[7] as Long?
       val codec = pigeonVar_list[8] as String?
-      return ExoPlayerAudioTrackData(groupIndex, trackIndex, label, language, isSelected, bitrate, sampleRate, channelCount, codec)
+      return ExoPlayerAudioTrackData(
+          groupIndex,
+          trackIndex,
+          label,
+          language,
+          isSelected,
+          bitrate,
+          sampleRate,
+          channelCount,
+          codec)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      groupIndex,
-      trackIndex,
-      label,
-      language,
-      isSelected,
-      bitrate,
-      sampleRate,
-      channelCount,
-      codec,
+        groupIndex,
+        trackIndex,
+        label,
+        language,
+        isSelected,
+        bitrate,
+        sampleRate,
+        channelCount,
+        codec,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is ExoPlayerAudioTrackData) {
       return false
@@ -542,7 +557,8 @@ data class ExoPlayerAudioTrackData (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -552,22 +568,23 @@ data class ExoPlayerAudioTrackData (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class NativeAudioTrackData (
-  /** ExoPlayer-based tracks */
-  val exoPlayerTracks: List<ExoPlayerAudioTrackData>? = null
-)
- {
+data class NativeAudioTrackData(
+    /** ExoPlayer-based tracks */
+    val exoPlayerTracks: List<ExoPlayerAudioTrackData>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeAudioTrackData {
       val exoPlayerTracks = pigeonVar_list[0] as List<ExoPlayerAudioTrackData>?
       return NativeAudioTrackData(exoPlayerTracks)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      exoPlayerTracks,
+        exoPlayerTracks,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is NativeAudioTrackData) {
       return false
@@ -575,7 +592,8 @@ data class NativeAudioTrackData (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -585,18 +603,17 @@ data class NativeAudioTrackData (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class ExoPlayerVideoTrackData (
-  val groupIndex: Long,
-  val trackIndex: Long,
-  val label: String? = null,
-  val isSelected: Boolean,
-  val bitrate: Long? = null,
-  val width: Long? = null,
-  val height: Long? = null,
-  val frameRate: Double? = null,
-  val codec: String? = null
-)
- {
+data class ExoPlayerVideoTrackData(
+    val groupIndex: Long,
+    val trackIndex: Long,
+    val label: String? = null,
+    val isSelected: Boolean,
+    val bitrate: Long? = null,
+    val width: Long? = null,
+    val height: Long? = null,
+    val frameRate: Double? = null,
+    val codec: String? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): ExoPlayerVideoTrackData {
       val groupIndex = pigeonVar_list[0] as Long
@@ -608,22 +625,25 @@ data class ExoPlayerVideoTrackData (
       val height = pigeonVar_list[6] as Long?
       val frameRate = pigeonVar_list[7] as Double?
       val codec = pigeonVar_list[8] as String?
-      return ExoPlayerVideoTrackData(groupIndex, trackIndex, label, isSelected, bitrate, width, height, frameRate, codec)
+      return ExoPlayerVideoTrackData(
+          groupIndex, trackIndex, label, isSelected, bitrate, width, height, frameRate, codec)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      groupIndex,
-      trackIndex,
-      label,
-      isSelected,
-      bitrate,
-      width,
-      height,
-      frameRate,
-      codec,
+        groupIndex,
+        trackIndex,
+        label,
+        isSelected,
+        bitrate,
+        width,
+        height,
+        frameRate,
+        codec,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is ExoPlayerVideoTrackData) {
       return false
@@ -631,7 +651,8 @@ data class ExoPlayerVideoTrackData (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
@@ -641,22 +662,23 @@ data class ExoPlayerVideoTrackData (
  *
  * Generated class from Pigeon that represents data sent in messages.
  */
-data class NativeVideoTrackData (
-  /** ExoPlayer-based tracks */
-  val exoPlayerTracks: List<ExoPlayerVideoTrackData>? = null
-)
- {
+data class NativeVideoTrackData(
+    /** ExoPlayer-based tracks */
+    val exoPlayerTracks: List<ExoPlayerVideoTrackData>? = null
+) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NativeVideoTrackData {
       val exoPlayerTracks = pigeonVar_list[0] as List<ExoPlayerVideoTrackData>?
       return NativeVideoTrackData(exoPlayerTracks)
     }
   }
+
   fun toList(): List<Any?> {
     return listOf(
-      exoPlayerTracks,
+        exoPlayerTracks,
     )
   }
+
   override fun equals(other: Any?): Boolean {
     if (other !is NativeVideoTrackData) {
       return false
@@ -664,47 +686,35 @@ data class NativeVideoTrackData (
     if (this === other) {
       return true
     }
-    return MessagesPigeonUtils.deepEquals(toList(), other.toList())  }
+    return MessagesPigeonUtils.deepEquals(toList(), other.toList())
+  }
 
   override fun hashCode(): Int = toList().hashCode()
 }
+
 private open class MessagesPigeonCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       129.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformVideoFormat.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformVideoFormat.ofRaw(it.toInt()) }
       }
       130.toByte() -> {
-        return (readValue(buffer) as Long?)?.let {
-          PlatformPlaybackState.ofRaw(it.toInt())
-        }
+        return (readValue(buffer) as Long?)?.let { PlatformPlaybackState.ofRaw(it.toInt()) }
       }
       131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          InitializationEvent.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { InitializationEvent.fromList(it) }
       }
       132.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlaybackStateChangeEvent.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlaybackStateChangeEvent.fromList(it) }
       }
       133.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          IsPlayingStateEvent.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { IsPlayingStateEvent.fromList(it) }
       }
       134.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AudioTrackChangedEvent.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AudioTrackChangedEvent.fromList(it) }
       }
       135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          VideoTrackChangedEvent.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { VideoTrackChangedEvent.fromList(it) }
       }
       136.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
@@ -712,49 +722,34 @@ private open class MessagesPigeonCodec : StandardMessageCodec() {
         }
       }
       137.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          CreationOptions.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { CreationOptions.fromList(it) }
       }
       138.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          TexturePlayerIds.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { TexturePlayerIds.fromList(it) }
       }
       139.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          PlaybackState.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { PlaybackState.fromList(it) }
       }
       140.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          AudioTrackMessage.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { AudioTrackMessage.fromList(it) }
       }
       141.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          ExoPlayerAudioTrackData.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { ExoPlayerAudioTrackData.fromList(it) }
       }
       142.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeAudioTrackData.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { NativeAudioTrackData.fromList(it) }
       }
       143.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          ExoPlayerVideoTrackData.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { ExoPlayerVideoTrackData.fromList(it) }
       }
       144.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          NativeVideoTrackData.fromList(it)
-        }
+        return (readValue(buffer) as? List<Any?>)?.let { NativeVideoTrackData.fromList(it) }
       }
       else -> super.readValueOfType(type, buffer)
     }
   }
-  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
     when (value) {
       is PlatformVideoFormat -> {
         stream.write(129)
@@ -830,31 +825,47 @@ val MessagesPigeonMethodCodec = StandardMethodCodec(MessagesPigeonCodec())
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface AndroidVideoPlayerApi {
   fun initialize()
+
   fun createForPlatformView(options: CreationOptions): Long
+
   fun createForTextureView(options: CreationOptions): TexturePlayerIds
+
   fun dispose(playerId: Long)
+
   fun setMixWithOthers(mixWithOthers: Boolean)
+
   fun getLookupKeyForAsset(asset: String, packageName: String?): String
 
   companion object {
     /** The codec used by AndroidVideoPlayerApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
-    /** Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+    /**
+     * Sets up an instance of `AndroidVideoPlayerApi` to handle messages through the
+     * `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: AndroidVideoPlayerApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: AndroidVideoPlayerApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.initialize$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.initialize$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.initialize()
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.initialize()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -862,16 +873,21 @@ interface AndroidVideoPlayerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForPlatformView$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForPlatformView$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val optionsArg = args[0] as CreationOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.createForPlatformView(optionsArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createForPlatformView(optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -879,16 +895,21 @@ interface AndroidVideoPlayerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForTextureView$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.createForTextureView$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val optionsArg = args[0] as CreationOptions
-            val wrapped: List<Any?> = try {
-              listOf(api.createForTextureView(optionsArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.createForTextureView(optionsArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -896,17 +917,22 @@ interface AndroidVideoPlayerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.dispose$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.dispose$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val playerIdArg = args[0] as Long
-            val wrapped: List<Any?> = try {
-              api.dispose(playerIdArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.dispose(playerIdArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -914,17 +940,22 @@ interface AndroidVideoPlayerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setMixWithOthers$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.setMixWithOthers$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val mixWithOthersArg = args[0] as Boolean
-            val wrapped: List<Any?> = try {
-              api.setMixWithOthers(mixWithOthersArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setMixWithOthers(mixWithOthersArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -932,17 +963,22 @@ interface AndroidVideoPlayerApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.AndroidVideoPlayerApi.getLookupKeyForAsset$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val assetArg = args[0] as String
             val packageNameArg = args[1] as String?
-            val wrapped: List<Any?> = try {
-              listOf(api.getLookupKeyForAsset(assetArg, packageNameArg))
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getLookupKeyForAsset(assetArg, packageNameArg))
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -977,32 +1013,43 @@ interface VideoPlayerInstanceApi {
   /** Gets the available video tracks for the video. */
   fun getVideoTracks(): NativeVideoTrackData
   /**
-   * Selects which video track is chosen for playback from its [groupIndex] and [trackIndex].
-   * Pass -1 for both indices to enable auto quality selection.
+   * Selects which video track is chosen for playback from its [groupIndex] and [trackIndex]. Pass
+   * -1 for both indices to enable auto quality selection.
    */
   fun selectVideoTrack(groupIndex: Long, trackIndex: Long)
 
   companion object {
     /** The codec used by VideoPlayerInstanceApi. */
-    val codec: MessageCodec<Any?> by lazy {
-      MessagesPigeonCodec()
-    }
-    /** Sets up an instance of `VideoPlayerInstanceApi` to handle messages through the `binaryMessenger`. */
+    val codec: MessageCodec<Any?> by lazy { MessagesPigeonCodec() }
+    /**
+     * Sets up an instance of `VideoPlayerInstanceApi` to handle messages through the
+     * `binaryMessenger`.
+     */
     @JvmOverloads
-    fun setUp(binaryMessenger: BinaryMessenger, api: VideoPlayerInstanceApi?, messageChannelSuffix: String = "") {
-      val separatedMessageChannelSuffix = if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
+    fun setUp(
+        binaryMessenger: BinaryMessenger,
+        api: VideoPlayerInstanceApi?,
+        messageChannelSuffix: String = ""
+    ) {
+      val separatedMessageChannelSuffix =
+          if (messageChannelSuffix.isNotEmpty()) ".$messageChannelSuffix" else ""
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setLooping$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setLooping$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val loopingArg = args[0] as Boolean
-            val wrapped: List<Any?> = try {
-              api.setLooping(loopingArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setLooping(loopingArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1010,17 +1057,22 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setVolume$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setVolume$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val volumeArg = args[0] as Double
-            val wrapped: List<Any?> = try {
-              api.setVolume(volumeArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setVolume(volumeArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1028,17 +1080,22 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setPlaybackSpeed$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setPlaybackSpeed$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val speedArg = args[0] as Double
-            val wrapped: List<Any?> = try {
-              api.setPlaybackSpeed(speedArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.setPlaybackSpeed(speedArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1046,15 +1103,20 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.play$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.play$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.play()
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.play()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1062,15 +1124,20 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.pause$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              api.pause()
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.pause()
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1078,17 +1145,22 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.seekTo$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val positionArg = args[0] as Long
-            val wrapped: List<Any?> = try {
-              api.seekTo(positionArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.seekTo(positionArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1096,14 +1168,19 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getCurrentPosition$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getCurrentPosition$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getCurrentPosition())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getCurrentPosition())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1111,14 +1188,19 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getBufferedPosition$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getBufferedPosition$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getBufferedPosition())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getBufferedPosition())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1126,14 +1208,19 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getAudioTracks$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getAudioTracks())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getAudioTracks())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1141,18 +1228,23 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectAudioTrack$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val groupIndexArg = args[0] as Long
             val trackIndexArg = args[1] as Long
-            val wrapped: List<Any?> = try {
-              api.selectAudioTrack(groupIndexArg, trackIndexArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.selectAudioTrack(groupIndexArg, trackIndexArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1160,14 +1252,19 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getVideoTracks$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.getVideoTracks$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            val wrapped: List<Any?> = try {
-              listOf(api.getVideoTracks())
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getVideoTracks())
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1175,18 +1272,23 @@ interface VideoPlayerInstanceApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectVideoTrack$separatedMessageChannelSuffix", codec)
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.selectVideoTrack$separatedMessageChannelSuffix",
+                codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val groupIndexArg = args[0] as Long
             val trackIndexArg = args[1] as Long
-            val wrapped: List<Any?> = try {
-              api.selectVideoTrack(groupIndexArg, trackIndexArg)
-              listOf(null)
-            } catch (exception: Throwable) {
-              MessagesPigeonUtils.wrapError(exception)
-            }
+            val wrapped: List<Any?> =
+                try {
+                  api.selectVideoTrack(groupIndexArg, trackIndexArg)
+                  listOf(null)
+                } catch (exception: Throwable) {
+                  MessagesPigeonUtils.wrapError(exception)
+                }
             reply.reply(wrapped)
           }
         } else {
@@ -1197,9 +1299,8 @@ interface VideoPlayerInstanceApi {
   }
 }
 
-private class MessagesPigeonStreamHandler<T>(
-    val wrapper: MessagesPigeonEventChannelWrapper<T>
-) : EventChannel.StreamHandler {
+private class MessagesPigeonStreamHandler<T>(val wrapper: MessagesPigeonEventChannelWrapper<T>) :
+    EventChannel.StreamHandler {
   var pigeonSink: PigeonEventSink<T>? = null
 
   override fun onListen(p0: Any?, sink: EventChannel.EventSink) {
@@ -1232,21 +1333,26 @@ class PigeonEventSink<T>(private val sink: EventChannel.EventSink) {
     sink.endOfStream()
   }
 }
-      
+
 abstract class VideoEventsStreamHandler : MessagesPigeonEventChannelWrapper<PlatformVideoEvent> {
   companion object {
-    fun register(messenger: BinaryMessenger, streamHandler: VideoEventsStreamHandler, instanceName: String = "") {
-      var channelName: String = "dev.flutter.pigeon.video_player_android.VideoEventChannel.videoEvents"
+    fun register(
+        messenger: BinaryMessenger,
+        streamHandler: VideoEventsStreamHandler,
+        instanceName: String = ""
+    ) {
+      var channelName: String =
+          "dev.flutter.pigeon.video_player_android.VideoEventChannel.videoEvents"
       if (instanceName.isNotEmpty()) {
         channelName += ".$instanceName"
       }
       val internalStreamHandler = MessagesPigeonStreamHandler<PlatformVideoEvent>(streamHandler)
-      EventChannel(messenger, channelName, MessagesPigeonMethodCodec).setStreamHandler(internalStreamHandler)
+      EventChannel(messenger, channelName, MessagesPigeonMethodCodec)
+          .setStreamHandler(internalStreamHandler)
     }
   }
-// Implement methods from MessagesPigeonEventChannelWrapper
-override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformVideoEvent>) {}
+  // Implement methods from MessagesPigeonEventChannelWrapper
+  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformVideoEvent>) {}
 
-override fun onCancel(p0: Any?) {}
+  override fun onCancel(p0: Any?) {}
 }
-      

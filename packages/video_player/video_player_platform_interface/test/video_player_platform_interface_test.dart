@@ -112,10 +112,7 @@ void main() {
         label: '1080p',
         bitrate: 5000000,
       );
-      const track3 = VideoTrack(
-        id: 'track_2',
-        isSelected: false,
-      );
+      const track3 = VideoTrack(id: 'track_2', isSelected: false);
 
       expect(track1, equals(track2));
       expect(track1, isNot(equals(track3)));

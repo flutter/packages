@@ -440,84 +440,80 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   // Use AVAssetVariant API for iOS 15+ to get HLS variants
   if (@available(iOS 15.0, macOS 12.0, *)) {
-    [urlAsset loadValuesAsynchronouslyForKeys:@[ @"variants" ]
-                            completionHandler:^{
-                              dispatch_async(dispatch_get_main_queue(), ^{
-                                NSError *error = nil;
-                                AVKeyValueStatus status = [urlAsset statusOfValueForKey:@"variants"
-                                                                                  error:&error];
+    [urlAsset
+        loadValuesAsynchronouslyForKeys:@[ @"variants" ]
+                      completionHandler:^{
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                          NSError *error = nil;
+                          AVKeyValueStatus status = [urlAsset statusOfValueForKey:@"variants"
+                                                                            error:&error];
 
-                                if (status == AVKeyValueStatusLoaded) {
-                                  NSArray<AVAssetVariant *> *variants = urlAsset.variants;
-                                  double currentBitrate =
-                                      currentItem.preferredPeakBitRate > 0
-                                          ? currentItem.preferredPeakBitRate
-                                          : 0;
+                          if (status == AVKeyValueStatusLoaded) {
+                            NSArray<AVAssetVariant *> *variants = urlAsset.variants;
+                            double currentBitrate = currentItem.preferredPeakBitRate > 0
+                                                        ? currentItem.preferredPeakBitRate
+                                                        : 0;
 
-                                  for (NSInteger i = 0; i < variants.count; i++) {
-                                    AVAssetVariant *variant = variants[i];
-                                    double peakBitRate = variant.peakBitRate;
-                                    CGSize videoSize = CGSizeZero;
-                                    double frameRate = 0;
-                                    NSString *codec = nil;
+                            for (NSInteger i = 0; i < variants.count; i++) {
+                              AVAssetVariant *variant = variants[i];
+                              double peakBitRate = variant.peakBitRate;
+                              CGSize videoSize = CGSizeZero;
+                              double frameRate = 0;
+                              NSString *codec = nil;
 
-                                    // Get video attributes if available
-                                    AVAssetVariantVideoAttributes *videoAttrs =
-                                        variant.videoAttributes;
-                                    if (videoAttrs) {
-                                      videoSize = videoAttrs.presentationSize;
-                                      frameRate = videoAttrs.nominalFrameRate;
-                                      // Get codec from media sub types
-                                      NSArray *codecTypes = videoAttrs.codecTypes;
-                                      if (codecTypes.count > 0) {
-                                        FourCharCode codecType =
-                                            [codecTypes[0] unsignedIntValue];
-                                        codec = [self codecStringFromFourCharCode:codecType];
-                                      }
-                                    }
-
-                                    // Determine if this variant is selected (approximate match by
-                                    // bitrate)
-                                    BOOL isSelected = (currentBitrate > 0 &&
-                                                       fabs(peakBitRate - currentBitrate) <
-                                                           peakBitRate * 0.1);
-
-                                    // Generate label from resolution
-                                    NSString *label = nil;
-                                    if (videoSize.height > 0) {
-                                      label =
-                                          [NSString stringWithFormat:@"%.0fp", videoSize.height];
-                                    }
-
-                                    FVPMediaSelectionVideoTrackData *trackData =
-                                        [FVPMediaSelectionVideoTrackData
-                                            makeWithVariantIndex:i
-                                                           label:label
-                                                         bitrate:peakBitRate > 0
-                                                                     ? @((NSInteger)peakBitRate)
-                                                                     : nil
-                                                           width:videoSize.width > 0
-                                                                     ? @((NSInteger)videoSize.width)
-                                                                     : nil
-                                                          height:videoSize.height > 0
-                                                                     ? @((NSInteger)videoSize
-                                                                             .height)
-                                                                     : nil
-                                                       frameRate:frameRate > 0 ? @(frameRate) : nil
-                                                           codec:codec
-                                                      isSelected:isSelected];
-                                    [mediaSelectionTracks addObject:trackData];
-                                  }
+                              // Get video attributes if available
+                              AVAssetVariantVideoAttributes *videoAttrs = variant.videoAttributes;
+                              if (videoAttrs) {
+                                videoSize = videoAttrs.presentationSize;
+                                frameRate = videoAttrs.nominalFrameRate;
+                                // Get codec from media sub types
+                                NSArray *codecTypes = videoAttrs.codecTypes;
+                                if (codecTypes.count > 0) {
+                                  FourCharCode codecType = [codecTypes[0] unsignedIntValue];
+                                  codec = [self codecStringFromFourCharCode:codecType];
                                 }
+                              }
 
-                                FVPNativeVideoTrackData *result = [FVPNativeVideoTrackData
-                                    makeWithAssetTracks:nil
-                                   mediaSelectionTracks:mediaSelectionTracks.count > 0
-                                                            ? mediaSelectionTracks
-                                                            : nil];
-                                completion(result, nil);
-                              });
-                            }];
+                              // Determine if this variant is selected (approximate match by
+                              // bitrate)
+                              BOOL isSelected =
+                                  (currentBitrate > 0 &&
+                                   fabs(peakBitRate - currentBitrate) < peakBitRate * 0.1);
+
+                              // Generate label from resolution
+                              NSString *label = nil;
+                              if (videoSize.height > 0) {
+                                label = [NSString stringWithFormat:@"%.0fp", videoSize.height];
+                              }
+
+                              FVPMediaSelectionVideoTrackData *trackData =
+                                  [FVPMediaSelectionVideoTrackData
+                                      makeWithVariantIndex:i
+                                                     label:label
+                                                   bitrate:peakBitRate > 0
+                                                               ? @((NSInteger)peakBitRate)
+                                                               : nil
+                                                     width:videoSize.width > 0
+                                                               ? @((NSInteger)videoSize.width)
+                                                               : nil
+                                                    height:videoSize.height > 0
+                                                               ? @((NSInteger)videoSize.height)
+                                                               : nil
+                                                 frameRate:frameRate > 0 ? @(frameRate) : nil
+                                                     codec:codec
+                                                isSelected:isSelected];
+                              [mediaSelectionTracks addObject:trackData];
+                            }
+                          }
+
+                          FVPNativeVideoTrackData *result = [FVPNativeVideoTrackData
+                               makeWithAssetTracks:nil
+                              mediaSelectionTracks:mediaSelectionTracks.count > 0
+                                                       ? mediaSelectionTracks
+                                                       : nil];
+                          completion(result, nil);
+                        });
+                      }];
   } else {
     // For iOS < 15, return empty list as AVAssetVariant is not available
     completion([[FVPNativeVideoTrackData alloc] init], nil);
