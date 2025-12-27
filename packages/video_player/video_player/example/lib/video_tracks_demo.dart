@@ -50,7 +50,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
     try {
       await _controller?.dispose();
 
-      final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      final controller = VideoPlayerController.networkUrl(
         Uri.parse(_sampleVideos[_selectedVideoIndex]),
       );
       _controller = controller;
@@ -138,19 +138,17 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
       if (!mounted) {
         return;
       }
-      final String message = track == null
+      final message = track == null
           ? 'Switched to automatic quality'
           : 'Selected video track: ${_getTrackLabel(track)}';
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to select video track: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Failed to select video track: $e')));
     }
   }
 
@@ -186,7 +184,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
     }
 
     final VideoPlayerValue currentValue = _controller!.value;
-    bool shouldUpdate = false;
+    var shouldUpdate = false;
 
     // Check for relevant state changes that affect UI
     if (currentValue.isPlaying != _wasPlaying) {
@@ -230,11 +228,9 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               inputDecorationTheme: const InputDecorationTheme(
                 border: OutlineInputBorder(),
               ),
-              dropdownMenuEntries: _sampleVideos.indexed.map((
-                (int, String) record,
-              ) {
-                final (int index, String url) = record;
-                final String label = url.contains('.m3u8')
+              dropdownMenuEntries: _sampleVideos.indexed.map(((int, String) record) {
+                final (index, url) = record;
+                final label = url.contains('.m3u8')
                     ? 'HLS Stream ${index + 1}'
                     : 'MP4 Video ${index + 1}';
                 return DropdownMenuEntry<int>(value: index, label: label);
@@ -289,10 +285,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _initializeVideo,
-              child: const Text('Retry'),
-            ),
+            ElevatedButton(onPressed: _initializeVideo, child: const Text('Retry')),
           ],
         ),
       );
@@ -381,9 +374,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               title: Text(
                 'Automatic Quality',
                 style: TextStyle(
-                  fontWeight: _isAutoQuality
-                      ? FontWeight.bold
-                      : FontWeight.normal,
+                  fontWeight: _isAutoQuality ? FontWeight.bold : FontWeight.normal,
                 ),
               ),
               subtitle: const Text('Let the player choose the best quality'),
@@ -406,7 +397,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
                 ),
               ),
             )
-          else if (_error != null && _controller?.value.isInitialized == true)
+          else if (_error != null && (_controller?.value.isInitialized ?? false))
             Expanded(
               child: Center(
                 child: Text(
@@ -443,9 +434,7 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
         ),
         title: Text(
           _getTrackLabel(track),
-          style: TextStyle(
-            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-          ),
+          style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
