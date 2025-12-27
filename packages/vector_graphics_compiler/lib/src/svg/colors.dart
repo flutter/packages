@@ -168,7 +168,6 @@ const Map<String, Color> namedColors = <String, Color>{
 /// - `rgb(R G B / A)` or `rgba(R G B / A)` - modern with slash before alpha
 /// - `rgb(R,G,B)` or `rgba(R,G,B)` - legacy comma-separated
 /// - `rgb(R,G,B,A)` or `rgba(R,G,B,A)` - legacy with alpha
-/// - `rgb(R G,B,A)` or `rgba(R G,B,A)` - mixed: spaces before first comma
 ///
 /// Throws [ArgumentError] if the color string is invalid.
 Color parseRgbFunction(String colorString) {
@@ -190,35 +189,13 @@ Color parseRgbFunction(String colorString) {
 
   if (commaSplit.length > 1) {
     // We are dealing with comma-separated syntax
-
-    // First handle the weird case where "R G, B" and "R G, B, A" are valid
-    final List<String> firstValueSpaceSplit = commaSplit.first
-        .split(' ')
-        .map((String value) => value.trim())
-        .where((String value) => value.isNotEmpty)
-        .toList();
-    if (firstValueSpaceSplit.length > 2) {
-      throw ArgumentError.value(
-        colorString,
-        'colorString',
-        'Expected at most 2 space-separated values in first value',
-      );
-    }
-    final List<String> stringRgbAndAlphaValues = [
-      ...firstValueSpaceSplit,
-      ...commaSplit.skip(1),
-    ];
-
-    (
-      stringAlphaValue,
-      stringRgbValues,
-    ) = switch (stringRgbAndAlphaValues.length) {
-      3 => (null, stringRgbAndAlphaValues),
-      4 => (stringRgbAndAlphaValues.removeLast(), stringRgbAndAlphaValues),
+    (stringAlphaValue, stringRgbValues) = switch (commaSplit.length) {
+      3 => (null, commaSplit),
+      4 => (commaSplit.removeLast(), commaSplit),
       _ => throw ArgumentError.value(
         colorString,
         'colorString',
-        'Expected 3 or 4 values, got ${stringRgbAndAlphaValues.length}',
+        'Expected 3 or 4 values, got ${commaSplit.length}',
       ),
     };
   } else {

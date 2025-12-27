@@ -39,8 +39,6 @@ void main() {
         '67% 205 93.7%',
         // Decimal RGB values
         '171.1 205.1 238.9',
-        // Mixed separators: spaces before first comma, then commas
-        '171 205,239',
       ];
 
       final List<String> rgbaVariations = [
@@ -77,10 +75,6 @@ void main() {
         '171.1 205.1 238.9 / 53%',
         // Decimal RGB values with decimal alpha
         '171.1 205.1 238.9 / 0.53',
-        // Mixed separators: spaces before first comma, then commas (decimal alpha)
-        '171 205,239, 0.53',
-        // Mixed separators: spaces before first comma, then commas (percentage alpha)
-        '171   205,239, 53%',
       ];
 
       final List<String> rgbaVariations = [
@@ -198,6 +192,15 @@ void main() {
         '255 255 255 128 64',
         // Missing alpha after slash
         '255 255 255 /',
+        // Mixed separators: spaces before first comma, then commas (no alpha)
+        //  Note: This actually parses correctly on css(web) but it's not valid as per the spec.
+        '171 205,239',
+        // Mixed separators: spaces before first comma, then commas (decimal alpha)
+        //  Note: This actually parses correctly on css(web) but it's not valid as per the spec.
+        '171 205,239, 0.53',
+        // Mixed separators: spaces before first comma, then commas (percentage alpha)
+        //  Note: This actually parses correctly on css(web) but it's not valid as per the spec.
+        '171   205,239, 53%',
       ];
 
       final List<String> rgbaVariations = [
