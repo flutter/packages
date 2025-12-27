@@ -209,7 +209,7 @@ void main() {
         test(rgba, () {
           expect(
             () => parser.parseColor(rgba, attributeName: 'foo', id: null),
-            throwsStateError,
+            throwsArgumentError,
           );
         });
       }
