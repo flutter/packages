@@ -22,5 +22,4 @@ flutter:
   config:
     data-assets: true
 
-flutter:
   uses-material-design: true
