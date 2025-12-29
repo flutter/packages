@@ -20,6 +20,6 @@ dev_dependencies:
 
 flutter:
   config:
-    data-assets: true
+    enable-dart-data-assets: true
 
   uses-material-design: true

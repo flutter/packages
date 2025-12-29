@@ -41,7 +41,7 @@ dev_dependencies:
 
 flutter:
   config:
-    data-assets: true
+    enable-dart-data-assets: true
 
 topics:
   - svg
