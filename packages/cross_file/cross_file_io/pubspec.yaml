@@ -9,15 +9,15 @@ environment:
   flutter: ">=3.35.0"
 
 dependencies:
-  flutter:
-    sdk: flutter
   cross_file_platform_interface:
     path: ../cross_file_platform_interface
+  flutter:
+    sdk: flutter
 
 dev_dependencies:
-  path: ^1.9.1
   flutter_test:
     sdk: flutter
+  path: ^1.9.1
 
 topics:
   - files
