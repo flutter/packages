@@ -15,11 +15,11 @@ void integrationTestMain() {
 }
 
 void main() {
-  runApp(const MyApp());
+  runApp(MaterialApp(home: FileOpenScreen()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class FileOpenScreen extends StatelessWidget {
+  const FileOpenScreen({super.key});
 
   Future<void> _openFile(BuildContext context) async {
     final XFile? file = await openFile();
@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Open a File')),
+      appBar: AppBar(title: const Text('Open a File'), backgroundColor: Colors.blue,),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -83,7 +83,7 @@ class TextDisplay extends StatelessWidget {
         child: SingleChildScrollView(
           child: FutureBuilder<String>(
             future: file.readAsString(),
-            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            builder: (_, AsyncSnapshot<String> snapshot) {
               if (snapshot.hasData) {
                 return Text(snapshot.data!);
               } else {
