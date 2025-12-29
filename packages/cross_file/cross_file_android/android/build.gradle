@@ -1,5 +1,5 @@
 group = "dev.flutter.packages.cross_file_android"
-version = "1.0-SNAPSHOT"
+version = "1.0"
 
 buildscript {
     ext.kotlin_version = "2.1.0"
@@ -26,16 +26,15 @@ apply plugin: "kotlin-android"
 
 android {
     namespace = "dev.flutter.packages.cross_file_android"
-
-    compileSdk = 36
+    compileSdk = flutter.compileSdkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11
+        jvmTarget = JavaVersion.VERSION_17.toString()
     }
 
     sourceSets {
