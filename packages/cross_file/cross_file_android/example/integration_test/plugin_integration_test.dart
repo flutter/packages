@@ -1,24 +1,23 @@
-// This is a basic Flutter integration test.
-//
-// Since integration tests run in a full Flutter application, they can interact
-// with the host side of a plugin implementation, unlike Dart unit tests.
-//
-// For more information about Flutter integration tests, please see
-// https://flutter.dev/to/integration-testing
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
 
+import 'package:cross_file_android_example/main.dart' as app;
+import 'package:flutter_driver/driver_extension.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
-import 'package:cross_file_android/cross_file_android.dart';
+/// Entry point for integration tests that require espresso.
+@pragma('vm:entry-point')
+void integrationTestMain() {
+  enableFlutterDriverExtension();
+  app.main();
+}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('getPlatformVersion test', (WidgetTester tester) async {
-    final CrossFileAndroid plugin = CrossFileAndroid();
-    final String? version = await plugin.getPlatformVersion();
-    // The version string depends on the host platform running the test, so
-    // just assert that some non-empty string is returned.
-    expect(version?.isNotEmpty, true);
-  });
+  // Since this test is lacking integration tests, this test ensures the example
+  // app can be launched on an emulator/device.
+  testWidgets('Launch Test', (WidgetTester tester) async {});
 }
