@@ -20,7 +20,7 @@ final class AvailableCamerasTest: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: deviceDiscoverer,
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
