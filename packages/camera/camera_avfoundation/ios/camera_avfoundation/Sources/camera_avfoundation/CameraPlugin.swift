@@ -15,7 +15,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   private let messenger: FlutterBinaryMessenger
   private let globalEventAPI: FCPCameraGlobalEventApi
   private let deviceDiscoverer: CameraDeviceDiscoverer
-  private let permissionManager: FLTCameraPermissionManager
+  private let permissionManager: CameraPermissionManager
   private let captureDeviceFactory: VideoCaptureDeviceFactory
   private let captureSessionFactory: CaptureSessionFactory
   private let captureDeviceInputFactory: CaptureDeviceInputFactory
@@ -32,8 +32,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       messenger: registrar.messenger(),
       globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
       deviceDiscoverer: DefaultCameraDeviceDiscoverer(),
-      permissionManager: FLTCameraPermissionManager(
-        permissionService: FLTDefaultPermissionService()),
+      permissionManager: CameraPermissionManager(
+        permissionService: DefaultPermissionService()),
       deviceFactory: { name in
         // TODO(RobertOdrowaz) Implement better error handling and remove non-null assertion
         AVCaptureDevice(uniqueID: name)!
@@ -51,7 +51,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     messenger: FlutterBinaryMessenger,
     globalAPI: FCPCameraGlobalEventApi,
     deviceDiscoverer: CameraDeviceDiscoverer,
-    permissionManager: FLTCameraPermissionManager,
+    permissionManager: CameraPermissionManager,
     deviceFactory: @escaping VideoCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
     captureDeviceInputFactory: CaptureDeviceInputFactory,
