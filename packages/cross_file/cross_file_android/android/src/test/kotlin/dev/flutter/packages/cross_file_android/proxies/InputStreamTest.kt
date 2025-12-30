@@ -6,17 +6,15 @@ package dev.flutter.packages.cross_file_android.proxies
 
 import dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse
 import dev.flutter.packages.cross_file_android.TestProxyApiRegistrar
-import org.mockito.ArgumentCaptor
-import org.mockito.kotlin.any
-import org.mockito.kotlin.capture
-import org.mockito.kotlin.eq
+import java.io.ByteArrayInputStream
 import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import org.mockito.ArgumentCaptor
+import org.mockito.kotlin.capture
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.io.ByteArrayInputStream
 
 class InputStreamTest {
   @Test
@@ -30,7 +28,9 @@ class InputStreamTest {
     val value = 3
     whenever(instance.read(bytesCaptor.capture(), eq(off), eq(len))).thenReturn(value)
 
-    assertEquals(api.readBytes(instance, len.toLong(), off.toLong()), InputStreamReadBytesResponse(value, bytesCaptor.value))
+    assertEquals(
+        api.readBytes(instance, len.toLong(), off.toLong()),
+        InputStreamReadBytesResponse(value, bytesCaptor.value))
     assertEquals(bytesCaptor.value.size, len)
   }
 

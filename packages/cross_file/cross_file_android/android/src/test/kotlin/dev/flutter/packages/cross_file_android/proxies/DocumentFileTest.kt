@@ -7,13 +7,9 @@ package dev.flutter.packages.cross_file_android.proxies
 import android.net.Uri
 import androidx.documentfile.provider.DocumentFile
 import dev.flutter.packages.cross_file_android.TestProxyApiRegistrar
-import org.mockito.Mockito
-import org.mockito.Mockito.mockStatic
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import org.mockito.Mockito.mockStatic
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
@@ -26,8 +22,9 @@ class DocumentFileTest {
     mockStatic(DocumentFile::class.java).use { mockedStatic ->
       val instance = mock<DocumentFile>()
       val singleUri = Uri("myString")
-      mockedStatic.`when`<DocumentFile> { DocumentFile.fromSingleUri(registrar.context, singleUri) }
-        .thenReturn(instance)
+      mockedStatic
+          .`when`<DocumentFile> { DocumentFile.fromSingleUri(registrar.context, singleUri) }
+          .thenReturn(instance)
 
       assertEquals(instance, api.fromSingleUri(singleUri.toString()))
     }
@@ -41,8 +38,9 @@ class DocumentFileTest {
     mockStatic(DocumentFile::class.java).use { mockedStatic ->
       val instance = mock<DocumentFile>()
       val treeUri = Uri("myString")
-      mockedStatic.`when`<DocumentFile> { DocumentFile.fromTreeUri(registrar.context, treeUri) }
-        .thenReturn(instance)
+      mockedStatic
+          .`when`<DocumentFile> { DocumentFile.fromTreeUri(registrar.context, treeUri) }
+          .thenReturn(instance)
 
       assertEquals(instance, api.fromTreeUri(treeUri.toString()))
     }

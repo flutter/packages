@@ -5,10 +5,6 @@
 package dev.flutter.packages.cross_file_android
 
 import android.content.Context
-import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import androidx.annotation.ChecksSdkIntAtLeast
 import dev.flutter.packages.cross_file_android.proxies.AndroidLibraryPigeonProxyApiRegistrar
 import dev.flutter.packages.cross_file_android.proxies.ContentResolverProxyApi
 import dev.flutter.packages.cross_file_android.proxies.DocumentFileProxyApi
@@ -25,7 +21,7 @@ import io.flutter.plugin.common.BinaryMessenger
  * implementation and any additional resources needed by an implementation.
  */
 open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Context) :
-   AndroidLibraryPigeonProxyApiRegistrar(binaryMessenger) {
+    AndroidLibraryPigeonProxyApiRegistrar(binaryMessenger) {
 
   override fun getPigeonApiDocumentFile(): PigeonApiDocumentFile {
     return DocumentFileProxyApi(this)
