@@ -4,8 +4,8 @@
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-import 'android_cross_shared_storage_file.dart';
 import 'android_library.g.dart';
+import 'android_shared_storage_cross_file.dart';
 
 /// Implementation of [PlatformSharedStorageXDirectory] for Android.
 base class AndroidSharedStorageXDirectory
