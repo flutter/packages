@@ -2,14 +2,14 @@ group = "dev.flutter.packages.cross_file_android"
 version = "1.0"
 
 buildscript {
-    ext.kotlin_version = "2.1.0"
+    ext.kotlin_version = "2.2.21"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.9.1")
+        classpath("com.android.tools.build:gradle:8.13.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
     }
 }
@@ -47,7 +47,9 @@ android {
     }
 
     dependencies {
-        implementation "androidx.documentfile:documentfile:1.1.0"
+        implementation("androidx.documentfile:documentfile:1.1.0")
+        implementation("androidx.annotation:annotation:1.9.1")
+        implementation("androidx.core:core-ktx:1.13.0")
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")
@@ -62,6 +64,8 @@ android {
     }
 
     testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.returnDefaultValues = true
         unitTests.all {
             useJUnitPlatform()
             testLogging {

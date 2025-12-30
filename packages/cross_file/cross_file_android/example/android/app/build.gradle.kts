@@ -1,9 +1,23 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+
+if (localPropertiesFile.exists()) {
+  localPropertiesFile.reader(Charsets.UTF_8).use { reader ->
+    localProperties.load(reader)
+  }
+}
+
+val flutterVersionCode: String = localProperties.getProperty("flutter.versionCode") ?: "1"
+val flutterVersionName: String = localProperties.getProperty("flutter.versionName") ?: "1.0"
 
 android {
     namespace = "dev.flutter.packages.cross_file_android_example"
@@ -38,6 +52,13 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+}
+
+dependencies {
+  testImplementation("junit:junit:4.13.2")
+  androidTestImplementation("androidx.test:runner:1.2.0")
+  androidTestImplementation("androidx.test.espresso:espresso-core:3.2.0")
+  api("androidx.test:core:1.4.0")
 }
 
 flutter {
