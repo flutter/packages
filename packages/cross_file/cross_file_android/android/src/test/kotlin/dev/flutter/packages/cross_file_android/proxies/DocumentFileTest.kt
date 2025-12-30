@@ -25,12 +25,26 @@ class DocumentFileTest {
 
     mockStatic(DocumentFile::class.java).use { mockedStatic ->
       val instance = mock<DocumentFile>()
-      val singleUri = "myString"
-      mockedStatic.`when`<DocumentFile> { DocumentFile.fromSingleUri(eq(registrar.context), any()) }
+      val singleUri = Uri("myString")
+      mockedStatic.`when`<DocumentFile> { DocumentFile.fromSingleUri(registrar.context, singleUri) }
         .thenReturn(instance)
 
-      assertEquals(instance, api.fromSingleUri(singleUri))
-      assertEquals( singleUri, Uri.lastValue)
+      assertEquals(instance, api.fromSingleUri(singleUri.toString()))
+    }
+  }
+
+  @Test
+  fun fromTreeUri() {
+    val registrar = TestProxyApiRegistrar()
+    val api = registrar.getPigeonApiDocumentFile()
+
+    mockStatic(DocumentFile::class.java).use { mockedStatic ->
+      val instance = mock<DocumentFile>()
+      val treeUri = Uri("myString")
+      mockedStatic.`when`<DocumentFile> { DocumentFile.fromTreeUri(registrar.context, treeUri) }
+        .thenReturn(instance)
+
+      assertEquals(instance, api.fromTreeUri(treeUri.toString()))
     }
   }
 
@@ -87,5 +101,49 @@ class DocumentFileTest {
     whenever(instance.length()).thenReturn(value)
 
     assertEquals(value, api.length(instance))
+  }
+
+  @Test
+  fun isFile() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val value = true
+    whenever(instance.isFile).thenReturn(value)
+
+    assertEquals(value, api.isFile(instance))
+  }
+
+  @Test
+  fun isDirectory() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val value = true
+    whenever(instance.isDirectory).thenReturn(value)
+
+    assertEquals(value, api.isDirectory(instance))
+  }
+
+  @Test
+  fun listFiles() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val value = listOf(mock<DocumentFile>())
+    whenever(instance.listFiles()).thenReturn(value.toTypedArray())
+
+    assertEquals(value, api.listFiles(instance))
+  }
+
+  @Test
+  fun getUri() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val value = Uri("myString")
+    whenever(instance.uri).thenReturn(value)
+
+    assertEquals(value.toString(), api.getUri(instance))
   }
 }

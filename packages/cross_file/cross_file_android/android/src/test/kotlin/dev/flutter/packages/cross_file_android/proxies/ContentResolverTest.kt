@@ -18,15 +18,25 @@ import org.mockito.kotlin.whenever
 
 class ContentResolverTest {
   @Test
+  fun instance() {
+    val registrar = TestProxyApiRegistrar()
+    val api = registrar.getPigeonApiContentResolver()
+
+    val instance = mock<ContentResolver>()
+    whenever(registrar.context.contentResolver).thenReturn(instance)
+
+    assertEquals(instance, api.instance())
+  }
+
+  @Test
   fun openInputStream() {
     val api = TestProxyApiRegistrar().getPigeonApiContentResolver()
 
     val instance = mock<ContentResolver>()
-    val uri = "myString"
+    val uri = Uri("myString")
     val value = mock<InputStream>()
-    whenever(instance.openInputStream(any())).thenReturn(value)
+    whenever(instance.openInputStream(uri)).thenReturn(value)
 
-    assertEquals(value, api.openInputStream(instance, uri))
-    assertEquals(uri, Uri.lastValue)
+    assertEquals(value, api.openInputStream(instance, uri.toString()))
   }
 }

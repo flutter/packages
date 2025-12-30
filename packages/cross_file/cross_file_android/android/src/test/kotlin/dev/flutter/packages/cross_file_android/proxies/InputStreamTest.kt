@@ -45,4 +45,16 @@ class InputStreamTest {
     assertEquals(value.size, result.size)
     assertEquals(value.first(), result.first())
   }
+
+  @Test
+  fun skip() {
+    val api = TestProxyApiRegistrar().getPigeonApiInputStream()
+
+    val instance = mock<InputStream>()
+    val n = 5L
+    val value = 6L
+    whenever(instance.skip(n)).thenReturn(value)
+
+    assertEquals(value, api.skip(instance, n))
+  }
 }
