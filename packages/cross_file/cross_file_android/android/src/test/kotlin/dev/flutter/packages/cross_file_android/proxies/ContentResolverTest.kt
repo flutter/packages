@@ -5,9 +5,11 @@
 package dev.flutter.packages.cross_file_android.proxies
 
 import android.content.ContentResolver
+import android.net.Uri
 import android.os.Looper
 import androidx.core.net.toUri
 import dev.flutter.packages.cross_file_android.TestProxyApiRegistrar
+import org.mockito.kotlin.any
 import java.io.InputStream
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,14 +19,14 @@ import org.mockito.kotlin.whenever
 class ContentResolverTest {
   @Test
   fun openInputStream() {
-    val a = Looper.getMainLooper()
-    val api = TestProxyApiRegistrar()//.getPigeonApiContentResolver()
+    val api = TestProxyApiRegistrar().getPigeonApiContentResolver()
 
     val instance = mock<ContentResolver>()
     val uri = "myString"
     val value = mock<InputStream>()
-    whenever(instance.openInputStream(uri.toUri())).thenReturn(value)
+    whenever(instance.openInputStream(any())).thenReturn(value)
 
-  assertEquals(value, api.openInputStream(instance, uri))
+    assertEquals(value, api.openInputStream(instance, uri))
+    assertEquals(uri, Uri.lastValue)
   }
 }
