@@ -8,18 +8,18 @@ import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-import 'android_library.g.dart';
+import 'android_library.g.dart' as android;
 
 /// Implementation of [PlatformSharedStorageXFile] for Android.
 base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
   /// Constructs an [AndroidSharedStorageXFile].
   AndroidSharedStorageXFile(super.params) : super.implementation();
 
-  late final DocumentFile _documentFile = DocumentFile.fromSingleUri(
-    singleUri: params.uri,
-  );
+  late final android.DocumentFile _documentFile =
+      android.DocumentFile.fromSingleUri(singleUri: params.uri);
 
-  late final ContentResolver _contentResolver = ContentResolver.instance;
+  late final android.ContentResolver _contentResolver =
+      android.ContentResolver.instance;
 
   @override
   Future<DateTime> lastModified() async {
@@ -36,17 +36,14 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
     int bytesToRead = (end ?? await length()) - (start ?? 0);
     assert(bytesToRead >= 0);
 
-    final InputStream? inputStream = await _contentResolver.openInputStream(
-      params.uri,
-    );
+    final android.InputStream? inputStream = await _contentResolver
+        .openInputStream(params.uri);
 
     const int maxByteArrayLen = 4 * 1024;
 
-    if (inputStream case final InputStream inputStream) {
-      InputStreamReadBytesResponse response = await inputStream.readBytes(
-        min(bytesToRead, maxByteArrayLen),
-        start ?? 0,
-      );
+    if (inputStream case final android.InputStream inputStream) {
+      android.InputStreamReadBytesResponse response = await inputStream
+          .readBytes(min(bytesToRead, maxByteArrayLen), start ?? 0);
       bytesToRead -= response.returnValue;
 
       while (response.returnValue != -1 && bytesToRead > 0) {
@@ -64,10 +61,9 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
 
   @override
   Future<Uint8List> readAsBytes() async {
-    final InputStream? inputStream = await _contentResolver.openInputStream(
-      params.uri,
-    );
-    if (inputStream case final InputStream inputStream) {
+    final android.InputStream? inputStream = await _contentResolver
+        .openInputStream(params.uri);
+    if (inputStream case final android.InputStream inputStream) {
       return inputStream.readAllBytes();
     }
 
