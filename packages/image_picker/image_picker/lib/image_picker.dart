@@ -270,8 +270,13 @@ class ImagePicker {
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured video. If no [maxDuration] is specified,
-  /// the maximum duration will be infinite.
+  /// The [maxDuration] argument specifies the maximum duration of the recorded video.
+  ///
+  /// This parameter only applies when recording a video using the camera.
+  /// It does not restrict the duration of videos selected from the gallery,
+  /// since the underlying platform gallery APIs do not support filtering
+  /// by video duration.
+
   ///
   /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
