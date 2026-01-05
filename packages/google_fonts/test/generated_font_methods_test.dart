@@ -60,15 +60,15 @@ void main() {
     'Text style with no direct match picks closest font weight match',
     (WidgetTester tester) async {
       const inputTextStyle = TextStyle(
-        fontWeight: FontWeight(549),
+        fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       );
 
-      final TextStyle outputTextStyle = GoogleFonts.roboto(
+      final TextStyle outputTextStyle = GoogleFonts.robotoFlex(
         textStyle: inputTextStyle,
       );
 
-      expect(outputTextStyle.fontFamily, equals('Roboto_500'));
+      expect(outputTextStyle.fontFamily, equals('RobotoFlex_regular')); // w400
     },
   );
 
@@ -76,15 +76,15 @@ void main() {
     WidgetTester tester,
   ) async {
     const inputTextStyle = TextStyle(
-      fontWeight: FontWeight(549),
+      fontWeight: FontWeight.w500,
       fontStyle: FontStyle.italic,
     );
 
-    final TextStyle outputTextStyle = GoogleFonts.roboto(
+    final TextStyle outputTextStyle = GoogleFonts.robotoFlex(
       textStyle: inputTextStyle,
     );
 
-    expect(outputTextStyle.fontFamily, equals('Roboto_500italic'));
+    expect(outputTextStyle.fontFamily, equals('RobotoFlex_regular')); // w400
   });
 
   testWidgets('Text style prefers matching italics to closer weight', (
