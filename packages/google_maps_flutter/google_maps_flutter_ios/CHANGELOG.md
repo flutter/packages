@@ -1,6 +1,6 @@
 ## 2.16.0
 
-* Adds compatibility with SDK version 10.x for apps targetting iOS 16+.
+* Adds compatibility with SDK version 10.x for apps targeting iOS 16+.
 
 ## 2.15.8
 
