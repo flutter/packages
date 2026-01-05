@@ -409,9 +409,9 @@ class MapUiBodyState extends State<MapUiBody> {
   }
 
   void onMapLoaded() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Map is loaded')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Map is loaded')));
   }
 
   void onMapCreated(GoogleMapController controller) {

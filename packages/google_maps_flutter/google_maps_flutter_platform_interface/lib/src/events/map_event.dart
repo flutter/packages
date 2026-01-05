@@ -190,4 +190,3 @@ class MapLoadedEvent extends MapEvent<void> {
   /// Build a MapLoaded Event triggered from the map represented by `mapId`.
   MapLoadedEvent(int mapId) : super(mapId, null);
 }
-
