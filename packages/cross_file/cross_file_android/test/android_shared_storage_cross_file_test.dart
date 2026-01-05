@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cross_file_android/src/android_library.g.dart' as android;
@@ -200,5 +201,103 @@ void main() {
 
       expect(combineLists(await file.openRead(3, 6).toList()), <int>[1, 1, 1]);
     });
+  });
+
+  test('readAsBytes', () async {
+    final testBytes = Uint8List.fromList([0, 1, 2]);
+
+    final mockDocumentFile = MockDocumentFile();
+    when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri =
+        ({required String singleUri}) {
+          expect(singleUri, uri);
+          return mockDocumentFile;
+        };
+
+    final mockInputStream = MockInputStream();
+    when(mockInputStream.readAllBytes()).thenAnswer((_) async => testBytes);
+
+    final mockContentResolver = MockContentResolver();
+    when(
+      mockContentResolver.openInputStream(uri),
+    ).thenAnswer((_) async => mockInputStream);
+    android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+    final file = AndroidSharedStorageXFile(
+      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    );
+
+    expect(await file.readAsBytes(), testBytes);
+  });
+
+  test('readAsString', () async {
+    const testString = 'Hello, World!';
+    final Uint8List testBytes = utf8.encode(testString);
+
+    final mockDocumentFile = MockDocumentFile();
+    when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri =
+        ({required String singleUri}) {
+          expect(singleUri, uri);
+          return mockDocumentFile;
+        };
+
+    final mockInputStream = MockInputStream();
+    when(mockInputStream.readAllBytes()).thenAnswer((_) async => testBytes);
+
+    final mockContentResolver = MockContentResolver();
+    when(
+      mockContentResolver.openInputStream(uri),
+    ).thenAnswer((_) async => mockInputStream);
+    android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+    final file = AndroidSharedStorageXFile(
+      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    );
+
+    expect(await file.readAsString(), testString);
+  });
+
+  test('canRead', () async {
+    final mockDocumentFile = MockDocumentFile();
+    const canRead = false;
+    when(mockDocumentFile.canRead()).thenAnswer((_) async => canRead);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri =
+        ({required String singleUri}) {
+          expect(singleUri, uri);
+          return mockDocumentFile;
+        };
+
+    final file = AndroidSharedStorageXFile(
+      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    );
+
+    expect(await file.canRead(), canRead);
+  });
+
+  test('exists', () async {
+    final mockDocumentFile = MockDocumentFile();
+    const exists = true;
+    when(mockDocumentFile.exists()).thenAnswer((_) async => exists);
+    when(mockDocumentFile.isFile()).thenAnswer((_) async => true);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri =
+        ({required String singleUri}) {
+          expect(singleUri, uri);
+          return mockDocumentFile;
+        };
+
+    final file = AndroidSharedStorageXFile(
+      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    );
+
+    expect(await file.exists(), exists);
   });
 }
