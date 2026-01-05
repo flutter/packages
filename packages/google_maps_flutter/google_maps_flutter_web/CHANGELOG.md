@@ -1,6 +1,7 @@
-## NEXT
+## 0.5.14+4
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+* Adds support for `onMapLoaded` callback.
 
 ## 0.5.14+3
 

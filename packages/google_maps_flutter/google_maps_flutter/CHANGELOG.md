@@ -1,3 +1,7 @@
+## 2.14.2
+
+* Adds `onMapLoaded` callback.
+
 ## 2.14.1
 
 * Replaces internal use of deprecated methods.
