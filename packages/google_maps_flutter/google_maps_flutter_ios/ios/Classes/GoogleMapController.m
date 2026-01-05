@@ -427,6 +427,11 @@
                                         }];
 }
 
+- (void)mapViewDidFinishTileRendering:(GMSMapView *)mapView {
+  [self.dartCallbackHandler didFinishRenderingMap:^(FlutterError *_Nullable _){
+  }];
+}
+
 - (void)interpretMapConfiguration:(FGMPlatformMapConfiguration *)config {
   FGMPlatformCameraTargetBounds *cameraTargetBounds = config.cameraTargetBounds;
   if (cameraTargetBounds) {

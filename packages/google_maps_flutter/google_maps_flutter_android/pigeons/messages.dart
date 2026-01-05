@@ -783,6 +783,9 @@ abstract class MapsCallbackApi {
   /// Called when a ground overlay is tapped.
   void onGroundOverlayTap(String groundOverlayId);
 
+  /// Called when the map is fully loaded.
+  void onMapLoaded();
+
   /// Called to get data for a map tile.
   @async
   PlatformTile getTileOverlayTile(

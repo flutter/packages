@@ -62,6 +62,7 @@ class GoogleMapController
         ClusterManager.OnClusterItemClickListener<MarkerBuilder>,
         ClusterManagersController.OnClusterItemRendered<MarkerBuilder>,
         DefaultLifecycleObserver,
+        GoogleMap.OnMapLoadedCallback,
         GoogleMapListener,
         GoogleMapOptionsSink,
         MapsApi,
@@ -239,6 +240,7 @@ class GoogleMapController
       updateMapStyle(initialMapStyle);
       initialMapStyle = null;
     }
+    googleMap.setOnMapLoadedCallback(this);
   }
 
   // Returns the first TextureView found in the view hierarchy.
@@ -341,6 +343,11 @@ class GoogleMapController
   public void onCameraIdle() {
     clusterManagersController.onCameraIdle();
     flutterApi.onCameraIdle(new NoOpVoidResult());
+  }
+
+  @Override
+  public void onMapLoaded() {
+    flutterApi.onMapLoaded(new NoOpVoidResult());
   }
 
   @Override
