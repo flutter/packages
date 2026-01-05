@@ -13,23 +13,6 @@ import 'package:mockito/mockito.dart';
 
 import 'android_shared_storage_cross_file_test.mocks.dart';
 
-// Test byte array that decodes to 'Hello, World!' in UTF-8.
-final testBytes = Uint8List.fromList([
-  72,
-  101,
-  108,
-  108,
-  111,
-  44,
-  32,
-  87,
-  111,
-  114,
-  108,
-  100,
-  33,
-]);
-
 @GenerateMocks(<Type>[
   android.ContentResolver,
   android.DocumentFile,
@@ -124,7 +107,9 @@ void main() {
       );
     }
 
-    test('openRead', () async {
+    test('openRead finishes successfully', () async {
+      final testBytes = Uint8List.fromList([72, 101, 108]);
+
       final mockDocumentFile = MockDocumentFile();
       when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
 
@@ -150,5 +135,41 @@ void main() {
 
       expect(combineLists(await file.openRead().toList()), testBytes);
     });
+
+    test(
+      'openRead finishes successfully with file larger than max array len',
+      () async {
+        final testBytes = Uint8List.fromList(
+          List.filled(AndroidSharedStorageXFile.maxByteArrayLen + 1, 0),
+        );
+
+        final mockDocumentFile = MockDocumentFile();
+        when(
+          mockDocumentFile.length(),
+        ).thenAnswer((_) async => testBytes.length);
+
+        const uri = 'uri';
+        android.PigeonOverrides.documentFile_fromSingleUri =
+            ({required String singleUri}) {
+              expect(singleUri, uri);
+              return mockDocumentFile;
+            };
+
+        final mockInputStream = MockInputStream();
+        setUpInputStreamWithBytes(mockInputStream, testBytes);
+
+        final mockContentResolver = MockContentResolver();
+        when(
+          mockContentResolver.openInputStream(uri),
+        ).thenAnswer((_) async => mockInputStream);
+        android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+        final file = AndroidSharedStorageXFile(
+          const PlatformSharedStorageXFileCreationParams(uri: uri),
+        );
+
+        expect(combineLists(await file.openRead().toList()), testBytes);
+      },
+    );
   });
 }

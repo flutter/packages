@@ -21,9 +21,12 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
   late final android.ContentResolver _contentResolver =
       android.ContentResolver.instance;
 
-  /// Maximum number of bytes to read at a time.
+  /// Maximum number of bytes to read at a time from the native Android
+  /// InputStream.
+  ///
+  /// Only visible for testing.
   @visibleForTesting
-  static const int maxByteArrayLen = 4 * 1024;
+  static const int maxByteArrayLen = 5; //4 * 1024;
 
   @override
   Future<DateTime> lastModified() async {
@@ -51,14 +54,17 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
       android.InputStreamReadBytesResponse response = await inputStream
           .readBytes(min(bytesToRead, maxByteArrayLen));
       bytesToRead -= response.returnValue;
+      yield response.bytes;
 
-      do {
-        yield response.bytes;
+      var returnValue = -1;
+      while (returnValue != -1 && bytesToRead > 0) {
         response = await inputStream.readBytes(
           min(bytesToRead, maxByteArrayLen),
         );
+        yield response.bytes;
+        returnValue = response.returnValue;
         bytesToRead -= response.returnValue;
-      } while(response.returnValue != -1 && bytesToRead > 0);
+      }
     } else {
       throw NullInputStreamError(params.uri);
     }
