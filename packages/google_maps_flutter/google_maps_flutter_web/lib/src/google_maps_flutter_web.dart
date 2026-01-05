@@ -42,6 +42,13 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
     // so we don't have to do anything in this method, which is left intentionally
     // blank.
     assert(_mapById[mapId] != null, 'Must call buildWidget before init!');
+    // If the map has already loaded tiles, we need to emit the map loaded event
+    // now that the controller has been initialized.
+    Future<void>.delayed(Duration.zero, () {
+      if (_mapById[mapId] != null) {
+        _map(mapId).checkAndEmitMapLoadedIfNecessary();
+      }
+    });
   }
 
   /// Updates the options of a given `mapId`.
@@ -302,6 +309,11 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   @override
   Stream<ClusterTapEvent> onClusterTap({required int mapId}) {
     return _events(mapId).whereType<ClusterTapEvent>();
+  }
+
+  @override
+  Stream<MapLoadedEvent> onMapLoaded({required int mapId}) {
+    return _events(mapId).whereType<MapLoadedEvent>();
   }
 
   @override

@@ -346,6 +346,7 @@ class MapUiBodyState extends State<MapUiBody> {
       myLocationButtonEnabled: _myLocationButtonEnabled,
       trafficEnabled: _myTrafficEnabled,
       onCameraMove: _updateCameraPosition,
+      onMapLoaded: onMapLoaded,
     );
 
     final columnChildren = <Widget>[
@@ -405,6 +406,12 @@ class MapUiBodyState extends State<MapUiBody> {
     setState(() {
       _position = position;
     });
+  }
+
+  void onMapLoaded() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Map is loaded')),
+    );
   }
 
   void onMapCreated(GoogleMapController controller) {
