@@ -103,7 +103,7 @@ abstract class InputStreamReadBytesResponse {
 abstract class InputStream {
   /// Reads some number of bytes from the input stream and stores them into the
   /// returns them.
-  InputStreamReadBytesResponse readBytes(int len, int off);
+  InputStreamReadBytesResponse readBytes(int len);
 
   /// Reads all remaining bytes from the input stream.
   Uint8List readAllBytes();

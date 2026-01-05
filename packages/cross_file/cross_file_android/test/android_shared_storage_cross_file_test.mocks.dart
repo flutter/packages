@@ -4,6 +4,7 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
+import 'dart:typed_data' as _i5;
 
 import 'package:cross_file_android/src/android_library.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
@@ -30,15 +31,67 @@ class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
-class _FakeDocumentFile_1 extends _i1.SmartFake implements _i2.DocumentFile {
-  _FakeDocumentFile_1(Object parent, Invocation parentInvocation)
+class _FakeContentResolver_1 extends _i1.SmartFake
+    implements _i2.ContentResolver {
+  _FakeContentResolver_1(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
-class _FakeContentResolver_2 extends _i1.SmartFake
-    implements _i2.ContentResolver {
-  _FakeContentResolver_2(Object parent, Invocation parentInvocation)
+class _FakeDocumentFile_2 extends _i1.SmartFake implements _i2.DocumentFile {
+  _FakeDocumentFile_2(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
+}
+
+class _FakeInputStreamReadBytesResponse_3 extends _i1.SmartFake
+    implements _i2.InputStreamReadBytesResponse {
+  _FakeInputStreamReadBytesResponse_3(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(parent, parentInvocation);
+}
+
+class _FakeInputStream_4 extends _i1.SmartFake implements _i2.InputStream {
+  _FakeInputStream_4(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+/// A class which mocks [ContentResolver].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockContentResolver extends _i1.Mock implements _i2.ContentResolver {
+  MockContentResolver() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_0(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
+
+  @override
+  _i3.Future<_i2.InputStream?> openInputStream(String? uri) =>
+      (super.noSuchMethod(
+            Invocation.method(#openInputStream, [uri]),
+            returnValue: _i3.Future<_i2.InputStream?>.value(),
+          )
+          as _i3.Future<_i2.InputStream?>);
+
+  @override
+  _i2.ContentResolver pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeContentResolver_1(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.ContentResolver);
 }
 
 /// A class which mocks [DocumentFile].
@@ -140,7 +193,7 @@ class MockDocumentFile extends _i1.Mock implements _i2.DocumentFile {
   _i2.DocumentFile pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeDocumentFile_1(
+            returnValue: _FakeDocumentFile_2(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
@@ -148,11 +201,11 @@ class MockDocumentFile extends _i1.Mock implements _i2.DocumentFile {
           as _i2.DocumentFile);
 }
 
-/// A class which mocks [ContentResolver].
+/// A class which mocks [InputStream].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockContentResolver extends _i1.Mock implements _i2.ContentResolver {
-  MockContentResolver() {
+class MockInputStream extends _i1.Mock implements _i2.InputStream {
+  MockInputStream() {
     _i1.throwOnMissingStub(this);
   }
 
@@ -168,21 +221,42 @@ class MockContentResolver extends _i1.Mock implements _i2.ContentResolver {
           as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<_i2.InputStream?> openInputStream(String? uri) =>
+  _i3.Future<_i2.InputStreamReadBytesResponse> readBytes(int? len) =>
       (super.noSuchMethod(
-            Invocation.method(#openInputStream, [uri]),
-            returnValue: _i3.Future<_i2.InputStream?>.value(),
+            Invocation.method(#readBytes, [len]),
+            returnValue: _i3.Future<_i2.InputStreamReadBytesResponse>.value(
+              _FakeInputStreamReadBytesResponse_3(
+                this,
+                Invocation.method(#readBytes, [len]),
+              ),
+            ),
           )
-          as _i3.Future<_i2.InputStream?>);
+          as _i3.Future<_i2.InputStreamReadBytesResponse>);
 
   @override
-  _i2.ContentResolver pigeon_copy() =>
+  _i3.Future<_i5.Uint8List> readAllBytes() =>
+      (super.noSuchMethod(
+            Invocation.method(#readAllBytes, []),
+            returnValue: _i3.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
+          )
+          as _i3.Future<_i5.Uint8List>);
+
+  @override
+  _i3.Future<int> skip(int? n) =>
+      (super.noSuchMethod(
+            Invocation.method(#skip, [n]),
+            returnValue: _i3.Future<int>.value(0),
+          )
+          as _i3.Future<int>);
+
+  @override
+  _i2.InputStream pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeContentResolver_2(
+            returnValue: _FakeInputStream_4(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
           )
-          as _i2.ContentResolver);
+          as _i2.InputStream);
 }

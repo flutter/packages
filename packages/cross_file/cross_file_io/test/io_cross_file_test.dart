@@ -51,6 +51,8 @@ void main() {
         PlatformXFileCreationParams(uri: testFile.path),
       );
 
+      print(await file.readAsBytes());
+
       expect(await file.readAsBytes(), await testFile.readAsBytes());
     });
 

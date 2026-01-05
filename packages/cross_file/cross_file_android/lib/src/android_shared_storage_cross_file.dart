@@ -4,9 +4,9 @@
 
 import 'dart:convert';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
+import 'package:flutter/foundation.dart';
 
 import 'android_library.g.dart' as android;
 
@@ -20,6 +20,10 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
 
   late final android.ContentResolver _contentResolver =
       android.ContentResolver.instance;
+
+  /// Maximum number of bytes to read at a time.
+  @visibleForTesting
+  static const int maxByteArrayLen = 4 * 1024;
 
   @override
   Future<DateTime> lastModified() async {
@@ -39,23 +43,24 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
     final android.InputStream? inputStream = await _contentResolver
         .openInputStream(params.uri);
 
-    const int maxByteArrayLen = 4 * 1024;
-
     if (inputStream case final android.InputStream inputStream) {
+      if (start != null && start > 0) {
+        await inputStream.skip(start);
+      }
+
       android.InputStreamReadBytesResponse response = await inputStream
-          .readBytes(min(bytesToRead, maxByteArrayLen), start ?? 0);
+          .readBytes(min(bytesToRead, maxByteArrayLen));
       bytesToRead -= response.returnValue;
 
-      while (response.returnValue != -1 && bytesToRead > 0) {
+      do {
         yield response.bytes;
         response = await inputStream.readBytes(
           min(bytesToRead, maxByteArrayLen),
-          0,
         );
         bytesToRead -= response.returnValue;
-      }
+      } while(response.returnValue != -1 && bytesToRead > 0);
     } else {
-      throw _createNullInputStreamError();
+      throw NullInputStreamError(params.uri);
     }
   }
 
@@ -67,7 +72,7 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
       return inputStream.readAllBytes();
     }
 
-    throw _createNullInputStreamError();
+    throw NullInputStreamError(params.uri);
   }
 
   @override
@@ -82,11 +87,14 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
   Future<bool> exists() async {
     return await _documentFile.exists() && await _documentFile.isFile();
   }
+}
 
-  UnsupportedError _createNullInputStreamError() {
-    return UnsupportedError(
-      'Failed to get native InputStream from file with path: ${params.uri}. '
-      'App may not have permissions to access file.',
-    );
-  }
+/// Error thrown when the native [android.InputStream] is not accessible.
+class NullInputStreamError extends UnsupportedError {
+  /// Constructs a [NullInputStreamError].
+  NullInputStreamError(String uri)
+    : super(
+        'Failed to get native InputStream from file with path: $uri. '
+        'App may not have permissions to access file.',
+      );
 }
