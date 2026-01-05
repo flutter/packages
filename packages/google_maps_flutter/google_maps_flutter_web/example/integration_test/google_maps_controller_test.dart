@@ -322,7 +322,8 @@ void main() {
           )
           ..init();
 
-        final Stream<MapEvent<Object?>> capturedEvents = stream.stream.take(2);
+        final Stream<MapEvent<Object?>> capturedEvents =
+            stream.stream.where((MapEvent<Object?> event) => event is! WebMapReadyEvent).take(2);
 
         // tilesloaded events
         gmaps.event.trigger(map, 'tilesloaded');
