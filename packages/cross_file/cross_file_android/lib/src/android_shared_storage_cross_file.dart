@@ -26,7 +26,7 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
   ///
   /// Only visible for testing.
   @visibleForTesting
-  static const int maxByteArrayLen = 5; //4 * 1024;
+  static const int maxByteArrayLen = 4 * 1024;
 
   @override
   Future<DateTime> lastModified() async {
@@ -51,20 +51,14 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
         await inputStream.skip(start);
       }
 
-      android.InputStreamReadBytesResponse response = await inputStream
-          .readBytes(min(bytesToRead, maxByteArrayLen));
-      bytesToRead -= response.returnValue;
-      yield response.bytes;
-
-      var returnValue = -1;
-      while (returnValue != -1 && bytesToRead > 0) {
+      late android.InputStreamReadBytesResponse response;
+      do {
         response = await inputStream.readBytes(
           min(bytesToRead, maxByteArrayLen),
         );
         yield response.bytes;
-        returnValue = response.returnValue;
         bytesToRead -= response.returnValue;
-      }
+      } while (response.returnValue > -1 && bytesToRead > 0);
     } else {
       throw NullInputStreamError(params.uri);
     }

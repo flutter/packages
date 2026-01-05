@@ -108,7 +108,7 @@ void main() {
     }
 
     test('openRead finishes successfully', () async {
-      final testBytes = Uint8List.fromList([72, 101, 108]);
+      final testBytes = Uint8List.fromList([0, 1, 2]);
 
       final mockDocumentFile = MockDocumentFile();
       when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
@@ -171,5 +171,34 @@ void main() {
         expect(combineLists(await file.openRead().toList()), testBytes);
       },
     );
+
+    test('openRead finishes successfully with subset of array', () async {
+      final testBytes = Uint8List.fromList(<int>[0, 0, 0, 1, 1, 1, 0, 0, 0]);
+
+      final mockDocumentFile = MockDocumentFile();
+      when(mockDocumentFile.length()).thenAnswer((_) async => testBytes.length);
+
+      const uri = 'uri';
+      android.PigeonOverrides.documentFile_fromSingleUri =
+          ({required String singleUri}) {
+            expect(singleUri, uri);
+            return mockDocumentFile;
+          };
+
+      final mockInputStream = MockInputStream();
+      setUpInputStreamWithBytes(mockInputStream, testBytes);
+
+      final mockContentResolver = MockContentResolver();
+      when(
+        mockContentResolver.openInputStream(uri),
+      ).thenAnswer((_) async => mockInputStream);
+      android.PigeonOverrides.contentResolver_instance = mockContentResolver;
+
+      final file = AndroidSharedStorageXFile(
+        const PlatformSharedStorageXFileCreationParams(uri: uri),
+      );
+
+      expect(combineLists(await file.openRead(3, 6).toList()), <int>[1, 1, 1]);
+    });
   });
 }
