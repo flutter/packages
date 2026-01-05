@@ -60,7 +60,7 @@ void main() {
     'Text style with no direct match picks closest font weight match',
     (WidgetTester tester) async {
       const inputTextStyle = TextStyle(
-        fontWeight: FontWeight.w600,
+        fontWeight: FontWeight(549),
         fontStyle: FontStyle.normal,
       );
 
@@ -76,7 +76,7 @@ void main() {
     WidgetTester tester,
   ) async {
     const inputTextStyle = TextStyle(
-      fontWeight: FontWeight.w600,
+      fontWeight: FontWeight(549),
       fontStyle: FontStyle.italic,
     );
 
