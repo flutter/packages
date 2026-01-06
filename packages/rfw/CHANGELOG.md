@@ -1,6 +1,6 @@
 ## 1.1.1
 
-* Removes scripting language integration section in README.md.
+* Removes obsolete scripting language integration section in README.md.
 
 ## 1.1.0
 
