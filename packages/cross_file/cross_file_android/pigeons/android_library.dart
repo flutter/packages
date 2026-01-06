@@ -60,6 +60,9 @@ abstract class DocumentFile {
 
   /// A Uri for the underlying document represented by this file.
   String getUri();
+
+  /// Returns the display name of this document.
+  String? getName();
 }
 
 /// This class provides applications access to the content model.

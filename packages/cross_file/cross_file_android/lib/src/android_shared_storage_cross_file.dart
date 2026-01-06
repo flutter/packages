@@ -11,7 +11,8 @@ import 'package:flutter/foundation.dart';
 import 'android_library.g.dart' as android;
 
 /// Implementation of [PlatformSharedStorageXFile] for Android.
-base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
+base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile
+    with AndroidSharedStorageXFileExtension {
   /// Constructs an [AndroidSharedStorageXFile].
   AndroidSharedStorageXFile(super.params) : super.implementation();
 
@@ -27,6 +28,9 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
   /// Only visible for testing.
   @visibleForTesting
   static const int maxByteArrayLen = 4 * 1024;
+
+  @override
+  PlatformXFileEntityExtension? get extension => this;
 
   @override
   Future<DateTime> lastModified() async {
@@ -87,6 +91,16 @@ base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
   Future<bool> exists() async {
     return await _documentFile.exists() && await _documentFile.isFile();
   }
+
+  @override
+  Future<String?> displayName() => _documentFile.getName();
+}
+
+/// Provides platform specific features for [AndroidSharedStorageXFile].
+mixin AndroidSharedStorageXFileExtension
+    implements PlatformSharedStorageXFileExtension {
+  /// Returns the display name of this document.
+  Future<String?> displayName();
 }
 
 /// Error thrown when the native [android.InputStream] is not accessible.

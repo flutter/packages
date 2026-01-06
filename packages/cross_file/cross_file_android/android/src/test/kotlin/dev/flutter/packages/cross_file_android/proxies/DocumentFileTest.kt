@@ -144,4 +144,15 @@ class DocumentFileTest {
 
     assertEquals(value.toString(), api.getUri(instance))
   }
+
+  @Test
+  fun getName() {
+    val api = TestProxyApiRegistrar().getPigeonApiDocumentFile()
+
+    val instance = mock<DocumentFile>()
+    val value = "name"
+    whenever(instance.name).thenReturn(value)
+
+    assertEquals(value, api.getName(instance))
+  }
 }

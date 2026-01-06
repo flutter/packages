@@ -9,7 +9,7 @@ environment:
 dependencies:
   cross_file_android:
     # When depending on this package from a real application you should use:
-    #   file_selector_android: ^x.y.z
+    #   cross_file_android: ^x.y.z
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
@@ -19,6 +19,7 @@ dependencies:
     sdk: flutter
   flutter_driver:
     sdk: flutter
+  mime: ^2.0.0
   video_player: ^2.8.6
 
 dev_dependencies:

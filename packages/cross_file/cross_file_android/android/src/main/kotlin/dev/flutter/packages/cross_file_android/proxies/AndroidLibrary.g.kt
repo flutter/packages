@@ -582,6 +582,9 @@ abstract class PigeonApiDocumentFile(
   /** A Uri for the underlying document represented by this file. */
   abstract fun getUri(pigeon_instance: androidx.documentfile.provider.DocumentFile): String
 
+  /** Returns the display name of this document. */
+  abstract fun getName(pigeon_instance: androidx.documentfile.provider.DocumentFile): String?
+
   companion object {
     @Suppress("LocalVariableName")
     fun setUpMessageHandlers(binaryMessenger: BinaryMessenger, api: PigeonApiDocumentFile?) {
@@ -815,6 +818,28 @@ abstract class PigeonApiDocumentFile(
             val wrapped: List<Any?> =
                 try {
                   listOf(api.getUri(pigeon_instanceArg))
+                } catch (exception: Throwable) {
+                  AndroidLibraryPigeonUtils.wrapError(exception)
+                }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel =
+            BasicMessageChannel<Any?>(
+                binaryMessenger,
+                "dev.flutter.pigeon.cross_file_android.DocumentFile.getName",
+                codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val pigeon_instanceArg = args[0] as androidx.documentfile.provider.DocumentFile
+            val wrapped: List<Any?> =
+                try {
+                  listOf(api.getName(pigeon_instanceArg))
                 } catch (exception: Throwable) {
                   AndroidLibraryPigeonUtils.wrapError(exception)
                 }

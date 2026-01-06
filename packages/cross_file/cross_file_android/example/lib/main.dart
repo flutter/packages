@@ -15,10 +15,12 @@ void integrationTestMain() {
 }
 
 void main() {
-  runApp(MaterialApp(home: FileOpenScreen()));
+  runApp(const MaterialApp(home: FileOpenScreen()));
 }
 
+/// Example screen to open a file selector and display it.
 class FileOpenScreen extends StatelessWidget {
+  /// Constructs a [FileOpenScreen].
   const FileOpenScreen({super.key});
 
   Future<void> _openFile(BuildContext context) async {

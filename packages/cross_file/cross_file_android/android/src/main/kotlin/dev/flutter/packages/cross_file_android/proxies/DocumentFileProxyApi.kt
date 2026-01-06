@@ -60,4 +60,8 @@ class DocumentFileProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun getUri(pigeon_instance: DocumentFile): String {
     return pigeon_instance.uri.toString()
   }
+
+  override fun getName(pigeon_instance: DocumentFile): String? {
+    return pigeon_instance.name
+  }
 }
