@@ -1,3 +1,7 @@
+## 6.4.0
+
+- Adds support for WOFF2 and WOFF font formats on web platforms for improved performance and smaller bundle sizes.
+
 ## 6.3.3
 
 - Replaces use of the deprecated `FontWeight.index`.
