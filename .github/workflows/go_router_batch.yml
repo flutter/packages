@@ -16,5 +16,5 @@ jobs:
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
           repository: flutter/packages
-          event-type: batch_release_pr
+          event-type: batch-release-pr
           client-payload: '{"package": "go_router"}'
