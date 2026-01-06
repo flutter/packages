@@ -14,58 +14,6 @@
 #import "FLTGoogleMapTileOverlayController.h"
 #import "messages.g.h"
 
-#pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
-
-@interface FLTGoogleMapFactory ()
-
-@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
-@property(strong, nonatomic, readonly) id<NSObject> sharedMapServices;
-
-@end
-
-@implementation FLTGoogleMapFactory
-
-@synthesize sharedMapServices = _sharedMapServices;
-
-- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  self = [super init];
-  if (self) {
-    _registrar = registrar;
-  }
-  return self;
-}
-
-- (NSObject<FlutterMessageCodec> *)createArgsCodec {
-  return FGMGetMessagesCodec();
-}
-
-- (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame
-                                    viewIdentifier:(int64_t)viewId
-                                         arguments:(id _Nullable)args {
-  // Precache shared map services, if needed.
-  // Retain the shared map services singleton, don't use the result for anything.
-  (void)[self sharedMapServices];
-
-  return [[FLTGoogleMapController alloc] initWithFrame:frame
-                                        viewIdentifier:viewId
-                                    creationParameters:args
-                                             registrar:self.registrar];
-}
-
-- (id<NSObject>)sharedMapServices {
-  if (_sharedMapServices == nil) {
-    // Calling this prepares GMSServices on a background thread controlled
-    // by the GoogleMaps framework.
-    // Retain the singleton to cache the initialization work across all map views.
-    _sharedMapServices = [GMSServices sharedServices];
-  }
-  return _sharedMapServices;
-}
-
-@end
-
-#pragma mark -
-
 /// Private declarations of the FGMMapCallHandler.
 @interface FGMMapCallHandler ()
 - (instancetype)initWithMapController:(nonnull FLTGoogleMapController *)controller
