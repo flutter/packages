@@ -1146,6 +1146,22 @@ void main() {
     expect((await stream.next).value.value, equals(objectId));
   });
 
+  test('onMapLoaded sends event to correct stream', () async {
+    const mapId = 1;
+
+    final maps = GoogleMapsFlutterAndroid();
+    final HostMapMessageHandler callbackHandler = maps.ensureHandlerInitialized(
+      mapId,
+    );
+
+    final stream = StreamQueue<MapLoadedEvent>(maps.onMapLoaded(mapId: mapId));
+
+    // Simulate message from the native side.
+    callbackHandler.onMapLoaded();
+
+    expect((await stream.next).mapId, equals(mapId));
+  });
+
   test('Does not use PlatformViewLink when using TLHC', () async {
     final maps = GoogleMapsFlutterAndroid();
     maps.useAndroidViewSurface = false;

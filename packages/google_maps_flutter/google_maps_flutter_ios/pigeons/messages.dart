@@ -784,6 +784,10 @@ abstract class MapsCallbackApi {
   @ObjCSelector('didTapGroundOverlayWithIdentifier:')
   void onGroundOverlayTap(String groundOverlayId);
 
+  /// Called when the map is fully loaded.
+  @ObjCSelector('didFinishRenderingMap')
+  void onMapLoaded();
+
   /// Called to get data for a map tile.
   @async
   @ObjCSelector('tileWithOverlayIdentifier:location:zoom:')

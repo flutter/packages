@@ -142,6 +142,7 @@ class GoogleMapController {
   StreamSubscription<void>? _onRightClickSubscription;
   StreamSubscription<void>? _onBoundsChangedSubscription;
   StreamSubscription<void>? _onIdleSubscription;
+  StreamSubscription<void>? _onMapLoadedSubscription;
 
   // Keeps track if _attachGeometryControllers has been called or not.
   bool _controllersBoundToMap = false;
@@ -198,6 +199,10 @@ class GoogleMapController {
   /// A flag that returns true if the controller has been initialized or not.
   @visibleForTesting
   bool get isInitialized => _googleMap != null;
+
+  /// Returns `true` if the map tiles have loaded at least once.
+  bool get tilesLoaded => _tilesLoaded;
+  bool _tilesLoaded = false;
 
   /// Starts the JS Maps SDK into the target [_div] with `rawOptions`.
   ///
@@ -292,6 +297,12 @@ class GoogleMapController {
       _mapIsMoving = false;
       if (!_streamController.isClosed) {
         _streamController.add(CameraIdleEvent(_mapId));
+      }
+    });
+    _onMapLoadedSubscription = map.onTilesloaded.listen((void _) {
+      _tilesLoaded = true;
+      if (!_streamController.isClosed) {
+        _streamController.add(MapLoadedEvent(_mapId));
       }
     });
   }
@@ -675,7 +686,16 @@ class GoogleMapController {
     _onBoundsChangedSubscription = null;
     _onIdleSubscription?.cancel();
     _onIdleSubscription = null;
+    _onMapLoadedSubscription?.cancel();
+    _onMapLoadedSubscription = null;
     _streamController.close();
+  }
+
+  /// Emits a [MapLoadedEvent] if the map tiles are already loaded.
+  void checkAndEmitMapLoadedIfNecessary() {
+    if (_tilesLoaded && !_streamController.isClosed) {
+      _streamController.add(MapLoadedEvent(_mapId));
+    }
   }
 }
 

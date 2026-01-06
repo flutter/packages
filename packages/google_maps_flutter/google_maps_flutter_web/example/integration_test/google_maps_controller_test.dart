@@ -309,6 +309,33 @@ void main() {
         expect(events[4], isA<CameraIdleEvent>());
       });
 
+      testWidgets('listens to tilesloaded events', (WidgetTester tester) async {
+        controller = createController()
+          ..debugSetOverrides(
+            createMap: (_, __) => map,
+            circles: circles,
+            heatmaps: heatmaps,
+            markers: markers,
+            polygons: polygons,
+            polylines: polylines,
+            groundOverlays: groundOverlays,
+          )
+          ..init();
+
+        final Stream<MapEvent<Object?>> capturedEvents = stream.stream
+            .where((MapEvent<Object?> event) => event is! WebMapReadyEvent)
+            .take(2);
+
+        // tilesloaded events
+        gmaps.event.trigger(map, 'tilesloaded');
+        gmaps.event.trigger(map, 'tilesloaded');
+
+        final List<MapEvent<Object?>> events = await capturedEvents.toList();
+
+        expect(events[0], isA<MapLoadedEvent>());
+        expect(events[1], isA<MapLoadedEvent>());
+      });
+
       testWidgets('stops listening to map events once disposed', (
         WidgetTester tester,
       ) async {

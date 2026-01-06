@@ -133,6 +133,11 @@ class GoogleMapController {
           .onClusterTap(mapId: mapId)
           .listen((ClusterTapEvent e) => _googleMapState.onClusterTap(e.value)),
     );
+    _streamSubscriptions.add(
+      GoogleMapsFlutterPlatform.instance
+          .onMapLoaded(mapId: mapId)
+          .listen((_) => _googleMapState.onMapLoaded()),
+    );
   }
 
   /// Updates configuration options of the map user interface.

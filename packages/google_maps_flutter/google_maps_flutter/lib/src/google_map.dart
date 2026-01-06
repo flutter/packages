@@ -133,6 +133,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.onMapLoaded,
     this.cloudMapId,
   });
 
@@ -289,6 +290,13 @@ class GoogleMap extends StatefulWidget {
 
   /// Called every time a [GoogleMap] is long pressed.
   final ArgumentCallback<LatLng>? onLongPress;
+
+  /// Called when the tiles have been loaded.
+  ///
+  /// This implementation maps to [Map.tilesloaded](https://developers.google.com/maps/documentation/javascript/reference/map#Map.tilesloaded) on Web,
+  /// [GoogleMap.OnMapLoadedCallback](https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMapLoadedCallback) on Android,
+  /// and [GMSMapViewDelegate.mapViewDidFinishTileRendering](https://developers.google.com/maps/documentation/ios-sdk/reference/protocol_g_m_s_map_view_delegate-p#mapViewDidFinishTileRendering:) on iOS.
+  final VoidCallback? onMapLoaded;
 
   /// True if a "My Location" layer should be shown on the map.
   ///
@@ -694,6 +702,13 @@ class _GoogleMapState extends State<GoogleMap> {
     final ArgumentCallback<Cluster>? onClusterTap = clusterManager.onClusterTap;
     if (onClusterTap != null) {
       onClusterTap(cluster);
+    }
+  }
+
+  void onMapLoaded() {
+    final VoidCallback? onMapLoaded = widget.onMapLoaded;
+    if (onMapLoaded != null) {
+      onMapLoaded();
     }
   }
 }

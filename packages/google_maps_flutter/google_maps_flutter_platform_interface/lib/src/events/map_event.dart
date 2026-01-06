@@ -184,3 +184,9 @@ class ClusterTapEvent extends MapEvent<Cluster> {
   /// cluster icon managed by [ClusterManager].
   ClusterTapEvent(super.mapId, super.cluster);
 }
+
+/// An event fired when the Map is fully loaded.
+class MapLoadedEvent extends MapEvent<void> {
+  /// Build a MapLoaded Event triggered from the map represented by `mapId`.
+  MapLoadedEvent(int mapId) : super(mapId, null);
+}

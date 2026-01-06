@@ -230,6 +230,11 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MapLoadedEvent> onMapLoaded({required int mapId}) {
+    return _events(mapId).whereType<MapLoadedEvent>();
+  }
+
+  @override
   Future<void> updateMapConfiguration(
     MapConfiguration configuration, {
     required int mapId,
@@ -1250,6 +1255,11 @@ class HostMapMessageHandler implements MapsCallbackApi {
     streamController.add(
       MapTapEvent(mapId, _latLngFromPlatformLatLng(position)),
     );
+  }
+
+  @override
+  void onMapLoaded() {
+    streamController.add(MapLoadedEvent(mapId));
   }
 }
 
