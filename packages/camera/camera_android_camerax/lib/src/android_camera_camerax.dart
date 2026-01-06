@@ -1123,48 +1123,6 @@ class AndroidCameraCameraX extends CameraPlatform {
       return;
     }
 
-    dynamic Function(CameraImageData)? streamCallback = options.streamCallback;
-    if (!_previewIsPaused) {
-      // The plugin binds the preview use case to the camera lifecycle when
-      // createCamera is called, but camera use cases can become limited
-      // when video recording and displaying a preview concurrently. This logic
-      // will prioritize attempting to continue displaying the preview,
-      // stream images, and record video if specified and supported. Otherwise,
-      // the preview must be paused in order to allow those concurrently. See
-      // https://developer.android.com/media/camera/camerax/architecture#combine-use-cases
-      // for more information on supported concurrent camera use cases.
-      final camera2CameraInfo = Camera2CameraInfo.from(cameraInfo: cameraInfo!);
-      final cameraInfoSupportedHardwareLevel =
-          (await camera2CameraInfo.getCameraCharacteristic(
-                CameraCharacteristics.infoSupportedHardwareLevel,
-              ))!
-              as InfoSupportedHardwareLevel;
-
-      // Handle limited level device restrictions:
-      final cameraSupportsConcurrentImageCapture =
-          cameraInfoSupportedHardwareLevel != InfoSupportedHardwareLevel.legacy;
-      if (!cameraSupportsConcurrentImageCapture) {
-        // Concurrent preview + video recording + image capture is not supported
-        // unless the camera device is cameraSupportsHardwareLevelLimited or
-        // better.
-        await _unbindUseCaseFromLifecycle(imageCapture!);
-      }
-
-      // Handle level 3 device restrictions:
-      final cameraSupportsHardwareLevel3 =
-          cameraInfoSupportedHardwareLevel == InfoSupportedHardwareLevel.level3;
-      if (!cameraSupportsHardwareLevel3 || streamCallback == null) {
-        // Concurrent preview + video recording + image streaming is not supported
-        // unless the camera device is cameraSupportsHardwareLevel3 or better.
-        streamCallback = null;
-        await _unbindUseCaseFromLifecycle(imageAnalysis!);
-      } else {
-        // If image streaming concurrently with video recording, image capture
-        // is unsupported.
-        await _unbindUseCaseFromLifecycle(imageCapture!);
-      }
-    }
-
     await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);
 
     // Set target rotation to default CameraX rotation only if capture
@@ -1194,8 +1152,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     recording = await pendingRecording!.start(_videoRecordingEventListener);
 
-    if (streamCallback != null) {
-      onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
+    if (options.streamCallback != null) {
+      onStreamedFrameAvailable(options.cameraId).listen(options.streamCallback);
     }
 
     // Wait for video recording to start.
