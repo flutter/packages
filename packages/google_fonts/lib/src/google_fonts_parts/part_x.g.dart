@@ -43,14 +43,14 @@ class PartX {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'cefc4c5849c6620d62c7988dae984db322fbd6799a07d828a6fe24529a4c1fa2',
+        'e93b1f1a41c9c6d924ab92f23c91764b6e6ade7b78e0e568115ff446644699b6',
         38916,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.italic,
       ): GoogleFontsFile(
-        'ee195b8d6c4df8d2aa72117e92fa2bd82d24d301df61c81ac361a54725906730',
+        '94d5da2862ea346a4bb60d377d2593cda0fb55078716b137334b859485c91c34',
         41920,
       ),
     };
