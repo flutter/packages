@@ -2,7 +2,7 @@ name: "Creates Batch Release for a Package"
 
 on:
   repository_dispatch:
-    types: [batch_release_pr]
+    types: [batch-release-pr]
 
 jobs:
   create_release_pr:
