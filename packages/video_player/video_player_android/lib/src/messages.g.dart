@@ -21,7 +21,9 @@ PlatformException _createConnectionError(String channelName) {
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed.every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
     return a.length == b.length &&
@@ -123,7 +125,8 @@ class PlaybackStateChangeEvent extends PlatformVideoEvent {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlaybackStateChangeEvent || other.runtimeType != runtimeType) {
+    if (other is! PlaybackStateChangeEvent ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -237,7 +240,8 @@ class PlatformVideoViewCreationParams {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformVideoViewCreationParams || other.runtimeType != runtimeType) {
+    if (other is! PlatformVideoViewCreationParams ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -280,7 +284,8 @@ class CreationOptions {
     return CreationOptions(
       uri: result[0]! as String,
       formatHint: result[1] as PlatformVideoFormat?,
-      httpHeaders: (result[2] as Map<Object?, Object?>?)!.cast<String, String>(),
+      httpHeaders: (result[2] as Map<Object?, Object?>?)!
+          .cast<String, String>(),
       userAgent: result[3] as String?,
     );
   }
@@ -319,7 +324,10 @@ class TexturePlayerIds {
 
   static TexturePlayerIds decode(Object result) {
     result as List<Object?>;
-    return TexturePlayerIds(playerId: result[0]! as int, textureId: result[1]! as int);
+    return TexturePlayerIds(
+      playerId: result[0]! as int,
+      textureId: result[1]! as int,
+    );
   }
 
   @override
@@ -558,7 +566,8 @@ class NativeAudioTrackData {
   static NativeAudioTrackData decode(Object result) {
     result as List<Object?>;
     return NativeAudioTrackData(
-      exoPlayerTracks: (result[0] as List<Object?>?)?.cast<ExoPlayerAudioTrackData>(),
+      exoPlayerTracks: (result[0] as List<Object?>?)
+          ?.cast<ExoPlayerAudioTrackData>(),
     );
   }
 
@@ -667,7 +676,9 @@ class _PigeonCodec extends StandardMessageCodec {
   }
 }
 
-const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(_PigeonCodec());
+const StandardMethodCodec pigeonMethodCodec = StandardMethodCodec(
+  _PigeonCodec(),
+);
 
 class AndroidVideoPlayerApi {
   /// Constructor for [AndroidVideoPlayerApi].  The [binaryMessenger] named argument is
@@ -717,9 +728,9 @@ class AndroidVideoPlayerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      options,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[options],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -747,9 +758,9 @@ class AndroidVideoPlayerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      options,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[options],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -777,9 +788,9 @@ class AndroidVideoPlayerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      playerId,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[playerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -802,9 +813,9 @@ class AndroidVideoPlayerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      mixWithOthers,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[mixWithOthers],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -827,10 +838,9 @@ class AndroidVideoPlayerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      asset,
-      packageName,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[asset, packageName],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -877,9 +887,9 @@ class VideoPlayerInstanceApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      looping,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[looping],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -903,9 +913,9 @@ class VideoPlayerInstanceApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      volume,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[volume],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -929,7 +939,9 @@ class VideoPlayerInstanceApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[speed]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[speed],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -1001,9 +1013,9 @@ class VideoPlayerInstanceApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      position,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[position],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -1114,10 +1126,9 @@ class VideoPlayerInstanceApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[
-      groupIndex,
-      trackIndex,
-    ]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[groupIndex, trackIndex],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
