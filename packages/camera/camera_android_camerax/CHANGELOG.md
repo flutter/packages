@@ -1,6 +1,6 @@
 ## 0.6.26+4
 
-* Removes restrictions against concurrent `UseCase`s that are now allowed.
+* Removes outdated restrictions against concurrent camera use cases.
 
 ## 0.6.26+3
 
