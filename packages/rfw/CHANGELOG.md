@@ -2,6 +2,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 * Removes the wasm example.
+* Remove scripting language integration section from README
 
 ## 1.0.31
 
