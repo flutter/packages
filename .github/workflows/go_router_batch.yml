@@ -15,5 +15,6 @@ jobs:
         uses: peter-evans/repository-dispatch@5fc4efd1a4797ddb68ffd0714a238564e4cc0e6f
         with:
           token: "${{ secrets.GITHUB_TOKEN }}"
+          repository: flutter/packages
           event-type: batch_release_pr
           client-payload: '{"package": "go_router"}'
