@@ -1,3 +1,7 @@
+## 0.2.6+5
+
+* Use temp directory fallback when Pictures folder is unavailable
+
 ## 0.2.6+4
 
 * Removes usage of the deprecated and ignored `maxVideoDuration` in the example.

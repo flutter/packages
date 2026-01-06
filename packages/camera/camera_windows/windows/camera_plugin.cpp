@@ -86,6 +86,8 @@ std::string GetCurrentTimeString() {
 }
 
 // Builds file path for picture capture.
+/// If Pictures folder exist use it, otherwise use temp directory
+/// This fallback prevents crashes or unexpected failures on systems where the Pictures folder is unavailable or restricted
 std::optional<std::string> GetFilePathForPicture() {
   ComHeapPtr<wchar_t> known_folder_path;
   HRESULT hr = SHGetKnownFolderPath(FOLDERID_Pictures, KF_FLAG_CREATE, nullptr,
