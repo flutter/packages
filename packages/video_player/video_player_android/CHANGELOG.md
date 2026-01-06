@@ -1,3 +1,11 @@
+## 2.9.1
+
+* Updates to Pigeon 26.1.5.
+
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods for Android using ExoPlayer.
+
 ## 2.8.22
 
 * Bumps kotlin_version to 2.2.21.
