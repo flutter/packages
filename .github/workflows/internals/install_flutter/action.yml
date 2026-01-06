@@ -1,0 +1,20 @@
+name: "Install Flutter"
+description: "Installs a pinned version of Flutter"
+runs:
+  using: "composite"
+  steps:
+    - name: "Install Flutter"
+      # This uses a pinned version of Flutter rather than `stable` so that it is
+      # not subject to out-of-band failures when new releases happen. It does
+      # not use the auto-rolled pin because there's no way for the autoroller
+      # to test the actual release flow, so changes would still show up in
+      # post-submit. A manually-rolled pin means that any changes here must be
+      # made deliberately, so that the person updating it knows to watch the
+      # next actual auto-release to ensure that it works, and knows to revert
+      # the change if it doesn't.
+      shell: bash
+      run: |
+        cd $HOME
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.38.1 _flutter
+        echo "$HOME/_flutter/bin" >> $GITHUB_PATH
+        cd $GITHUB_WORKSPACE
