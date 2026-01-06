@@ -90,13 +90,28 @@ std::optional<std::string> GetFilePathForPicture() {
   ComHeapPtr<wchar_t> known_folder_path;
   HRESULT hr = SHGetKnownFolderPath(FOLDERID_Pictures, KF_FLAG_CREATE, nullptr,
                                     &known_folder_path);
-  if (FAILED(hr)) {
-    return std::nullopt;
+
+  std::wstring wpath;
+
+  if (SUCCEEDED(hr)) {
+    wpath = std::wstring(known_folder_path);
+  } else {
+    // Fallback to temp folder
+    wchar_t tempPath[MAX_PATH];
+    DWORD len = GetTempPathW(MAX_PATH, tempPath);
+    if (len == 0 || len > MAX_PATH) {
+      return std::nullopt;
+    }
+    wpath = std::wstring(tempPath);
   }
 
-  std::string path = Utf8FromUtf16(std::wstring(known_folder_path));
+  if (!wpath.empty() && wpath.back() != L'\\' && wpath.back() != L'/') {
+    wpath.push_back(L'\\');
+  }
 
-  return path + "\\" + "PhotoCapture_" + GetCurrentTimeString() + "." +
+  std::string path = Utf8FromUtf16(wpath);
+
+  return path + "PhotoCapture_" + GetCurrentTimeString() + "." +
          kPictureCaptureExtension;
 }
 
