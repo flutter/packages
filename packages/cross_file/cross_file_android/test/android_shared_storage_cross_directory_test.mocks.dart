@@ -131,6 +131,14 @@ class MockDocumentFile extends _i1.Mock implements _i2.DocumentFile {
           as _i3.Future<String>);
 
   @override
+  _i3.Future<String?> getName() =>
+      (super.noSuchMethod(
+            Invocation.method(#getName, []),
+            returnValue: _i3.Future<String?>.value(),
+          )
+          as _i3.Future<String?>);
+
+  @override
   _i2.DocumentFile pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),

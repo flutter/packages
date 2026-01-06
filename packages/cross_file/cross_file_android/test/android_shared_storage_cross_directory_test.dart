@@ -19,6 +19,25 @@ void main() {
     android.PigeonOverrides.pigeon_reset();
   });
 
+  test('exists', () async {
+    final mockDocumentFile = MockDocumentFile();
+    when(mockDocumentFile.exists()).thenAnswer((_) async => true);
+    when(mockDocumentFile.isDirectory()).thenAnswer((_) async => true);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromTreeUri =
+        ({required String treeUri}) {
+          expect(treeUri, uri);
+          return mockDocumentFile;
+        };
+
+    final file = AndroidSharedStorageXDirectory(
+      const PlatformSharedStorageXDirectoryCreationParams(uri: uri),
+    );
+
+    expect(await file.exists(), true);
+  });
+
   test('list', () async {
     final mockFile = MockDocumentFile();
     const fileUri = 'fileUri';

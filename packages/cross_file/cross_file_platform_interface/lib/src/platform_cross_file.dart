@@ -131,4 +131,9 @@ abstract base class PlatformXFile extends PlatformXFileEntity {
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
   Future<String> readAsString({Encoding encoding = utf8});
+
+  /// The name of the resource represented by this object.
+  ///
+  /// The path is excluded from this value.
+  Future<String?> name();
 }

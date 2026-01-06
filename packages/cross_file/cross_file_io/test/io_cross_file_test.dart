@@ -51,8 +51,6 @@ void main() {
         PlatformXFileCreationParams(uri: testFile.path),
       );
 
-      print(await file.readAsBytes());
-
       expect(await file.readAsBytes(), await testFile.readAsBytes());
     });
 
@@ -78,6 +76,14 @@ void main() {
       );
 
       expect(await file.exists(), testFile.existsSync());
+    });
+
+    test('name', () async {
+      final file = PlatformXFile(
+        PlatformXFileCreationParams(uri: testFile.path),
+      );
+
+      expect(await file.name(), 'test_file.txt');
     });
   });
 }

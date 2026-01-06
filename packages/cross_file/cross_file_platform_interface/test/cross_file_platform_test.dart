@@ -71,4 +71,9 @@ final class TestXFile extends PlatformXFile {
   Future<String> readAsString({Encoding encoding = utf8}) {
     throw UnimplementedError();
   }
+
+  @override
+  Future<String?> name() {
+    throw UnimplementedError();
+  }
 }

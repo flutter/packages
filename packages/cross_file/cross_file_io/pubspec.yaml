@@ -13,11 +13,11 @@ dependencies:
     path: ../cross_file_platform_interface
   flutter:
     sdk: flutter
+  path: ^1.9.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  path: ^1.9.1
 
 topics:
   - files

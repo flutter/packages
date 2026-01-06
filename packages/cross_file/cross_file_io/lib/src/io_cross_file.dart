@@ -7,6 +7,7 @@ import 'dart:io';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as path;
 
 /// Implementation of [PlatformXFileCreationParams] for dart:io.
 @immutable
@@ -67,6 +68,9 @@ base class IOXFile extends PlatformXFile with IOXFileExtension {
 
   @override
   Future<bool> exists() async => file.existsSync();
+
+  @override
+  Future<String?> name() async => path.basename(file.path);
 }
 
 /// Provides platform specific features for [IOXFile].

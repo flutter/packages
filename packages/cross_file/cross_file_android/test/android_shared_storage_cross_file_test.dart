@@ -283,8 +283,7 @@ void main() {
 
   test('exists', () async {
     final mockDocumentFile = MockDocumentFile();
-    const exists = true;
-    when(mockDocumentFile.exists()).thenAnswer((_) async => exists);
+    when(mockDocumentFile.exists()).thenAnswer((_) async => true);
     when(mockDocumentFile.isFile()).thenAnswer((_) async => true);
 
     const uri = 'uri';
@@ -298,6 +297,25 @@ void main() {
       const PlatformSharedStorageXFileCreationParams(uri: uri),
     );
 
-    expect(await file.exists(), exists);
+    expect(await file.exists(), true);
+  });
+
+  test('name', () async {
+    final mockDocumentFile = MockDocumentFile();
+    const name = 'name';
+    when(mockDocumentFile.getName()).thenAnswer((_) async => name);
+
+    const uri = 'uri';
+    android.PigeonOverrides.documentFile_fromSingleUri =
+        ({required String singleUri}) {
+          expect(singleUri, uri);
+          return mockDocumentFile;
+        };
+
+    final file = AndroidSharedStorageXFile(
+      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    );
+
+    expect(await file.name(), name);
   });
 }

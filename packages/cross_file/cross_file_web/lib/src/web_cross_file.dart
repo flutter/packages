@@ -130,6 +130,12 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
 
     downloadObjectUrl(params.uri, name);
   }
+
+  @override
+  Future<String?> name() async {
+    final Blob blob = await getBlob();
+    return blob is File ? blob.name : null;
+  }
 }
 
 /// Provides platform specific features for [WebXFile].
