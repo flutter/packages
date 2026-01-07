@@ -15,6 +15,6 @@ runs:
       shell: bash
       run: |
         cd $HOME
-        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.38.1 _flutter
+        git clone https://github.com/flutter/flutter.git --depth 1 -b 3.38.5 _flutter
         echo "$HOME/_flutter/bin" >> $GITHUB_PATH
         cd $GITHUB_WORKSPACE
