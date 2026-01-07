@@ -31,6 +31,9 @@ extension NonStandardFieldsOnMediaTrackCapabilities on MediaTrackCapabilities {
 
   @JS('torch')
   external JSArray<JSBoolean>? get torchNullable;
+
+  @JS('facingMode')
+  external JSArray<JSString>? get facingModeNullable;
 }
 
 /// Adds missing fields to [MediaTrackSettings]
