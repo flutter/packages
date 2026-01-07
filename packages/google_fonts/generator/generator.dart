@@ -24,6 +24,8 @@ Future<void> main() async {
   print('Success! Using $protoUrl');
 
   final Directory fontDirectory = await _readFontsProtoData(protoUrl);
+  _computeVariantCounts(fontDirectory);
+
   print('\nValidating font URLs and file contents...');
   await _verifyUrls(fontDirectory);
   print(_success);
@@ -183,6 +185,55 @@ class _FamiliesDelta {
 
     return diff;
   }
+}
+
+int _countVariableFonts(Directory fontDirectory) {
+  var count = 0;
+  for (final FontFamily family in fontDirectory.family) {
+    for (final Font font in family.fonts) {
+      if (font.isVf) {
+        count += 1;
+      }
+    }
+  }
+  return count;
+}
+
+void _computeVariantCounts(Directory fontDirectory) {
+  final int families = fontDirectory.family.length;
+
+  // Pre-dedup counts
+  var preStatic = 0;
+  var preVariable = 0;
+  for (final FontFamily family in fontDirectory.family) {
+    for (final Font font in family.fonts) {
+      if (font.isVf) {
+        preVariable += 1;
+      } else {
+        preStatic += 1;
+      }
+    }
+  }
+  print(
+    'Found $families font families, composed of $preStatic static variants and $preVariable variable variants.',
+  );
+
+  // Post-dedup counts
+  var postStatic = 0;
+  var postVariable = 0;
+  for (final FontFamily family in fontDirectory.family) {
+    final List<Font> filtered = _deduplicateFonts(family.fonts);
+    for (final font in filtered) {
+      if (font.isVf) {
+        postVariable += 1;
+      } else {
+        postStatic += 1;
+      }
+    }
+  }
+  print(
+    'After deduplication: composed of $postStatic static variants and $postVariable variable variants.',
+  );
 }
 
 void _generateDartCode(Directory fontDirectory) {
