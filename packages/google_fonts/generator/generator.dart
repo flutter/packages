@@ -212,7 +212,7 @@ void _generateDartCode(Directory fontDirectory) {
       'labelSmall',
     ];
 
-    final List<Font> filteredVariants = deduplicateFonts(item.fonts);
+    final List<Font> filteredVariants = _deduplicateFonts(item.fonts);
 
     methods.add(<String, dynamic>{
       'methodName': methodName,
@@ -297,7 +297,7 @@ void _writeDartFile(String path, String content) {
 // TODO(guidezpl): Add explicit variable-font support, see
 // https://github.com/flutter/flutter/issues/174575 and
 // https://github.com/flutter/flutter/issues/174567
-List<Font> deduplicateFonts(List<Font> fonts) {
+List<Font> _deduplicateFonts(List<Font> fonts) {
   final filteredVariants = <Font>[];
   for (final variant in fonts) {
     if (!variant.isVf) {
