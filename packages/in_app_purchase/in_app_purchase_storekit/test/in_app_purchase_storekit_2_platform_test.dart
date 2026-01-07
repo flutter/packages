@@ -343,6 +343,116 @@ void main() {
         expect(lastPurchaseOptions.quantity, 1);
       },
     );
+
+    test(
+      'user cancelled purchase should emit canceled status to purchaseStream',
+      () async {
+        fakeStoreKit2Platform.simulatedPurchaseResult =
+            SK2ProductPurchaseResultMessage.userCancelled;
+
+        final completer = Completer<List<PurchaseDetails>>();
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
+
+        late StreamSubscription<List<PurchaseDetails>> subscription;
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
+          completer.complete(purchaseDetailsList);
+          subscription.cancel();
+        });
+
+        final purchaseParam = AppStorePurchaseParam(
+          productDetails: AppStoreProduct2Details.fromSK2Product(
+            dummyProductWrapper,
+          ),
+          applicationUserName: 'appName',
+        );
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
+
+        final List<PurchaseDetails> result = await completer.future;
+        expect(result.length, 1);
+        expect(result.first.productID, dummyProductWrapper.id);
+        expect(result.first.status, PurchaseStatus.canceled);
+        expect(result.first.pendingCompletePurchase, false);
+      },
+    );
+
+    test(
+      'pending purchase should emit pending status to purchaseStream',
+      () async {
+        fakeStoreKit2Platform.simulatedPurchaseResult =
+            SK2ProductPurchaseResultMessage.pending;
+
+        final completer = Completer<List<PurchaseDetails>>();
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
+
+        late StreamSubscription<List<PurchaseDetails>> subscription;
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
+          completer.complete(purchaseDetailsList);
+          subscription.cancel();
+        });
+
+        final purchaseParam = AppStorePurchaseParam(
+          productDetails: AppStoreProduct2Details.fromSK2Product(
+            dummyProductWrapper,
+          ),
+          applicationUserName: 'appName',
+        );
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
+
+        final List<PurchaseDetails> result = await completer.future;
+        expect(result.length, 1);
+        expect(result.first.productID, dummyProductWrapper.id);
+        expect(result.first.status, PurchaseStatus.pending);
+        expect(result.first.pendingCompletePurchase, false);
+      },
+    );
+
+    test(
+      'unverified purchase should receive transaction from native side',
+      () async {
+        fakeStoreKit2Platform.simulatedPurchaseResult =
+            SK2ProductPurchaseResultMessage.unverified;
+
+        final completer = Completer<List<PurchaseDetails>>();
+        final Stream<List<PurchaseDetails>> stream =
+            iapStoreKitPlatform.purchaseStream;
+
+        late StreamSubscription<List<PurchaseDetails>> subscription;
+        subscription = stream.listen((
+          List<PurchaseDetails> purchaseDetailsList,
+        ) {
+          completer.complete(purchaseDetailsList);
+          subscription.cancel();
+        });
+
+        final purchaseParam = AppStorePurchaseParam(
+          productDetails: AppStoreProduct2Details.fromSK2Product(
+            dummyProductWrapper,
+          ),
+          applicationUserName: 'appName',
+        );
+        await iapStoreKitPlatform.buyNonConsumable(
+          purchaseParam: purchaseParam,
+        );
+
+        final List<PurchaseDetails> result = await completer.future;
+        expect(result.length, 1);
+        expect(result.first.productID, dummyProductWrapper.id);
+        // Native side sends the transaction for unverified case
+        // The transaction comes with purchased status from native side
+        expect(result.first.status, PurchaseStatus.purchased);
+        expect(result.first.pendingCompletePurchase, true);
+      },
+    );
   });
 
   group('restore purchases', () {
