@@ -728,6 +728,29 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     return verticalOffset.applyContentDimensions(0.0, maxVerticalScrollExtent);
   }
 
+  /// Binary search to find the first index with [_Span] matching the condition.
+  /// [map]: Index-[_Span] map, [condition]: Match rule
+  /// Returns the first matched index or null if not found.
+  int? _binarySearchFirstFromMap(Map<int, _Span> map, bool Function(_Span) condition) {
+    if (map.isEmpty) {
+      return null;
+    }
+    var low = 0;
+    int high = map.length - 1;
+    int? result;
+    while (low <= high) {
+      final int mid = low + ((high - low) >> 1);
+      final _Span span = map[mid]!;
+      if (condition(span)) {
+        result = mid;
+        high = mid - 1;
+      } else {
+        low = mid + 1;
+      }
+    }
+    return result;
+  }
+
   // Uses the cached metrics to update the currently visible cells. If the
   // number of rows or columns are infinite, the layout is computed lazily, so
   // this will call for an update to the metrics if we have scrolled beyond the
@@ -750,21 +773,15 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
     _firstNonPinnedColumn = null;
     _lastNonPinnedColumn = null;
-    for (var column = 0; column < _columnMetrics.length; column++) {
-      if (_columnMetrics[column]!.isPinned) {
-        continue;
-      }
-      final double endOfColumn = _columnMetrics[column]!.trailingOffset;
-      if (endOfColumn >= _targetLeadingColumnPixel &&
-          _firstNonPinnedColumn == null) {
-        _firstNonPinnedColumn = column;
-      }
-      if (endOfColumn >= _targetTrailingColumnPixel &&
-          _lastNonPinnedColumn == null) {
-        _lastNonPinnedColumn = column;
-        break;
-      }
-    }
+    // Binary search replaces for-loop to reduce computation.
+    _firstNonPinnedColumn = _binarySearchFirstFromMap(
+      _columnMetrics,
+          (span) => !span.isPinned && span.trailingOffset >= _targetLeadingColumnPixel,
+    );
+    _lastNonPinnedColumn = _binarySearchFirstFromMap(
+      _columnMetrics,
+          (span) => !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
+    );
     if (_firstNonPinnedColumn != null) {
       _lastNonPinnedColumn ??= _columnMetrics.length - 1;
     }
@@ -786,19 +803,15 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     }
     _firstNonPinnedRow = null;
     _lastNonPinnedRow = null;
-    for (var row = 0; row < _rowMetrics.length; row++) {
-      if (_rowMetrics[row]!.isPinned) {
-        continue;
-      }
-      final double endOfRow = _rowMetrics[row]!.trailingOffset;
-      if (endOfRow >= _targetLeadingRowPixel && _firstNonPinnedRow == null) {
-        _firstNonPinnedRow = row;
-      }
-      if (endOfRow >= _targetTrailingRowPixel && _lastNonPinnedRow == null) {
-        _lastNonPinnedRow = row;
-        break;
-      }
-    }
+    // Binary search replaces for-loop to reduce computation.
+    _firstNonPinnedRow = _binarySearchFirstFromMap(
+      _rowMetrics,
+          (span) => !span.isPinned && span.trailingOffset >= _targetLeadingRowPixel,
+    );
+    _lastNonPinnedRow = _binarySearchFirstFromMap(
+      _rowMetrics,
+          (span) => !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
+    );
     if (_firstNonPinnedRow != null) {
       _lastNonPinnedRow ??= _rowMetrics.length - 1;
     }
