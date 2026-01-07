@@ -12,10 +12,9 @@ import 'package:mustache_template/mustache.dart';
 
 import 'fonts.pb.dart';
 
-const String _generatedAllPartsFilePath =
-    'lib/src/google_fonts_all_parts.g.dart';
+const String _generatedAllPartsFilePath = 'lib/src/google_fonts_all_parts.dart';
 String _generatedPartFilePath(String part) =>
-    'lib/src/google_fonts_parts/part_$part.g.dart';
+    'lib/src/google_fonts_parts/part_$part.dart';
 const String _familiesSupportedPath = 'generator/families_supported';
 const String _familiesDiffPath = 'generator/families_diff';
 
