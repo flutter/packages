@@ -1,3 +1,7 @@
+## 4.10.12
+
+* Bumps kotlin_version to 2.3.0.
+
 ## 4.10.11
 
 * Removes internal native library Dart proxy.

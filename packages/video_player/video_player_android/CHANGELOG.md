@@ -2,6 +2,10 @@
 
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using ExoPlayer.
 
+## 2.9.2
+
+* Bumps kotlin_version to 2.3.0.
+
 ## 2.9.1
 
 * Updates to Pigeon 26.1.5.
