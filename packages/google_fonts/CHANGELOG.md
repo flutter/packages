@@ -1,5 +1,5 @@
 ## 7.0.1
--
+- Exclude variable font entries when a static entry of the same weight and style exists
 
 ## 7.0.0
 
