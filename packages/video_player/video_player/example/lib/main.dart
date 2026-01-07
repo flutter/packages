@@ -10,7 +10,6 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-
 import 'video_tracks_demo.dart';
 
 void main() {

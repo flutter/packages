@@ -141,14 +141,16 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
       final message = track == null
           ? 'Switched to automatic quality'
           : 'Selected video track: ${_getTrackLabel(track)}';
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     } catch (e) {
       if (!mounted) {
         return;
       }
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Failed to select video track: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to select video track: $e')),
+      );
     }
   }
 
@@ -228,7 +230,9 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               inputDecorationTheme: const InputDecorationTheme(
                 border: OutlineInputBorder(),
               ),
-              dropdownMenuEntries: _sampleVideos.indexed.map(((int, String) record) {
+              dropdownMenuEntries: _sampleVideos.indexed.map((
+                (int, String) record,
+              ) {
                 final (index, url) = record;
                 final label = url.contains('.m3u8')
                     ? 'HLS Stream ${index + 1}'
@@ -285,7 +289,10 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(onPressed: _initializeVideo, child: const Text('Retry')),
+            ElevatedButton(
+              onPressed: _initializeVideo,
+              child: const Text('Retry'),
+            ),
           ],
         ),
       );
@@ -374,7 +381,9 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
               title: Text(
                 'Automatic Quality',
                 style: TextStyle(
-                  fontWeight: _isAutoQuality ? FontWeight.bold : FontWeight.normal,
+                  fontWeight: _isAutoQuality
+                      ? FontWeight.bold
+                      : FontWeight.normal,
                 ),
               ),
               subtitle: const Text('Let the player choose the best quality'),
@@ -397,7 +406,8 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
                 ),
               ),
             )
-          else if (_error != null && (_controller?.value.isInitialized ?? false))
+          else if (_error != null &&
+              (_controller?.value.isInitialized ?? false))
             Expanded(
               child: Center(
                 child: Text(
@@ -434,7 +444,9 @@ class _VideoTracksDemoState extends State<VideoTracksDemo> {
         ),
         title: Text(
           _getTrackLabel(track),
-          style: TextStyle(fontWeight: isSelected ? FontWeight.bold : FontWeight.normal),
+          style: TextStyle(
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

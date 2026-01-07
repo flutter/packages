@@ -21,7 +21,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new AVFoundation-based video player implementation instance.
   AVFoundationVideoPlayer({
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
-    @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
+    @visibleForTesting
+    VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
   }) : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
        _playerApiProvider = playerApiProvider ?? _productionApiProvider;
 
@@ -70,7 +71,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
         if (asset == null) {
-          throw ArgumentError('"asset" must be non-null for an asset data source');
+          throw ArgumentError(
+            '"asset" must be non-null for an asset data source',
+          );
         }
         uri = await _api.getAssetUrl(asset, dataSource.package);
         if (uri == null) {
@@ -184,13 +187,16 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
     // Convert HLS variant tracks (iOS 15+)
     if (nativeData.mediaSelectionTracks != null) {
-      for (final MediaSelectionVideoTrackData track in nativeData.mediaSelectionTracks!) {
+      for (final MediaSelectionVideoTrackData track
+          in nativeData.mediaSelectionTracks!) {
         // Use bitrate as the track ID for HLS variants
         final trackId = 'variant_${track.bitrate ?? track.variantIndex}';
         // Generate label from resolution if not provided
         final String? label =
             track.label ??
-            (track.width != null && track.height != null ? '${track.height}p' : null);
+            (track.width != null && track.height != null
+                ? '${track.height}p'
+                : null);
         tracks.add(
           VideoTrack(
             id: trackId,
@@ -213,7 +219,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         // Generate label from resolution if not provided
         final String? label =
             track.label ??
-            (track.width != null && track.height != null ? '${track.height}p' : null);
+            (track.width != null && track.height != null
+                ? '${track.height}p'
+                : null);
         tracks.add(
           VideoTrack(
             id: trackId,
@@ -266,7 +274,9 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(
+        textureId: textureId,
+      ),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
     };
   }
@@ -293,8 +303,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 /// An instance of a video player, corresponding to a single player ID in
 /// [AVFoundationVideoPlayer].
 class _PlayerInstance {
-  _PlayerInstance(this._api, this.viewState, {required EventChannel eventChannel})
-    : _eventChannel = eventChannel;
+  _PlayerInstance(
+    this._api,
+    this.viewState, {
+    required EventChannel eventChannel,
+  }) : _eventChannel = eventChannel;
 
   final VideoPlayerInstanceApi _api;
   final VideoPlayerViewState viewState;

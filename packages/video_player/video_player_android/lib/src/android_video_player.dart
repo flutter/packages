@@ -17,7 +17,9 @@ VideoPlayerInstanceApi _productionApiProvider(int playerId) {
 }
 
 /// The non-test implementation of `_videoEventStreamProvider`.
-Stream<PlatformVideoEvent> _productionVideoEventStreamProvider(String streamIdentifier) {
+Stream<PlatformVideoEvent> _productionVideoEventStreamProvider(
+  String streamIdentifier,
+) {
   return pigeon.videoEvents(instanceName: streamIdentifier);
 }
 
@@ -27,7 +29,8 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
   /// Creates a new Android video player implementation instance.
   AndroidVideoPlayer({
     @visibleForTesting AndroidVideoPlayerApi? pluginApi,
-    @visibleForTesting VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
+    @visibleForTesting
+    VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
     Stream<PlatformVideoEvent> Function(String streamIdentifier)?
     videoEventStreamProvider,
   }) : _api = pluginApi ?? AndroidVideoPlayerApi(),
@@ -87,9 +90,14 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
       case DataSourceType.asset:
         final String? asset = dataSource.asset;
         if (asset == null) {
-          throw ArgumentError('"asset" must be non-null for an asset data source');
+          throw ArgumentError(
+            '"asset" must be non-null for an asset data source',
+          );
         }
-        final String key = await _api.getLookupKeyForAsset(asset, dataSource.package);
+        final String key = await _api.getLookupKeyForAsset(
+          asset,
+          dataSource.package,
+        );
         uri = 'asset:///$key';
       case DataSourceType.network:
         uri = dataSource.uri;
@@ -205,7 +213,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
-      VideoPlayerTextureViewState(:final int textureId) => Texture(textureId: textureId),
+      VideoPlayerTextureViewState(:final int textureId) => Texture(
+        textureId: textureId,
+      ),
       VideoPlayerPlatformViewState() => PlatformViewPlayer(playerId: playerId),
     };
   }
@@ -271,7 +281,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
         // Generate label from resolution if not provided
         final String? label =
             track.label ??
-            (track.width != null && track.height != null ? '${track.height}p' : null);
+            (track.width != null && track.height != null
+                ? '${track.height}p'
+                : null);
         tracks.add(
           VideoTrack(
             id: trackId,
@@ -306,7 +318,9 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return player ?? (throw StateError('No active player with ID $id.'));
   }
 
-  PlatformVideoFormat? _platformVideoFormatFromVideoFormat(VideoFormat? format) {
+  PlatformVideoFormat? _platformVideoFormatFromVideoFormat(
+    VideoFormat? format,
+  ) {
     return switch (format) {
       VideoFormat.dash => PlatformVideoFormat.dash,
       VideoFormat.hls => PlatformVideoFormat.hls,
@@ -560,7 +574,9 @@ class _PlayerInstance {
             // should be synchronous with the state change.
             break;
           case PlatformPlaybackState.ended:
-            _eventStreamController.add(VideoEvent(eventType: VideoEventType.completed));
+            _eventStreamController.add(
+              VideoEvent(eventType: VideoEventType.completed),
+            );
           case PlatformPlaybackState.unknown:
             // Ignore unknown states. This isn't an error since the media
             // framework could add new states in the future.
