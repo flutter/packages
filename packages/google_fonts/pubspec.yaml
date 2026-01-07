@@ -16,6 +16,7 @@ dependencies:
   path_provider: ^2.0.0
 
 dev_dependencies:
+  fixnum: ^1.1.1
   flutter_test:
     sdk: flutter
   mockito: ^5.0.0

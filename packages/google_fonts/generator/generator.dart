@@ -213,30 +213,7 @@ void _generateDartCode(Directory fontDirectory) {
       'labelSmall',
     ];
 
-    // Remove variable-font entries when a static entry of the same
-    // weight/italic exists. Keep variable only if no static equivalent.
-    // TODO(guidezpl): Add explicit variable-font support. See:
-    // https://github.com/flutter/flutter/issues/174575 and
-    // https://github.com/flutter/flutter/issues/174567
-    final List<Font> filteredVariants = <Font>[];
-    for (final Font variant in item.fonts) {
-      if (!variant.isVf) {
-        filteredVariants.add(variant);
-        continue;
-      }
-      var hasStaticEquivalent = false;
-      for (final Font other in item.fonts) {
-        if (!other.isVf &&
-            other.weight.start == variant.weight.start &&
-            other.italic.start.round() == variant.italic.start.round()) {
-          hasStaticEquivalent = true;
-          break;
-        }
-      }
-      if (!hasStaticEquivalent) {
-        filteredVariants.add(variant);
-      }
-    }
+    final List<Font> filteredVariants = deduplicateFonts(item.fonts);
 
     methods.add(<String, dynamic>{
       'methodName': methodName,
@@ -313,6 +290,35 @@ void _generateDartCode(Directory fontDirectory) {
 
 void _writeDartFile(String path, String content) {
   File(path).writeAsStringSync(content);
+}
+
+/// Remove variable-font entries when a static entry of the same
+/// weight/italic exists. Keep variable only if no static equivalent.
+///
+/// TODO(guidezpl): Add explicit variable-font support. See:
+/// https://github.com/flutter/flutter/issues/174575 and
+/// https://github.com/flutter/flutter/issues/174567
+List<Font> deduplicateFonts(List<Font> fonts) {
+  final List<Font> filteredVariants = <Font>[];
+  for (final Font variant in fonts) {
+    if (!variant.isVf) {
+      filteredVariants.add(variant);
+      continue;
+    }
+    var hasStaticEquivalent = false;
+    for (final Font other in fonts) {
+      if (!other.isVf &&
+          other.weight.start == variant.weight.start &&
+          other.italic.start.round() == variant.italic.start.round()) {
+        hasStaticEquivalent = true;
+        break;
+      }
+    }
+    if (!hasStaticEquivalent) {
+      filteredVariants.add(variant);
+    }
+  }
+  return filteredVariants;
 }
 
 String _familyToMethodName(String family) {
