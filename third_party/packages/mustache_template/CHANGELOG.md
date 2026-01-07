@@ -1,8 +1,8 @@
 ## 2.0.3
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
-* Fix error handling in LambdaContext by adding missing throw statements.
-* Use StateError instead of Exception for unreachable code in parser.
+* Fixes error handling in LambdaContext by adding missing throw statements.
+* Uses StateError instead of Exception for unreachable code in parser.
 
 ## 2.0.2
 
