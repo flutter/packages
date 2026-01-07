@@ -5,6 +5,7 @@
 export 'src/cross_file_web.dart';
 export 'src/web_cross_file.dart'
     show
+        WebXFile,
         BlobWebXFileCreationParams,
         UrlWebXFileCreationParams,
         WebXFileCreationParams,
