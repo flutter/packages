@@ -5,7 +5,6 @@
 @TestOn('vm')
 library;
 
-import 'package:fixnum/fixnum.dart';
 import 'package:test/test.dart';
 
 import '../generator/fonts.pb.dart';
@@ -16,14 +15,14 @@ void main() {
     test('Removes variable font when static equivalent exists', () {
       // Simulate AR One Sans w400 normal: one static and one variable
       final staticFont = Font(
-        file: FileSpec(hash: [1, 2, 3], fileSize: Int64(1000)),
+        file: FileSpec(hash: [1, 2, 3]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: false,
       );
 
       final variableFont = Font(
-        file: FileSpec(hash: [4, 5, 6], fileSize: Int64(2000)),
+        file: FileSpec(hash: [4, 5, 6]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: true,
@@ -40,7 +39,7 @@ void main() {
 
     test('Keeps variable font when no static equivalent exists', () {
       final variableFont = Font(
-        file: FileSpec(hash: [7, 8, 9], fileSize: Int64(3000)),
+        file: FileSpec(hash: [7, 8, 9]),
         weight: IntRange(start: 500, end: 500),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: true,
@@ -57,28 +56,28 @@ void main() {
 
     test('Handles mixed weights correctly', () {
       final static400 = Font(
-        file: FileSpec(hash: [1], fileSize: Int64(100)),
+        file: FileSpec(hash: [1]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: false,
       );
 
       final variable400 = Font(
-        file: FileSpec(hash: [2], fileSize: Int64(200)),
+        file: FileSpec(hash: [2]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: true,
       );
 
       final static700 = Font(
-        file: FileSpec(hash: [3], fileSize: Int64(300)),
+        file: FileSpec(hash: [3]),
         weight: IntRange(start: 700, end: 700),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: false,
       );
 
       final variable600 = Font(
-        file: FileSpec(hash: [4], fileSize: Int64(400)),
+        file: FileSpec(hash: [4]),
         weight: IntRange(start: 600, end: 600),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: true,
@@ -111,28 +110,28 @@ void main() {
 
     test('Handles italic fonts correctly', () {
       final staticNormal = Font(
-        file: FileSpec(hash: [1], fileSize: Int64(100)),
+        file: FileSpec(hash: [1]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: false,
       );
 
       final variableNormal = Font(
-        file: FileSpec(hash: [2], fileSize: Int64(200)),
+        file: FileSpec(hash: [2]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 0.0, end: 0.0),
         isVf: true,
       );
 
       final staticItalic = Font(
-        file: FileSpec(hash: [3], fileSize: Int64(300)),
+        file: FileSpec(hash: [3]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 1.0, end: 1.0),
         isVf: false,
       );
 
       final variableItalic = Font(
-        file: FileSpec(hash: [4], fileSize: Int64(400)),
+        file: FileSpec(hash: [4]),
         weight: IntRange(start: 400, end: 400),
         italic: FloatRange(start: 1.0, end: 1.0),
         isVf: true,
@@ -163,25 +162,25 @@ void main() {
       // Multiple static fonts of different weights, plus variable duplicates
       final statics = [
         Font(
-          file: FileSpec(hash: [1], fileSize: Int64(100)),
+          file: FileSpec(hash: [1]),
           weight: IntRange(start: 400, end: 400),
           italic: FloatRange(start: 0.0, end: 0.0),
           isVf: false,
         ),
         Font(
-          file: FileSpec(hash: [2], fileSize: Int64(200)),
+          file: FileSpec(hash: [2]),
           weight: IntRange(start: 500, end: 500),
           italic: FloatRange(start: 0.0, end: 0.0),
           isVf: false,
         ),
         Font(
-          file: FileSpec(hash: [3], fileSize: Int64(300)),
+          file: FileSpec(hash: [3]),
           weight: IntRange(start: 600, end: 600),
           italic: FloatRange(start: 0.0, end: 0.0),
           isVf: false,
         ),
         Font(
-          file: FileSpec(hash: [4], fileSize: Int64(400)),
+          file: FileSpec(hash: [4]),
           weight: IntRange(start: 700, end: 700),
           italic: FloatRange(start: 0.0, end: 0.0),
           isVf: false,
@@ -190,13 +189,13 @@ void main() {
 
       final variables = [
         Font(
-          file: FileSpec(hash: [11], fileSize: Int64(500)),
+          file: FileSpec(hash: [11]),
           weight: IntRange(start: 400, end: 400),
           italic: FloatRange(start: 0.0, end: 0.0),
           isVf: true,
         ),
         Font(
-          file: FileSpec(hash: [12], fileSize: Int64(600)),
+          file: FileSpec(hash: [12]),
           weight: IntRange(start: 500, end: 500),
           italic: FloatRange(start: 0.0, end: 0.0),
           isVf: true,
