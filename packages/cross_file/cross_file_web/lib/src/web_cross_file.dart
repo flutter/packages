@@ -14,23 +14,32 @@ import 'web_helpers.dart';
 @immutable
 sealed class WebXFileCreationParams extends PlatformXFileCreationParams {
   /// Constructs a [WebXFileCreationParams].
-  const WebXFileCreationParams({required super.uri});
+  const WebXFileCreationParams({required super.uri, this.testOverrides});
+
+  /// Overrides some functions to allow testing.
+  @visibleForTesting
+  final XFileTestOverrides? testOverrides;
 }
 
 /// Implementation of [WebXFileCreationParams] with an object url.
 @immutable
 base class UrlWebXFileCreationParams extends WebXFileCreationParams {
   /// Constructs a [UrlWebXFileCreationParams].
-  const UrlWebXFileCreationParams({required String objectUrl})
-    : super(uri: objectUrl);
+  const UrlWebXFileCreationParams({
+    required String objectUrl,
+    @visibleForTesting super.testOverrides,
+  }) : super(uri: objectUrl);
 }
 
 /// Implementation of [WebXFileCreationParams] with a [Blob].
 @immutable
 base class BlobWebXFileCreationParams extends WebXFileCreationParams {
   /// Constructs a [BlobWebXFileCreationParams].
-  BlobWebXFileCreationParams(this.blob, {this.autoRevokeObjectUrl = true})
-    : super(uri: URL.createObjectURL(blob)) {
+  BlobWebXFileCreationParams(
+    this.blob, {
+    this.autoRevokeObjectUrl = true,
+    @visibleForTesting super.testOverrides,
+  }) : super(uri: URL.createObjectURL(blob)) {
     if (autoRevokeObjectUrl) {
       _finalizer.attach(this, uri);
     }
@@ -128,7 +137,7 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
       name = blob.name;
     }
 
-    downloadObjectUrl(params.uri, name);
+    downloadObjectUrl(params.uri, name, testOverrides: params.testOverrides);
   }
 
   @override

@@ -5,6 +5,7 @@
 import 'dart:js_interop';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:web/web.dart';
 
 /// Create anchor element with download attribute
@@ -40,11 +41,20 @@ Element ensureInitialized(String id) {
 /// the file to whatever they want before it's actually saved.
 ///
 /// Maybe some day: https://developer.mozilla.org/en-US/docs/Web/API/Window/showSaveFilePicker
-void downloadObjectUrl(String objectUrl, String? name) {
+void downloadObjectUrl(
+  String objectUrl,
+  String? name, {
+  XFileTestOverrides? testOverrides,
+}) {
   // Create a DOM container where the anchor can be injected.
   final Element target = ensureInitialized('__x_file_dom_element');
+
   // Create an <a> tag with the appropriate download attributes and click it
-  final HTMLAnchorElement element = createAnchorElement(objectUrl, name);
+  // May be overridden with CrossFileTestOverrides
+  final HTMLAnchorElement element = testOverrides != null
+      ? testOverrides.createAnchorElement(objectUrl, name) as HTMLAnchorElement
+      : createAnchorElement(objectUrl, name);
+
   // Clear the children in target.
   target.replaceChildren(JSArray<JSAny?>());
   // Add the new `element` and click.
@@ -82,4 +92,15 @@ Future<Blob> fetchBlob(String objectUrl) async {
   } catch (e) {
     throw Exception('Could not fetch Blob by URL: $objectUrl');
   }
+}
+
+/// Overrides some functions to allow testing.
+// TODO(dit): https://github.com/flutter/flutter/issues/91400
+// Move this to web_helpers_test.dart
+class XFileTestOverrides {
+  /// Default constructor for overrides
+  XFileTestOverrides({required this.createAnchorElement});
+
+  /// For overriding the creation of the file input element.
+  Element Function(String href, String? suggestedName) createAnchorElement;
 }

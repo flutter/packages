@@ -10,6 +10,7 @@ import 'dart:js_interop';
 import 'dart:typed_data';
 
 import 'package:cross_file_web/src/web_cross_file.dart';
+import 'package:cross_file_web/src/web_helpers.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:web/web.dart' as html;
 
@@ -106,27 +107,25 @@ void main() {
         expect(element.download, 'path');
       });
 
-      // test('anchor element is clicked', () async {
-      //   final mockAnchor =
-      //       html.document.createElement('a') as html.HTMLAnchorElement;
-      //
-      //   final overrides = CrossFileTestOverrides(
-      //     createAnchorElement: (_, __) => mockAnchor,
-      //   );
-      //
-      //   final file = XFile.fromData(
-      //     bytes,
-      //     name: textFile.name,
-      //     overrides: overrides,
-      //   );
-      //
-      //   var clicked = false;
-      //   mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
-      //
-      //   await file.saveTo('path');
-      //
-      //   expect(clicked, true);
-      // });
+      test('anchor element is clicked', () async {
+        final mockAnchor =
+            html.document.createElement('a') as html.HTMLAnchorElement;
+
+        final testOverrides = XFileTestOverrides(
+          createAnchorElement: (_, __) => mockAnchor,
+        );
+
+        final file = WebXFile(
+          BlobWebXFileCreationParams(textFile, testOverrides: testOverrides),
+        );
+
+        var clicked = false;
+        mockAnchor.onClick.listen((html.MouseEvent event) => clicked = true);
+
+        await file.download('path');
+
+        expect(clicked, true);
+      });
     });
   });
 }
