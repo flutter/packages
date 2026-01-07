@@ -180,44 +180,21 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
-    final NativeAudioTrackData nativeData = await _playerWith(
+    final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
       id: playerId,
     ).getAudioTracks();
     final tracks = <VideoAudioTrack>[];
 
-    // Convert asset tracks to VideoAudioTrack
-    if (nativeData.assetTracks != null) {
-      for (final AssetAudioTrackData track in nativeData.assetTracks!) {
-        tracks.add(
-          VideoAudioTrack(
-            id: track.trackId.toString(),
-            label: track.label,
-            language: track.language,
-            isSelected: track.isSelected,
-            bitrate: track.bitrate,
-            sampleRate: track.sampleRate,
-            channelCount: track.channelCount,
-            codec: track.codec,
-          ),
-        );
-      }
-    }
-
-    // Convert media selection tracks to VideoAudioTrack (for HLS streams)
-    if (nativeData.mediaSelectionTracks != null) {
-      for (final MediaSelectionAudioTrackData track
-          in nativeData.mediaSelectionTracks!) {
-        final trackId = 'media_selection_${track.index}';
-        final String? label = track.commonMetadataTitle ?? track.displayName;
-        tracks.add(
-          VideoAudioTrack(
-            id: trackId,
-            label: label,
-            language: track.languageCode,
-            isSelected: track.isSelected,
-          ),
-        );
-      }
+    for (final track in nativeData) {
+      final String? label = track.commonMetadataTitle ?? track.displayName;
+      tracks.add(
+        VideoAudioTrack(
+          id: track.index.toString(),
+          label: label,
+          language: track.languageCode,
+          isSelected: track.isSelected,
+        ),
+      );
     }
 
     return tracks;
@@ -225,22 +202,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> selectAudioTrack(int playerId, String trackId) {
-    // Parse the trackId to determine type and extract the integer ID
-    String trackType;
-    int numericTrackId;
-
-    if (trackId.startsWith('media_selection_')) {
-      trackType = 'mediaSelection';
-      numericTrackId = int.parse(trackId.substring('media_selection_'.length));
-    } else {
-      // Asset track - the trackId is just the integer as a string
-      trackType = 'asset';
-      numericTrackId = int.parse(trackId);
-    }
-
-    return _playerWith(
-      id: playerId,
-    ).selectAudioTrack(trackType, numericTrackId);
+    final int trackIndex = int.parse(trackId);
+    return _playerWith(id: playerId).selectAudioTrack(trackIndex);
   }
 
   @override
@@ -320,10 +283,11 @@ class _PlayerInstance {
     return Duration(milliseconds: await _api.getPosition());
   }
 
-  Future<NativeAudioTrackData> getAudioTracks() => _api.getAudioTracks();
+  Future<List<MediaSelectionAudioTrackData>> getAudioTracks() =>
+      _api.getAudioTracks();
 
-  Future<void> selectAudioTrack(String trackType, int trackId) =>
-      _api.selectAudioTrack(trackType, trackId);
+  Future<void> selectAudioTrack(int trackIndex) =>
+      _api.selectAudioTrack(trackIndex);
 
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(

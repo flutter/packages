@@ -184,14 +184,15 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
               inputDecorationTheme: const InputDecorationTheme(
                 border: OutlineInputBorder(),
               ),
-              dropdownMenuEntries:
-                  _sampleVideos.indexed.map(((int, String) record) {
-                    final (int index, _) = record;
-                    return DropdownMenuEntry<int>(
-                      value: index,
-                      label: 'Video ${index + 1}',
-                    );
-                  }).toList(),
+              dropdownMenuEntries: _sampleVideos.indexed.map((
+                (int, String) record,
+              ) {
+                final (int index, _) = record;
+                return DropdownMenuEntry<int>(
+                  value: index,
+                  label: 'Video ${index + 1}',
+                );
+              }).toList(),
               onSelected: (int? value) {
                 if (value != null && value != _selectedVideoIndex) {
                   setState(() {
@@ -366,10 +367,9 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
               Text('Channels: ${track.channelCount}'),
           ],
         ),
-        trailing:
-            track.isSelected
-                ? const Icon(Icons.radio_button_checked, color: Colors.green)
-                : const Icon(Icons.radio_button_unchecked),
+        trailing: track.isSelected
+            ? const Icon(Icons.radio_button_checked, color: Colors.green)
+            : const Icon(Icons.radio_button_unchecked),
         onTap: track.isSelected ? null : () => _selectAudioTrack(track.id),
       ),
     );

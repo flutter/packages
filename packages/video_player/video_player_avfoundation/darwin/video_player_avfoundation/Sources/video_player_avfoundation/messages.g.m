@@ -48,27 +48,9 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 - (NSArray<id> *)toList;
 @end
 
-@interface FVPAudioTrackMessage ()
-+ (FVPAudioTrackMessage *)fromList:(NSArray<id> *)list;
-+ (nullable FVPAudioTrackMessage *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
-@interface FVPAssetAudioTrackData ()
-+ (FVPAssetAudioTrackData *)fromList:(NSArray<id> *)list;
-+ (nullable FVPAssetAudioTrackData *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
 @interface FVPMediaSelectionAudioTrackData ()
 + (FVPMediaSelectionAudioTrackData *)fromList:(NSArray<id> *)list;
 + (nullable FVPMediaSelectionAudioTrackData *)nullableFromList:(NSArray<id> *)list;
-- (NSArray<id> *)toList;
-@end
-
-@interface FVPNativeAudioTrackData ()
-+ (FVPNativeAudioTrackData *)fromList:(NSArray<id> *)list;
-+ (nullable FVPNativeAudioTrackData *)nullableFromList:(NSArray<id> *)list;
 - (NSArray<id> *)toList;
 @end
 
@@ -144,104 +126,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation FVPAudioTrackMessage
-+ (instancetype)makeWithId:(NSString *)id
-                     label:(NSString *)label
-                  language:(NSString *)language
-                isSelected:(BOOL)isSelected
-                   bitrate:(nullable NSNumber *)bitrate
-                sampleRate:(nullable NSNumber *)sampleRate
-              channelCount:(nullable NSNumber *)channelCount
-                     codec:(nullable NSString *)codec {
-  FVPAudioTrackMessage *pigeonResult = [[FVPAudioTrackMessage alloc] init];
-  pigeonResult.id = id;
-  pigeonResult.label = label;
-  pigeonResult.language = language;
-  pigeonResult.isSelected = isSelected;
-  pigeonResult.bitrate = bitrate;
-  pigeonResult.sampleRate = sampleRate;
-  pigeonResult.channelCount = channelCount;
-  pigeonResult.codec = codec;
-  return pigeonResult;
-}
-+ (FVPAudioTrackMessage *)fromList:(NSArray<id> *)list {
-  FVPAudioTrackMessage *pigeonResult = [[FVPAudioTrackMessage alloc] init];
-  pigeonResult.id = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.label = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.language = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.isSelected = [GetNullableObjectAtIndex(list, 3) boolValue];
-  pigeonResult.bitrate = GetNullableObjectAtIndex(list, 4);
-  pigeonResult.sampleRate = GetNullableObjectAtIndex(list, 5);
-  pigeonResult.channelCount = GetNullableObjectAtIndex(list, 6);
-  pigeonResult.codec = GetNullableObjectAtIndex(list, 7);
-  return pigeonResult;
-}
-+ (nullable FVPAudioTrackMessage *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FVPAudioTrackMessage fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    self.id ?: [NSNull null],
-    self.label ?: [NSNull null],
-    self.language ?: [NSNull null],
-    @(self.isSelected),
-    self.bitrate ?: [NSNull null],
-    self.sampleRate ?: [NSNull null],
-    self.channelCount ?: [NSNull null],
-    self.codec ?: [NSNull null],
-  ];
-}
-@end
-
-@implementation FVPAssetAudioTrackData
-+ (instancetype)makeWithTrackId:(NSInteger)trackId
-                          label:(nullable NSString *)label
-                       language:(nullable NSString *)language
-                     isSelected:(BOOL)isSelected
-                        bitrate:(nullable NSNumber *)bitrate
-                     sampleRate:(nullable NSNumber *)sampleRate
-                   channelCount:(nullable NSNumber *)channelCount
-                          codec:(nullable NSString *)codec {
-  FVPAssetAudioTrackData *pigeonResult = [[FVPAssetAudioTrackData alloc] init];
-  pigeonResult.trackId = trackId;
-  pigeonResult.label = label;
-  pigeonResult.language = language;
-  pigeonResult.isSelected = isSelected;
-  pigeonResult.bitrate = bitrate;
-  pigeonResult.sampleRate = sampleRate;
-  pigeonResult.channelCount = channelCount;
-  pigeonResult.codec = codec;
-  return pigeonResult;
-}
-+ (FVPAssetAudioTrackData *)fromList:(NSArray<id> *)list {
-  FVPAssetAudioTrackData *pigeonResult = [[FVPAssetAudioTrackData alloc] init];
-  pigeonResult.trackId = [GetNullableObjectAtIndex(list, 0) integerValue];
-  pigeonResult.label = GetNullableObjectAtIndex(list, 1);
-  pigeonResult.language = GetNullableObjectAtIndex(list, 2);
-  pigeonResult.isSelected = [GetNullableObjectAtIndex(list, 3) boolValue];
-  pigeonResult.bitrate = GetNullableObjectAtIndex(list, 4);
-  pigeonResult.sampleRate = GetNullableObjectAtIndex(list, 5);
-  pigeonResult.channelCount = GetNullableObjectAtIndex(list, 6);
-  pigeonResult.codec = GetNullableObjectAtIndex(list, 7);
-  return pigeonResult;
-}
-+ (nullable FVPAssetAudioTrackData *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FVPAssetAudioTrackData fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    @(self.trackId),
-    self.label ?: [NSNull null],
-    self.language ?: [NSNull null],
-    @(self.isSelected),
-    self.bitrate ?: [NSNull null],
-    self.sampleRate ?: [NSNull null],
-    self.channelCount ?: [NSNull null],
-    self.codec ?: [NSNull null],
-  ];
-}
-@end
-
 @implementation FVPMediaSelectionAudioTrackData
 + (instancetype)makeWithIndex:(NSInteger)index
                   displayName:(nullable NSString *)displayName
@@ -279,32 +163,6 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
 }
 @end
 
-@implementation FVPNativeAudioTrackData
-+ (instancetype)makeWithAssetTracks:(nullable NSArray<FVPAssetAudioTrackData *> *)assetTracks
-               mediaSelectionTracks:
-                   (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)mediaSelectionTracks {
-  FVPNativeAudioTrackData *pigeonResult = [[FVPNativeAudioTrackData alloc] init];
-  pigeonResult.assetTracks = assetTracks;
-  pigeonResult.mediaSelectionTracks = mediaSelectionTracks;
-  return pigeonResult;
-}
-+ (FVPNativeAudioTrackData *)fromList:(NSArray<id> *)list {
-  FVPNativeAudioTrackData *pigeonResult = [[FVPNativeAudioTrackData alloc] init];
-  pigeonResult.assetTracks = GetNullableObjectAtIndex(list, 0);
-  pigeonResult.mediaSelectionTracks = GetNullableObjectAtIndex(list, 1);
-  return pigeonResult;
-}
-+ (nullable FVPNativeAudioTrackData *)nullableFromList:(NSArray<id> *)list {
-  return (list) ? [FVPNativeAudioTrackData fromList:list] : nil;
-}
-- (NSArray<id> *)toList {
-  return @[
-    self.assetTracks ?: [NSNull null],
-    self.mediaSelectionTracks ?: [NSNull null],
-  ];
-}
-@end
-
 @interface FVPMessagesPigeonCodecReader : FlutterStandardReader
 @end
 @implementation FVPMessagesPigeonCodecReader
@@ -317,13 +175,7 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
     case 131:
       return [FVPTexturePlayerIds fromList:[self readValue]];
     case 132:
-      return [FVPAudioTrackMessage fromList:[self readValue]];
-    case 133:
-      return [FVPAssetAudioTrackData fromList:[self readValue]];
-    case 134:
       return [FVPMediaSelectionAudioTrackData fromList:[self readValue]];
-    case 135:
-      return [FVPNativeAudioTrackData fromList:[self readValue]];
     default:
       return [super readValueOfType:type];
   }
@@ -343,17 +195,8 @@ static id GetNullableObjectAtIndex(NSArray<id> *array, NSInteger key) {
   } else if ([value isKindOfClass:[FVPTexturePlayerIds class]]) {
     [self writeByte:131];
     [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FVPAudioTrackMessage class]]) {
-    [self writeByte:132];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FVPAssetAudioTrackData class]]) {
-    [self writeByte:133];
-    [self writeValue:[value toList]];
   } else if ([value isKindOfClass:[FVPMediaSelectionAudioTrackData class]]) {
-    [self writeByte:134];
-    [self writeValue:[value toList]];
-  } else if ([value isKindOfClass:[FVPNativeAudioTrackData class]]) {
-    [self writeByte:135];
+    [self writeByte:132];
     [self writeValue:[value toList]];
   } else {
     [super writeValue:value];
@@ -721,7 +564,7 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         FlutterError *error;
-        FVPNativeAudioTrackData *output = [api getAudioTracks:&error];
+        NSArray<FVPMediaSelectionAudioTrackData *> *output = [api getAudioTracks:&error];
         callback(wrapResult(output, error));
       }];
     } else {
@@ -737,16 +580,15 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
         binaryMessenger:binaryMessenger
                   codec:FVPGetMessagesCodec()];
     if (api) {
-      NSCAssert([api respondsToSelector:@selector(selectAudioTrackWithType:trackId:error:)],
+      NSCAssert([api respondsToSelector:@selector(selectAudioTrackAtIndex:error:)],
                 @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to "
-                @"@selector(selectAudioTrackWithType:trackId:error:)",
+                @"@selector(selectAudioTrackAtIndex:error:)",
                 api);
       [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
         NSArray<id> *args = message;
-        NSString *arg_trackType = GetNullableObjectAtIndex(args, 0);
-        NSInteger arg_trackId = [GetNullableObjectAtIndex(args, 1) integerValue];
+        NSInteger arg_trackIndex = [GetNullableObjectAtIndex(args, 0) integerValue];
         FlutterError *error;
-        [api selectAudioTrackWithType:arg_trackType trackId:arg_trackId error:&error];
+        [api selectAudioTrackAtIndex:arg_trackIndex error:&error];
         callback(wrapResult(nil, error));
       }];
     } else {

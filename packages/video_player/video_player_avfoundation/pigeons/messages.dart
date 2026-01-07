@@ -39,52 +39,6 @@ class TexturePlayerIds {
   final int textureId;
 }
 
-/// Represents an audio track in a video.
-class AudioTrackMessage {
-  AudioTrackMessage({
-    required this.id,
-    required this.label,
-    required this.language,
-    required this.isSelected,
-    this.bitrate,
-    this.sampleRate,
-    this.channelCount,
-    this.codec,
-  });
-
-  String id;
-  String label;
-  String language;
-  bool isSelected;
-  int? bitrate;
-  int? sampleRate;
-  int? channelCount;
-  String? codec;
-}
-
-/// Raw audio track data from AVAssetTrack (for regular assets).
-class AssetAudioTrackData {
-  AssetAudioTrackData({
-    required this.trackId,
-    this.label,
-    this.language,
-    required this.isSelected,
-    this.bitrate,
-    this.sampleRate,
-    this.channelCount,
-    this.codec,
-  });
-
-  int trackId;
-  String? label;
-  String? language;
-  bool isSelected;
-  int? bitrate;
-  int? sampleRate;
-  int? channelCount;
-  String? codec;
-}
-
 /// Raw audio track data from AVMediaSelectionOption (for HLS streams).
 class MediaSelectionAudioTrackData {
   MediaSelectionAudioTrackData({
@@ -100,17 +54,6 @@ class MediaSelectionAudioTrackData {
   String? languageCode;
   bool isSelected;
   String? commonMetadataTitle;
-}
-
-/// Container for raw audio track data from native platforms.
-class NativeAudioTrackData {
-  NativeAudioTrackData({this.assetTracks, this.mediaSelectionTracks});
-
-  /// Asset-based tracks (for regular video files)
-  List<AssetAudioTrackData>? assetTracks;
-
-  /// Media selection-based tracks (for HLS streams)
-  List<MediaSelectionAudioTrackData>? mediaSelectionTracks;
 }
 
 @HostApi()
@@ -147,7 +90,7 @@ abstract class VideoPlayerInstanceApi {
   void pause();
   void dispose();
   @ObjCSelector('getAudioTracks')
-  NativeAudioTrackData getAudioTracks();
-  @ObjCSelector('selectAudioTrackWithType:trackId:')
-  void selectAudioTrack(String trackType, int trackId);
+  List<MediaSelectionAudioTrackData> getAudioTracks();
+  @ObjCSelector('selectAudioTrackAtIndex:')
+  void selectAudioTrack(int trackIndex);
 }

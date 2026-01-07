@@ -421,17 +421,20 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   [self updatePlayingState];
 }
 
-- (nullable FVPNativeAudioTrackData *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error {
+- (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:
+    (FlutterError *_Nullable *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
   NSAssert(currentItem, @"currentItem should not be nil");
   AVAsset *asset = currentItem.asset;
 
-  // First, try to get tracks from media selection (for HLS streams)
+  // Get tracks from media selection (for HLS streams)
   AVMediaSelectionGroup *audioGroup =
       [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
+      [[NSMutableArray alloc] init];
+
   if (audioGroup.options.count > 0) {
-    NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
-        [[NSMutableArray alloc] init];
     AVMediaSelection *mediaSelection = currentItem.currentMediaSelection;
     AVMediaSelectionOption *currentSelection =
         [mediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
@@ -462,125 +465,24 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
       [mediaSelectionTracks addObject:trackData];
     }
-
-    // Always return media selection tracks when there's a media selection group
-    // even if all options were nil/invalid (empty array)
-    return [FVPNativeAudioTrackData makeWithAssetTracks:nil
-                                   mediaSelectionTracks:mediaSelectionTracks];
   }
 
-  // If no media selection group or empty, try to get tracks from AVAsset (for regular video files)
-  NSArray<AVAssetTrack *> *assetAudioTracks = [asset tracksWithMediaType:AVMediaTypeAudio];
-  NSMutableArray<FVPAssetAudioTrackData *> *assetTracks = [[NSMutableArray alloc] init];
-
-  for (NSInteger i = 0; i < assetAudioTracks.count; i++) {
-    AVAssetTrack *track = assetAudioTracks[i];
-
-    // Extract metadata from the track
-    NSString *language = nil;
-    NSString *label = nil;
-
-    // Try to get language from track
-    if ([track.languageCode length] > 0) {
-      language = track.languageCode;
-    }
-
-    // Try to get label from metadata
-    for (AVMetadataItem *item in track.commonMetadata) {
-      if ([item.commonKey isEqualToString:AVMetadataCommonKeyTitle] && item.stringValue) {
-        label = item.stringValue;
-        break;
-      }
-    }
-
-    // Extract format information
-    NSNumber *bitrate = nil;
-    NSNumber *sampleRate = nil;
-    NSNumber *channelCount = nil;
-    NSString *codec = nil;
-
-    // Extract format information from the track's format descriptions
-    if (track.formatDescriptions.count > 0) {
-      CMFormatDescriptionRef formatDesc =
-          (__bridge CMFormatDescriptionRef)track.formatDescriptions[0];
-
-      // Get audio stream basic description
-      const AudioStreamBasicDescription *audioDesc =
-          CMAudioFormatDescriptionGetStreamBasicDescription(formatDesc);
-      if (audioDesc) {
-        if (audioDesc->mSampleRate > 0) {
-          sampleRate = @((NSInteger)audioDesc->mSampleRate);
-        }
-        if (audioDesc->mChannelsPerFrame > 0) {
-          channelCount = @(audioDesc->mChannelsPerFrame);
-        }
-      }
-
-      // Get codec information
-      FourCharCode codecType = CMFormatDescriptionGetMediaSubType(formatDesc);
-      switch (codecType) {
-        case kAudioFormatMPEG4AAC:
-          codec = @"aac";
-          break;
-        case kAudioFormatAC3:
-          codec = @"ac3";
-          break;
-        case kAudioFormatEnhancedAC3:
-          codec = @"eac3";
-          break;
-        case kAudioFormatMPEGLayer3:
-          codec = @"mp3";
-          break;
-        default:
-          codec = nil;
-          break;
-      }
-    }
-
-    // Estimate bitrate from track
-    if (track.estimatedDataRate > 0) {
-      bitrate = @((NSInteger)track.estimatedDataRate);
-    }
-
-    // For now, assume the first track is selected (we don't have easy access to current selection
-    // for asset tracks)
-    BOOL isSelected = (i == 0);
-
-    FVPAssetAudioTrackData *trackData = [FVPAssetAudioTrackData makeWithTrackId:track.trackID
-                                                                          label:label
-                                                                       language:language
-                                                                     isSelected:isSelected
-                                                                        bitrate:bitrate
-                                                                     sampleRate:sampleRate
-                                                                   channelCount:channelCount
-                                                                          codec:codec];
-
-    [assetTracks addObject:trackData];
-  }
-
-  // Return asset tracks (even if empty), media selection tracks should be nil
-  return [FVPNativeAudioTrackData makeWithAssetTracks:assetTracks mediaSelectionTracks:nil];
+  return mediaSelectionTracks;
 }
 
-- (void)selectAudioTrackWithType:(nonnull NSString *)trackType
-                         trackId:(NSInteger)trackId
-                           error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+- (void)selectAudioTrackAtIndex:(NSInteger)trackIndex
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
   AVPlayerItem *currentItem = _player.currentItem;
   NSAssert(currentItem, @"currentItem should not be nil");
   AVAsset *asset = currentItem.asset;
 
-  // Check if this is a media selection track (for HLS streams)
-  if ([trackType isEqualToString:@"mediaSelection"]) {
-    AVMediaSelectionGroup *audioGroup =
-        [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
-    // Validate that we have a valid audio group and the trackId (index) is valid
-    if (audioGroup && trackId >= 0 && trackId < (NSInteger)audioGroup.options.count) {
-      AVMediaSelectionOption *option = audioGroup.options[trackId];
-      [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
-    }
+  AVMediaSelectionGroup *audioGroup =
+      [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  if (audioGroup && trackIndex >= 0 && trackIndex < (NSInteger)audioGroup.options.count) {
+    AVMediaSelectionOption *option = audioGroup.options[trackIndex];
+    [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
   }
-  // For asset tracks, we don't have a direct way to select them in AVFoundation
-  // This would require more complex track selection logic that's not commonly used
 }
 
 #pragma mark - Private

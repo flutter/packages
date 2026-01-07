@@ -572,7 +572,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
-      await _videoPlayerPlatform.setMixWithOthers(videoPlayerOptions!.mixWithOthers);
+      await _videoPlayerPlatform.setMixWithOthers(
+        videoPlayerOptions!.mixWithOthers,
+      );
     }
 
     _playerId =
@@ -633,7 +635,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           value = value.copyWith(isBuffering: false);
         case VideoEventType.isPlayingStateUpdate:
           if (event.isPlaying ?? false) {
-            value = value.copyWith(isPlaying: event.isPlaying, isCompleted: false);
+            value = value.copyWith(
+              isPlaying: event.isPlaying,
+              isCompleted: false,
+            );
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
@@ -724,7 +729,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       await _videoPlayerPlatform.play(_playerId);
 
       _timer?.cancel();
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (Timer timer) async {
+      _timer = Timer.periodic(const Duration(milliseconds: 100), (
+        Timer timer,
+      ) async {
         if (_isDisposed) {
           return;
         }
@@ -846,7 +853,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// * >0: The caption will have a negative offset. So you will get caption text from the past.
   /// * <0: The caption will have a positive offset. So you will get caption text from the future.
   void setCaptionOffset(Duration offset) {
-    value = value.copyWith(captionOffset: offset, caption: _getCaptionAt(value.position));
+    value = value.copyWith(
+      captionOffset: offset,
+      caption: _getCaptionAt(value.position),
+    );
   }
 
   /// The closed caption based on the current [position] in the video.
@@ -880,7 +890,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Sets a closed caption file.
   ///
   /// If [closedCaptionFile] is null, closed captions will be removed.
-  Future<void> setClosedCaptionFile(Future<ClosedCaptionFile>? closedCaptionFile) async {
+  Future<void> setClosedCaptionFile(
+    Future<ClosedCaptionFile>? closedCaptionFile,
+  ) async {
     await _updateClosedCaptionWithFuture(closedCaptionFile);
     _closedCaptionFileFuture = closedCaptionFile;
   }
@@ -1124,7 +1136,11 @@ class VideoScrubber extends StatefulWidget {
   ///
   /// [controller] is the [VideoPlayerController] that will be controlled by
   /// this scrubber.
-  const VideoScrubber({super.key, required this.child, required this.controller});
+  const VideoScrubber({
+    super.key,
+    required this.child,
+    required this.controller,
+  });
 
   /// The widget that will be displayed inside the gesture detector.
   final Widget child;
@@ -1294,7 +1310,10 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       child: progressIndicator,
     );
     if (widget.allowScrubbing) {
-      return VideoScrubber(controller: controller, child: paddedProgressIndicator);
+      return VideoScrubber(
+        controller: controller,
+        child: paddedProgressIndicator,
+      );
     } else {
       return paddedProgressIndicator;
     }
@@ -1346,7 +1365,9 @@ class ClosedCaption extends StatelessWidget {
 
     final TextStyle effectiveTextStyle =
         textStyle ??
-        DefaultTextStyle.of(context).style.copyWith(fontSize: 36.0, color: Colors.white);
+        DefaultTextStyle.of(
+          context,
+        ).style.copyWith(fontSize: 36.0, color: Colors.white);
 
     return Align(
       alignment: Alignment.bottomCenter,
