@@ -15,6 +15,10 @@ static void *statusContext = &statusContext;
 static void *playbackLikelyToKeepUpContext = &playbackLikelyToKeepUpContext;
 static void *rateContext = &rateContext;
 
+/// The key name for loading AVURLAsset variants property asynchronously.
+/// Note: Apple does not provide a constant for this key; it is documented in the AVURLAsset API.
+static NSString *const kFVPAssetVariantsKey = @"variants";
+
 /// Registers KVO observers on 'object' for each entry in 'observations', which must be a
 /// dictionary mapping KVO keys to NSValue-wrapped context pointers.
 ///
@@ -441,11 +445,11 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   // Use AVAssetVariant API for iOS 15+ to get HLS variants
   if (@available(iOS 15.0, macOS 12.0, *)) {
     [urlAsset
-        loadValuesAsynchronouslyForKeys:@[ @"variants" ]
+        loadValuesAsynchronouslyForKeys:@[ kFVPAssetVariantsKey ]
                       completionHandler:^{
                         dispatch_async(dispatch_get_main_queue(), ^{
                           NSError *error = nil;
-                          AVKeyValueStatus status = [urlAsset statusOfValueForKey:@"variants"
+                          AVKeyValueStatus status = [urlAsset statusOfValueForKey:kFVPAssetVariantsKey
                                                                             error:&error];
 
                           if (status == AVKeyValueStatusLoaded) {
@@ -472,8 +476,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                 }
                               }
 
-                              // Determine if this variant is selected (approximate match by
-                              // bitrate)
+                              // Determine if this variant is currently selected by comparing bitrates.
+                              // Since AVPlayer doesn't expose the exact selected variant, we use a 10%
+                              // tolerance to account for minor bitrate variations in adaptive streaming.
                               BOOL isSelected =
                                   (currentBitrate > 0 &&
                                    fabs(peakBitRate - currentBitrate) < peakBitRate * 0.1);
@@ -485,21 +490,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                               }
 
                               FVPMediaSelectionVideoTrackData *trackData =
-                                  [FVPMediaSelectionVideoTrackData
-                                      makeWithVariantIndex:variantIndex
-                                                     label:resolutionLabel
-                                                   bitrate:peakBitRate > 0
-                                                               ? @((NSInteger)peakBitRate)
-                                                               : nil
-                                                     width:videoSize.width > 0
-                                                               ? @((NSInteger)videoSize.width)
-                                                               : nil
-                                                    height:videoSize.height > 0
-                                                               ? @((NSInteger)videoSize.height)
-                                                               : nil
-                                                 frameRate:frameRate > 0 ? @(frameRate) : nil
-                                                     codec:codec
-                                                isSelected:isSelected];
+                                  [self createVideoTrackDataWithIndex:variantIndex
+                                                                label:resolutionLabel
+                                                          peakBitRate:peakBitRate
+                                                            videoSize:videoSize
+                                                            frameRate:frameRate
+                                                                codec:codec
+                                                           isSelected:isSelected];
                               [mediaSelectionTracks addObject:trackData];
                               variantIndex++;
                             }
@@ -512,9 +509,30 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                         });
                       }];
   } else {
-    // For iOS < 15, return empty list as AVAssetVariant is not available
+    // For iOS < 15, AVAssetVariant API is not available. Return an empty result (not an error)
+    // since the absence of variant data is expected on older OS versions.
     completion([[FVPNativeVideoTrackData alloc] init], nil);
   }
+}
+
+/// Creates a video track data object with the given parameters, converting values to NSNumber
+/// where appropriate and returning nil for invalid/zero values.
+- (FVPMediaSelectionVideoTrackData *)createVideoTrackDataWithIndex:(NSInteger)index
+                                                              label:(NSString *)label
+                                                        peakBitRate:(double)peakBitRate
+                                                          videoSize:(CGSize)videoSize
+                                                          frameRate:(double)frameRate
+                                                              codec:(NSString *)codec
+                                                         isSelected:(BOOL)isSelected {
+  return [FVPMediaSelectionVideoTrackData
+      makeWithVariantIndex:index
+                     label:label
+                   bitrate:peakBitRate > 0 ? @((NSInteger)peakBitRate) : nil
+                     width:videoSize.width > 0 ? @((NSInteger)videoSize.width) : nil
+                    height:videoSize.height > 0 ? @((NSInteger)videoSize.height) : nil
+                 frameRate:frameRate > 0 ? @(frameRate) : nil
+                     codec:codec
+                isSelected:isSelected];
 }
 
 /// Converts a FourCharCode codec type to a human-readable string for display in the UI.

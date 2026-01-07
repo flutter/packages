@@ -1053,8 +1053,8 @@
 
 #pragma mark - Video Track Tests
 
-// Tests getVideoTracks with a regular MP4 video file using real AVFoundation.
-// Regular MP4 files don't have HLS variants, so we expect empty media selection tracks.
+// Integration test for getVideoTracks with a non-HLS MP4 video over a live network request.
+// Non-HLS MP4 files don't have adaptive bitrate variants, so we expect empty media selection tracks.
 - (void)testGetVideoTracksWithRealMP4Video {
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
@@ -1086,8 +1086,8 @@
   [player disposeWithError:&disposeError];
 }
 
-// Tests getVideoTracks with an HLS stream using real AVFoundation.
-// HLS streams use AVAssetVariant API (iOS 15+) for video track selection.
+// Integration test for getVideoTracks with an HLS stream over a live network request.
+// HLS streams use AVAssetVariant API (iOS 15+) to enumerate available quality variants.
 - (void)testGetVideoTracksWithRealHLSStream {
   NSURL *hlsURL = [NSURL
       URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
