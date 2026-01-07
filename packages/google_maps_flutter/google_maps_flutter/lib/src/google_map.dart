@@ -295,7 +295,7 @@ class GoogleMap extends StatefulWidget {
   ///
   /// This implementation maps to [Map.tilesloaded](https://developers.google.com/maps/documentation/javascript/reference/map#Map.tilesloaded) on Web,
   /// [GoogleMap.OnMapLoadedCallback](https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMapLoadedCallback) on Android,
-  /// and [GMSMapViewDelegate.mapViewDidFinishTileRendering](https://developers.google.com/maps/documentation/ios-sdk/reference/protocol_g_m_s_map_view_delegate-p#mapViewDidFinishTileRendering:) on iOS.
+  /// and [GMSMapViewDelegate.mapViewDidFinishTileRendering](https://developers.google.com/maps/documentation/ios-sdk/reference/objc/Protocols/GMSMapViewDelegate#-mapviewdidfinishtilerendering:) on iOS.
   final VoidCallback? onMapLoaded;
 
   /// True if a "My Location" layer should be shown on the map.
