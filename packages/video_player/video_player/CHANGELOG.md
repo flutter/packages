@@ -1,11 +1,11 @@
-## NEXT
+## 2.11.0
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
-* Adds video track (quality) selection support via `getVideoTracks()`, `selectVideoTrack()`, and `isVideoTrackSupportAvailable()` methods.
+* Adds video quality selection support for HLS/DASH adaptive streams via `getVideoTracks()`, `selectVideoTrack()`, and `isVideoTrackSupportAvailable()` methods. This enables programmatic switching between different resolution/bitrate variants.
 
 ## 2.10.1
 

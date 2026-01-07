@@ -827,9 +827,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Gets the available video tracks (quality variants) for the video.
   ///
   /// Returns a list of [VideoTrack] objects representing the available
-  /// video quality variants. For HLS/DASH streams, this returns the different
-  /// quality levels available. For regular videos, this may return a single
-  /// track or an empty list.
+  /// video quality variants. For HLS/DASH adaptive streams, this returns the
+  /// different quality levels (resolution/bitrate variants) available.
+  /// For non-adaptive videos (MP4, MOV, etc.), this returns an empty list
+  /// as they have a single fixed quality that cannot be switched.
   ///
   /// Note: On iOS 13-14, this returns an empty list as the AVAssetVariant API
   /// requires iOS 15+. On web, this throws an [UnimplementedError].
@@ -1295,9 +1296,9 @@ class ClosedCaption extends StatelessWidget {
 
 /// Represents a video track (quality variant) in a video with its metadata.
 ///
-/// For HLS/DASH streams, each [VideoTrack] represents a different quality
-/// level (e.g., 1080p, 720p, 480p). For regular videos, there may be only
-/// one track or none available.
+/// For HLS/DASH adaptive streams, each [VideoTrack] represents a different
+/// quality level (e.g., 1080p, 720p, 480p). For non-adaptive videos (MP4,
+/// MOV, etc.), no tracks are returned as they have a single fixed quality.
 @immutable
 class VideoTrack {
   /// Constructs an instance of [VideoTrack].
@@ -1330,7 +1331,7 @@ class VideoTrack {
   ///
   /// The format is platform-specific:
   /// - Android: `"{groupIndex}_{trackIndex}"` (e.g., `"0_2"`)
-  /// - iOS: `"variant_{bitrate}"` for HLS, `"asset_{trackID}"` for regular videos
+  /// - iOS: `"variant_{bitrate}"` for HLS adaptive streams
   final String id;
 
   /// Whether this track is currently selected.

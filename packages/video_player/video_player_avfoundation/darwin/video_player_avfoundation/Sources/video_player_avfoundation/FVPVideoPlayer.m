@@ -450,12 +450,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
                           if (status == AVKeyValueStatusLoaded) {
                             NSArray<AVAssetVariant *> *variants = urlAsset.variants;
-                            double currentBitrate = currentItem.preferredPeakBitRate > 0
-                                                        ? currentItem.preferredPeakBitRate
-                                                        : 0;
+                            double currentBitrate = MAX(currentItem.preferredPeakBitRate, 0);
 
-                            for (NSInteger i = 0; i < variants.count; i++) {
-                              AVAssetVariant *variant = variants[i];
+                            NSInteger variantIndex = 0;
+                            for (AVAssetVariant *variant in variants) {
                               double peakBitRate = variant.peakBitRate;
                               CGSize videoSize = CGSizeZero;
                               double frameRate = 0;
@@ -480,16 +478,16 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                   (currentBitrate > 0 &&
                                    fabs(peakBitRate - currentBitrate) < peakBitRate * 0.1);
 
-                              // Generate label from resolution
-                              NSString *label = nil;
+                              // Generate a human-readable resolution label (e.g., "1080p")
+                              NSString *resolutionLabel = nil;
                               if (videoSize.height > 0) {
-                                label = [NSString stringWithFormat:@"%.0fp", videoSize.height];
+                                resolutionLabel = [NSString stringWithFormat:@"%.0fp", videoSize.height];
                               }
 
                               FVPMediaSelectionVideoTrackData *trackData =
                                   [FVPMediaSelectionVideoTrackData
-                                      makeWithVariantIndex:i
-                                                     label:label
+                                      makeWithVariantIndex:variantIndex
+                                                     label:resolutionLabel
                                                    bitrate:peakBitRate > 0
                                                                ? @((NSInteger)peakBitRate)
                                                                : nil
@@ -503,14 +501,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                                      codec:codec
                                                 isSelected:isSelected];
                               [mediaSelectionTracks addObject:trackData];
+                              variantIndex++;
                             }
                           }
 
                           FVPNativeVideoTrackData *result = [FVPNativeVideoTrackData
                                makeWithAssetTracks:nil
-                              mediaSelectionTracks:mediaSelectionTracks.count > 0
-                                                       ? mediaSelectionTracks
-                                                       : nil];
+                              mediaSelectionTracks:mediaSelectionTracks];
                           completion(result, nil);
                         });
                       }];
@@ -520,8 +517,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+/// Converts a FourCharCode codec type to a human-readable string for display in the UI.
+/// These codec names help users understand the video encoding format of each quality variant.
 - (NSString *)codecStringFromFourCharCode:(FourCharCode)code {
-  // Convert common video codec FourCharCodes to readable strings
   switch (code) {
     case kCMVideoCodecType_H264:
       return @"avc1";
