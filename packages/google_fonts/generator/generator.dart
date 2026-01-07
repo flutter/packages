@@ -213,6 +213,31 @@ void _generateDartCode(Directory fontDirectory) {
       'labelSmall',
     ];
 
+    // Remove variable-font entries when a static entry of the same
+    // weight/italic exists. Keep variable only if no static equivalent.
+    // TODO(guidezpl): Add explicit variable-font support. See:
+    // https://github.com/flutter/flutter/issues/174575 and
+    // https://github.com/flutter/flutter/issues/174567
+    final List<Font> filteredVariants = <Font>[];
+    for (final Font variant in item.fonts) {
+      if (!variant.isVf) {
+        filteredVariants.add(variant);
+        continue;
+      }
+      var hasStaticEquivalent = false;
+      for (final Font other in item.fonts) {
+        if (!other.isVf &&
+            other.weight.start == variant.weight.start &&
+            other.italic.start.round() == variant.italic.start.round()) {
+          hasStaticEquivalent = true;
+          break;
+        }
+      }
+      if (!hasStaticEquivalent) {
+        filteredVariants.add(variant);
+      }
+    }
+
     methods.add(<String, dynamic>{
       'methodName': methodName,
       'part': methodName[0].toUpperCase(),
@@ -220,7 +245,7 @@ void _generateDartCode(Directory fontDirectory) {
       'fontFamilyDisplay': family,
       'docsUrl': 'https://fonts.google.com/specimen/$familyWithPlusSigns',
       'fontUrls': <Map<String, Object>>[
-        for (final Font variant in item.fonts)
+        for (final Font variant in filteredVariants)
           <String, Object>{
             'variantWeight': variant.weight.start,
             'variantStyle': variant.italic.start.round() == 1
