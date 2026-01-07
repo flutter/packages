@@ -4,8 +4,9 @@ framework module image_picker_ios {
   export *
   module * { export * }
 
+  header "FIPViewProvider.h"
+
   explicit module Test {
-    header "FIPViewProvider.h"
     header "FLTImagePickerPlugin_Test.h"
     header "FLTImagePickerImageUtil.h"
     header "FLTImagePickerMetaDataUtil.h"
