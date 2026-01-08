@@ -138,7 +138,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain, {String? namePre
 ///     output the new image for verification.
 ///
 ///  The [FlutterSkippingFileComparator] is utilized to skip tests outside
-///  of the appropriate environments described above. Currently, some 
+///  of the appropriate environments described above. Currently, some
 ///  packages or environments do not execute golden file testing, and as such do
 ///  not require a comparator. This comparator is also used when an internet
 ///  connection is unavailable.
@@ -235,7 +235,6 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
     return Uri.parse(
       <String>[
         ?namePrefix,
-        basedir.pathSegments[1], // ~/packages/<package-name>
         golden.toString(),
       ].join('.'),
     );
