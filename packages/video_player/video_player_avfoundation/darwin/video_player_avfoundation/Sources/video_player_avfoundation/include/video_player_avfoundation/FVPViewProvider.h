@@ -19,8 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// The view containing the Flutter content.
 @property(nonatomic, readonly, nullable) NSView *view;
 #else
-/// The view containing the Flutter content.
-@property(nonatomic, readonly, nullable) UIView *view;
+/// The view controller containing the Flutter content.
+@property(nonatomic, readonly, nullable) UIViewController *viewController;
 #endif
 @end
 
