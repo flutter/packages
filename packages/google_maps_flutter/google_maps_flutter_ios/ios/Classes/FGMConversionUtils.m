@@ -260,7 +260,8 @@ GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate
 UIColor *FGMGetColorForPigeonColor(FGMPlatformColor *color) {
   return [UIColor colorWithRed:color.red green:color.green blue:color.blue alpha:color.alpha];
 }
-extern FGMPlatformColor *FGMGetPigeonColorForColor(UIColor *color) {
+
+FGMPlatformColor *FGMGetPigeonColorForColor(UIColor *color) {
   double red, green, blue, alpha;
   [color getRed:&red green:&green blue:&blue alpha:&alpha];
   return [FGMPlatformColor makeWithRed:red green:green blue:blue alpha:alpha];
