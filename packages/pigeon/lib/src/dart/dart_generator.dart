@@ -335,7 +335,7 @@ class _FfiType {
             type.baseName == 'bool')) {
       return name;
     }
-    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${_getNullableSymbol(type.isNullable && type.baseName != 'Object')}>($name)';
+    return '_PigeonFfiCodec.writeValue<${ffiType.ffiName}${_getNullableSymbol(type.isNullable && type.baseName != 'Object')}>($name${type.baseName == 'Object' ? ', generic: true' : ''})';
   }
 
   String getFfiCallReturnType({
