@@ -138,7 +138,7 @@ final Map<Object?, Object?> map = <Object?, Object?>{
   'b': 2.0,
   'c': 'three',
   'd': false,
-  // 'e': null
+  'e': null,
 };
 
 final Map<String?, String?> stringMap = <String?, String?>{

@@ -2752,14 +2752,14 @@ class _PigeonFfiCodec {
       return (NSString.as(value)).toDartString();
     } else if (ffi_bridge.PigeonTypedData.isA(value)) {
       return getValueFromPigeonTypedData(value as ffi_bridge.PigeonTypedData);
-    } else if (value is NSArray || NSArray.isA(value)) {
+    } else if (NSArray.isA(value)) {
       final NSArray array = NSArray.as(value);
       final List<Object?> res = <Object?>[];
       for (int i = 0; i < array.count; i++) {
         res.add(readValue(array.objectAtIndex(i)));
       }
       return res;
-    } else if (value is NSDictionary || NSDictionary.isA(value)) {
+    } else if (NSDictionary.isA(value)) {
       final NSDictionary dictionary = NSDictionary.as(value);
       final Map<Object?, Object?> res = <Object?, Object?>{};
       for (final MapEntry<NSCopying?, ObjCObject?> entry
@@ -2776,9 +2776,6 @@ class _PigeonFfiCodec {
         return ${ffiType.type.baseName}.fromFfi(${ffiType.ffiName}.as(value));
         ''';
     }).join()}
-      // ignore: unnecessary_type_check
-    } else if (value is ObjCObject) {
-      return null;
     } else {
       throw ArgumentError.value(value);
     }
