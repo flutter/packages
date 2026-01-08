@@ -2545,9 +2545,11 @@ protocol NIHostIntegrationCoreApi {
     everything: NIAllNullableTypesWithoutRecursionBridge?, wrappedError: NiTestsError
   ) -> NIAllNullableTypesWithoutRecursionBridge? {
     do {
-      return try NIAllNullableTypesWithoutRecursionBridge.fromSwift(
-        api!.echoAllNullableTypesWithoutRecursion(
-          everything: isNullish(everything) ? nil : everything!.toSwift()))
+        let everything2 = isNullish(everything) ? nil : everything!.toSwift()
+        let retEver = try api!.echoAllNullableTypesWithoutRecursion(
+            everything: everything2)
+        let lastEver = NIAllNullableTypesWithoutRecursionBridge.fromSwift(retEver)
+        return lastEver
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

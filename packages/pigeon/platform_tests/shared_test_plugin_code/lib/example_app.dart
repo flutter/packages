@@ -46,9 +46,10 @@ class _ExampleAppState extends State<ExampleApp> {
       // api!.noop();
       // api!.echoStringList(stringList);
       // api!.echoAllTypes(genericNIAllTypes);
-      api!.echoObject(genericNIAllNullableTypesWithoutRecursion);
-      // api!.echoAllNullableTypesWithoutRecursion(
-      //     genericNIAllNullableTypesWithoutRecursion);
+      // api!.echoObject(genericNIAllNullableTypesWithoutRecursion);
+      api!.echoAllNullableTypesWithoutRecursion(
+        genericNIAllNullableTypesWithoutRecursion,
+      );
       // final NIAllClassesWrapper classWrapper = classWrapperMaker();
       // classWrapper.allTypes = null;
       // final NIAllClassesWrapper receivedClassWrapper =

@@ -565,8 +565,7 @@ class _PigeonFfiCodec {
       }
     } else if (NSString.isA(value)) {
       return (NSString.as(value)).toDartString();
-    } else if (value is ffi_bridge.PigeonTypedData ||
-        ffi_bridge.PigeonTypedData.isA(value)) {
+    } else if (ffi_bridge.PigeonTypedData.isA(value)) {
       return getValueFromPigeonTypedData(value as ffi_bridge.PigeonTypedData);
     } else if (value is NSArray || NSArray.isA(value)) {
       final NSArray array = NSArray.as(value);
@@ -610,7 +609,10 @@ class _PigeonFfiCodec {
     }
   }
 
-  static T writeValue<T extends ObjCObject?>(Object? value) {
+  static T writeValue<T extends ObjCObject?>(
+    Object? value, {
+    bool generic = false,
+  }) {
     if (value == null) {
       if (isTypeOrNullableType<T>(ObjCObject) ||
           isTypeOrNullableType<T>(NSObject)) {
@@ -621,7 +623,7 @@ class _PigeonFfiCodec {
         value is double ||
         value is int ||
         value is Enum) {
-      if (!isType<T>(NSNumber) && !isType<NSNumber?>(T)) {
+      if (generic) {
         return convertToFfiNumberWrapper(value) as T;
       }
       if (value is bool) {
@@ -639,32 +641,32 @@ class _PigeonFfiCodec {
       return convertToFfiNumberWrapper(value) as T;
     } else if (value is String) {
       return NSString(value) as T;
-    } else if (isTypeOrNullableType<ffi_bridge.PigeonTypedData>(T)) {
-      return toPigeonTypedData(value as TypedData) as T;
+    } else if (value is TypedData) {
+      return toPigeonTypedData(value) as T;
     } else if (value is List<bool> && isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final bool entry in value) {
-        res.addObject(writeValue<NSNumber>(entry));
+        res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<double> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final double entry in value) {
-        res.addObject(writeValue<NSNumber>(entry));
+        res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<int> && isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final int entry in value) {
-        res.addObject(writeValue<NSNumber>(entry));
+        res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<String> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final String entry in value) {
-        res.addObject(writeValue<NSString>(entry));
+        res.addObject(writeValue<NSString>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<NIAllNullableTypesWithoutRecursion> &&
@@ -674,6 +676,7 @@ class _PigeonFfiCodec {
         res.addObject(
           writeValue<ffi_bridge.NIAllNullableTypesWithoutRecursionBridge>(
             entry,
+            generic: true,
           ),
         );
       }
@@ -682,7 +685,9 @@ class _PigeonFfiCodec {
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final NIAnEnum entry in value) {
-        res.addObject(writeValue<ffi_bridge.NumberWrapper>(entry));
+        res.addObject(
+          writeValue<ffi_bridge.NumberWrapper>(entry, generic: true),
+        );
       }
       return res as T;
     } else if (value is List<NIAllTypes?> &&
@@ -692,7 +697,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<ffi_bridge.NIAllTypesBridge>(entry),
+              : writeValue<ffi_bridge.NIAllTypesBridge>(entry, generic: true),
         );
       }
       return res as T;
@@ -703,7 +708,10 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<ffi_bridge.NIAllNullableTypesBridge>(entry),
+              : writeValue<ffi_bridge.NIAllNullableTypesBridge>(
+                  entry,
+                  generic: true,
+                ),
         );
       }
       return res as T;
@@ -716,6 +724,7 @@ class _PigeonFfiCodec {
               ? ffi_bridge.PigeonInternalNull()
               : writeValue<ffi_bridge.NIAllNullableTypesWithoutRecursionBridge>(
                   entry,
+                  generic: true,
                 ),
         );
       }
@@ -727,7 +736,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<ffi_bridge.NumberWrapper>(entry),
+              : writeValue<ffi_bridge.NumberWrapper>(entry, generic: true),
         );
       }
       return res as T;
@@ -738,7 +747,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<NSNumber>(entry),
+              : writeValue<NSNumber>(entry, generic: true),
         );
       }
       return res as T;
@@ -749,7 +758,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<NSNumber>(entry),
+              : writeValue<NSNumber>(entry, generic: true),
         );
       }
       return res as T;
@@ -759,7 +768,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<NSNumber>(entry),
+              : writeValue<NSNumber>(entry, generic: true),
         );
       }
       return res as T;
@@ -770,7 +779,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<NSString>(entry),
+              : writeValue<NSString>(entry, generic: true),
         );
       }
       return res as T;
@@ -778,7 +787,7 @@ class _PigeonFfiCodec {
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final List<Object?> entry in value) {
-        res.addObject(writeValue<NSArray>(entry));
+        res.addObject(writeValue<NSArray>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<List<Object?>?> &&
@@ -788,7 +797,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<NSArray>(entry),
+              : writeValue<NSArray>(entry, generic: true),
         );
       }
       return res as T;
@@ -796,7 +805,7 @@ class _PigeonFfiCodec {
         isTypeOrNullableType<NSMutableArray>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final Map<Object?, Object?> entry in value) {
-        res.addObject(writeValue<NSDictionary>(entry));
+        res.addObject(writeValue<NSDictionary>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<Map<Object?, Object?>?> &&
@@ -806,7 +815,7 @@ class _PigeonFfiCodec {
         res.addObject(
           entry == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue<NSDictionary>(entry),
+              : writeValue<NSDictionary>(entry, generic: true),
         );
       }
       return res as T;
@@ -816,7 +825,7 @@ class _PigeonFfiCodec {
         res.addObject(
           value[i] == null
               ? ffi_bridge.PigeonInternalNull()
-              : writeValue(value[i]),
+              : writeValue(value[i], generic: true),
         );
       }
       return res as T;
@@ -826,8 +835,8 @@ class _PigeonFfiCodec {
       for (final MapEntry<int, NIAllNullableTypesWithoutRecursion> entry
           in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -836,8 +845,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<NIAnEnum, NIAnEnum> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -846,8 +855,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int, int> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -856,8 +865,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String, String> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -866,8 +875,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllTypes?> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -876,8 +885,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -887,8 +896,8 @@ class _PigeonFfiCodec {
       for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry
           in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -897,8 +906,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<NIAnEnum?, NIAnEnum?> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -907,8 +916,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, int?> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -917,8 +926,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<String?, String?> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -927,8 +936,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int, List<Object?>> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -937,8 +946,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int?, List<Object?>?> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -947,8 +956,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -958,8 +967,8 @@ class _PigeonFfiCodec {
       for (final MapEntry<int?, Map<Object?, Object?>?> entry
           in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;
@@ -967,8 +976,8 @@ class _PigeonFfiCodec {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
         res.setObject(
-          writeValue(entry.value),
-          forKey: NSCopying.as(writeValue(entry.key)),
+          writeValue(entry.value, generic: true),
+          forKey: NSCopying.as(writeValue(entry.key, generic: true)),
         );
       }
       return res as T;

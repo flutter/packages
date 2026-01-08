@@ -2750,7 +2750,7 @@ class _PigeonFfiCodec {
       }
     } else if (NSString.isA(value)) {
       return (NSString.as(value)).toDartString();
-    } else if (value is ffi_bridge.PigeonTypedData || ffi_bridge.PigeonTypedData.isA(value)) {
+    } else if (ffi_bridge.PigeonTypedData.isA(value)) {
       return getValueFromPigeonTypedData(value as ffi_bridge.PigeonTypedData);
     } else if (value is NSArray || NSArray.isA(value)) {
       final NSArray array = NSArray.as(value);
@@ -2784,14 +2784,17 @@ class _PigeonFfiCodec {
     }
   }
 
-  static T writeValue<T extends ObjCObject?>(Object? value) {
+  static T writeValue<T extends ObjCObject?>(
+    Object? value, {
+    bool generic = false,
+  }) {
     if (value == null) {
       if (isTypeOrNullableType<T>(ObjCObject) || isTypeOrNullableType<T>(NSObject)) {
         return ffi_bridge.PigeonInternalNull() as T;
       }
       return null as T;
     } else if (value is bool || value is double || value is int || value is Enum) {
-      if (!isType<T>(NSNumber) && !isType<NSNumber?>(T)) {
+      if (generic) {
         return convertToFfiNumberWrapper(value) as T;
       }
       if (value is bool) {
@@ -2809,8 +2812,8 @@ class _PigeonFfiCodec {
       return convertToFfiNumberWrapper(value) as T;
     } else if (value is String) {
       return NSString(value) as T;
-    } else if (isTypeOrNullableType<ffi_bridge.PigeonTypedData>(T)) {
-      return toPigeonTypedData(value as TypedData) as T;
+    } else if (value is TypedData) {
+      return toPigeonTypedData(value) as T;
     ${root.lists.values.sorted(sortByObjectCount).map((TypeDeclaration list) {
       if (list.typeArguments.isEmpty || list.typeArguments.first.baseName == 'Object') {
         return '';
@@ -2820,7 +2823,7 @@ class _PigeonFfiCodec {
     } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.fullFfiName}>(T)) {
       final NSMutableArray res = NSMutableArray();
       for (final ${ffiType.dartCollectionTypes} entry in value) {
-        res.addObject(${ffiType.subTypeOne!.type.isNullable ? 'entry == null ? ffi_bridge.PigeonInternalNull() : ' : ''}writeValue<${ffiType.subTypeOne?.getFfiCallReturnType(forceNonNullable: true) ?? 'ObjCObject'}>(entry));
+        res.addObject(${ffiType.subTypeOne!.type.isNullable ? 'entry == null ? ffi_bridge.PigeonInternalNull() : ' : ''}writeValue<${ffiType.subTypeOne?.getFfiCallReturnType(forceNonNullable: true) ?? 'ObjCObject'}>(entry, generic: true));
       }
       return res as T;
         ''';
@@ -2828,7 +2831,7 @@ class _PigeonFfiCodec {
     } else if (value is List) {
       final NSMutableArray res = NSMutableArray();
       for (int i = 0; i < value.length; i++) {
-        res.addObject(value[i] == null ? ffi_bridge.PigeonInternalNull() : writeValue(value[i]));
+        res.addObject(value[i] == null ? ffi_bridge.PigeonInternalNull() : writeValue(value[i], generic: true));
       }
       return res as T;
     ${root.maps.entries.sorted((MapEntry<String, TypeDeclaration> a, MapEntry<String, TypeDeclaration> b) => sortByObjectCount(a.value, b.value)).map((MapEntry<String, TypeDeclaration> mapType) {
@@ -2840,7 +2843,7 @@ class _PigeonFfiCodec {
     } else if (value is ${ffiType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${ffiType.fullFfiName}>(T)) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry${ffiType.dartCollectionTypeAnnotations} entry in value.entries) {
-        res.setObject(writeValue(entry.value), forKey: NSCopying.as(writeValue(entry.key)));
+        res.setObject(writeValue(entry.value, generic: true), forKey: NSCopying.as(writeValue(entry.key, generic: true)));
       }
       return res as T;
         ''';
@@ -2848,7 +2851,7 @@ class _PigeonFfiCodec {
     } else if (value is Map) {
       final NSMutableDictionary res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
-        res.setObject(writeValue(entry.value), forKey: NSCopying.as(writeValue(entry.key)));
+        res.setObject(writeValue(entry.value, generic: true), forKey: NSCopying.as(writeValue(entry.key, generic: true)));
       }
       return res as T;
     ${root.classes.map((Class dataClass) {

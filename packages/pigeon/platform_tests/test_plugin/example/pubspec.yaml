@@ -32,4 +32,4 @@ flutter:
 
 dependency_overrides:
   ffigen: ^20.0.0
-  objective_c: ^9.0.0
+  objective_c: ^9.2.0

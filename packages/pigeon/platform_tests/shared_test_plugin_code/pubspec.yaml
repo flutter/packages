@@ -21,7 +21,7 @@ dependencies:
     sdk: flutter
   jni: ^0.15.2
   mockito: ^5.4.4
-  objective_c: ^9.0.0
+  objective_c: ^9.2.0
 
 dev_dependencies:
   leak_tracker: any
