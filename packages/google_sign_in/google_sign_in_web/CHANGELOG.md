@@ -3,10 +3,6 @@
 * Throws a more actionable error when init is called more than once
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
-## NEXT
-
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
-
 ## 1.1.0
 
 * Adds support for the `clearAuthorizationToken` method.

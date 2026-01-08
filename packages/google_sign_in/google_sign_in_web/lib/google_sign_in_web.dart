@@ -49,14 +49,10 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     @visibleForTesting GisSdkClient? debugOverrideGisSdkClient,
     @visibleForTesting
     StreamController<AuthenticationEvent>? debugAuthenticationController,
-  }) : _authenticationController =
+  }) : _debugOverrideGisSdkClient = debugOverrideGisSdkClient,
+       _authenticationController =
            debugAuthenticationController ??
            StreamController<AuthenticationEvent>.broadcast() {
-    // Only set _gisSdkClient if debugOverrideGisSdkClient is provided
-    if (debugOverrideGisSdkClient != null) {
-      _gisSdkClient = debugOverrideGisSdkClient;
-    }
-
     autoDetectedClientId = web.document
         .querySelector(clientIdMetaSelector)
         ?.getAttribute(clientIdAttributeName);
@@ -88,6 +84,9 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   // The instance of [GisSdkClient] backing the plugin.
   // Using late final ensures it can only be set once and throws if accessed before initialization.
   late final GisSdkClient _gisSdkClient;
+
+  // An optional override for the GisSdkClient, used for testing.
+  final GisSdkClient? _debugOverrideGisSdkClient;
 
   /// A future that resolves when the plugin is fully initialized.
   ///
@@ -129,13 +128,15 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
     await _jsSdkLoadedFuture;
 
-    _gisSdkClient = GisSdkClient(
-      clientId: appClientId!,
-      nonce: params.nonce,
-      hostedDomain: params.hostedDomain,
-      authenticationController: _authenticationController,
-      loggingEnabled: kDebugMode,
-    );
+    _gisSdkClient =
+        _debugOverrideGisSdkClient ??
+        GisSdkClient(
+          clientId: appClientId!,
+          nonce: params.nonce,
+          hostedDomain: params.hostedDomain,
+          authenticationController: _authenticationController,
+          loggingEnabled: kDebugMode,
+        );
 
     _initCalled.complete();
   }
