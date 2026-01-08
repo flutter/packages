@@ -37,27 +37,6 @@
   XCTAssertNil(FGMGetValueOrNilFromDict(dict, key));
 }
 
-- (void)testLocationFromLatLong {
-  NSArray<NSNumber *> *latlong = @[ @1, @2 ];
-  CLLocationCoordinate2D location = [FGMHeatmapConversions locationFromLatLong:latlong];
-  XCTAssertEqual(location.latitude, 1);
-  XCTAssertEqual(location.longitude, 2);
-}
-
-- (void)testPointFromArray {
-  NSArray<NSNumber *> *array = @[ @1, @2 ];
-  CGPoint point = [FGMHeatmapConversions pointFromArray:array];
-  XCTAssertEqual(point.x, 1);
-  XCTAssertEqual(point.y, 2);
-}
-
-- (void)testArrayFromLocation {
-  CLLocationCoordinate2D location = CLLocationCoordinate2DMake(1, 2);
-  NSArray<NSNumber *> *array = [FGMHeatmapConversions arrayFromLocation:location];
-  XCTAssertEqual([array[0] integerValue], 1);
-  XCTAssertEqual([array[1] integerValue], 2);
-}
-
 - (void)testColorFromPlatformColor {
   double platformRed = 1 / 255.0;
   double platformGreen = 2 / 255.0;
@@ -406,30 +385,19 @@
   XCTAssertEqual(secondSpanLength.doubleValue, dashLength);
 }
 
-- (void)testWeightedLatLngFromArray {
-  NSArray *weightedLatLng = @[ @[ @1, @2 ], @3 ];
+- (void)testWeightedDataFromPlatformWeightedData {
+  CGFloat intensity1 = 3.0;
+  CGFloat intensity2 = 6.0;
+  NSArray<FGMPlatformWeightedLatLng *> *data = @[
+    [FGMPlatformWeightedLatLng makeWithPoint:[FGMPlatformLatLng makeWithLatitude:10 longitude:20]
+                                      weight:intensity1],
+    [FGMPlatformWeightedLatLng makeWithPoint:[FGMPlatformLatLng makeWithLatitude:30 longitude:40]
+                                      weight:intensity2],
+  ];
 
-  GMUWeightedLatLng *weightedLocation =
-      [FGMHeatmapConversions weightedLatLngFromArray:weightedLatLng];
-
-  // The location gets projected to different values
-  XCTAssertEqual([weightedLocation intensity], 3);
-}
-
-- (void)testWeightedLatLngFromArrayThrowsForInvalidInput {
-  NSArray *weightedLatLng = @[];
-
-  XCTAssertThrows([FGMHeatmapConversions weightedLatLngFromArray:weightedLatLng]);
-}
-
-- (void)testWeightedDataFromArray {
-  NSNumber *intensity1 = @3;
-  NSNumber *intensity2 = @6;
-  NSArray *data = @[ @[ @[ @1, @2 ], intensity1 ], @[ @[ @4, @5 ], intensity2 ] ];
-
-  NSArray<GMUWeightedLatLng *> *weightedData = [FGMHeatmapConversions weightedDataFromArray:data];
-  XCTAssertEqual([weightedData[0] intensity], [intensity1 floatValue]);
-  XCTAssertEqual([weightedData[1] intensity], [intensity2 floatValue]);
+  NSArray<GMUWeightedLatLng *> *weightedData = FGMGetWeightedDataForPigeonWeightedData(data);
+  XCTAssertEqual([weightedData[0] intensity], intensity1);
+  XCTAssertEqual([weightedData[1] intensity], intensity2);
 }
 
 - (void)testGradientFromPlatformGradient {

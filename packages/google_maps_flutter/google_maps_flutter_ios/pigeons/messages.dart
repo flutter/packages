@@ -134,9 +134,7 @@ class PlatformHeatmap {
   });
 
   final String heatmapId;
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object data;
+  final List<PlatformWeightedLatLng> data;
   final PlatformHeatmapGradient? gradient;
   final double opacity;
   final int radius;
@@ -159,6 +157,14 @@ class PlatformHeatmapGradient {
   final List<PlatformColor> colors;
   final List<double> startPoints;
   final int colorMapSize;
+}
+
+/// Pigeon equivalent of the WeightedLatLng class.
+class PlatformWeightedLatLng {
+  PlatformWeightedLatLng({required this.point, required this.weight});
+
+  final PlatformLatLng point;
+  final double weight;
 }
 
 /// Pigeon equivalent of the InfoWindow class.

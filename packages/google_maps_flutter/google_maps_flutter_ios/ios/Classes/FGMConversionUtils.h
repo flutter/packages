@@ -68,6 +68,14 @@ extern GMUGradient *FGMGetGradientForPigeonHeatmapGradient(FGMPlatformHeatmapGra
 
 extern FGMPlatformHeatmapGradient *FGMGetPigeonHeatmapGradientForGradient(GMUGradient *gradient);
 
+/// Creates a GMUWeightedLatLng array from its Pigeon equivalent.
+extern NSArray<GMUWeightedLatLng *> *FGMGetWeightedDataForPigeonWeightedData(
+    NSArray<FGMPlatformWeightedLatLng *> *weightedLatLngs);
+
+/// Converts a GMUWeightedLatLng array to its Pigeon equivalent.
+extern NSArray<FGMPlatformWeightedLatLng *> *FGMGetPigeonWeightedDataForWeightedData(
+    NSArray<GMUWeightedLatLng *> *weightedLatLngs);
+
 /// Creates a GMSCameraUpdate from its Pigeon equivalent.
 extern GMSCameraUpdate *_Nullable FGMGetCameraUpdateForPigeonCameraUpdate(
     FGMPlatformCameraUpdate *update);
@@ -85,20 +93,5 @@ extern NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
 /// Creates an array of span lengths using the given patterns.
 extern NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(
     NSArray<FGMPlatformPatternItem *> *patterns);
-
-/// Legacy conversion utils for heatmaps, which are still using a JSON
-/// representation instead of structured Pigeon data.
-// TODO(stuartmorgan): Remove this once heatmaps are migrated to Pigeon.
-@interface FGMHeatmapConversions : NSObject
-
-+ (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong;
-+ (CGPoint)pointFromArray:(NSArray *)array;
-+ (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location;
-+ (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data;
-+ (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;
-+ (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data;
-+ (NSArray<NSArray<id> *> *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData;
-
-@end
 
 NS_ASSUME_NONNULL_END

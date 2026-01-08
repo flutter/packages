@@ -52,12 +52,7 @@
 + (void)updateHeatmap:(GMUHeatmapTileLayer *)heatmapTileLayer
     fromPlatformHeatmap:(FGMPlatformHeatmap *)platformHeatmap
             withMapView:(GMSMapView *)mapView {
-  // TODO(stuartmorgan): Migrate this to Pigeon. See
-  // https://github.com/flutter/flutter/issues/117907
-  id weightedData = platformHeatmap.data;
-  if ([weightedData isKindOfClass:[NSArray class]]) {
-    heatmapTileLayer.weightedData = [FGMHeatmapConversions weightedDataFromArray:weightedData];
-  }
+  heatmapTileLayer.weightedData = FGMGetWeightedDataForPigeonWeightedData(platformHeatmap.data);
   if (platformHeatmap.gradient) {
     heatmapTileLayer.gradient = FGMGetGradientForPigeonHeatmapGradient(platformHeatmap.gradient);
   }
@@ -135,7 +130,7 @@
   }
   return [FGMPlatformHeatmap
          makeWithHeatmapId:identifier
-                      data:[FGMHeatmapConversions arrayFromWeightedData:heatmap.weightedData]
+                      data:FGMGetPigeonWeightedDataForWeightedData(heatmap.weightedData)
                   gradient:FGMGetPigeonHeatmapGradientForGradient(heatmap.gradient)
                    opacity:heatmap.opacity
                     radius:heatmap.radius

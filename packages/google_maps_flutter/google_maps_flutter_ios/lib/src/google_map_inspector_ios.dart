@@ -8,7 +8,6 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'google_maps_flutter_ios.dart';
 import 'messages.g.dart';
-import 'serialization.dart';
 
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
@@ -97,10 +96,7 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
 
     return Heatmap(
       heatmapId: heatmapId,
-      data: (heatmapInfo.data as List<Object?>)
-          .map(deserializeWeightedLatLng)
-          .whereType<WeightedLatLng>()
-          .toList(),
+      data: heatmapInfo.data.map(_deserializeWeightedLatLng).toList(),
       gradient: _deserializeHeatmapGradient(heatmapInfo.gradient),
       opacity: heatmapInfo.opacity,
       radius: HeatmapRadius.fromPixels(heatmapInfo.radius),
@@ -257,6 +253,15 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
         ),
       ).toList(),
       colorMapSize: gradient.colorMapSize,
+    );
+  }
+
+  static WeightedLatLng _deserializeWeightedLatLng(
+    PlatformWeightedLatLng weightedLatLng,
+  ) {
+    return WeightedLatLng(
+      LatLng(weightedLatLng.point.latitude, weightedLatLng.point.longitude),
+      weight: weightedLatLng.weight,
     );
   }
 }

@@ -13,7 +13,6 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_ios.dart';
 import 'messages.g.dart';
-import 'serialization.dart';
 
 /// The non-test implementation of `_apiProvider`.
 MapsApi _productionApiProvider(int mapId) {
@@ -676,7 +675,9 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     final HeatmapGradient? gradient = heatmap.gradient;
     return PlatformHeatmap(
       heatmapId: heatmap.heatmapId.value,
-      data: heatmap.data.map(serializeWeightedLatLng).toList(),
+      data: heatmap.data
+          .map(_platformWeightedLatLngFromWeightedLatLng)
+          .toList(),
       gradient: _platformHeatmapGradientFromHeatmapGradient(gradient),
       opacity: heatmap.opacity,
       radius: heatmap.radius.radius,
@@ -1188,6 +1189,15 @@ PlatformLatLngBounds? _platformLatLngBoundsFromLatLngBounds(
   return PlatformLatLngBounds(
     northeast: _platformLatLngFromLatLng(bounds.northeast),
     southwest: _platformLatLngFromLatLng(bounds.southwest),
+  );
+}
+
+PlatformWeightedLatLng _platformWeightedLatLngFromWeightedLatLng(
+  WeightedLatLng weightedLatLng,
+) {
+  return PlatformWeightedLatLng(
+    point: _platformLatLngFromLatLng(weightedLatLng.point),
+    weight: weightedLatLng.weight,
   );
 }
 
