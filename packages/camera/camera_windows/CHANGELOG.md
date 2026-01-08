@@ -1,3 +1,7 @@
+## 0.2.6+5
+
+* Fixes initializing video preview with latest webcam driver [#140014](https://github.com/flutter/flutter/issues/140014).
+
 ## 0.2.6+4
 
 * Removes usage of the deprecated and ignored `maxVideoDuration` in the example.
