@@ -187,18 +187,6 @@ class _FamiliesDelta {
   }
 }
 
-int _countVariableFonts(Directory fontDirectory) {
-  var count = 0;
-  for (final FontFamily family in fontDirectory.family) {
-    for (final Font font in family.fonts) {
-      if (font.isVf) {
-        count += 1;
-      }
-    }
-  }
-  return count;
-}
-
 void _computeVariantCounts(Directory fontDirectory) {
   final int families = fontDirectory.family.length;
 
