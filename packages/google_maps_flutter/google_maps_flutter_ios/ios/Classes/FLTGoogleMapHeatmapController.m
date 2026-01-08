@@ -20,16 +20,16 @@
 @end
 
 @implementation FLTGoogleMapHeatmapController
-- (instancetype)initWithHeatmapTileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
-                                 mapView:(GMSMapView *)mapView
-                                 options:(NSDictionary<NSString *, id> *)options {
+- (instancetype)initWithHeatmap:(FGMPlatformHeatmap *)heatmap
+                      tileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
+                        mapView:(GMSMapView *)mapView {
   self = [super init];
   if (self) {
     _heatmapTileLayer = heatmapTileLayer;
     _mapView = mapView;
 
     [FLTGoogleMapHeatmapController updateHeatmap:_heatmapTileLayer
-                                     fromOptions:options
+                             fromPlatformHeatmap:heatmap
                                      withMapView:_mapView];
   }
   return self;
@@ -43,46 +43,31 @@
   [_heatmapTileLayer clearTileCache];
 }
 
-- (void)interpretHeatmapOptions:(NSDictionary<NSString *, id> *)data {
+- (void)updateFromPlatformHeatmap:(FGMPlatformHeatmap *)platformHeatmap {
   [FLTGoogleMapHeatmapController updateHeatmap:_heatmapTileLayer
-                                   fromOptions:data
+                           fromPlatformHeatmap:platformHeatmap
                                    withMapView:_mapView];
 }
 
 + (void)updateHeatmap:(GMUHeatmapTileLayer *)heatmapTileLayer
-          fromOptions:(NSDictionary<NSString *, id> *)options
-          withMapView:(GMSMapView *)mapView {
+    fromPlatformHeatmap:(FGMPlatformHeatmap *)platformHeatmap
+            withMapView:(GMSMapView *)mapView {
   // TODO(stuartmorgan): Migrate this to Pigeon. See
   // https://github.com/flutter/flutter/issues/117907
-  id weightedData = options[kHeatmapDataKey];
+  id weightedData = platformHeatmap.data;
   if ([weightedData isKindOfClass:[NSArray class]]) {
     heatmapTileLayer.weightedData = [FGMHeatmapConversions weightedDataFromArray:weightedData];
   }
-
-  id gradient = options[kHeatmapGradientKey];
+  // TODO(stuartmorgan): Migrate this to Pigeon. See
+  // https://github.com/flutter/flutter/issues/117907
+  id gradient = platformHeatmap.gradient;
   if ([gradient isKindOfClass:[NSDictionary class]]) {
     heatmapTileLayer.gradient = [FGMHeatmapConversions gradientFromDictionary:gradient];
   }
-
-  id opacity = options[kHeatmapOpacityKey];
-  if ([opacity isKindOfClass:[NSNumber class]]) {
-    heatmapTileLayer.opacity = [opacity doubleValue];
-  }
-
-  id radius = options[kHeatmapRadiusKey];
-  if ([radius isKindOfClass:[NSNumber class]]) {
-    heatmapTileLayer.radius = [radius intValue];
-  }
-
-  id minimumZoomIntensity = options[kHeatmapMinimumZoomIntensityKey];
-  if ([minimumZoomIntensity isKindOfClass:[NSNumber class]]) {
-    heatmapTileLayer.minimumZoomIntensity = [minimumZoomIntensity intValue];
-  }
-
-  id maximumZoomIntensity = options[kHeatmapMaximumZoomIntensityKey];
-  if ([maximumZoomIntensity isKindOfClass:[NSNumber class]]) {
-    heatmapTileLayer.maximumZoomIntensity = [maximumZoomIntensity intValue];
-  }
+  heatmapTileLayer.opacity = platformHeatmap.opacity;
+  heatmapTileLayer.radius = platformHeatmap.radius;
+  heatmapTileLayer.minimumZoomIntensity = platformHeatmap.minimumZoomIntensity;
+  heatmapTileLayer.maximumZoomIntensity = platformHeatmap.maximumZoomIntensity;
 
   // The map must be set each time for options to update.
   // This must be done last, to avoid visual flickers of default property values.
@@ -113,22 +98,20 @@
 
 - (void)addHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToAdd {
   for (FGMPlatformHeatmap *heatmap in heatmapsToAdd) {
-    NSString *heatmapId = [FLTHeatmapsController identifierForHeatmap:heatmap.json];
     GMUHeatmapTileLayer *heatmapTileLayer = [[GMUHeatmapTileLayer alloc] init];
     FLTGoogleMapHeatmapController *controller =
-        [[FLTGoogleMapHeatmapController alloc] initWithHeatmapTileLayer:heatmapTileLayer
-                                                                mapView:_mapView
-                                                                options:heatmap.json];
-    _heatmapIdToController[heatmapId] = controller;
+        [[FLTGoogleMapHeatmapController alloc] initWithHeatmap:heatmap
+                                                     tileLayer:heatmapTileLayer
+                                                       mapView:_mapView];
+    _heatmapIdToController[heatmap.heatmapId] = controller;
   }
 }
 
 - (void)changeHeatmaps:(NSArray<FGMPlatformHeatmap *> *)heatmapsToChange {
   for (FGMPlatformHeatmap *heatmap in heatmapsToChange) {
-    NSString *heatmapId = [FLTHeatmapsController identifierForHeatmap:heatmap.json];
-    FLTGoogleMapHeatmapController *controller = _heatmapIdToController[heatmapId];
+    FLTGoogleMapHeatmapController *controller = _heatmapIdToController[heatmap.heatmapId];
 
-    [controller interpretHeatmapOptions:heatmap.json];
+    [controller updateFromPlatformHeatmap:heatmap];
     [controller clearTileCache];
   }
 }
@@ -148,24 +131,18 @@
   return _heatmapIdToController[identifier] != nil;
 }
 
-- (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier {
-  FLTGoogleMapHeatmapController *heatmapController = self.heatmapIdToController[identifier];
-  if (heatmapController) {
-    return @{
-      kHeatmapDataKey : [FGMHeatmapConversions
-          arrayFromWeightedData:heatmapController.heatmapTileLayer.weightedData],
-      kHeatmapGradientKey : [FGMHeatmapConversions
-          dictionaryFromGradient:heatmapController.heatmapTileLayer.gradient],
-      kHeatmapOpacityKey : @(heatmapController.heatmapTileLayer.opacity),
-      kHeatmapRadiusKey : @(heatmapController.heatmapTileLayer.radius),
-      kHeatmapMinimumZoomIntensityKey : @(heatmapController.heatmapTileLayer.minimumZoomIntensity),
-      kHeatmapMaximumZoomIntensityKey : @(heatmapController.heatmapTileLayer.maximumZoomIntensity)
-    };
+- (FGMPlatformHeatmap *)heatmapWithIdentifier:(NSString *)identifier {
+  GMUHeatmapTileLayer *heatmap = self.heatmapIdToController[identifier].heatmapTileLayer;
+  if (!heatmap) {
+    return nil;
   }
-  return nil;
-}
-
-+ (NSString *)identifierForHeatmap:(NSDictionary<NSString *, id> *)heatmap {
-  return heatmap[kHeatmapIdKey];
+  return [FGMPlatformHeatmap
+         makeWithHeatmapId:identifier
+                      data:[FGMHeatmapConversions arrayFromWeightedData:heatmap.weightedData]
+                  gradient:[FGMHeatmapConversions dictionaryFromGradient:heatmap.gradient]
+                   opacity:heatmap.opacity
+                    radius:heatmap.radius
+      minimumZoomIntensity:heatmap.minimumZoomIntensity
+      maximumZoomIntensity:heatmap.maximumZoomIntensity];
 }
 @end

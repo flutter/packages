@@ -123,14 +123,27 @@ class PlatformCircle {
 
 /// Pigeon equivalent of the Heatmap class.
 class PlatformHeatmap {
-  PlatformHeatmap(this.json);
+  PlatformHeatmap({
+    required this.heatmapId,
+    required this.data,
+    this.gradient,
+    required this.opacity,
+    required this.radius,
+    required this.minimumZoomIntensity,
+    required this.maximumZoomIntensity,
+  });
 
-  /// The heatmap data, as JSON. This should only be set from
-  /// Heatmap.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
+  final String heatmapId;
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
-  final Object json;
+  final Object data;
+  // TODO(stuartmorgan): Replace this with structured data. This exists only to
+  //  allow incremental migration to Pigeon.
+  final Object? gradient;
+  final double opacity;
+  final int radius;
+  final int minimumZoomIntensity;
+  final int maximumZoomIntensity;
 }
 
 /// Pigeon equivalent of the InfoWindow class.

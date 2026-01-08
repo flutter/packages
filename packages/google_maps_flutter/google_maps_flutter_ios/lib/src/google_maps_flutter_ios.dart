@@ -673,7 +673,16 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
-    return PlatformHeatmap(json: serializeHeatmap(heatmap));
+    final HeatmapGradient? gradient = heatmap.gradient;
+    return PlatformHeatmap(
+      heatmapId: heatmap.heatmapId.value,
+      data: heatmap.data.map(serializeWeightedLatLng).toList(),
+      gradient: gradient == null ? null : serializeHeatmapGradient(gradient),
+      opacity: heatmap.opacity,
+      radius: heatmap.radius.radius,
+      minimumZoomIntensity: heatmap.minimumZoomIntensity,
+      maximumZoomIntensity: heatmap.maximumZoomIntensity,
+    );
   }
 
   static PlatformInfoWindow _platformInfoWindowFromInfoWindow(

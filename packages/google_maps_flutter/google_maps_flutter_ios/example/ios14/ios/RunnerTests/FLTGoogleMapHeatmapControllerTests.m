@@ -23,20 +23,22 @@
 - (void)testUpdateHeatmapSetsVisibilityLast {
   PropertyOrderValidatingHeatmap *heatmap = [[PropertyOrderValidatingHeatmap alloc] init];
   [FLTGoogleMapHeatmapController
-      updateHeatmap:heatmap
-        fromOptions:@{
-          @"data" : @[ @[ @[ @(5), @(5) ], @(0.5) ], @[ @[ @(10), @(10) ], @(0.75) ] ],
-          @"gradient" : @{
-            @"colors" : @[ @(0), @(1) ],
-            @"startPoints" : @[ @(0), @(1) ],
-            @"colorMapSize" : @(256),
-          },
-          @"opacity" : @(0.5),
-          @"radius" : @(1),
-          @"minimumZoomIntensity" : @(1),
-          @"maximumZoomIntensity" : @(2),
-        }
-        withMapView:[GoogleMapsHeatmapControllerTests mapView]];
+            updateHeatmap:heatmap
+      fromPlatformHeatmap:[FGMPlatformHeatmap makeWithHeatmapId:@"heatmap"
+                                                           data:@[
+                                                             @[ @[ @(5), @(5) ], @(0.5) ],
+                                                             @[ @[ @(10), @(10) ], @(0.75) ]
+                                                           ]
+                                                       gradient:@{
+                                                         @"colors" : @[ @(0), @(1) ],
+                                                         @"startPoints" : @[ @(0), @(1) ],
+                                                         @"colorMapSize" : @(256),
+                                                       }
+                                                        opacity:0.5
+                                                         radius:1
+                                           minimumZoomIntensity:1
+                                           maximumZoomIntensity:2]
+              withMapView:[GoogleMapsHeatmapControllerTests mapView]];
   XCTAssertTrue(heatmap.hasSetMap);
 }
 

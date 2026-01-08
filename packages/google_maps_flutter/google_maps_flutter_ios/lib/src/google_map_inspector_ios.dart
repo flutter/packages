@@ -95,19 +95,17 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       return null;
     }
 
-    final Map<String, Object?> json =
-        (heatmapInfo.json as Map<Object?, Object?>).cast<String, Object?>();
     return Heatmap(
       heatmapId: heatmapId,
-      data: (json['data']! as List<Object?>)
+      data: (heatmapInfo.data as List<Object?>)
           .map(deserializeWeightedLatLng)
           .whereType<WeightedLatLng>()
           .toList(),
-      gradient: deserializeHeatmapGradient(json['gradient']),
-      opacity: json['opacity']! as double,
-      radius: HeatmapRadius.fromPixels(json['radius']! as int),
-      minimumZoomIntensity: json['minimumZoomIntensity']! as int,
-      maximumZoomIntensity: json['maximumZoomIntensity']! as int,
+      gradient: deserializeHeatmapGradient(heatmapInfo.gradient),
+      opacity: heatmapInfo.opacity,
+      radius: HeatmapRadius.fromPixels(heatmapInfo.radius),
+      minimumZoomIntensity: heatmapInfo.minimumZoomIntensity,
+      maximumZoomIntensity: heatmapInfo.maximumZoomIntensity,
     );
   }
 

@@ -6,13 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 // These constants must match the corresponding constants in FGMConversionUtils.m
-const String _heatmapIdKey = 'heatmapId';
-const String _heatmapDataKey = 'data';
-const String _heatmapGradientKey = 'gradient';
-const String _heatmapOpacityKey = 'opacity';
-const String _heatmapRadiusKey = 'radius';
-const String _heatmapMinimumZoomIntensityKey = 'minimumZoomIntensity';
-const String _heatmapMaximumZoomIntensityKey = 'maximumZoomIntensity';
 const String _heatmapGradientColorsKey = 'colors';
 const String _heatmapGradientStartPointsKey = 'startPoints';
 const String _heatmapGradientColorMapSizeKey = 'colorMapSize';
@@ -21,41 +14,6 @@ void _addIfNonNull(Map<String, Object?> map, String fieldName, Object? value) {
   if (value != null) {
     map[fieldName] = value;
   }
-}
-
-/// Serialize [Heatmap]
-Object serializeHeatmap(Heatmap heatmap) {
-  final json = <String, Object>{};
-
-  _addIfNonNull(json, _heatmapIdKey, heatmap.heatmapId.value);
-  _addIfNonNull(
-    json,
-    _heatmapDataKey,
-    heatmap.data.map(serializeWeightedLatLng).toList(),
-  );
-
-  final HeatmapGradient? gradient = heatmap.gradient;
-  if (gradient != null) {
-    _addIfNonNull(
-      json,
-      _heatmapGradientKey,
-      serializeHeatmapGradient(gradient),
-    );
-  }
-  _addIfNonNull(json, _heatmapOpacityKey, heatmap.opacity);
-  _addIfNonNull(json, _heatmapRadiusKey, heatmap.radius.radius);
-  _addIfNonNull(
-    json,
-    _heatmapMinimumZoomIntensityKey,
-    heatmap.minimumZoomIntensity,
-  );
-  _addIfNonNull(
-    json,
-    _heatmapMaximumZoomIntensityKey,
-    heatmap.maximumZoomIntensity,
-  );
-
-  return json;
 }
 
 /// Serialize [WeightedLatLng]
