@@ -230,6 +230,7 @@ abstract class FlutterGoldenFileComparator extends GoldenFileComparator {
       'Golden files in the Flutter framework must end with the file extension '
       '.png.',
     );
+    print('_addPrefix, golden: $golden');
     print('basedir: $basedir');
     return Uri.parse(
       <String>[
@@ -319,6 +320,7 @@ class FlutterPostSubmitFileComparator extends FlutterGoldenFileComparator {
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
     await skiaClient.imgtestInit();
     golden = _addPrefix(golden);
+    print('prefixed golden: $golden');
     await update(golden, imageBytes);
     final File goldenFile = getGoldenFile(golden);
     try {
@@ -432,6 +434,7 @@ class FlutterPreSubmitFileComparator extends FlutterGoldenFileComparator {
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
     await skiaClient.tryjobInit();
     golden = _addPrefix(golden);
+    print('prefixed golden: $golden');
     await update(golden, imageBytes);
     final File goldenFile = getGoldenFile(golden);
 
@@ -665,6 +668,7 @@ class FlutterLocalFileComparator extends FlutterGoldenFileComparator with LocalC
   @override
   Future<bool> compare(Uint8List imageBytes, Uri golden) async {
     golden = _addPrefix(golden);
+    print('prefixed golden: $golden');
     final String testName = skiaClient.cleanTestName(golden.path);
     late String? testExpectation;
     testExpectation = await skiaClient.getExpectationForTest(testName);
