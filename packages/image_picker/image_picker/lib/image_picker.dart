@@ -270,8 +270,14 @@ class ImagePicker {
   /// The [source] argument controls where the video comes from. This can
   /// be either [ImageSource.camera] or [ImageSource.gallery].
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured video. If no [maxDuration] is specified,
-  /// the maximum duration will be infinite.
+  /// The [maxDuration] argument specifies the maximum duration of the captured video when recording
+  /// from the camera ([ImageSource.camera]). The recording will automatically stop when this duration
+  /// is reached. If no [maxDuration] is specified, the maximum duration will be infinite.
+  ///
+  /// **Important:** The [maxDuration] parameter is ignored when selecting videos from the gallery
+  /// ([ImageSource.gallery]). Users can select videos of any duration from the gallery, regardless
+  /// of the [maxDuration] value. If you need to enforce duration limits on gallery-selected videos,
+  /// you must validate the video duration programmatically after selection.
   ///
   /// Use `preferredCameraDevice` to specify the camera to use when the `source` is [ImageSource.camera].
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
@@ -304,9 +310,13 @@ class ImagePicker {
   ///
   /// The videos come from the gallery.
   ///
-  /// The [maxDuration] argument specifies the maximum duration of the captured
-  /// videos. If no [maxDuration] is specified, the maximum duration will be
-  /// infinite. This value may be ignored by platforms that cannot support it.
+  /// The [maxDuration] argument specifies the maximum duration of the videos.
+  /// If no [maxDuration] is specified, the maximum duration will be infinite.
+  ///
+  /// **Important:** This method only picks videos from the gallery. The [maxDuration]
+  /// parameter is ignored and users can select videos of any duration. If you need
+  /// to enforce duration limits, you must validate the video durations programmatically
+  /// after selection.
   ///
   /// The `limit` parameter modifies the maximum number of videos that can be
   /// selected. This value may be ignored by platforms that cannot support it.
