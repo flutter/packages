@@ -7,3 +7,18 @@ import Dispatch
 /// Queue-specific context data to be associated with the capture session queue.
 let captureSessionQueueSpecificKey = DispatchSpecificKey<String>()
 let captureSessionQueueSpecificValue = "capture_session_queue"
+
+/// Ensures the given block to be run on the main queue.
+/// If caller site is already on the main queue, the block will be run
+/// synchronously. Otherwise, the block will be dispatched asynchronously to the
+/// main queue.
+/// block - the block to be run on the main queue.
+func ensureToRunOnMainQueue(_ block: @escaping () -> Void) {
+  if Thread.isMainThread {
+    block()
+  } else {
+    DispatchQueue.main.async {
+      block()
+    }
+  }
+}

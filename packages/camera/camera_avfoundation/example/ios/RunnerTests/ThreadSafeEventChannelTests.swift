@@ -14,7 +14,7 @@ import XCTest
 final class ThreadSafeEventChannelTests: XCTestCase {
   func testSetStreamHandler_shouldStayOnMainThreadIfCalledFromMainThread() {
     let mockEventChannel = MockEventChannel()
-    let threadSafeEventChannel = FLTThreadSafeEventChannel(eventChannel: mockEventChannel)
+    let threadSafeEventChannel = ThreadSafeEventChannel(eventChannel: mockEventChannel)
 
     let mainThreadExpectation = expectation(
       description: "setStreamHandler must be called on the main thread")
@@ -37,7 +37,7 @@ final class ThreadSafeEventChannelTests: XCTestCase {
 
   func testSetStreamHandler_shouldDispatchToMainThreadIfCalledFromBackgroundThread() {
     let mockEventChannel = MockEventChannel()
-    let threadSafeEventChannel = FLTThreadSafeEventChannel(eventChannel: mockEventChannel)
+    let threadSafeEventChannel = ThreadSafeEventChannel(eventChannel: mockEventChannel)
 
     let mainThreadExpectation = expectation(
       description: "setStreamHandler must be called on the main thread")
@@ -66,7 +66,7 @@ final class ThreadSafeEventChannelTests: XCTestCase {
     let expectation = self.expectation(description: "Completion should be called.")
 
     DispatchQueue(label: "test").async {
-      let channel = FLTThreadSafeEventChannel(eventChannel: mockEventChannel)
+      let channel = ThreadSafeEventChannel(eventChannel: mockEventChannel)
 
       channel.setStreamHandler(nil) {
         expectation.fulfill()

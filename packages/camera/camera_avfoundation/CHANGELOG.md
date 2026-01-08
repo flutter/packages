@@ -1,6 +1,7 @@
 ## 0.9.22+9
 
-* Migrates `FLTSavePhotoDelegate` and `FLTWritableData` classes to Swift.
+* Migrates `FLTSavePhotoDelegate`, `FLTWritableData`, and `FLTImageStreamHandler` classes to Swift.
+* Migrates `CameraProperties` and `QueueUtils` helpers to Swift.
 
 ## 0.9.22+8
 
