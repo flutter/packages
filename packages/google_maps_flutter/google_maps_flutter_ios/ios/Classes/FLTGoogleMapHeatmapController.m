@@ -58,11 +58,8 @@
   if ([weightedData isKindOfClass:[NSArray class]]) {
     heatmapTileLayer.weightedData = [FGMHeatmapConversions weightedDataFromArray:weightedData];
   }
-  // TODO(stuartmorgan): Migrate this to Pigeon. See
-  // https://github.com/flutter/flutter/issues/117907
-  id gradient = platformHeatmap.gradient;
-  if ([gradient isKindOfClass:[NSDictionary class]]) {
-    heatmapTileLayer.gradient = [FGMHeatmapConversions gradientFromDictionary:gradient];
+  if (platformHeatmap.gradient) {
+    heatmapTileLayer.gradient = FGMGetGradientForPigeonHeatmapGradient(platformHeatmap.gradient);
   }
   heatmapTileLayer.opacity = platformHeatmap.opacity;
   heatmapTileLayer.radius = platformHeatmap.radius;
@@ -139,7 +136,7 @@
   return [FGMPlatformHeatmap
          makeWithHeatmapId:identifier
                       data:[FGMHeatmapConversions arrayFromWeightedData:heatmap.weightedData]
-                  gradient:[FGMHeatmapConversions dictionaryFromGradient:heatmap.gradient]
+                  gradient:FGMGetPigeonHeatmapGradientForGradient(heatmap.gradient)
                    opacity:heatmap.opacity
                     radius:heatmap.radius
       minimumZoomIntensity:heatmap.minimumZoomIntensity

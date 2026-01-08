@@ -169,6 +169,26 @@ FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOver
   }
 }
 
+GMUGradient *FGMGetGradientForPigeonHeatmapGradient(FGMPlatformHeatmapGradient *gradient) {
+  NSMutableArray *colors = [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
+  for (FGMPlatformColor *color in gradient.colors) {
+    [colors addObject:FGMGetColorForPigeonColor(color)];
+  }
+  return [[GMUGradient alloc] initWithColors:colors
+                                 startPoints:gradient.startPoints
+                                colorMapSize:gradient.colorMapSize];
+}
+
+FGMPlatformHeatmapGradient *FGMGetPigeonHeatmapGradientForGradient(GMUGradient *gradient) {
+  NSMutableArray *colors = [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
+  for (UIColor *color in gradient.colors) {
+    [colors addObject:FGMGetPigeonColorForColor(color)];
+  }
+  return [FGMPlatformHeatmapGradient makeWithColors:colors
+                                        startPoints:gradient.startPoints
+                                       colorMapSize:gradient.mapSize];
+}
+
 GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate *cameraUpdate) {
   // See note in messages.dart for why this is so loosely typed.
   id update = cameraUpdate.cameraUpdate;
@@ -216,6 +236,11 @@ GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate
 UIColor *FGMGetColorForPigeonColor(FGMPlatformColor *color) {
   return [UIColor colorWithRed:color.red green:color.green blue:color.blue alpha:color.alpha];
 }
+extern FGMPlatformColor *FGMGetPigeonColorForColor(UIColor *color) {
+  double red, green, blue, alpha;
+  [color getRed:&red green:&green blue:&blue alpha:&alpha];
+  return [FGMPlatformColor makeWithRed:red green:green blue:blue alpha:alpha];
+}
 
 NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
     NSArray<FGMPlatformPatternItem *> *patterns, UIColor *strokeColor) {
@@ -238,19 +263,6 @@ NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(NSArray<FGMPlatformPatternIte
 }
 
 @implementation FGMHeatmapConversions
-
-// These constants must match the corresponding constants in serialization.dart
-NSString *const kHeatmapsToAddKey = @"heatmapsToAdd";
-NSString *const kHeatmapIdKey = @"heatmapId";
-NSString *const kHeatmapDataKey = @"data";
-NSString *const kHeatmapGradientKey = @"gradient";
-NSString *const kHeatmapOpacityKey = @"opacity";
-NSString *const kHeatmapRadiusKey = @"radius";
-NSString *const kHeatmapMinimumZoomIntensityKey = @"minimumZoomIntensity";
-NSString *const kHeatmapMaximumZoomIntensityKey = @"maximumZoomIntensity";
-NSString *const kHeatmapGradientColorsKey = @"colors";
-NSString *const kHeatmapGradientStartPointsKey = @"startPoints";
-NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
 
 + (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong {
   return CLLocationCoordinate2DMake([latlong[0] doubleValue], [latlong[1] doubleValue]);
@@ -316,32 +328,6 @@ NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
   }
 
   return data;
-}
-
-+ (GMUGradient *)gradientFromDictionary:(NSDictionary<NSString *, id> *)data {
-  NSArray *colorData = data[kHeatmapGradientColorsKey];
-  NSMutableArray<UIColor *> *colors = [[NSMutableArray alloc] initWithCapacity:colorData.count];
-  for (NSNumber *colorCode in colorData) {
-    [colors addObject:[FGMHeatmapConversions colorFromRGBA:colorCode]];
-  }
-
-  return [[GMUGradient alloc] initWithColors:colors
-                                 startPoints:data[kHeatmapGradientStartPointsKey]
-                                colorMapSize:[data[kHeatmapGradientColorMapSizeKey] intValue]];
-}
-
-+ (NSDictionary<NSString *, id> *)dictionaryFromGradient:(GMUGradient *)gradient {
-  NSMutableArray<NSNumber *> *colorCodes =
-      [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
-  for (UIColor *color in gradient.colors) {
-    [colorCodes addObject:[FGMHeatmapConversions RGBAFromColor:color]];
-  }
-
-  return @{
-    kHeatmapGradientColorsKey : colorCodes,
-    kHeatmapGradientStartPointsKey : gradient.startPoints,
-    kHeatmapGradientColorMapSizeKey : @(gradient.mapSize)
-  };
 }
 
 @end

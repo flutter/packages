@@ -78,6 +78,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformCameraUpdateZoomTo;
 @class FGMPlatformCircle;
 @class FGMPlatformHeatmap;
+@class FGMPlatformHeatmapGradient;
 @class FGMPlatformInfoWindow;
 @class FGMPlatformCluster;
 @class FGMPlatformClusterManager;
@@ -231,18 +232,34 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithHeatmapId:(NSString *)heatmapId
                              data:(id)data
-                         gradient:(nullable id)gradient
+                         gradient:(nullable FGMPlatformHeatmapGradient *)gradient
                           opacity:(double)opacity
                            radius:(NSInteger)radius
              minimumZoomIntensity:(NSInteger)minimumZoomIntensity
              maximumZoomIntensity:(NSInteger)maximumZoomIntensity;
 @property(nonatomic, copy) NSString *heatmapId;
 @property(nonatomic, strong) id data;
-@property(nonatomic, strong, nullable) id gradient;
+@property(nonatomic, strong, nullable) FGMPlatformHeatmapGradient *gradient;
 @property(nonatomic, assign) double opacity;
 @property(nonatomic, assign) NSInteger radius;
 @property(nonatomic, assign) NSInteger minimumZoomIntensity;
 @property(nonatomic, assign) NSInteger maximumZoomIntensity;
+@end
+
+/// Pigeon equivalent of the GMUGradient class.
+///
+/// The structure is slightly different from HeatmapGradient, so this matches
+/// the iOS API so that conversion can be done on the Dart side where the
+/// structures are easier to work with.
+@interface FGMPlatformHeatmapGradient : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithColors:(NSArray<FGMPlatformColor *> *)colors
+                   startPoints:(NSArray<NSNumber *> *)startPoints
+                  colorMapSize:(NSInteger)colorMapSize;
+@property(nonatomic, copy) NSArray<FGMPlatformColor *> *colors;
+@property(nonatomic, copy) NSArray<NSNumber *> *startPoints;
+@property(nonatomic, assign) NSInteger colorMapSize;
 @end
 
 /// Pigeon equivalent of the InfoWindow class.

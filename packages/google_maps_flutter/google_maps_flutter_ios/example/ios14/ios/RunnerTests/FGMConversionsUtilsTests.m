@@ -58,17 +58,37 @@
   XCTAssertEqual([array[1] integerValue], 2);
 }
 
-- (void)testColorFromRGBA {
-  NSNumber *rgba = @(0x01020304);
-  UIColor *color = [FGMHeatmapConversions colorFromRGBA:rgba];
+- (void)testColorFromPlatformColor {
+  double platformRed = 1 / 255.0;
+  double platformGreen = 2 / 255.0;
+  double platformBlue = 3 / 255.0;
+  double platformAlpha = 4 / 255.0;
+  UIColor *color = FGMGetColorForPigeonColor([FGMPlatformColor makeWithRed:platformRed
+                                                                     green:platformGreen
+                                                                      blue:platformBlue
+                                                                     alpha:platformAlpha]);
   CGFloat red, green, blue, alpha;
   BOOL success = [color getRed:&red green:&green blue:&blue alpha:&alpha];
   XCTAssertTrue(success);
   const CGFloat accuracy = 0.0001;
-  XCTAssertEqualWithAccuracy(red, 2 / 255.0, accuracy);
-  XCTAssertEqualWithAccuracy(green, 3 / 255.0, accuracy);
-  XCTAssertEqualWithAccuracy(blue, 4 / 255.0, accuracy);
-  XCTAssertEqualWithAccuracy(alpha, 1 / 255.0, accuracy);
+  XCTAssertEqualWithAccuracy(red, platformRed, accuracy);
+  XCTAssertEqualWithAccuracy(green, platformGreen, accuracy);
+  XCTAssertEqualWithAccuracy(blue, platformBlue, accuracy);
+  XCTAssertEqualWithAccuracy(alpha, platformAlpha, accuracy);
+}
+
+- (void)testPlatformColorFromColor {
+  double red = 1 / 255.0;
+  double green = 2 / 255.0;
+  double blue = 3 / 255.0;
+  double alpha = 4 / 255.0;
+  UIColor *color = [UIColor colorWithRed:red green:green blue:blue alpha:alpha];
+  FGMPlatformColor *platformColor = FGMGetPigeonColorForColor(color);
+  const CGFloat accuracy = 0.0001;
+  XCTAssertEqualWithAccuracy(red, platformColor.red, accuracy);
+  XCTAssertEqualWithAccuracy(green, platformColor.green, accuracy);
+  XCTAssertEqualWithAccuracy(blue, platformColor.blue, accuracy);
+  XCTAssertEqualWithAccuracy(alpha, platformColor.alpha, accuracy);
 }
 
 - (void)testPointsFromLatLongs {
@@ -412,27 +432,31 @@
   XCTAssertEqual([weightedData[1] intensity], [intensity2 floatValue]);
 }
 
-- (void)testGradientFromDictionary {
-  NSNumber *startPoint = @0.6;
-  NSNumber *colorMapSize = @200;
-  NSDictionary *gradientData = @{
-    @"colors" : @[
-      // Color.fromARGB(255, 0, 255, 255)
-      @4278255615,
-    ],
-    @"startPoints" : @[ startPoint ],
-    @"colorMapSize" : colorMapSize,
-  };
+- (void)testGradientFromPlatformGradient {
+  CGFloat startPoint = 0.6;
+  CGFloat platformRed = 0.1;
+  CGFloat platformGreen = 0.2;
+  CGFloat platformBlue = 0.3;
+  CGFloat platformAlpha = 0.4;
+  NSInteger colorMapSize = 200;
+  FGMPlatformHeatmapGradient *platformGradient =
+      [FGMPlatformHeatmapGradient makeWithColors:@[ [FGMPlatformColor makeWithRed:platformRed
+                                                                            green:platformGreen
+                                                                             blue:platformBlue
+                                                                            alpha:platformAlpha] ]
+                                     startPoints:@[ @(startPoint) ]
+                                    colorMapSize:colorMapSize];
 
-  GMUGradient *gradient = [FGMHeatmapConversions gradientFromDictionary:gradientData];
+  GMUGradient *gradient = FGMGetGradientForPigeonHeatmapGradient(platformGradient);
   CGFloat red, green, blue, alpha;
   [[gradient colors][0] getRed:&red green:&green blue:&blue alpha:&alpha];
-  XCTAssertEqual(red, 0);
-  XCTAssertEqual(green, 1);
-  XCTAssertEqual(blue, 1);
-  XCTAssertEqual(alpha, 1);
-  XCTAssertEqualWithAccuracy([[gradient startPoints][0] doubleValue], [startPoint doubleValue], 0);
-  XCTAssertEqual([gradient mapSize], [colorMapSize intValue]);
+  const CGFloat accuracy = 0.001;
+  XCTAssertEqualWithAccuracy(red, platformRed, accuracy);
+  XCTAssertEqualWithAccuracy(green, platformGreen, accuracy);
+  XCTAssertEqualWithAccuracy(blue, platformBlue, accuracy);
+  XCTAssertEqualWithAccuracy(alpha, platformAlpha, accuracy);
+  XCTAssertEqualWithAccuracy([[gradient startPoints][0] doubleValue], startPoint, accuracy);
+  XCTAssertEqual([gradient mapSize], colorMapSize);
 }
 
 @end

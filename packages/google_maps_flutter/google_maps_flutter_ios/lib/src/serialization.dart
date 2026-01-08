@@ -2,19 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
-
-// These constants must match the corresponding constants in FGMConversionUtils.m
-const String _heatmapGradientColorsKey = 'colors';
-const String _heatmapGradientStartPointsKey = 'startPoints';
-const String _heatmapGradientColorMapSizeKey = 'colorMapSize';
-
-void _addIfNonNull(Map<String, Object?> map, String fieldName, Object? value) {
-  if (value != null) {
-    map[fieldName] = value;
-  }
-}
 
 /// Serialize [WeightedLatLng]
 Object serializeWeightedLatLng(WeightedLatLng wll) {
@@ -45,50 +33,4 @@ LatLng? deserializeLatLng(Object? json) {
   assert(json is List && json.length == 2);
   final list = json as List<Object?>;
   return LatLng(list[0]! as double, list[1]! as double);
-}
-
-/// Serialize [HeatmapGradient]
-Object serializeHeatmapGradient(HeatmapGradient gradient) {
-  final json = <String, Object>{};
-
-  _addIfNonNull(
-    json,
-    _heatmapGradientColorsKey,
-    gradient.colors
-        .map((HeatmapGradientColor e) => e.color.toARGB32())
-        .toList(),
-  );
-  _addIfNonNull(
-    json,
-    _heatmapGradientStartPointsKey,
-    gradient.colors.map((HeatmapGradientColor e) => e.startPoint).toList(),
-  );
-  _addIfNonNull(json, _heatmapGradientColorMapSizeKey, gradient.colorMapSize);
-
-  return json;
-}
-
-/// Deserialize [HeatmapGradient]
-HeatmapGradient? deserializeHeatmapGradient(Object? json) {
-  if (json == null) {
-    return null;
-  }
-  assert(json is Map);
-  final Map<String, Object?> map = (json as Map<Object?, Object?>).cast();
-  final List<Color> colors = (map[_heatmapGradientColorsKey]! as List<Object?>)
-      .whereType<int>()
-      .map((int e) => Color(e))
-      .toList();
-  final List<double> startPoints =
-      (map[_heatmapGradientStartPointsKey]! as List<Object?>)
-          .whereType<double>()
-          .toList();
-  final gradientColors = <HeatmapGradientColor>[];
-  for (var i = 0; i < colors.length; i++) {
-    gradientColors.add(HeatmapGradientColor(colors[i], startPoints[i]));
-  }
-  return HeatmapGradient(
-    gradientColors,
-    colorMapSize: map[_heatmapGradientColorMapSizeKey] as int? ?? 256,
-  );
 }

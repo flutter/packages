@@ -137,13 +137,28 @@ class PlatformHeatmap {
   // TODO(stuartmorgan): Replace this with structured data. This exists only to
   //  allow incremental migration to Pigeon.
   final Object data;
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object? gradient;
+  final PlatformHeatmapGradient? gradient;
   final double opacity;
   final int radius;
   final int minimumZoomIntensity;
   final int maximumZoomIntensity;
+}
+
+/// Pigeon equivalent of the HeatmapGradient class.
+///
+/// The GMUGradient structure is slightly different from HeatmapGradient, so
+/// this matches the iOS API so that conversion can be done on the Dart side
+/// where the structures are easier to work with.
+class PlatformHeatmapGradient {
+  PlatformHeatmapGradient({
+    required this.colors,
+    required this.startPoints,
+    required this.colorMapSize,
+  });
+
+  final List<PlatformColor> colors;
+  final List<double> startPoints;
+  final int colorMapSize;
 }
 
 /// Pigeon equivalent of the InfoWindow class.

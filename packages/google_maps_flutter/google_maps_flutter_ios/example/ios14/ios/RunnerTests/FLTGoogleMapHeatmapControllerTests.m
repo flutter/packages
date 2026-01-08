@@ -22,6 +22,12 @@
 
 - (void)testUpdateHeatmapSetsVisibilityLast {
   PropertyOrderValidatingHeatmap *heatmap = [[PropertyOrderValidatingHeatmap alloc] init];
+  FGMPlatformHeatmapGradient *gradient = [FGMPlatformHeatmapGradient makeWithColors:@[
+    [FGMPlatformColor makeWithRed:0 green:0 blue:0 alpha:0],
+    [FGMPlatformColor makeWithRed:1.0 green:1.0 blue:1.0 alpha:1.0],
+  ]
+                                                                        startPoints:@[ @(0), @(1) ]
+                                                                       colorMapSize:256];
   [FLTGoogleMapHeatmapController
             updateHeatmap:heatmap
       fromPlatformHeatmap:[FGMPlatformHeatmap makeWithHeatmapId:@"heatmap"
@@ -29,11 +35,7 @@
                                                              @[ @[ @(5), @(5) ], @(0.5) ],
                                                              @[ @[ @(10), @(10) ], @(0.75) ]
                                                            ]
-                                                       gradient:@{
-                                                         @"colors" : @[ @(0), @(1) ],
-                                                         @"startPoints" : @[ @(0), @(1) ],
-                                                         @"colorMapSize" : @(256),
-                                                       }
+                                                       gradient:gradient
                                                         opacity:0.5
                                                          radius:1
                                            minimumZoomIntensity:1

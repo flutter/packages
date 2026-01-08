@@ -677,11 +677,35 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return PlatformHeatmap(
       heatmapId: heatmap.heatmapId.value,
       data: heatmap.data.map(serializeWeightedLatLng).toList(),
-      gradient: gradient == null ? null : serializeHeatmapGradient(gradient),
+      gradient: _platformHeatmapGradientFromHeatmapGradient(gradient),
       opacity: heatmap.opacity,
       radius: heatmap.radius.radius,
       minimumZoomIntensity: heatmap.minimumZoomIntensity,
       maximumZoomIntensity: heatmap.maximumZoomIntensity,
+    );
+  }
+
+  static PlatformHeatmapGradient? _platformHeatmapGradientFromHeatmapGradient(
+    HeatmapGradient? gradient,
+  ) {
+    if (gradient == null) {
+      return null;
+    }
+    return PlatformHeatmapGradient(
+      colors: gradient.colors
+          .map(
+            (HeatmapGradientColor c) => PlatformColor(
+              red: c.color.r,
+              green: c.color.g,
+              blue: c.color.b,
+              alpha: c.color.a,
+            ),
+          )
+          .toList(),
+      startPoints: gradient.colors
+          .map((HeatmapGradientColor c) => c.startPoint)
+          .toList(),
+      colorMapSize: gradient.colorMapSize,
     );
   }
 
