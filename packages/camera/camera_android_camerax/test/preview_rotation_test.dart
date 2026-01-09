@@ -4,7 +4,6 @@
 
 import 'package:camera_android_camerax/camera_android_camerax.dart';
 import 'package:camera_android_camerax/src/camerax_library.dart';
-import 'package:camera_android_camerax/src/camerax_proxy.dart';
 import 'package:camera_platform_interface/camera_platform_interface.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart'
@@ -37,6 +36,11 @@ String _serializeDeviceOrientation(DeviceOrientation orientation) {
 void main() {
   tearDownAll(() {
     AndroidCameraCameraX.deviceOrientationChangedStreamController.close();
+  });
+
+  setUp(() {
+    PigeonOverrides.pigeon_reset();
+    GenericsPigeonOverrides.reset();
   });
 
   /// Sets up mock CameraSelector and mock ProcessCameraProvider used to
@@ -79,42 +83,29 @@ void main() {
     return mockProcessCameraProvider;
   }
 
-  /// Returns CameraXProxy used to mock all calls to native Android in
+  /// Set up overrides used to mock all calls to native Android in
   /// the `availableCameras` and `createCameraWithSettings` methods, with
   /// a DeviceORientationManager specified.
   ///
   /// Useful for tests that need a reference to a DeviceOrientationManager.
-  CameraXProxy getProxyForCreatingTestCameraWithDeviceOrientationManager(
+  void setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
     DeviceOrientationManager deviceOrientationManager, {
     required MockProcessCameraProvider mockProcessCameraProvider,
     required CameraSelector Function({
       LensFacing? requireLensFacing,
-      CameraInfo? cameraInfoForFilter,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
+      dynamic cameraInfoForFilter,
     })
     createCameraSelector,
     required bool handlesCropAndRotation,
-  }) => CameraXProxy(
-    getInstanceProcessCameraProvider:
-        ({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) async => mockProcessCameraProvider,
-    newCameraSelector: createCameraSelector,
-    newPreview:
+  }) {
+    PigeonOverrides.processCameraProvider_getInstance = () async =>
+        mockProcessCameraProvider;
+    PigeonOverrides.cameraSelector_new = createCameraSelector;
+    PigeonOverrides.preview_new =
         ({
           int? targetRotation,
           CameraIntegerRange? targetFpsRange,
           ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final preview = MockPreview();
           when(
@@ -125,161 +116,88 @@ void main() {
                 ResolutionInfo.pigeon_detached(resolution: MockCameraSize()),
           );
           return preview;
-        },
-    newImageCapture:
+        };
+    PigeonOverrides.imageCapture_new =
         ({
           int? targetRotation,
           CameraXFlashMode? flashMode,
           ResolutionSelector? resolutionSelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) => MockImageCapture(),
-    newRecorder:
+        }) => MockImageCapture();
+    PigeonOverrides.recorder_new =
         ({
           int? aspectRatio,
           int? targetVideoEncodingBitRate,
           QualitySelector? qualitySelector,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) => MockRecorder(),
-    withOutputVideoCapture:
+        }) => MockRecorder();
+    PigeonOverrides.videoCapture_withOutput =
         ({
           required VideoOutput videoOutput,
           CameraIntegerRange? targetFpsRange,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return MockVideoCapture();
-        },
-    newImageAnalysis:
+        };
+    PigeonOverrides.imageAnalysis_new =
         ({
           int? targetRotation,
           CameraIntegerRange? targetFpsRange,
           ResolutionSelector? resolutionSelector,
           int? outputImageFormat,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return MockImageAnalysis();
-        },
-    newResolutionStrategy:
+        };
+    PigeonOverrides.resolutionStrategy_new =
         ({
           required CameraSize boundSize,
           required ResolutionStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return MockResolutionStrategy();
-        },
-    newResolutionSelector:
+        };
+    PigeonOverrides.resolutionSelector_new =
         ({
           AspectRatioStrategy? aspectRatioStrategy,
           ResolutionStrategy? resolutionStrategy,
           ResolutionFilter? resolutionFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return MockResolutionSelector();
-        },
-    lowerQualityOrHigherThanFallbackStrategy:
-        ({
-          required VideoQuality quality,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
+        };
+    PigeonOverrides.fallbackStrategy_lowerQualityOrHigherThan =
+        ({required VideoQuality quality}) {
           return MockFallbackStrategy();
-        },
-    lowerQualityThanFallbackStrategy:
-        ({
-          required VideoQuality quality,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
+        };
+    PigeonOverrides.fallbackStrategy_lowerQualityThan =
+        ({required VideoQuality quality}) {
           return MockFallbackStrategy();
-        },
-    fromCamera2CameraInfo:
-        ({
-          required CameraInfo cameraInfo,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          final camera2cameraInfo = MockCamera2CameraInfo();
-          when(
-            camera2cameraInfo.getCameraCharacteristic(any),
-          ).thenAnswer((_) async => 90);
-          return camera2cameraInfo;
-        },
-    fromQualitySelector:
-        ({
-          required VideoQuality quality,
-          FallbackStrategy? fallbackStrategy,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
+        };
+    PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
+      final camera2cameraInfo = MockCamera2CameraInfo();
+      when(
+        camera2cameraInfo.getCameraCharacteristic(any),
+      ).thenAnswer((_) async => 90);
+      return camera2cameraInfo;
+    };
+    PigeonOverrides.qualitySelector_from =
+        ({required VideoQuality quality, FallbackStrategy? fallbackStrategy}) {
           return MockQualitySelector();
-        },
-    newObserver:
-        <T>({
-          required void Function(Observer<T>, T) onChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
-          return Observer<T>.detached(
-            onChanged: onChanged,
-            pigeon_instanceManager: PigeonInstanceManager(
-              onWeakReferenceRemoved: (_) {},
-            ),
-          );
-        },
-    newSystemServicesManager:
+        };
+    GenericsPigeonOverrides.observerNew =
+        <T>({required void Function(Observer<T>, T) onChanged}) {
+          return Observer<T>.detached(onChanged: onChanged);
+        };
+    PigeonOverrides.systemServicesManager_new =
         ({
           required void Function(SystemServicesManager, String) onCameraError,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
         }) {
           return MockSystemServicesManager();
-        },
-    newDeviceOrientationManager:
+        };
+    PigeonOverrides.deviceOrientationManager_new =
         ({
           required void Function(DeviceOrientationManager, String)
           onDeviceOrientationChanged,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) => deviceOrientationManager,
-    newAspectRatioStrategy:
+        }) => deviceOrientationManager;
+    PigeonOverrides.aspectRatioStrategy_new =
         ({
           required AspectRatio preferredAspectRatio,
           required AspectRatioStrategyFallbackRule fallbackRule,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
         }) {
           final mockAspectRatioStrategy = MockAspectRatioStrategy();
           when(
@@ -289,34 +207,24 @@ void main() {
             mockAspectRatioStrategy.getPreferredAspectRatio(),
           ).thenAnswer((_) async => preferredAspectRatio);
           return mockAspectRatioStrategy;
-        },
-    createWithOnePreferredSizeResolutionFilter:
-        ({
-          required CameraSize preferredSize,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
-        }) {
+        };
+    PigeonOverrides.resolutionFilter_createWithOnePreferredSize =
+        ({required CameraSize preferredSize}) {
           return MockResolutionFilter();
-        },
-  );
+        };
+  }
 
-  /// Returns CameraXProxy used to mock all calls to native Android in
+  /// Set up overrides used to mock all calls to native Android in
   /// the `availableCameras` and `createCameraWithSettings` methods, with
   /// functions `getUiOrientation` and `getDefaultDisplayRotation` specified
   /// to create a mock DeviceOrientationManager.
   ///
   /// Useful for tests that do not need a reference to a DeviceOrientationManager.
-  CameraXProxy getProxyForCreatingTestCamera({
+  void setUpOverridesForCreatingTestCamera({
     required MockProcessCameraProvider mockProcessCameraProvider,
     required CameraSelector Function({
       LensFacing? requireLensFacing,
-      CameraInfo? cameraInfoForFilter,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
+      dynamic cameraInfoForFilter,
     })
     createCameraSelector,
     required bool handlesCropAndRotation,
@@ -330,7 +238,7 @@ void main() {
     when(
       deviceOrientationManager.getDefaultDisplayRotation(),
     ).thenAnswer((_) => getDefaultDisplayRotation());
-    return getProxyForCreatingTestCameraWithDeviceOrientationManager(
+    setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
       deviceOrientationManager,
       mockProcessCameraProvider: mockProcessCameraProvider,
       createCameraSelector: createCameraSelector,
@@ -341,21 +249,10 @@ void main() {
   /// Returns function that a CameraXProxy can use to select the front camera.
   MockCameraSelector Function({
     LensFacing? requireLensFacing,
-    CameraInfo? cameraInfoForFilter,
-    // ignore: non_constant_identifier_names
-    BinaryMessenger? pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    PigeonInstanceManager? pigeon_instanceManager,
+    dynamic cameraInfoForFilter,
   })
   createCameraSelectorForFrontCamera(MockCameraSelector mockCameraSelector) {
-    return ({
-      LensFacing? requireLensFacing,
-      CameraInfo? cameraInfoForFilter,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
+    return ({LensFacing? requireLensFacing, dynamic cameraInfoForFilter}) {
       switch (requireLensFacing) {
         case LensFacing.front:
           return mockCameraSelector;
@@ -371,21 +268,10 @@ void main() {
   /// Returns function that a CameraXProxy can use to select the back camera.
   MockCameraSelector Function({
     LensFacing? requireLensFacing,
-    CameraInfo? cameraInfoForFilter,
-    // ignore: non_constant_identifier_names
-    BinaryMessenger? pigeon_binaryMessenger,
-    // ignore: non_constant_identifier_names
-    PigeonInstanceManager? pigeon_instanceManager,
+    dynamic cameraInfoForFilter,
   })
   createCameraSelectorForBackCamera(MockCameraSelector mockCameraSelector) {
-    return ({
-      LensFacing? requireLensFacing,
-      CameraInfo? cameraInfoForFilter,
-      // ignore: non_constant_identifier_names
-      BinaryMessenger? pigeon_binaryMessenger,
-      // ignore: non_constant_identifier_names
-      PigeonInstanceManager? pigeon_instanceManager,
-    }) {
+    return ({LensFacing? requireLensFacing, dynamic cameraInfoForFilter}) {
       switch (requireLensFacing) {
         case LensFacing.back:
           return mockCameraSelector;
@@ -478,12 +364,8 @@ void main() {
       late DeviceOrientation testInitialDeviceOrientation;
       late MockProcessCameraProvider mockProcessCameraProvider;
       late MockCameraSelector Function({
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
         LensFacing? requireLensFacing,
-        CameraInfo? cameraInfoForFilter,
+        dynamic cameraInfoForFilter,
       })
       fakeCreateCameraSelector;
       late MediaSettings testMediaSettings;
@@ -514,7 +396,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to landscape right, and set initial default display rotation to 0 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -569,7 +451,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to landscape right, and set initial default display rotation to 90 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -622,7 +504,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to landscape right, and set initial default display rotation to 180 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -675,7 +557,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to landscape right, and set initial default display rotation to 270 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -733,12 +615,8 @@ void main() {
       late int testInitialDefaultDisplayRotation;
       late MockProcessCameraProvider mockProcessCameraProvider;
       late MockCameraSelector Function({
-        // ignore: non_constant_identifier_names
-        BinaryMessenger? pigeon_binaryMessenger,
-        // ignore: non_constant_identifier_names
-        PigeonInstanceManager? pigeon_instanceManager,
         LensFacing? requireLensFacing,
-        CameraInfo? cameraInfoForFilter,
+        dynamic cameraInfoForFilter,
       })
       fakeCreateCameraSelector;
       late MediaSettings testMediaSettings;
@@ -769,7 +647,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to portrait up, and set initial default display rotation to 90 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -822,7 +700,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to landscape left, and set initial default display rotation to 90 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -875,7 +753,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to portrait down, and set initial default display rotation to 90 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -928,7 +806,7 @@ void main() {
         (WidgetTester tester) async {
           // Mock calls to CameraXProxy. Most importantly, tell camera that handlesCropAndRotation is true, set initial device
           // orientation to landscape right, and set initial default display rotation to 90 degrees clockwise.
-          camera.proxy = getProxyForCreatingTestCamera(
+          setUpOverridesForCreatingTestCamera(
             mockProcessCameraProvider: mockProcessCameraProvider,
             createCameraSelector: fakeCreateCameraSelector,
             handlesCropAndRotation: true,
@@ -991,12 +869,8 @@ void main() {
         // These settings do not matter for this test.
         final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
+          dynamic cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -1020,8 +894,7 @@ void main() {
           mockDeviceOrientationManager.getDefaultDisplayRotation(),
         ).thenAnswer((_) => Future<int>.value(Surface.rotation0));
 
-        camera
-            .proxy = getProxyForCreatingTestCameraWithDeviceOrientationManager(
+        setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
           mockDeviceOrientationManager,
           mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
           createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1101,12 +974,8 @@ void main() {
         // These settings do not matter for this test.
         final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
+          dynamic cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -1120,7 +989,7 @@ void main() {
 
         // Tell camera that handlesCropAndRotation is true, set camera initial device orientation
         // to portrait up, set initial default display rotation to 270 degrees clockwise.
-        camera.proxy = getProxyForCreatingTestCamera(
+        setUpOverridesForCreatingTestCamera(
           mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
           createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
           handlesCropAndRotation: true,
@@ -1199,11 +1068,7 @@ void main() {
         late MockCameraSelector mockFrontCameraSelector;
         late MockCameraSelector Function({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
+          dynamic cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera;
         late MockProcessCameraProvider mockProcessCameraProviderForFrontCamera;
@@ -1237,7 +1102,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial device orientation to portrait up.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1298,7 +1163,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial device orientation to landscape right.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1359,7 +1224,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial device orientation to portrait down.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1420,7 +1285,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial device orientation to landscape left.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1487,12 +1352,8 @@ void main() {
         late MockCameraSelector mockFrontCameraSelector;
         late MockProcessCameraProvider mockProcessCameraProviderForFrontCamera;
         late MockCameraSelector Function({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
+          dynamic cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera;
         late Future<String> Function() proxyGetUiOrientation;
@@ -1525,7 +1386,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial default display rotation to 0 degrees.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1586,7 +1447,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial default display rotation to 0 degrees.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1651,7 +1512,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial default display rotation to 0 degrees.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1714,7 +1575,7 @@ void main() {
           (WidgetTester tester) async {
             // Set up test to use front camera, tell camera that handlesCropAndRotation is false,
             // set camera initial default display rotation to 0 degrees.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider:
                   mockProcessCameraProviderForFrontCamera,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1789,12 +1650,8 @@ void main() {
         // media settings for test front camera.
         final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
+          dynamic cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -1817,8 +1674,7 @@ void main() {
         when(
           mockDeviceOrientationManager.getDefaultDisplayRotation(),
         ).thenAnswer((_) => Future<int>.value(Surface.rotation0));
-        camera
-            .proxy = getProxyForCreatingTestCameraWithDeviceOrientationManager(
+        setUpOverridesForCreatingTestCameraWithDeviceOrientationManager(
           mockDeviceOrientationManager,
           mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
           createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
@@ -1910,11 +1766,7 @@ void main() {
         final mockFrontCameraSelector = MockCameraSelector();
         final MockCameraSelector Function({
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
+          dynamic cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForFrontCamera =
             createCameraSelectorForFrontCamera(mockFrontCameraSelector);
@@ -1931,7 +1783,7 @@ void main() {
         // Set up test to use front camera and tell camera that handlesCropAndRotation is false,
         // set camera initial device orientation to landscape left, set initial default display
         // rotation to 90 degrees clockwise.
-        camera.proxy = getProxyForCreatingTestCamera(
+        setUpOverridesForCreatingTestCamera(
           mockProcessCameraProvider: mockProcessCameraProviderForFrontCamera,
           createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
           handlesCropAndRotation: false,
@@ -2025,12 +1877,8 @@ void main() {
         late int cameraId;
         late MockCameraSelector mockBackCameraSelector;
         late MockCameraSelector Function({
-          // ignore: non_constant_identifier_names
-          BinaryMessenger? pigeon_binaryMessenger,
-          // ignore: non_constant_identifier_names
-          PigeonInstanceManager? pigeon_instanceManager,
           LensFacing? requireLensFacing,
-          CameraInfo? cameraInfoForFilter,
+          dynamic cameraInfoForFilter,
         })
         proxyCreateCameraSelectorForBackCamera;
         late Future<int> Function() proxyGetDefaultDisplayRotation;
@@ -2069,7 +1917,7 @@ void main() {
 
             // Set up test to use back camera, tell camera that handlesCropAndRotation is false,
             // set camera initial device orientation to landscape left.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider: mockProcessCameraProviderForBackCamera,
               createCameraSelector: proxyCreateCameraSelectorForBackCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
@@ -2129,7 +1977,7 @@ void main() {
 
             // Set up test to use back camera, tell camera that handlesCropAndRotation is false,
             // set camera initial device orientation to landscape left.
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider: mockProcessCameraProviderForBackCamera,
               createCameraSelector: proxyCreateCameraSelectorForBackCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
@@ -2216,16 +2064,12 @@ void main() {
                 );
             // Set up front camera selection and initial device orientation as landscape right.
             final MockCameraSelector Function({
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
               LensFacing? requireLensFacing,
-              CameraInfo? cameraInfoForFilter,
+              dynamic cameraInfoForFilter,
             })
             proxyCreateCameraSelectorForFrontCamera =
                 createCameraSelectorForFrontCamera(mockFrontCameraSelector);
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider: mockProcessCameraProvider,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
@@ -2295,16 +2139,12 @@ void main() {
 
             // Set up front camera selection and initial device orientation as landscape right.
             final MockCameraSelector Function({
-              // ignore: non_constant_identifier_names
-              BinaryMessenger? pigeon_binaryMessenger,
-              // ignore: non_constant_identifier_names
-              PigeonInstanceManager? pigeon_instanceManager,
               LensFacing? requireLensFacing,
-              CameraInfo? cameraInfoForFilter,
+              dynamic cameraInfoForFilter,
             })
             proxyCreateCameraSelectorForFrontCamera =
                 createCameraSelectorForBackCamera(mockBackCameraSelector);
-            camera.proxy = getProxyForCreatingTestCamera(
+            setUpOverridesForCreatingTestCamera(
               mockProcessCameraProvider: mockProcessCameraProvider,
               createCameraSelector: proxyCreateCameraSelectorForFrontCamera,
               getDefaultDisplayRotation: proxyGetDefaultDisplayRotation,
