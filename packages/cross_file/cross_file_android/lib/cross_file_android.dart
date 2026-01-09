@@ -5,5 +5,4 @@
 export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
     show ListParams, PlatformXFileEntity;
 
-export 'src/android_shared_storage_cross_file.dart';
 export 'src/cross_file_android.dart';
