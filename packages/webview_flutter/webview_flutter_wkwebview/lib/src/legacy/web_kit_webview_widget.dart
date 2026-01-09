@@ -240,12 +240,27 @@ class WebKitWebViewPlatformController extends WebViewPlatformController {
       unawaited(updateSettings(params.webSettings!));
     }
 
-    if (params.backgroundColor != null) {
+    if (params.backgroundColor case final Color backgroundColor) {
       unawaited(webView.setOpaque(false));
-      unawaited(webView.setBackgroundColor(Colors.transparent.toARGB32()));
+      const Color transparent = Colors.transparent;
+      unawaited(
+        webView.setBackgroundColor(
+          UIColor(
+            red: transparent.r,
+            green: transparent.g,
+            blue: transparent.b,
+            alpha: transparent.a,
+          ),
+        ),
+      );
       unawaited(
         webView.scrollView.setBackgroundColor(
-          params.backgroundColor?.toARGB32(),
+          UIColor(
+            red: backgroundColor.r,
+            green: backgroundColor.g,
+            blue: backgroundColor.b,
+            alpha: backgroundColor.a,
+          ),
         ),
       );
     }
