@@ -157,3 +157,145 @@ const Map<String, Color> namedColors = <String, Color>{
   'yellow': Color.fromARGB(255, 255, 255, 0),
   'yellowgreen': Color.fromARGB(255, 154, 205, 50),
 };
+
+/// Parses a CSS `rgb()` or `rgba()` function color string and returns a Color.
+///
+/// The [colorString] should be the full color string including the function
+/// name (`rgb` or `rgba`) and parentheses.
+///
+/// Both `rgb()` and `rgba()` accept the same syntax variations:
+/// - `rgb(R G B)` or `rgba(R G B)` - modern space-separated
+/// - `rgb(R G B / A)` or `rgba(R G B / A)` - modern with slash before alpha
+/// - `rgb(R,G,B)` or `rgba(R,G,B)` - legacy comma-separated
+/// - `rgb(R,G,B,A)` or `rgba(R,G,B,A)` - legacy with alpha
+///
+/// Throws [ArgumentError] if the color string is invalid.
+Color parseRgbFunction(String colorString) {
+  final String content = colorString.substring(
+    colorString.indexOf('(') + 1,
+    colorString.indexOf(')'),
+  );
+
+  if (content.isEmpty) {
+    throw ArgumentError.value(colorString, 'colorString', 'Empty content');
+  }
+  final List<String> stringRgbValues;
+  final String? stringAlphaValue;
+
+  final List<String> commaSplit = content
+      .split(',')
+      .map((String value) => value.trim())
+      .toList();
+
+  if (commaSplit.length > 1) {
+    // We are dealing with comma-separated syntax
+    (stringAlphaValue, stringRgbValues) = switch (commaSplit.length) {
+      3 => (null, commaSplit),
+      4 => (commaSplit.removeLast(), commaSplit),
+      _ => throw ArgumentError.value(
+        colorString,
+        'colorString',
+        'Expected 3 or 4 values, got ${commaSplit.length}',
+      ),
+    };
+  } else {
+    final List<String> slashSplit = content
+        .split('/')
+        .map((String value) => value.trim())
+        .toList();
+
+    final (
+      String tempStringRgbValues,
+      String? tempStringAlphaValue,
+    ) = switch (slashSplit.length) {
+      1 => (slashSplit.first, null),
+      2 => (slashSplit.first, slashSplit.last),
+      _ => throw ArgumentError.value(
+        colorString,
+        'colorString',
+        'Multiple slashes not allowed',
+      ),
+    };
+
+    final List<String> rgbSpaceSplit = tempStringRgbValues
+        .split(' ')
+        .map((String value) => value.trim())
+        .where((String value) => value.isNotEmpty)
+        .toList();
+
+    if (rgbSpaceSplit.length != 3) {
+      throw ArgumentError.value(
+        colorString,
+        'colorString',
+        'Expected 3 space-separated RGB values',
+      );
+    }
+
+    stringRgbValues = rgbSpaceSplit;
+    stringAlphaValue = tempStringAlphaValue;
+  }
+
+  final List<int> rgbIntValues = stringRgbValues
+      .map(
+        (String value) => _parseRgbaFunctionComponent(
+          isAlpha: false,
+          rawComponentValue: value,
+          originalColorString: colorString,
+        ),
+      )
+      .toList();
+
+  final int a = stringAlphaValue == null
+      ? 255
+      : _parseRgbaFunctionComponent(
+          isAlpha: true,
+          rawComponentValue: stringAlphaValue,
+          originalColorString: colorString,
+        );
+
+  return Color.fromARGB(a, rgbIntValues[0], rgbIntValues[1], rgbIntValues[2]);
+}
+
+/// Parses a single RGB/RGBA component value and returns an integer 0-255.
+///
+/// The [rawComponentValue] can be:
+/// - A percentage (e.g., "50%") - converted to 0-255 range
+/// - A decimal number (e.g., "128" or "128.5") - clamped to 0-255 for RGB
+/// - For alpha (index 3): decimal 0-1 range, converted to 0-255
+///
+/// Out-of-bounds values are clamped rather than rejected.
+///
+/// Throws [ArgumentError] if the value cannot be parsed as a number.
+int _parseRgbaFunctionComponent({
+  required bool isAlpha,
+  required String rawComponentValue,
+  required String originalColorString,
+}) {
+  if (rawComponentValue.endsWith('%')) {
+    final String numPart = rawComponentValue.substring(
+      0,
+      rawComponentValue.length - 1,
+    );
+    final double? percent = double.tryParse(numPart);
+    if (percent == null) {
+      throw ArgumentError.value(
+        originalColorString,
+        'originalColorString',
+        'invalid percentage "$rawComponentValue"',
+      );
+    }
+    return (percent.clamp(0, 100) * 2.55).round();
+  }
+  final double? value = double.tryParse(rawComponentValue);
+  if (value == null) {
+    throw ArgumentError.value(
+      originalColorString,
+      'originalColorString',
+      'invalid value "$rawComponentValue"',
+    );
+  }
+  if (isAlpha) {
+    return (value.clamp(0, 1) * 255).round();
+  }
+  return value.clamp(0, 255).round();
+}
