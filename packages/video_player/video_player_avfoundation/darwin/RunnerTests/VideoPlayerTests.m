@@ -1054,7 +1054,7 @@
 #pragma mark - Audio Track Tests
 
 // Tests getAudioTracks with a regular MP4 video file using real AVFoundation.
-// The bee.mp4 video has a single audio track.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
 - (void)testGetAudioTracksWithRealMP4Video {
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
@@ -1070,24 +1070,14 @@
 
   // Now test getAudioTracks
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
 
   XCTAssertNil(error);
   XCTAssertNotNil(result);
 
-  // For regular MP4 files, we expect asset tracks (not media selection tracks)
-  // bee.mp4 has at least one audio track
-  if (result.assetTracks) {
-    XCTAssertGreaterThanOrEqual(result.assetTracks.count, 1);
-    // First track should be selected by default
-    if (result.assetTracks.count > 0) {
-      FVPAssetAudioTrackData *firstTrack = result.assetTracks[0];
-      XCTAssertTrue(firstTrack.isSelected);
-      XCTAssertGreaterThan(firstTrack.trackId, 0);
-    }
-  }
-  // mediaSelectionTracks should be nil for regular MP4 files
-  XCTAssertNil(result.mediaSelectionTracks);
+  // Regular MP4 files do not have media selection groups for audio.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
 
   [player disposeWithError:&error];
 }
@@ -1113,31 +1103,24 @@
 
   // Now test getAudioTracks
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
 
   XCTAssertNil(error);
   XCTAssertNotNil(result);
 
-  // For HLS streams, the result depends on whether the stream has multiple audio options.
+  // For HLS streams with multiple audio options, we get media selection tracks.
   // The bee.m3u8 stream may or may not have multiple audio tracks.
   // We verify the method returns valid data without crashing.
-  if (result.mediaSelectionTracks) {
-    // If media selection tracks exist, they should have valid structure
-    for (FVPMediaSelectionAudioTrackData *track in result.mediaSelectionTracks) {
-      XCTAssertNotNil(track.displayName);
-      XCTAssertGreaterThanOrEqual(track.index, 0);
-    }
-  } else if (result.assetTracks) {
-    // Falls back to asset tracks if no media selection group
-    for (FVPAssetAudioTrackData *track in result.assetTracks) {
-      XCTAssertGreaterThan(track.trackId, 0);
-    }
+  for (FVPMediaSelectionAudioTrackData *track in result) {
+    XCTAssertNotNil(track.displayName);
+    XCTAssertGreaterThanOrEqual(track.index, 0);
   }
 
   [player disposeWithError:&error];
 }
 
 // Tests that getAudioTracks returns valid data for audio-only files.
+// Regular audio files do not have media selection groups, so getAudioTracks returns an empty array.
 - (void)testGetAudioTracksWithRealAudioFile {
   NSURL *audioURL = [NSURL
       URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
@@ -1157,20 +1140,20 @@
 
   // Now test getAudioTracks
   FlutterError *error = nil;
-  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
 
   XCTAssertNil(error);
   XCTAssertNotNil(result);
 
-  // Audio files should have at least one audio track
-  if (result.assetTracks) {
-    XCTAssertGreaterThanOrEqual(result.assetTracks.count, 1);
-  }
+  // Regular audio files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
 
   [player disposeWithError:&error];
 }
 
 // Tests that getAudioTracks works correctly through the plugin API with a real video.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
 - (void)testGetAudioTracksViaPluginWithRealVideo {
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin =
@@ -1199,15 +1182,14 @@
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
 
   // Now test getAudioTracks
-  FVPNativeAudioTrackData *result = [player getAudioTracks:&error];
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
 
   XCTAssertNil(error);
   XCTAssertNotNil(result);
 
-  // For regular MP4, expect asset tracks
-  if (result.assetTracks) {
-    XCTAssertGreaterThanOrEqual(result.assetTracks.count, 1);
-  }
+  // Regular MP4 files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
 
   [player disposeWithError:&error];
 }
