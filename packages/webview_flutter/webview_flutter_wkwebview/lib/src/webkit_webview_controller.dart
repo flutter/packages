@@ -663,8 +663,8 @@ class WebKitWebViewController extends PlatformWebViewController {
       final bool? javaScriptCanOpenWindowsAutomatically =
           _webKitParams.javaScriptCanOpenWindowsAutomatically;
       if (javaScriptCanOpenWindowsAutomatically != null) {
-        final WKPreferences preferences =
-            await _webView.configuration.getPreferences();
+        final WKPreferences preferences = await _webView.configuration
+            .getPreferences();
         await preferences.setJavaScriptCanOpenWindowsAutomatically(
           javaScriptCanOpenWindowsAutomatically,
         );
@@ -678,8 +678,8 @@ class WebKitWebViewController extends PlatformWebViewController {
       rethrow;
     }
 
-    final WKPreferences preferences =
-        await _webView.configuration.getPreferences();
+    final WKPreferences preferences = await _webView.configuration
+        .getPreferences();
     switch (javaScriptMode) {
       case JavaScriptMode.disabled:
         await preferences.setJavaScriptEnabled(false);
