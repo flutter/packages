@@ -75,12 +75,11 @@ double? parseDoubleWithUnits(
 
   // Handle percentage values first.
   // Check inline to avoid circular import with parsers.dart.
-  final bool isPercent = rawDouble?.endsWith('%') ?? false;
+  final bool isPercent = rawDouble?.trim().endsWith('%') ?? false;
   if (isPercent) {
     if (percentageRef == null || percentageRef.isInfinite) {
-      // If no reference dimension is available, treat as 0.
-      // This maintains backwards compatibility for cases where
-      // percentages can't be resolved.
+      // If no reference dimension is available, the percentage cannot be
+      // resolved. Return null for tryParse, otherwise throw an exception.
       if (tryParse) {
         return null;
       }
