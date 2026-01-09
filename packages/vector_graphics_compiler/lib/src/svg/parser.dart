@@ -495,7 +495,10 @@ class _Paths {
       parserState.attribute('cy', def: '0'),
       percentageRef: vh,
     )!;
-    // For radius percentage, use the normalized diagonal per SVG spec.
+    // For circle radius percentage, use the normalized diagonal per SVG spec:
+    // https://www.w3.org/TR/SVG2/coords.html#Units
+    // "For any other length value expressed as a percentage of the SVG viewport,
+    // the percentage must be calculated as a percentage of the normalized diagonal"
     final double? diagRef = (vw != null && vh != null)
         ? math.sqrt(vw * vw + vh * vh) / math.sqrt(2)
         : null;
