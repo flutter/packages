@@ -325,7 +325,8 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
       [UIImagePickerController isCameraDeviceAvailable:device]) {
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePickerController.cameraDevice = device;
-    UIViewController *presentingController = [self addInteractionBlocker];
+    UIViewController *presentingController =
+        [self presentingViewControllerForImagePickerInNewWindow];
     [presentingController presentViewController:imagePickerController animated:YES completion:nil];
   } else {
     UIAlertController *cameraErrorAlert = [UIAlertController
@@ -683,7 +684,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   self.callContext = nil;
 }
 
-/// Why a separate UIWindow for the touch blocker?
+/// Why a separate UIWindow for the interaction blocker?
 /// Flutter renders inside a UIWindow owned by FlutterViewController. UIImagePickerController is
 /// presented in that same window and dismisses with an animation; during that brief transition,
 /// taps can “leak” to the Flutter view underneath.
@@ -697,7 +698,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 /// The image picker is presented on this blocker window so it appears above everything.
 ///
 /// @return The view controller that should be used to present the image picker.
-- (UIViewController *)addInteractionBlocker {
+- (UIViewController *)presentingViewControllerForImagePickerInNewWindow {
   if (self.interactionBlockerWindow != nil) {
     return self.interactionBlockerWindow.rootViewController;
   }
