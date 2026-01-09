@@ -115,7 +115,7 @@ class GoogleFontsVariant {
     final String weightPrefix =
         _fontWeightToFilenameWeightParts[fontWeight] ??
         _fontWeightToFilenameWeightParts[FontWeight.w400]!;
-    final String italicSuffix = fontStyle == FontStyle.italic ? 'Italic' : '';
+    final italicSuffix = fontStyle == FontStyle.italic ? 'Italic' : '';
     if (weightPrefix == 'Regular') {
       return italicSuffix == '' ? weightPrefix : italicSuffix;
     }
@@ -134,13 +134,13 @@ class GoogleFontsVariant {
   /// See [GoogleFontsVariant.toString] for the inverse function.
   @override
   String toString() {
-    final Object fontWeightString = fontWeight.index == 3
+    final Object fontWeightString = fontWeight == FontWeight.normal
         ? ''
-        : (fontWeight.index + 1) * 100;
+        : fontWeight.value;
     final String fontStyleString = fontStyle
         .toString()
         .replaceAll('FontStyle.', '')
-        .replaceFirst(_normal, fontWeight.index == 3 ? _regular : '');
+        .replaceFirst(_normal, fontWeight == FontWeight.normal ? _regular : '');
     return '$fontWeightString$fontStyleString';
   }
 

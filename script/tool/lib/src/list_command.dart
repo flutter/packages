@@ -11,10 +11,7 @@ import 'common/repository_package.dart';
 class ListCommand extends PackageCommand {
   /// Creates an instance of the list command, whose behavior depends on the
   /// 'type' argument it provides.
-  ListCommand(
-    super.packagesDir, {
-    super.platform,
-  }) {
+  ListCommand(super.packagesDir, {super.platform}) {
     argParser.addOption(
       _type,
       defaultsTo: _package,
@@ -45,7 +42,8 @@ class ListCommand extends PackageCommand {
       case _example:
         final Stream<RepositoryPackage> examples = getTargetPackages()
             .expand<RepositoryPackage>(
-                (PackageEnumerationEntry entry) => entry.package.getExamples());
+              (PackageEnumerationEntry entry) => entry.package.getExamples(),
+            );
         await for (final RepositoryPackage package in examples) {
           print(package.path);
         }

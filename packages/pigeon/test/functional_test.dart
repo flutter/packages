@@ -7,7 +7,7 @@ import 'package:test/test.dart';
 
 void main() {
   test('indexMap', () {
-    final List<String> items = <String>['a', 'b', 'c'];
+    final items = <String>['a', 'b', 'c'];
     final List<String> result = indexMap(
       items,
       (int index, String value) => value + index.toString(),
@@ -18,8 +18,8 @@ void main() {
   });
 
   test('enumerate', () {
-    final List<String> items = <String>['a', 'b', 'c'];
-    int saw = 0;
+    final items = <String>['a', 'b', 'c'];
+    var saw = 0;
     enumerate(items, (int index, String value) {
       if (index == 0) {
         expect(value, 'a');

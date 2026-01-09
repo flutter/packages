@@ -104,9 +104,9 @@ class PlatformCircle {
   PlatformCircle({
     required this.circleId,
     required this.center,
+    required this.fillColor,
+    required this.strokeColor,
     this.consumeTapEvents = false,
-    this.fillColor = 0x00000000,
-    this.strokeColor = 0xFF000000,
     this.visible = true,
     this.strokeWidth = 10,
     this.zIndex = 0.0,
@@ -114,8 +114,8 @@ class PlatformCircle {
   });
 
   final bool consumeTapEvents;
-  final int fillColor;
-  final int strokeColor;
+  final PlatformColor fillColor;
+  final PlatformColor strokeColor;
   final bool visible;
   final int strokeWidth;
   final double zIndex;
@@ -149,6 +149,15 @@ class PlatformDoublePair {
 
   final double x;
   final double y;
+}
+
+/// Pigeon equivalent of the Color class.
+///
+/// See https://developer.android.com/reference/android/graphics/Color.html.
+class PlatformColor {
+  const PlatformColor(this.argbValue);
+
+  final int argbValue;
 }
 
 /// Pigeon equivalent of the InfoWindow class.
@@ -211,12 +220,12 @@ class PlatformPolygon {
 
   final String polygonId;
   final bool consumesTapEvents;
-  final int fillColor;
+  final PlatformColor fillColor;
   final bool geodesic;
   final List<PlatformLatLng> points;
   final List<List<PlatformLatLng>> holes;
   final bool visible;
-  final int strokeColor;
+  final PlatformColor strokeColor;
   final int strokeWidth;
   final int zIndex;
 }
@@ -243,7 +252,7 @@ class PlatformPolyline {
 
   final String polylineId;
   final bool consumesTapEvents;
-  final int color;
+  final PlatformColor color;
   final bool geodesic;
 
   /// The joint type.
@@ -453,7 +462,7 @@ class PlatformMapConfiguration {
     required this.trafficEnabled,
     required this.buildingsEnabled,
     required this.liteModeEnabled,
-    required this.cloudMapId,
+    required this.mapId,
     required this.style,
   });
 
@@ -475,7 +484,7 @@ class PlatformMapConfiguration {
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
   final bool? liteModeEnabled;
-  final String? cloudMapId;
+  final String? mapId;
   final String? style;
 }
 

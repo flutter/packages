@@ -16,10 +16,8 @@ void main() {
   });
 
   test('Cannot be implemented with `implements`', () {
-    final MockWebViewControllerDelegate controller =
-        MockWebViewControllerDelegate();
-    final PlatformWebViewWidgetCreationParams params =
-        PlatformWebViewWidgetCreationParams(controller: controller);
+    final controller = MockWebViewControllerDelegate();
+    final params = PlatformWebViewWidgetCreationParams(controller: controller);
     when(
       WebViewPlatform.instance!.createPlatformWebViewWidget(params),
     ).thenReturn(ImplementsWebViewWidgetDelegate());
@@ -37,10 +35,8 @@ void main() {
   });
 
   test('Can be extended', () {
-    final MockWebViewControllerDelegate controller =
-        MockWebViewControllerDelegate();
-    final PlatformWebViewWidgetCreationParams params =
-        PlatformWebViewWidgetCreationParams(controller: controller);
+    final controller = MockWebViewControllerDelegate();
+    final params = PlatformWebViewWidgetCreationParams(controller: controller);
     when(
       WebViewPlatform.instance!.createPlatformWebViewWidget(params),
     ).thenReturn(ExtendsWebViewWidgetDelegate(params));
@@ -49,10 +45,8 @@ void main() {
   });
 
   test('Can be mocked with `implements`', () {
-    final MockWebViewControllerDelegate controller =
-        MockWebViewControllerDelegate();
-    final PlatformWebViewWidgetCreationParams params =
-        PlatformWebViewWidgetCreationParams(controller: controller);
+    final controller = MockWebViewControllerDelegate();
+    final params = PlatformWebViewWidgetCreationParams(controller: controller);
     when(
       WebViewPlatform.instance!.createPlatformWebViewWidget(params),
     ).thenReturn(MockWebViewWidgetDelegate());

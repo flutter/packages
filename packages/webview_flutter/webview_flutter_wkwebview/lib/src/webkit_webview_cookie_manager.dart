@@ -2,36 +2,27 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import 'common/web_kit.g.dart';
-import 'webkit_proxy.dart';
 
 /// Object specifying creation parameters for a [WebKitWebViewCookieManager].
 class WebKitWebViewCookieManagerCreationParams
     extends PlatformWebViewCookieManagerCreationParams {
   /// Constructs a [WebKitWebViewCookieManagerCreationParams].
-  WebKitWebViewCookieManagerCreationParams({WebKitProxy? webKitProxy})
-    : webKitProxy = webKitProxy ?? const WebKitProxy();
+  WebKitWebViewCookieManagerCreationParams();
 
   /// Constructs a [WebKitWebViewCookieManagerCreationParams] using a
   /// [PlatformWebViewCookieManagerCreationParams].
   WebKitWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
     // Recommended placeholder to prevent being broken by platform interface.
     // ignore: avoid_unused_constructor_parameters
-    PlatformWebViewCookieManagerCreationParams params, {
-    @visibleForTesting WebKitProxy? webKitProxy,
-  }) : this(webKitProxy: webKitProxy);
-
-  /// Handles constructing objects and calling static methods for the WebKit
-  /// native library.
-  @visibleForTesting
-  final WebKitProxy webKitProxy;
+    PlatformWebViewCookieManagerCreationParams params,
+  );
 
   /// Manages stored data for [WKWebView]s.
-  late final WKWebsiteDataStore _websiteDataStore = webKitProxy
-      .defaultDataStoreWKWebsiteDataStore();
+  late final WKWebsiteDataStore _websiteDataStore =
+      WKWebsiteDataStore.defaultDataStore;
 }
 
 /// An implementation of [PlatformWebViewCookieManager] with the WebKit api.
@@ -65,7 +56,7 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
     }
 
     return _webkitParams._websiteDataStore.httpCookieStore.setCookie(
-      _webkitParams.webKitProxy.newHTTPCookie(
+      HTTPCookie(
         properties: <HttpCookiePropertyKey, Object>{
           HttpCookiePropertyKey.name: cookie.name,
           HttpCookiePropertyKey.value: cookie.value,

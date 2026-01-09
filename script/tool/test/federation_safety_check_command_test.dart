@@ -25,14 +25,17 @@ void main() {
     (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks(platform: mockPlatform);
 
-    final FederationSafetyCheckCommand command = FederationSafetyCheckCommand(
-        packagesDir,
-        processRunner: processRunner,
-        platform: mockPlatform,
-        gitDir: gitDir);
+    final command = FederationSafetyCheckCommand(
+      packagesDir,
+      processRunner: processRunner,
+      platform: mockPlatform,
+      gitDir: gitDir,
+    );
 
-    runner = CommandRunner<void>('federation_safety_check_command',
-        'Test for $FederationSafetyCheckCommand');
+    runner = CommandRunner<void>(
+      'federation_safety_check_command',
+      'Test for $FederationSafetyCheckCommand',
+    );
     runner.addCommand(command);
   });
 
@@ -46,8 +49,9 @@ void main() {
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -69,8 +73,9 @@ void main() {
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -84,8 +89,10 @@ void main() {
 
   test('skips interface packages', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    final RepositoryPackage platformInterface = createFakePlugin(
+      'foo_platform_interface',
+      pluginGroupDir,
+    );
 
     final String changedFileOutput = <File>[
       platformInterface.libDirectory.childFile('foo.dart'),
@@ -94,8 +101,9 @@ void main() {
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -109,8 +117,10 @@ void main() {
 
   test('allows changes to just an interface package', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    final RepositoryPackage platformInterface = createFakePlugin(
+      'foo_platform_interface',
+      pluginGroupDir,
+    );
     createFakePlugin('foo', pluginGroupDir);
     createFakePlugin('foo_ios', pluginGroupDir);
     createFakePlugin('foo_android', pluginGroupDir);
@@ -123,8 +133,9 @@ void main() {
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -142,17 +153,21 @@ void main() {
     );
     expect(
       output,
-      isNot(contains(<Matcher>[
-        contains('No published changes for foo_platform_interface'),
-      ])),
+      isNot(
+        contains(<Matcher>[
+          contains('No published changes for foo_platform_interface'),
+        ]),
+      ),
     );
   });
 
   test('allows changes to multiple non-interface packages', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
     final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
+    final RepositoryPackage implementation = createFakePlugin(
+      'foo_bar',
+      pluginGroupDir,
+    );
     createFakePlugin('foo_platform_interface', pluginGroupDir);
 
     final String changedFileOutput = <File>[
@@ -163,8 +178,9 @@ void main() {
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -178,16 +194,23 @@ void main() {
   });
 
   test(
-      'fails on changes to interface and non-interface packages in the same plugin',
-      () async {
-    final Directory pluginGroupDir = packagesDir.childDirectory('foo');
-    final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    'fails on changes to interface and non-interface packages in the same plugin',
+    () async {
+      final Directory pluginGroupDir = packagesDir.childDirectory('foo');
+      final RepositoryPackage appFacing = createFakePlugin(
+        'foo',
+        pluginGroupDir,
+      );
+      final RepositoryPackage implementation = createFakePlugin(
+        'foo_bar',
+        pluginGroupDir,
+      );
+      final RepositoryPackage platformInterface = createFakePlugin(
+        'foo_platform_interface',
+        pluginGroupDir,
+      );
 
-    const String appFacingChanges = '''
+      const appFacingChanges = '''
 diff --git a/packages/foo/foo/lib/foo.dart b/packages/foo/foo/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo/lib/foo.dart
@@ -204,61 +227,84 @@ index abc123..def456 100644
    // Do things.
 ''';
 
-    final String changedFileOutput = <File>[
-      appFacing.libDirectory.childFile('foo.dart'),
-      implementation.libDirectory.childFile('foo.dart'),
-      platformInterface.pubspecFile,
-      platformInterface.libDirectory.childFile('foo.dart'),
-    ].map((File file) => file.path).join('\n');
-    gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-      // Ensure that a change with both a comment and non-comment addition is
-      // counted, to validate change analysis.
-      FakeProcessInfo(MockProcess(stdout: appFacingChanges),
-          <String>['', 'HEAD', '--', '/packages/foo/foo/lib/foo.dart']),
-      // The others diffs don't need to be specified, since empty diff is also
-      // treated as a non-comment change.
-    ];
+      final String changedFileOutput = <File>[
+        appFacing.libDirectory.childFile('foo.dart'),
+        implementation.libDirectory.childFile('foo.dart'),
+        platformInterface.pubspecFile,
+        platformInterface.libDirectory.childFile('foo.dart'),
+      ].map((File file) => file.path).join('\n');
+      gitProcessRunner
+          .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+        // Ensure that a change with both a comment and non-comment addition is
+        // counted, to validate change analysis.
+        FakeProcessInfo(MockProcess(stdout: appFacingChanges), <String>[
+          '',
+          'HEAD',
+          '--',
+          '/packages/foo/foo/lib/foo.dart',
+        ]),
+        // The others diffs don't need to be specified, since empty diff is also
+        // treated as a non-comment change.
+      ];
 
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['federation-safety-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['federation-safety-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-    expect(commandError, isA<ToolExit>());
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains('Running for foo/foo...'),
-        contains('Dart changes are not allowed to other packages in foo in the '
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for foo/foo...'),
+          contains(
+            'Dart changes are not allowed to other packages in foo in the '
             'same PR as changes to public Dart code in foo_platform_interface, '
             'as this can cause accidental breaking changes to be missed by '
             'automated checks. Please split the changes to these two packages '
-            'into separate PRs.'),
-        contains('Running for foo_bar...'),
-        contains('Dart changes are not allowed to other packages in foo'),
-        contains('The following packages had errors:'),
-        contains('foo/foo:\n'
-            '    foo_platform_interface changed.'),
-        contains('foo_bar:\n'
-            '    foo_platform_interface changed.'),
-      ]),
-    );
-  });
+            'into separate PRs.',
+          ),
+          contains('Running for foo_bar...'),
+          contains('Dart changes are not allowed to other packages in foo'),
+          contains('The following packages had errors:'),
+          contains(
+            'foo/foo:\n'
+            '    foo_platform_interface changed.',
+          ),
+          contains(
+            'foo_bar:\n'
+            '    foo_platform_interface changed.',
+          ),
+        ]),
+      );
+    },
+  );
 
-  test('fails with specific text for combo PRs using the recommended tooling',
-      () async {
-    final Directory pluginGroupDir = packagesDir.childDirectory('foo');
-    final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+  test(
+    'fails with specific text for combo PRs using the recommended tooling',
+    () async {
+      final Directory pluginGroupDir = packagesDir.childDirectory('foo');
+      final RepositoryPackage appFacing = createFakePlugin(
+        'foo',
+        pluginGroupDir,
+      );
+      final RepositoryPackage implementation = createFakePlugin(
+        'foo_bar',
+        pluginGroupDir,
+      );
+      final RepositoryPackage platformInterface = createFakePlugin(
+        'foo_platform_interface',
+        pluginGroupDir,
+      );
 
-    void addFakeTempPubspecOverrides(RepositoryPackage package) {
-      final String contents = package.pubspecFile.readAsStringSync();
-      package.pubspecFile.writeAsStringSync('''
+      void addFakeTempPubspecOverrides(RepositoryPackage package) {
+        final String contents = package.pubspecFile.readAsStringSync();
+        package.pubspecFile.writeAsStringSync('''
 $contents
 
 # FOR TESTING AND INITIAL REVIEW ONLY. $kDoNotLandWarning.
@@ -266,12 +312,12 @@ dependency_overrides:
   foo_platform_interface:
     path: ../../../foo/foo_platform_interface
 ''');
-    }
+      }
 
-    addFakeTempPubspecOverrides(appFacing.getExamples().first);
-    addFakeTempPubspecOverrides(implementation.getExamples().first);
+      addFakeTempPubspecOverrides(appFacing.getExamples().first);
+      addFakeTempPubspecOverrides(implementation.getExamples().first);
 
-    const String appFacingChanges = '''
+      const appFacingChanges = '''
 diff --git a/packages/foo/foo/lib/foo.dart b/packages/foo/foo/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo/lib/foo.dart
@@ -288,55 +334,74 @@ index abc123..def456 100644
    // Do things.
 ''';
 
-    final String changedFileOutput = <File>[
-      appFacing.libDirectory.childFile('foo.dart'),
-      implementation.libDirectory.childFile('foo.dart'),
-      platformInterface.pubspecFile,
-      platformInterface.libDirectory.childFile('foo.dart'),
-    ].map((File file) => file.path).join('\n');
-    gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-      FakeProcessInfo(MockProcess(stdout: appFacingChanges),
-          <String>['', 'HEAD', '--', '/packages/foo/foo/lib/foo.dart']),
-      // The others diffs don't need to be specified, since empty diff is also
-      // treated as a non-comment change.
-    ];
+      final String changedFileOutput = <File>[
+        appFacing.libDirectory.childFile('foo.dart'),
+        implementation.libDirectory.childFile('foo.dart'),
+        platformInterface.pubspecFile,
+        platformInterface.libDirectory.childFile('foo.dart'),
+      ].map((File file) => file.path).join('\n');
+      gitProcessRunner
+          .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+        FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+        FakeProcessInfo(MockProcess(stdout: appFacingChanges), <String>[
+          '',
+          'HEAD',
+          '--',
+          '/packages/foo/foo/lib/foo.dart',
+        ]),
+        // The others diffs don't need to be specified, since empty diff is also
+        // treated as a non-comment change.
+      ];
 
-    Error? commandError;
-    final List<String> output = await runCapturingPrint(
-        runner, <String>['federation-safety-check'], errorHandler: (Error e) {
-      commandError = e;
-    });
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['federation-safety-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
-    expect(commandError, isA<ToolExit>());
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains('Running for foo/foo...'),
-        contains('"DO NOT MERGE" found in pubspec.yaml, so this is assumed to '
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('Running for foo/foo...'),
+          contains(
+            '"DO NOT MERGE" found in pubspec.yaml, so this is assumed to '
             'be the initial combination PR for a federated change, following '
             'the standard repository procedure. This failure is expected, in '
             'order to prevent accidentally landing the temporary overrides, '
             'and will automatically be resolved when the temporary overrides '
-            'are replaced by dependency version bumps later in the process.'),
-        contains('Running for foo_bar...'),
-        contains('"DO NOT MERGE" found in pubspec.yaml'),
-        contains('The following packages had errors:'),
-        contains('foo/foo:\n'
-            '    Unresolved combo PR.'),
-        contains('foo_bar:\n'
-            '    Unresolved combo PR.'),
-      ]),
-    );
-  });
+            'are replaced by dependency version bumps later in the process.',
+          ),
+          contains('Running for foo_bar...'),
+          contains('"DO NOT MERGE" found in pubspec.yaml'),
+          contains('The following packages had errors:'),
+          contains(
+            'foo/foo:\n'
+            '    Unresolved combo PR.',
+          ),
+          contains(
+            'foo_bar:\n'
+            '    Unresolved combo PR.',
+          ),
+        ]),
+      );
+    },
+  );
 
   test('ignores test-only changes to interface packages', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
     final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    final RepositoryPackage implementation = createFakePlugin(
+      'foo_bar',
+      pluginGroupDir,
+    );
+    final RepositoryPackage platformInterface = createFakePlugin(
+      'foo_platform_interface',
+      pluginGroupDir,
+    );
 
     final String changedFileOutput = <File>[
       appFacing.libDirectory.childFile('foo.dart'),
@@ -348,8 +413,9 @@ index abc123..def456 100644
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -365,10 +431,14 @@ index abc123..def456 100644
   test('ignores unpublished changes to interface packages', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
     final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    final RepositoryPackage implementation = createFakePlugin(
+      'foo_bar',
+      pluginGroupDir,
+    );
+    final RepositoryPackage platformInterface = createFakePlugin(
+      'foo_platform_interface',
+      pluginGroupDir,
+    );
 
     final String changedFileOutput = <File>[
       appFacing.libDirectory.childFile('foo.dart'),
@@ -381,12 +451,14 @@ index abc123..def456 100644
     ];
     // Simulate no change to the version in the interface's pubspec.yaml.
     gitProcessRunner.mockProcessesForExecutable['git-show'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(
-          stdout: platformInterface.pubspecFile.readAsStringSync())),
+      FakeProcessInfo(
+        MockProcess(stdout: platformInterface.pubspecFile.readAsStringSync()),
+      ),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -401,10 +473,14 @@ index abc123..def456 100644
 
   test('ignores comment-only changes in implementation packages', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    final RepositoryPackage implementation = createFakePlugin(
+      'foo_bar',
+      pluginGroupDir,
+    );
+    final RepositoryPackage platformInterface = createFakePlugin(
+      'foo_platform_interface',
+      pluginGroupDir,
+    );
 
     final String changedFileOutput = <File>[
       implementation.libDirectory.childFile('foo.dart'),
@@ -412,7 +488,7 @@ index abc123..def456 100644
       platformInterface.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
 
-    const String platformInterfaceChanges = '''
+    const platformInterfaceChanges = '''
 diff --git a/packages/foo/foo_platform_interface/lib/foo.dart b/packages/foo/foo_platform_interface/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_platform_interface/lib/foo.dart
@@ -426,7 +502,7 @@ index abc123..def456 100644
    e,
  }
 ''';
-    const String implementationChanges = '''
+    const implementationChanges = '''
 diff --git a/packages/foo/foo_bar/lib/foo.dart b/packages/foo/foo_bar/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_bar/lib/foo.dart
@@ -444,20 +520,26 @@ index abc123..def456 100644
 ''';
 
     gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-      FakeProcessInfo(
-          MockProcess(stdout: changedFileOutput), <String>['--name-only']),
-      FakeProcessInfo(MockProcess(stdout: implementationChanges),
-          <String>['', 'HEAD', '--', '/packages/foo/foo_bar/lib/foo.dart']),
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput), <String>[
+        '--name-only',
+      ]),
+      FakeProcessInfo(MockProcess(stdout: implementationChanges), <String>[
+        '',
+        'HEAD',
+        '--',
+        '/packages/foo/foo_bar/lib/foo.dart',
+      ]),
       FakeProcessInfo(MockProcess(stdout: platformInterfaceChanges), <String>[
         '',
         'HEAD',
         '--',
-        '/packages/foo/foo_platform_interface/lib/foo.dart'
+        '/packages/foo/foo_platform_interface/lib/foo.dart',
       ]),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -470,10 +552,14 @@ index abc123..def456 100644
 
   test('ignores comment-only changes in platform interface packages', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    final RepositoryPackage implementation = createFakePlugin(
+      'foo_bar',
+      pluginGroupDir,
+    );
+    final RepositoryPackage platformInterface = createFakePlugin(
+      'foo_platform_interface',
+      pluginGroupDir,
+    );
 
     final String changedFileOutput = <File>[
       implementation.libDirectory.childFile('foo.dart'),
@@ -481,7 +567,7 @@ index abc123..def456 100644
       platformInterface.libDirectory.childFile('foo.dart'),
     ].map((File file) => file.path).join('\n');
 
-    const String platformInterfaceChanges = '''
+    const platformInterfaceChanges = '''
 diff --git a/packages/foo/foo_platform_interface/lib/foo.dart b/packages/foo/foo_platform_interface/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_platform_interface/lib/foo.dart
@@ -496,7 +582,7 @@ index abc123..def456 100644
      some code;
    }
 ''';
-    const String implementationChanges = '''
+    const implementationChanges = '''
 diff --git a/packages/foo/foo_bar/lib/foo.dart b/packages/foo/foo_bar/lib/foo.dart
 index abc123..def456 100644
 --- a/packages/foo/foo_bar/lib/foo.dart
@@ -512,20 +598,26 @@ index abc123..def456 100644
 ''';
 
     gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-      FakeProcessInfo(
-          MockProcess(stdout: changedFileOutput), <String>['--name-only']),
-      FakeProcessInfo(MockProcess(stdout: implementationChanges),
-          <String>['', 'HEAD', '--', '/packages/foo/foo_bar/lib/foo.dart']),
+      FakeProcessInfo(MockProcess(stdout: changedFileOutput), <String>[
+        '--name-only',
+      ]),
+      FakeProcessInfo(MockProcess(stdout: implementationChanges), <String>[
+        '',
+        'HEAD',
+        '--',
+        '/packages/foo/foo_bar/lib/foo.dart',
+      ]),
       FakeProcessInfo(MockProcess(stdout: platformInterfaceChanges), <String>[
         '',
         'HEAD',
         '--',
-        '/packages/foo/foo_platform_interface/lib/foo.dart'
+        '/packages/foo/foo_platform_interface/lib/foo.dart',
       ]),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
@@ -539,10 +631,14 @@ index abc123..def456 100644
   test('allows things that look like mass changes, with warning', () async {
     final Directory pluginGroupDir = packagesDir.childDirectory('foo');
     final RepositoryPackage appFacing = createFakePlugin('foo', pluginGroupDir);
-    final RepositoryPackage implementation =
-        createFakePlugin('foo_bar', pluginGroupDir);
-    final RepositoryPackage platformInterface =
-        createFakePlugin('foo_platform_interface', pluginGroupDir);
+    final RepositoryPackage implementation = createFakePlugin(
+      'foo_bar',
+      pluginGroupDir,
+    );
+    final RepositoryPackage platformInterface = createFakePlugin(
+      'foo_platform_interface',
+      pluginGroupDir,
+    );
 
     final RepositoryPackage otherPlugin1 = createFakePlugin('bar', packagesDir);
     final RepositoryPackage otherPlugin2 = createFakePlugin('baz', packagesDir);
@@ -559,45 +655,50 @@ index abc123..def456 100644
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
       containsAllInOrder(<Matcher>[
         contains('Running for foo/foo...'),
         contains(
-            'Ignoring potentially dangerous change, as this appears to be a mass change.'),
+          'Ignoring potentially dangerous change, as this appears to be a mass change.',
+        ),
         contains('Running for foo_bar...'),
         contains(
-            'Ignoring potentially dangerous change, as this appears to be a mass change.'),
+          'Ignoring potentially dangerous change, as this appears to be a mass change.',
+        ),
         contains('Ran for 2 package(s) (2 with warnings)'),
       ]),
     );
   });
 
-  test('handles top-level files that match federated package heuristics',
-      () async {
-    final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
+  test(
+    'handles top-level files that match federated package heuristics',
+    () async {
+      final RepositoryPackage plugin = createFakePlugin('foo', packagesDir);
 
-    final String changedFileOutput = <File>[
-      // This should be picked up as a change to 'foo', and not crash.
-      plugin.directory.childFile('foo_bar.baz'),
-    ].map((File file) => file.path).join('\n');
-    gitProcessRunner.mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
-    ];
+      final String changedFileOutput = <File>[
+        // This should be picked up as a change to 'foo', and not crash.
+        plugin.directory.childFile('foo_bar.baz'),
+      ].map((File file) => file.path).join('\n');
+      gitProcessRunner.mockProcessesForExecutable['git-diff'] =
+          <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
+          ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'federation-safety-check',
+      ]);
 
-    expect(
-      output,
-      containsAllInOrder(<Matcher>[
-        contains('Running for foo...'),
-      ]),
-    );
-  });
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Running for foo...')]),
+      );
+    },
+  );
 
   test('handles deletion of an entire plugin', () async {
     // Simulate deletion, in the form of diffs for packages that don't exist in
@@ -625,14 +726,13 @@ index abc123..def456 100644
       FakeProcessInfo(MockProcess(stdout: changedFileOutput)),
     ];
 
-    final List<String> output =
-        await runCapturingPrint(runner, <String>['federation-safety-check']);
+    final List<String> output = await runCapturingPrint(runner, <String>[
+      'federation-safety-check',
+    ]);
 
     expect(
       output,
-      containsAllInOrder(<Matcher>[
-        contains('Ran for 0 package(s)'),
-      ]),
+      containsAllInOrder(<Matcher>[contains('Ran for 0 package(s)')]),
     );
   });
 }

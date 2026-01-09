@@ -22,11 +22,14 @@ Downloaded by pub (not CocoaPods).
   # has been confirmed to be compatible via an example in examples/. See discussion
   # in https://github.com/flutter/flutter/issues/86820 for why this should be as
   # broad as possible.
-  # Versions earlier than 8.4 can't be supported because that's the first version
-  # that supports privacy manifests.
-  s.dependency 'GoogleMaps', '>= 8.4', '< 10.0'
+  # - Versions earlier than 8.4 can't be supported because that's the first version
+  #   that supports privacy manifests.
+  # - Per https://developers.google.com/maps/documentation/ios-sdk/release-notes#September_07_2025,
+  #   10.x is the last version expected to be available via CocoaPods.
+  s.dependency 'GoogleMaps', '>= 8.4', '< 11.0'
   # Google-Maps-iOS-Utils 5.x supports GoogleMaps 8.x and iOS 14.0+
-  # Google-Maps-iOS-Utils 6.x supports GoogleMaps 9.x and iOS 15.0+
+  # Google-Maps-iOS-Utils 6.0 and 6.1.0 support GoogleMaps 9.x and iOS 15.0+
+  # Google-Maps-iOS-Utils 6.1.3 supports GoogleMaps 10.x and iOS 16.0+
   s.dependency 'Google-Maps-iOS-Utils', '>= 5.0', '< 7.0'
   s.static_framework = true
   s.platform = :ios, '14.0'

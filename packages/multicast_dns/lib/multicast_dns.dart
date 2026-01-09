@@ -143,7 +143,7 @@ class MDnsClient {
       listenAddress.type,
     )).toList();
 
-    for (final NetworkInterface interface in interfaces) {
+    for (final interface in interfaces) {
       final InternetAddress targetAddress = interface.addresses[0];
 
       // Ensure that we're using this address/interface for multicast.
@@ -217,14 +217,14 @@ class MDnsClient {
       throw StateError('mDNS client must be started before calling lookup.');
     }
     // Look for entries in the cache.
-    final List<T> cached = <T>[];
+    final cached = <T>[];
     _cache.lookup<T>(
       query.fullyQualifiedName,
       query.resourceRecordType,
       cached,
     );
     if (cached.isNotEmpty) {
-      final StreamController<T> controller = StreamController<T>();
+      final controller = StreamController<T>();
       cached.forEach(controller.add);
       controller.close();
       return controller.stream;

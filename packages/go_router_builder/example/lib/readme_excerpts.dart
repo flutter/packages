@@ -30,11 +30,11 @@ void otherDoc(BuildContext context) {
   // #enddocregion GoWrong
 
   // #docregion GoRouter
-  final GoRouter router = GoRouter(routes: $appRoutes);
+  final router = GoRouter(routes: $appRoutes);
   // #enddocregion GoRouter
 
   // #docregion routerWithErrorBuilder
-  final GoRouter routerWithErrorBuilder = GoRouter(
+  final routerWithErrorBuilder = GoRouter(
     routes: $appRoutes,
     errorBuilder: (BuildContext context, GoRouterState state) {
       return ErrorRoute(error: state.error!).build(context, state);
@@ -61,14 +61,14 @@ void otherDoc(BuildContext context) {
   void onTapRelative() => const DetailsRoute().goRelative(context);
   // #enddocregion goRelative
 
-  final LoginInfo loginInfo = LoginInfo();
+  final loginInfo = LoginInfo();
 
-  final GoRouter routerWithRedirect = GoRouter(
+  final routerWithRedirect = GoRouter(
     routes: $appRoutes,
     // #docregion redirect
     redirect: (BuildContext context, GoRouterState state) {
       final bool loggedIn = loginInfo.loggedIn;
-      final bool loggingIn = state.matchedLocation == LoginRoute().location;
+      final loggingIn = state.matchedLocation == LoginRoute().location;
       if (!loggedIn && !loggingIn) {
         return LoginRoute(from: state.matchedLocation).location;
       }

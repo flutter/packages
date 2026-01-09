@@ -34,7 +34,7 @@ public class HeatmapController implements HeatmapOptionsSink {
 
   @Override
   public void setWeightedData(@NonNull List<WeightedLatLng> weightedData) {
-    heatmap.setWeightedData(weightedData);
+    heatmap.updateData(weightedData);
   }
 
   @Override

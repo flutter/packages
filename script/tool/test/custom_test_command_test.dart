@@ -24,7 +24,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final CustomTestCommand analyzeCommand = CustomTestCommand(
+      final analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -32,116 +32,141 @@ void main() {
       );
 
       runner = CommandRunner<void>(
-          'custom_test_command', 'Test for custom_test_command');
+        'custom_test_command',
+        'Test for custom_test_command',
+      );
       runner.addCommand(analyzeCommand);
     });
 
     test('runs both new and legacy when both are present', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, extraFiles: <String>[
-        'tool/run_tests.dart',
-        'run_tests.sh',
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
+      );
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'custom-test',
       ]);
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['custom-test']);
+      expect(
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall(
+            package.directory.childFile('run_tests.sh').path,
+            const <String>[],
+            package.path,
+          ),
+          ProcessCall('dart', const <String>[
+            'run',
+            'tool/run_tests.dart',
+          ], package.path),
+        ]),
+      );
 
       expect(
-          processRunner.recordedCalls,
-          containsAll(<ProcessCall>[
-            ProcessCall(package.directory.childFile('run_tests.sh').path,
-                const <String>[], package.path),
-            ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'],
-                package.path),
-          ]));
-
-      expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Ran for 1 package(s)'),
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+      );
     });
 
     test('runs when only new is present', () async {
       final RepositoryPackage package = createFakePackage(
-          'a_package', packagesDir,
-          extraFiles: <String>['tool/run_tests.dart']);
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart'],
+      );
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['custom-test']);
-
-      expect(
-          processRunner.recordedCalls,
-          containsAll(<ProcessCall>[
-            ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'],
-                package.path),
-          ]));
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'custom-test',
+      ]);
 
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Ran for 1 package(s)'),
-          ]));
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall('dart', const <String>[
+            'run',
+            'tool/run_tests.dart',
+          ], package.path),
+        ]),
+      );
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+      );
     });
 
     test('runs pub get before running Dart test script', () async {
       final RepositoryPackage package = createFakePackage(
-          'a_package', packagesDir,
-          extraFiles: <String>['tool/run_tests.dart']);
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart'],
+      );
 
       await runCapturingPrint(runner, <String>['custom-test']);
 
       expect(
-          processRunner.recordedCalls,
-          containsAll(<ProcessCall>[
-            ProcessCall('dart', const <String>['pub', 'get'], package.path),
-            ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'],
-                package.path),
-          ]));
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall('dart', const <String>['pub', 'get'], package.path),
+          ProcessCall('dart', const <String>[
+            'run',
+            'tool/run_tests.dart',
+          ], package.path),
+        ]),
+      );
     });
 
     test('runs when only legacy is present', () async {
       final RepositoryPackage package = createFakePackage(
-          'a_package', packagesDir,
-          extraFiles: <String>['run_tests.sh']);
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['run_tests.sh'],
+      );
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['custom-test']);
-
-      expect(
-          processRunner.recordedCalls,
-          containsAll(<ProcessCall>[
-            ProcessCall(package.directory.childFile('run_tests.sh').path,
-                const <String>[], package.path),
-          ]));
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'custom-test',
+      ]);
 
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Ran for 1 package(s)'),
-          ]));
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall(
+            package.directory.childFile('run_tests.sh').path,
+            const <String>[],
+            package.path,
+          ),
+        ]),
+      );
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+      );
     });
 
     test('skips when neither is present', () async {
       createFakePackage('a_package', packagesDir);
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['custom-test']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'custom-test',
+      ]);
 
       expect(processRunner.recordedCalls, isEmpty);
 
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Skipped 1 package(s)'),
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[contains('Skipped 1 package(s)')]),
+      );
     });
 
     test('fails if new fails', () async {
-      createFakePackage('a_package', packagesDir, extraFiles: <String>[
-        'tool/run_tests.dart',
-        'run_tests.sh',
-      ]);
+      createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
+      );
 
       processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
@@ -150,24 +175,29 @@ void main() {
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['custom-test'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['custom-test'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('The following packages had errors:'),
-            contains('a_package')
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The following packages had errors:'),
+          contains('a_package'),
+        ]),
+      );
     });
 
     test('fails if pub get fails', () async {
-      createFakePackage('a_package', packagesDir, extraFiles: <String>[
-        'tool/run_tests.dart',
-        'run_tests.sh',
-      ]);
+      createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
+      );
 
       processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1), <String>['pub', 'get']),
@@ -175,45 +205,56 @@ void main() {
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['custom-test'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['custom-test'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('The following packages had errors:'),
-            contains('a_package:\n'
-                '    Unable to get script dependencies')
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The following packages had errors:'),
+          contains(
+            'a_package:\n'
+            '    Unable to get script dependencies',
+          ),
+        ]),
+      );
     });
 
     test('fails if legacy fails', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, extraFiles: <String>[
-        'tool/run_tests.dart',
-        'run_tests.sh',
-      ]);
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
+      );
 
-      processRunner.mockProcessesForExecutable[
-          package.directory.childFile('run_tests.sh').path] = <FakeProcessInfo>[
+      processRunner.mockProcessesForExecutable[package.directory
+          .childFile('run_tests.sh')
+          .path] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['custom-test'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['custom-test'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('The following packages had errors:'),
-            contains('a_package')
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The following packages had errors:'),
+          contains('a_package'),
+        ]),
+      );
     });
   });
 
@@ -223,7 +264,7 @@ void main() {
       final GitDir gitDir;
       (:packagesDir, :processRunner, gitProcessRunner: _, :gitDir) =
           configureBaseCommandMocks(platform: mockPlatform);
-      final CustomTestCommand analyzeCommand = CustomTestCommand(
+      final analyzeCommand = CustomTestCommand(
         packagesDir,
         processRunner: processRunner,
         platform: mockPlatform,
@@ -231,78 +272,94 @@ void main() {
       );
 
       runner = CommandRunner<void>(
-          'custom_test_command', 'Test for custom_test_command');
+        'custom_test_command',
+        'Test for custom_test_command',
+      );
       runner.addCommand(analyzeCommand);
     });
 
     test('runs new and skips old when both are present', () async {
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir, extraFiles: <String>[
-        'tool/run_tests.dart',
-        'run_tests.sh',
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
+      );
+
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'custom-test',
       ]);
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['custom-test']);
+      expect(
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall('dart', const <String>[
+            'run',
+            'tool/run_tests.dart',
+          ], package.path),
+        ]),
+      );
 
       expect(
-          processRunner.recordedCalls,
-          containsAll(<ProcessCall>[
-            ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'],
-                package.path),
-          ]));
-
-      expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Ran for 1 package(s)'),
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+      );
     });
 
     test('runs when only new is present', () async {
       final RepositoryPackage package = createFakePackage(
-          'a_package', packagesDir,
-          extraFiles: <String>['tool/run_tests.dart']);
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart'],
+      );
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['custom-test']);
-
-      expect(
-          processRunner.recordedCalls,
-          containsAll(<ProcessCall>[
-            ProcessCall('dart', const <String>['run', 'tool/run_tests.dart'],
-                package.path),
-          ]));
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'custom-test',
+      ]);
 
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('Ran for 1 package(s)'),
-          ]));
+        processRunner.recordedCalls,
+        containsAll(<ProcessCall>[
+          ProcessCall('dart', const <String>[
+            'run',
+            'tool/run_tests.dart',
+          ], package.path),
+        ]),
+      );
+
+      expect(
+        output,
+        containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
+      );
     });
 
     test('skips package when only legacy is present', () async {
-      createFakePackage('a_package', packagesDir,
-          extraFiles: <String>['run_tests.sh']);
+      createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['run_tests.sh'],
+      );
 
-      final List<String> output =
-          await runCapturingPrint(runner, <String>['custom-test']);
+      final List<String> output = await runCapturingPrint(runner, <String>[
+        'custom-test',
+      ]);
 
       expect(processRunner.recordedCalls, isEmpty);
 
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('run_tests.sh is not supported on Windows'),
-            contains('Skipped 1 package(s)'),
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('run_tests.sh is not supported on Windows'),
+          contains('Skipped 1 package(s)'),
+        ]),
+      );
     });
 
     test('fails if new fails', () async {
-      createFakePackage('a_package', packagesDir, extraFiles: <String>[
-        'tool/run_tests.dart',
-        'run_tests.sh',
-      ]);
+      createFakePackage(
+        'a_package',
+        packagesDir,
+        extraFiles: <String>['tool/run_tests.dart', 'run_tests.sh'],
+      );
 
       processRunner.mockProcessesForExecutable['dart'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess(), <String>['pub', 'get']),
@@ -311,17 +368,21 @@ void main() {
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
-          runner, <String>['custom-test'], errorHandler: (Error e) {
-        commandError = e;
-      });
+        runner,
+        <String>['custom-test'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<Matcher>[
-            contains('The following packages had errors:'),
-            contains('a_package')
-          ]));
+        output,
+        containsAllInOrder(<Matcher>[
+          contains('The following packages had errors:'),
+          contains('a_package'),
+        ]),
+      );
     });
   });
 }

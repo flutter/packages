@@ -1,7 +1,14 @@
+## 2.10.3
+
+* Optimizes caption retrieval with binary search.
+
 ## 2.10.2
 
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
-* Optimizes caption retrieval with binary search.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
 
 ## 2.10.1
 

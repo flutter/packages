@@ -101,9 +101,9 @@ class PlatformCircle {
   PlatformCircle({
     required this.circleId,
     required this.center,
+    required this.fillColor,
+    required this.strokeColor,
     this.consumeTapEvents = false,
-    this.fillColor = 0x00000000,
-    this.strokeColor = 0xFF000000,
     this.visible = true,
     this.strokeWidth = 10,
     this.zIndex = 0.0,
@@ -111,8 +111,8 @@ class PlatformCircle {
   });
 
   final bool consumeTapEvents;
-  final int fillColor;
-  final int strokeColor;
+  final PlatformColor fillColor;
+  final PlatformColor strokeColor;
   final bool visible;
   final int strokeWidth;
   final double zIndex;
@@ -215,12 +215,12 @@ class PlatformPolygon {
 
   final String polygonId;
   final bool consumesTapEvents;
-  final int fillColor;
+  final PlatformColor fillColor;
   final bool geodesic;
   final List<PlatformLatLng> points;
   final List<List<PlatformLatLng>> holes;
   final bool visible;
-  final int strokeColor;
+  final PlatformColor strokeColor;
   final int strokeWidth;
   final int zIndex;
 }
@@ -245,7 +245,7 @@ class PlatformPolyline {
 
   final String polylineId;
   final bool consumesTapEvents;
-  final int color;
+  final PlatformColor color;
   final bool geodesic;
 
   /// The joint type.
@@ -414,7 +414,7 @@ class PlatformMapConfiguration {
     required this.indoorViewEnabled,
     required this.trafficEnabled,
     required this.buildingsEnabled,
-    required this.cloudMapId,
+    required this.mapId,
     required this.style,
   });
 
@@ -433,7 +433,7 @@ class PlatformMapConfiguration {
   final bool? indoorViewEnabled;
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
-  final String? cloudMapId;
+  final String? mapId;
   final String? style;
 }
 
@@ -451,6 +451,21 @@ class PlatformSize {
 
   final double width;
   final double height;
+}
+
+/// Pigeon representation of a color.
+class PlatformColor {
+  PlatformColor({
+    required this.red,
+    required this.green,
+    required this.blue,
+    required this.alpha,
+  });
+
+  final double red;
+  final double green;
+  final double blue;
+  final double alpha;
 }
 
 /// Pigeon equivalent of GMSTileLayer properties.
