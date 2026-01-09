@@ -358,11 +358,6 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
   Map<String, bool> eligibleIntroductoryOffers = <String, bool>{};
 
-  /// Simulates purchase result for testing non-success scenarios.
-  /// Set to userCancelled, pending, or unverified to test those cases.
-  SK2ProductPurchaseResultMessage simulatedPurchaseResult =
-      SK2ProductPurchaseResultMessage.success;
-
   void reset() {
     validProductIDs = <String>{'123', '456'};
     validProducts = <String, SK2Product>{};
@@ -380,7 +375,6 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     }
     eligibleWinBackOffers = <String, Set<String>>{};
     eligibleIntroductoryOffers = <String, bool>{};
-    simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
   }
 
   SK2TransactionMessage createRestoredTransaction(
@@ -429,18 +423,13 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     SK2ProductPurchaseOptionsMessage? options,
   }) {
     lastPurchaseOptions = options;
+    final SK2TransactionMessage transaction = createPendingTransaction(id);
 
-    // Native side sends transaction update for success cases (both verified and unverified)
-    // Only userCancelled and pending don't send transaction updates
-    if (simulatedPurchaseResult == SK2ProductPurchaseResultMessage.success ||
-        simulatedPurchaseResult == SK2ProductPurchaseResultMessage.unverified) {
-      final SK2TransactionMessage transaction = createPendingTransaction(id);
-      InAppPurchaseStoreKitPlatform.sk2TransactionObserver
-          .onTransactionsUpdated(<SK2TransactionMessage>[transaction]);
-    }
-
+    InAppPurchaseStoreKitPlatform.sk2TransactionObserver.onTransactionsUpdated(
+      <SK2TransactionMessage>[transaction],
+    );
     return Future<SK2ProductPurchaseResultMessage>.value(
-      simulatedPurchaseResult,
+      SK2ProductPurchaseResultMessage.success,
     );
   }
 
