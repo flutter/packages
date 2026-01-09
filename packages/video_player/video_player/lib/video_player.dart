@@ -763,12 +763,8 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [Caption].
 
   Caption _getCaptionAt(Duration position) {
-    if (_closedCaptionFile == null || _sortedCaptions == null) {
-      return Caption.none;
-    }
-
     final List<Caption>? sortedCaptions = _sortedCaptions;
-    if (sortedCaptions == null) {
+    if (_closedCaptionFile == null || sortedCaptions == null) {
       return Caption.none;
     }
 
@@ -814,20 +810,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
   ) async {
     _closedCaptionFileFuture = closedCaptionFile;
-
-    if (closedCaptionFile != null) {
-      _closedCaptionFile = await closedCaptionFile;
-      // Always sort when explicitly setting a new caption file
-      _sortedCaptions = List<Caption>.from(_closedCaptionFile!.captions)
-        ..sort((Caption a, Caption b) {
-          return a.start.compareTo(b.start);
-        });
-      value = value.copyWith(caption: _getCaptionAt(value.position));
-    } else {
-      _closedCaptionFile = null;
-      _sortedCaptions = null;
-      value = value.copyWith(caption: Caption.none);
-    }
+    // Reset sorted captions to force re-sort when setting a new file
+    _sortedCaptions = null;
+    await _updateClosedCaptionWithFuture(closedCaptionFile);
   }
 
   Future<void> _updateClosedCaptionWithFuture(
