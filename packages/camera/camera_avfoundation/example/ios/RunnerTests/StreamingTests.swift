@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import Flutter
 import XCTest
 
 @testable import camera_avfoundation
@@ -12,10 +13,14 @@ import XCTest
   import camera_avfoundation_objc
 #endif
 
-private class MockImageStreamHandler: FLTImageStreamHandler {
+private class MockImageStreamHandler: NSObject, ImageStreamHandler {
+  var captureSessionQueue: DispatchQueue {
+    preconditionFailure("Attempted to access unimplemented property: captureSessionQueue")
+  }
+
   var eventSinkStub: ((Any?) -> Void)?
 
-  override var eventSink: FlutterEventSink? {
+  var eventSink: FlutterEventSink? {
     get {
       if let stub = eventSinkStub {
         return { event in
@@ -29,6 +34,13 @@ private class MockImageStreamHandler: FLTImageStreamHandler {
     }
   }
 
+  func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink)
+    -> FlutterError?
+  { nil }
+
+  func onCancel(withArguments arguments: Any?) -> FlutterError? {
+    nil
+  }
 }
 
 final class StreamingTests: XCTestCase {
