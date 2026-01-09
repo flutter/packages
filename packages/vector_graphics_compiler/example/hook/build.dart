@@ -7,12 +7,11 @@ import 'package:vector_graphics_compiler/build.dart';
 
 void main(List<String> args) {
   build(args, (BuildInput input, BuildOutputBuilder output) async {
-    await compileSvg(
+    await addSvg(
       input,
       output,
-      name: 'example_file',
-      file: input.packageRoot.resolve('assets/example.svg'),
-      options: const Options(dumpDebug: true, concurrency: 2),
+      file: 'assets/example.svg',
+      treeshakeable: true,
     );
   });
 }

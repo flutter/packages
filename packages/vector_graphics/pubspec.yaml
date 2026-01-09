@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.0.0
+  meta: ^1.17.0
   vector_graphics_codec: ^1.1.11+1
 
 dev_dependencies:

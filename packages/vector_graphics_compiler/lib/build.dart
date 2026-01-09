@@ -11,27 +11,85 @@ import 'package:path/path.dart' as p;
 import 'src/util/isolate_processor.dart';
 import 'vector_graphics_compiler.dart';
 
-/// Helper to build svg
-Future<void> compileSvg(
+/// The magic prefix to prevent accidental non-const loading.
+const magicPrefix = 'svg1234:';
+
+/// Helper to add svg
+Future<void> addSvg(
   BuildInput input,
   BuildOutputBuilder output, {
-  required String name,
-  required Uri file,
+  required String file,
   Options options = const Options(),
-}) async => compileSvgs(
-  input,
-  output,
-  nameToFile: <String, Uri>{name: file},
-  options: options,
-);
+
+  /// Whether this asset should be treeshaken if it's not used. Means that it
+  /// can only be loaded by the [ConstAssetBytesLoader] which knows about the
+  /// magic prefix to prevent accidental treeshaking.
+  required bool treeshakeable,
+}) async {
+  final String prefix = treeshakeable ? magicPrefix : '';
+  // If we are linking, then do the compilation there, as we can compile all SVGs at once
+  if (input.config.linkingEnabled) {
+    output.assets.data.add(
+      DataAsset(
+        package: input.packageName,
+        name: prefix + file,
+        file: input.packageRoot.resolve(file),
+      ),
+      routing: const ToLinkHook('vector_graphics_compiler'),
+    );
+  } else {
+    // If we are not linking, then do the compilation here
+    final Map<String, IOPair> pairs = await _compileSvgs(options, {
+      prefix + file: input.packageRoot.resolve(file),
+    }, input.outputDirectory);
+    for (final MapEntry<String, IOPair>(
+          key: String name,
+          value: IOPair(output: String outputPath),
+        )
+        in pairs.entries) {
+      output.assets.data.add(
+        DataAsset(
+          package: input.packageName,
+          name: name,
+          file: Uri.file(outputPath),
+        ),
+      );
+    }
+  }
+}
 
 /// Helper to build svgs
 Future<void> compileSvgs(
-  BuildInput input,
-  BuildOutputBuilder output, {
+  LinkInput input,
+  LinkOutputBuilder output, {
   required Map<String, Uri> nameToFile,
   Options options = const Options(),
 }) async {
+  final Map<String, IOPair> pairs = await _compileSvgs(
+    options,
+    nameToFile,
+    input.outputDirectory,
+  );
+  for (final MapEntry<String, IOPair>(
+        key: String name,
+        value: IOPair(output: String outputPath),
+      )
+      in pairs.entries) {
+    output.assets.data.add(
+      DataAsset(
+        package: input.packageName,
+        name: name,
+        file: Uri.file(outputPath),
+      ),
+    );
+  }
+}
+
+Future<Map<String, IOPair>> _compileSvgs(
+  Options options,
+  Map<String, Uri> nameToFile,
+  Uri outputDirectory,
+) async {
   final processor = IsolateProcessor(
     options.libpathops,
     options.libtessellator,
@@ -43,7 +101,7 @@ Future<void> compileSvgs(
       name,
       IOPair(
         file.path,
-        '${p.join(input.outputDirectory.path, p.basenameWithoutExtension(file.path))}.vec',
+        '${p.join(outputDirectory.path, p.basenameWithoutExtension(file.path))}.vec',
       ),
     ),
   );
@@ -61,19 +119,7 @@ Future<void> compileSvgs(
       'Did not succeed for ${pairs.map((String name, IOPair e) => MapEntry<String, String>(name, '$name: ${e.input} -> ${e.output}')).values}',
     );
   }
-  for (final MapEntry<String, IOPair>(
-        key: String name,
-        value: IOPair(output: String outputPath),
-      )
-      in pairs.entries) {
-    output.assets.data.add(
-      DataAsset(
-        package: input.packageName,
-        name: name,
-        file: Uri.file(outputPath),
-      ),
-    );
-  }
+  return pairs;
 }
 
 /// Options for the processor.

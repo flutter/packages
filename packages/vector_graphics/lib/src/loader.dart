@@ -2,9 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// ignore_for_file: experimental_member_use
+
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:meta/meta.dart' show RecordUse, mustBeConst;
 
 /// An interface that can be implemented to support decoding vector graphic
 /// binary assets from different byte sources.
@@ -34,6 +37,27 @@ abstract class BytesLoader {
   /// [context] argument of [loadBytes], then those objects should be
   /// incorporated into a new cache key.
   Object cacheKey(BuildContext? context) => this;
+}
+
+/// The magic prefix to prevent accidental non-const loading.
+///
+/// Must be the same as when storing the asset in build.dart.
+///
+/// TODO: move to a common location.
+const magicPrefix = 'svg1234:';
+
+/// Loads vector graphics data from an asset bundle.
+@RecordUse()
+class ConstAssetBytesLoader extends AssetBytesLoader {
+  ///
+  const ConstAssetBytesLoader(
+    @mustBeConst super.assetName, {
+    super.packageName,
+    super.assetBundle,
+  });
+
+  @override
+  String get assetName => magicPrefix + super.assetName;
 }
 
 /// Loads vector graphics data from an asset bundle.
@@ -73,9 +97,11 @@ class AssetBytesLoader extends BytesLoader {
 
   @override
   Future<ByteData> loadBytes(BuildContext? context) {
-    return _resolveBundle(context).load(
-      packageName == null ? assetName : 'packages/$packageName/$assetName',
-    );
+    final String key = packageName == null
+        ? assetName
+        : 'packages/$packageName/$assetName';
+    print('load $key');
+    return _resolveBundle(context).load(key);
   }
 
   @override
