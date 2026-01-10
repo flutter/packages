@@ -118,7 +118,7 @@ abstract base class PlatformXFile extends PlatformXFileEntity {
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
-  Stream<List<int>> openRead([int? start, int? end]);
+  Stream<Uint8List> openRead([int? start, int? end]);
 
   /// Reads the entire resource contents as a list of bytes.
   ///

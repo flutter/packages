@@ -58,7 +58,7 @@ final class TestXFile extends PlatformXFile {
   }
 
   @override
-  Stream<List<int>> openRead([int? start, int? end]) {
+  Stream<Uint8List> openRead([int? start, int? end]) {
     throw UnimplementedError();
   }
 
