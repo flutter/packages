@@ -1,4 +1,4 @@
-## 0.3.6
+## 0.3.5+2
 
 * Separates "Save As" implementation details from XFile web class.
 
