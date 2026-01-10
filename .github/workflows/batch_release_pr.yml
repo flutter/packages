@@ -2,7 +2,7 @@ name: "Creates Batch Release for a Package"
 
 on:
   repository_dispatch:
-    types: [batch_release_pr]
+    types: [batch-release-pr]
 
 jobs:
   create_release_pr:
@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: checkout repository
         uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+      - name: "Install Flutter"
+        uses: ./.github/workflows/internals/install_flutter
       - name: Set up tools
         run: dart pub get
         working-directory: ${{ github.workspace }}/script/tool
