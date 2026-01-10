@@ -3,9 +3,7 @@ name: "Sync Release to Main"
 on:
   push:
     branches:
-      - 'release-go-router'
-      - 'release-material'
-      - 'release-cupertino'
+      - 'release-go_router'
 
 jobs:
   create_sync_pr:
