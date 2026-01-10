@@ -3,14 +3,14 @@
 // found in the LICENSE file.
 
 import Flutter
+import Testing
 import UIKit
-import XCTest
 
-class RunnerTests: XCTestCase {
+struct RunnerTests {
 
-  func testExample() {
+  @Test func example() {
     // If you add code to the Runner application, consider adding tests here.
-    // See https://developer.apple.com/documentation/xctest for more information about using XCTest.
+    // See https://developer.apple.com/documentation/testing for more information about using Swift Testing.
   }
 
 }
