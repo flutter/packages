@@ -454,13 +454,13 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   AVPlayerItem *currentItem = _player.currentItem;
   if (!currentItem) {
-    completion([[FVPNativeVideoTrackData alloc] init], nil);
+    completion(nil, nil);
     return;
   }
 
   AVURLAsset *urlAsset = (AVURLAsset *)currentItem.asset;
   if (![urlAsset isKindOfClass:[AVURLAsset class]]) {
-    completion([[FVPNativeVideoTrackData alloc] init], nil);
+    completion(nil, nil);
     return;
   }
 
@@ -531,9 +531,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                         });
                       }];
   } else {
-    // For iOS < 15, AVAssetVariant API is not available. Return an empty result (not an error)
+    // For iOS < 15, AVAssetVariant API is not available. Return nil (not an error)
     // since the absence of variant data is expected on older OS versions.
-    completion([[FVPNativeVideoTrackData alloc] init], nil);
+    completion(nil, nil);
   }
 }
 
