@@ -123,14 +123,48 @@ class PlatformCircle {
 
 /// Pigeon equivalent of the Heatmap class.
 class PlatformHeatmap {
-  PlatformHeatmap(this.json);
+  PlatformHeatmap({
+    required this.heatmapId,
+    required this.data,
+    this.gradient,
+    required this.opacity,
+    required this.radius,
+    required this.minimumZoomIntensity,
+    required this.maximumZoomIntensity,
+  });
 
-  /// The heatmap data, as JSON. This should only be set from
-  /// Heatmap.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final String heatmapId;
+  final List<PlatformWeightedLatLng> data;
+  final PlatformHeatmapGradient? gradient;
+  final double opacity;
+  final int radius;
+  final int minimumZoomIntensity;
+  final int maximumZoomIntensity;
+}
+
+/// Pigeon equivalent of the HeatmapGradient class.
+///
+/// The GMUGradient structure is slightly different from HeatmapGradient, so
+/// this matches the iOS API so that conversion can be done on the Dart side
+/// where the structures are easier to work with.
+class PlatformHeatmapGradient {
+  PlatformHeatmapGradient({
+    required this.colors,
+    required this.startPoints,
+    required this.colorMapSize,
+  });
+
+  final List<PlatformColor> colors;
+  final List<double> startPoints;
+  final int colorMapSize;
+}
+
+/// Pigeon equivalent of the WeightedLatLng class.
+class PlatformWeightedLatLng {
+  PlatformWeightedLatLng({required this.point, required this.weight});
+
+  final PlatformLatLng point;
+  final double weight;
 }
 
 /// Pigeon equivalent of the InfoWindow class.

@@ -169,6 +169,50 @@ FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *groundOver
   }
 }
 
+GMUGradient *FGMGetGradientForPigeonHeatmapGradient(FGMPlatformHeatmapGradient *gradient) {
+  NSMutableArray *colors = [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
+  for (FGMPlatformColor *color in gradient.colors) {
+    [colors addObject:FGMGetColorForPigeonColor(color)];
+  }
+  return [[GMUGradient alloc] initWithColors:colors
+                                 startPoints:gradient.startPoints
+                                colorMapSize:gradient.colorMapSize];
+}
+
+FGMPlatformHeatmapGradient *FGMGetPigeonHeatmapGradientForGradient(GMUGradient *gradient) {
+  NSMutableArray *colors = [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
+  for (UIColor *color in gradient.colors) {
+    [colors addObject:FGMGetPigeonColorForColor(color)];
+  }
+  return [FGMPlatformHeatmapGradient makeWithColors:colors
+                                        startPoints:gradient.startPoints
+                                       colorMapSize:gradient.mapSize];
+}
+
+NSArray<GMUWeightedLatLng *> *FGMGetWeightedDataForPigeonWeightedData(
+    NSArray<FGMPlatformWeightedLatLng *> *weightedLatLngs) {
+  NSMutableArray *weightedData = [[NSMutableArray alloc] initWithCapacity:weightedLatLngs.count];
+  for (FGMPlatformWeightedLatLng *weightedLatLng in weightedLatLngs) {
+    [weightedData
+        addObject:[[GMUWeightedLatLng alloc]
+                      initWithCoordinate:FGMGetCoordinateForPigeonLatLng(weightedLatLng.point)
+                               intensity:weightedLatLng.weight]];
+  }
+  return weightedData;
+}
+
+NSArray<FGMPlatformWeightedLatLng *> *FGMGetPigeonWeightedDataForWeightedData(
+    NSArray<GMUWeightedLatLng *> *weightedLatLngs) {
+  NSMutableArray *weightedData = [[NSMutableArray alloc] initWithCapacity:weightedLatLngs.count];
+  for (GMUWeightedLatLng *weightedLatLng in weightedLatLngs) {
+    GMSMapPoint point = {weightedLatLng.point.x, weightedLatLng.point.y};
+    [weightedData addObject:[FGMPlatformWeightedLatLng
+                                makeWithPoint:FGMGetPigeonLatLngForCoordinate(GMSUnproject(point))
+                                       weight:weightedLatLng.intensity]];
+  }
+  return weightedData;
+}
+
 GMSCameraUpdate *FGMGetCameraUpdateForPigeonCameraUpdate(FGMPlatformCameraUpdate *cameraUpdate) {
   // See note in messages.dart for why this is so loosely typed.
   id update = cameraUpdate.cameraUpdate;
@@ -217,6 +261,12 @@ UIColor *FGMGetColorForPigeonColor(FGMPlatformColor *color) {
   return [UIColor colorWithRed:color.red green:color.green blue:color.blue alpha:color.alpha];
 }
 
+FGMPlatformColor *FGMGetPigeonColorForColor(UIColor *color) {
+  double red, green, blue, alpha;
+  [color getRed:&red green:&green blue:&blue alpha:&alpha];
+  return [FGMPlatformColor makeWithRed:red green:green blue:blue alpha:alpha];
+}
+
 NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
     NSArray<FGMPlatformPatternItem *> *patterns, UIColor *strokeColor) {
   NSMutableArray *strokeStyles = [[NSMutableArray alloc] initWithCapacity:[patterns count]];
@@ -236,112 +286,3 @@ NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(NSArray<FGMPlatformPatternIte
   }
   return lengths;
 }
-
-@implementation FGMHeatmapConversions
-
-// These constants must match the corresponding constants in serialization.dart
-NSString *const kHeatmapsToAddKey = @"heatmapsToAdd";
-NSString *const kHeatmapIdKey = @"heatmapId";
-NSString *const kHeatmapDataKey = @"data";
-NSString *const kHeatmapGradientKey = @"gradient";
-NSString *const kHeatmapOpacityKey = @"opacity";
-NSString *const kHeatmapRadiusKey = @"radius";
-NSString *const kHeatmapMinimumZoomIntensityKey = @"minimumZoomIntensity";
-NSString *const kHeatmapMaximumZoomIntensityKey = @"maximumZoomIntensity";
-NSString *const kHeatmapGradientColorsKey = @"colors";
-NSString *const kHeatmapGradientStartPointsKey = @"startPoints";
-NSString *const kHeatmapGradientColorMapSizeKey = @"colorMapSize";
-
-+ (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong {
-  return CLLocationCoordinate2DMake([latlong[0] doubleValue], [latlong[1] doubleValue]);
-}
-
-+ (CGPoint)pointFromArray:(NSArray *)array {
-  return CGPointMake([array[0] doubleValue], [array[1] doubleValue]);
-}
-
-+ (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location {
-  return @[ @(location.latitude), @(location.longitude) ];
-}
-
-+ (UIColor *)colorFromRGBA:(NSNumber *)numberColor {
-  NSInteger rgba = numberColor.unsignedLongValue;
-  return [UIColor colorWithRed:((CGFloat)((rgba & 0xFF0000) >> 16)) / 255.0
-                         green:((CGFloat)((rgba & 0xFF00) >> 8)) / 255.0
-                          blue:((CGFloat)(rgba & 0xFF)) / 255.0
-                         alpha:((CGFloat)((rgba & 0xFF000000) >> 24)) / 255.0];
-}
-
-+ (NSNumber *)RGBAFromColor:(UIColor *)color {
-  CGFloat red, green, blue, alpha;
-  [color getRed:&red green:&green blue:&blue alpha:&alpha];
-  unsigned long value = ((unsigned long)(alpha * 255) << 24) | ((unsigned long)(red * 255) << 16) |
-                        ((unsigned long)(green * 255) << 8) | ((unsigned long)(blue * 255));
-  return @(value);
-}
-
-+ (GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data {
-  NSAssert(data.count == 2, @"WeightedLatLng data must have length of 2");
-  if (data.count != 2) {
-    return nil;
-  }
-  return [[GMUWeightedLatLng alloc]
-      initWithCoordinate:[FGMHeatmapConversions locationFromLatLong:data[0]]
-               intensity:[data[1] doubleValue]];
-}
-
-+ (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng {
-  GMSMapPoint point = {weightedLatLng.point.x, weightedLatLng.point.y};
-  return @[
-    [FGMHeatmapConversions arrayFromLocation:GMSUnproject(point)], @(weightedLatLng.intensity)
-  ];
-}
-
-+ (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data {
-  NSMutableArray<GMUWeightedLatLng *> *weightedData =
-      [[NSMutableArray alloc] initWithCapacity:data.count];
-  for (NSArray<id> *item in data) {
-    GMUWeightedLatLng *weightedLatLng = [FGMHeatmapConversions weightedLatLngFromArray:item];
-    if (weightedLatLng == nil) continue;
-    [weightedData addObject:weightedLatLng];
-  }
-
-  return weightedData;
-}
-
-+ (NSArray<NSArray<id> *> *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData {
-  NSMutableArray *data = [[NSMutableArray alloc] initWithCapacity:weightedData.count];
-  for (GMUWeightedLatLng *weightedLatLng in weightedData) {
-    [data addObject:[FGMHeatmapConversions arrayFromWeightedLatLng:weightedLatLng]];
-  }
-
-  return data;
-}
-
-+ (GMUGradient *)gradientFromDictionary:(NSDictionary<NSString *, id> *)data {
-  NSArray *colorData = data[kHeatmapGradientColorsKey];
-  NSMutableArray<UIColor *> *colors = [[NSMutableArray alloc] initWithCapacity:colorData.count];
-  for (NSNumber *colorCode in colorData) {
-    [colors addObject:[FGMHeatmapConversions colorFromRGBA:colorCode]];
-  }
-
-  return [[GMUGradient alloc] initWithColors:colors
-                                 startPoints:data[kHeatmapGradientStartPointsKey]
-                                colorMapSize:[data[kHeatmapGradientColorMapSizeKey] intValue]];
-}
-
-+ (NSDictionary<NSString *, id> *)dictionaryFromGradient:(GMUGradient *)gradient {
-  NSMutableArray<NSNumber *> *colorCodes =
-      [[NSMutableArray alloc] initWithCapacity:gradient.colors.count];
-  for (UIColor *color in gradient.colors) {
-    [colorCodes addObject:[FGMHeatmapConversions RGBAFromColor:color]];
-  }
-
-  return @{
-    kHeatmapGradientColorsKey : colorCodes,
-    kHeatmapGradientStartPointsKey : gradient.startPoints,
-    kHeatmapGradientColorMapSizeKey : @(gradient.mapSize)
-  };
-}
-
-@end
