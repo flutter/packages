@@ -125,9 +125,8 @@ struct RunnerTests {
     try plugin.set(key: "aStringList", value: ["hello", "world"], options: emptyOptions)
 
     #expect((try plugin.getValue(key: "aBool", options: emptyOptions)) != nil)
-    let doubleVal = try plugin.getValue(key: "aDouble", options: emptyOptions) as? Double
-    #expect(doubleVal != nil)
-    #expect(abs(doubleVal! - 3.14) < 0.0001)
+    let doubleVal = try #require(plugin.getValue(key: "aDouble", options: emptyOptions) as? Double)
+    #expect(abs(doubleVal - 3.14) < 0.0001)
     
     #expect(try plugin.getValue(key: "anInt", options: emptyOptions) as? Int == 42)
     #expect(try plugin.getValue(key: "aString", options: emptyOptions) as? String == "hello world")
