@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Testing
 
 @testable import path_provider_foundation
 
@@ -12,40 +12,37 @@ import XCTest
   import FlutterMacOS
 #endif
 
-class RunnerTests: XCTestCase {
-  func testGetTemporaryDirectory() throws {
+struct RunnerTests {
+  @Test func getTemporaryDirectory() throws {
     let plugin = PathProviderPlugin()
     let path = plugin.getDirectoryPath(type: .temp)
-    XCTAssertEqual(
-      path,
-      NSSearchPathForDirectoriesInDomains(
+    #expect(
+      path == NSSearchPathForDirectoriesInDomains(
         FileManager.SearchPathDirectory.cachesDirectory,
         FileManager.SearchPathDomainMask.userDomainMask,
         true
       ).first)
   }
 
-  func testGetApplicationDocumentsDirectory() throws {
+  @Test func getApplicationDocumentsDirectory() throws {
     let plugin = PathProviderPlugin()
     let path = plugin.getDirectoryPath(type: .applicationDocuments)
-    XCTAssertEqual(
-      path,
-      NSSearchPathForDirectoriesInDomains(
+    #expect(
+      path == NSSearchPathForDirectoriesInDomains(
         FileManager.SearchPathDirectory.documentDirectory,
         FileManager.SearchPathDomainMask.userDomainMask,
         true
       ).first)
   }
 
-  func testGetApplicationSupportDirectory() throws {
+  @Test func getApplicationSupportDirectory() throws {
     let plugin = PathProviderPlugin()
     let path = plugin.getDirectoryPath(type: .applicationSupport)
     #if os(iOS)
       // On iOS, the application support directory path should be just the system application
       // support path.
-      XCTAssertEqual(
-        path,
-        NSSearchPathForDirectoriesInDomains(
+      #expect(
+        path == NSSearchPathForDirectoriesInDomains(
           FileManager.SearchPathDirectory.applicationSupportDirectory,
           FileManager.SearchPathDomainMask.userDomainMask,
           true
@@ -53,35 +50,33 @@ class RunnerTests: XCTestCase {
     #else
       // On macOS, the application support directory path should be the system application
       // support path with an added subdirectory based on the app name.
-      XCTAssert(
+      #expect(
         path!.hasPrefix(
           NSSearchPathForDirectoriesInDomains(
             FileManager.SearchPathDirectory.applicationSupportDirectory,
             FileManager.SearchPathDomainMask.userDomainMask,
             true
           ).first!))
-      XCTAssert(path!.hasSuffix("Example"))
+      #expect(path!.hasSuffix("Example"))
     #endif
   }
 
-  func testGetLibraryDirectory() throws {
+  @Test func getLibraryDirectory() throws {
     let plugin = PathProviderPlugin()
     let path = plugin.getDirectoryPath(type: .library)
-    XCTAssertEqual(
-      path,
-      NSSearchPathForDirectoriesInDomains(
+    #expect(
+      path == NSSearchPathForDirectoriesInDomains(
         FileManager.SearchPathDirectory.libraryDirectory,
         FileManager.SearchPathDomainMask.userDomainMask,
         true
       ).first)
   }
 
-  func testGetDownloadsDirectory() throws {
+  @Test func getDownloadsDirectory() throws {
     let plugin = PathProviderPlugin()
     let path = plugin.getDirectoryPath(type: .downloads)
-    XCTAssertEqual(
-      path,
-      NSSearchPathForDirectoriesInDomains(
+    #expect(
+      path == NSSearchPathForDirectoriesInDomains(
         FileManager.SearchPathDirectory.downloadsDirectory,
         FileManager.SearchPathDomainMask.userDomainMask,
         true
