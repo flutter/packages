@@ -32,10 +32,10 @@ struct RunnerTests {
 
     let storedValues = plugin.getAll(prefix: prefix, allowList: nil)
     #expect(storedValues["\(prefix)aBool"] as? Bool == true)
-    
+
     let doubleValue = try #require(storedValues["\(prefix)aDouble"] as? Double)
     #expect(abs(doubleValue - 3.14) < 0.0001)
-    
+
     #expect(storedValues["\(prefix)anInt"] as? Int == 42)
     #expect(storedValues["\(prefix)aString"] as? String == "hello world")
     #expect(storedValues["\(prefix)aStringList"] as? [String] == ["hello", "world"])
@@ -127,11 +127,13 @@ struct RunnerTests {
     #expect((try plugin.getValue(key: "aBool", options: emptyOptions)) != nil)
     let doubleVal = try #require(plugin.getValue(key: "aDouble", options: emptyOptions) as? Double)
     #expect(abs(doubleVal - 3.14) < 0.0001)
-    
+
     #expect(try plugin.getValue(key: "anInt", options: emptyOptions) as? Int == 42)
     #expect(try plugin.getValue(key: "aString", options: emptyOptions) as? String == "hello world")
     #expect(
-      try plugin.getValue(key: "aStringList", options: emptyOptions) as? [String] == ["hello", "world"])
+      try plugin.getValue(key: "aStringList", options: emptyOptions) as? [String] == [
+        "hello", "world",
+      ])
   }
 
   @Test func asyncGetAll() throws {
@@ -145,10 +147,10 @@ struct RunnerTests {
 
     let storedValues = try plugin.getAll(allowList: nil, options: emptyOptions)
     #expect(storedValues["aBool"] as? Bool == true)
-    
+
     let doubleVal = try #require(storedValues["aDouble"] as? Double)
     #expect(abs(doubleVal - 3.14) < 0.0001)
-    
+
     #expect(storedValues["anInt"] as? Int == 42)
     #expect(storedValues["aString"] as? String == "hello world")
     #expect(storedValues["aStringList"] as? [String] == ["hello", "world"])
