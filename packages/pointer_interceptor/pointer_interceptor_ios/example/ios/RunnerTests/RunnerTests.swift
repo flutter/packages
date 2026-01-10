@@ -7,12 +7,13 @@ import UIKit
 
 @testable import pointer_interceptor_ios
 
+@MainActor
 struct RunnerTests {
   @Test(arguments: [
     (false, UIColor.clear),
     (true, UIColor(red: 1, green: 0, blue: 0, alpha: 0.5)),
   ])
-  @MainActor func debugMode(debug: Bool, expectedColor: UIColor) {
+  func debugMode(debug: Bool, expectedColor: UIColor) {
     let view = PointerInterceptorView(
       frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: debug)
 

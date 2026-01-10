@@ -13,7 +13,7 @@ import UIKit
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
 
-    weak var registrar = self.registrar(forPlugin: "DummyPlatform")
+    weak let registrar = self.registrar(forPlugin: "DummyPlatform")
 
     let factory = DummyPlatformViewFactory(messenger: registrar!.messenger())
     self.registrar(forPlugin: "<DummyPlatform>")!.register(
