@@ -2,26 +2,21 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import Flutter
+import Testing
 import UIKit
-import XCTest
 
 @testable import pointer_interceptor_ios
 
-class RunnerTests: XCTestCase {
-  func testNonDebugMode() {
+struct RunnerTests {
+  @Test(arguments: [
+    (false, UIColor.clear),
+    (true, UIColor(red: 1, green: 0, blue: 0, alpha: 0.5)),
+  ])
+  @MainActor func debugMode(debug: Bool, expectedColor: UIColor) {
     let view = PointerInterceptorView(
-      frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: false)
+      frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: debug)
 
     let debugView = view.view()
-    XCTAssertTrue(debugView.backgroundColor == UIColor.clear)
-  }
-
-  func testDebugMode() {
-    let view = PointerInterceptorView(
-      frame: CGRect(x: 0, y: 0, width: 180, height: 48.0), debug: true)
-
-    let debugView = view.view()
-    XCTAssertTrue(debugView.backgroundColor == UIColor(red: 1, green: 0, blue: 0, alpha: 0.5))
+    #expect(debugView.backgroundColor == expectedColor)
   }
 }
