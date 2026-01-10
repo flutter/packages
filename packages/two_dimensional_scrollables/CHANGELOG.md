@@ -2,7 +2,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Updates examples to use the new RadioGroup API instead of deprecated Radio parameters.
-* Optimizes tableview janks with >250k rows
+* Optimizes tableview janks with >250k rows.
 
 ## 0.3.7
 
