@@ -343,6 +343,73 @@ void main() {
         expect(lastPurchaseOptions.quantity, 1);
       },
     );
+
+    /// Helper function to reduce test boilerplate for purchase result tests.
+    /// Sets up the purchase stream listener and executes a buy operation,
+    /// returning the resulting [PurchaseDetails].
+    Future<PurchaseDetails> getPurchaseDetailsAfterBuy({
+      required SK2ProductPurchaseResultMessage simulatedResult,
+    }) async {
+      fakeStoreKit2Platform.simulatedPurchaseResult = simulatedResult;
+
+      final completer = Completer<List<PurchaseDetails>>();
+      final Stream<List<PurchaseDetails>> stream =
+          iapStoreKitPlatform.purchaseStream;
+
+      late StreamSubscription<List<PurchaseDetails>> subscription;
+      subscription = stream.listen((List<PurchaseDetails> purchaseDetailsList) {
+        completer.complete(purchaseDetailsList);
+        subscription.cancel();
+      });
+
+      final purchaseParam = AppStorePurchaseParam(
+        productDetails: AppStoreProduct2Details.fromSK2Product(
+          dummyProductWrapper,
+        ),
+        applicationUserName: 'appName',
+      );
+      await iapStoreKitPlatform.buyNonConsumable(purchaseParam: purchaseParam);
+
+      final List<PurchaseDetails> result = await completer.future;
+      expect(result.length, 1);
+      expect(result.first.productID, dummyProductWrapper.id);
+      return result.first;
+    }
+
+    test(
+      'user cancelled purchase should emit canceled status to purchaseStream',
+      () async {
+        final PurchaseDetails details = await getPurchaseDetailsAfterBuy(
+          simulatedResult: SK2ProductPurchaseResultMessage.userCancelled,
+        );
+        expect(details.status, PurchaseStatus.canceled);
+        expect(details.pendingCompletePurchase, false);
+      },
+    );
+
+    test(
+      'pending purchase should emit pending status to purchaseStream',
+      () async {
+        final PurchaseDetails details = await getPurchaseDetailsAfterBuy(
+          simulatedResult: SK2ProductPurchaseResultMessage.pending,
+        );
+        expect(details.status, PurchaseStatus.pending);
+        expect(details.pendingCompletePurchase, false);
+      },
+    );
+
+    test(
+      'unverified purchase should receive transaction from native side',
+      () async {
+        final PurchaseDetails details = await getPurchaseDetailsAfterBuy(
+          simulatedResult: SK2ProductPurchaseResultMessage.unverified,
+        );
+        // Native side sends the transaction for unverified case
+        // The transaction comes with purchased status from native side
+        expect(details.status, PurchaseStatus.purchased);
+        expect(details.pendingCompletePurchase, true);
+      },
+    );
   });
 
   group('restore purchases', () {

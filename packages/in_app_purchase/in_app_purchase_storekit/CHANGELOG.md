@@ -1,5 +1,6 @@
-## NEXT
+## 0.4.7+1
 
+* Fixes StoreKit 2 purchase flow to send cancelled/pending/unverified results to `purchaseStream`.
 * Fixes Xcode 26.2 analyzer warnings in example app tests.
 
 ## 0.4.7
