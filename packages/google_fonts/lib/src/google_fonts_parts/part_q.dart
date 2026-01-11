@@ -645,13 +645,6 @@ class PartQ {
         '75e85595ac7acf57cdb1c64202577c48150e7aee3fcf600c558d082b040cb8c1',
         72892,
       ),
-      const GoogleFontsVariant(
-        fontWeight: FontWeight.w400,
-        fontStyle: FontStyle.normal,
-      ): GoogleFontsFile(
-        'f5e183e5a04dba950d8bafe4310b453c7f9da6ca3a8c55bc0fdf8a99a7d63d02',
-        119072,
-      ),
     };
 
     return googleFontsTextStyle(
