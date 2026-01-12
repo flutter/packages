@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -630,6 +630,12 @@ abstract class IMAAdError extends NSObject {
 /// See https://developers.google.com/interactive-media-ads/docs/sdks/ios/client-side/reference/Classes/IMAAdsManager.html.
 @ProxyApi()
 abstract class IMAAdsManager extends NSObject {
+  /// List of content time offsets at which ad breaks are scheduled.
+  ///
+  /// List of double values in seconds. Empty list for single ads or if no ad
+  /// breaks are scheduled.
+  late List<double> adCuePoints;
+
   /// The `IMAAdsManagerDelegate` to notify with events during ad playback.
   void setDelegate(IMAAdsManagerDelegate? delegate);
 

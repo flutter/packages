@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -43,11 +43,11 @@ class SignInDemoState extends State<SignInDemo> {
   Future<void> _ensureInitialized() {
     // The example app uses the parsing of values from google-services.json
     // to provide the serverClientId, otherwise it would be required here.
-    return _initialization ??= GoogleSignInPlatform.instance.init(
-      const InitParameters(),
-    )..catchError((dynamic _) {
-      _initialization = null;
-    });
+    return _initialization ??=
+        GoogleSignInPlatform.instance.init(const InitParameters())
+          ..catchError((dynamic _) {
+            _initialization = null;
+          });
   }
 
   void _setUser(GoogleSignInUserData? user) {
@@ -70,10 +70,9 @@ class SignInDemoState extends State<SignInDemo> {
       _setUser(result?.user);
     } on GoogleSignInException catch (e) {
       setState(() {
-        _errorMessage =
-            e.code == GoogleSignInExceptionCode.canceled
-                ? ''
-                : 'GoogleSignInException ${e.code}: ${e.description}';
+        _errorMessage = e.code == GoogleSignInExceptionCode.canceled
+            ? ''
+            : 'GoogleSignInException ${e.code}: ${e.description}';
       });
     }
   }
@@ -178,10 +177,9 @@ class SignInDemoState extends State<SignInDemo> {
       _setUser(result.user);
     } on GoogleSignInException catch (e) {
       setState(() {
-        _errorMessage =
-            e.code == GoogleSignInExceptionCode.canceled
-                ? ''
-                : 'GoogleSignInException ${e.code}: ${e.description}';
+        _errorMessage = e.code == GoogleSignInExceptionCode.canceled
+            ? ''
+            : 'GoogleSignInException ${e.code}: ${e.description}';
       });
     }
   }

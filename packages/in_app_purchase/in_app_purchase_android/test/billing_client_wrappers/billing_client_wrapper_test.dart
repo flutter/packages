@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -489,13 +489,11 @@ void main() {
             responseCode: PlatformBillingResponse.ok,
             debugMessage: debugMessage,
           ),
-          purchases:
-              expectedList
-                  .map(
-                    (PurchaseWrapper purchase) =>
-                        convertToPigeonPurchase(purchase),
-                  )
-                  .toList(),
+          purchases: expectedList
+              .map(
+                (PurchaseWrapper purchase) => convertToPigeonPurchase(purchase),
+              )
+              .toList(),
         ),
       );
 
@@ -633,8 +631,8 @@ void main() {
       when(
         mockApi.getBillingConfigAsync(),
       ).thenAnswer((_) async => platformBillingConfigFromWrapper(expected));
-      final BillingConfigWrapper result =
-          await billingClient.getBillingConfig();
+      final BillingConfigWrapper result = await billingClient
+          .getBillingConfig();
       expect(result.countryCode, 'US');
       expect(result, expected);
     });
@@ -652,8 +650,8 @@ void main() {
           debugMessage: expected.debugMessage!,
         ),
       );
-      final BillingResultWrapper result =
-          await billingClient.isAlternativeBillingOnlyAvailable();
+      final BillingResultWrapper result = await billingClient
+          .isAlternativeBillingOnlyAvailable();
       expect(result, expected);
     });
   });
@@ -690,8 +688,8 @@ void main() {
           debugMessage: expected.debugMessage!,
         ),
       );
-      final BillingResultWrapper result =
-          await billingClient.showAlternativeBillingOnlyInformationDialog();
+      final BillingResultWrapper result = await billingClient
+          .showAlternativeBillingOnlyInformationDialog();
       expect(result, expected);
     });
   });

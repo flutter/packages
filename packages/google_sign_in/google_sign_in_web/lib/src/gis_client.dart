@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'dart:async';
@@ -277,6 +277,14 @@ class GisSdkClient {
         .forEach(oauth2.revoke);
     _lastClientAuthorizationByUser.clear();
     await signOut();
+  }
+
+  /// Clears the authorization cache for the given [token].
+  void clearAuthorizationToken(String token) {
+    _lastClientAuthorizationByUser.removeWhere(
+      (String? key, (TokenResponse tokenResponse, DateTime expiration) value) =>
+          value.$1.access_token == token,
+    );
   }
 
   /// Requests the given list of [scopes], and returns the resulting

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -57,9 +57,10 @@ class MapsDemo extends StatelessWidget {
   void _pushPage(BuildContext context, GoogleMapExampleAppPage page) {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder:
-            (_) =>
-                Scaffold(appBar: AppBar(title: Text(page.title)), body: page),
+        builder: (_) => Scaffold(
+          appBar: AppBar(title: Text(page.title)),
+          body: page,
+        ),
       ),
     );
   }
@@ -70,12 +71,11 @@ class MapsDemo extends StatelessWidget {
       appBar: AppBar(title: const Text('GoogleMaps examples')),
       body: ListView.builder(
         itemCount: _allPages.length,
-        itemBuilder:
-            (_, int index) => ListTile(
-              leading: _allPages[index].leading,
-              title: Text(_allPages[index].title),
-              onTap: () => _pushPage(context, _allPages[index]),
-            ),
+        itemBuilder: (_, int index) => ListTile(
+          leading: _allPages[index].leading,
+          title: Text(_allPages[index].title),
+          onTap: () => _pushPage(context, _allPages[index]),
+        ),
       ),
     );
   }

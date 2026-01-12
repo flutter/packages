@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -274,8 +274,11 @@ extension on SK2PriceLocaleMessage {
 /// Wrapper around [PurchaseResult]
 /// https://developer.apple.com/documentation/storekit/product/purchaseresult
 enum SK2ProductPurchaseResult {
-  /// The purchase succeeded and results in a transaction.
+  /// The purchase succeeded and results in a transaction signed by the App Store.
   success,
+
+  /// The purchase succeeded but the transation could not be verified.
+  unverified,
 
   /// The user canceled the purchase.
   userCancelled,
@@ -320,14 +323,16 @@ class SK2ProductPurchaseOptions {
 
 extension on SK2ProductPurchaseResultMessage {
   SK2ProductPurchaseResult convertFromPigeon() {
-    switch (this) {
-      case SK2ProductPurchaseResultMessage.success:
-        return SK2ProductPurchaseResult.success;
-      case SK2ProductPurchaseResultMessage.userCancelled:
-        return SK2ProductPurchaseResult.userCancelled;
-      case SK2ProductPurchaseResultMessage.pending:
-        return SK2ProductPurchaseResult.pending;
-    }
+    return switch (this) {
+      SK2ProductPurchaseResultMessage.success =>
+        SK2ProductPurchaseResult.success,
+      SK2ProductPurchaseResultMessage.userCancelled =>
+        SK2ProductPurchaseResult.userCancelled,
+      SK2ProductPurchaseResultMessage.pending =>
+        SK2ProductPurchaseResult.pending,
+      SK2ProductPurchaseResultMessage.unverified =>
+        SK2ProductPurchaseResult.unverified,
+    };
   }
 }
 

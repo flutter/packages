@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -104,5 +104,12 @@ final class StoreKit2TranslatorTests: XCTestCase {
     let locale = product.priceFormatStyle.locale
     let pigeonMessage = locale.convertToPigeon
     XCTAssertEqual(pigeonMessage, productMessage.priceLocale)
+  }
+
+  func testPigeonConversionForPurchaseResult() {
+    // Unfortunately the .success case is not testable because the Transaction
+    // type has no visible initializers.
+    XCTAssertEqual(Product.PurchaseResult.pending.convertToPigeon(), .pending)
+    XCTAssertEqual(Product.PurchaseResult.userCancelled.convertToPigeon(), .userCancelled)
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -139,36 +139,41 @@ void main() {
 
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          required dynamic onError,
-          dynamic onPrepared,
-          void Function(ima.VideoView, ima.MediaPlayer)? onCompletion,
-        }) {
-          onCompletionCallback = onCompletion!;
-          return MockVideoView();
-        },
+        newVideoView:
+            ({
+              required dynamic onError,
+              dynamic onPrepared,
+              void Function(ima.VideoView, ima.MediaPlayer)? onCompletion,
+            }) {
+              onCompletionCallback = onCompletion!;
+              return MockVideoView();
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
-          addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAdCallback = loadAd;
-          addCallbackCallback = addCallback;
-          return MockVideoAdPlayer();
-        },
+        newVideoAdPlayer:
+            ({
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.VideoAdPlayerCallback,
+              )
+              addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required dynamic playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAdCallback = loadAd;
+              addCallbackCallback = addCallback;
+              return MockVideoAdPlayer();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -206,37 +211,42 @@ void main() {
 
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          required void Function(ima.VideoView, ima.MediaPlayer, int, int)
-          onError,
-          dynamic onPrepared,
-          dynamic onCompletion,
-        }) {
-          onErrorCallback = onError;
-          return MockVideoView();
-        },
+        newVideoView:
+            ({
+              required void Function(ima.VideoView, ima.MediaPlayer, int, int)
+              onError,
+              dynamic onPrepared,
+              dynamic onCompletion,
+            }) {
+              onErrorCallback = onError;
+              return MockVideoView();
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
-          addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAdCallback = loadAd;
-          addCallbackCallback = addCallback;
-          return MockVideoAdPlayer();
-        },
+        newVideoAdPlayer:
+            ({
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.VideoAdPlayerCallback,
+              )
+              addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required dynamic playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAdCallback = loadAd;
+              addCallbackCallback = addCallback;
+              return MockVideoAdPlayer();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -280,49 +290,52 @@ void main() {
 
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          dynamic onError,
-          Future<void> Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
-          dynamic onCompletion,
-        }) {
-          onPreparedCallback = onPrepared!;
-          final MockVideoView mockVideoView = MockVideoView();
-          when(
-            mockVideoView.getCurrentPosition(),
-          ).thenAnswer((_) async => adProgress);
-          return mockVideoView;
-        },
+        newVideoView:
+            ({
+              dynamic onError,
+              Future<void> Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
+              dynamic onCompletion,
+            }) {
+              onPreparedCallback = onPrepared!;
+              final MockVideoView mockVideoView = MockVideoView();
+              when(
+                mockVideoView.getCurrentPosition(),
+              ).thenAnswer((_) async => adProgress);
+              return mockVideoView;
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
-          addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAdCallback = loadAd;
-          addCallbackCallback = addCallback;
-          playAdCallback = playAd;
-          return MockVideoAdPlayer();
-        },
-        newVideoProgressUpdate: ({
-          required int currentTimeMs,
-          required int durationMs,
-        }) {
-          expect(currentTimeMs, adProgress);
-          expect(durationMs, adDuration);
-          return MockVideoProgressUpdate();
-        },
+        newVideoAdPlayer:
+            ({
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.VideoAdPlayerCallback,
+              )
+              addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAdCallback = loadAd;
+              addCallbackCallback = addCallback;
+              playAdCallback = playAd;
+              return MockVideoAdPlayer();
+            },
+        newVideoProgressUpdate:
+            ({required int currentTimeMs, required int durationMs}) {
+              expect(currentTimeMs, adProgress);
+              expect(durationMs, adDuration);
+              return MockVideoProgressUpdate();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -369,51 +382,56 @@ void main() {
 
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          dynamic onError,
-          void Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
-          dynamic onCompletion,
-        }) {
-          // VideoView.onPrepared returns void, but the implementation uses an
-          // async callback method.
-          onPreparedCallback =
-              onPrepared!
-                  as Future<void> Function(ima.VideoView, ima.MediaPlayer);
-          final MockVideoView mockVideoView = MockVideoView();
-          when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => 10);
-          return mockVideoView;
-        },
+        newVideoView:
+            ({
+              dynamic onError,
+              void Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
+              dynamic onCompletion,
+            }) {
+              // VideoView.onPrepared returns void, but the implementation uses an
+              // async callback method.
+              onPreparedCallback =
+                  onPrepared!
+                      as Future<void> Function(ima.VideoView, ima.MediaPlayer);
+              final MockVideoView mockVideoView = MockVideoView();
+              when(
+                mockVideoView.getCurrentPosition(),
+              ).thenAnswer((_) async => 10);
+              return mockVideoView;
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required dynamic addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAdCallback = loadAd;
-          // VideoAdPlayer.pauseAd returns void, but the implementation uses an
-          // async callback method.
-          pauseAdCallback =
-              pauseAd
-                  as Future<void> Function(ima.VideoAdPlayer, ima.AdMediaInfo);
-          return MockVideoAdPlayer();
-        },
-        newVideoProgressUpdate: ({
-          required int currentTimeMs,
-          required int durationMs,
-        }) {
-          return MockVideoProgressUpdate();
-        },
+        newVideoAdPlayer:
+            ({
+              required dynamic addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required dynamic playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAdCallback = loadAd;
+              // VideoAdPlayer.pauseAd returns void, but the implementation uses an
+              // async callback method.
+              pauseAdCallback =
+                  pauseAd
+                      as Future<void> Function(
+                        ima.VideoAdPlayer,
+                        ima.AdMediaInfo,
+                      );
+              return MockVideoAdPlayer();
+            },
+        newVideoProgressUpdate:
+            ({required int currentTimeMs, required int durationMs}) {
+              return MockVideoProgressUpdate();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -454,52 +472,57 @@ void main() {
 
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          dynamic onError,
-          void Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
-          dynamic onCompletion,
-        }) {
-          // VideoView.onPrepared returns void, but the implementation uses an
-          // async callback method.
-          onPreparedCallback =
-              onPrepared!
-                  as Future<void> Function(ima.VideoView, ima.MediaPlayer);
-          final MockVideoView mockVideoView = MockVideoView();
-          when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => 10);
-          return mockVideoView;
-        },
+        newVideoView:
+            ({
+              dynamic onError,
+              void Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
+              dynamic onCompletion,
+            }) {
+              // VideoView.onPrepared returns void, but the implementation uses an
+              // async callback method.
+              onPreparedCallback =
+                  onPrepared!
+                      as Future<void> Function(ima.VideoView, ima.MediaPlayer);
+              final MockVideoView mockVideoView = MockVideoView();
+              when(
+                mockVideoView.getCurrentPosition(),
+              ).thenAnswer((_) async => 10);
+              return mockVideoView;
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required dynamic addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAdCallback = loadAd;
-          // VideoAdPlayer.pauseAd returns void, but the implementation uses an
-          // async callback method.
-          pauseAdCallback =
-              pauseAd
-                  as Future<void> Function(ima.VideoAdPlayer, ima.AdMediaInfo);
-          releaseCallback = release as void Function(ima.VideoAdPlayer);
-          return MockVideoAdPlayer();
-        },
-        newVideoProgressUpdate: ({
-          required int currentTimeMs,
-          required int durationMs,
-        }) {
-          return MockVideoProgressUpdate();
-        },
+        newVideoAdPlayer:
+            ({
+              required dynamic addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required dynamic playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAdCallback = loadAd;
+              // VideoAdPlayer.pauseAd returns void, but the implementation uses an
+              // async callback method.
+              pauseAdCallback =
+                  pauseAd
+                      as Future<void> Function(
+                        ima.VideoAdPlayer,
+                        ima.AdMediaInfo,
+                      );
+              releaseCallback = release as void Function(ima.VideoAdPlayer);
+              return MockVideoAdPlayer();
+            },
+        newVideoProgressUpdate:
+            ({required int currentTimeMs, required int durationMs}) {
+              return MockVideoProgressUpdate();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -541,52 +564,57 @@ void main() {
 
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          dynamic onError,
-          void Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
-          dynamic onCompletion,
-        }) {
-          // VideoView.onPrepared returns void, but the implementation uses an
-          // async callback method.
-          onPreparedCallback =
-              onPrepared!
-                  as Future<void> Function(ima.VideoView, ima.MediaPlayer);
-          final MockVideoView mockVideoView = MockVideoView();
-          when(mockVideoView.getCurrentPosition()).thenAnswer((_) async => 10);
-          return mockVideoView;
-        },
+        newVideoView:
+            ({
+              dynamic onError,
+              void Function(ima.VideoView, ima.MediaPlayer)? onPrepared,
+              dynamic onCompletion,
+            }) {
+              // VideoView.onPrepared returns void, but the implementation uses an
+              // async callback method.
+              onPreparedCallback =
+                  onPrepared!
+                      as Future<void> Function(ima.VideoView, ima.MediaPlayer);
+              final MockVideoView mockVideoView = MockVideoView();
+              when(
+                mockVideoView.getCurrentPosition(),
+              ).thenAnswer((_) async => 10);
+              return mockVideoView;
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required dynamic addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAdCallback = loadAd;
-          // VideoAdPlayer.pauseAd returns void, but the implementation uses an
-          // async callback method.
-          pauseAdCallback =
-              pauseAd
-                  as Future<void> Function(ima.VideoAdPlayer, ima.AdMediaInfo);
-          playAdCallback = playAd;
-          return MockVideoAdPlayer();
-        },
-        newVideoProgressUpdate: ({
-          required int currentTimeMs,
-          required int durationMs,
-        }) {
-          return MockVideoProgressUpdate();
-        },
+        newVideoAdPlayer:
+            ({
+              required dynamic addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAdCallback = loadAd;
+              // VideoAdPlayer.pauseAd returns void, but the implementation uses an
+              // async callback method.
+              pauseAdCallback =
+                  pauseAd
+                      as Future<void> Function(
+                        ima.VideoAdPlayer,
+                        ima.AdMediaInfo,
+                      );
+              playAdCallback = playAd;
+              return MockVideoAdPlayer();
+            },
+        newVideoProgressUpdate:
+            ({required int currentTimeMs, required int durationMs}) {
+              return MockVideoProgressUpdate();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -633,34 +661,32 @@ void main() {
       final MockVideoView mockVideoView = MockVideoView();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          dynamic onError,
-          dynamic onPrepared,
-          dynamic onCompletion,
-        }) {
-          return mockVideoView;
-        },
+        newVideoView:
+            ({dynamic onError, dynamic onPrepared, dynamic onCompletion}) {
+              return mockVideoView;
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required dynamic addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAdCallback = loadAd;
-          playAdCallback = playAd;
-          return MockVideoAdPlayer();
-        },
+        newVideoAdPlayer:
+            ({
+              required dynamic addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAdCallback = loadAd;
+              playAdCallback = playAd;
+              return MockVideoAdPlayer();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -689,43 +715,41 @@ void main() {
       int newViewVideoCallCount = 0;
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => mockFrameLayout,
-        newVideoView: ({
-          dynamic onError,
-          dynamic onPrepared,
-          dynamic onCompletion,
-        }) {
-          switch (newViewVideoCallCount) {
-            case 0:
-              newViewVideoCallCount++;
-              return mockVideoView;
-            case 1:
-              newViewVideoCallCount++;
-              return mockVideoView2;
-            default:
-              fail('newVideoView was called too many times');
-          }
-        },
+        newVideoView:
+            ({dynamic onError, dynamic onPrepared, dynamic onCompletion}) {
+              switch (newViewVideoCallCount) {
+                case 0:
+                  newViewVideoCallCount++;
+                  return mockVideoView;
+                case 1:
+                  newViewVideoCallCount++;
+                  return mockVideoView2;
+                default:
+                  fail('newVideoView was called too many times');
+              }
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required dynamic addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) stopAd,
-        }) {
-          loadAd(MockVideoAdPlayer(), MockAdMediaInfo(), MockAdPodInfo());
-          stopAdCallback = stopAd;
-          return MockVideoAdPlayer();
-        },
+        newVideoAdPlayer:
+            ({
+              required dynamic addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required dynamic playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) stopAd,
+            }) {
+              loadAd(MockVideoAdPlayer(), MockAdMediaInfo(), MockAdPodInfo());
+              stopAdCallback = stopAd;
+              return MockVideoAdPlayer();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -750,43 +774,41 @@ void main() {
       int newViewVideoCallCount = 0;
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => mockFrameLayout,
-        newVideoView: ({
-          dynamic onError,
-          dynamic onPrepared,
-          dynamic onCompletion,
-        }) {
-          switch (newViewVideoCallCount) {
-            case 0:
-              newViewVideoCallCount++;
-              return mockVideoView;
-            case 1:
-              newViewVideoCallCount++;
-              return mockVideoView2;
-            default:
-              fail('newVideoView was called too many times');
-          }
-        },
+        newVideoView:
+            ({dynamic onError, dynamic onPrepared, dynamic onCompletion}) {
+              switch (newViewVideoCallCount) {
+                case 0:
+                  newViewVideoCallCount++;
+                  return mockVideoView;
+                case 1:
+                  newViewVideoCallCount++;
+                  return mockVideoView2;
+                default:
+                  fail('newVideoView was called too many times');
+              }
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required dynamic addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required void Function(ima.VideoAdPlayer) release,
-          required dynamic removeCallback,
-          required dynamic stopAd,
-        }) {
-          loadAd(MockVideoAdPlayer(), MockAdMediaInfo(), MockAdPodInfo());
-          releaseCallback = release;
-          return MockVideoAdPlayer();
-        },
+        newVideoAdPlayer:
+            ({
+              required dynamic addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required dynamic playAd,
+              required void Function(ima.VideoAdPlayer) release,
+              required dynamic removeCallback,
+              required dynamic stopAd,
+            }) {
+              loadAd(MockVideoAdPlayer(), MockAdMediaInfo(), MockAdPodInfo());
+              releaseCallback = release;
+              return MockVideoAdPlayer();
+            },
       );
 
       AndroidAdDisplayContainer(
@@ -918,37 +940,42 @@ void main() {
       final MockVideoView mockVideoView = MockVideoView();
       final InteractiveMediaAdsProxy imaProxy = InteractiveMediaAdsProxy(
         newFrameLayout: () => MockFrameLayout(),
-        newVideoView: ({
-          dynamic onError,
-          dynamic onPrepared,
-          void Function(ima.VideoView, ima.MediaPlayer)? onCompletion,
-        }) {
-          onCompletionCallback = onCompletion!;
-          return mockVideoView;
-        },
+        newVideoView:
+            ({
+              dynamic onError,
+              dynamic onPrepared,
+              void Function(ima.VideoView, ima.MediaPlayer)? onCompletion,
+            }) {
+              onCompletionCallback = onCompletion!;
+              return mockVideoView;
+            },
         createAdDisplayContainerImaSdkFactory: (_, __) async {
           return MockAdDisplayContainer();
         },
-        newVideoAdPlayer: ({
-          required void Function(ima.VideoAdPlayer, ima.VideoAdPlayerCallback)
-          addCallback,
-          required void Function(
-            ima.VideoAdPlayer,
-            ima.AdMediaInfo,
-            ima.AdPodInfo,
-          )
-          loadAd,
-          required dynamic pauseAd,
-          required dynamic playAd,
-          required dynamic release,
-          required dynamic removeCallback,
-          required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) stopAd,
-        }) {
-          addCallbackCallback = addCallback;
-          loadAdCallback = loadAd;
-          stopAdCallback = stopAd;
-          return MockVideoAdPlayer();
-        },
+        newVideoAdPlayer:
+            ({
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.VideoAdPlayerCallback,
+              )
+              addCallback,
+              required void Function(
+                ima.VideoAdPlayer,
+                ima.AdMediaInfo,
+                ima.AdPodInfo,
+              )
+              loadAd,
+              required dynamic pauseAd,
+              required dynamic playAd,
+              required dynamic release,
+              required dynamic removeCallback,
+              required void Function(ima.VideoAdPlayer, ima.AdMediaInfo) stopAd,
+            }) {
+              addCallbackCallback = addCallback;
+              loadAdCallback = loadAd;
+              stopAdCallback = stopAd;
+              return MockVideoAdPlayer();
+            },
       );
 
       AndroidAdDisplayContainer(

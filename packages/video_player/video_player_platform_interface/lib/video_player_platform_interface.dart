@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -115,6 +115,13 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// Sets the audio mode to mix with other sources.
   Future<void> setMixWithOthers(bool mixWithOthers) {
     throw UnimplementedError('setMixWithOthers() has not been implemented.');
+  }
+
+  /// Sets whether the video should continue to play in the background.
+  Future<void> setAllowBackgroundPlayback(bool allowBackgroundPlayback) {
+    throw UnimplementedError(
+      'setAllowBackgroundPlayback() has not been implemented.',
+    );
   }
 
   /// Sets additional options on web.

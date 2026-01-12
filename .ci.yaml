@@ -28,7 +28,7 @@ platform_properties:
       device_type: none
       dependencies: >-
         [
-          {"dependency": "android_sdk", "version": "version:36v1"},
+          {"dependency": "android_sdk", "version": "version:36v3"},
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
           {"dependency": "avd_cipd_version", "version": "build_id:8719362231152674241"}

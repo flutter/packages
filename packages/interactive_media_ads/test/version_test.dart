@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,8 +12,9 @@ void main() {
 
     final String adsRequestProxyApiPath =
         '${Directory.current.path}/android/src/main/kotlin/dev/flutter/packages/interactive_media_ads/AdsRequestProxyApi.kt';
-    final String apiFileAsString =
-        File(adsRequestProxyApiPath).readAsStringSync();
+    final String apiFileAsString = File(
+      adsRequestProxyApiPath,
+    ).readAsStringSync();
 
     expect(
       apiFileAsString,
@@ -26,8 +27,9 @@ void main() {
 
     final String adsRequestProxyApiDelegatePath =
         '${Directory.current.path}/ios/interactive_media_ads/Sources/interactive_media_ads/AdsRequestProxyAPIDelegate.swift';
-    final String apiFileAsString =
-        File(adsRequestProxyApiDelegatePath).readAsStringSync();
+    final String apiFileAsString = File(
+      adsRequestProxyApiDelegatePath,
+    ).readAsStringSync();
 
     expect(
       apiFileAsString,

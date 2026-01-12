@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -360,6 +360,10 @@ Future<void> simulateAndroidBackButton(WidgetTester tester) async {
     message,
     (_) {},
   );
+}
+
+Future<void> simulateIosBackGesture(WidgetTester tester) async {
+  await tester.dragFrom(const Offset(0, 300), const Offset(500, 300));
 }
 
 GoRouterPageBuilder createPageBuilder({

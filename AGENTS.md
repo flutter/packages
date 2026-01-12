@@ -40,10 +40,15 @@ The primary tool for this repository is `flutter_plugin_tools.dart`.
 
 ### Initial Setup
 
-First, initialize the tooling:
+First, define an environment variable for the repository root directory and initialize the tooling:
 ```bash
-cd $REPO_ROOT/script/tool # $REPO_ROOT is the repository root
-dart pub get
+# Define an environment variable for the repository root.
+export REPO_ROOT=$(pwd)
+
+# Verify that the environment variable is working correctly.
+echo "Repository root directory: $REPO_ROOT"
+
+dart pub get -C $REPO_ROOT/script/tool
 ```
 
 ### Identifying Target Packages

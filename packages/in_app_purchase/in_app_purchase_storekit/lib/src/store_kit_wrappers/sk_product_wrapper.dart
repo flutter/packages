@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -384,7 +384,7 @@ class SKProductDiscountWrapper {
   /// A string used to uniquely identify a discount offer for a product.
   ///
   /// You set up offers and their identifiers in App Store Connect.
-  @JsonKey(defaultValue: null)
+  @JsonKey()
   final String? identifier;
 
   /// Values representing the types of discount offers an app can present.

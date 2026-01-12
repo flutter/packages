@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,8 +58,8 @@ void main() {
     group('withPrefix', () {
       testWidgets('reading', (WidgetTester _) async {
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], isNull);
         expect(values['Bool'], isNull);
         expect(values['Int'], isNull);
@@ -121,8 +121,8 @@ void main() {
           ),
         ]);
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('prefix.');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('prefix.');
         expect(values['prefix.String'], allTestValues['prefix.String']);
         expect(values['prefix.Bool'], allTestValues['prefix.Bool']);
         expect(values['prefix.Int'], allTestValues['prefix.Int']);
@@ -186,8 +186,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('prefix.');
         Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('prefix.');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('prefix.');
         expect(values['prefix.String'], null);
         expect(values['prefix.Bool'], null);
         expect(values['prefix.Int'], null);
@@ -243,8 +243,8 @@ void main() {
           ),
         ]);
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], allTestValues['String']);
         expect(values['Bool'], allTestValues['Bool']);
         expect(values['Int'], allTestValues['Int']);
@@ -300,8 +300,8 @@ void main() {
         // ignore: deprecated_member_use
         await preferences.clearWithPrefix('');
         final Map<String, Object> values =
-        // ignore: deprecated_member_use
-        await preferences.getAllWithPrefix('');
+            // ignore: deprecated_member_use
+            await preferences.getAllWithPrefix('');
         expect(values['String'], null);
         expect(values['Bool'], null);
         expect(values['Int'], null);

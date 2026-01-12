@@ -1,3 +1,11 @@
+## 0.8.13+5
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.8.13+4
+
+* Resolves Gradle 9 deprecations.
+
 ## 0.8.13+3
 
 * Bumps androidx.exifinterface:exifinterface from 1.3.7 to 1.4.1.

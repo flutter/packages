@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -758,6 +758,24 @@ void main() {
         await googleSignIn.authorizationClient.authorizeServer(scopes),
         null,
       );
+    });
+  });
+
+  group('clearAuthorizationToken', () {
+    test('passes expected paramaters', () async {
+      final GoogleSignIn googleSignIn = GoogleSignIn.instance;
+
+      const String token = 'someAccessToken';
+      await googleSignIn.authorizationClient.clearAuthorizationToken(
+        accessToken: token,
+      );
+
+      final VerificationResult verification = verify(
+        mockPlatform.clearAuthorizationToken(captureAny),
+      );
+      final ClearAuthorizationTokenParams params =
+          verification.captured[0] as ClearAuthorizationTokenParams;
+      expect(params.accessToken, token);
     });
   });
 }

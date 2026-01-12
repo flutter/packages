@@ -27,9 +27,9 @@ SkProductResponseWrapper _$SkProductResponseWrapperFromJson(Map json) =>
 SKProductSubscriptionPeriodWrapper _$SKProductSubscriptionPeriodWrapperFromJson(
   Map json,
 ) => SKProductSubscriptionPeriodWrapper(
-  numberOfUnits: json['numberOfUnits'] as int? ?? 0,
+  numberOfUnits: (json['numberOfUnits'] as num?)?.toInt() ?? 0,
   unit: const SKSubscriptionPeriodUnitConverter().fromJson(
-    json['unit'] as int?,
+    (json['unit'] as num?)?.toInt(),
   ),
 );
 
@@ -39,18 +39,18 @@ SKProductDiscountWrapper _$SKProductDiscountWrapperFromJson(Map json) =>
       priceLocale: SKPriceLocaleWrapper.fromJson(
         (json['priceLocale'] as Map?)?.map((k, e) => MapEntry(k as String, e)),
       ),
-      numberOfPeriods: json['numberOfPeriods'] as int? ?? 0,
+      numberOfPeriods: (json['numberOfPeriods'] as num?)?.toInt() ?? 0,
       paymentMode: const SKProductDiscountPaymentModeConverter().fromJson(
-        json['paymentMode'] as int?,
+        (json['paymentMode'] as num?)?.toInt(),
       ),
       subscriptionPeriod: SKProductSubscriptionPeriodWrapper.fromJson(
         (json['subscriptionPeriod'] as Map?)?.map(
           (k, e) => MapEntry(k as String, e),
         ),
       ),
-      identifier: json['identifier'] as String? ?? null,
+      identifier: json['identifier'] as String?,
       type: const SKProductDiscountTypeConverter().fromJson(
-        json['type'] as int?,
+        (json['type'] as num?)?.toInt(),
       ),
     );
 

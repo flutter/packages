@@ -52,7 +52,7 @@ if (!configured) {
 }
 
 android {
-    namespace 'io.flutter.plugins.inapppurchaseexample'
+    namespace = "io.flutter.plugins.inapppurchaseexample"
     signingConfigs {
         release {
             storeFile project.KEYSTORE_STORE_FILE
@@ -78,16 +78,16 @@ android {
         // Google Play Billing APIs only work with apps signed for production.
         debug {
             if (configured) {
-                signingConfig signingConfigs.release
+                signingConfig = signingConfigs.release
             } else {
-                signingConfig signingConfigs.debug
+                signingConfig = signingConfigs.debug
             }
         }
         release {
             if (configured) {
-                signingConfig signingConfigs.release
+                signingConfig = signingConfigs.release
             } else {
-                signingConfig signingConfigs.debug
+                signingConfig = signingConfigs.debug
             }
         }
     }
@@ -101,14 +101,14 @@ android {
 }
 
 flutter {
-    source '../..'
+    source = '../..'
 }
 
 dependencies {
-    implementation 'com.android.billingclient:billing:3.0.2'
-    testImplementation 'junit:junit:4.13.2'
-    testImplementation 'org.mockito:mockito-core:5.0.0'
-    testImplementation 'org.json:json:20250517'
-    androidTestImplementation 'androidx.test:runner:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
+    implementation("com.android.billingclient:billing:3.0.2")
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.0.0")
+    testImplementation("org.json:json:20250517")
+    androidTestImplementation("androidx.test:runner:1.1.1")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.1.1")
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -60,16 +60,16 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
     _adsLoaderFuture = _createAdsLoader();
   }
 
-  late final ima.ImaSdkFactory _sdkFactory =
-      _androidParams._proxy.instanceImaSdkFactory();
+  late final ima.ImaSdkFactory _sdkFactory = _androidParams._proxy
+      .instanceImaSdkFactory();
   late Future<ima.AdsLoader> _adsLoaderFuture;
 
   late final AndroidAdsLoaderCreationParams _androidParams =
       params is AndroidAdsLoaderCreationParams
-          ? params as AndroidAdsLoaderCreationParams
-          : AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
-            params,
-          );
+      ? params as AndroidAdsLoaderCreationParams
+      : AndroidAdsLoaderCreationParams.fromPlatformAdsLoaderCreationParams(
+          params,
+        );
 
   @override
   Future<void> contentComplete() async {

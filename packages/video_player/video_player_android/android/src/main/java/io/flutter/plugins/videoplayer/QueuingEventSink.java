@@ -1,14 +1,13 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.videoplayer;
 
-import io.flutter.plugin.common.EventChannel;
 import java.util.ArrayList;
 
 /**
- * And implementation of {@link EventChannel.EventSink} which can wrap an underlying sink.
+ * A wrapper for {@link PigeonEventSink} which can queue messages.
  *
  * <p>It delivers messages immediately when downstream is available, but it queues messages before
  * the delegate event sink is set with setDelegate.
@@ -16,31 +15,28 @@ import java.util.ArrayList;
  * <p>This class is not thread-safe. All calls must be done on the same thread or synchronized
  * externally.
  */
-final class QueuingEventSink implements EventChannel.EventSink {
-  private EventChannel.EventSink delegate;
+final class QueuingEventSink {
+  private PigeonEventSink<PlatformVideoEvent> delegate;
   private final ArrayList<Object> eventQueue = new ArrayList<>();
   private boolean done = false;
 
-  public void setDelegate(EventChannel.EventSink delegate) {
+  public void setDelegate(PigeonEventSink<PlatformVideoEvent> delegate) {
     this.delegate = delegate;
     maybeFlush();
   }
 
-  @Override
   public void endOfStream() {
     enqueue(new EndOfStreamEvent());
     maybeFlush();
     done = true;
   }
 
-  @Override
   public void error(String code, String message, Object details) {
     enqueue(new ErrorEvent(code, message, details));
     maybeFlush();
   }
 
-  @Override
-  public void success(Object event) {
+  public void success(PlatformVideoEvent event) {
     enqueue(event);
     maybeFlush();
   }
@@ -63,7 +59,7 @@ final class QueuingEventSink implements EventChannel.EventSink {
         ErrorEvent errorEvent = (ErrorEvent) event;
         delegate.error(errorEvent.code, errorEvent.message, errorEvent.details);
       } else {
-        delegate.success(event);
+        delegate.success((PlatformVideoEvent) event);
       }
     }
     eventQueue.clear();

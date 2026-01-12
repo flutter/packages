@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -111,21 +111,20 @@ class _MyHomePageState extends State<MyHomePage> {
               maxHeight: maxHeight,
               imageQuality: quality,
             );
-            final List<XFile> pickedFileList =
-                isMedia
-                    ? await _picker.getMedia(
-                      options: MediaOptions(
-                        allowMultiple: allowMultiple,
-                        imageOptions: imageOptions,
-                        limit: limit,
-                      ),
-                    )
-                    : await _picker.getMultiImageWithOptions(
-                      options: MultiImagePickerOptions(
-                        imageOptions: imageOptions,
-                        limit: limit,
-                      ),
-                    );
+            final List<XFile> pickedFileList = isMedia
+                ? await _picker.getMedia(
+                    options: MediaOptions(
+                      allowMultiple: allowMultiple,
+                      imageOptions: imageOptions,
+                      limit: limit,
+                    ),
+                  )
+                : await _picker.getMultiImageWithOptions(
+                    options: MultiImagePickerOptions(
+                      imageOptions: imageOptions,
+                      limit: limit,
+                    ),
+                  );
             if (pickedFileList.isNotEmpty && context.mounted) {
               _showPickedSnackBar(context, pickedFileList);
             }
@@ -256,21 +255,21 @@ class _MyHomePageState extends State<MyHomePage> {
             final String? mime = lookupMimeType(image.path);
             return Semantics(
               label: 'image_picker_example_picked_image',
-              child:
-                  mime == null || mime.startsWith('image/')
-                      ? Image.file(
-                        File(image.path),
-                        errorBuilder: (
-                          BuildContext context,
-                          Object error,
-                          StackTrace? stackTrace,
-                        ) {
-                          return const Center(
-                            child: Text('This image type is not supported'),
-                          );
-                        },
-                      )
-                      : _buildInlineVideoPlayer(index),
+              child: mime == null || mime.startsWith('image/')
+                  ? Image.file(
+                      File(image.path),
+                      errorBuilder:
+                          (
+                            BuildContext context,
+                            Object error,
+                            StackTrace? stackTrace,
+                          ) {
+                            return const Center(
+                              child: Text('This image type is not supported'),
+                            );
+                          },
+                    )
+                  : _buildInlineVideoPlayer(index),
             );
           },
           itemCount: _mediaFileList!.length,
@@ -512,22 +511,18 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton(
               child: const Text('PICK'),
               onPressed: () {
-                final double? width =
-                    maxWidthController.text.isNotEmpty
-                        ? double.parse(maxWidthController.text)
-                        : null;
-                final double? height =
-                    maxHeightController.text.isNotEmpty
-                        ? double.parse(maxHeightController.text)
-                        : null;
-                final int? quality =
-                    qualityController.text.isNotEmpty
-                        ? int.parse(qualityController.text)
-                        : null;
-                final int? limit =
-                    limitController.text.isNotEmpty
-                        ? int.parse(limitController.text)
-                        : null;
+                final double? width = maxWidthController.text.isNotEmpty
+                    ? double.parse(maxWidthController.text)
+                    : null;
+                final double? height = maxHeightController.text.isNotEmpty
+                    ? double.parse(maxHeightController.text)
+                    : null;
+                final int? quality = qualityController.text.isNotEmpty
+                    ? int.parse(qualityController.text)
+                    : null;
+                final int? limit = limitController.text.isNotEmpty
+                    ? int.parse(limitController.text)
+                    : null;
                 onPick(width, height, quality, limit);
                 Navigator.of(context).pop();
               },

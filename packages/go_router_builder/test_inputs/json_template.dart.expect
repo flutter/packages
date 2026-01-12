@@ -1,0 +1,65 @@
+RouteBase get $jsonTemplateRoute => GoRouteData.$route(
+      path: '/',
+      factory: $JsonTemplateRoute._fromState,
+    );
+
+mixin $JsonTemplateRoute on GoRouteData {
+  static JsonTemplateRoute _fromState(GoRouterState state) => JsonTemplateRoute(
+        nested: (String json0) {
+          return JsonExampleNested.fromJson(
+            jsonDecode(json0) as Map<String, dynamic>,
+            (Object? json1) {
+              return JsonExample.fromJson(json1 as Map<String, dynamic>);
+            },
+          );
+        }(state.uri.queryParameters['nested']!),
+        deepNested: _$convertMapValue('deep-nested', state.uri.queryParameters,
+            (String json0) {
+          return JsonExampleNested.fromJson(
+            jsonDecode(json0) as Map<String, dynamic>,
+            (Object? json1) {
+              return JsonExampleNested.fromJson(
+                json1 as Map<String, dynamic>,
+                (Object? json2) {
+                  return JsonExample.fromJson(json2 as Map<String, dynamic>);
+                },
+              );
+            },
+          );
+        }),
+      );
+
+  JsonTemplateRoute get _self => this as JsonTemplateRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+        '/',
+        queryParams: {
+          'nested': jsonEncode(_self.nested.toJson()),
+          if (_self.deepNested != null)
+            'deep-nested': jsonEncode(_self.deepNested!.toJson()),
+        },
+      );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}

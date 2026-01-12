@@ -1,6 +1,6 @@
 ## 2.4.2
 
-* Fixed an issue that caused duplicate semantic nodes for `Link` widgets.
+* Fixes an issue that caused duplicate semantic nodes for `Link` widgets.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 2.4.1

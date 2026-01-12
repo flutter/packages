@@ -83,6 +83,15 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
           as _i4.Future<void>);
 
   @override
+  _i4.Future<void> clearAuthorizationToken(String? token) =>
+      (super.noSuchMethod(
+            Invocation.method(#clearAuthorizationToken, [token]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
   _i4.Future<_i2.AuthorizeResult> authorize(
     _i2.PlatformAuthorizationRequest? params, {
     required bool? promptIfUnauthorized,
@@ -115,4 +124,13 @@ class MockGoogleSignInApi extends _i1.Mock implements _i2.GoogleSignInApi {
             ),
           )
           as _i4.Future<_i2.AuthorizeResult>);
+
+  @override
+  _i4.Future<void> revokeAccess(_i2.PlatformRevokeAccessRequest? params) =>
+      (super.noSuchMethod(
+            Invocation.method(#revokeAccess, [params]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

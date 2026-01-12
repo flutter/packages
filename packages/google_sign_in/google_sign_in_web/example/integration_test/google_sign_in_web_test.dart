@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -351,6 +351,26 @@ void main() {
           ),
           throwsAssertionError,
         );
+      });
+    });
+
+    group('clearAuthorizationToken', () {
+      setUp(() {
+        plugin.init(options);
+      });
+
+      testWidgets('calls clearAuthorizationToken on GIS client', (_) async {
+        const String someToken = 'someToken';
+        await plugin.clearAuthorizationToken(
+          const ClearAuthorizationTokenParams(accessToken: someToken),
+        );
+
+        final List<Object?> arguments =
+            mockito
+                .verify(mockGis.clearAuthorizationToken(mockito.captureAny))
+                .captured;
+
+        expect(arguments.first, someToken);
       });
     });
   });

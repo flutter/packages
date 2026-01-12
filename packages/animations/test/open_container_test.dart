@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,6 +7,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
+  testWidgets('Can be opened via GlobalKey', (WidgetTester tester) async {
+    final GlobalKey<OpenContainerState> openContainerKey =
+        GlobalKey<OpenContainerState>();
+
+    await tester.pumpWidget(
+      _boilerplate(
+        child: Center(
+          child: OpenContainer(
+            key: openContainerKey,
+            closedBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Closed');
+            },
+            openBuilder: (BuildContext context, VoidCallback _) {
+              return const Text('Open');
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Closed'), findsOneWidget);
+    expect(find.text('Open'), findsNothing);
+
+    openContainerKey.currentState!.openContainer();
+    await tester.pumpAndSettle();
+
+    expect(find.text('Closed'), findsNothing);
+    expect(find.text('Open'), findsOneWidget);
+  });
+
   testWidgets('Container opens - Fade (by default)', (
     WidgetTester tester,
   ) async {
@@ -1861,6 +1891,7 @@ class _SizableContainerState extends State<_SizableContainer> {
 
   double get size => _size;
   late double _size;
+
   set size(double value) {
     if (value == _size) {
       return;

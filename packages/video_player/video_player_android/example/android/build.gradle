@@ -51,8 +51,8 @@ gradle.projectsEvaluated {
             // For future reference the dependencies are excluded here:
             // https://github.com/google/ExoPlayer/blob/r2.18.1/library/common/build.gradle#L33-L34
             dependencies {
-                implementation "org.checkerframework:checker-qual:3.13.0"
-                implementation "com.google.errorprone:error_prone_annotations:2.10.0"
+                implementation("org.checkerframework:checker-qual:3.13.0")
+                implementation("com.google.errorprone:error_prone_annotations:2.10.0")
             }
         }
     }

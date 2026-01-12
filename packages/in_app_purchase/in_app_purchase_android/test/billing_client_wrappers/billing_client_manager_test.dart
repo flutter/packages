@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -154,10 +154,9 @@ void main() {
         ) async {
           timesCalled++;
           return BillingResultWrapper(
-            responseCode:
-                timesCalled == 1
-                    ? BillingResponse.serviceDisconnected
-                    : BillingResponse.ok,
+            responseCode: timesCalled == 1
+                ? BillingResponse.serviceDisconnected
+                : BillingResponse.ok,
           );
         });
         verify(mockApi.startConnection(any, any, any)).called(1);

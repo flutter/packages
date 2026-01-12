@@ -1,3 +1,33 @@
+## 0.3.0+2
+
+* Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.3.0+1
+
+* Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.3.0
+
+* Bumps `com.google.ads.interactivemedia.v3:interactivemedia` from 3.36.0 to 3.37.0.
+* **Breaking Change** Adds app desugaring as a requirement for Android apps. Apps without desugaring
+  enabled won't build with the current or future IMA versions. To enable app desugaring, see
+  `README.md`.
+* **Breaking Change** Updates `AdsRequest.adTagUrl` to return `null` when an ad tag is not set.
+
+## 0.2.8+1
+
+* Resolves Gradle 9 deprecations.
+
+## 0.2.8
+
+* Adds support for accessing data for an ad. See `AdEvent.ad`.
+
+## 0.2.7
+
+* Adds support to retrieve content time offsets at which ad breaks are scheduled. See
+  `AdsManager.adCuePoints`
+
 ## 0.2.6+7
 
 * Updates Android `PlatformAdDisplayContainer` implementation to support preloading ads.
