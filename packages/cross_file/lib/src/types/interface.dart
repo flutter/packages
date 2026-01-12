@@ -35,7 +35,10 @@ class XFile extends XFileBase {
     );
   }
 
-  /// Construct a CrossFile object from its data
+  /// Construct a CrossFile object from its data.
+  ///
+  /// On the web, the [path] is ignored if the [bytes] are provided,
+  /// as the underlying Blob URL is used as the path.
   XFile.fromData(
     Uint8List bytes, {
     String? mimeType,

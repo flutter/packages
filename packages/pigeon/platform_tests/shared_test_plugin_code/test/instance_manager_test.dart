@@ -11,13 +11,11 @@ import 'package:shared_test_plugin_code/src/generated/proxy_api_tests.gen.dart';
 void main() {
   group('InstanceManager', () {
     test('addHostCreatedInstance', () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -29,13 +27,11 @@ void main() {
     });
 
     test('addHostCreatedInstance prevents already used objects and ids', () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -54,13 +50,11 @@ void main() {
     });
 
     test('addFlutterCreatedInstance', () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addDartCreatedInstance(object);
 
@@ -71,15 +65,13 @@ void main() {
 
     test('removeWeakReference', () {
       int? weakInstanceId;
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (int instanceId) {
           weakInstanceId = instanceId;
         },
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
@@ -92,30 +84,27 @@ void main() {
     });
 
     test('removeWeakReference removes only weak reference', () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
 
       expect(instanceManager.removeWeakReference(object), 0);
-      final CopyableObject copy =
-          instanceManager.getInstanceWithWeakReference(0)!;
+      final CopyableObject copy = instanceManager.getInstanceWithWeakReference(
+        0,
+      )!;
       expect(identical(object, copy), isFalse);
     });
 
     test('remove', () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
@@ -124,40 +113,36 @@ void main() {
     });
 
     test('remove throws AssertionError if weak reference still exists', () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addDartCreatedInstance(object);
       expect(() => instanceManager.remove(0), throwsAssertionError);
     });
 
     test('getInstance can add a new weak reference', () {
-      final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+      final instanceManager = PigeonInstanceManager(
         onWeakReferenceRemoved: (_) {},
       );
 
-      final CopyableObject object = CopyableObject(
-        pigeon_instanceManager: instanceManager,
-      );
+      final object = CopyableObject(pigeon_instanceManager: instanceManager);
 
       instanceManager.addHostCreatedInstance(object, 0);
       instanceManager.removeWeakReference(object);
 
-      final CopyableObject newWeakCopy =
-          instanceManager.getInstanceWithWeakReference(0)!;
+      final CopyableObject newWeakCopy = instanceManager
+          .getInstanceWithWeakReference(0)!;
       expect(identical(object, newWeakCopy), isFalse);
     });
 
     test(
       'addDartCreatedInstance should add finalizer to original object',
       () async {
-        bool weakReferencedRemovedCalled = false;
-        final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+        var weakReferencedRemovedCalled = false;
+        final instanceManager = PigeonInstanceManager(
           onWeakReferenceRemoved: (_) {
             weakReferencedRemovedCalled = true;
           },
@@ -179,8 +164,8 @@ void main() {
     test(
       'addHostCreatedInstance should not add finalizer to original object',
       () async {
-        bool weakReferencedRemovedCalled = false;
-        final PigeonInstanceManager instanceManager = PigeonInstanceManager(
+        var weakReferencedRemovedCalled = false;
+        final instanceManager = PigeonInstanceManager(
           onWeakReferenceRemoved: (_) {
             weakReferencedRemovedCalled = true;
           },
@@ -202,7 +187,7 @@ void main() {
     testWidgets(
       'instantiating default InstanceManager does not make a message call',
       (WidgetTester tester) async {
-        bool messageCallMade = false;
+        var messageCallMade = false;
         TestDefaultBinaryMessengerBinding
             .instance
             .defaultBinaryMessenger
@@ -222,7 +207,7 @@ void main() {
     testWidgets(
       'default InstanceManager does not make message call when weak reference is removed',
       (WidgetTester tester) async {
-        bool messageCallMade = false;
+        var messageCallMade = false;
         TestDefaultBinaryMessengerBinding
             .instance
             .defaultBinaryMessenger

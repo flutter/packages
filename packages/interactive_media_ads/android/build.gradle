@@ -2,14 +2,14 @@ group = 'dev.flutter.packages.interactive_media_ads'
 version = '1.0-SNAPSHOT'
 
 buildscript {
-    ext.kotlin_version = '2.2.10'
+    ext.kotlin_version = '2.3.0'
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.12.1'
+        classpath 'com.android.tools.build:gradle:8.13.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -44,13 +44,13 @@ android {
     }
 
     defaultConfig {
-        minSdk 21
+        minSdkVersion 24
     }
 
     dependencies {
         implementation("androidx.annotation:annotation:1.9.1")
         implementation("androidx.core:core-ktx:1.13.0")
-        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.37.0")
+        implementation("com.google.ads.interactivemedia.v3:interactivemedia:3.38.0")
         testImplementation("junit:junit:4.13.2")
         testImplementation("org.jetbrains.kotlin:kotlin-test")
         testImplementation("org.mockito.kotlin:mockito-kotlin:6.1.0")

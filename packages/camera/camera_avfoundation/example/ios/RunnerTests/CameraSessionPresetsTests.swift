@@ -28,15 +28,15 @@ final class CameraSessionPresetsTests: XCTestCase {
     }
     let captureFormatMock = MockCaptureDeviceFormat()
     let captureDeviceMock = MockCaptureDevice()
-    captureDeviceMock.formats = [captureFormatMock]
-    captureDeviceMock.activeFormat = captureFormatMock
+    captureDeviceMock.flutterFormats = [captureFormatMock]
+    captureDeviceMock.flutterActiveFormat = captureFormatMock
     captureDeviceMock.lockForConfigurationStub = {
       lockForConfigurationExpectation.fulfill()
     }
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { _ in captureDeviceMock }
-    configuration.videoDimensionsForFormat = { format in
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoDimensionsConverter = { format in
       return CMVideoDimensions(width: 1, height: 1)
     }
     configuration.videoCaptureSession = videoSessionMock
@@ -65,7 +65,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.max)
-    configuration.captureDeviceFactory = { _ in MockCaptureDevice() }
+    configuration.videoCaptureDeviceFactory = { _ in MockCaptureDevice() }
 
     let _ = CameraTestUtils.createTestCamera(configuration)
 

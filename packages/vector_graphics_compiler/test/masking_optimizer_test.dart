@@ -15,7 +15,7 @@ import 'test_svg_strings.dart';
 
 Node parseAndResolve(String source) {
   final Node node = parseToNodeTree(source);
-  final ResolvingVisitor visitor = ResolvingVisitor();
+  final visitor = ResolvingVisitor();
   return node.accept(visitor, AffineMatrix.identity);
 }
 
@@ -42,7 +42,7 @@ void main() {
   </g>
 </svg>''');
 
-      final MaskingOptimizer visitor = MaskingOptimizer();
+      final visitor = MaskingOptimizer();
       final Node newNode = visitor.apply(node);
 
       final List<ResolvedMaskNode> maskNodesNew =
@@ -65,7 +65,7 @@ void main() {
     <circle cx="50" cy="50" r="50" mask="url(#myMask)" />
 </svg>
 ''');
-      final MaskingOptimizer visitor = MaskingOptimizer();
+      final visitor = MaskingOptimizer();
       final Node newNode = visitor.apply(node);
 
       final List<ResolvedMaskNode> maskNodesNew =
@@ -89,7 +89,7 @@ void main() {
 </svg>
 ''');
 
-      final MaskingOptimizer visitor = MaskingOptimizer();
+      final visitor = MaskingOptimizer();
       final Node newNode = visitor.apply(node);
 
       final List<ResolvedMaskNode> maskNodesNew =
@@ -108,7 +108,7 @@ void main() {
   <path mask="url(#a)" d="M0 0 z"/>
 </svg>
 ''');
-    final MaskingOptimizer visitor = MaskingOptimizer();
+    final visitor = MaskingOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedMaskNode> maskNodesNew = queryChildren<ResolvedMaskNode>(
@@ -124,7 +124,7 @@ void main() {
     );
     final List<ParentNode> parentNodesOld = queryChildren<ParentNode>(node);
 
-    final MaskingOptimizer visitor = MaskingOptimizer();
+    final visitor = MaskingOptimizer();
     final Node newNode = visitor.apply(node);
 
     final List<ResolvedPathNode> pathNodesNew = queryChildren<ResolvedPathNode>(
@@ -201,7 +201,7 @@ void main() {
     final VectorInstructions instructionsWithOptimizer = parse(blendAndMask);
     expect(instructionsWithOptimizer.paths, blendsAndMasksForMaskingOptimizer);
 
-    const LinearGradient gradient1 = LinearGradient(
+    const gradient1 = LinearGradient(
       id: 'url(#linearGradient-3)',
       from: Point(46.9782516, 60.9121966),
       to: Point(60.42279469999999, 90.6839734),
@@ -210,7 +210,7 @@ void main() {
       tileMode: TileMode.clamp,
       unitMode: GradientUnitMode.transformed,
     );
-    const LinearGradient gradient2 = LinearGradient(
+    const gradient2 = LinearGradient(
       id: 'url(#linearGradient-3)',
       from: Point(47.58260128, 58.72975728),
       to: Point(58.338235759999996, 82.54717871999999),
@@ -226,7 +226,9 @@ void main() {
         blendMode: BlendMode.multiply,
         fill: Fill(color: Color(0x98ffffff), shader: gradient1),
       ),
-      Paint(fill: Fill(color: Color(0x98ffffff), shader: gradient2)),
+      Paint(
+        fill: Fill(color: Color(0x98ffffff), shader: gradient2),
+      ),
     ]);
 
     expect(instructions.commands, const <DrawCommand>[

@@ -1,5 +1,11 @@
-## NEXT
+## 0.3.5+1
 
+* Replaces README mentions of `dart:html` with `package:web`.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 0.3.5
+
+* Fixes a bug where the bytes of an XFile, that is created using the `XFile.fromData` constructor, are ignored on web.
 * Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 
 ## 0.3.4+2

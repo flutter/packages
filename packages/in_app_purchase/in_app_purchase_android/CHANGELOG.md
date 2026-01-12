@@ -1,3 +1,11 @@
+## 0.4.0+8
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 0.4.0+7
+
+* Updates to Pigeon 26.
+
 ## 0.4.0+6
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.

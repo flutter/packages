@@ -73,8 +73,8 @@ class App extends StatelessWidget {
     routes: <GoRoute>[
       GoRoute(
         path: '/',
-        builder:
-            (BuildContext context, GoRouterState state) => const HomeScreen(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
             name: 'family',
@@ -128,10 +128,9 @@ class FamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> newQueries;
-    final List<String> names =
-        _families[fid]!.people.values
-            .map<String>((Person p) => p.name)
-            .toList();
+    final List<String> names = _families[fid]!.people.values
+        .map<String>((Person p) => p.name)
+        .toList();
     names.sort();
     if (asc) {
       newQueries = const <String, String>{'sort': 'desc'};
@@ -143,12 +142,11 @@ class FamilyScreen extends StatelessWidget {
         title: Text(_families[fid]!.name),
         actions: <Widget>[
           IconButton(
-            onPressed:
-                () => context.goNamed(
-                  'family',
-                  pathParameters: <String, String>{'fid': fid},
-                  queryParameters: newQueries,
-                ),
+            onPressed: () => context.goNamed(
+              'family',
+              pathParameters: <String, String>{'fid': fid},
+              queryParameters: newQueries,
+            ),
             tooltip: 'sort ascending or descending',
             icon: const Icon(Icons.sort),
           ),

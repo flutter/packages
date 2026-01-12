@@ -22,9 +22,8 @@ void main() {
   });
 
   test('Can decode a message without a stroke and vertices', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = FlutterVectorGraphicsListener();
     final int paintId = codec.writeStroke(buffer, 44, 1, 2, 3, 4.0, 6.0);
     codec.writeDrawVertices(
       buffer,
@@ -39,9 +38,8 @@ void main() {
   });
 
   test('Can decode a message with a fill and path', () {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener();
+    final buffer = VectorGraphicsBuffer();
+    final listener = FlutterVectorGraphicsListener();
     final int paintId = codec.writeFill(buffer, 23, 0);
     final int pathId = codec.writePath(
       buffer,
@@ -61,8 +59,7 @@ void main() {
   });
 
   test('Asserts if toPicture is called more than once', () {
-    final FlutterVectorGraphicsListener listener =
-        FlutterVectorGraphicsListener();
+    final listener = FlutterVectorGraphicsListener();
     listener.toPicture();
 
     expect(listener.toPicture, throwsAssertionError);
@@ -71,7 +68,7 @@ void main() {
   testWidgets(
     'Creates layout widgets when VectorGraphic is sized (0x0 graphic)',
     (WidgetTester tester) async {
-      final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+      final buffer = VectorGraphicsBuffer();
       await tester.pumpWidget(
         VectorGraphic(
           loader: TestBytesLoader(buffer.done()),
@@ -83,7 +80,7 @@ void main() {
 
       expect(find.byType(SizedBox), findsNWidgets(2));
 
-      final SizedBox sizedBox =
+      final sizedBox =
           find.byType(SizedBox).evaluate().first.widget as SizedBox;
 
       expect(sizedBox.width, 100);
@@ -94,7 +91,7 @@ void main() {
   testWidgets(
     'Creates layout widgets when VectorGraphic is sized (1:1 ratio)',
     (WidgetTester tester) async {
-      final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+      final buffer = VectorGraphicsBuffer();
       const VectorGraphicsCodec().writeSize(buffer, 50, 50);
       await tester.pumpWidget(
         VectorGraphic(
@@ -107,7 +104,7 @@ void main() {
 
       expect(find.byType(SizedBox), findsNWidgets(2));
 
-      final SizedBox sizedBox =
+      final sizedBox =
           find.byType(SizedBox).evaluate().first.widget as SizedBox;
 
       expect(sizedBox.width, 100);
@@ -118,7 +115,7 @@ void main() {
   testWidgets(
     'Creates layout widgets when VectorGraphic is sized (3:5 ratio)',
     (WidgetTester tester) async {
-      final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+      final buffer = VectorGraphicsBuffer();
       const VectorGraphicsCodec().writeSize(buffer, 30, 50);
       await tester.pumpWidget(
         VectorGraphic(
@@ -131,7 +128,7 @@ void main() {
 
       expect(find.byType(SizedBox), findsNWidgets(2));
 
-      final SizedBox sizedBox =
+      final sizedBox =
           find.byType(SizedBox).evaluate().first.widget as SizedBox;
 
       expect(sizedBox.width, 60);
@@ -142,7 +139,7 @@ void main() {
   testWidgets('Creates alignment widgets when VectorGraphic is aligned', (
     WidgetTester tester,
   ) async {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
     await tester.pumpWidget(
       VectorGraphic(
         loader: TestBytesLoader(buffer.done()),
@@ -154,7 +151,7 @@ void main() {
 
     expect(find.byType(FittedBox), findsOneWidget);
 
-    final FittedBox fittedBox =
+    final fittedBox =
         find.byType(FittedBox).evaluate().first.widget as FittedBox;
 
     expect(fittedBox.fit, BoxFit.fitHeight);
@@ -166,7 +163,7 @@ void main() {
     testWidgets('Sets clipBehavior to hardEdge if not provided', (
       WidgetTester tester,
     ) async {
-      final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+      final buffer = VectorGraphicsBuffer();
       await tester.pumpWidget(
         VectorGraphic(loader: TestBytesLoader(buffer.done())),
       );
@@ -174,7 +171,7 @@ void main() {
 
       expect(find.byType(FittedBox), findsOneWidget);
 
-      final FittedBox fittedBox =
+      final fittedBox =
           find.byType(FittedBox).evaluate().first.widget as FittedBox;
 
       expect(fittedBox.clipBehavior, Clip.hardEdge);
@@ -183,7 +180,7 @@ void main() {
     testWidgets('Passes clipBehavior to FittedBox if provided', (
       WidgetTester tester,
     ) async {
-      final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+      final buffer = VectorGraphicsBuffer();
       await tester.pumpWidget(
         VectorGraphic(
           loader: TestBytesLoader(buffer.done()),
@@ -194,7 +191,7 @@ void main() {
 
       expect(find.byType(FittedBox), findsOneWidget);
 
-      final FittedBox fittedBox =
+      final fittedBox =
           find.byType(FittedBox).evaluate().first.widget as FittedBox;
 
       expect(fittedBox.clipBehavior, Clip.none);
@@ -204,7 +201,7 @@ void main() {
   testWidgets('Sizes VectorGraphic based on encoded viewbox information', (
     WidgetTester tester,
   ) async {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
     codec.writeSize(buffer, 100, 200);
 
     await tester.pumpWidget(
@@ -214,8 +211,7 @@ void main() {
 
     expect(find.byType(SizedBox), findsNWidgets(2));
 
-    final SizedBox sizedBox =
-        find.byType(SizedBox).evaluate().last.widget as SizedBox;
+    final sizedBox = find.byType(SizedBox).evaluate().last.widget as SizedBox;
 
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 200);
@@ -224,7 +220,7 @@ void main() {
   testWidgets('Reloads bytes when configuration changes', (
     WidgetTester tester,
   ) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
     final GlobalKey key = GlobalKey();
 
     await tester.pumpWidget(
@@ -253,7 +249,7 @@ void main() {
   });
 
   testWidgets('Can update SVG picture', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -277,7 +273,7 @@ void main() {
   });
 
   testWidgets('Can set locale and text direction', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
     await tester.pumpWidget(
       Localizations(
         delegates: const <LocalizationsDelegate<Object>>[
@@ -322,8 +318,8 @@ void main() {
   testWidgets('Test animated switch between placeholder and image', (
     WidgetTester tester,
   ) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
-    const Text placeholderWidget = Text('Placeholder');
+    final testBundle = TestAssetBundle();
+    const placeholderWidget = Text('Placeholder');
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -349,7 +345,7 @@ void main() {
   });
 
   testWidgets('Can exclude from semantics', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -367,7 +363,7 @@ void main() {
   });
 
   testWidgets('Can add semantic label', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -390,7 +386,7 @@ void main() {
   });
 
   testWidgets('Default placeholder builder', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -409,7 +405,7 @@ void main() {
   });
 
   testWidgets('Custom placeholder builder', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
 
     await tester.pumpWidget(
       DefaultAssetBundle(
@@ -433,9 +429,9 @@ void main() {
   testWidgets('Does not call setState after unmounting', (
     WidgetTester tester,
   ) async {
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
     codec.writeSize(buffer, 100, 200);
-    final Completer<ByteData> completer = Completer<ByteData>();
+    final completer = Completer<ByteData>();
 
     await tester.pumpWidget(
       Directionality(
@@ -448,8 +444,8 @@ void main() {
   });
 
   testWidgets('Loads a picture with loadPicture', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
-    final Completer<PictureInfo> completer = Completer<PictureInfo>();
+    final testBundle = TestAssetBundle();
+    final completer = Completer<PictureInfo>();
     await tester.pumpWidget(
       Localizations(
         delegates: const <LocalizationsDelegate<Object>>[
@@ -482,8 +478,8 @@ void main() {
   testWidgets('Loads a picture with loadPicture and null build context', (
     WidgetTester tester,
   ) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
-    final Completer<PictureInfo> completer = Completer<PictureInfo>();
+    final testBundle = TestAssetBundle();
+    final completer = Completer<PictureInfo>();
     await tester.pumpWidget(
       Localizations(
         delegates: const <LocalizationsDelegate<Object>>[
@@ -519,8 +515,8 @@ void main() {
   testWidgets('Throws a helpful exception if decoding fails', (
     WidgetTester tester,
   ) async {
-    final Uint8List data = Uint8List(256);
-    final TestBytesLoader loader = TestBytesLoader(
+    final data = Uint8List(256);
+    final loader = TestBytesLoader(
       data.buffer.asByteData(),
       '/foo/bar/whatever.vec',
     );
@@ -542,7 +538,7 @@ void main() {
   testWidgets(
     'Construct vector graphic with drawPicture strategy',
     (WidgetTester tester) async {
-      final TestAssetBundle testBundle = TestAssetBundle();
+      final testBundle = TestAssetBundle();
 
       await tester.pumpWidget(
         DefaultAssetBundle(
@@ -568,11 +564,11 @@ void main() {
   ); // picture rasterization works differently on HTML due to saveLayer bugs in HTML backend
 
   testWidgets('Can render VG with image', (WidgetTester tester) async {
-    const String bluePngPixel =
+    const bluePngPixel =
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPj/HwADBwIAMCbHYQAAAABJRU5ErkJggg==';
 
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
-    const VectorGraphicsCodec codec = VectorGraphicsCodec();
+    final buffer = VectorGraphicsBuffer();
+    const codec = VectorGraphicsCodec();
     codec.writeSize(buffer, 100, 100);
 
     codec.writeDrawImage(
@@ -584,8 +580,8 @@ void main() {
       100,
       null,
     );
-    final UniqueKey key = UniqueKey();
-    final TestBytesLoader loader = TestBytesLoader(buffer.done());
+    final key = UniqueKey();
+    final loader = TestBytesLoader(buffer.done());
     // See listener.dart.
     final int imageKey = Object.hash(loader.hashCode, 0, 0);
 
@@ -627,15 +623,12 @@ void main() {
   }, skip: kIsWeb);
 
   test('AssetBytesLoader respects packages', () async {
-    final TestBundle bundle = TestBundle(<String, ByteData>{
+    final bundle = TestBundle(<String, ByteData>{
       'foo': Uint8List(0).buffer.asByteData(),
       'packages/packageName/foo': Uint8List(1).buffer.asByteData(),
     });
-    final AssetBytesLoader loader = AssetBytesLoader(
-      'foo',
-      assetBundle: bundle,
-    );
-    final AssetBytesLoader packageLoader = AssetBytesLoader(
+    final loader = AssetBytesLoader('foo', assetBundle: bundle);
+    final packageLoader = AssetBytesLoader(
       'foo',
       assetBundle: bundle,
       packageName: 'packageName',
@@ -645,7 +638,7 @@ void main() {
   });
 
   testWidgets('Respects text direction', (WidgetTester tester) async {
-    final TestAssetBundle testBundle = TestAssetBundle();
+    final testBundle = TestAssetBundle();
 
     await tester.pumpWidget(
       Directionality(
@@ -674,10 +667,13 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final Matrix4 matrix = Matrix4.identity();
-    final RenderObject transformObject =
-        find.byType(Transform).evaluate().first.renderObject!;
-    bool visited = false;
+    final matrix = Matrix4.identity();
+    final RenderObject transformObject = find
+        .byType(Transform)
+        .evaluate()
+        .first
+        .renderObject!;
+    var visited = false;
     transformObject.visitChildren((RenderObject child) {
       if (!visited) {
         transformObject.applyPaintTransform(child, matrix);
@@ -702,16 +698,13 @@ void main() {
         loader: const ThrowingBytesLoader(),
         width: 100,
         height: 100,
-        errorBuilder: (
-          BuildContext context,
-          Object error,
-          StackTrace stackTrace,
-        ) {
-          return const Directionality(
-            textDirection: TextDirection.ltr,
-            child: Text('Error is handled'),
-          );
-        },
+        errorBuilder:
+            (BuildContext context, Object error, StackTrace stackTrace) {
+              return const Directionality(
+                textDirection: TextDirection.ltr,
+                child: Text('Error is handled'),
+              );
+            },
       ),
     );
     await tester.pumpAndSettle();
@@ -738,7 +731,7 @@ class TestAssetBundle extends Fake implements AssetBundle {
   @override
   Future<ByteData> load(String key) async {
     loadKeys.add(key);
-    final VectorGraphicsBuffer buffer = VectorGraphicsBuffer();
+    final buffer = VectorGraphicsBuffer();
     codec.writeSize(buffer, 100, 200);
     return buffer.done();
   }

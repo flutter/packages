@@ -1,3 +1,7 @@
+## 2.5.6
+
+* Updates to Pigeon 26.
+
 ## 2.5.5
 
 * Updates minimum supported version to iOS 13 and macOS 10.15.

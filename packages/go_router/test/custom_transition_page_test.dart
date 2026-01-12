@@ -10,12 +10,12 @@ void main() {
   testWidgets(
     'CustomTransitionPage builds its child using transitionsBuilder',
     (WidgetTester tester) async {
-      const HomeScreen child = HomeScreen();
-      final CustomTransitionPage<void> transition = CustomTransitionPage<void>(
+      const child = HomeScreen();
+      final transition = CustomTransitionPage<void>(
         transitionsBuilder: expectAsync4((_, __, ___, Widget child) => child),
         child: child,
       );
-      final GoRouter router = GoRouter(
+      final router = GoRouter(
         routes: <GoRoute>[
           GoRoute(path: '/', pageBuilder: (_, __) => transition),
         ],
@@ -31,9 +31,7 @@ void main() {
   testWidgets('NoTransitionPage does not apply any transition', (
     WidgetTester tester,
   ) async {
-    final ValueNotifier<bool> showHomeValueNotifier = ValueNotifier<bool>(
-      false,
-    );
+    final showHomeValueNotifier = ValueNotifier<bool>(false);
     addTearDown(showHomeValueNotifier.dispose);
     await tester.pumpWidget(
       MaterialApp(
@@ -78,7 +76,7 @@ void main() {
   testWidgets('NoTransitionPage does not apply any reverse transition', (
     WidgetTester tester,
   ) async {
-    final ValueNotifier<bool> showHomeValueNotifier = ValueNotifier<bool>(true);
+    final showHomeValueNotifier = ValueNotifier<bool>(true);
     addTearDown(showHomeValueNotifier.dispose);
     await tester.pumpWidget(
       MaterialApp(
@@ -111,23 +109,23 @@ void main() {
   testWidgets('Dismiss a screen by tapping a modal barrier', (
     WidgetTester tester,
   ) async {
-    const ValueKey<String> homeKey = ValueKey<String>('home');
-    const ValueKey<String> dismissibleModalKey = ValueKey<String>(
-      'dismissibleModal',
-    );
+    const homeKey = ValueKey<String>('home');
+    const dismissibleModalKey = ValueKey<String>('dismissibleModal');
 
-    final GoRouter router = GoRouter(
+    final router = GoRouter(
       routes: <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const HomeScreen(key: homeKey)),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const HomeScreen(key: homeKey),
+        ),
         GoRoute(
           path: '/dismissible-modal',
-          pageBuilder:
-              (_, GoRouterState state) => CustomTransitionPage<void>(
-                key: state.pageKey,
-                barrierDismissible: true,
-                transitionsBuilder: (_, __, ___, Widget child) => child,
-                child: const DismissibleModal(key: dismissibleModalKey),
-              ),
+          pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            barrierDismissible: true,
+            transitionsBuilder: (_, __, ___, Widget child) => child,
+            child: const DismissibleModal(key: dismissibleModalKey),
+          ),
         ),
       ],
     );
@@ -145,26 +143,28 @@ void main() {
   testWidgets('transitionDuration and reverseTransitionDuration is different', (
     WidgetTester tester,
   ) async {
-    const ValueKey<String> homeKey = ValueKey<String>('home');
-    const ValueKey<String> loginKey = ValueKey<String>('login');
-    const Duration transitionDuration = Duration(milliseconds: 50);
-    const Duration reverseTransitionDuration = Duration(milliseconds: 500);
+    const homeKey = ValueKey<String>('home');
+    const loginKey = ValueKey<String>('login');
+    const transitionDuration = Duration(milliseconds: 50);
+    const reverseTransitionDuration = Duration(milliseconds: 500);
 
-    final GoRouter router = GoRouter(
+    final router = GoRouter(
       routes: <GoRoute>[
-        GoRoute(path: '/', builder: (_, __) => const HomeScreen(key: homeKey)),
+        GoRoute(
+          path: '/',
+          builder: (_, __) => const HomeScreen(key: homeKey),
+        ),
         GoRoute(
           path: '/login',
-          pageBuilder:
-              (_, GoRouterState state) => CustomTransitionPage<void>(
-                key: state.pageKey,
-                transitionDuration: transitionDuration,
-                reverseTransitionDuration: reverseTransitionDuration,
-                transitionsBuilder:
-                    (_, Animation<double> animation, ___, Widget child) =>
-                        FadeTransition(opacity: animation, child: child),
-                child: const LoginScreen(key: loginKey),
-              ),
+          pageBuilder: (_, GoRouterState state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            transitionDuration: transitionDuration,
+            reverseTransitionDuration: reverseTransitionDuration,
+            transitionsBuilder:
+                (_, Animation<double> animation, ___, Widget child) =>
+                    FadeTransition(opacity: animation, child: child),
+            child: const LoginScreen(key: loginKey),
+          ),
         ),
       ],
     );

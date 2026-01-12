@@ -48,7 +48,7 @@ class StringListResult {
   StringListLookupResultType type;
 }
 
-@HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
+@HostApi()
 abstract class SharedPreferencesAsyncApi {
   /// Adds property to shared preferences data set of type bool.
   @TaskQueue(type: TaskQueueType.serialBackgroundThread)

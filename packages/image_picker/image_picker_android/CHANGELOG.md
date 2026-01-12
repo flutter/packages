@@ -1,3 +1,23 @@
+## 0.8.13+10
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.1
+
+## 0.8.13+9
+
+* Bumps androidx.activity:activity from 1.10.1 to 1.11.0.
+
+## 0.8.13+8
+
+* Updates to Pigeon 26.
+
+## 0.8.13+7
+
+* Removes reference to internal `isSystemPickerAvailable$activity_release()` method.
+
+## 0.8.13+6
+
+* Fixes typo in limit parameter validation error message.
+
 ## 0.8.13+5
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.

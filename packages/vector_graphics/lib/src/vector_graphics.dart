@@ -397,7 +397,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
   Future<void> _loadAssetBytes() async {
     // First check if we have an avilable picture and use this immediately.
     final Object loaderKey = widget.loader.cacheKey(context);
-    final _PictureKey key = _PictureKey(
+    final key = _PictureKey(
       loaderKey,
       locale,
       textDirection,
@@ -465,7 +465,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
       assert(width != null && height != null);
 
-      double scale = 1.0;
+      var scale = 1.0;
       scale = math.min(
         pictureInfo.size.width / width!,
         pictureInfo.size.height / height!,
@@ -499,10 +499,9 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
         final TextDirection direction = Directionality.of(context);
         if (direction == TextDirection.rtl) {
           child = Transform(
-            transform:
-                Matrix4.identity()
-                  ..translate(pictureInfo.size.width)
-                  ..scale(-1.0, 1.0),
+            transform: Matrix4.identity()
+              ..translate(pictureInfo.size.width)
+              ..scale(-1.0, 1.0),
             child: child,
           );
         }

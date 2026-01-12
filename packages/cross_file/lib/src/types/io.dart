@@ -81,7 +81,7 @@ class XFile extends XFileBase {
     if (_bytes == null) {
       await _file.copy(path);
     } else {
-      final File fileToSave = File(path);
+      final fileToSave = File(path);
       // TODO(kevmoo): Remove ignore and fix when the MIN Dart SDK is 3.3
       // ignore: unnecessary_non_null_assertion
       await fileToSave.writeAsBytes(_bytes!);

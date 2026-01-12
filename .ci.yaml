@@ -29,9 +29,10 @@ platform_properties:
       dependencies: >-
         [
           {"dependency": "android_sdk", "version": "version:36v3"},
-          {"dependency": "open_jdk", "version": "version:17"},
+          {"dependency": "open_jdk", "version": "version:21"},
           {"dependency": "curl", "version": "version:7.64.0"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8719362231152674241"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8719362231152674241"},
+          {"dependency": "ninja", "version": "version:1.9.0"}
         ]
   linux_android_legacy:
     properties:
@@ -47,7 +48,8 @@ platform_properties:
           {"dependency": "open_jdk", "version": "version:17"},
           {"dependency": "curl", "version": "version:7.64.0"},
           {"dependency": "android_virtual_device", "version": "android_31_google_apis_x64.textpb"},
-          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"}
+          {"dependency": "avd_cipd_version", "version": "build_id:8733065022087935185"},
+          {"dependency": "ninja", "version": "version:1.9.0"}
         ]
   linux_desktop:
     properties:
@@ -93,7 +95,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14|Mac-15.5
+      os: Mac-15.5|Mac-15.7
       device_type: none
       cpu: arm64
       $flutter/osx_sdk : >-
@@ -106,7 +108,7 @@ platform_properties:
         [
           {"dependency": "ruby", "version": "ruby_3.1-pod_1.13"}
         ]
-      os: Mac-14|Mac-15.5
+      os: Mac-15.5|Mac-15.7
       device_type: none
       cpu: x86
       $flutter/osx_sdk : >-
@@ -127,7 +129,7 @@ targets:
       dependencies: >-
         [
           {"dependency": "clang", "version": "git_revision:5d5aba78dbbee75508f01bcaa69aedb2ab79065a"},
-          {"dependency": "open_jdk", "version": "version:17"}
+          {"dependency": "open_jdk", "version": "version:21"}
         ]
       env_variables: >-
         {
@@ -325,10 +327,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.32.8"
+      channel: "3.35.7"
       env_variables: >-
         {
-          "CHANNEL": "3.32.8"
+          "CHANNEL": "3.35.7"
         }
 
   - name: Linux analyze_legacy N-2
@@ -336,10 +338,10 @@ targets:
     timeout: 30
     properties:
       target_file: analyze_legacy.yaml
-      channel: "3.29.3"
+      channel: "3.32.8"
       env_variables: >-
         {
-          "CHANNEL": "3.29.3"
+          "CHANNEL": "3.32.8"
         }
 
   - name: Linux_android custom_package_tests master

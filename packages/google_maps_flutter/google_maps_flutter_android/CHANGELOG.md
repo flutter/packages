@@ -1,3 +1,18 @@
+## 2.18.8
+
+* Bumps com.google.maps.android:android-maps-utils from 3.6.0 to 3.19.1.
+
+## 2.18.7
+
+* Replaces internal use of deprecated methods.
+
+## 2.18.6
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 2.18.5
+
+* Updates to Pigeon 26.
+
 ## 2.18.4
 
 * Updates Java compatibility version to 17 and minimum supported SDK version to Flutter 3.35/Dart 3.9.

@@ -491,8 +491,8 @@ not identify a list):
 'Foo': (BuildContext context, DataSource source) {
   final int length = source.length(<Object>['text']);
   if (length > 0) {
-    final StringBuffer text = StringBuffer();
-    for (int index = 0; index < length; index += 1) {
+    final text = StringBuffer();
+    for (var index = 0; index < length; index += 1) {
       text.write(source.v<String>(<Object>['text', index]));
     }
     return Text(text.toString(), textDirection: TextDirection.ltr);
@@ -762,7 +762,7 @@ function.
 
 Compiling a text `rfwtxt` file to the binary `rfw` format can be done
 by calling
-[`encodeLibraryBlob`](https://pub.dev/documentation/rfw/latest/formats/encodeLibraryBlob.html)
+[`encodeLibraryBlob`](https://pub.dev/documentation/rfw/latest/rfw/encodeLibraryBlob.html)
 on the results of calling `parseLibraryFile`.
 
 The example in `example/remote` has some [elaborate remote
@@ -853,7 +853,7 @@ with the `DynamicContent` under the name `server`.
 > This data is parsed by calling
 > [`parseDataFile`](https://pub.dev/documentation/rfw/latest/formats/parseDataFile.html),
 > which turns it into
-> [`DynamicMap`](https://pub.dev/documentation/rfw/latest/formats/DynamicMap.html).
+> [`DynamicMap`](https://pub.dev/documentation/rfw/latest/rfw/DynamicMap.html).
 > That object is then passed to a
 > [`DynamicContent`](https://pub.dev/documentation/rfw/latest/rfw/DynamicContent-class.html),
 > using
@@ -867,9 +867,9 @@ with the `DynamicContent` under the name `server`.
 >
 > Ideally, rather than dealing with this text form on the client, the
 > data would be turned into a binary form using
-> [`encodeDataBlob`](https://pub.dev/documentation/rfw/latest/formats/encodeDataBlob.html)
+> [`encodeDataBlob`](https://pub.dev/documentation/rfw/latest/rfw/encodeDataBlob.html)
 > on the server, and then parsed on the client using
-> [`decodeDataBlob`](https://pub.dev/documentation/rfw/latest/formats/decodeDataBlob.html).
+> [`decodeDataBlob`](https://pub.dev/documentation/rfw/latest/rfw/decodeDataBlob.html).
 
 First, let's render a plain Flutter `ListView` with the name of each
 product. The `Shop` widget below achieves this:
@@ -935,36 +935,6 @@ the app is run.
 This example also shows how an application can implement custom local
 code for events; in this case, incrementing a counter (both of the
 "remote" widgets are just different ways of implementing a counter).
-
-### Integrating with scripting language runtimes
-
-The example in `example/wasm` shows how a program could fetch logic in
-addition to UI, in this case using Wasm compiled from C (and let us
-briefly appreciate the absurdity of using C as a scripting language
-for an application written in Dart).
-
-In this example, as written, the Dart client could support any
-application whose data model consisted of a single integer and whose
-logic could be expressed in C without external dependencies.
-
-This example could be extended to have the C program export data in
-the Remote Flutter Widgets binary data blob format which could be
-parsed using `decodeDataBlob` and passed to `DynamicContent.update`
-(thus allowing any structured data supported by RFW), and similarly
-arguments could be passed to the Wasm code using the same format
-(encoding using `encodeDataBlob`) to allow arbitrary structured data
-to be communicated from the interface to the Wasm logic. In addition,
-the Wasm logic could be provided with WASI interface bindings or with
-custom bindings that expose platform capabilities (e.g. from Flutter
-plugins), greatly extending the scope of what could be implemented in
-the Wasm logic.
-
-As of the time of writing, `package:wasm` does not support Android,
-iOS, or web, so this demo is limited to desktop environments. The
-underlying Wasmer runtime supports Android and iOS already, and
-obviously Wasm in general is supported by web browsers, so it is
-expected that these limitations are only temporary (modulo policy
-concerns on iOS, anyway).
 
 ## Contributing
 

@@ -41,7 +41,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
 
   @override
   Widget build(BuildContext context) {
-    final ExampleGoogleMap googleMap = ExampleGoogleMap(
+    final googleMap = ExampleGoogleMap(
       onMapCreated: onMapCreated,
       initialCameraPosition: _kInitialPosition,
       onTap: (LatLng pos) {
@@ -56,7 +56,7 @@ class _MapClickBodyState extends State<_MapClickBody> {
       },
     );
 
-    final List<Widget> columnChildren = <Widget>[
+    final columnChildren = <Widget>[
       Padding(
         padding: const EdgeInsets.all(10.0),
         child: Center(
@@ -66,8 +66,8 @@ class _MapClickBodyState extends State<_MapClickBody> {
     ];
 
     if (mapController != null) {
-      final String lastTap = 'Tap:\n${_lastTap ?? ""}\n';
-      final String lastLongPress = 'Long press:\n${_lastLongPress ?? ""}';
+      final lastTap = 'Tap:\n${_lastTap ?? ""}\n';
+      final lastLongPress = 'Long press:\n${_lastLongPress ?? ""}';
       columnChildren.add(
         Center(child: Text(lastTap, textAlign: TextAlign.center)),
       );

@@ -1,6 +1,20 @@
-## NEXT
+## 2.16.0
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Adds compatibility with SDK version 10.x for apps targeting iOS 16+.
+
+## 2.15.8
+
+* Replaces internal use of deprecated methods.
+
+## 2.15.7
+
+* Updates to Pigeon 26.
+
+## 2.15.6
+
+* Fixes potential flickers of default property values when adding objects to
+  the map.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 2.15.5
 

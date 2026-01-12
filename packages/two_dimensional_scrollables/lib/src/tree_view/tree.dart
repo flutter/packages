@@ -219,8 +219,8 @@ class TreeViewController {
   /// add a [Builder] widget, which provides a new scope with a
   /// [BuildContext] that is "under" the [TreeView].
   static TreeViewController of(BuildContext context) {
-    final _TreeViewState<Object?>? result =
-        context.findAncestorStateOfType<_TreeViewState<Object?>>();
+    final _TreeViewState<Object?>? result = context
+        .findAncestorStateOfType<_TreeViewState<Object?>>();
     if (result != null) {
       return result.controller;
     }
@@ -579,17 +579,16 @@ class TreeView<T> extends StatefulWidget {
             node: node,
             child: SizedBox.square(
               dimension: 30.0,
-              child:
-                  node.children.isNotEmpty
-                      ? AnimatedRotation(
-                        key: ValueKey<int>(index),
-                        turns: node.isExpanded ? 0.25 : 0.0,
-                        duration: animationDuration,
-                        curve: animationCurve,
-                        // Renders a unicode right-facing arrow. >
-                        child: const Icon(IconData(0x25BA), size: 14),
-                      )
-                      : null,
+              child: node.children.isNotEmpty
+                  ? AnimatedRotation(
+                      key: ValueKey<int>(index),
+                      turns: node.isExpanded ? 0.25 : 0.0,
+                      duration: animationDuration,
+                      curve: animationCurve,
+                      // Renders a unicode right-facing arrow. >
+                      child: const Icon(IconData(0x25BA), size: 14),
+                    )
+                  : null,
             ),
           ),
           // Spacer
@@ -606,12 +605,11 @@ class TreeView<T> extends StatefulWidget {
 }
 
 // Used in TreeViewState for code simplicity.
-typedef _AnimationRecord =
-    ({
-      AnimationController controller,
-      CurvedAnimation animation,
-      UniqueKey key,
-    });
+typedef _AnimationRecord = ({
+  AnimationController controller,
+  CurvedAnimation animation,
+  UniqueKey key,
+});
 
 class _TreeViewState<T> extends State<TreeView<T>>
     with TickerProviderStateMixin, TreeViewStateMixin<T> {
@@ -776,8 +774,8 @@ class _TreeViewState<T> extends State<TreeView<T>>
   @override
   TreeViewNode<T>? getNodeFor(T content) => _getNode(content, widget.tree);
   TreeViewNode<T>? _getNode(T content, List<TreeViewNode<T>> tree) {
-    final List<TreeViewNode<T>> nextDepth = <TreeViewNode<T>>[];
-    for (final TreeViewNode<T> node in tree) {
+    final nextDepth = <TreeViewNode<T>>[];
+    for (final node in tree) {
       if (node.content == content) {
         return node;
       }
@@ -801,7 +799,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
   @override
   void expandAll() {
-    final List<TreeViewNode<T>> activeNodesToExpand = <TreeViewNode<T>>[];
+    final activeNodesToExpand = <TreeViewNode<T>>[];
     _expandAll(widget.tree, activeNodesToExpand);
     activeNodesToExpand.reversed.forEach(toggleNode);
   }
@@ -810,7 +808,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     List<TreeViewNode<T>> tree,
     List<TreeViewNode<T>> activeNodesToExpand,
   ) {
-    for (final TreeViewNode<T> node in tree) {
+    for (final node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
         // Expand all the children, and their children.
@@ -833,7 +831,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
 
   @override
   void collapseAll() {
-    final List<TreeViewNode<T>> activeNodesToCollapse = <TreeViewNode<T>>[];
+    final activeNodesToCollapse = <TreeViewNode<T>>[];
     _collapseAll(widget.tree, activeNodesToCollapse);
     activeNodesToCollapse.reversed.forEach(toggleNode);
   }
@@ -842,7 +840,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
     List<TreeViewNode<T>> tree,
     List<TreeViewNode<T>> activeNodesToCollapse,
   ) {
-    for (final TreeViewNode<T> node in tree) {
+    for (final node in tree) {
       if (node.children.isNotEmpty) {
         // This is a parent node.
         // Collapse all the children, and their children.
@@ -944,7 +942,7 @@ class _TreeViewState<T> extends State<TreeView<T>>
         case AnimationStatus.completed:
       }
 
-      final CurvedAnimation newAnimation = CurvedAnimation(
+      final newAnimation = CurvedAnimation(
         parent: controller,
         curve:
             widget.toggleAnimationStyle?.curve ??

@@ -22,7 +22,7 @@ String render(
     }
     return Template(source, partialResolver: resolver, lenient: true);
   };
-  final Template t = Template(source, partialResolver: resolver, lenient: true);
+  final t = Template(source, partialResolver: resolver, lenient: true);
   return t.renderString(values);
 }
 
@@ -31,7 +31,7 @@ void main() {
 }
 
 void defineTests() {
-  final Directory specsDir = Directory('test/spec/specs');
+  final specsDir = Directory('test/spec/specs');
   specsDir.listSync().forEach((FileSystemEntity f) {
     if (f is File) {
       final String filename = f.path;
@@ -46,25 +46,24 @@ void defineTests() {
 void _defineGroupFromFile(String filename, String text) {
   final Map<String, Object?> jsondata =
       (json.decode(text) as Map<dynamic, dynamic>).cast<String, Object?>();
-  final List<Map<String, Object?>> tests =
-      (jsondata['tests']! as List<dynamic>).cast<Map<String, Object?>>();
+  final List<Map<String, Object?>> tests = (jsondata['tests']! as List<dynamic>)
+      .cast<Map<String, Object?>>();
   filename = filename.substring(filename.lastIndexOf('/') + 1);
   group('Specs of $filename', () {
-    for (final Map<String, Object?> t in tests) {
-      final StringBuffer testDescription = StringBuffer(t['name']! as String);
+    for (final t in tests) {
+      final testDescription = StringBuffer(t['name']! as String);
       testDescription.write(': ');
       testDescription.write(t['desc']);
-      final String template = t['template']! as String;
+      final template = t['template']! as String;
       final Object? data = t['data'];
       final String templateOneline = template
           .replaceAll('\n', r'\n')
           .replaceAll('\r', r'\r');
-      final StringBuffer reason = StringBuffer(
+      final reason = StringBuffer(
         "Could not render right '''$templateOneline'''",
       );
       final Object? expected = t['expected'];
-      final Map<String, Object?>? partials =
-          t['partials'] as Map<String, Object?>?;
+      final partials = t['partials'] as Map<String, Object?>?;
       String? partial(String name) {
         if (partials == null) {
           return null;
@@ -101,7 +100,7 @@ bool shouldRun(String filename) {
 }
 
 String Function(Object?) _dummyCallableWithState() {
-  int callCounter = 0;
+  var callCounter = 0;
   return (Object? arg) {
     callCounter++;
     return callCounter.toString();

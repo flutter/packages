@@ -83,11 +83,11 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
       return;
     }
 
-    final String circleIdVal = 'circle_id_$_circleIdCounter';
+    final circleIdVal = 'circle_id_$_circleIdCounter';
     _circleIdCounter++;
-    final CircleId circleId = CircleId(circleIdVal);
+    final circleId = CircleId(circleIdVal);
 
-    final Circle circle = Circle(
+    final circle = Circle(
       circleId: circleId,
       consumeTapEvents: true,
       strokeColor: Colors.orange,
@@ -171,17 +171,15 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
                       children: <Widget>[
                         TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
-                          onPressed:
-                              (selectedId == null)
-                                  ? null
-                                  : () => _remove(selectedId),
+                          onPressed: (selectedId == null)
+                              ? null
+                              : () => _remove(selectedId),
                           child: const Text('remove'),
                         ),
                         TextButton(
-                          onPressed:
-                              (selectedId == null)
-                                  ? null
-                                  : () => _toggleVisible(selectedId),
+                          onPressed: (selectedId == null)
+                              ? null
+                              : () => _toggleVisible(selectedId),
                           child: const Text('toggle visible'),
                         ),
                       ],
@@ -189,24 +187,21 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
                     Column(
                       children: <Widget>[
                         TextButton(
-                          onPressed:
-                              (selectedId == null)
-                                  ? null
-                                  : () => _changeStrokeWidth(selectedId),
+                          onPressed: (selectedId == null)
+                              ? null
+                              : () => _changeStrokeWidth(selectedId),
                           child: const Text('change stroke width'),
                         ),
                         TextButton(
-                          onPressed:
-                              (selectedId == null)
-                                  ? null
-                                  : () => _changeStrokeColor(selectedId),
+                          onPressed: (selectedId == null)
+                              ? null
+                              : () => _changeStrokeColor(selectedId),
                           child: const Text('change stroke color'),
                         ),
                         TextButton(
-                          onPressed:
-                              (selectedId == null)
-                                  ? null
-                                  : () => _changeFillColor(selectedId),
+                          onPressed: (selectedId == null)
+                              ? null
+                              : () => _changeFillColor(selectedId),
                           child: const Text('change fill color'),
                         ),
                       ],

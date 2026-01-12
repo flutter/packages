@@ -1,3 +1,20 @@
+## NEXT
+
+* Fixes Xcode 26.2 analyzer warnings in example app tests.
+
+## 0.4.7
+
+* Adds `SK2Transaction.unfinishedTransactions()` method to query only unfinished transactions.
+* Exposes `appAccountToken` property in `SK2PurchaseDetails` for user identification.
+
+## 0.4.6+2
+
+* Updates to Pigeon 26.
+
+## 0.4.6+1
+
+* Refactors internals for improved testability.
+
 ## 0.4.6
 
 * Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`

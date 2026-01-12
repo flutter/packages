@@ -7,6 +7,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:math' as math show max;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,11 +17,7 @@ import 'package:video_player_platform_interface/video_player_platform_interface.
 VideoPlayerPlatform? _cachedPlatform;
 
 VideoPlayerPlatform get _platform {
-  if (_cachedPlatform == null) {
-    _cachedPlatform = VideoPlayerPlatform.instance;
-    _cachedPlatform!.init();
-  }
-  return _cachedPlatform!;
+  return _cachedPlatform ??= VideoPlayerPlatform.instance..init();
 }
 
 /// The duration, current position, buffering state, error state and settings
@@ -248,7 +245,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         );
     }
 
-    final VideoCreationOptions creationOptions = VideoCreationOptions(
+    final creationOptions = VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
     );
@@ -257,7 +254,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
         (await _platform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
-    final Completer<void> initializingCompleter = Completer<void>();
+    final initializingCompleter = Completer<void>();
 
     void eventListener(VideoEvent event) {
       switch (event.eventType) {
@@ -287,7 +284,7 @@ class MiniController extends ValueNotifier<VideoPlayerValue> {
     }
 
     void errorListener(Object obj) {
-      final PlatformException e = obj as PlatformException;
+      final e = obj as PlatformException;
       value = VideoPlayerValue.erroneous(e.message!);
       _timer?.cancel();
       if (!initializingCompleter.isCompleted) {
@@ -424,8 +421,8 @@ class _VideoPlayerState extends State<VideoPlayer> {
   }
 
   @override
-  void deactivate() {
-    super.deactivate();
+  void dispose() {
+    super.dispose();
     widget.controller.removeListener(_listener);
   }
 
@@ -453,7 +450,7 @@ class _VideoScrubberState extends State<_VideoScrubber> {
   @override
   Widget build(BuildContext context) {
     void seekToRelativePosition(Offset globalPosition) {
-      final RenderBox box = context.findRenderObject()! as RenderBox;
+      final box = context.findRenderObject()! as RenderBox;
       final Offset tapPos = box.globalToLocal(globalPosition);
       final double relative = tapPos.dx / box.size.width;
       final Duration position = controller.value.duration * relative;
@@ -513,33 +510,31 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
 
   @override
   Widget build(BuildContext context) {
-    const Color playedColor = Color.fromRGBO(255, 0, 0, 0.7);
-    const Color bufferedColor = Color.fromRGBO(50, 50, 200, 0.2);
-    const Color backgroundColor = Color.fromRGBO(200, 200, 200, 0.5);
+    const playedColor = Color.fromRGBO(255, 0, 0, 0.7);
+    const bufferedColor = Color.fromRGBO(50, 50, 200, 0.2);
+    const backgroundColor = Color.fromRGBO(200, 200, 200, 0.5);
 
-    Widget progressIndicator;
+    final Widget progressIndicator;
     if (controller.value.isInitialized) {
       final int duration = controller.value.duration.inMilliseconds;
       final int position = controller.value.position.inMilliseconds;
 
-      int maxBuffering = 0;
-      for (final DurationRange range in controller.value.buffered) {
-        final int end = range.end.inMilliseconds;
-        if (end > maxBuffering) {
-          maxBuffering = end;
-        }
-      }
-
+      final double maxBuffering = duration == 0.0
+          ? 0.0
+          : controller.value.buffered
+                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .fold(0, math.max) /
+                duration;
       progressIndicator = Stack(
         fit: StackFit.passthrough,
         children: <Widget>[
           LinearProgressIndicator(
-            value: maxBuffering / duration,
+            value: maxBuffering,
             valueColor: const AlwaysStoppedAnimation<Color>(bufferedColor),
             backgroundColor: backgroundColor,
           ),
           LinearProgressIndicator(
-            value: position / duration,
+            value: duration == 0.0 ? 0.0 : position / duration,
             valueColor: const AlwaysStoppedAnimation<Color>(playedColor),
             backgroundColor: Colors.transparent,
           ),

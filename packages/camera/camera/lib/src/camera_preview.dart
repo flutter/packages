@@ -23,24 +23,23 @@ class CameraPreview extends StatelessWidget {
   Widget build(BuildContext context) {
     return controller.value.isInitialized
         ? ValueListenableBuilder<CameraValue>(
-          valueListenable: controller,
-          builder: (BuildContext context, Object? value, Widget? child) {
-            return AspectRatio(
-              aspectRatio:
-                  _isLandscape()
-                      ? controller.value.aspectRatio
-                      : (1 / controller.value.aspectRatio),
-              child: Stack(
-                fit: StackFit.expand,
-                children: <Widget>[
-                  _wrapInRotatedBox(child: controller.buildPreview()),
-                  child ?? Container(),
-                ],
-              ),
-            );
-          },
-          child: child,
-        )
+            valueListenable: controller,
+            builder: (BuildContext context, Object? value, Widget? child) {
+              return AspectRatio(
+                aspectRatio: _isLandscape()
+                    ? controller.value.aspectRatio
+                    : (1 / controller.value.aspectRatio),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[
+                    _wrapInRotatedBox(child: controller.buildPreview()),
+                    child ?? Container(),
+                  ],
+                ),
+              );
+            },
+            child: child,
+          )
         : Container();
   }
 
@@ -60,7 +59,7 @@ class CameraPreview extends StatelessWidget {
   }
 
   int _getQuarterTurns() {
-    final Map<DeviceOrientation, int> turns = <DeviceOrientation, int>{
+    final turns = <DeviceOrientation, int>{
       DeviceOrientation.portraitUp: 0,
       DeviceOrientation.landscapeRight: 1,
       DeviceOrientation.portraitDown: 2,
@@ -73,7 +72,7 @@ class CameraPreview extends StatelessWidget {
     return controller.value.isRecordingVideo
         ? controller.value.recordingOrientation!
         : (controller.value.previewPauseOrientation ??
-            controller.value.lockedCaptureOrientation ??
-            controller.value.deviceOrientation);
+              controller.value.lockedCaptureOrientation ??
+              controller.value.deviceOrientation);
   }
 }

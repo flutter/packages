@@ -16,16 +16,240 @@
 #endif
 @import GoogleSignIn;
 
-// OCMock library doesn't generate a valid modulemap.
-#import <OCMock/OCMock.h>
+/// Test implementation of @c FSIViewProvider.
+@interface TestViewProvider : NSObject <FSIViewProvider>
+#if TARGET_OS_OSX
+/// The view containing the Flutter content.
+@property(nonatomic, nullable) NSView *view;
+#else
+/// The view controller containing the Flutter content.
+@property(nonatomic, nullable) UIViewController *viewController;
+#endif
+@end
+
+@implementation TestViewProvider
+@end
+
+/// Test implementation of @c FSIGIDSignIn.
+@interface TestSignIn : NSObject <FSIGIDSignIn>
+
+// To cause methods to throw an exception.
+@property(nonatomic, nullable) NSException *exception;
+
+// Results to use in completion callbacks.
+@property(nonatomic, nullable) NSObject<FSIGIDGoogleUser> *user;
+@property(nonatomic, nullable) NSError *error;
+@property(nonatomic, nullable) NSObject<FSIGIDSignInResult> *signInResult;
+
+// Passed parameters.
+@property(nonatomic, copy, nullable) NSString *hint;
+@property(nonatomic, copy, nullable) NSArray<NSString *> *additionalScopes;
+@property(nonatomic, copy, nullable) NSString *nonce;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+@property(nonatomic, nullable) UIViewController *presentingViewController;
+#else
+@property(nonatomic, nullable) NSWindow *presentingWindow;
+#endif
+
+/// Whether @c signOut was called.
+@property(nonatomic) BOOL signOutCalled;
+
+@end
+
+@implementation TestSignIn
+@synthesize configuration;
+
+- (BOOL)handleURL:(NSURL *)url {
+  return YES;
+}
+
+- (void)restorePreviousSignInWithCompletion:
+    (nullable void (^)(NSObject<FSIGIDGoogleUser> *_Nullable user,
+                       NSError *_Nullable error))completion {
+  if (self.exception) {
+    @throw self.exception;
+  }
+  if (completion) {
+    completion(self.user, self.user ? nil : self.error);
+  }
+}
+
+- (void)signOut {
+  self.signOutCalled = YES;
+}
+
+- (void)disconnectWithCompletion:(nullable void (^)(NSError *_Nullable error))completion {
+  if (self.exception) {
+    @throw self.exception;
+  }
+  if (completion) {
+    completion(self.error);
+  }
+}
+
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+- (void)signInWithPresentingViewController:(UIViewController *)presentingViewController
+                                      hint:(nullable NSString *)hint
+                          additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                                     nonce:(nullable NSString *)nonce
+                                completion:(nullable void (^)(
+                                               NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                               NSError *_Nullable error))completion {
+  if (self.exception) {
+    @throw self.exception;
+  }
+  self.presentingViewController = presentingViewController;
+  self.hint = hint;
+  self.additionalScopes = additionalScopes;
+  self.nonce = nonce;
+  if (completion) {
+    completion(self.signInResult, self.signInResult ? nil : self.error);
+  }
+}
+#else
+- (void)signInWithPresentingWindow:(NSWindow *)presentingWindow
+                              hint:(nullable NSString *)hint
+                  additionalScopes:(nullable NSArray<NSString *> *)additionalScopes
+                             nonce:(nullable NSString *)nonce
+                        completion:
+                            (nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable signInResult,
+                                               NSError *_Nullable error))completion {
+  if (self.exception) {
+    @throw self.exception;
+  }
+  self.presentingWindow = presentingWindow;
+  self.hint = hint;
+  self.additionalScopes = additionalScopes;
+  self.nonce = nonce;
+  if (completion) {
+    completion(self.signInResult, self.signInResult ? nil : self.error);
+  }
+}
+#endif
+
+@end
+
+/// Test implementation of @c FSIGIDProfileData.
+@interface TestProfileData : NSObject <FSIGIDProfileData>
+@property(nonatomic, readwrite) NSString *email;
+@property(nonatomic, readwrite) NSString *name;
+/// A URL to return from imageURLWithDimension:.
+@property(nonatomic) NSURL *imageURL;
+@end
+
+@implementation TestProfileData {
+}
+
+- (BOOL)hasImage {
+  return self.imageURL != nil;
+}
+
+- (NSURL *)imageURLWithDimension:(NSUInteger)dimension {
+  return self.imageURL;
+}
+@end
+
+/// Test implementation of @c FSIGIDToken.
+@interface TestToken : NSObject <FSIGIDToken>
+@property(nonatomic, readwrite) NSString *tokenString;
+@property(nonatomic, readwrite) NSDate *expirationDate;
+@end
+
+@implementation TestToken
+@end
+
+/// Test implementation of @c FSIGIDSignInResult.
+@interface TestSignInResult : NSObject <FSIGIDSignInResult>
+@property(nonatomic, readwrite) NSObject<FSIGIDGoogleUser> *user;
+@property(nonatomic, readwrite, nullable) NSString *serverAuthCode;
+@end
+
+@implementation TestSignInResult
+@end
+
+/// Test implementation of @c FSIGIDGoogleUser.
+@interface TestGoogleUser : NSObject <FSIGIDGoogleUser>
+@property(nonatomic, readwrite, nullable) NSString *userID;
+@property(nonatomic, readwrite, nullable) NSObject<FSIGIDProfileData> *profile;
+@property(nonatomic, readwrite, nullable) NSArray<NSString *> *grantedScopes;
+@property(nonatomic, readwrite) NSObject<FSIGIDToken> *accessToken;
+@property(nonatomic, readwrite) NSObject<FSIGIDToken> *refreshToken;
+@property(nonatomic, readwrite, nullable) NSObject<FSIGIDToken> *idToken;
+
+/// An exception to throw from methods.
+@property(nonatomic, nullable) NSException *exception;
+
+/// The result to return from addScopes:presentingViewController:completion:.
+@property(nonatomic, nullable) NSObject<FSIGIDSignInResult> *result;
+
+/// The error to return from methods.
+@property(nonatomic, nullable) NSError *error;
+
+// Values passed as parameters.
+@property(nonatomic, copy, nullable) NSArray<NSString *> *requestedScopes;
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+@property(nonatomic, nullable) UIViewController *presentingViewController;
+#else
+@property(nonatomic, nullable) NSWindow *presentingWindow;
+#endif
+@end
+
+@implementation TestGoogleUser
+
+- (void)refreshTokensIfNeededWithCompletion:(void (^)(NSObject<FSIGIDGoogleUser> *_Nullable user,
+                                                      NSError *_Nullable error))completion {
+  if (self.exception) {
+    @throw self.exception;
+  }
+  if (completion) {
+    completion(self.error ? nil : self, self.error);
+  }
+}
+
+#if TARGET_OS_IOS || TARGET_OS_MACCATALYST
+
+- (void)addScopes:(NSArray<NSString *> *)scopes
+    presentingViewController:(UIViewController *)presentingViewController
+                  completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable result,
+                                                NSError *_Nullable error))completion {
+  self.requestedScopes = scopes;
+  self.presentingViewController = presentingViewController;
+  if (self.exception) {
+    @throw self.exception;
+  }
+  if (completion) {
+    completion(self.error ? nil : self.result, self.error);
+  }
+}
+
+#elif TARGET_OS_OSX
+
+- (void)addScopes:(NSArray<NSString *> *)scopes
+    presentingWindow:(NSWindow *)presentingWindow
+          completion:(nullable void (^)(NSObject<FSIGIDSignInResult> *_Nullable result,
+                                        NSError *_Nullable error))completion {
+  self.requestedScopes = scopes;
+  self.presentingWindow = presentingWindow;
+  if (self.exception) {
+    @throw self.exception;
+  }
+  if (completion) {
+    completion(self.error ? nil : self.result, self.error);
+  }
+}
+
+#endif
+
+@end
+
+#pragma mark -
 
 @interface FLTGoogleSignInPluginTest : XCTestCase
 
-@property(strong, nonatomic) NSObject<FlutterBinaryMessenger> *mockBinaryMessenger;
-@property(strong, nonatomic) NSObject<FlutterPluginRegistrar> *mockPluginRegistrar;
-@property(strong, nonatomic) FLTGoogleSignInPlugin *plugin;
-@property(strong, nonatomic) id mockSignIn;
-@property(strong, nonatomic) NSDictionary<NSString *, id> *googleServiceInfo;
+@property(nonatomic) TestViewProvider *viewProvider;
+@property(nonatomic) FLTGoogleSignInPlugin *plugin;
+@property(nonatomic) TestSignIn *fakeSignIn;
+@property(nonatomic, copy) NSDictionary<NSString *, id> *googleServiceInfo;
 
 @end
 
@@ -33,16 +257,12 @@
 
 - (void)setUp {
   [super setUp];
-  self.mockBinaryMessenger = OCMProtocolMock(@protocol(FlutterBinaryMessenger));
-  self.mockPluginRegistrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  self.viewProvider = [[TestViewProvider alloc] init];
 
-  id mockSignIn = OCMClassMock([GIDSignIn class]);
-  self.mockSignIn = mockSignIn;
+  self.fakeSignIn = [[TestSignIn alloc] init];
 
-  OCMStub(self.mockPluginRegistrar.messenger).andReturn(self.mockBinaryMessenger);
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:mockSignIn
-                                                    registrar:self.mockPluginRegistrar];
-  [FLTGoogleSignInPlugin registerWithRegistrar:self.mockPluginRegistrar];
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
+                                                 viewProvider:self.viewProvider];
 
   NSString *plistPath =
       [[NSBundle bundleForClass:[self class]] pathForResource:@"GoogleService-Info"
@@ -55,14 +275,11 @@
 - (void)testSignOut {
   FlutterError *error;
   [self.plugin signOutWithError:&error];
-  OCMVerify([self.mockSignIn signOut]);
+  XCTAssertTrue(self.fakeSignIn.signOutCalled);
   XCTAssertNil(error);
 }
 
 - (void)testDisconnect {
-  [(GIDSignIn *)[self.mockSignIn stub]
-      disconnectWithCompletion:[OCMArg invokeBlockWithArgs:[NSNull null], nil]];
-
   XCTestExpectation *expectation = [self expectationWithDescription:@"expect result returns true"];
   [self.plugin disconnectWithCompletion:^(FlutterError *error) {
     XCTAssertNil(error);
@@ -75,8 +292,8 @@
 
 - (void)testInitNoClientIdNoError {
   // Init plugin without GoogleService-Info.plist.
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
-                                                    registrar:self.mockPluginRegistrar
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:nil];
 
   // init call does not provide a clientId.
@@ -90,79 +307,63 @@
 }
 
 - (void)testInitGoogleServiceInfoPlist {
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
-                                                    registrar:self.mockPluginRegistrar
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:self.googleServiceInfo];
   FSIPlatformConfigurationParams *params =
       [FSIPlatformConfigurationParams makeWithClientId:nil
                                         serverClientId:nil
                                           hostedDomain:@"example.com"];
 
-  OCMExpect([self.mockSignIn
-      setConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *config) {
-        XCTAssertEqualObjects(config.hostedDomain, @"example.com");
-        // Set in example app GoogleService-Info.plist.
-        XCTAssertEqualObjects(
-            config.clientID,
-            @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
-        XCTAssertEqualObjects(config.serverClientID, @"YOUR_SERVER_CLIENT_ID");
-        return YES;
-      }]]);
-
   FlutterError *error;
   [self.plugin configureWithParameters:params error:&error];
   XCTAssertNil(error);
+  XCTAssertEqualObjects(self.fakeSignIn.configuration.hostedDomain, @"example.com");
+  // Set in example app GoogleService-Info.plist.
+  XCTAssertEqualObjects(
+      self.fakeSignIn.configuration.clientID,
+      @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
+  XCTAssertEqualObjects(self.fakeSignIn.configuration.serverClientID, @"YOUR_SERVER_CLIENT_ID");
 }
 
 - (void)testInitDynamicClientIdNullDomain {
   // Init plugin without GoogleService-Info.plist.
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
-                                                    registrar:self.mockPluginRegistrar
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:nil];
-
-  OCMExpect(
-      [self.mockSignIn setConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *config) {
-                         XCTAssertEqualObjects(config.hostedDomain, nil);
-                         XCTAssertEqualObjects(config.clientID, @"mockClientId");
-                         XCTAssertEqualObjects(config.serverClientID, nil);
-                         return YES;
-                       }]]);
 
   FSIPlatformConfigurationParams *params =
       [FSIPlatformConfigurationParams makeWithClientId:@"mockClientId"
                                         serverClientId:nil
                                           hostedDomain:nil];
 
-  FlutterError *initializationError;
-  [self.plugin configureWithParameters:params error:&initializationError];
-  XCTAssertNil(initializationError);
-
-  OCMVerifyAll(self.mockSignIn);
+  FlutterError *error;
+  [self.plugin configureWithParameters:params error:&error];
+  XCTAssertNil(error);
+  XCTAssertNil(self.fakeSignIn.configuration.hostedDomain);
+  XCTAssertEqualObjects(self.fakeSignIn.configuration.clientID, @"mockClientId");
+  XCTAssertNil(self.fakeSignIn.configuration.serverClientID);
 }
 
 - (void)testInitDynamicServerClientIdNullDomain {
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
-                                                    registrar:self.mockPluginRegistrar
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:self.googleServiceInfo];
   FSIPlatformConfigurationParams *params =
       [FSIPlatformConfigurationParams makeWithClientId:nil
                                         serverClientId:@"mockServerClientId"
                                           hostedDomain:nil];
 
-  OCMExpect([self.mockSignIn
-      setConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *config) {
-        XCTAssertEqualObjects(config.hostedDomain, nil);
-        // Set in example app GoogleService-Info.plist.
-        XCTAssertEqualObjects(
-            config.clientID,
-            @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
-        XCTAssertEqualObjects(config.serverClientID, @"mockServerClientId");
-        return YES;
-      }]]);
-
-  FlutterError *initializationError;
-  [self.plugin configureWithParameters:params error:&initializationError];
-  XCTAssertNil(initializationError);
+  FlutterError *error;
+  [self.plugin configureWithParameters:params error:&error];
+  XCTAssertNil(error);
+  XCTAssertNil(self.fakeSignIn.configuration.hostedDomain);
+  // Set in example app GoogleService-Info.plist.
+  XCTAssertEqualObjects(
+      self.fakeSignIn.configuration.clientID,
+      @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
+  // Overridden by params.
+  XCTAssertEqualObjects(self.fakeSignIn.configuration.serverClientID, @"mockServerClientId");
 }
 
 - (void)testInitInfoPlist {
@@ -171,32 +372,20 @@
                                         serverClientId:nil
                                           hostedDomain:@"example.com"];
 
-  OCMExpect([self.mockSignIn
-      setConfiguration:[OCMArg checkWithBlock:^BOOL(GIDConfiguration *config) {
-        XCTAssertEqualObjects(config.hostedDomain, nil);
-        // Set in example app Info.plist.
-        XCTAssertEqualObjects(
-            config.clientID,
-            @"479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com");
-        XCTAssertEqualObjects(config.serverClientID, @"YOUR_SERVER_CLIENT_ID");
-        return YES;
-      }]]);
-
   FlutterError *error;
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithRegistrar:self.mockPluginRegistrar];
   [self.plugin configureWithParameters:params error:&error];
   XCTAssertNil(error);
+  // No configuration should be set, allowing the SDK to use its default behavior
+  // (which is to load configuration information from Info.plist).
+  XCTAssertNil(self.fakeSignIn.configuration);
 }
 
 #pragma mark - restorePreviousSignIn
 
 - (void)testSignInSilently {
-  id mockUser = OCMClassMock([GIDGoogleUser class]);
-  OCMStub([mockUser userID]).andReturn(@"mockID");
-
-  [[self.mockSignIn stub]
-      restorePreviousSignInWithCompletion:[OCMArg
-                                              invokeBlockWithArgs:mockUser, [NSNull null], nil]];
+  TestGoogleUser *fakeUser = [[TestGoogleUser alloc] init];
+  fakeUser.userID = @"mockID";
+  self.fakeSignIn.user = fakeUser;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin restorePreviousSignInWithCompletion:^(FSISignInResult *result, FlutterError *error) {
@@ -219,10 +408,7 @@
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
                                           code:kGIDSignInErrorCodeHasNoAuthInKeychain
                                       userInfo:nil];
-
-  [[self.mockSignIn stub]
-      restorePreviousSignInWithCompletion:[OCMArg
-                                              invokeBlockWithArgs:[NSNull null], sdkError, nil]];
+  self.fakeSignIn.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin restorePreviousSignInWithCompletion:^(FSISignInResult *result, FlutterError *error) {
@@ -237,34 +423,28 @@
 #pragma mark - signIn
 
 - (void)testSignIn {
-  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.mockSignIn
-                                                    registrar:self.mockPluginRegistrar
+  self.plugin = [[FLTGoogleSignInPlugin alloc] initWithSignIn:self.fakeSignIn
+                                                 viewProvider:self.viewProvider
                                       googleServiceProperties:self.googleServiceInfo];
-  id mockUser = OCMClassMock([GIDGoogleUser class]);
-  id mockUserProfile = OCMClassMock([GIDProfileData class]);
-  OCMStub([mockUserProfile name]).andReturn(@"mockDisplay");
-  OCMStub([mockUserProfile email]).andReturn(@"mock@example.com");
-  OCMStub([mockUserProfile hasImage]).andReturn(YES);
-  OCMStub([mockUserProfile imageURLWithDimension:1337])
-      .andReturn([NSURL URLWithString:@"https://example.com/profile.png"]);
+  TestGoogleUser *fakeUser = [[TestGoogleUser alloc] init];
+  fakeUser.userID = @"mockID";
+  TestProfileData *fakeUserProfile = [[TestProfileData alloc] init];
+  fakeUserProfile.name = @"mockDisplay";
+  fakeUserProfile.email = @"mock@example.com";
+  fakeUserProfile.imageURL = [NSURL URLWithString:@"https://example.com/profile.png"];
 
   NSString *accessToken = @"mockAccessToken";
   NSString *serverAuthCode = @"mockAuthCode";
-  OCMStub([mockUser profile]).andReturn(mockUserProfile);
-  OCMStub([mockUser userID]).andReturn(@"mockID");
-  id mockAccessToken = OCMClassMock([GIDToken class]);
-  OCMStub([mockAccessToken tokenString]).andReturn(accessToken);
-  OCMStub([mockUser accessToken]).andReturn(mockAccessToken);
+  fakeUser.profile = fakeUserProfile;
+  TestToken *fakeAccessToken = [[TestToken alloc] init];
+  fakeAccessToken.tokenString = accessToken;
+  fakeUser.accessToken = fakeAccessToken;
 
-  id mockSignInResult = OCMClassMock([GIDSignInResult class]);
-  OCMStub([mockSignInResult user]).andReturn(mockUser);
-  OCMStub([mockSignInResult serverAuthCode]).andReturn(serverAuthCode);
+  TestSignInResult *fakeSignInResult = [[TestSignInResult alloc] init];
+  fakeSignInResult.user = fakeUser;
+  fakeSignInResult.serverAuthCode = serverAuthCode;
 
-  [self configureMock:[self.mockSignIn expect]
-      forSignInWithHint:nil
-       additionalScopes:@[]
-                  nonce:nil
-             completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
+  self.fakeSignIn.signInResult = fakeSignInResult;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithScopeHint:@[]
@@ -281,8 +461,6 @@
                           [expectation fulfill];
                         }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
-
-  OCMVerifyAll(self.mockSignIn);
 }
 
 - (void)testSignInWithScopeHint {
@@ -293,19 +471,13 @@
                                  error:&initializationError];
   XCTAssertNil(initializationError);
 
-  id mockUser = OCMClassMock([GIDGoogleUser class]);
-  OCMStub([mockUser userID]).andReturn(@"mockID");
-  id mockSignInResult = OCMClassMock([GIDSignInResult class]);
-  OCMStub([mockSignInResult user]).andReturn(mockUser);
+  TestGoogleUser *fakeUser = [[TestGoogleUser alloc] init];
+  fakeUser.userID = @"mockID";
+  TestSignInResult *fakeSignInResult = [[TestSignInResult alloc] init];
+  fakeSignInResult.user = fakeUser;
 
   NSArray<NSString *> *requestedScopes = @[ @"scope1", @"scope2" ];
-  [self configureMock:[self.mockSignIn expect]
-      forSignInWithHint:nil
-       additionalScopes:[OCMArg checkWithBlock:^BOOL(NSArray<NSString *> *scopes) {
-         return [[NSSet setWithArray:scopes] isEqualToSet:[NSSet setWithArray:requestedScopes]];
-       }]
-                  nonce:nil
-             completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
+  self.fakeSignIn.signInResult = fakeSignInResult;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithScopeHint:requestedScopes
@@ -318,7 +490,8 @@
                         }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 
-  OCMVerifyAll(self.mockSignIn);
+  XCTAssertTrue([[NSSet setWithArray:self.fakeSignIn.additionalScopes]
+      isEqualToSet:[NSSet setWithArray:requestedScopes]]);
 }
 
 - (void)testSignInWithNonce {
@@ -329,17 +502,13 @@
                                  error:&initializationError];
   XCTAssertNil(initializationError);
 
-  id mockUser = OCMClassMock([GIDGoogleUser class]);
-  OCMStub([mockUser userID]).andReturn(@"mockID");
-  id mockSignInResult = OCMClassMock([GIDSignInResult class]);
-  OCMStub([mockSignInResult user]).andReturn(mockUser);
+  TestGoogleUser *fakeUser = [[TestGoogleUser alloc] init];
+  fakeUser.userID = @"mockID";
+  TestSignInResult *fakeSignInResult = [[TestSignInResult alloc] init];
+  fakeSignInResult.user = fakeUser;
 
   NSString *nonce = @"A nonce";
-  [self configureMock:[self.mockSignIn expect]
-      forSignInWithHint:nil
-       additionalScopes:OCMOCK_ANY
-                  nonce:nonce
-             completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
+  self.fakeSignIn.signInResult = fakeSignInResult;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithScopeHint:@[]
@@ -352,27 +521,21 @@
                         }];
   [self waitForExpectationsWithTimeout:5.0 handler:nil];
 
-  OCMVerifyAll(self.mockSignIn);
+  XCTAssertEqualObjects(self.fakeSignIn.nonce, nonce);
 }
 
 - (void)testSignInAlreadyGranted {
-  id mockUser = OCMClassMock([GIDGoogleUser class]);
-  OCMStub([mockUser userID]).andReturn(@"mockID");
-  id mockSignInResult = OCMClassMock([GIDSignInResult class]);
-  OCMStub([mockSignInResult user]).andReturn(mockUser);
+  TestGoogleUser *fakeUser = [[TestGoogleUser alloc] init];
+  fakeUser.userID = @"mockID";
+  TestSignInResult *fakeSignInResult = [[TestSignInResult alloc] init];
+  fakeSignInResult.user = fakeUser;
 
-  [self configureMock:[self.mockSignIn stub]
-      forSignInWithHint:nil
-       additionalScopes:OCMOCK_ANY
-                  nonce:nil
-             completion:[OCMArg invokeBlockWithArgs:mockSignInResult, [NSNull null], nil]];
+  self.fakeSignIn.signInResult = fakeSignInResult;
 
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
                                           code:kGIDSignInErrorCodeScopesAlreadyGranted
                                       userInfo:nil];
-  [self configureMock:mockUser
-         forAddScopes:OCMOCK_ANY
-           completion:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
+  self.fakeSignIn.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithScopeHint:@[]
@@ -390,11 +553,7 @@
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
                                           code:kGIDSignInErrorCodeCanceled
                                       userInfo:nil];
-  [self configureMock:[self.mockSignIn stub]
-      forSignInWithHint:nil
-       additionalScopes:OCMOCK_ANY
-                  nonce:nil
-             completion:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
+  self.fakeSignIn.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithScopeHint:@[]
@@ -411,12 +570,9 @@
 }
 
 - (void)testSignInExceptionReturnsError {
-  OCMExpect([self configureMock:self.mockSignIn
-                forSignInWithHint:OCMOCK_ANY
-                 additionalScopes:OCMOCK_ANY
-                            nonce:nil
-                       completion:OCMOCK_ANY])
-      .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
+  self.fakeSignIn.exception = [NSException exceptionWithName:@"MockName"
+                                                      reason:@"MockReason"
+                                                    userInfo:nil];
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin signInWithScopeHint:@[]
@@ -436,26 +592,20 @@
 #pragma mark - refreshedAuthorizationTokens
 
 - (void)testRefreshTokens {
-  id mockUser = [self signedInMockUser];
-  NSString *userIdentifier = ((GIDGoogleUser *)mockUser).userID;
-  id mockUserResponse = OCMClassMock([GIDGoogleUser class]);
-  OCMStub([mockUserResponse userID]).andReturn(userIdentifier);
+  TestGoogleUser *fakeUser = [self addSignedInUser];
+  // TestGoogleUser passes itself as the result's user property, so set the
+  // fake result data on this object.
+  TestToken *fakeIDToken = [[TestToken alloc] init];
+  fakeIDToken.tokenString = @"mockIdToken";
+  fakeUser.idToken = fakeIDToken;
 
-  id mockIdToken = OCMClassMock([GIDToken class]);
-  OCMStub([mockIdToken tokenString]).andReturn(@"mockIdToken");
-  OCMStub([mockUserResponse idToken]).andReturn(mockIdToken);
-
-  id mockAccessToken = OCMClassMock([GIDToken class]);
-  OCMStub([mockAccessToken tokenString]).andReturn(@"mockAccessToken");
-  OCMStub([mockUserResponse accessToken]).andReturn(mockAccessToken);
-
-  [[mockUser stub]
-      refreshTokensIfNeededWithCompletion:[OCMArg invokeBlockWithArgs:mockUserResponse,
-                                                                      [NSNull null], nil]];
+  TestToken *fakeAccessToken = [[TestToken alloc] init];
+  fakeAccessToken.tokenString = @"mockAccessToken";
+  fakeUser.accessToken = fakeAccessToken;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin
-      refreshedAuthorizationTokensForUser:userIdentifier
+      refreshedAuthorizationTokensForUser:fakeUser.userID
                                completion:^(FSISignInResult *result, FlutterError *error) {
                                  XCTAssertNil(error);
                                  XCTAssertNil(result.error);
@@ -484,16 +634,15 @@
 }
 
 - (void)testRefreshTokensNoAuthKeychainError {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
                                           code:kGIDSignInErrorCodeHasNoAuthInKeychain
                                       userInfo:nil];
-  [[mockUser stub] refreshTokensIfNeededWithCompletion:[OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                                   sdkError, nil]];
+  fakeUser.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
-  [self.plugin refreshedAuthorizationTokensForUser:((GIDGoogleUser *)mockUser).userID
+  [self.plugin refreshedAuthorizationTokensForUser:fakeUser.userID
                                         completion:^(FSISignInResult *result, FlutterError *error) {
                                           XCTAssertNil(error);
                                           XCTAssertNil(result.success);
@@ -505,16 +654,15 @@
 }
 
 - (void)testRefreshTokensCancelledError {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
                                           code:kGIDSignInErrorCodeCanceled
                                       userInfo:nil];
-  [[mockUser stub] refreshTokensIfNeededWithCompletion:[OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                                   sdkError, nil]];
+  fakeUser.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
-  [self.plugin refreshedAuthorizationTokensForUser:((GIDGoogleUser *)mockUser).userID
+  [self.plugin refreshedAuthorizationTokensForUser:fakeUser.userID
                                         completion:^(FSISignInResult *result, FlutterError *error) {
                                           XCTAssertNil(error);
                                           XCTAssertNil(result.success);
@@ -526,16 +674,15 @@
 }
 
 - (void)testRefreshTokensURLError {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
   NSError *sdkError = [NSError errorWithDomain:NSURLErrorDomain
                                           code:NSURLErrorTimedOut
                                       userInfo:nil];
-  [[mockUser stub] refreshTokensIfNeededWithCompletion:[OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                                   sdkError, nil]];
+  fakeUser.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
-  [self.plugin refreshedAuthorizationTokensForUser:((GIDGoogleUser *)mockUser).userID
+  [self.plugin refreshedAuthorizationTokensForUser:fakeUser.userID
                                         completion:^(FSISignInResult *result, FlutterError *error) {
                                           XCTAssertNil(result.error);
                                           XCTAssertNil(result.success);
@@ -549,14 +696,13 @@
 }
 
 - (void)testRefreshTokensUnknownError {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
   NSError *sdkError = [NSError errorWithDomain:@"BogusDomain" code:42 userInfo:nil];
-  [[mockUser stub] refreshTokensIfNeededWithCompletion:[OCMArg invokeBlockWithArgs:[NSNull null],
-                                                                                   sdkError, nil]];
+  fakeUser.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
-  [self.plugin refreshedAuthorizationTokensForUser:((GIDGoogleUser *)mockUser).userID
+  [self.plugin refreshedAuthorizationTokensForUser:fakeUser.userID
                                         completion:^(FSISignInResult *result, FlutterError *error) {
                                           XCTAssertNil(result.success);
                                           XCTAssertEqualObjects(error.code, @"BogusDomain: 42");
@@ -566,6 +712,29 @@
 }
 
 #pragma mark - addScopes
+
+- (void)testRequestScopesPassesScopes {
+  TestGoogleUser *fakeUser = [self addSignedInUser];
+  // Create a different instance to return in the result, to avoid a retain cycle.
+  TestGoogleUser *fakeResultUser = [[TestGoogleUser alloc] init];
+  fakeResultUser.userID = fakeUser.userID;
+  TestSignInResult *fakeSignInResult = [[TestSignInResult alloc] init];
+  fakeSignInResult.user = fakeResultUser;
+  fakeUser.result = fakeSignInResult;
+
+  NSArray<NSString *> *scopes = @[ @"mockScope1" ];
+
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
+  [self.plugin addScopes:@[ @"mockScope1" ]
+                 forUser:fakeUser.userID
+              completion:^(FSISignInResult *result, FlutterError *error) {
+                XCTAssertNil(error);
+                XCTAssertNotNil(result.success);
+                [expectation fulfill];
+              }];
+  [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  XCTAssertEqual(fakeUser.requestedScopes.firstObject, scopes.firstObject);
+}
 
 - (void)testRequestScopesResultErrorIfNotSignedIn {
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
@@ -581,18 +750,16 @@
 }
 
 - (void)testRequestScopesIfNoMissingScope {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
                                           code:kGIDSignInErrorCodeScopesAlreadyGranted
                                       userInfo:nil];
-  [self configureMock:[mockUser stub]
-         forAddScopes:@[ @"mockScope1" ]
-           completion:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
+  fakeUser.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin addScopes:@[ @"mockScope1" ]
-                 forUser:((GIDGoogleUser *)mockUser).userID
+                 forUser:fakeUser.userID
               completion:^(FSISignInResult *result, FlutterError *error) {
                 XCTAssertNil(error);
                 XCTAssertNil(result.success);
@@ -603,18 +770,16 @@
 }
 
 - (void)testRequestScopesResultErrorIfMismatchingUser {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
   NSError *sdkError = [NSError errorWithDomain:kGIDSignInErrorDomain
                                           code:kGIDSignInErrorCodeMismatchWithCurrentUser
                                       userInfo:nil];
-  [self configureMock:[mockUser stub]
-         forAddScopes:@[ @"mockScope1" ]
-           completion:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
+  fakeUser.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin addScopes:@[ @"mockScope1" ]
-                 forUser:((GIDGoogleUser *)mockUser).userID
+                 forUser:fakeUser.userID
               completion:^(FSISignInResult *result, FlutterError *error) {
                 XCTAssertNil(error);
                 XCTAssertNil(result.success);
@@ -625,16 +790,14 @@
 }
 
 - (void)testRequestScopesWithUnknownError {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
   NSError *sdkError = [NSError errorWithDomain:@"BogusDomain" code:42 userInfo:nil];
-  [self configureMock:[mockUser stub]
-         forAddScopes:@[ @"mockScope1" ]
-           completion:[OCMArg invokeBlockWithArgs:[NSNull null], sdkError, nil]];
+  fakeUser.error = sdkError;
 
   XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin addScopes:@[ @"mockScope1" ]
-                 forUser:((GIDGoogleUser *)mockUser).userID
+                 forUser:fakeUser.userID
               completion:^(FSISignInResult *result, FlutterError *error) {
                 XCTAssertNil(result);
                 XCTAssertEqualObjects(error.code, @"BogusDomain: 42");
@@ -644,60 +807,33 @@
 }
 
 - (void)testRequestScopesException {
-  id mockUser = [self signedInMockUser];
+  TestGoogleUser *fakeUser = [self addSignedInUser];
 
-  OCMExpect([self configureMock:mockUser forAddScopes:@[] completion:OCMOCK_ANY])
-      .andThrow([NSException exceptionWithName:@"MockName" reason:@"MockReason" userInfo:nil]);
+  fakeUser.exception = [NSException exceptionWithName:@"MockName"
+                                               reason:@"MockReason"
+                                             userInfo:nil];
 
+  XCTestExpectation *expectation = [self expectationWithDescription:@"completion called"];
   [self.plugin addScopes:@[]
-                 forUser:((GIDGoogleUser *)mockUser).userID
+                 forUser:fakeUser.userID
               completion:^(FSISignInResult *result, FlutterError *error) {
                 XCTAssertNil(result);
                 XCTAssertEqualObjects(error.code, @"request_scopes");
                 XCTAssertEqualObjects(error.message, @"MockReason");
                 XCTAssertEqualObjects(error.details, @"MockName");
+                [expectation fulfill];
               }];
+  [self waitForExpectationsWithTimeout:5.0 handler:nil];
 }
 
 #pragma mark - Utils
 
-- (id)signedInMockUser {
-  NSString *identifier = @"mockID";
-  id mockUser = OCMClassMock([GIDGoogleUser class]);
-  OCMStub([mockUser userID]).andReturn(identifier);
-  self.plugin.usersByIdentifier[identifier] = mockUser;
-  return mockUser;
-}
-
-- (void)configureMock:(id)mock
-         forAddScopes:(NSArray<NSString *> *)scopes
-           completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
-                                         NSError *_Nullable error))completion {
-#if TARGET_OS_OSX
-  [mock addScopes:scopes presentingWindow:OCMOCK_ANY completion:completion];
-#else
-  [mock addScopes:scopes presentingViewController:OCMOCK_ANY completion:completion];
-#endif
-}
-- (void)configureMock:(id)mock
-    forSignInWithHint:(NSString *)hint
-     additionalScopes:(NSArray<NSString *> *)additionalScopes
-                nonce:(nullable NSString *)nonce
-           completion:(nullable void (^)(GIDSignInResult *_Nullable signInResult,
-                                         NSError *_Nullable error))completion {
-#if TARGET_OS_OSX
-  [mock signInWithPresentingWindow:OCMOCK_ANY
-                              hint:hint
-                  additionalScopes:additionalScopes
-                             nonce:nonce
-                        completion:completion];
-#else
-  [mock signInWithPresentingViewController:[OCMArg isKindOfClass:[FlutterViewController class]]
-                                      hint:hint
-                          additionalScopes:additionalScopes
-                                     nonce:nonce
-                                completion:completion];
-#endif
+- (TestGoogleUser *)addSignedInUser {
+  NSString *identifier = @"fakeID";
+  TestGoogleUser *user = [[TestGoogleUser alloc] init];
+  user.userID = identifier;
+  self.plugin.usersByIdentifier[identifier] = user;
+  return user;
 }
 
 @end

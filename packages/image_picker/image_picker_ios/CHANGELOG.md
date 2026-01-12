@@ -1,3 +1,16 @@
+## 0.8.13+4
+
+* Improves compatibility with `UIScene`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 0.8.13+3
+
+* Fixes a performance regression on iOS where picking videos could cause a long delay due to transcoding. The picker is now configured to request the original asset to avoid conversion.
+
+## 0.8.13+2
+
+* Updates to Pigeon 26.
+
 ## 0.8.13+1
 
 * Updates minimum supported version to iOS 13.

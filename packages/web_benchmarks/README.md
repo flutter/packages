@@ -54,8 +54,8 @@ void main() {
 }
 
 BenchmarkResults _benchmarkResultsFromFile(String path) {
-  final File file = File.fromUri(Uri.parse(path));
-  final Map<String, Object?> fileContentAsJson =
+  final file = File.fromUri(Uri.parse(path));
+  final fileContentAsJson =
       jsonDecode(file.readAsStringSync()) as Map<String, Object?>;
   return BenchmarkResults.parse(fileContentAsJson);
 }

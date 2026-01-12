@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
     BuildContext context,
     AsyncSnapshot<Directory?> snapshot,
   ) {
-    Text text = const Text('');
+    var text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
         text = Text('Error: ${snapshot.error}');
@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
     BuildContext context,
     AsyncSnapshot<List<Directory>?> snapshot,
   ) {
-    Text text = const Text('');
+    var text = const Text('');
     if (snapshot.connectionState == ConnectionState.done) {
       if (snapshot.hasError) {
         text = Text('Error: ${snapshot.error}');
@@ -193,8 +193,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed:
-                        Platform.isAndroid ? null : _requestAppLibraryDirectory,
+                    onPressed: Platform.isAndroid
+                        ? null
+                        : _requestAppLibraryDirectory,
                     child: Text(
                       Platform.isAndroid
                           ? 'Application Library Directory unavailable'
@@ -228,10 +229,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed:
-                        !Platform.isAndroid
-                            ? null
-                            : _requestExternalStorageDirectory,
+                    onPressed: !Platform.isAndroid
+                        ? null
+                        : _requestExternalStorageDirectory,
                     child: Text(
                       !Platform.isAndroid
                           ? 'External storage is unavailable'
@@ -250,14 +250,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed:
-                        !Platform.isAndroid
-                            ? null
-                            : () {
-                              _requestExternalStorageDirectories(
-                                StorageDirectory.music,
-                              );
-                            },
+                    onPressed: !Platform.isAndroid
+                        ? null
+                        : () {
+                            _requestExternalStorageDirectories(
+                              StorageDirectory.music,
+                            );
+                          },
                     child: Text(
                       !Platform.isAndroid
                           ? 'External directories are unavailable'
@@ -276,10 +275,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed:
-                        !Platform.isAndroid
-                            ? null
-                            : _requestExternalCacheDirectories,
+                    onPressed: !Platform.isAndroid
+                        ? null
+                        : _requestExternalCacheDirectories,
                     child: Text(
                       !Platform.isAndroid
                           ? 'External directories are unavailable'
@@ -298,10 +296,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: ElevatedButton(
-                    onPressed:
-                        Platform.isAndroid || Platform.isIOS
-                            ? null
-                            : _requestDownloadsDirectory,
+                    onPressed: Platform.isAndroid || Platform.isIOS
+                        ? null
+                        : _requestDownloadsDirectory,
                     child: Text(
                       Platform.isAndroid || Platform.isIOS
                           ? 'Downloads directory is unavailable'

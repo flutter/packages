@@ -128,6 +128,10 @@ public class FileSelectorPlugin: NSObject, FlutterPlugin, FileSelectorApi {
         }
       }
     }
+
+    if let canCreateDirectories = options.canCreateDirectories {
+      panel.canCreateDirectories = canCreateDirectories
+    }
   }
 
   /// Configures an NSOpenPanel based on channel method call arguments.

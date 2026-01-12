@@ -62,7 +62,7 @@ void main() {
         String key, {
         required Map<String, Object?> expectedData,
       }) async {
-        const bool legacy = false;
+        const legacy = false;
 
         await extension.requestValue(key, legacy);
 
@@ -74,8 +74,8 @@ void main() {
       }
 
       test('should request bool value from async api', () async {
-        const String key = 'key';
-        const bool expectedValue = true;
+        const key = 'key';
+        const expectedValue = true;
         await asyncPreferences.setBool(key, expectedValue);
 
         await testAsyncApiRequestValue(
@@ -88,8 +88,8 @@ void main() {
       });
 
       test('should request int value from async api', () async {
-        const String key = 'key';
-        const int expectedValue = 42;
+        const key = 'key';
+        const expectedValue = 42;
         await asyncPreferences.setInt(key, expectedValue);
 
         await testAsyncApiRequestValue(
@@ -102,8 +102,8 @@ void main() {
       });
 
       test('should request double value from async api', () async {
-        const String key = 'key';
-        const double expectedValue = 42.2;
+        const key = 'key';
+        const expectedValue = 42.2;
         await asyncPreferences.setDouble(key, expectedValue);
 
         await testAsyncApiRequestValue(
@@ -116,8 +116,8 @@ void main() {
       });
 
       test('should request string value from async api', () async {
-        const String key = 'key';
-        const String expectedValue = 'value';
+        const key = 'key';
+        const expectedValue = 'value';
         await asyncPreferences.setString(key, expectedValue);
 
         await testAsyncApiRequestValue(
@@ -130,8 +130,8 @@ void main() {
       });
 
       test('should request string list value from async api', () async {
-        const String key = 'key';
-        const List<String> expectedValue = <String>['string1', 'string2'];
+        const key = 'key';
+        const expectedValue = <String>['string1', 'string2'];
         await asyncPreferences.setStringList(key, expectedValue);
 
         await testAsyncApiRequestValue(
@@ -147,7 +147,7 @@ void main() {
         String key,
         Object expectedValue,
       ) async {
-        const bool legacy = false;
+        const legacy = false;
 
         await extension.requestValueChange(
           key,
@@ -164,8 +164,8 @@ void main() {
       }
 
       test('should request int value change on async api', () async {
-        const String key = 'key';
-        const int expectedValue = 42;
+        const key = 'key';
+        const expectedValue = 42;
         await asyncPreferences.setInt(key, 24);
 
         await testAsyncApiValueChange(key, expectedValue);
@@ -174,8 +174,8 @@ void main() {
       });
 
       test('should request bool value change on async api', () async {
-        const String key = 'key';
-        const bool expectedValue = false;
+        const key = 'key';
+        const expectedValue = false;
         await asyncPreferences.setBool(key, true);
 
         await testAsyncApiValueChange(key, expectedValue);
@@ -184,8 +184,8 @@ void main() {
       });
 
       test('should request double value change on async api', () async {
-        const String key = 'key';
-        const double expectedValue = 22.22;
+        const key = 'key';
+        const expectedValue = 22.22;
         await asyncPreferences.setDouble(key, 11.1);
 
         await testAsyncApiValueChange(key, expectedValue);
@@ -194,8 +194,8 @@ void main() {
       });
 
       test('should request string value change on async api', () async {
-        const String key = 'key';
-        const String expectedValue = 'new value';
+        const key = 'key';
+        const expectedValue = 'new value';
         await asyncPreferences.setString(key, 'old value');
 
         await testAsyncApiValueChange(key, expectedValue);
@@ -204,8 +204,8 @@ void main() {
       });
 
       test('should request string list value change on async api', () async {
-        const String key = 'key';
-        const List<String> expectedValue = <String>['string1', 'string2'];
+        const key = 'key';
+        const expectedValue = <String>['string1', 'string2'];
         await asyncPreferences.setStringList(key, <String>['old1', 'old2']);
 
         await testAsyncApiValueChange(key, expectedValue);
@@ -222,7 +222,7 @@ void main() {
         String key, {
         required Map<String, Object?> expectedData,
       }) async {
-        const bool legacy = true;
+        const legacy = true;
 
         await extension.requestValue(key, legacy);
 
@@ -234,8 +234,8 @@ void main() {
       }
 
       test('should request bool value from legacy api', () async {
-        const String key = 'key';
-        const bool expectedValue = false;
+        const key = 'key';
+        const expectedValue = false;
         SharedPreferences.setMockInitialValues(<String, Object>{
           key: expectedValue,
         });
@@ -250,8 +250,8 @@ void main() {
       });
 
       test('should request int value from legacy api', () async {
-        const String key = 'key';
-        const int expectedValue = 42;
+        const key = 'key';
+        const expectedValue = 42;
         SharedPreferences.setMockInitialValues(<String, Object>{
           key: expectedValue,
         });
@@ -266,8 +266,8 @@ void main() {
       });
 
       test('should request double value from legacy api', () async {
-        const String key = 'key';
-        const double expectedValue = 42.2;
+        const key = 'key';
+        const expectedValue = 42.2;
         SharedPreferences.setMockInitialValues(<String, Object>{
           key: expectedValue,
         });
@@ -282,8 +282,8 @@ void main() {
       });
 
       test('should request string value from legacy api', () async {
-        const String key = 'key';
-        const String expectedValue = 'value';
+        const key = 'key';
+        const expectedValue = 'value';
         SharedPreferences.setMockInitialValues(<String, Object>{
           key: expectedValue,
         });
@@ -298,8 +298,8 @@ void main() {
       });
 
       test('should request string list value from legacy api', () async {
-        const String key = 'key';
-        const List<String> expectedValue = <String>['string1', 'string2'];
+        const key = 'key';
+        const expectedValue = <String>['string1', 'string2'];
         SharedPreferences.setMockInitialValues(<String, Object>{
           key: expectedValue,
         });
@@ -317,7 +317,7 @@ void main() {
         String key,
         Object expectedValue,
       ) async {
-        const bool legacy = true;
+        const legacy = true;
 
         await extension.requestValueChange(
           key,
@@ -334,8 +334,8 @@ void main() {
       }
 
       test('should request int value change on legacy api', () async {
-        const String key = 'key';
-        const int expectedValue = 42;
+        const key = 'key';
+        const expectedValue = 42;
         SharedPreferences.setMockInitialValues(<String, Object>{key: 24});
 
         await testLegacyApiValueChange(key, expectedValue);
@@ -347,8 +347,8 @@ void main() {
       });
 
       test('should request bool value change on legacy api', () async {
-        const String key = 'key';
-        const bool expectedValue = false;
+        const key = 'key';
+        const expectedValue = false;
         SharedPreferences.setMockInitialValues(<String, Object>{key: true});
 
         await testLegacyApiValueChange(key, expectedValue);
@@ -360,8 +360,8 @@ void main() {
       });
 
       test('should request double value change on legacy api', () async {
-        const String key = 'key';
-        const double expectedValue = 1.11;
+        const key = 'key';
+        const expectedValue = 1.11;
         SharedPreferences.setMockInitialValues(<String, Object>{key: 2.22});
 
         await testLegacyApiValueChange(key, expectedValue);
@@ -373,8 +373,8 @@ void main() {
       });
 
       test('should request string value change on legacy api', () async {
-        const String key = 'key';
-        const String expectedValue = 'new value';
+        const key = 'key';
+        const expectedValue = 'new value';
         SharedPreferences.setMockInitialValues(<String, Object>{
           key: 'old value',
         });
@@ -388,8 +388,8 @@ void main() {
       });
 
       test('should request string list value change on legacy api', () async {
-        const String key = 'key';
-        const List<String> expectedValue = <String>['string1', 'string2'];
+        const key = 'key';
+        const expectedValue = <String>['string1', 'string2'];
         SharedPreferences.setMockInitialValues(<String, Object>{
           key: <String>['old1', 'old2'],
         });

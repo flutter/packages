@@ -14,10 +14,12 @@ class PathProviderFoundation extends PathProviderPlatform {
   /// Constructor that accepts a testable PathProviderPlatformProvider.
   PathProviderFoundation({
     @visibleForTesting PathProviderPlatformProvider? platform,
-  }) : _platformProvider = platform ?? PathProviderPlatformProvider();
+    @visibleForTesting PathProviderApi? pathProviderApi,
+  }) : _platformProvider = platform ?? PathProviderPlatformProvider(),
+       _pathProvider = pathProviderApi ?? PathProviderApi();
 
   final PathProviderPlatformProvider _platformProvider;
-  final PathProviderApi _pathProvider = PathProviderApi();
+  final PathProviderApi _pathProvider;
 
   /// Registers this class as the default instance of [PathProviderPlatform]
   static void registerWith() {

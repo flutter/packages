@@ -1,3 +1,7 @@
+## 2.0.1
+
+* Updates to Pigeon 26.
+
 ## 2.0.0
 
 * **BREAKING CHANGES:**

@@ -936,6 +936,33 @@
   OCMVerifyAllWithDelay(mockTextureRegistry, 10);
 }
 
+- (void)testVideoOutputIsAddedWhenAVPlayerItemBecomesReady {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}];
+
+  FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
+                                                                                 error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(identifiers);
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
+  XCTAssertNotNil(player);
+
+  AVPlayerItem *item = player.player.currentItem;
+  [self keyValueObservingExpectationForObject:(id)item
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusReadyToPlay)];
+  [self waitForExpectationsWithTimeout:10.0 handler:nil];
+  // Video output is added as soon as the status becomes ready to play.
+  XCTAssertEqual(item.outputs.count, 1);
+}
+
 #if TARGET_OS_IOS
 - (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
@@ -1022,6 +1049,43 @@
 
 - (nonnull AVPlayerItem *)playerItemWithURL:(NSURL *)url {
   return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
+}
+
+- (void)testLoadTracksWithMediaTypeIsCalledOnNewerOS {
+  if (@available(iOS 15.0, macOS 12.0, *)) {
+    AVAsset *mockAsset = OCMClassMock([AVAsset class]);
+    AVPlayerItem *mockItem = OCMClassMock([AVPlayerItem class]);
+    OCMStub([mockItem asset]).andReturn(mockAsset);
+
+    // Stub loadValuesAsynchronouslyForKeys to immediately call completion
+    OCMStub([mockAsset loadValuesAsynchronouslyForKeys:[OCMArg any]
+                                     completionHandler:[OCMArg invokeBlock]]);
+
+    // Stub statusOfValueForKey to return Loaded
+    OCMStub([mockAsset statusOfValueForKey:@"tracks" error:[OCMArg anyObjectRef]])
+        .andReturn(AVKeyValueStatusLoaded);
+
+    // Expect loadTracksWithMediaType:completionHandler:
+    XCTestExpectation *expectation =
+        [self expectationWithDescription:@"loadTracksWithMediaType called"];
+    OCMExpect([mockAsset loadTracksWithMediaType:AVMediaTypeVideo completionHandler:[OCMArg any]])
+        .andDo(^(NSInvocation *invocation) {
+          [expectation fulfill];
+          // Invoke the completion handler to prevent leaks or hangs if the code waits for it
+          void (^completion)(NSArray<AVAssetTrack *> *, NSError *);
+          [invocation getArgument:&completion atIndex:3];
+          completion(@[], nil);
+        });
+
+    StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil output:nil];
+    FVPVideoPlayer *player =
+        [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
+                                         avFactory:stubAVFactory
+                                      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+    (void)player;  // Keep reference
+
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  }
 }
 
 @end

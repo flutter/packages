@@ -34,7 +34,7 @@ private object EventChannelMessagesPigeonUtils {
     }
     if (a is Map<*, *> && b is Map<*, *>) {
       return a.size == b.size &&
-          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
@@ -186,4 +186,8 @@ abstract class StreamEventsStreamHandler :
           .setStreamHandler(internalStreamHandler)
     }
   }
+  // Implement methods from EventChannelMessagesPigeonEventChannelWrapper
+  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
+
+  override fun onCancel(p0: Any?) {}
 }
