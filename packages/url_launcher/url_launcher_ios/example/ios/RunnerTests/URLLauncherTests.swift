@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import url_launcher_ios
 
@@ -31,7 +31,8 @@ final class StubViewPresenterProvider: ViewPresenterProvider {
   }
 }
 
-final class URLLauncherTests: XCTestCase {
+@MainActor
+struct URLLauncherTests {
 
   private func createPlugin(
     launcher: FakeLauncher = FakeLauncher(), viewPresenter: ViewPresenter? = TestViewPresenter()
@@ -41,147 +42,131 @@ final class URLLauncherTests: XCTestCase {
       viewPresenterProvider: StubViewPresenterProvider(viewPresenter: viewPresenter))
   }
 
-  func testCanLaunchSuccess() {
-    let result = createPlugin().canLaunchUrl(url: "good://url")
-    XCTAssertEqual(result, .success)
+  @Test(arguments: [
+    ("good://url", LaunchResult.success),
+    ("bad://url", .failure),
+  ])
+  func canLaunch(url: String, expected: LaunchResult) {
+    let result = createPlugin().canLaunchUrl(url: url)
+    #expect(result == expected)
   }
 
-  func testCanLaunchFailure() {
-    let result = createPlugin().canLaunchUrl(url: "bad://url")
-    XCTAssertEqual(result, .failure)
-  }
-
-  func testCanLaunchFailureWithInvalidURL() {
+  @Test func canLaunchFailureWithInvalidURL() {
     let result = createPlugin().canLaunchUrl(url: "urls can't have spaces")
-
     if urlParsingIsStrict() {
-      XCTAssertEqual(result, .invalidUrl)
+      #expect(result == .invalidUrl)
     } else {
-      XCTAssertEqual(result, .failure)
+      #expect(result == .failure)
     }
   }
 
-  func testLaunchSuccess() {
-    let expectation = XCTestExpectation(description: "completion called")
-    createPlugin().launchUrl(url: "good://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let details):
-        XCTAssertEqual(details, .success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
-      expectation.fulfill()
-    }
-
-    wait(for: [expectation], timeout: 1)
-  }
-
-  func testLaunchFailure() {
-    let expectation = XCTestExpectation(description: "completion called")
-    createPlugin().launchUrl(url: "bad://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let details):
-        XCTAssertEqual(details, .failure)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
-      }
-      expectation.fulfill()
-    }
-
-    wait(for: [expectation], timeout: 1)
-  }
-
-  func testLaunchFailureWithInvalidURL() {
-    let expectation = XCTestExpectation(description: "completion called")
-    createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let details):
-        if urlParsingIsStrict() {
-          XCTAssertEqual(details, .invalidUrl)
-        } else {
-          XCTAssertEqual(details, .failure)
+  @Test(arguments: [
+    ("good://url", LaunchResult.success),
+    ("bad://url", .failure),
+  ])
+  func launch(url: String, expected: LaunchResult) async {
+    await confirmation("completion called") { confirmed in
+      createPlugin().launchUrl(url: url, universalLinksOnly: false) { result in
+        switch result {
+        case .success(let details):
+          #expect(details == expected)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
         }
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
+        confirmed()
       }
-      expectation.fulfill()
     }
-
-    wait(for: [expectation], timeout: 1)
   }
 
-  func testLaunchWithoutUniversalLinks() {
+  @Test func launchFailureWithInvalidURL() async {
+    await confirmation("completion called") { confirmed in
+      createPlugin().launchUrl(url: "urls can't have spaces", universalLinksOnly: false) { result in
+        switch result {
+        case .success(let details):
+          if urlParsingIsStrict() {
+            #expect(details == .invalidUrl)
+          } else {
+            #expect(details == .failure)
+          }
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        confirmed()
+      }
+    }
+  }
+
+  @Test func launchWithoutUniversalLinks() async throws {
     let launcher = FakeLauncher()
     let plugin = createPlugin(launcher: launcher)
 
-    let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
-      switch result {
-      case .success(let details):
-        XCTAssertEqual(details, .success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
+    await confirmation("completion called") { confirmed in
+      plugin.launchUrl(url: "good://url", universalLinksOnly: false) { result in
+        switch result {
+        case .success(let details):
+          #expect(details == .success)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        confirmed()
       }
-      expectation.fulfill()
     }
-
-    wait(for: [expectation], timeout: 1)
-    XCTAssertEqual(launcher.passedOptions?[.universalLinksOnly] as? Bool, false)
+    let passedOptions = try #require(launcher.passedOptions)
+    #expect(passedOptions[.universalLinksOnly] as? Bool == false)
   }
 
-  func testLaunchWithUniversalLinks() {
+  @Test func launchWithUniversalLinks() async throws {
     let launcher = FakeLauncher()
     let plugin = createPlugin(launcher: launcher)
 
-    let expectation = XCTestExpectation(description: "completion called")
-    plugin.launchUrl(url: "good://url", universalLinksOnly: true) { result in
-      switch result {
-      case .success(let details):
-        XCTAssertEqual(details, .success)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
+    await confirmation("completion called") { confirmed in
+      plugin.launchUrl(url: "good://url", universalLinksOnly: true) { result in
+        switch result {
+        case .success(let details):
+          #expect(details == .success)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        confirmed()
       }
-      expectation.fulfill()
     }
-
-    wait(for: [expectation], timeout: 1)
-    XCTAssertEqual(launcher.passedOptions?[.universalLinksOnly] as? Bool, true)
+    let passedOptions = try #require(launcher.passedOptions)
+    #expect(passedOptions[.universalLinksOnly] as? Bool == true)
   }
 
-  func testLaunchSafariViewControllerWithClose() {
+  @Test func launchSafariViewControllerWithClose() async throws {
     let launcher = FakeLauncher()
     let viewPresenter = TestViewPresenter()
     let plugin = createPlugin(launcher: launcher, viewPresenter: viewPresenter)
 
-    let expectation = XCTestExpectation(description: "completion called")
-    plugin.openUrlInSafariViewController(url: "https://flutter.dev") { result in
-      switch result {
-      case .success(let details):
-        XCTAssertEqual(details, .dismissed)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
+    await confirmation("completion called") { confirmed in
+      plugin.openUrlInSafariViewController(url: "https://flutter.dev") { result in
+        switch result {
+        case .success(let details):
+          #expect(details == .dismissed)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        confirmed()
       }
-      expectation.fulfill()
+      plugin.closeSafariViewController()
     }
-    plugin.closeSafariViewController()
-    wait(for: [expectation], timeout: 30)
-    XCTAssertNotNil(viewPresenter.presentedController)
+    #expect(viewPresenter.presentedController != nil)
   }
 
-  func testLaunchSafariViewControllerFailureWithNoViewPresenter() {
-    let expectation = XCTestExpectation(description: "completion called")
-    createPlugin(viewPresenter: nil).openUrlInSafariViewController(url: "https://flutter.dev") {
-      result in
-      switch result {
-      case .success(let details):
-        XCTAssertEqual(details, .noUI)
-      case .failure(let error):
-        XCTFail("Unexpected error: \(error)")
+  @Test func launchSafariViewControllerFailureWithNoViewPresenter() async {
+    await confirmation("completion called") { confirmed in
+      createPlugin(viewPresenter: nil).openUrlInSafariViewController(url: "https://flutter.dev") {
+        result in
+        switch result {
+        case .success(let details):
+          #expect(details == .noUI)
+        case .failure(let error):
+          Issue.record("Unexpected error: \(error)")
+        }
+        confirmed()
       }
-      expectation.fulfill()
     }
-
-    wait(for: [expectation], timeout: 1)
   }
 
 }
