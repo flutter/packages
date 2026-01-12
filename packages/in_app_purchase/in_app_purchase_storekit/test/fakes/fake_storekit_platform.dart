@@ -358,6 +358,11 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
   Map<String, Set<String>> eligibleWinBackOffers = <String, Set<String>>{};
   Map<String, bool> eligibleIntroductoryOffers = <String, bool>{};
 
+  /// Simulates purchase result for testing non-success scenarios.
+  /// Set to userCancelled, pending, or unverified to test those cases.
+  SK2ProductPurchaseResultMessage simulatedPurchaseResult =
+      SK2ProductPurchaseResultMessage.success;
+
   void reset() {
     validProductIDs = <String>{'123', '456'};
     validProducts = <String, SK2Product>{};
@@ -375,6 +380,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     }
     eligibleWinBackOffers = <String, Set<String>>{};
     eligibleIntroductoryOffers = <String, bool>{};
+    simulatedPurchaseResult = SK2ProductPurchaseResultMessage.success;
   }
 
   SK2TransactionMessage createRestoredTransaction(
@@ -388,7 +394,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
       productId: '',
       purchaseDate: '',
       appAccountToken: '',
-      restoring: true,
+      status: SK2PurchaseStatusMessage.restored,
     );
   }
 
@@ -423,13 +429,50 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
     SK2ProductPurchaseOptionsMessage? options,
   }) {
     lastPurchaseOptions = options;
-    final SK2TransactionMessage transaction = createPendingTransaction(id);
 
-    InAppPurchaseStoreKitPlatform.sk2TransactionObserver.onTransactionsUpdated(
-      <SK2TransactionMessage>[transaction],
-    );
+    // Native side sends transaction update for success cases (both verified and unverified)
+    // Only userCancelled and pending don't have real transaction data
+    switch (simulatedPurchaseResult) {
+      case SK2ProductPurchaseResultMessage.success:
+      case SK2ProductPurchaseResultMessage.unverified:
+        final transaction = SK2TransactionMessage(
+          id: 1,
+          originalId: 2,
+          productId: id,
+          purchaseDate: 'purchaseDate',
+          appAccountToken: 'appAccountToken',
+          receiptData: 'receiptData',
+          jsonRepresentation: 'jsonRepresentation',
+          status: SK2PurchaseStatusMessage.purchased,
+        );
+        InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+            .onTransactionsUpdated(<SK2TransactionMessage>[transaction]);
+      case SK2ProductPurchaseResultMessage.pending:
+        // Create minimal message for pending status (without purchaseDate)
+        final pendingTransaction = SK2TransactionMessage(
+          id: 0,
+          originalId: 0,
+          productId: id,
+          status: SK2PurchaseStatusMessage.pending,
+        );
+        InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+            .onTransactionsUpdated(<SK2TransactionMessage>[pendingTransaction]);
+      case SK2ProductPurchaseResultMessage.userCancelled:
+        // Create minimal message for cancelled status (without purchaseDate)
+        final cancelledTransaction = SK2TransactionMessage(
+          id: 0,
+          originalId: 0,
+          productId: id,
+          status: SK2PurchaseStatusMessage.cancelled,
+        );
+        InAppPurchaseStoreKitPlatform.sk2TransactionObserver
+            .onTransactionsUpdated(<SK2TransactionMessage>[
+              cancelledTransaction,
+            ]);
+    }
+
     return Future<SK2ProductPurchaseResultMessage>.value(
-      SK2ProductPurchaseResultMessage.success,
+      simulatedPurchaseResult,
     );
   }
 
@@ -446,6 +489,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
         originalId: 123,
         productId: 'product_id',
         purchaseDate: '12-12',
+        status: SK2PurchaseStatusMessage.purchased,
       ),
     ]);
   }
@@ -460,6 +504,7 @@ class FakeStoreKit2Platform implements InAppPurchase2API {
         purchaseDate: '12-12',
         receiptData: 'fake_jws_representation',
         appAccountToken: 'fake_app_account_token',
+        status: SK2PurchaseStatusMessage.purchased,
       ),
     ]);
   }
@@ -549,5 +594,6 @@ SK2TransactionMessage createPendingTransaction(String id, {int quantity = 1}) {
     appAccountToken: 'appAccountToken',
     receiptData: 'receiptData',
     jsonRepresentation: 'jsonRepresentation',
+    status: SK2PurchaseStatusMessage.purchased,
   );
 }

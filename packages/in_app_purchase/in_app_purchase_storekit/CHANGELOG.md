@@ -1,5 +1,6 @@
-## NEXT
+## 0.4.7+1
 
+* Fixes StoreKit 2 purchase flow to send cancelled/pending/unverified results to `purchaseStream`.
 * Fixes Xcode 26.2 analyzer warnings in example app tests.
 
 ## 0.4.7
@@ -18,7 +19,7 @@
 ## 0.4.6
 
 * Adds a new case `.unverified` to enum `SK2ProductPurchaseResult`
-* Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding 
+* Fixes the StoreKit2 implementation throwing `PlatformException`s instead of returning the corresponding
 `SK2ProductPurchaseResult` when a purchase is cancelled / unverified / pending.
 
 ## 0.4.5
@@ -47,7 +48,7 @@
 
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 * Adds **Win Back Offers** support for StoreKit2:
-    - Includes new `isWinBackOfferEligible` function for eligibility verification
+  * Includes new `isWinBackOfferEligible` function for eligibility verification
 * Adds **Promotional Offers** support in StoreKit2 purchases
 * Fixes introductory pricing handling in promotional offers list in StoreKit2
 * Ensures proper `appAccountToken` handling for StoreKit2 purchases

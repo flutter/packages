@@ -174,26 +174,29 @@ class SK2TransactionMessage {
     required this.id,
     required this.originalId,
     required this.productId,
-    required this.purchaseDate,
+    this.purchaseDate,
     this.expirationDate,
     this.purchasedQuantity = 1,
     this.appAccountToken,
     this.error,
     this.receiptData,
     this.jsonRepresentation,
-    this.restoring = false,
+    required this.status,
   });
   final int id;
   final int originalId;
   final String productId;
-  final String purchaseDate;
+  final String? purchaseDate;
   final String? expirationDate;
   final int purchasedQuantity;
   final String? appAccountToken;
-  final bool restoring;
   final String? receiptData;
   final SK2ErrorMessage? error;
   final String? jsonRepresentation;
+
+  /// The status of this purchase transaction.
+  /// Set by native side to communicate the result state to Dart layer.
+  final SK2PurchaseStatusMessage status;
 }
 
 class SK2ErrorMessage {
@@ -213,6 +216,22 @@ enum SK2ProductPurchaseResultMessage {
   unverified,
   userCancelled,
   pending,
+}
+
+/// The status of a purchase transaction.
+/// Used to communicate the result state to Dart layer via purchaseStream.
+enum SK2PurchaseStatusMessage {
+  /// Purchase completed successfully.
+  purchased,
+
+  /// Purchase is pending (e.g., Ask to Buy).
+  pending,
+
+  /// Purchase was cancelled by the user.
+  cancelled,
+
+  /// Purchase was restored.
+  restored,
 }
 
 @HostApi()

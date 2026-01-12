@@ -90,9 +90,15 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         switch result {
         case .success(let verification):
           sendTransactionUpdate(
-            transaction: verification.unsafePayloadValue, receipt: verification.jwsRepresentation)
-        case .pending, .userCancelled:
-          break
+            productId: id,
+            transaction: verification.unsafePayloadValue,
+            receipt: verification.jwsRepresentation,
+            status: .purchased
+          )
+        case .pending:
+          sendTransactionUpdate(productId: id, status: .pending)
+        case .userCancelled:
+          sendTransactionUpdate(productId: id, status: .cancelled)
         @unknown default:
           fatalError("An unknown StoreKit PurchaseResult has been encountered.")
         }
@@ -223,7 +229,7 @@ extension InAppPurchasePlugin: InAppPurchase2API {
       @MainActor in
       do {
         let transactionsMsgs = await rawTransactions().map {
-          $0.convertToPigeon(receipt: nil)
+          $0.convertToPigeon(receipt: nil, status: .purchased)
         }
         completion(.success(transactionsMsgs))
       }
@@ -242,7 +248,8 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         switch verificationResult {
         case .verified(let transaction):
           transactionsMsgs.append(
-            transaction.convertToPigeon(receipt: verificationResult.jwsRepresentation)
+            transaction.convertToPigeon(
+              receipt: verificationResult.jwsRepresentation, status: .purchased)
           )
         case .unverified:
           break
@@ -261,7 +268,11 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           switch completedPurchase {
           case .verified(let purchase):
             self.sendTransactionUpdate(
-              transaction: purchase, receipt: "\(completedPurchase.jwsRepresentation)")
+              productId: purchase.productID,
+              transaction: purchase,
+              receipt: "\(completedPurchase.jwsRepresentation)",
+              status: .restored
+            )
           case .unverified(let failedPurchase, let error):
             unverifiedPurchases[failedPurchase.id] = (
               receipt: completedPurchase.jwsRepresentation, error: error
@@ -340,7 +351,11 @@ extension InAppPurchasePlugin: InAppPurchase2API {
           switch verificationResult {
           case .verified(let transaction):
             self?.sendTransactionUpdate(
-              transaction: transaction, receipt: verificationResult.jwsRepresentation)
+              productId: transaction.productID,
+              transaction: transaction,
+              receipt: verificationResult.jwsRepresentation,
+              status: .purchased
+            )
           case .unverified:
             break
           }
@@ -353,16 +368,41 @@ extension InAppPurchasePlugin: InAppPurchase2API {
     updateListenerTask.cancel()
   }
 
-  /// Sends an transaction back to Dart. Access these transactions with `purchaseStream`
-  private func sendTransactionUpdate(transaction: Transaction, receipt: String? = nil) {
-    let transactionMessage = transaction.convertToPigeon(receipt: receipt)
+  /// Sends a transaction or status update back to Dart. Access these transactions with `purchaseStream`
+  /// - Parameters:
+  ///   - productId: The product ID (required)
+  ///   - transaction: The transaction object (for success cases, nil for pending/cancelled)
+  ///   - receipt: The JWS receipt data
+  ///   - status: The purchase status
+  private func sendTransactionUpdate(
+    productId: String,
+    transaction: Transaction? = nil,
+    receipt: String? = nil,
+    status: SK2PurchaseStatusMessage
+  ) {
+    let transactionMessage: SK2TransactionMessage
+
+    if let transaction = transaction {
+      // Has real transaction: use transaction info
+      transactionMessage = transaction.convertToPigeon(receipt: receipt, status: status)
+    } else {
+      // No transaction (pending/cancelled): create minimal message without purchaseDate
+      transactionMessage = SK2TransactionMessage(
+        id: 0,
+        originalId: 0,
+        productId: productId,
+        purchasedQuantity: 1,
+        status: status
+      )
+    }
+
     Task { @MainActor in
       self.transactionCallbackAPI?.onTransactionsUpdated(newTransactions: [transactionMessage]) {
         result in
         switch result {
         case .success: break
         case .failure(let error):
-          print("Failed to send transaction updates: \(error)")
+          print("Failed to send transaction update: \(error)")
         }
       }
     }
