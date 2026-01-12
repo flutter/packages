@@ -134,7 +134,7 @@ struct URLLauncherTests {
     #expect(passedOptions[.universalLinksOnly] as? Bool == true)
   }
 
-  @Test func launchSafariViewControllerWithClose() async throws {
+  @Test func launchSafariViewControllerWithClose() async {
     let launcher = FakeLauncher()
     let viewPresenter = TestViewPresenter()
     let plugin = createPlugin(launcher: launcher, viewPresenter: viewPresenter)
