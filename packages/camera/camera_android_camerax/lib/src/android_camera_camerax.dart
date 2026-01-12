@@ -1122,6 +1122,13 @@ class AndroidCameraCameraX extends CameraPlatform {
       // There is currently an active recording, so do not start a new one.
       return;
     }
+    final dynamic Function(CameraImageData)? streamCallback =
+        options.streamCallback;
+    if (streamCallback == null) {
+      // ImageAnalysis is not universally supported with Preview + VideoCapture,
+      // so unbind ImageAnalysis if it is not in use.
+      await _unbindUseCaseFromLifecycle(imageAnalysis!);
+    }
 
     await _bindUseCaseToLifecycle(videoCapture!, options.cameraId);
 
@@ -1152,8 +1159,8 @@ class AndroidCameraCameraX extends CameraPlatform {
 
     recording = await pendingRecording!.start(_videoRecordingEventListener);
 
-    if (options.streamCallback != null) {
-      onStreamedFrameAvailable(options.cameraId).listen(options.streamCallback);
+    if (streamCallback != null) {
+      onStreamedFrameAvailable(options.cameraId).listen(streamCallback);
     }
 
     // Wait for video recording to start.
