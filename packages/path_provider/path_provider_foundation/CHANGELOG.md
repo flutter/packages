@@ -1,3 +1,7 @@
+## NEXT
+
+* Migrates XCTest to Swift Testing.
+
 ## 2.5.1
 
 * Reverts to plugin-based implementation while FFI issues are investigated.
