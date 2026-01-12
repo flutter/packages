@@ -1,3 +1,7 @@
+## 0.6.26+4
+
+* Removes outdated restrictions against concurrent camera use cases.
+
 ## 0.6.26+3
 
 * Bumps kotlin_version to 2.3.0.
