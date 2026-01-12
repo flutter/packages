@@ -323,8 +323,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
 
       cameraSensorOrientation = cameraInfo.sensorRotationDegrees;
-      cameraName =
-          await Camera2CameraInfo.from(cameraInfo: cameraInfo).getCameraId();
+      cameraName = await Camera2CameraInfo.from(
+        cameraInfo: cameraInfo,
+      ).getCameraId();
 
       _savedCameras[cameraName] = cameraInfo;
 

@@ -545,9 +545,7 @@ void main() {
         } else if (cameraInfo == mockFrontCameraInfo) {
           cameraId = '1';
         }
-        when(
-          camera2cameraInfo.getCameraId(),
-        ).thenAnswer((_) async => cameraId);
+        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
         return camera2cameraInfo;
       };
       PigeonOverrides.systemServicesManager_new =
@@ -3460,9 +3458,7 @@ void main() {
         } else if (cameraInfo == mockFrontCameraInfo) {
           cameraId = '1';
         }
-        when(
-          camera2cameraInfo.getCameraId(),
-        ).thenAnswer((_) async => cameraId);
+        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
         when(
           camera2cameraInfo.getCameraCharacteristic(any),
         ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
@@ -3737,9 +3733,7 @@ void main() {
         } else if (cameraInfo == mockFrontCameraInfo) {
           cameraId = '1';
         }
-        when(
-          camera2cameraInfo.getCameraId(),
-        ).thenAnswer((_) async => cameraId);
+        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
         when(
           camera2cameraInfo.getCameraCharacteristic(any),
         ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
