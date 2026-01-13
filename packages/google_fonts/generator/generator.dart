@@ -167,19 +167,21 @@ class _FamiliesDelta {
   // (e.g. CHANGELOG, PR description).
   String markdownDiff() {
     final Iterable<String> addedPrintable = added.map(
-      (String family) => '  - Added `$family`',
+      (String family) => '  - `$family`',
     );
     final Iterable<String> removedPrintable = removed.map(
-      (String family) => '  - Removed `$family`',
+      (String family) => '  - `$family`',
     );
 
     var diff = '';
-    if (removedPrintable.isNotEmpty) {
-      diff += removedPrintable.join('\n');
+    if (addedPrintable.isNotEmpty) {
+      diff += '- Added fonts:\n';
+      diff += addedPrintable.join('\n');
       diff += '\n';
     }
-    if (addedPrintable.isNotEmpty) {
-      diff += addedPrintable.join('\n');
+    if (removedPrintable.isNotEmpty) {
+      diff += '- Removed fonts:\n';
+      diff += removedPrintable.join('\n');
       diff += '\n';
     }
 
