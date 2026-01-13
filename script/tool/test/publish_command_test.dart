@@ -1284,7 +1284,7 @@ void main() {
       );
     });
 
-    group('--batch-release flag', () {
+    group('--batch-release-branch flag', () {
       test(
         'filters packages based on the existence of ci_config.yaml',
         () async {
@@ -1334,7 +1334,7 @@ void main() {
               'publish',
               '--all-changed',
               '--base-sha=HEAD~',
-              '--batch-release',
+              '--batch-release-branch=release-plugin1',
             ],
           );
           // Package1 is published in batch realease, pacakge2 is not.
@@ -1408,7 +1408,7 @@ void main() {
               'publish',
               '--all-changed',
               '--base-sha=HEAD~',
-              '--batch-release',
+              '--batch-release-branch=release-plugin1',
             ],
           );
           // Package1 is published in batch realease, pacakge2 is not.
@@ -1436,7 +1436,7 @@ void main() {
       );
 
       test(
-        'when --batch-release flag value is false, batch release packages are filtered out',
+        'when --batch-release-branch flag value is empty, batch release packages are filtered out',
         () async {
           // Mock pub.dev responses.
           mockHttpResponses['plugin1'] = <String, dynamic>{

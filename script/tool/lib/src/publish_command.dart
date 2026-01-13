@@ -15,7 +15,6 @@ import 'package:platform/platform.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml/yaml.dart';
 
-import 'common/ci_config.dart';
 import 'common/core.dart';
 import 'common/file_utils.dart';
 import 'common/output_utils.dart';
@@ -85,8 +84,8 @@ class PublishCommand extends PackageLoopingCommand {
           'The --packages option is ignored if this is on.',
     );
     argParser.addFlag(
-      _batchReleaseFlag,
-      help: 'only release the packages that opt-in for batch release option.',
+      _batchReleaseBranchFlag,
+      help: 'batch release a package from its release branch',
     );
     argParser.addFlag(
       _dryRunFlag,
@@ -114,7 +113,7 @@ class PublishCommand extends PackageLoopingCommand {
   static const String _pubFlagsOption = 'pub-publish-flags';
   static const String _remoteOption = 'remote';
   static const String _allChangedFlag = 'all-changed';
-  static const String _batchReleaseFlag = 'batch-release';
+  static const String _batchReleaseBranchFlag = 'batch-release-branch';
   static const String _dryRunFlag = 'dry-run';
   static const String _skipConfirmationFlag = 'skip-confirmation';
   static const String _tagForAutoPublishFlag = 'tag-for-auto-publish';
@@ -214,17 +213,30 @@ class PublishCommand extends PackageLoopingCommand {
           if (!ciConfigFile.existsSync()) {
             isBatchReleasePackage = false;
           } else {
-            final CIConfig ciConfig =
-                CIConfig.parse(ciConfigFile.readAsStringSync());
+            final ciConfig = CIConfig.parse(ciConfigFile.readAsStringSync());
             isBatchReleasePackage = ciConfig.isBatchRelease;
           }
         } catch (e) {
           printError('Could not parse ci_config.yaml for $packageName: $e');
           continue;
         }
-        // Skip the package if batch release flag is not set to match the ci_config.yaml
-        if (getBoolArg(_batchReleaseFlag) != isBatchReleasePackage) {
-          continue;
+
+        final String batchReleaseBranchName = getStringArg(_batchReleaseBranchFlag);
+
+        // When releasing from the main branch, skip the batch release packages.
+        if (batchReleaseBranchName.isEmpty) {
+          if (isBatchReleasePackage) {
+            continue;
+          }
+        }
+        // When releasing from a batch release branch, verify the package has
+        // the opt-in flag and that the package name matches the branch suffix.
+        // Example: branch "release-go_router" matches package "go_router".
+        if (batchReleaseBranchName.isNotEmpty) {
+          if (!(isBatchReleasePackage &&
+              batchReleaseBranchName.contains(packageName))) {
+            continue;
+          }
         }
 
         // git outputs a relativa, Posix-style path.
