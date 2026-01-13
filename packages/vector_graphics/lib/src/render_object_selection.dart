@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,7 +20,7 @@ bool useHtmlRenderObject() {
     return _cachedUseHtmlRenderObject!;
   }
 
-  final ui.PictureRecorder recorder = ui.PictureRecorder();
+  final recorder = ui.PictureRecorder();
   ui.Canvas(recorder);
   final ui.Picture picture = recorder.endRecording();
   ui.Image? image;

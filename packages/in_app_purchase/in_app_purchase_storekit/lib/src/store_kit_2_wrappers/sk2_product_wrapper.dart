@@ -1,12 +1,11 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/services.dart';
 
 import '../../store_kit_2_wrappers.dart';
-
-InAppPurchase2API _hostApi = InAppPurchase2API();
+import '../in_app_purchase_apis.dart';
 
 /// A wrapper around StoreKit2's ProductType
 /// https://developer.apple.com/documentation/storekit/product/producttype
@@ -22,7 +21,7 @@ enum SK2ProductType {
   nonRenewable,
 
   /// An auto-renewable subscription.
-  autoRenewable;
+  autoRenewable,
 }
 
 extension on SK2ProductTypeMessage {
@@ -119,12 +118,13 @@ class SK2SubscriptionOffer {
 extension on SK2SubscriptionOfferMessage {
   SK2SubscriptionOffer convertFromPigeon() {
     return SK2SubscriptionOffer(
-        id: id,
-        price: price,
-        type: type.convertFromPigeon(),
-        period: period.convertFromPigeon(),
-        periodCount: periodCount,
-        paymentMode: paymentMode.convertFromPigeon());
+      id: id,
+      price: price,
+      type: type.convertFromPigeon(),
+      period: period.convertFromPigeon(),
+      periodCount: periodCount,
+      paymentMode: paymentMode.convertFromPigeon(),
+    );
   }
 }
 
@@ -196,7 +196,7 @@ enum SK2SubscriptionPeriodUnit {
   month,
 
   /// A subscription period unit of a year.
-  year
+  year,
 }
 
 extension on SK2SubscriptionPeriodUnitMessage {
@@ -224,7 +224,7 @@ enum SK2SubscriptionOfferPaymentMode {
   payUpFront,
 
   /// A payment mode of a product discount that indicates a free trial offer.
-  freeTrial;
+  freeTrial,
 }
 
 extension on SK2SubscriptionOfferPaymentModeMessage {
@@ -255,28 +255,35 @@ class SK2PriceLocale {
   /// Convert this instance of [SK2PriceLocale] to [SK2PriceLocaleMessage]
   SK2PriceLocaleMessage convertToPigeon() {
     return SK2PriceLocaleMessage(
-        currencyCode: currencyCode, currencySymbol: currencySymbol);
+      currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
+    );
   }
 }
 
 extension on SK2PriceLocaleMessage {
   SK2PriceLocale convertFromPigeon() {
     return SK2PriceLocale(
-        currencyCode: currencyCode, currencySymbol: currencySymbol);
+      currencyCode: currencyCode,
+      currencySymbol: currencySymbol,
+    );
   }
 }
 
 /// Wrapper around [PurchaseResult]
 /// https://developer.apple.com/documentation/storekit/product/purchaseresult
 enum SK2ProductPurchaseResult {
-  /// The purchase succeeded and results in a transaction.
+  /// The purchase succeeded and results in a transaction signed by the App Store.
   success,
+
+  /// The purchase succeeded but the transation could not be verified.
+  unverified,
 
   /// The user canceled the purchase.
   userCancelled,
 
   /// The purchase is pending, and requires action from the customer.
-  pending
+  pending,
 }
 
 /// Wrapper around [PurchaseOption]
@@ -315,14 +322,16 @@ class SK2ProductPurchaseOptions {
 
 extension on SK2ProductPurchaseResultMessage {
   SK2ProductPurchaseResult convertFromPigeon() {
-    switch (this) {
-      case SK2ProductPurchaseResultMessage.success:
-        return SK2ProductPurchaseResult.success;
-      case SK2ProductPurchaseResultMessage.userCancelled:
-        return SK2ProductPurchaseResult.userCancelled;
-      case SK2ProductPurchaseResultMessage.pending:
-        return SK2ProductPurchaseResult.pending;
-    }
+    return switch (this) {
+      SK2ProductPurchaseResultMessage.success =>
+        SK2ProductPurchaseResult.success,
+      SK2ProductPurchaseResultMessage.userCancelled =>
+        SK2ProductPurchaseResult.userCancelled,
+      SK2ProductPurchaseResultMessage.pending =>
+        SK2ProductPurchaseResult.pending,
+      SK2ProductPurchaseResultMessage.unverified =>
+        SK2ProductPurchaseResult.unverified,
+    };
   }
 }
 
@@ -371,8 +380,9 @@ class SK2Product {
   /// If any of the identifiers are invalid or can't be found, they are excluded
   /// from the returned list.
   static Future<List<SK2Product>> products(List<String> identifiers) async {
-    final List<SK2ProductMessage?> productsMsg =
-        await _hostApi.products(identifiers);
+    final List<SK2ProductMessage?> productsMsg = await hostApi2.products(
+      identifiers,
+    );
     if (productsMsg.isEmpty && identifiers.isNotEmpty) {
       throw PlatformException(
         code: 'storekit_no_response',
@@ -389,15 +399,25 @@ class SK2Product {
   /// Wrapper for StoreKit's [Product.purchase]
   /// https://developer.apple.com/documentation/storekit/product/3791971-purchase
   /// Initiates a purchase for the product with the App Store and displays the confirmation sheet.
-  static Future<SK2ProductPurchaseResult> purchase(String id,
-      {SK2ProductPurchaseOptions? options}) async {
+  static Future<SK2ProductPurchaseResult> purchase(
+    String id, {
+    SK2ProductPurchaseOptions? options,
+  }) async {
     SK2ProductPurchaseResultMessage result;
     if (options != null) {
-      result = await _hostApi.purchase(id, options: options.convertToPigeon());
+      result = await hostApi2.purchase(id, options: options.convertToPigeon());
     } else {
-      result = await _hostApi.purchase(id);
+      result = await hostApi2.purchase(id);
     }
     return result.convertFromPigeon();
+  }
+
+  /// Checks if the user is eligible for an introductory offer.
+  /// The product must be an auto-renewable subscription.
+  static Future<bool> isIntroductoryOfferEligible(String productId) async {
+    final bool result = await hostApi2.isIntroductoryOfferEligible(productId);
+
+    return result;
   }
 
   /// Checks if the user is eligible for a specific win back offer.
@@ -405,7 +425,7 @@ class SK2Product {
     String productId,
     String offerId,
   ) async {
-    final bool result = await _hostApi.isWinBackOfferEligible(
+    final bool result = await hostApi2.isWinBackOfferEligible(
       productId,
       offerId,
     );
@@ -416,26 +436,28 @@ class SK2Product {
   /// Converts this instance of [SK2Product] to it's pigeon representation [SK2ProductMessage]
   SK2ProductMessage convertToPigeon() {
     return SK2ProductMessage(
-        id: id,
-        displayName: displayName,
-        description: description,
-        price: price,
-        displayPrice: displayPrice,
-        type: type.convertToPigeon(),
-        priceLocale: priceLocale.convertToPigeon());
+      id: id,
+      displayName: displayName,
+      description: description,
+      price: price,
+      displayPrice: displayPrice,
+      type: type.convertToPigeon(),
+      priceLocale: priceLocale.convertToPigeon(),
+    );
   }
 }
 
 extension on SK2ProductMessage {
   SK2Product convertFromPigeon() {
     return SK2Product(
-        id: id,
-        displayName: displayName,
-        displayPrice: displayPrice,
-        price: price,
-        description: description,
-        type: type.convertFromPigeon(),
-        subscription: subscription?.convertFromPigeon(),
-        priceLocale: priceLocale.convertFromPigeon());
+      id: id,
+      displayName: displayName,
+      displayPrice: displayPrice,
+      price: price,
+      description: description,
+      type: type.convertFromPigeon(),
+      subscription: subscription?.convertFromPigeon(),
+      priceLocale: priceLocale.convertFromPigeon(),
+    );
   }
 }

@@ -1,3 +1,12 @@
+## 3.2.5
+
+* Updates to Pigeon 26.
+
+## 3.2.4
+
+* Updates minimum supported version to macOS 10.15.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
 ## 3.2.3
 
 * Updates to Pigeon 25.5.0.

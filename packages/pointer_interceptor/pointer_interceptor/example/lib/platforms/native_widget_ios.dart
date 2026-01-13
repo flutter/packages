@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -16,8 +16,8 @@ class NativeWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String viewType = 'dummy_platform_view';
-    final Map<String, dynamic> creationParams = <String, dynamic>{};
+    const viewType = 'dummy_platform_view';
+    final creationParams = <String, dynamic>{};
 
     return UiKitView(
       viewType: viewType,

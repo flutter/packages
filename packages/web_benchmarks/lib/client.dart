@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -58,7 +58,8 @@ Future<void> runBenchmarks(
 
   if (nextBenchmark == LocalBenchmarkServerClient.kManualFallback) {
     _fallbackToManual(
-        'The server did not tell us which benchmark to run next.');
+      'The server did not tell us which benchmark to run next.',
+    );
     return;
   }
 
@@ -67,7 +68,7 @@ Future<void> runBenchmarks(
   final Uri currentUri = Uri.parse(window.location.href);
   // Create a new URI with the parsed value of [benchmarkPath] to ensure the
   // benchmark app is reloaded with the proper configuration.
-  final String newUri = Uri.parse(benchmarkPath)
+  final newUri = Uri.parse(benchmarkPath)
       .replace(
         scheme: currentUri.scheme,
         host: currentUri.host,
@@ -93,7 +94,7 @@ Future<void> _runBenchmark(String? benchmarkName) async {
   await runZoned<Future<void>>(
     () async {
       final Recorder recorder = recorderFactory();
-      final Runner runner = recorder.isTracingEnabled && !_client.isInManualMode
+      final runner = recorder.isTracingEnabled && !_client.isInManualMode
           ? Runner(
               recorder: recorder,
               setUpAllDidRun: () =>
@@ -118,20 +119,21 @@ Future<void> _runBenchmark(String? benchmarkName) async {
           await _client.printToConsole(line);
         }
       },
-      handleUncaughtError: (
-        Zone self,
-        ZoneDelegate parent,
-        Zone zone,
-        Object error,
-        StackTrace stackTrace,
-      ) async {
-        if (_client.isInManualMode) {
-          parent.print(zone, '[$benchmarkName] $error, $stackTrace');
-          parent.handleUncaughtError(zone, error, stackTrace);
-        } else {
-          await _client.reportError(error, stackTrace);
-        }
-      },
+      handleUncaughtError:
+          (
+            Zone self,
+            ZoneDelegate parent,
+            Zone zone,
+            Object error,
+            StackTrace stackTrace,
+          ) async {
+            if (_client.isInManualMode) {
+              parent.print(zone, '[$benchmarkName] $error, $stackTrace');
+              parent.handleUncaughtError(zone, error, stackTrace);
+            } else {
+              await _client.reportError(error, stackTrace);
+            }
+          },
     ),
   );
 }
@@ -154,18 +156,19 @@ void _fallbackToManual(String error) {
     // Find the button elements added above.
     final Element button = document.querySelector('#$benchmarkName')!;
     button.addEventListener(
-        'click',
-        (JSAny? arg) {
-          final Element? manualPanel = document.querySelector('#manual-panel');
-          manualPanel?.remove();
-          _runBenchmark(benchmarkName);
-        }.toJS);
+      'click',
+      (JSAny? arg) {
+        final Element? manualPanel = document.querySelector('#manual-panel');
+        manualPanel?.remove();
+        _runBenchmark(benchmarkName);
+      }.toJS,
+    );
   }
 }
 
 /// Visualizes results on the Web page for manual inspection.
 void _printResultsToScreen(Profile profile) {
-  final HTMLBodyElement body = document.body! as HTMLBodyElement;
+  final body = document.body! as HTMLBodyElement;
 
   body.innerHTMLString = '<h2>${profile.name}</h2>';
 
@@ -194,7 +197,8 @@ class TimeseriesVisualization {
     // The amount of vertical space available on the chart. Because some
     // outliers can be huge they can dwarf all the useful values. So we
     // limit it to 1.5 x the biggest non-outlier.
-    _maxValueChartRange = 1.5 *
+    _maxValueChartRange =
+        1.5 *
         _stats.samples
             .where((AnnotatedSample sample) => !sample.isOutlier)
             .map<double>((AnnotatedSample sample) => sample.magnitude)
@@ -234,7 +238,7 @@ class TimeseriesVisualization {
 
     final double barWidth = _screenWidth / _stats.samples.length;
     double xOffset = 0;
-    for (int i = 0; i < _stats.samples.length; i++) {
+    for (var i = 0; i < _stats.samples.length; i++) {
       final AnnotatedSample sample = _stats.samples[i];
 
       if (sample.isWarmUpValue) {
@@ -260,13 +264,21 @@ class TimeseriesVisualization {
 
     // Draw a horizontal solid line corresponding to the average.
     _ctx.lineWidth = 1;
-    drawLine(0, _normalized(_stats.average), _screenWidth,
-        _normalized(_stats.average));
+    drawLine(
+      0,
+      _normalized(_stats.average),
+      _screenWidth,
+      _normalized(_stats.average),
+    );
 
     // Draw a horizontal dashed line corresponding to the outlier cut off.
     _ctx.setLineDash(<JSNumber>[5.toJS, 5.toJS].toJS);
-    drawLine(0, _normalized(_stats.outlierCutOff), _screenWidth,
-        _normalized(_stats.outlierCutOff));
+    drawLine(
+      0,
+      _normalized(_stats.outlierCutOff),
+      _screenWidth,
+      _normalized(_stats.outlierCutOff),
+    );
 
     // Draw a light red band that shows the noise (1 stddev in each direction).
     _ctx.fillStyle = 'rgba(255,50,50,0.3)'.toJS;
@@ -361,8 +373,10 @@ class LocalBenchmarkServerClient {
       sendData: json.encode(profile.toJson()),
     );
     if (request.status != 200) {
-      throw Exception('Failed to report profile data to benchmark server. '
-          'The server responded with status code ${request.status}.');
+      throw Exception(
+        'Failed to report profile data to benchmark server. '
+        'The server responded with status code ${request.status}.',
+      );
     }
   }
 
@@ -401,8 +415,8 @@ class LocalBenchmarkServerClient {
     required String mimeType,
     String? sendData,
   }) {
-    final Completer<XMLHttpRequest> completer = Completer<XMLHttpRequest>();
-    final XMLHttpRequest xhr = XMLHttpRequest();
+    final completer = Completer<XMLHttpRequest>();
+    final xhr = XMLHttpRequest();
     xhr.open(method, url, true);
     xhr.overrideMimeType(mimeType);
     xhr.onLoad.listen((ProgressEvent e) {

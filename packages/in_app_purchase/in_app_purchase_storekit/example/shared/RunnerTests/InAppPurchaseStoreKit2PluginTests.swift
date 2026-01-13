@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -194,7 +194,8 @@ final class InAppPurchase2PluginTests: XCTestCase {
     let expectation = self.expectation(description: "Purchase request should succeed")
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success:
+      case .success(let message):
+        XCTAssert(message == .success)
         expectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")
@@ -211,7 +212,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success:
-        XCTFail("Purchase should NOT suceed.")
+        XCTFail("Purchase should NOT succeed.")
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
@@ -392,7 +393,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(let purchase):
+      case .success(_):
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")

@@ -1,11 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart';
 
 @immutable
-
 /// A class that represents the state of an asynchronous operation.
 ///
 /// It has three possible states:
@@ -28,9 +27,7 @@ sealed class AsyncState<T> {
 
   /// Returns a [AsyncState] with the same type `T` but with the data transformed by the `onData` function.
   /// If the current state is not [AsyncStateData], it returns the current state.
-  AsyncState<T> whenData(
-    T Function(T data) onData,
-  ) {
+  AsyncState<T> whenData(T Function(T data) onData) {
     return switch (this) {
       AsyncStateData<T>(data: final T data) => AsyncState<T>.data(onData(data)),
       _ => this,
@@ -44,9 +41,7 @@ sealed class AsyncState<T> {
   /// returns the current state, but with the type mapped.
   /// If the current state is [AsyncStateData], it returns a new data state with
   /// the data transformed by the `onData` function.
-  AsyncState<R> mapWhenData<R>(
-    R Function(T data) onData,
-  ) {
+  AsyncState<R> mapWhenData<R>(R Function(T data) onData) {
     return flatMapWhenData((T data) => AsyncState<R>.data(onData(data)));
   }
 
@@ -57,9 +52,7 @@ sealed class AsyncState<T> {
   /// returns the current state, but with the type mapped.
   /// If the current state is [AsyncStateData], it returns the result of the
   /// `onData` function.
-  AsyncState<R> flatMapWhenData<R>(
-    AsyncState<R> Function(T data) onData,
-  ) {
+  AsyncState<R> flatMapWhenData<R>(AsyncState<R> Function(T data) onData) {
     return switch (this) {
       AsyncStateData<T>(data: final T data) => onData(data),
       AsyncStateError<T>(
@@ -98,14 +91,14 @@ sealed class AsyncState<T> {
 
   @override
   int get hashCode => switch (this) {
-        AsyncStateLoading<T>() => 0,
-        AsyncStateData<T>(data: final T data) => data.hashCode,
-        AsyncStateError<T>(
-          error: final Object error,
-          stackTrace: final StackTrace? stackTrace,
-        ) =>
-          error.hashCode ^ stackTrace.hashCode,
-      };
+    AsyncStateLoading<T>() => 0,
+    AsyncStateData<T>(data: final T data) => data.hashCode,
+    AsyncStateError<T>(
+      error: final Object error,
+      stackTrace: final StackTrace? stackTrace,
+    ) =>
+      error.hashCode ^ stackTrace.hashCode,
+  };
 
   @override
   String toString() {

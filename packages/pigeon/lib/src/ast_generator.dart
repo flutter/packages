@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,11 +7,11 @@ import 'generator_tools.dart';
 
 /// Writes the AST representation of [root] to [sink].
 void generateAst(Root root, StringSink sink) {
-  final Indent indent = Indent(sink);
-  final String output = root.toString();
-  bool isFirst = true;
+  final indent = Indent(sink);
+  final output = root.toString();
+  var isFirst = true;
   for (final int ch in output.runes) {
-    final String chStr = String.fromCharCode(ch);
+    final chStr = String.fromCharCode(ch);
     if (chStr == '(') {
       if (isFirst) {
         isFirst = false;

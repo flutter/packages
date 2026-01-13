@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -120,6 +120,45 @@ widget Product = ListTile(
 );
 // #enddocregion MaterialShop
 ''',
+
+'CalculatorPad': '''
+import core;
+
+widget CalculatorPad = Column(
+  children: [
+    CalculatorButton(label: "1", onPressed: event "digit" { arguments: [0] }),
+    CalculatorButton(label: "1", onPressed: event "digit" { arguments: [1] }),
+    CalculatorButton(label: "2", onPressed: event "digit" { arguments: [2] }),
+    CalculatorButton(label: "3", onPressed: event "digit" { arguments: [3] }),
+    CalculatorButton(label: "4", onPressed: event "digit" { arguments: [4] }),
+    CalculatorButton(label: "5", onPressed: event "digit" { arguments: [5] }),
+    CalculatorButton(label: "6", onPressed: event "digit" { arguments: [6] }),
+    // #docregion button7
+    CalculatorButton(label: "7", onPressed: event "digit" { arguments: [7] }),
+    // #enddocregion button7
+    CalculatorButton(label: "8", onPressed: event "digit" { arguments: [8] }),
+    CalculatorButton(label: "9", onPressed: event "digit" { arguments: [9] }),
+  ],
+);
+''',
+
+'CalculatorButton': '''
+import core;
+
+// #docregion CalculatorButton
+widget CalculatorButton = Padding(
+  padding: [8.0],
+  child: SizedBox(
+    width: 100.0,
+    height: 100.0,
+    child: Button(
+      child: FittedBox(child: Text(text: args.label)),
+      onPressed: args.onPressed,
+    ),
+  ),
+);
+// #enddocregion CalculatorButton
+''',
 };
 
 // The empty docregion at the end of the following causes the snippet to end with "// ...".
@@ -198,8 +237,8 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
         'Foo': (BuildContext context, DataSource source) {
           final int length = source.length(<Object>['text']);
           if (length > 0) {
-            final StringBuffer text = StringBuffer();
-            for (int index = 0; index < length; index += 1) {
+            final text = StringBuffer();
+            for (var index = 0; index < length; index += 1) {
               text.write(source.v<String>(<Object>['text', index]));
             }
             return Text(text.toString(), textDirection: TextDirection.ltr);
@@ -274,6 +313,8 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
       ];
     case 'Shop':
     case 'MaterialShop':
+    case 'CalculatorPad':
+    case 'CalculatorButton':
       return <WidgetLibrary>[];
     default:
       fail('test has no defined local widgets for root widget "$region"');
@@ -282,11 +323,11 @@ List<WidgetLibrary> _createLocalWidgets(String region) {
 
 void main() {
   testWidgets('readme snippets', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets())
       ..update(const LibraryName(<String>['material']), createMaterialWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(parseDataFile(gameData));
+    final data = DynamicContent(parseDataFile(gameData));
     for (final String region in rawRemoteWidgetSnippets.keys) {
       final String body = rawRemoteWidgetSnippets[region]!;
       runtime.update(LibraryName(<String>[region]), parseLibraryFile(body));

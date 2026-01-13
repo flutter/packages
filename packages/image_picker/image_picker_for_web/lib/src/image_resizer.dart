@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -30,10 +30,16 @@ class ImageResizer {
     }
     try {
       final web.HTMLImageElement imageElement = await loadImage(file.path);
-      final web.HTMLCanvasElement canvas =
-          resizeImageElement(imageElement, maxWidth, maxHeight);
-      final XFile resizedImage =
-          await writeCanvasToFile(file, canvas, imageQuality);
+      final web.HTMLCanvasElement canvas = resizeImageElement(
+        imageElement,
+        maxWidth,
+        maxHeight,
+      );
+      final XFile resizedImage = await writeCanvasToFile(
+        file,
+        canvas,
+        imageQuality,
+      );
       web.URL.revokeObjectURL(file.path);
       return resizedImage;
     } catch (e) {
@@ -43,16 +49,15 @@ class ImageResizer {
 
   /// Loads the `blobUrl` into a [web.HTMLImageElement].
   Future<web.HTMLImageElement> loadImage(String blobUrl) {
-    final Completer<web.HTMLImageElement> imageLoadCompleter =
-        Completer<web.HTMLImageElement>();
-    final web.HTMLImageElement imageElement = web.HTMLImageElement();
+    final imageLoadCompleter = Completer<web.HTMLImageElement>();
+    final imageElement = web.HTMLImageElement();
     imageElement
       ..src = blobUrl
       ..onLoad.listen((web.Event event) {
         imageLoadCompleter.complete(imageElement);
       })
       ..onError.listen((web.Event event) {
-        const String exception = 'Error while loading image.';
+        const exception = 'Error while loading image.';
         imageElement.remove();
         imageLoadCompleter.completeError(exception);
       });
@@ -66,18 +71,24 @@ class ImageResizer {
     double? maxHeight,
   ) {
     final Size newImageSize = calculateSizeOfDownScaledImage(
-        Size(source.width.toDouble(), source.height.toDouble()),
-        maxWidth,
-        maxHeight);
-    final web.HTMLCanvasElement canvas = web.HTMLCanvasElement()
+      Size(source.width.toDouble(), source.height.toDouble()),
+      maxWidth,
+      maxHeight,
+    );
+    final canvas = web.HTMLCanvasElement()
       ..width = newImageSize.width.toInt()
       ..height = newImageSize.height.toInt();
     final web.CanvasRenderingContext2D context = canvas.context2D;
     if (maxHeight == null && maxWidth == null) {
       context.drawImage(source, 0, 0);
     } else {
-      context.drawImageScaled(
-          source, 0, 0, canvas.width.toDouble(), canvas.height.toDouble());
+      context.drawImage(
+        source,
+        0,
+        0,
+        canvas.width.toDouble(),
+        canvas.height.toDouble(),
+      );
     }
     return canvas;
   }
@@ -92,16 +103,23 @@ class ImageResizer {
   ) async {
     final double calculatedImageQuality =
         (min(imageQuality ?? 100, 100)) / 100.0;
-    final Completer<XFile> completer = Completer<XFile>();
+    final completer = Completer<XFile>();
     final web.BlobCallback blobCallback = (web.Blob blob) {
-      completer.complete(XFile(web.URL.createObjectURL(blob),
+      completer.complete(
+        XFile(
+          web.URL.createObjectURL(blob),
           mimeType: originalFile.mimeType,
           name: 'scaled_${originalFile.name}',
           lastModified: DateTime.now(),
-          length: blob.size));
+          length: blob.size,
+        ),
+      );
     }.toJS;
     canvas.toBlob(
-        blobCallback, originalFile.mimeType ?? '', calculatedImageQuality.toJS);
+      blobCallback,
+      originalFile.mimeType ?? '',
+      calculatedImageQuality.toJS,
+    );
     return completer.future;
   }
 }

@@ -1,16 +1,14 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.localauth;
 
-import static android.app.Activity.RESULT_OK;
 import static android.content.Context.KEYGUARD_SERVICE;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -21,11 +19,11 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin;
 import io.flutter.embedding.engine.plugins.activity.ActivityAware;
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding;
 import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter;
-import io.flutter.plugin.common.PluginRegistry;
 import io.flutter.plugins.localauth.AuthenticationHelper.AuthCompletionHandler;
 import io.flutter.plugins.localauth.Messages.AuthClassification;
 import io.flutter.plugins.localauth.Messages.AuthOptions;
 import io.flutter.plugins.localauth.Messages.AuthResult;
+import io.flutter.plugins.localauth.Messages.AuthResultCode;
 import io.flutter.plugins.localauth.Messages.AuthStrings;
 import io.flutter.plugins.localauth.Messages.LocalAuthApi;
 import io.flutter.plugins.localauth.Messages.Result;
@@ -39,32 +37,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * <p>Instantiate this in an add to app scenario to gracefully handle activity and context changes.
  */
 public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthApi {
-  private static final int LOCK_REQUEST_CODE = 221;
   private Activity activity;
   private AuthenticationHelper authHelper;
 
   @VisibleForTesting final AtomicBoolean authInProgress = new AtomicBoolean(false);
 
-  // These are null when not using v2 embedding.
   private Lifecycle lifecycle;
   private BiometricManager biometricManager;
   private KeyguardManager keyguardManager;
-  Result<AuthResult> lockRequestResult;
-  private final PluginRegistry.ActivityResultListener resultListener =
-      new PluginRegistry.ActivityResultListener() {
-        @Override
-        public boolean onActivityResult(int requestCode, int resultCode, Intent data) {
-          if (requestCode == LOCK_REQUEST_CODE) {
-            if (resultCode == RESULT_OK && lockRequestResult != null) {
-              onAuthenticationCompleted(lockRequestResult, AuthResult.SUCCESS);
-            } else {
-              onAuthenticationCompleted(lockRequestResult, AuthResult.FAILURE);
-            }
-            lockRequestResult = null;
-          }
-          return false;
-        }
-      };
 
   /**
    * Default constructor for LocalAuthPlugin.
@@ -73,15 +53,21 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
    */
   public LocalAuthPlugin() {}
 
+  @Override
   public @NonNull Boolean isDeviceSupported() {
     return isDeviceSecure() || canAuthenticateWithBiometrics();
   }
 
+  @Override
   public @NonNull Boolean deviceCanSupportBiometrics() {
     return hasBiometricHardware();
   }
 
+  @Override
   public @NonNull List<AuthClassification> getEnrolledBiometrics() {
+    if (biometricManager == null) {
+      return null;
+    }
     ArrayList<AuthClassification> biometrics = new ArrayList<>();
     if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK)
         == BiometricManager.BIOMETRIC_SUCCESS) {
@@ -94,6 +80,7 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     return biometrics;
   }
 
+  @Override
   public @NonNull Boolean stopAuthentication() {
     try {
       if (authHelper != null && authInProgress.get()) {
@@ -107,27 +94,29 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
     }
   }
 
+  @Override
   public void authenticate(
       @NonNull AuthOptions options,
       @NonNull AuthStrings strings,
       @NonNull Result<AuthResult> result) {
     if (authInProgress.get()) {
-      result.success(AuthResult.ERROR_ALREADY_IN_PROGRESS);
+      result.success(new AuthResult.Builder().setCode(AuthResultCode.ALREADY_IN_PROGRESS).build());
       return;
     }
 
     if (activity == null || activity.isFinishing()) {
-      result.success(AuthResult.ERROR_NO_ACTIVITY);
+      result.success(new AuthResult.Builder().setCode(AuthResultCode.NO_ACTIVITY).build());
       return;
     }
 
     if (!(activity instanceof FragmentActivity)) {
-      result.success(AuthResult.ERROR_NOT_FRAGMENT_ACTIVITY);
+      result.success(
+          new AuthResult.Builder().setCode(AuthResultCode.NOT_FRAGMENT_ACTIVITY).build());
       return;
     }
 
     if (!isDeviceSupported()) {
-      result.success(AuthResult.ERROR_NOT_AVAILABLE);
+      result.success(new AuthResult.Builder().setCode(AuthResultCode.NO_CREDENTIALS).build());
       return;
     }
 
@@ -172,7 +161,7 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
   @VisibleForTesting
   public boolean isDeviceSecure() {
     if (keyguardManager == null) return false;
-    return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && keyguardManager.isDeviceSecure());
+    return keyguardManager.isDeviceSecure();
   }
 
   private boolean canAuthenticateWithBiometrics() {
@@ -221,7 +210,6 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
 
   @Override
   public void onAttachedToActivity(@NonNull ActivityPluginBinding binding) {
-    binding.addActivityResultListener(resultListener);
     setServicesFromActivity(binding.getActivity());
     lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding);
   }
@@ -234,7 +222,6 @@ public class LocalAuthPlugin implements FlutterPlugin, ActivityAware, LocalAuthA
 
   @Override
   public void onReattachedToActivityForConfigChanges(@NonNull ActivityPluginBinding binding) {
-    binding.addActivityResultListener(resultListener);
     setServicesFromActivity(binding.getActivity());
     lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding);
   }

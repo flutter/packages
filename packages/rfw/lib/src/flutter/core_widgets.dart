@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,6 +34,7 @@ import 'runtime.dart';
 ///  * [DefaultTextStyle]
 ///  * [Directionality]
 ///  * [Expanded]
+///  * [Flexible]
 ///  * [FittedBox]
 ///  * [FractionallySizedBox]
 ///  * [GestureDetector]
@@ -349,6 +350,14 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
     );
   },
 
+  'Flexible': (BuildContext context, DataSource source) {
+    return Flexible(
+      flex: source.v<int>(['flex']) ?? 1,
+      fit: ArgumentDecoders.enumValue<FlexFit>(FlexFit.values, source, ['fit']) ?? FlexFit.loose,
+      child: source.child(['child']),
+    );
+  },
+
   'FittedBox': (BuildContext context, DataSource source) {
     return FittedBox(
       fit: ArgumentDecoders.enumValue<BoxFit>(BoxFit.values, source, ['fit']) ?? BoxFit.contain,
@@ -643,9 +652,9 @@ Map<String, LocalWidgetBuilder> get _coreWidgetsDefinitions => <String, LocalWid
   'Text': (BuildContext context, DataSource source) {
     String? text = source.v<String>(['text']);
     if (text == null) {
-      final StringBuffer builder = StringBuffer();
+      final builder = StringBuffer();
       final int count = source.length(['text']);
-      for (int index = 0; index < count; index += 1) {
+      for (var index = 0; index < count; index += 1) {
         builder.write(source.v<String>(['text', index]) ?? '');
       }
       text = builder.toString();

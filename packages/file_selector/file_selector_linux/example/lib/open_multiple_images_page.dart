@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,19 +15,14 @@ class OpenMultipleImagesPage extends StatelessWidget {
   const OpenMultipleImagesPage({super.key});
 
   Future<void> _openImageFile(BuildContext context) async {
-    const XTypeGroup jpgsTypeGroup = XTypeGroup(
+    const jpgsTypeGroup = XTypeGroup(
       label: 'JPEGs',
       extensions: <String>['jpg', 'jpeg'],
     );
-    const XTypeGroup pngTypeGroup = XTypeGroup(
-      label: 'PNGs',
-      extensions: <String>['png'],
+    const pngTypeGroup = XTypeGroup(label: 'PNGs', extensions: <String>['png']);
+    final List<XFile> files = await FileSelectorPlatform.instance.openFiles(
+      acceptedTypeGroups: <XTypeGroup>[jpgsTypeGroup, pngTypeGroup],
     );
-    final List<XFile> files = await FileSelectorPlatform.instance
-        .openFiles(acceptedTypeGroups: <XTypeGroup>[
-      jpgsTypeGroup,
-      pngTypeGroup,
-    ]);
     if (files.isEmpty) {
       // Operation was canceled by the user.
       return;
@@ -43,9 +38,7 @@ class OpenMultipleImagesPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Open multiple images'),
-      ),
+      appBar: AppBar(title: const Text('Open multiple images')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -84,10 +77,11 @@ class MultipleImagesDisplay extends StatelessWidget {
           children: <Widget>[
             ...files.map(
               (XFile file) => Flexible(
-                  child: kIsWeb
-                      ? Image.network(file.path)
-                      : Image.file(File(file.path))),
-            )
+                child: kIsWeb
+                    ? Image.network(file.path)
+                    : Image.file(File(file.path)),
+              ),
+            ),
           ],
         ),
       ),

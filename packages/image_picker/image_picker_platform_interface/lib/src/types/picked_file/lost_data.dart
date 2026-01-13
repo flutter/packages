@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -18,11 +18,7 @@ class LostData {
 
   /// Initializes an instance with all member params set to null and considered
   /// to be empty.
-  LostData.empty()
-      : file = null,
-        exception = null,
-        type = null,
-        _empty = true;
+  LostData.empty() : file = null, exception = null, type = null, _empty = true;
 
   /// Whether it is an empty response.
   ///

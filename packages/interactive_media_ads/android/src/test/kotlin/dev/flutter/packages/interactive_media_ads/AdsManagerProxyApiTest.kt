@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -43,14 +43,14 @@ class AdsManagerProxyApiTest {
   }
 
   @Test
-  fun getAdCuePoints() {
+  fun adCuePoints() {
     val api = TestProxyApiRegistrar().getPigeonApiAdsManager()
 
     val instance = mock<AdsManager>()
     val value = listOf(1.0)
     whenever(instance.adCuePoints).thenReturn(listOf(1.0f))
 
-    assertEquals(value, api.getAdCuePoints(instance))
+    assertEquals(value, api.adCuePoints(instance))
   }
 
   @Test

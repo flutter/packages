@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -10,8 +10,11 @@ import 'product_details.dart';
 /// A list of [ProductDetails] can be obtained from the this response.
 class ProductDetailsResponse {
   /// Creates a new [ProductDetailsResponse] with the provided response details.
-  ProductDetailsResponse(
-      {required this.productDetails, required this.notFoundIDs, this.error});
+  ProductDetailsResponse({
+    required this.productDetails,
+    required this.notFoundIDs,
+    this.error,
+  });
 
   /// Each [ProductDetails] uniquely matches one valid identifier in [identifiers] of [InAppPurchasePlatform.queryProductDetails].
   final List<ProductDetails> productDetails;

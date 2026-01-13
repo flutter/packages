@@ -1,3 +1,17 @@
+## 2.2.3
+
+* Replaces use of deprecated Color.value.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.2.2
+
+* Fixes typo of `allowDrawingOutsideViewBox` in doc comments.
+
+## 2.2.1
+
+* Fixes message buffer access in SvgAssetLoader.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 2.2.0
 
 * Exposes `renderingStrategy` in `SvgPicture` constructors.

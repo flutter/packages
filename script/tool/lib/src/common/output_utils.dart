@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,6 +35,11 @@ void printWarning(String message) {
 /// Prints [message] in red, if the environment supports color.
 void printError(String message) {
   print(_colorizeIfAppropriate(message, Styles.RED));
+}
+
+/// Prints [message] in dark grey, if the environment supports color.
+void printSkip(String message) {
+  print(_colorizeIfAppropriate(message, Styles.DARK_GRAY));
 }
 
 /// Returns [message] with escapes to print it in [color], if the environment

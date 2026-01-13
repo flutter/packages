@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,8 +12,9 @@ void main() {
     WebViewPlatform.instance = FakeWebViewPlatform();
   });
 
-  testWidgets('Test snackbar from ScaffoldMessenger',
-      (WidgetTester tester) async {
+  testWidgets('Test snackbar from ScaffoldMessenger', (
+    WidgetTester tester,
+  ) async {
     await tester.pumpWidget(const MaterialApp(home: WebViewExample()));
     expect(find.byIcon(Icons.favorite), findsOneWidget);
     await tester.tap(find.byIcon(Icons.favorite));
@@ -68,7 +69,8 @@ class FakeWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> addJavaScriptChannel(
-      JavaScriptChannelParams javaScriptChannelParams) async {}
+    JavaScriptChannelParams javaScriptChannelParams,
+  ) async {}
 
   @override
   Future<void> loadRequest(LoadRequestParams params) async {}
@@ -118,9 +120,7 @@ class FakeNavigationDelegate extends PlatformNavigationDelegate {
   Future<void> setOnUrlChange(UrlChangeCallback onUrlChange) async {}
 
   @override
-  Future<void> setOnHttpAuthRequest(
-    HttpAuthRequestCallback handler,
-  ) async {}
+  Future<void> setOnHttpAuthRequest(HttpAuthRequestCallback handler) async {}
 
   @override
   Future<void> setOnHttpError(HttpResponseErrorCallback onHttpError) async {}

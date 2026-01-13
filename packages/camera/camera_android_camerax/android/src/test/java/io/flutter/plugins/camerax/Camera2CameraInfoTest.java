@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -69,7 +69,7 @@ public class Camera2CameraInfoTest {
     assertEquals(value, api.getCameraCharacteristic(instance, key));
   }
 
-  @Config(minSdk = 21)
+  @Config(minSdk = 23)
   @SuppressWarnings("unchecked")
   @Test
   public void getCameraCharacteristic_returnsExpectedCameraHardwareLevelWhenRequested() {

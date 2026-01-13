@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -24,20 +24,23 @@ class _MyAppState extends State<MyApp> {
       ValueNotifier<RoutingConfig>(_generateRoutingConfig());
 
   late final GoRouter router = GoRouter.routingConfig(
-      routingConfig: myConfig,
-      errorBuilder: (_, GoRouterState state) => Scaffold(
-            appBar: AppBar(title: const Text('Page not found')),
-            body: Center(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('${state.uri} does not exist'),
-                ElevatedButton(
-                    onPressed: () => router.go('/'),
-                    child: const Text('Go to home')),
-              ],
-            )),
-          ));
+    routingConfig: myConfig,
+    errorBuilder: (_, GoRouterState state) => Scaffold(
+      appBar: AppBar(title: const Text('Page not found')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('${state.uri} does not exist'),
+            ElevatedButton(
+              onPressed: () => router.go('/'),
+              child: const Text('Go to home'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 
   RoutingConfig _generateRoutingConfig() {
     return RoutingConfig(
@@ -70,7 +73,7 @@ class _MyAppState extends State<MyApp> {
                         router.go('/new-route');
                       },
                       child: const Text('Try going to /new-route'),
-                    )
+                    ),
                   ],
                 ),
               ),
@@ -84,14 +87,16 @@ class _MyAppState extends State<MyApp> {
               return Scaffold(
                 appBar: AppBar(title: const Text('A new Route')),
                 body: Center(
-                    child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    ElevatedButton(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      ElevatedButton(
                         onPressed: () => router.go('/'),
-                        child: const Text('Go to home')),
-                  ],
-                )),
+                        child: const Text('Go to home'),
+                      ),
+                    ],
+                  ),
+                ),
               );
             },
           ),
@@ -101,8 +106,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: router,
-    );
+    return MaterialApp.router(routerConfig: router);
   }
 }

@@ -1,10 +1,10 @@
 RouteBase get $requiredNullableTypeArgumentsExtraValueRoute =>
     GoRouteData.$route(
       path: '/default-value-route',
-      factory: _$RequiredNullableTypeArgumentsExtraValueRoute._fromState,
+      factory: $RequiredNullableTypeArgumentsExtraValueRoute._fromState,
     );
 
-mixin _$RequiredNullableTypeArgumentsExtraValueRoute on GoRouteData {
+mixin $RequiredNullableTypeArgumentsExtraValueRoute on GoRouteData {
   static RequiredNullableTypeArgumentsExtraValueRoute _fromState(
           GoRouterState state) =>
       RequiredNullableTypeArgumentsExtraValueRoute(

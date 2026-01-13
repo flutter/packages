@@ -21,9 +21,11 @@ To use the `Android SharedPreferences` backend, use the `SharedPreferencesAsyncA
 ```dart
 const SharedPreferencesAsyncAndroidOptions options =
     SharedPreferencesAsyncAndroidOptions(
-        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-            fileName: 'the_name_of_a_file'));
+      backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+      originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+        fileName: 'the_name_of_a_file',
+      ),
+    );
 ```
 
 The [SharedPreferences] API uses the native [Android SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences) tool to store data.

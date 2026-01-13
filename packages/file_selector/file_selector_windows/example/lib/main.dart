@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
         '/save/text': (BuildContext context) => SaveTextPage(),
         '/directory': (BuildContext context) => const GetDirectoryPage(),
         '/multi-directories': (BuildContext context) =>
-            const GetMultipleDirectoriesPage()
+            const GetMultipleDirectoriesPage(),
       },
     );
   }

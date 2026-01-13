@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -49,9 +49,10 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     @visibleForTesting GisSdkClient? debugOverrideGisSdkClient,
     @visibleForTesting
     StreamController<AuthenticationEvent>? debugAuthenticationController,
-  })  : _gisSdkClient = debugOverrideGisSdkClient,
-        _authenticationController = debugAuthenticationController ??
-            StreamController<AuthenticationEvent>.broadcast() {
+  }) : _gisSdkClient = debugOverrideGisSdkClient,
+       _authenticationController =
+           debugAuthenticationController ??
+           StreamController<AuthenticationEvent>.broadcast() {
     autoDetectedClientId = web.document
         .querySelector(clientIdMetaSelector)
         ?.getAttribute(clientIdAttributeName);
@@ -107,8 +108,10 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   @visibleForTesting
   Future<void> get initialized {
     _assertIsInitCalled();
-    return Future.wait<void>(
-        <Future<void>>[_jsSdkLoadedFuture, _initCalled!.future]);
+    return Future.wait<void>(<Future<void>>[
+      _jsSdkLoadedFuture,
+      _initCalled!.future,
+    ]);
   }
 
   /// Stores the client ID if it was set in a meta-tag of the page.
@@ -124,13 +127,16 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
   Future<void> init(InitParameters params) async {
     final String? appClientId = params.clientId ?? autoDetectedClientId;
     assert(
-        appClientId != null,
-        'ClientID not set. Either set it on a '
-        '<meta name="google-signin-client_id" content="CLIENT_ID" /> tag,'
-        ' or pass clientId when initializing GoogleSignIn');
+      appClientId != null,
+      'ClientID not set. Either set it on a '
+      '<meta name="google-signin-client_id" content="CLIENT_ID" /> tag,'
+      ' or pass clientId when initializing GoogleSignIn',
+    );
 
-    assert(params.serverClientId == null,
-        'serverClientId is not supported on Web.');
+    assert(
+      params.serverClientId == null,
+      'serverClientId is not supported on Web.',
+    );
 
     _initCalled = Completer<void>();
 
@@ -149,7 +155,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults?>? attemptLightweightAuthentication(
-      AttemptLightweightAuthenticationParameters params) {
+    AttemptLightweightAuthenticationParameters params,
+  ) {
     initialized.then((void value) {
       _gisClient.requestOneTap();
     });
@@ -166,9 +173,12 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   @override
   Future<AuthenticationResults> authenticate(
-      AuthenticateParameters params) async {
-    throw UnimplementedError('authenticate is not supported on the web. '
-        'Instead, use renderButton to create a sign-in widget.');
+    AuthenticateParameters params,
+  ) async {
+    throw UnimplementedError(
+      'authenticate is not supported on the web. '
+      'Instead, use renderButton to create a sign-in widget.',
+    );
   }
 
   @override
@@ -187,13 +197,16 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   @override
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
-      ClientAuthorizationTokensForScopesParameters params) async {
+    ClientAuthorizationTokensForScopesParameters params,
+  ) async {
     await initialized;
     _validateScopes(params.request.scopes);
 
-    final String? token = await _gisClient.requestScopes(params.request.scopes,
-        promptIfUnauthorized: params.request.promptIfUnauthorized,
-        userHint: params.request.userId);
+    final String? token = await _gisClient.requestScopes(
+      params.request.scopes,
+      promptIfUnauthorized: params.request.promptIfUnauthorized,
+      userHint: params.request.userId,
+    );
     return token == null
         ? null
         : ClientAuthorizationTokenData(accessToken: token);
@@ -201,7 +214,8 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   @override
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
-      ServerAuthorizationTokensForScopesParameters params) async {
+    ServerAuthorizationTokensForScopesParameters params,
+  ) async {
     await initialized;
     _validateScopes(params.request.scopes);
 
@@ -222,10 +236,19 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
     // scopes must not contain any spaces.
     // https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#redirecting
     assert(
-        !scopes.any((String scope) => scope.contains(' ')),
-        "OAuth 2.0 Scopes for Google APIs can't contain spaces. "
-        'Check https://developers.google.com/identity/protocols/googlescopes '
-        'for a list of valid OAuth 2.0 scopes.');
+      !scopes.any((String scope) => scope.contains(' ')),
+      "OAuth 2.0 Scopes for Google APIs can't contain spaces. "
+      'Check https://developers.google.com/identity/protocols/googlescopes '
+      'for a list of valid OAuth 2.0 scopes.',
+    );
+  }
+
+  @override
+  Future<void> clearAuthorizationToken(
+    ClearAuthorizationTokenParams params,
+  ) async {
+    await initialized;
+    return _gisClient.clearAuthorizationToken(params.accessToken);
   }
 
   @override
@@ -236,16 +259,17 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
 
   // Register a factory for the Button HtmlElementView.
   void _registerButtonFactory() {
-    ui_web.platformViewRegistry.registerViewFactory(
-      'gsi_login_button',
-      (int viewId) {
-        final web.Element element = web.document.createElement('div');
-        element.setAttribute('style',
-            'width: 100%; height: 100%; overflow: hidden; display: flex; flex-wrap: wrap; align-content: center; justify-content: center;');
-        element.id = 'sign_in_button_$viewId';
-        return element;
-      },
-    );
+    ui_web.platformViewRegistry.registerViewFactory('gsi_login_button', (
+      int viewId,
+    ) {
+      final web.Element element = web.document.createElement('div');
+      element.setAttribute(
+        'style',
+        'width: 100%; height: 100%; overflow: hidden; display: flex; flex-wrap: wrap; align-content: center; justify-content: center;',
+      );
+      element.id = 'sign_in_button_$viewId';
+      return element;
+    });
   }
 
   /// Render the GSI button web experience.
@@ -258,10 +282,11 @@ class GoogleSignInPlugin extends GoogleSignInPlatform {
       builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
         if (snapshot.hasData) {
           return FlexHtmlElementView(
-              viewType: 'gsi_login_button',
-              onElementCreated: (Object element) {
-                _gisClient.renderButton(element, config);
-              });
+            viewType: 'gsi_login_button',
+            onElementCreated: (Object element) {
+              _gisClient.renderButton(element, config);
+            },
+          );
         }
         return const Text('Getting ready');
       },

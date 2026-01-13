@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,10 +15,8 @@ class App extends StatelessWidget {
   App({super.key});
 
   @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: _appTitle,
-      );
+  Widget build(BuildContext context) =>
+      MaterialApp.router(routerConfig: _router, title: _appTitle);
 
   final GoRouter _router = GoRouter(routes: $appRoutes);
 }
@@ -26,17 +24,17 @@ class App extends StatelessWidget {
 @TypedGoRoute<HomeRoute>(
   path: '/',
   routes: <TypedGoRoute<GoRouteData>>[
-    TypedGoRoute<SubRoute>(path: 'sub-route')
+    TypedGoRoute<SubRoute>(path: 'sub-route'),
   ],
 )
-class HomeRoute extends GoRouteData with _$HomeRoute {
+class HomeRoute extends GoRouteData with $HomeRoute {
   const HomeRoute();
 
   @override
   Widget build(BuildContext context, GoRouterState state) => const HomeScreen();
 }
 
-class SubRoute extends GoRouteData with _$SubRoute {
+class SubRoute extends GoRouteData with $SubRoute {
   const SubRoute();
 
   @override
@@ -69,13 +67,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      appBar: AppBar(title: const Text(_appTitle)),
-      body: Center(
-        child: ElevatedButton(
-          onPressed: () => const SubRoute().go(context),
-          child: const Text('Go to sub screen'),
-        ),
-      ));
+    appBar: AppBar(title: const Text(_appTitle)),
+    body: Center(
+      child: ElevatedButton(
+        onPressed: () => const SubRoute().go(context),
+        child: const Text('Go to sub screen'),
+      ),
+    ),
+  );
 }
 
 class SubScreen extends StatelessWidget {
@@ -83,14 +82,14 @@ class SubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('$_appTitle Sub screen')),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Go back'),
-          ),
-        ),
-      );
+    appBar: AppBar(title: const Text('$_appTitle Sub screen')),
+    body: Center(
+      child: ElevatedButton(
+        onPressed: () => Navigator.of(context).pop(),
+        child: const Text('Go back'),
+      ),
+    ),
+  );
 }
 
 const String _appTitle = 'GoRouter Example: builder';

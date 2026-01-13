@@ -3,13 +3,13 @@ description: Demonstrates how to use the local_auth_windows plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.6.0
-  flutter: ">=3.27.0"
+  sdk: ^3.8.0
+  flutter: ">=3.32.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  local_auth_platform_interface: ^1.0.0
+  local_auth_platform_interface: ^1.1.0
   local_auth_windows:
     # When depending on this package from a real application you should use:
     #   local_auth_windows: ^x.y.z

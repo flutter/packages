@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,7 +8,7 @@ import 'package:video_player/video_player.dart';
 
 void main() {
   test('Parses SubRip file', () {
-    final SubRipCaptionFile parsedFile = SubRipCaptionFile(_validSubRip);
+    final parsedFile = SubRipCaptionFile(_validSubRip);
 
     expect(parsedFile.captions.length, 4);
 

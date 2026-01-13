@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -14,11 +14,11 @@ import 'package:rfw/rfw.dart';
 
 void main() {
   testWidgets('Core widgets', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -248,11 +248,11 @@ void main() {
   });
 
   testWidgets('More core widgets', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       MaterialApp(
         home: RemoteWidget(
@@ -299,5 +299,196 @@ void main() {
     final RenderClipRRect renderClip = tester.allRenderObjects.whereType<RenderClipRRect>().first;
     expect(renderClip.clipBehavior, equals(Clip.antiAlias));
     expect(renderClip.borderRadius, equals(BorderRadius.zero));
+  });
+
+  testWidgets('Flexible widget with default values', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
+    final data = DynamicContent();
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Column(
+          children: [
+            Flexible(
+              child: Text(text: "Default flexible"),
+            ),
+          ],
+        ),
+      );
+    '''));
+
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(Flexible), findsOneWidget);
+    final Flexible defaultFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    expect(defaultFlexible.flex, equals(1));
+    expect(defaultFlexible.fit, equals(FlexFit.loose));
+  });
+
+  testWidgets('Flexible widget with custom flex value', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
+    final data = DynamicContent();
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Column(
+          children: [
+            Flexible(
+              flex: 3,
+              child: Text(text: "Custom flex"),
+            ),
+          ],
+        ),
+      );
+    '''));
+
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(Flexible), findsOneWidget);
+    final Flexible customFlexFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    expect(customFlexFlexible.flex, equals(3));
+    expect(customFlexFlexible.fit, equals(FlexFit.loose));
+  });
+
+  testWidgets('Flexible widget with fit tight', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
+    final data = DynamicContent();
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Column(
+          children: [
+            Flexible(
+              flex: 2,
+              fit: "tight",
+              child: Text(text: "Tight fit"),
+            ),
+          ],
+        ),
+      );
+    '''));
+
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(Flexible), findsOneWidget);
+    final Flexible tightFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    expect(tightFlexible.flex, equals(2));
+    expect(tightFlexible.fit, equals(FlexFit.tight));
+  });
+
+  testWidgets('Flexible widget with fit loose', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
+    final data = DynamicContent();
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Column(
+          children: [
+            Flexible(
+              flex: 4,
+              fit: "loose",
+              child: Text(text: "Loose fit"),
+            ),
+          ],
+        ),
+      );
+    '''));
+
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(Flexible), findsOneWidget);
+    final Flexible looseFlexible = tester.widget<Flexible>(find.byType(Flexible));
+    expect(looseFlexible.flex, equals(4));
+    expect(looseFlexible.fit, equals(FlexFit.loose));
+  });
+
+  testWidgets('Multiple Flexible widgets in Column', (WidgetTester tester) async {
+    final runtime = Runtime()
+      ..update(const LibraryName(<String>['core']), createCoreWidgets());
+    addTearDown(runtime.dispose);
+    final data = DynamicContent();
+
+    runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
+      import core;
+      widget root = Directionality(
+        textDirection: "ltr",
+        child: Column(
+          children: [
+            Flexible(
+              flex: 1,
+              fit: "loose",
+              child: Text(text: "First"),
+            ),
+            Flexible(
+              flex: 2,
+              fit: "tight",
+              child: Text(text: "Second"),
+            ),
+            Flexible(
+              flex: 1,
+              child: Text(text: "Third"),
+            ),
+          ],
+        ),
+      );
+    '''));
+
+    await tester.pumpWidget(
+      RemoteWidget(
+        runtime: runtime,
+        data: data,
+        widget: const FullyQualifiedWidgetName(LibraryName(<String>['test']), 'root'),
+      ),
+    );
+    await tester.pump();
+    expect(find.byType(Flexible), findsNWidgets(3));
+
+    final List<Flexible> flexibleWidgets = tester.widgetList<Flexible>(find.byType(Flexible)).toList();
+    expect(flexibleWidgets[0].flex, equals(1));
+    expect(flexibleWidgets[0].fit, equals(FlexFit.loose));
+    expect(flexibleWidgets[1].flex, equals(2));
+    expect(flexibleWidgets[1].fit, equals(FlexFit.tight));
+    expect(flexibleWidgets[2].flex, equals(1));
+    expect(flexibleWidgets[2].fit, equals(FlexFit.loose));
   });
 }

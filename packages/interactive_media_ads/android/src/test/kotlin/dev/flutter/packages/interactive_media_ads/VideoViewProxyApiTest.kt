@@ -1,9 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package dev.flutter.packages.interactive_media_ads
 
+import android.media.AudioManager
 import android.net.Uri
 import android.widget.VideoView
 import kotlin.test.Test
@@ -34,5 +35,15 @@ class VideoViewProxyApiTest {
     api.getCurrentPosition(instance)
 
     assertEquals(0, api.getCurrentPosition(instance))
+  }
+
+  @Test
+  fun setAudioFocusRequest() {
+    val api = TestProxyApiRegistrar().getPigeonApiVideoView()
+
+    val instance = mock<VideoView>()
+    api.setAudioFocusRequest(instance, AudioManagerAudioFocus.GAIN)
+
+    verify(instance).setAudioFocusRequest(AudioManager.AUDIOFOCUS_GAIN)
   }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,7 +6,7 @@ import AVFoundation
 import CoreMotion
 import Flutter
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -26,6 +26,8 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   var isPreviewPaused: Bool { get }
   var isStreamingImages: Bool { get }
+
+  var deviceOrientation: UIDeviceOrientation { get set }
 
   var minimumAvailableZoomFactor: CGFloat { get }
   var maximumAvailableZoomFactor: CGFloat { get }
@@ -61,7 +63,6 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   func captureToFile(completion: @escaping (_ path: String?, _ error: FlutterError?) -> Void)
 
-  func setDeviceOrientation(_ orientation: UIDeviceOrientation)
   func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation)
   func unlockCaptureOrientation()
 

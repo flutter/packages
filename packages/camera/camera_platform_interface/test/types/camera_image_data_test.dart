@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('CameraImageData can be created', () {
     debugDefaultTargetPlatformOverride = TargetPlatform.android;
-    final CameraImageData cameraImage = CameraImageData(
+    final cameraImage = CameraImageData(
       format: const CameraImageFormat(ImageFormatGroup.jpeg, raw: 42),
       height: 100,
       width: 200,
@@ -18,11 +18,12 @@ void main() {
       sensorSensitivity: 92.0,
       planes: <CameraImagePlane>[
         CameraImagePlane(
-            bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
-            bytesPerRow: 4,
-            bytesPerPixel: 2,
-            height: 100,
-            width: 200)
+          bytes: Uint8List.fromList(<int>[1, 2, 3, 4]),
+          bytesPerRow: 4,
+          bytesPerPixel: 2,
+          height: 100,
+          width: 200,
+        ),
       ],
     );
     expect(cameraImage.format.group, ImageFormatGroup.jpeg);

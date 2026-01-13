@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -20,15 +20,6 @@ import 'webview_android_widget.dart';
 /// an [AndroidView] to embed the webview in the widget hierarchy, and uses a method channel to
 /// communicate with the platform code.
 class AndroidWebView implements WebViewPlatform {
-  /// Constructs an [AndroidWebView].
-  AndroidWebView({@visibleForTesting PigeonInstanceManager? instanceManager})
-      : instanceManager = instanceManager ?? PigeonInstanceManager.instance;
-
-  /// Maintains instances used to communicate with the native objects they
-  /// represent.
-  @protected
-  final PigeonInstanceManager instanceManager;
-
   @override
   Widget build({
     required BuildContext context,
@@ -63,7 +54,9 @@ class AndroidWebView implements WebViewPlatform {
             gestureRecognizers: gestureRecognizers,
             layoutDirection:
                 Directionality.maybeOf(context) ?? TextDirection.rtl,
-            creationParams: instanceManager.getIdentifier(controller.webView),
+            creationParams: PigeonInstanceManager.instance.getIdentifier(
+              controller.webView,
+            ),
             creationParamsCodec: const StandardMessageCodec(),
           ),
         );
@@ -75,7 +68,8 @@ class AndroidWebView implements WebViewPlatform {
   Future<bool> clearCookies() {
     if (WebViewCookieManagerPlatform.instance == null) {
       throw Exception(
-          'Could not clear cookies as no implementation for WebViewCookieManagerPlatform has been registered.');
+        'Could not clear cookies as no implementation for WebViewCookieManagerPlatform has been registered.',
+      );
     }
     return WebViewCookieManagerPlatform.instance!.clearCookies();
   }

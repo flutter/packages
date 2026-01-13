@@ -205,14 +205,18 @@ which is passed as the last argument to the builder function. Example:
 <?code-excerpt "../example/lib/stateful_shell_route.dart (configuration-builder)"?>
 ```dart
 StatefulShellRoute.indexedStack(
-  builder: (BuildContext context, GoRouterState state,
-      StatefulNavigationShell navigationShell) {
-    // Return the widget that implements the custom shell (in this case
-    // using a BottomNavigationBar). The StatefulNavigationShell is passed
-    // to be able access the state of the shell and to navigate to other
-    // branches in a stateful way.
-    return ScaffoldWithNavBar(navigationShell: navigationShell);
-  },
+  builder:
+      (
+        BuildContext context,
+        GoRouterState state,
+        StatefulNavigationShell navigationShell,
+      ) {
+        // Return the widget that implements the custom shell (in this case
+        // using a BottomNavigationBar). The StatefulNavigationShell is passed
+        // to be able access the state of the shell and to navigate to other
+        // branches in a stateful way.
+        return ScaffoldWithNavBar(navigationShell: navigationShell);
+      },
 ```
 
 Within the custom shell widget, the StatefulNavigationShell is first and 

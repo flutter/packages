@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -100,5 +100,21 @@ public class WebSettingsProxyApi extends PigeonApiWebSettings {
   @Override
   public String getUserAgentString(@NonNull WebSettings pigeon_instance) {
     return pigeon_instance.getUserAgentString();
+  }
+
+  @Override
+  public void setMixedContentMode(
+      @NonNull WebSettings pigeon_instance, @NonNull MixedContentMode mode) {
+    switch (mode) {
+      case ALWAYS_ALLOW:
+        pigeon_instance.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        break;
+      case COMPATIBILITY_MODE:
+        pigeon_instance.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
+        break;
+      case NEVER_ALLOW:
+        pigeon_instance.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
+        break;
+    }
   }
 }

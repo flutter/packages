@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,10 +15,10 @@ import 'src/jwt.dart' as jwt;
 void main() async {
   await gis.loadWebSdk(); // Load the GIS SDK
   // The rest of your code...
-// #enddocregion use-loader
+  // #enddocregion use-loader
   id.setLogLevel('debug');
 
-  final IdConfiguration config = IdConfiguration(
+  final config = IdConfiguration(
     client_id: 'your-google-client-id-goes-here.apps.googleusercontent.com',
     callback: onCredentialResponse,
     use_fedcm_for_prompt: true,
@@ -26,7 +26,7 @@ void main() async {
 
   id.initialize(config);
   id.prompt(onPromptMoment);
-// #docregion use-loader
+  // #docregion use-loader
 }
 // #enddocregion use-loader
 

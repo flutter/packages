@@ -31,45 +31,25 @@ import 'package:mockito/src/dummies.dart' as _i8;
 
 class _FakeAccessCredentials_0 extends _i1.SmartFake
     implements _i2.AccessCredentials {
-  _FakeAccessCredentials_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAccessCredentials_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeResponse_1 extends _i1.SmartFake implements _i3.Response {
-  _FakeResponse_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeResponse_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeStreamedResponse_2 extends _i1.SmartFake
     implements _i3.StreamedResponse {
-  _FakeStreamedResponse_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeStreamedResponse_2(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeAnywhereCachesResource_3 extends _i1.SmartFake
     implements _i4.AnywhereCachesResource {
-  _FakeAnywhereCachesResource_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeAnywhereCachesResource_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeBucketAccessControlsResource_4 extends _i1.SmartFake
@@ -77,32 +57,19 @@ class _FakeBucketAccessControlsResource_4 extends _i1.SmartFake
   _FakeBucketAccessControlsResource_4(
     Object parent,
     Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  ) : super(parent, parentInvocation);
 }
 
 class _FakeBucketsResource_5 extends _i1.SmartFake
     implements _i4.BucketsResource {
-  _FakeBucketsResource_5(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeBucketsResource_5(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeChannelsResource_6 extends _i1.SmartFake
     implements _i4.ChannelsResource {
-  _FakeChannelsResource_6(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeChannelsResource_6(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeDefaultObjectAccessControlsResource_7 extends _i1.SmartFake
@@ -110,43 +77,25 @@ class _FakeDefaultObjectAccessControlsResource_7 extends _i1.SmartFake
   _FakeDefaultObjectAccessControlsResource_7(
     Object parent,
     Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  ) : super(parent, parentInvocation);
 }
 
 class _FakeFoldersResource_8 extends _i1.SmartFake
     implements _i4.FoldersResource {
-  _FakeFoldersResource_8(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeFoldersResource_8(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeManagedFoldersResource_9 extends _i1.SmartFake
     implements _i4.ManagedFoldersResource {
-  _FakeManagedFoldersResource_9(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeManagedFoldersResource_9(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeNotificationsResource_10 extends _i1.SmartFake
     implements _i4.NotificationsResource {
-  _FakeNotificationsResource_10(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeNotificationsResource_10(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeObjectAccessControlsResource_11 extends _i1.SmartFake
@@ -154,126 +103,68 @@ class _FakeObjectAccessControlsResource_11 extends _i1.SmartFake
   _FakeObjectAccessControlsResource_11(
     Object parent,
     Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  ) : super(parent, parentInvocation);
 }
 
 class _FakeObjectsResource_12 extends _i1.SmartFake
     implements _i4.ObjectsResource {
-  _FakeObjectsResource_12(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeObjectsResource_12(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeOperationsResource_13 extends _i1.SmartFake
     implements _i4.OperationsResource {
-  _FakeOperationsResource_13(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeOperationsResource_13(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeProjectsResource_14 extends _i1.SmartFake
     implements _i4.ProjectsResource {
-  _FakeProjectsResource_14(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeProjectsResource_14(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeGoogleLongrunningOperation_15 extends _i1.SmartFake
     implements _i4.GoogleLongrunningOperation {
-  _FakeGoogleLongrunningOperation_15(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeGoogleLongrunningOperation_15(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeObject_16 extends _i1.SmartFake implements _i4.Object {
-  _FakeObject_16(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeObject_16(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeObject_17 extends _i1.SmartFake implements Object {
-  _FakeObject_17(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeObject_17(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakePolicy_18 extends _i1.SmartFake implements _i4.Policy {
-  _FakePolicy_18(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakePolicy_18(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeObjects_19 extends _i1.SmartFake implements _i4.Objects {
-  _FakeObjects_19(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeObjects_19(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeRewriteResponse_20 extends _i1.SmartFake
     implements _i4.RewriteResponse {
-  _FakeRewriteResponse_20(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeRewriteResponse_20(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeTestIamPermissionsResponse_21 extends _i1.SmartFake
     implements _i4.TestIamPermissionsResponse {
-  _FakeTestIamPermissionsResponse_21(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeTestIamPermissionsResponse_21(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeChannel_22 extends _i1.SmartFake implements _i4.Channel {
-  _FakeChannel_22(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeChannel_22(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [AuthClient].
@@ -285,55 +176,41 @@ class MockAuthClient extends _i1.Mock implements _i5.AuthClient {
   }
 
   @override
-  _i2.AccessCredentials get credentials => (super.noSuchMethod(
-        Invocation.getter(#credentials),
-        returnValue: _FakeAccessCredentials_0(
-          this,
-          Invocation.getter(#credentials),
-        ),
-      ) as _i2.AccessCredentials);
+  _i2.AccessCredentials get credentials =>
+      (super.noSuchMethod(
+            Invocation.getter(#credentials),
+            returnValue: _FakeAccessCredentials_0(
+              this,
+              Invocation.getter(#credentials),
+            ),
+          )
+          as _i2.AccessCredentials);
 
   @override
-  _i6.Future<_i3.Response> head(
-    Uri? url, {
-    Map<String, String>? headers,
-  }) =>
+  _i6.Future<_i3.Response> head(Uri? url, {Map<String, String>? headers}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #head,
-          [url],
-          {#headers: headers},
-        ),
-        returnValue: _i6.Future<_i3.Response>.value(_FakeResponse_1(
-          this,
-          Invocation.method(
-            #head,
-            [url],
-            {#headers: headers},
-          ),
-        )),
-      ) as _i6.Future<_i3.Response>);
+            Invocation.method(#head, [url], {#headers: headers}),
+            returnValue: _i6.Future<_i3.Response>.value(
+              _FakeResponse_1(
+                this,
+                Invocation.method(#head, [url], {#headers: headers}),
+              ),
+            ),
+          )
+          as _i6.Future<_i3.Response>);
 
   @override
-  _i6.Future<_i3.Response> get(
-    Uri? url, {
-    Map<String, String>? headers,
-  }) =>
+  _i6.Future<_i3.Response> get(Uri? url, {Map<String, String>? headers}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [url],
-          {#headers: headers},
-        ),
-        returnValue: _i6.Future<_i3.Response>.value(_FakeResponse_1(
-          this,
-          Invocation.method(
-            #get,
-            [url],
-            {#headers: headers},
-          ),
-        )),
-      ) as _i6.Future<_i3.Response>);
+            Invocation.method(#get, [url], {#headers: headers}),
+            returnValue: _i6.Future<_i3.Response>.value(
+              _FakeResponse_1(
+                this,
+                Invocation.method(#get, [url], {#headers: headers}),
+              ),
+            ),
+          )
+          as _i6.Future<_i3.Response>);
 
   @override
   _i6.Future<_i3.Response> post(
@@ -343,28 +220,23 @@ class MockAuthClient extends _i1.Mock implements _i5.AuthClient {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #post,
-          [url],
-          {
-            #headers: headers,
-            #body: body,
-            #encoding: encoding,
-          },
-        ),
-        returnValue: _i6.Future<_i3.Response>.value(_FakeResponse_1(
-          this,
-          Invocation.method(
-            #post,
-            [url],
-            {
-              #headers: headers,
-              #body: body,
-              #encoding: encoding,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i3.Response>);
+            Invocation.method(
+              #post,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+            returnValue: _i6.Future<_i3.Response>.value(
+              _FakeResponse_1(
+                this,
+                Invocation.method(
+                  #post,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i3.Response>);
 
   @override
   _i6.Future<_i3.Response> put(
@@ -374,28 +246,23 @@ class MockAuthClient extends _i1.Mock implements _i5.AuthClient {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #put,
-          [url],
-          {
-            #headers: headers,
-            #body: body,
-            #encoding: encoding,
-          },
-        ),
-        returnValue: _i6.Future<_i3.Response>.value(_FakeResponse_1(
-          this,
-          Invocation.method(
-            #put,
-            [url],
-            {
-              #headers: headers,
-              #body: body,
-              #encoding: encoding,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i3.Response>);
+            Invocation.method(
+              #put,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+            returnValue: _i6.Future<_i3.Response>.value(
+              _FakeResponse_1(
+                this,
+                Invocation.method(
+                  #put,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i3.Response>);
 
   @override
   _i6.Future<_i3.Response> patch(
@@ -405,28 +272,23 @@ class MockAuthClient extends _i1.Mock implements _i5.AuthClient {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #patch,
-          [url],
-          {
-            #headers: headers,
-            #body: body,
-            #encoding: encoding,
-          },
-        ),
-        returnValue: _i6.Future<_i3.Response>.value(_FakeResponse_1(
-          this,
-          Invocation.method(
-            #patch,
-            [url],
-            {
-              #headers: headers,
-              #body: body,
-              #encoding: encoding,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i3.Response>);
+            Invocation.method(
+              #patch,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+            returnValue: _i6.Future<_i3.Response>.value(
+              _FakeResponse_1(
+                this,
+                Invocation.method(
+                  #patch,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i3.Response>);
 
   @override
   _i6.Future<_i3.Response> delete(
@@ -436,49 +298,36 @@ class MockAuthClient extends _i1.Mock implements _i5.AuthClient {
     _i7.Encoding? encoding,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [url],
-          {
-            #headers: headers,
-            #body: body,
-            #encoding: encoding,
-          },
-        ),
-        returnValue: _i6.Future<_i3.Response>.value(_FakeResponse_1(
-          this,
-          Invocation.method(
-            #delete,
-            [url],
-            {
-              #headers: headers,
-              #body: body,
-              #encoding: encoding,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i3.Response>);
+            Invocation.method(
+              #delete,
+              [url],
+              {#headers: headers, #body: body, #encoding: encoding},
+            ),
+            returnValue: _i6.Future<_i3.Response>.value(
+              _FakeResponse_1(
+                this,
+                Invocation.method(
+                  #delete,
+                  [url],
+                  {#headers: headers, #body: body, #encoding: encoding},
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i3.Response>);
 
   @override
-  _i6.Future<String> read(
-    Uri? url, {
-    Map<String, String>? headers,
-  }) =>
+  _i6.Future<String> read(Uri? url, {Map<String, String>? headers}) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #read,
-          [url],
-          {#headers: headers},
-        ),
-        returnValue: _i6.Future<String>.value(_i8.dummyValue<String>(
-          this,
-          Invocation.method(
-            #read,
-            [url],
-            {#headers: headers},
-          ),
-        )),
-      ) as _i6.Future<String>);
+            Invocation.method(#read, [url], {#headers: headers}),
+            returnValue: _i6.Future<String>.value(
+              _i8.dummyValue<String>(
+                this,
+                Invocation.method(#read, [url], {#headers: headers}),
+              ),
+            ),
+          )
+          as _i6.Future<String>);
 
   @override
   _i6.Future<_i9.Uint8List> readBytes(
@@ -486,39 +335,29 @@ class MockAuthClient extends _i1.Mock implements _i5.AuthClient {
     Map<String, String>? headers,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #readBytes,
-          [url],
-          {#headers: headers},
-        ),
-        returnValue: _i6.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
-      ) as _i6.Future<_i9.Uint8List>);
+            Invocation.method(#readBytes, [url], {#headers: headers}),
+            returnValue: _i6.Future<_i9.Uint8List>.value(_i9.Uint8List(0)),
+          )
+          as _i6.Future<_i9.Uint8List>);
 
   @override
   _i6.Future<_i3.StreamedResponse> send(_i3.BaseRequest? request) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #send,
-          [request],
-        ),
-        returnValue:
-            _i6.Future<_i3.StreamedResponse>.value(_FakeStreamedResponse_2(
-          this,
-          Invocation.method(
-            #send,
-            [request],
-          ),
-        )),
-      ) as _i6.Future<_i3.StreamedResponse>);
+            Invocation.method(#send, [request]),
+            returnValue: _i6.Future<_i3.StreamedResponse>.value(
+              _FakeStreamedResponse_2(
+                this,
+                Invocation.method(#send, [request]),
+              ),
+            ),
+          )
+          as _i6.Future<_i3.StreamedResponse>);
 
   @override
   void close() => super.noSuchMethod(
-        Invocation.method(
-          #close,
-          [],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#close, []),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [StorageApi].
@@ -530,115 +369,136 @@ class MockStorageApi extends _i1.Mock implements _i4.StorageApi {
   }
 
   @override
-  _i4.AnywhereCachesResource get anywhereCaches => (super.noSuchMethod(
-        Invocation.getter(#anywhereCaches),
-        returnValue: _FakeAnywhereCachesResource_3(
-          this,
-          Invocation.getter(#anywhereCaches),
-        ),
-      ) as _i4.AnywhereCachesResource);
+  _i4.AnywhereCachesResource get anywhereCaches =>
+      (super.noSuchMethod(
+            Invocation.getter(#anywhereCaches),
+            returnValue: _FakeAnywhereCachesResource_3(
+              this,
+              Invocation.getter(#anywhereCaches),
+            ),
+          )
+          as _i4.AnywhereCachesResource);
 
   @override
   _i4.BucketAccessControlsResource get bucketAccessControls =>
       (super.noSuchMethod(
-        Invocation.getter(#bucketAccessControls),
-        returnValue: _FakeBucketAccessControlsResource_4(
-          this,
-          Invocation.getter(#bucketAccessControls),
-        ),
-      ) as _i4.BucketAccessControlsResource);
+            Invocation.getter(#bucketAccessControls),
+            returnValue: _FakeBucketAccessControlsResource_4(
+              this,
+              Invocation.getter(#bucketAccessControls),
+            ),
+          )
+          as _i4.BucketAccessControlsResource);
 
   @override
-  _i4.BucketsResource get buckets => (super.noSuchMethod(
-        Invocation.getter(#buckets),
-        returnValue: _FakeBucketsResource_5(
-          this,
-          Invocation.getter(#buckets),
-        ),
-      ) as _i4.BucketsResource);
+  _i4.BucketsResource get buckets =>
+      (super.noSuchMethod(
+            Invocation.getter(#buckets),
+            returnValue: _FakeBucketsResource_5(
+              this,
+              Invocation.getter(#buckets),
+            ),
+          )
+          as _i4.BucketsResource);
 
   @override
-  _i4.ChannelsResource get channels => (super.noSuchMethod(
-        Invocation.getter(#channels),
-        returnValue: _FakeChannelsResource_6(
-          this,
-          Invocation.getter(#channels),
-        ),
-      ) as _i4.ChannelsResource);
+  _i4.ChannelsResource get channels =>
+      (super.noSuchMethod(
+            Invocation.getter(#channels),
+            returnValue: _FakeChannelsResource_6(
+              this,
+              Invocation.getter(#channels),
+            ),
+          )
+          as _i4.ChannelsResource);
 
   @override
   _i4.DefaultObjectAccessControlsResource get defaultObjectAccessControls =>
       (super.noSuchMethod(
-        Invocation.getter(#defaultObjectAccessControls),
-        returnValue: _FakeDefaultObjectAccessControlsResource_7(
-          this,
-          Invocation.getter(#defaultObjectAccessControls),
-        ),
-      ) as _i4.DefaultObjectAccessControlsResource);
+            Invocation.getter(#defaultObjectAccessControls),
+            returnValue: _FakeDefaultObjectAccessControlsResource_7(
+              this,
+              Invocation.getter(#defaultObjectAccessControls),
+            ),
+          )
+          as _i4.DefaultObjectAccessControlsResource);
 
   @override
-  _i4.FoldersResource get folders => (super.noSuchMethod(
-        Invocation.getter(#folders),
-        returnValue: _FakeFoldersResource_8(
-          this,
-          Invocation.getter(#folders),
-        ),
-      ) as _i4.FoldersResource);
+  _i4.FoldersResource get folders =>
+      (super.noSuchMethod(
+            Invocation.getter(#folders),
+            returnValue: _FakeFoldersResource_8(
+              this,
+              Invocation.getter(#folders),
+            ),
+          )
+          as _i4.FoldersResource);
 
   @override
-  _i4.ManagedFoldersResource get managedFolders => (super.noSuchMethod(
-        Invocation.getter(#managedFolders),
-        returnValue: _FakeManagedFoldersResource_9(
-          this,
-          Invocation.getter(#managedFolders),
-        ),
-      ) as _i4.ManagedFoldersResource);
+  _i4.ManagedFoldersResource get managedFolders =>
+      (super.noSuchMethod(
+            Invocation.getter(#managedFolders),
+            returnValue: _FakeManagedFoldersResource_9(
+              this,
+              Invocation.getter(#managedFolders),
+            ),
+          )
+          as _i4.ManagedFoldersResource);
 
   @override
-  _i4.NotificationsResource get notifications => (super.noSuchMethod(
-        Invocation.getter(#notifications),
-        returnValue: _FakeNotificationsResource_10(
-          this,
-          Invocation.getter(#notifications),
-        ),
-      ) as _i4.NotificationsResource);
+  _i4.NotificationsResource get notifications =>
+      (super.noSuchMethod(
+            Invocation.getter(#notifications),
+            returnValue: _FakeNotificationsResource_10(
+              this,
+              Invocation.getter(#notifications),
+            ),
+          )
+          as _i4.NotificationsResource);
 
   @override
   _i4.ObjectAccessControlsResource get objectAccessControls =>
       (super.noSuchMethod(
-        Invocation.getter(#objectAccessControls),
-        returnValue: _FakeObjectAccessControlsResource_11(
-          this,
-          Invocation.getter(#objectAccessControls),
-        ),
-      ) as _i4.ObjectAccessControlsResource);
+            Invocation.getter(#objectAccessControls),
+            returnValue: _FakeObjectAccessControlsResource_11(
+              this,
+              Invocation.getter(#objectAccessControls),
+            ),
+          )
+          as _i4.ObjectAccessControlsResource);
 
   @override
-  _i4.ObjectsResource get objects => (super.noSuchMethod(
-        Invocation.getter(#objects),
-        returnValue: _FakeObjectsResource_12(
-          this,
-          Invocation.getter(#objects),
-        ),
-      ) as _i4.ObjectsResource);
+  _i4.ObjectsResource get objects =>
+      (super.noSuchMethod(
+            Invocation.getter(#objects),
+            returnValue: _FakeObjectsResource_12(
+              this,
+              Invocation.getter(#objects),
+            ),
+          )
+          as _i4.ObjectsResource);
 
   @override
-  _i4.OperationsResource get operations => (super.noSuchMethod(
-        Invocation.getter(#operations),
-        returnValue: _FakeOperationsResource_13(
-          this,
-          Invocation.getter(#operations),
-        ),
-      ) as _i4.OperationsResource);
+  _i4.OperationsResource get operations =>
+      (super.noSuchMethod(
+            Invocation.getter(#operations),
+            returnValue: _FakeOperationsResource_13(
+              this,
+              Invocation.getter(#operations),
+            ),
+          )
+          as _i4.OperationsResource);
 
   @override
-  _i4.ProjectsResource get projects => (super.noSuchMethod(
-        Invocation.getter(#projects),
-        returnValue: _FakeProjectsResource_14(
-          this,
-          Invocation.getter(#projects),
-        ),
-      ) as _i4.ProjectsResource);
+  _i4.ProjectsResource get projects =>
+      (super.noSuchMethod(
+            Invocation.getter(#projects),
+            returnValue: _FakeProjectsResource_14(
+              this,
+              Invocation.getter(#projects),
+            ),
+          )
+          as _i4.ProjectsResource);
 }
 
 /// A class which mocks [ObjectsResource].
@@ -652,40 +512,34 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #bulkRestore,
-          [
-            request,
-            bucket,
-          ],
-          {#$fields: $fields},
-        ),
-        returnValue: _i6.Future<_i4.GoogleLongrunningOperation>.value(
-            _FakeGoogleLongrunningOperation_15(
-          this,
-          Invocation.method(
-            #bulkRestore,
-            [
-              request,
-              bucket,
-            ],
-            {#$fields: $fields},
-          ),
-        )),
-        returnValueForMissingStub:
-            _i6.Future<_i4.GoogleLongrunningOperation>.value(
-                _FakeGoogleLongrunningOperation_15(
-          this,
-          Invocation.method(
-            #bulkRestore,
-            [
-              request,
-              bucket,
-            ],
-            {#$fields: $fields},
-          ),
-        )),
-      ) as _i6.Future<_i4.GoogleLongrunningOperation>);
+            Invocation.method(
+              #bulkRestore,
+              [request, bucket],
+              {#$fields: $fields},
+            ),
+            returnValue: _i6.Future<_i4.GoogleLongrunningOperation>.value(
+              _FakeGoogleLongrunningOperation_15(
+                this,
+                Invocation.method(
+                  #bulkRestore,
+                  [request, bucket],
+                  {#$fields: $fields},
+                ),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i6.Future<_i4.GoogleLongrunningOperation>.value(
+                  _FakeGoogleLongrunningOperation_15(
+                    this,
+                    Invocation.method(
+                      #bulkRestore,
+                      [request, bucket],
+                      {#$fields: $fields},
+                    ),
+                  ),
+                ),
+          )
+          as _i6.Future<_i4.GoogleLongrunningOperation>);
 
   @override
   _i6.Future<_i4.Object> compose(
@@ -700,61 +554,54 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #compose,
-          [
-            request,
-            destinationBucket,
-            destinationObject,
-          ],
-          {
-            #destinationPredefinedAcl: destinationPredefinedAcl,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #kmsKeyName: kmsKeyName,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #compose,
-            [
-              request,
-              destinationBucket,
-              destinationObject,
-            ],
-            {
-              #destinationPredefinedAcl: destinationPredefinedAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #kmsKeyName: kmsKeyName,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #compose,
-            [
-              request,
-              destinationBucket,
-              destinationObject,
-            ],
-            {
-              #destinationPredefinedAcl: destinationPredefinedAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #kmsKeyName: kmsKeyName,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Object>);
+            Invocation.method(
+              #compose,
+              [request, destinationBucket, destinationObject],
+              {
+                #destinationPredefinedAcl: destinationPredefinedAcl,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #kmsKeyName: kmsKeyName,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #compose,
+                  [request, destinationBucket, destinationObject],
+                  {
+                    #destinationPredefinedAcl: destinationPredefinedAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #kmsKeyName: kmsKeyName,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #compose,
+                  [request, destinationBucket, destinationObject],
+                  {
+                    #destinationPredefinedAcl: destinationPredefinedAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #kmsKeyName: kmsKeyName,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Object>);
 
   @override
   _i6.Future<_i4.Object> copy(
@@ -779,91 +626,98 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #copy,
-          [
-            request,
-            sourceBucket,
-            sourceObject,
-            destinationBucket,
-            destinationObject,
-          ],
-          {
-            #destinationKmsKeyName: destinationKmsKeyName,
-            #destinationPredefinedAcl: destinationPredefinedAcl,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #ifSourceGenerationMatch: ifSourceGenerationMatch,
-            #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-            #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-            #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-            #projection: projection,
-            #sourceGeneration: sourceGeneration,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #copy,
-            [
-              request,
-              sourceBucket,
-              sourceObject,
-              destinationBucket,
-              destinationObject,
-            ],
-            {
-              #destinationKmsKeyName: destinationKmsKeyName,
-              #destinationPredefinedAcl: destinationPredefinedAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #ifSourceGenerationMatch: ifSourceGenerationMatch,
-              #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-              #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-              #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-              #projection: projection,
-              #sourceGeneration: sourceGeneration,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #copy,
-            [
-              request,
-              sourceBucket,
-              sourceObject,
-              destinationBucket,
-              destinationObject,
-            ],
-            {
-              #destinationKmsKeyName: destinationKmsKeyName,
-              #destinationPredefinedAcl: destinationPredefinedAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #ifSourceGenerationMatch: ifSourceGenerationMatch,
-              #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-              #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-              #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-              #projection: projection,
-              #sourceGeneration: sourceGeneration,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Object>);
+            Invocation.method(
+              #copy,
+              [
+                request,
+                sourceBucket,
+                sourceObject,
+                destinationBucket,
+                destinationObject,
+              ],
+              {
+                #destinationKmsKeyName: destinationKmsKeyName,
+                #destinationPredefinedAcl: destinationPredefinedAcl,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
+                #projection: projection,
+                #sourceGeneration: sourceGeneration,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #copy,
+                  [
+                    request,
+                    sourceBucket,
+                    sourceObject,
+                    destinationBucket,
+                    destinationObject,
+                  ],
+                  {
+                    #destinationKmsKeyName: destinationKmsKeyName,
+                    #destinationPredefinedAcl: destinationPredefinedAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                    #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                    #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                    #ifSourceMetagenerationNotMatch:
+                        ifSourceMetagenerationNotMatch,
+                    #projection: projection,
+                    #sourceGeneration: sourceGeneration,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #copy,
+                  [
+                    request,
+                    sourceBucket,
+                    sourceObject,
+                    destinationBucket,
+                    destinationObject,
+                  ],
+                  {
+                    #destinationKmsKeyName: destinationKmsKeyName,
+                    #destinationPredefinedAcl: destinationPredefinedAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                    #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                    #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                    #ifSourceMetagenerationNotMatch:
+                        ifSourceMetagenerationNotMatch,
+                    #projection: projection,
+                    #sourceGeneration: sourceGeneration,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Object>);
 
   @override
   _i6.Future<void> delete(
@@ -878,25 +732,23 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #delete,
-          [
-            bucket,
-            object,
-          ],
-          {
-            #generation: generation,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<void>.value(),
-        returnValueForMissingStub: _i6.Future<void>.value(),
-      ) as _i6.Future<void>);
+            Invocation.method(
+              #delete,
+              [bucket, object],
+              {
+                #generation: generation,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<void>.value(),
+            returnValueForMissingStub: _i6.Future<void>.value(),
+          )
+          as _i6.Future<void>);
 
   @override
   _i6.Future<Object> get(
@@ -915,73 +767,69 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     _i10.DownloadOptions? downloadOptions = _i10.DownloadOptions.metadata,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [
-            bucket,
-            object,
-          ],
-          {
-            #generation: generation,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #projection: projection,
-            #restoreToken: restoreToken,
-            #softDeleted: softDeleted,
-            #userProject: userProject,
-            #$fields: $fields,
-            #downloadOptions: downloadOptions,
-          },
-        ),
-        returnValue: _i6.Future<Object>.value(_FakeObject_17(
-          this,
-          Invocation.method(
-            #get,
-            [
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #projection: projection,
-              #restoreToken: restoreToken,
-              #softDeleted: softDeleted,
-              #userProject: userProject,
-              #$fields: $fields,
-              #downloadOptions: downloadOptions,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<Object>.value(_FakeObject_17(
-          this,
-          Invocation.method(
-            #get,
-            [
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #projection: projection,
-              #restoreToken: restoreToken,
-              #softDeleted: softDeleted,
-              #userProject: userProject,
-              #$fields: $fields,
-              #downloadOptions: downloadOptions,
-            },
-          ),
-        )),
-      ) as _i6.Future<Object>);
+            Invocation.method(
+              #get,
+              [bucket, object],
+              {
+                #generation: generation,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #projection: projection,
+                #restoreToken: restoreToken,
+                #softDeleted: softDeleted,
+                #userProject: userProject,
+                #$fields: $fields,
+                #downloadOptions: downloadOptions,
+              },
+            ),
+            returnValue: _i6.Future<Object>.value(
+              _FakeObject_17(
+                this,
+                Invocation.method(
+                  #get,
+                  [bucket, object],
+                  {
+                    #generation: generation,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #projection: projection,
+                    #restoreToken: restoreToken,
+                    #softDeleted: softDeleted,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                    #downloadOptions: downloadOptions,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<Object>.value(
+              _FakeObject_17(
+                this,
+                Invocation.method(
+                  #get,
+                  [bucket, object],
+                  {
+                    #generation: generation,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #projection: projection,
+                    #restoreToken: restoreToken,
+                    #softDeleted: softDeleted,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                    #downloadOptions: downloadOptions,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<Object>);
 
   @override
   _i6.Future<_i4.Policy> getIamPolicy(
@@ -992,49 +840,45 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getIamPolicy,
-          [
-            bucket,
-            object,
-          ],
-          {
-            #generation: generation,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Policy>.value(_FakePolicy_18(
-          this,
-          Invocation.method(
-            #getIamPolicy,
-            [
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Policy>.value(_FakePolicy_18(
-          this,
-          Invocation.method(
-            #getIamPolicy,
-            [
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Policy>);
+            Invocation.method(
+              #getIamPolicy,
+              [bucket, object],
+              {
+                #generation: generation,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Policy>.value(
+              _FakePolicy_18(
+                this,
+                Invocation.method(
+                  #getIamPolicy,
+                  [bucket, object],
+                  {
+                    #generation: generation,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Policy>.value(
+              _FakePolicy_18(
+                this,
+                Invocation.method(
+                  #getIamPolicy,
+                  [bucket, object],
+                  {
+                    #generation: generation,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Policy>);
 
   @override
   _i6.Future<_i4.Object> insert(
@@ -1055,79 +899,75 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     _i10.Media? uploadMedia,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #insert,
-          [
-            request,
-            bucket,
-          ],
-          {
-            #contentEncoding: contentEncoding,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #kmsKeyName: kmsKeyName,
-            #name: name,
-            #predefinedAcl: predefinedAcl,
-            #projection: projection,
-            #userProject: userProject,
-            #$fields: $fields,
-            #uploadOptions: uploadOptions,
-            #uploadMedia: uploadMedia,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #insert,
-            [
-              request,
-              bucket,
-            ],
-            {
-              #contentEncoding: contentEncoding,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #kmsKeyName: kmsKeyName,
-              #name: name,
-              #predefinedAcl: predefinedAcl,
-              #projection: projection,
-              #userProject: userProject,
-              #$fields: $fields,
-              #uploadOptions: uploadOptions,
-              #uploadMedia: uploadMedia,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #insert,
-            [
-              request,
-              bucket,
-            ],
-            {
-              #contentEncoding: contentEncoding,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #kmsKeyName: kmsKeyName,
-              #name: name,
-              #predefinedAcl: predefinedAcl,
-              #projection: projection,
-              #userProject: userProject,
-              #$fields: $fields,
-              #uploadOptions: uploadOptions,
-              #uploadMedia: uploadMedia,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Object>);
+            Invocation.method(
+              #insert,
+              [request, bucket],
+              {
+                #contentEncoding: contentEncoding,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #kmsKeyName: kmsKeyName,
+                #name: name,
+                #predefinedAcl: predefinedAcl,
+                #projection: projection,
+                #userProject: userProject,
+                #$fields: $fields,
+                #uploadOptions: uploadOptions,
+                #uploadMedia: uploadMedia,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #insert,
+                  [request, bucket],
+                  {
+                    #contentEncoding: contentEncoding,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #kmsKeyName: kmsKeyName,
+                    #name: name,
+                    #predefinedAcl: predefinedAcl,
+                    #projection: projection,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                    #uploadOptions: uploadOptions,
+                    #uploadMedia: uploadMedia,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #insert,
+                  [request, bucket],
+                  {
+                    #contentEncoding: contentEncoding,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #kmsKeyName: kmsKeyName,
+                    #name: name,
+                    #predefinedAcl: predefinedAcl,
+                    #projection: projection,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                    #uploadOptions: uploadOptions,
+                    #uploadMedia: uploadMedia,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Object>);
 
   @override
   _i6.Future<_i4.Objects> list(
@@ -1148,74 +988,78 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #list,
-          [bucket],
-          {
-            #delimiter: delimiter,
-            #endOffset: endOffset,
-            #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
-            #includeTrailingDelimiter: includeTrailingDelimiter,
-            #matchGlob: matchGlob,
-            #maxResults: maxResults,
-            #pageToken: pageToken,
-            #prefix: prefix,
-            #projection: projection,
-            #softDeleted: softDeleted,
-            #startOffset: startOffset,
-            #userProject: userProject,
-            #versions: versions,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Objects>.value(_FakeObjects_19(
-          this,
-          Invocation.method(
-            #list,
-            [bucket],
-            {
-              #delimiter: delimiter,
-              #endOffset: endOffset,
-              #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
-              #includeTrailingDelimiter: includeTrailingDelimiter,
-              #matchGlob: matchGlob,
-              #maxResults: maxResults,
-              #pageToken: pageToken,
-              #prefix: prefix,
-              #projection: projection,
-              #softDeleted: softDeleted,
-              #startOffset: startOffset,
-              #userProject: userProject,
-              #versions: versions,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub:
-            _i6.Future<_i4.Objects>.value(_FakeObjects_19(
-          this,
-          Invocation.method(
-            #list,
-            [bucket],
-            {
-              #delimiter: delimiter,
-              #endOffset: endOffset,
-              #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
-              #includeTrailingDelimiter: includeTrailingDelimiter,
-              #matchGlob: matchGlob,
-              #maxResults: maxResults,
-              #pageToken: pageToken,
-              #prefix: prefix,
-              #projection: projection,
-              #softDeleted: softDeleted,
-              #startOffset: startOffset,
-              #userProject: userProject,
-              #versions: versions,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Objects>);
+            Invocation.method(
+              #list,
+              [bucket],
+              {
+                #delimiter: delimiter,
+                #endOffset: endOffset,
+                #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
+                #includeTrailingDelimiter: includeTrailingDelimiter,
+                #matchGlob: matchGlob,
+                #maxResults: maxResults,
+                #pageToken: pageToken,
+                #prefix: prefix,
+                #projection: projection,
+                #softDeleted: softDeleted,
+                #startOffset: startOffset,
+                #userProject: userProject,
+                #versions: versions,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Objects>.value(
+              _FakeObjects_19(
+                this,
+                Invocation.method(
+                  #list,
+                  [bucket],
+                  {
+                    #delimiter: delimiter,
+                    #endOffset: endOffset,
+                    #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
+                    #includeTrailingDelimiter: includeTrailingDelimiter,
+                    #matchGlob: matchGlob,
+                    #maxResults: maxResults,
+                    #pageToken: pageToken,
+                    #prefix: prefix,
+                    #projection: projection,
+                    #softDeleted: softDeleted,
+                    #startOffset: startOffset,
+                    #userProject: userProject,
+                    #versions: versions,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Objects>.value(
+              _FakeObjects_19(
+                this,
+                Invocation.method(
+                  #list,
+                  [bucket],
+                  {
+                    #delimiter: delimiter,
+                    #endOffset: endOffset,
+                    #includeFoldersAsPrefixes: includeFoldersAsPrefixes,
+                    #includeTrailingDelimiter: includeTrailingDelimiter,
+                    #matchGlob: matchGlob,
+                    #maxResults: maxResults,
+                    #pageToken: pageToken,
+                    #prefix: prefix,
+                    #projection: projection,
+                    #softDeleted: softDeleted,
+                    #startOffset: startOffset,
+                    #userProject: userProject,
+                    #versions: versions,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Objects>);
 
   @override
   _i6.Future<_i4.Object> move(
@@ -1234,73 +1078,68 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #move,
-          [
-            bucket,
-            sourceObject,
-            destinationObject,
-          ],
-          {
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #ifSourceGenerationMatch: ifSourceGenerationMatch,
-            #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-            #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-            #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #move,
-            [
-              bucket,
-              sourceObject,
-              destinationObject,
-            ],
-            {
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #ifSourceGenerationMatch: ifSourceGenerationMatch,
-              #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-              #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-              #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #move,
-            [
-              bucket,
-              sourceObject,
-              destinationObject,
-            ],
-            {
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #ifSourceGenerationMatch: ifSourceGenerationMatch,
-              #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-              #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-              #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Object>);
+            Invocation.method(
+              #move,
+              [bucket, sourceObject, destinationObject],
+              {
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #move,
+                  [bucket, sourceObject, destinationObject],
+                  {
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                    #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                    #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                    #ifSourceMetagenerationNotMatch:
+                        ifSourceMetagenerationNotMatch,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #move,
+                  [bucket, sourceObject, destinationObject],
+                  {
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                    #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                    #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                    #ifSourceMetagenerationNotMatch:
+                        ifSourceMetagenerationNotMatch,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Object>);
 
   @override
   _i6.Future<_i4.Object> patch(
@@ -1319,73 +1158,66 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #patch,
-          [
-            request,
-            bucket,
-            object,
-          ],
-          {
-            #generation: generation,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #overrideUnlockedRetention: overrideUnlockedRetention,
-            #predefinedAcl: predefinedAcl,
-            #projection: projection,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #patch,
-            [
-              request,
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #overrideUnlockedRetention: overrideUnlockedRetention,
-              #predefinedAcl: predefinedAcl,
-              #projection: projection,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #patch,
-            [
-              request,
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #overrideUnlockedRetention: overrideUnlockedRetention,
-              #predefinedAcl: predefinedAcl,
-              #projection: projection,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Object>);
+            Invocation.method(
+              #patch,
+              [request, bucket, object],
+              {
+                #generation: generation,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #overrideUnlockedRetention: overrideUnlockedRetention,
+                #predefinedAcl: predefinedAcl,
+                #projection: projection,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #patch,
+                  [request, bucket, object],
+                  {
+                    #generation: generation,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #overrideUnlockedRetention: overrideUnlockedRetention,
+                    #predefinedAcl: predefinedAcl,
+                    #projection: projection,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #patch,
+                  [request, bucket, object],
+                  {
+                    #generation: generation,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #overrideUnlockedRetention: overrideUnlockedRetention,
+                    #predefinedAcl: predefinedAcl,
+                    #projection: projection,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Object>);
 
   @override
   _i6.Future<_i4.Object> restore(
@@ -1403,70 +1235,63 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #restore,
-          [
-            bucket,
-            object,
-            generation,
-          ],
-          {
-            #copySourceAcl: copySourceAcl,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #projection: projection,
-            #restoreToken: restoreToken,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #restore,
-            [
-              bucket,
-              object,
-              generation,
-            ],
-            {
-              #copySourceAcl: copySourceAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #projection: projection,
-              #restoreToken: restoreToken,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #restore,
-            [
-              bucket,
-              object,
-              generation,
-            ],
-            {
-              #copySourceAcl: copySourceAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #projection: projection,
-              #restoreToken: restoreToken,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Object>);
+            Invocation.method(
+              #restore,
+              [bucket, object, generation],
+              {
+                #copySourceAcl: copySourceAcl,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #projection: projection,
+                #restoreToken: restoreToken,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #restore,
+                  [bucket, object, generation],
+                  {
+                    #copySourceAcl: copySourceAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #projection: projection,
+                    #restoreToken: restoreToken,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #restore,
+                  [bucket, object, generation],
+                  {
+                    #copySourceAcl: copySourceAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #projection: projection,
+                    #restoreToken: restoreToken,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Object>);
 
   @override
   _i6.Future<_i4.RewriteResponse> rewrite(
@@ -1493,99 +1318,104 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #rewrite,
-          [
-            request,
-            sourceBucket,
-            sourceObject,
-            destinationBucket,
-            destinationObject,
-          ],
-          {
-            #destinationKmsKeyName: destinationKmsKeyName,
-            #destinationPredefinedAcl: destinationPredefinedAcl,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #ifSourceGenerationMatch: ifSourceGenerationMatch,
-            #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-            #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-            #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-            #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
-            #projection: projection,
-            #rewriteToken: rewriteToken,
-            #sourceGeneration: sourceGeneration,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue:
-            _i6.Future<_i4.RewriteResponse>.value(_FakeRewriteResponse_20(
-          this,
-          Invocation.method(
-            #rewrite,
-            [
-              request,
-              sourceBucket,
-              sourceObject,
-              destinationBucket,
-              destinationObject,
-            ],
-            {
-              #destinationKmsKeyName: destinationKmsKeyName,
-              #destinationPredefinedAcl: destinationPredefinedAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #ifSourceGenerationMatch: ifSourceGenerationMatch,
-              #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-              #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-              #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-              #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
-              #projection: projection,
-              #rewriteToken: rewriteToken,
-              #sourceGeneration: sourceGeneration,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub:
-            _i6.Future<_i4.RewriteResponse>.value(_FakeRewriteResponse_20(
-          this,
-          Invocation.method(
-            #rewrite,
-            [
-              request,
-              sourceBucket,
-              sourceObject,
-              destinationBucket,
-              destinationObject,
-            ],
-            {
-              #destinationKmsKeyName: destinationKmsKeyName,
-              #destinationPredefinedAcl: destinationPredefinedAcl,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #ifSourceGenerationMatch: ifSourceGenerationMatch,
-              #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
-              #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
-              #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
-              #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
-              #projection: projection,
-              #rewriteToken: rewriteToken,
-              #sourceGeneration: sourceGeneration,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.RewriteResponse>);
+            Invocation.method(
+              #rewrite,
+              [
+                request,
+                sourceBucket,
+                sourceObject,
+                destinationBucket,
+                destinationObject,
+              ],
+              {
+                #destinationKmsKeyName: destinationKmsKeyName,
+                #destinationPredefinedAcl: destinationPredefinedAcl,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                #ifSourceMetagenerationNotMatch: ifSourceMetagenerationNotMatch,
+                #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
+                #projection: projection,
+                #rewriteToken: rewriteToken,
+                #sourceGeneration: sourceGeneration,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.RewriteResponse>.value(
+              _FakeRewriteResponse_20(
+                this,
+                Invocation.method(
+                  #rewrite,
+                  [
+                    request,
+                    sourceBucket,
+                    sourceObject,
+                    destinationBucket,
+                    destinationObject,
+                  ],
+                  {
+                    #destinationKmsKeyName: destinationKmsKeyName,
+                    #destinationPredefinedAcl: destinationPredefinedAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                    #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                    #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                    #ifSourceMetagenerationNotMatch:
+                        ifSourceMetagenerationNotMatch,
+                    #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
+                    #projection: projection,
+                    #rewriteToken: rewriteToken,
+                    #sourceGeneration: sourceGeneration,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.RewriteResponse>.value(
+              _FakeRewriteResponse_20(
+                this,
+                Invocation.method(
+                  #rewrite,
+                  [
+                    request,
+                    sourceBucket,
+                    sourceObject,
+                    destinationBucket,
+                    destinationObject,
+                  ],
+                  {
+                    #destinationKmsKeyName: destinationKmsKeyName,
+                    #destinationPredefinedAcl: destinationPredefinedAcl,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #ifSourceGenerationMatch: ifSourceGenerationMatch,
+                    #ifSourceGenerationNotMatch: ifSourceGenerationNotMatch,
+                    #ifSourceMetagenerationMatch: ifSourceMetagenerationMatch,
+                    #ifSourceMetagenerationNotMatch:
+                        ifSourceMetagenerationNotMatch,
+                    #maxBytesRewrittenPerCall: maxBytesRewrittenPerCall,
+                    #projection: projection,
+                    #rewriteToken: rewriteToken,
+                    #sourceGeneration: sourceGeneration,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.RewriteResponse>);
 
   @override
   _i6.Future<_i4.Policy> setIamPolicy(
@@ -1597,52 +1427,45 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setIamPolicy,
-          [
-            request,
-            bucket,
-            object,
-          ],
-          {
-            #generation: generation,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Policy>.value(_FakePolicy_18(
-          this,
-          Invocation.method(
-            #setIamPolicy,
-            [
-              request,
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Policy>.value(_FakePolicy_18(
-          this,
-          Invocation.method(
-            #setIamPolicy,
-            [
-              request,
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Policy>);
+            Invocation.method(
+              #setIamPolicy,
+              [request, bucket, object],
+              {
+                #generation: generation,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Policy>.value(
+              _FakePolicy_18(
+                this,
+                Invocation.method(
+                  #setIamPolicy,
+                  [request, bucket, object],
+                  {
+                    #generation: generation,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Policy>.value(
+              _FakePolicy_18(
+                this,
+                Invocation.method(
+                  #setIamPolicy,
+                  [request, bucket, object],
+                  {
+                    #generation: generation,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Policy>);
 
   @override
   _i6.Future<_i4.TestIamPermissionsResponse> testIamPermissions(
@@ -1654,55 +1477,46 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #testIamPermissions,
-          [
-            bucket,
-            object,
-            permissions,
-          ],
-          {
-            #generation: generation,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.TestIamPermissionsResponse>.value(
-            _FakeTestIamPermissionsResponse_21(
-          this,
-          Invocation.method(
-            #testIamPermissions,
-            [
-              bucket,
-              object,
-              permissions,
-            ],
-            {
-              #generation: generation,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub:
-            _i6.Future<_i4.TestIamPermissionsResponse>.value(
-                _FakeTestIamPermissionsResponse_21(
-          this,
-          Invocation.method(
-            #testIamPermissions,
-            [
-              bucket,
-              object,
-              permissions,
-            ],
-            {
-              #generation: generation,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.TestIamPermissionsResponse>);
+            Invocation.method(
+              #testIamPermissions,
+              [bucket, object, permissions],
+              {
+                #generation: generation,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.TestIamPermissionsResponse>.value(
+              _FakeTestIamPermissionsResponse_21(
+                this,
+                Invocation.method(
+                  #testIamPermissions,
+                  [bucket, object, permissions],
+                  {
+                    #generation: generation,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub:
+                _i6.Future<_i4.TestIamPermissionsResponse>.value(
+                  _FakeTestIamPermissionsResponse_21(
+                    this,
+                    Invocation.method(
+                      #testIamPermissions,
+                      [bucket, object, permissions],
+                      {
+                        #generation: generation,
+                        #userProject: userProject,
+                        #$fields: $fields,
+                      },
+                    ),
+                  ),
+                ),
+          )
+          as _i6.Future<_i4.TestIamPermissionsResponse>);
 
   @override
   _i6.Future<_i4.Object> update(
@@ -1721,73 +1535,66 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #update,
-          [
-            request,
-            bucket,
-            object,
-          ],
-          {
-            #generation: generation,
-            #ifGenerationMatch: ifGenerationMatch,
-            #ifGenerationNotMatch: ifGenerationNotMatch,
-            #ifMetagenerationMatch: ifMetagenerationMatch,
-            #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-            #overrideUnlockedRetention: overrideUnlockedRetention,
-            #predefinedAcl: predefinedAcl,
-            #projection: projection,
-            #userProject: userProject,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #update,
-            [
-              request,
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #overrideUnlockedRetention: overrideUnlockedRetention,
-              #predefinedAcl: predefinedAcl,
-              #projection: projection,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub: _i6.Future<_i4.Object>.value(_FakeObject_16(
-          this,
-          Invocation.method(
-            #update,
-            [
-              request,
-              bucket,
-              object,
-            ],
-            {
-              #generation: generation,
-              #ifGenerationMatch: ifGenerationMatch,
-              #ifGenerationNotMatch: ifGenerationNotMatch,
-              #ifMetagenerationMatch: ifMetagenerationMatch,
-              #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
-              #overrideUnlockedRetention: overrideUnlockedRetention,
-              #predefinedAcl: predefinedAcl,
-              #projection: projection,
-              #userProject: userProject,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Object>);
+            Invocation.method(
+              #update,
+              [request, bucket, object],
+              {
+                #generation: generation,
+                #ifGenerationMatch: ifGenerationMatch,
+                #ifGenerationNotMatch: ifGenerationNotMatch,
+                #ifMetagenerationMatch: ifMetagenerationMatch,
+                #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                #overrideUnlockedRetention: overrideUnlockedRetention,
+                #predefinedAcl: predefinedAcl,
+                #projection: projection,
+                #userProject: userProject,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #update,
+                  [request, bucket, object],
+                  {
+                    #generation: generation,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #overrideUnlockedRetention: overrideUnlockedRetention,
+                    #predefinedAcl: predefinedAcl,
+                    #projection: projection,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Object>.value(
+              _FakeObject_16(
+                this,
+                Invocation.method(
+                  #update,
+                  [request, bucket, object],
+                  {
+                    #generation: generation,
+                    #ifGenerationMatch: ifGenerationMatch,
+                    #ifGenerationNotMatch: ifGenerationNotMatch,
+                    #ifMetagenerationMatch: ifMetagenerationMatch,
+                    #ifMetagenerationNotMatch: ifMetagenerationNotMatch,
+                    #overrideUnlockedRetention: overrideUnlockedRetention,
+                    #predefinedAcl: predefinedAcl,
+                    #projection: projection,
+                    #userProject: userProject,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Object>);
 
   @override
   _i6.Future<_i4.Channel> watchAll(
@@ -1806,72 +1613,67 @@ class MockObjectsResource extends _i1.Mock implements _i4.ObjectsResource {
     String? $fields,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #watchAll,
-          [
-            request,
-            bucket,
-          ],
-          {
-            #delimiter: delimiter,
-            #endOffset: endOffset,
-            #includeTrailingDelimiter: includeTrailingDelimiter,
-            #maxResults: maxResults,
-            #pageToken: pageToken,
-            #prefix: prefix,
-            #projection: projection,
-            #startOffset: startOffset,
-            #userProject: userProject,
-            #versions: versions,
-            #$fields: $fields,
-          },
-        ),
-        returnValue: _i6.Future<_i4.Channel>.value(_FakeChannel_22(
-          this,
-          Invocation.method(
-            #watchAll,
-            [
-              request,
-              bucket,
-            ],
-            {
-              #delimiter: delimiter,
-              #endOffset: endOffset,
-              #includeTrailingDelimiter: includeTrailingDelimiter,
-              #maxResults: maxResults,
-              #pageToken: pageToken,
-              #prefix: prefix,
-              #projection: projection,
-              #startOffset: startOffset,
-              #userProject: userProject,
-              #versions: versions,
-              #$fields: $fields,
-            },
-          ),
-        )),
-        returnValueForMissingStub:
-            _i6.Future<_i4.Channel>.value(_FakeChannel_22(
-          this,
-          Invocation.method(
-            #watchAll,
-            [
-              request,
-              bucket,
-            ],
-            {
-              #delimiter: delimiter,
-              #endOffset: endOffset,
-              #includeTrailingDelimiter: includeTrailingDelimiter,
-              #maxResults: maxResults,
-              #pageToken: pageToken,
-              #prefix: prefix,
-              #projection: projection,
-              #startOffset: startOffset,
-              #userProject: userProject,
-              #versions: versions,
-              #$fields: $fields,
-            },
-          ),
-        )),
-      ) as _i6.Future<_i4.Channel>);
+            Invocation.method(
+              #watchAll,
+              [request, bucket],
+              {
+                #delimiter: delimiter,
+                #endOffset: endOffset,
+                #includeTrailingDelimiter: includeTrailingDelimiter,
+                #maxResults: maxResults,
+                #pageToken: pageToken,
+                #prefix: prefix,
+                #projection: projection,
+                #startOffset: startOffset,
+                #userProject: userProject,
+                #versions: versions,
+                #$fields: $fields,
+              },
+            ),
+            returnValue: _i6.Future<_i4.Channel>.value(
+              _FakeChannel_22(
+                this,
+                Invocation.method(
+                  #watchAll,
+                  [request, bucket],
+                  {
+                    #delimiter: delimiter,
+                    #endOffset: endOffset,
+                    #includeTrailingDelimiter: includeTrailingDelimiter,
+                    #maxResults: maxResults,
+                    #pageToken: pageToken,
+                    #prefix: prefix,
+                    #projection: projection,
+                    #startOffset: startOffset,
+                    #userProject: userProject,
+                    #versions: versions,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+            returnValueForMissingStub: _i6.Future<_i4.Channel>.value(
+              _FakeChannel_22(
+                this,
+                Invocation.method(
+                  #watchAll,
+                  [request, bucket],
+                  {
+                    #delimiter: delimiter,
+                    #endOffset: endOffset,
+                    #includeTrailingDelimiter: includeTrailingDelimiter,
+                    #maxResults: maxResults,
+                    #pageToken: pageToken,
+                    #prefix: prefix,
+                    #projection: projection,
+                    #startOffset: startOffset,
+                    #userProject: userProject,
+                    #versions: versions,
+                    #$fields: $fields,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i4.Channel>);
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,15 +19,6 @@ extension Product {
       subscription: subscription?.convertToPigeon,
       priceLocale: priceFormatStyle.locale.convertToPigeon
     )
-  }
-}
-
-extension SK2ProductMessage: Equatable {
-  static func == (lhs: SK2ProductMessage, rhs: SK2ProductMessage) -> Bool {
-    return lhs.id == rhs.id && lhs.displayName == rhs.displayName
-      && lhs.description == rhs.description && lhs.price == rhs.price
-      && lhs.displayPrice == rhs.displayPrice && lhs.type == rhs.type
-      && lhs.subscription == rhs.subscription && lhs.priceLocale == rhs.priceLocale
   }
 }
 
@@ -72,14 +63,6 @@ extension Product.SubscriptionInfo {
   }
 }
 
-extension SK2SubscriptionInfoMessage: Equatable {
-  static func == (lhs: SK2SubscriptionInfoMessage, rhs: SK2SubscriptionInfoMessage) -> Bool {
-    return lhs.promotionalOffers == rhs.promotionalOffers
-      && lhs.subscriptionGroupID == rhs.subscriptionGroupID
-      && lhs.subscriptionPeriod == rhs.subscriptionPeriod
-  }
-}
-
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionOffer {
   var convertToPigeon: SK2SubscriptionOfferMessage {
@@ -92,14 +75,6 @@ extension Product.SubscriptionOffer {
       periodCount: Int64(periodCount),
       paymentMode: paymentMode.convertToPigeon
     )
-  }
-}
-
-extension SK2SubscriptionOfferMessage: Equatable {
-  static func == (lhs: SK2SubscriptionOfferMessage, rhs: SK2SubscriptionOfferMessage) -> Bool {
-    return lhs.id == rhs.id && lhs.price == rhs.price && lhs.type == rhs.type
-      && lhs.period == rhs.period && lhs.periodCount == rhs.periodCount
-      && lhs.paymentMode == rhs.paymentMode
   }
 }
 
@@ -158,12 +133,6 @@ extension Product.SubscriptionPeriod {
   }
 }
 
-extension SK2SubscriptionPeriodMessage: Equatable {
-  static func == (lhs: SK2SubscriptionPeriodMessage, rhs: SK2SubscriptionPeriodMessage) -> Bool {
-    return lhs.value == rhs.value && lhs.unit == rhs.unit
-  }
-}
-
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.SubscriptionPeriod.Unit {
   var convertToPigeon: SK2SubscriptionPeriodUnitMessage {
@@ -207,22 +176,14 @@ extension Locale {
   }
 }
 
-extension SK2PriceLocaleMessage: Equatable {
-  static func == (lhs: SK2PriceLocaleMessage, rhs: SK2PriceLocaleMessage) -> Bool {
-    return lhs.currencyCode == rhs.currencyCode && lhs.currencySymbol == rhs.currencySymbol
-  }
-}
-
 @available(iOS 15.0, macOS 12.0, *)
 extension Product.PurchaseResult {
   func convertToPigeon() -> SK2ProductPurchaseResultMessage {
-    switch self {
-    case .success(_):
-      return SK2ProductPurchaseResultMessage.success
-    case .userCancelled:
-      return SK2ProductPurchaseResultMessage.userCancelled
-    case .pending:
-      return SK2ProductPurchaseResultMessage.pending
+    return switch self {
+    case .success(.verified): .success
+    case .success(.unverified): .unverified
+    case .userCancelled: .userCancelled
+    case .pending: .pending
     @unknown default:
       fatalError()
     }

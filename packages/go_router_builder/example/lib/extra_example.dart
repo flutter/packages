@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -21,9 +21,7 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      routerConfig: _router,
-    );
+    return MaterialApp.router(routerConfig: _router);
   }
 }
 
@@ -34,7 +32,7 @@ class Extra {
 }
 
 @TypedGoRoute<RequiredExtraRoute>(path: '/requiredExtra')
-class RequiredExtraRoute extends GoRouteData with _$RequiredExtraRoute {
+class RequiredExtraRoute extends GoRouteData with $RequiredExtraRoute {
   const RequiredExtraRoute({required this.$extra});
 
   final Extra $extra;
@@ -59,7 +57,7 @@ class RequiredExtraScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<OptionalExtraRoute>(path: '/optionalExtra')
-class OptionalExtraRoute extends GoRouteData with _$OptionalExtraRoute {
+class OptionalExtraRoute extends GoRouteData with $OptionalExtraRoute {
   const OptionalExtraRoute({this.$extra});
 
   final Extra? $extra;
@@ -84,7 +82,7 @@ class OptionalExtraScreen extends StatelessWidget {
 }
 
 @TypedGoRoute<SplashRoute>(path: '/splash')
-class SplashRoute extends GoRouteData with _$SplashRoute {
+class SplashRoute extends GoRouteData with $SplashRoute {
   const SplashRoute();
 
   @override

@@ -1,22 +1,23 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  objcHeaderOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
-  objcSourceOut:
-      'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
-  objcOptions: ObjcOptions(
-    prefix: 'FCP',
-    headerIncludePath: './include/camera_avfoundation/messages.g.h',
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    objcHeaderOut:
+        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/include/camera_avfoundation/messages.g.h',
+    objcSourceOut:
+        'ios/camera_avfoundation/Sources/camera_avfoundation_objc/messages.g.m',
+    objcOptions: ObjcOptions(
+      prefix: 'FCP',
+      headerIncludePath: './include/camera_avfoundation/messages.g.h',
+    ),
+    copyrightHeader: 'pigeons/copyright.txt',
   ),
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+)
 // Pigeon version of CameraLensDirection.
 enum PlatformCameraLensDirection {
   /// Front facing camera (a user looking at the screen is seen by the camera).
@@ -29,6 +30,21 @@ enum PlatformCameraLensDirection {
   external,
 }
 
+// Pigeon version of CameraLensDirection.
+enum PlatformCameraLensType {
+  /// A built-in wide-angle camera device type.
+  wide,
+
+  /// A built-in camera device type with a longer focal length than a wide-angle camera.
+  telephoto,
+
+  /// A built-in camera device type with a shorter focal length than a wide-angle camera.
+  ultraWide,
+
+  /// Unknown camera device type.
+  unknown,
+}
+
 // Pigeon version of DeviceOrientation.
 enum PlatformDeviceOrientation {
   portraitUp,
@@ -38,52 +54,29 @@ enum PlatformDeviceOrientation {
 }
 
 // Pigeon version of ExposureMode.
-enum PlatformExposureMode {
-  auto,
-  locked,
-}
+enum PlatformExposureMode { auto, locked }
 
 // Pigeon version of FlashMode.
-enum PlatformFlashMode {
-  off,
-  auto,
-  always,
-  torch,
-}
+enum PlatformFlashMode { off, auto, always, torch }
 
 // Pigeon version of FocusMode.
-enum PlatformFocusMode {
-  auto,
-  locked,
-}
+enum PlatformFocusMode { auto, locked }
 
 /// Pigeon version of ImageFileFormat.
-enum PlatformImageFileFormat {
-  jpeg,
-  heif,
-}
+enum PlatformImageFileFormat { jpeg, heif }
 
 // Pigeon version of the subset of ImageFormatGroup supported on iOS.
-enum PlatformImageFormatGroup {
-  bgra8888,
-  yuv420,
-}
+enum PlatformImageFormatGroup { bgra8888, yuv420 }
 
 // Pigeon version of ResolutionPreset.
-enum PlatformResolutionPreset {
-  low,
-  medium,
-  high,
-  veryHigh,
-  ultraHigh,
-  max,
-}
+enum PlatformResolutionPreset { low, medium, high, veryHigh, ultraHigh, max }
 
 // Pigeon version of CameraDescription.
 class PlatformCameraDescription {
   PlatformCameraDescription({
     required this.name,
     required this.lensDirection,
+    required this.lensType,
   });
 
   /// The name of the camera device.
@@ -91,6 +84,9 @@ class PlatformCameraDescription {
 
   /// The direction the camera is facing.
   final PlatformCameraLensDirection lensDirection;
+
+  /// The type of the camera lens.
+  final PlatformCameraLensType lensType;
 }
 
 // Pigeon version of the data needed for a CameraInitializedEvent.

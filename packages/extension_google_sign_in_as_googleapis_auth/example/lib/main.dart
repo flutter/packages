@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -19,10 +19,7 @@ const List<String> scopes = <String>[PeopleServiceApi.contactsReadonlyScope];
 
 void main() {
   runApp(
-    const MaterialApp(
-      title: 'Google Sign In + googleapis',
-      home: SignInDemo(),
-    ),
+    const MaterialApp(title: 'Google Sign In + googleapis', home: SignInDemo()),
   );
 }
 
@@ -48,28 +45,30 @@ class SignInDemoState extends State<SignInDemo> {
 
     final GoogleSignIn signIn = GoogleSignIn.instance;
     _signInInitialized = signIn.initialize(
-        // Add your client IDs here as necessary for your supported platforms.
-        );
-    signIn.authenticationEvents.listen((GoogleSignInAuthenticationEvent event) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {
-        switch (event) {
-          case GoogleSignInAuthenticationEventSignIn():
-            _currentUser = event.user;
-          case GoogleSignInAuthenticationEventSignOut():
-            _currentUser = null;
-            _authorization = null;
-        }
-      });
+      // Add your client IDs here as necessary for your supported platforms.
+    );
+    signIn.authenticationEvents
+        .listen((GoogleSignInAuthenticationEvent event) {
+          if (!mounted) {
+            return;
+          }
+          setState(() {
+            switch (event) {
+              case GoogleSignInAuthenticationEventSignIn():
+                _currentUser = event.user;
+              case GoogleSignInAuthenticationEventSignOut():
+                _currentUser = null;
+                _authorization = null;
+            }
+          });
 
-      if (_currentUser != null) {
-        _checkAuthorization();
-      }
-    }).onError((Object error) {
-      debugPrint(error.toString());
-    });
+          if (_currentUser != null) {
+            _checkAuthorization();
+          }
+        })
+        .onError((Object error) {
+          debugPrint(error.toString());
+        });
 
     _signInInitialized.then((void value) {
       signIn.attemptLightweightAuthentication();
@@ -91,16 +90,21 @@ class SignInDemoState extends State<SignInDemo> {
 
   Future<void> _checkAuthorization() async {
     _updateAuthorization(
-        await _currentUser?.authorizationClient.authorizationForScopes(scopes));
+      await _currentUser?.authorizationClient.authorizationForScopes(scopes),
+    );
   }
 
   Future<void> _requestAuthorization() async {
-    _updateAuthorization(await _currentUser?.authorizationClient
-        .authorizeScopes(<String>[PeopleServiceApi.contactsReadonlyScope]));
+    _updateAuthorization(
+      await _currentUser?.authorizationClient.authorizeScopes(<String>[
+        PeopleServiceApi.contactsReadonlyScope,
+      ]),
+    );
   }
 
   Future<void> _handleGetContact(
-      GoogleSignInClientAuthorization authorization) async {
+    GoogleSignInClientAuthorization authorization,
+  ) async {
     if (!mounted) {
       return;
     }
@@ -113,17 +117,15 @@ class SignInDemoState extends State<SignInDemo> {
     final auth.AuthClient client = authorization.authClient(scopes: scopes);
 
     // Prepare a People Service authenticated client.
-    final PeopleServiceApi peopleApi = PeopleServiceApi(client);
+    final peopleApi = PeopleServiceApi(client);
     // Retrieve a list of connected contacts' names.
-    final ListConnectionsResponse response =
-        await peopleApi.people.connections.list(
-      'people/me',
-      personFields: 'names',
-    );
+    final ListConnectionsResponse response = await peopleApi.people.connections
+        .list('people/me', personFields: 'names');
     // #enddocregion CreateAPIClient
 
-    final String? firstNamedContactName =
-        _pickFirstNamedContact(response.connections);
+    final String? firstNamedContactName = _pickFirstNamedContact(
+      response.connections,
+    );
 
     if (mounted) {
       setState(() {
@@ -138,13 +140,9 @@ class SignInDemoState extends State<SignInDemo> {
 
   String? _pickFirstNamedContact(List<Person>? connections) {
     return connections
-        ?.firstWhere(
-          (Person person) => person.names != null,
-        )
+        ?.firstWhere((Person person) => person.names != null)
         .names
-        ?.firstWhere(
-          (Name name) => name.displayName != null,
-        )
+        ?.firstWhere((Name name) => name.displayName != null)
         .displayName;
   }
 
@@ -161,72 +159,66 @@ class SignInDemoState extends State<SignInDemo> {
 
   Widget _buildBody() {
     return FutureBuilder<void>(
-        future: _signInInitialized,
-        builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
-          final GoogleSignInAccount? user = _currentUser;
-          final GoogleSignInClientAuthorization? authorization = _authorization;
-          final List<Widget> children;
-          if (snapshot.hasError) {
-            children = <Widget>[
-              const Text('Error initializing sign in.'),
-            ];
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            children = <Widget>[
-              if (user != null) ...<Widget>[
-                ListTile(
-                  leading: GoogleUserCircleAvatar(
-                    identity: user,
-                  ),
-                  title: Text(user.displayName ?? ''),
-                  subtitle: Text(user.email),
-                ),
-                const Text('Signed in successfully.'),
-                if (authorization != null) ...<Widget>[
-                  Text(_contactText),
-                  ElevatedButton(
-                    onPressed: () => _handleGetContact(authorization),
-                    child: const Text('REFRESH'),
-                  ),
-                ] else ...<Widget>[
-                  ElevatedButton(
-                    onPressed: _requestAuthorization,
-                    child: const Text('LOAD CONTACTS'),
-                  ),
-                ],
+      future: _signInInitialized,
+      builder: (BuildContext context, AsyncSnapshot<void> snapshot) {
+        final GoogleSignInAccount? user = _currentUser;
+        final GoogleSignInClientAuthorization? authorization = _authorization;
+        final List<Widget> children;
+        if (snapshot.hasError) {
+          children = <Widget>[const Text('Error initializing sign in.')];
+        } else if (snapshot.connectionState == ConnectionState.done) {
+          children = <Widget>[
+            if (user != null) ...<Widget>[
+              ListTile(
+                leading: GoogleUserCircleAvatar(identity: user),
+                title: Text(user.displayName ?? ''),
+                subtitle: Text(user.email),
+              ),
+              const Text('Signed in successfully.'),
+              if (authorization != null) ...<Widget>[
+                Text(_contactText),
                 ElevatedButton(
-                  onPressed: _handleSignOut,
-                  child: const Text('SIGN OUT'),
+                  onPressed: () => _handleGetContact(authorization),
+                  child: const Text('REFRESH'),
                 ),
               ] else ...<Widget>[
-                const Text('You are not currently signed in.'),
                 ElevatedButton(
-                  onPressed: _handleSignIn,
-                  child: const Text('SIGN IN'),
+                  onPressed: _requestAuthorization,
+                  child: const Text('LOAD CONTACTS'),
                 ),
               ],
-            ];
-          } else {
-            children = <Widget>[
-              const CircularProgressIndicator(),
-            ];
-          }
+              ElevatedButton(
+                onPressed: _handleSignOut,
+                child: const Text('SIGN OUT'),
+              ),
+            ] else ...<Widget>[
+              const Text('You are not currently signed in.'),
+              ElevatedButton(
+                onPressed: _handleSignIn,
+                child: const Text('SIGN IN'),
+              ),
+            ],
+          ];
+        } else {
+          children = <Widget>[const CircularProgressIndicator()];
+        }
 
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: children,
-          );
-        });
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: children,
+        );
+      },
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Google Sign In + googleapis'),
-        ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: _buildBody(),
-        ));
+      appBar: AppBar(title: const Text('Google Sign In + googleapis')),
+      body: ConstrainedBox(
+        constraints: const BoxConstraints.expand(),
+        child: _buildBody(),
+      ),
+    );
   }
 }

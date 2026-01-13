@@ -1,3 +1,61 @@
+## NEXT
+
+* Updates README to reflect currently supported OS version.
+
+## 0.4.0+20
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 0.4.0+19
+
+* Bumps `com.squareup.okhttp3:okhttp` from 5.3.0 to 5.3.1.
+
+## 0.4.0+18
+
+*  Bumps `com.squareup.okhttp3:okhttp` from 5.1.0 to 5.3.0.
+
+## 0.4.0+17
+
+* Resolves Gradle 9 deprecations.
+
+## 0.4.0+16
+
+* Bumps `com.google.guava:guava` from `33.4.8-android` to `33.5.0-android`.
+
+## 0.4.0+15
+
+* Updates Java compatibility version to 17.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
+
+## 0.4.0+14
+
+* Bumps okhttp, junit, and truth dependencies.
+
+## 0.4.0+13
+
+* Bumps com.google.code.gson:gson from 2.11.0 to 2.13.2.
+
+## 0.4.0+12
+
+* Bumps androidx.test.espresso:espresso-* from 3.6.1 to 3.7.0.
+
+## 0.4.0+11
+
+* Bumps androidx.test.ext:truth from 1.6.0 to 1.7.0.
+
+## 0.4.0+10
+
+* Bumps com.android.tools.build:gradle to 8.12.1.
+
+## 0.4.0+9
+
+* Bumps `androidx.test:*` from 1.6.1 to 1.7.0.
+
+## 0.4.0+8
+
+* Bumps `com.google.guava:guava` from 33.3.1 to 33.4.8.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 0.4.0+7
 
 * Removes obsolete code related to supporting SDK <21.

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,13 +11,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'page.dart';
 
-const CameraPosition _kInitialPosition =
-    CameraPosition(target: LatLng(-33.852, 151.211), zoom: 11.0);
+const CameraPosition _kInitialPosition = CameraPosition(
+  target: LatLng(-33.852, 151.211),
+  zoom: 11.0,
+);
 
 class SnapshotPage extends GoogleMapExampleAppPage {
   const SnapshotPage({Key? key})
-      : super(const Icon(Icons.camera_alt), 'Take a snapshot of the map',
-            key: key);
+    : super(
+        const Icon(Icons.camera_alt),
+        'Take a snapshot of the map',
+        key: key,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +56,8 @@ class _SnapshotBodyState extends State<_SnapshotBody> {
           TextButton(
             child: const Text('Take a snapshot'),
             onPressed: () async {
-              final Uint8List? imageBytes =
-                  await _mapController?.takeSnapshot();
+              final Uint8List? imageBytes = await _mapController
+                  ?.takeSnapshot();
               setState(() {
                 _imageBytes = imageBytes;
               });

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,7 +15,7 @@ interface ProxyApiInterface
 
 @RequiresApi(25) class ClassWithApiRequirement
 
-class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
+open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger) :
     ProxyApiTestsPigeonProxyApiRegistrar(binaryMessenger) {
   override fun getPigeonApiProxyApiTestClass(): PigeonApiProxyApiTestClass {
     return ProxyApiTestClassApi(this)

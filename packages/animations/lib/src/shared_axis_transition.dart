@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -233,56 +233,44 @@ class SharedAxisTransition extends StatelessWidget {
     final Color color = fillColor ?? Theme.of(context).canvasColor;
     return DualTransitionBuilder(
       animation: animation,
-      forwardBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Widget? child,
-      ) {
-        return _EnterTransition(
-          animation: animation,
-          transitionType: transitionType,
-          child: child,
-        );
-      },
-      reverseBuilder: (
-        BuildContext context,
-        Animation<double> animation,
-        Widget? child,
-      ) {
-        return _ExitTransition(
-          animation: animation,
-          transitionType: transitionType,
-          reverse: true,
-          fillColor: color,
-          child: child,
-        );
-      },
+      forwardBuilder:
+          (BuildContext context, Animation<double> animation, Widget? child) {
+            return _EnterTransition(
+              animation: animation,
+              transitionType: transitionType,
+              child: child,
+            );
+          },
+      reverseBuilder:
+          (BuildContext context, Animation<double> animation, Widget? child) {
+            return _ExitTransition(
+              animation: animation,
+              transitionType: transitionType,
+              reverse: true,
+              fillColor: color,
+              child: child,
+            );
+          },
       child: DualTransitionBuilder(
         animation: ReverseAnimation(secondaryAnimation),
-        forwardBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return _EnterTransition(
-            animation: animation,
-            transitionType: transitionType,
-            reverse: true,
-            child: child,
-          );
-        },
-        reverseBuilder: (
-          BuildContext context,
-          Animation<double> animation,
-          Widget? child,
-        ) {
-          return _ExitTransition(
-            animation: animation,
-            transitionType: transitionType,
-            fillColor: color,
-            child: child,
-          );
-        },
+        forwardBuilder:
+            (BuildContext context, Animation<double> animation, Widget? child) {
+              return _EnterTransition(
+                animation: animation,
+                transitionType: transitionType,
+                reverse: true,
+                child: child,
+              );
+            },
+        reverseBuilder:
+            (BuildContext context, Animation<double> animation, Widget? child) {
+              return _ExitTransition(
+                animation: animation,
+                transitionType: transitionType,
+                fillColor: color,
+                child: child,
+              );
+            },
         child: child,
       ),
     );
@@ -471,9 +459,7 @@ class _ExitTransition extends StatelessWidget {
 /// between 0.0 and 1.0.
 class _FlippedCurveTween extends CurveTween {
   /// Creates a vertically flipped [CurveTween].
-  _FlippedCurveTween({
-    required super.curve,
-  });
+  _FlippedCurveTween({required super.curve});
 
   @override
   double transform(double t) => 1.0 - super.transform(t);

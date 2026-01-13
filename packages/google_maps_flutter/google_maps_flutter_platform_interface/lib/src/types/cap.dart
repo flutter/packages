@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,11 +29,11 @@ enum CapType {
 }
 
 String _capTypeToJson(CapType capType) => switch (capType) {
-      CapType.butt => 'buttCap',
-      CapType.round => 'roundCap',
-      CapType.square => 'squareCap',
-      CapType.custom => 'customCap',
-    };
+  CapType.butt => 'buttCap',
+  CapType.round => 'roundCap',
+  CapType.square => 'squareCap',
+  CapType.custom => 'customCap',
+};
 
 /// Cap that can be applied at the start or end vertex of a [Polyline].
 @immutable
@@ -94,7 +94,7 @@ class CustomCap extends Cap {
   /// the cap bitmap at its native dimension is designed. Must be positive. Default value
   /// is 10 pixels.
   const CustomCap(this.bitmapDescriptor, {this.refWidth = 10})
-      : super._(CapType.custom);
+    : super._(CapType.custom);
 
   /// Bitmap overlay centered at the start or end vertex of a [Polyline].
   final BitmapDescriptor bitmapDescriptor;
@@ -104,6 +104,9 @@ class CustomCap extends Cap {
   final double refWidth;
 
   @override
-  Object toJson() =>
-      <Object>[_capTypeToJson(type), bitmapDescriptor.toJson(), refWidth];
+  Object toJson() => <Object>[
+    _capTypeToJson(type),
+    bitmapDescriptor.toJson(),
+    refWidth,
+  ];
 }

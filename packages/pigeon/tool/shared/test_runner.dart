@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -37,11 +37,14 @@ Future<void> runTests(
     // TODO(tarrinneal): Remove linux filter once overflow class is added to gobject generator.
     // https://github.com/flutter/flutter/issues/152916
     await _runTests(
-        testsToRun
-            .where((String test) =>
-                test.contains('integration') && !test.contains('linux'))
-            .toList(),
-        ciMode: ciMode);
+      testsToRun
+          .where(
+            (String test) =>
+                test.contains('integration') && !test.contains('linux'),
+          )
+          .toList(),
+      ciMode: ciMode,
+    );
 
     if (!ciMode) {
       await _runGenerate(baseDir, ciMode: ciMode);
@@ -75,19 +78,17 @@ Future<void> _runGenerate(
 
 Future<void> _runFormat(String baseDir, {required bool ciMode}) async {
   _printHeading('Formatting generated output', ciMode: ciMode);
-  final int formatExitCode =
-      await formatAllFiles(repositoryRoot: p.dirname(p.dirname(baseDir)));
+  final int formatExitCode = await formatAllFiles(
+    repositoryRoot: p.dirname(p.dirname(baseDir)),
+  );
   if (formatExitCode != 0) {
     print('Formatting failed; see above for errors.');
     exit(formatExitCode);
   }
 }
 
-Future<void> _runTests(
-  List<String> testsToRun, {
-  required bool ciMode,
-}) async {
-  for (final String test in testsToRun) {
+Future<void> _runTests(List<String> testsToRun, {required bool ciMode}) async {
+  for (final test in testsToRun) {
     final TestInfo? info = testSuites[test];
     if (info != null) {
       _printHeading('Running $test', ciMode: ciMode);
@@ -106,9 +107,9 @@ Future<void> _runTests(
 }
 
 void _printHeading(String heading, {required bool ciMode}) {
-  String timestamp = '';
+  var timestamp = '';
   if (ciMode) {
-    final DateTime now = DateTime.now();
+    final now = DateTime.now();
     timestamp = ' [start time ${now.hour}:${now.minute}:${now.second}]';
   }
   print('##############################');

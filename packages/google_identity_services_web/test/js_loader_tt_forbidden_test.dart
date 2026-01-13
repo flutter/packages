@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -23,8 +23,7 @@ import 'tools.dart';
 
 void main() {
   group('loadWebSdk (TrustedTypes forbidden)', () {
-    final web.HTMLDivElement target =
-        web.document.createElement('div') as web.HTMLDivElement;
+    final target = web.document.createElement('div') as web.HTMLDivElement;
     injectMetaTag(<String, String>{
       'http-equiv': 'Content-Security-Policy',
       'content': "trusted-types 'none';",

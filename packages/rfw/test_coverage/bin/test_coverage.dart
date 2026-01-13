@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,20 +50,17 @@ final class LcovLine {
 Future<void> main(List<String> arguments) async {
   // This script is mentioned in the CONTRIBUTING.md file.
 
-  final Directory coverageDirectory = Directory('coverage');
+  final coverageDirectory = Directory('coverage');
 
   if (coverageDirectory.existsSync()) {
     coverageDirectory.deleteSync(recursive: true);
   }
 
-  final ProcessResult result = Process.runSync(
-    'flutter',
-    <String>[
-      'test',
-      '--coverage',
-      if (arguments.isNotEmpty) ...arguments,
-    ],
-  );
+  final ProcessResult result = Process.runSync('flutter', <String>[
+    'test',
+    '--coverage',
+    if (arguments.isNotEmpty) ...arguments,
+  ]);
 
   if (result.exitCode != 0) {
     print(result.stdout);
@@ -88,10 +85,10 @@ Future<void> main(List<String> arguments) async {
       .whereType<File>()
       .where((File file) => file.path.endsWith('.dart'))
       .toList();
-  final Set<LcovLine> flakyLines = <LcovLine>{};
-  final Set<LcovLine> deadLines = <LcovLine>{};
-  for (final File file in libFiles) {
-    int lineNumber = 0;
+  final flakyLines = <LcovLine>{};
+  final deadLines = <LcovLine>{};
+  for (final file in libFiles) {
+    var lineNumber = 0;
     for (final String line in file.readAsLinesSync()) {
       lineNumber += 1;
       if (line.endsWith('// dead code on VM target')) {
@@ -106,18 +103,18 @@ Future<void> main(List<String> arguments) async {
   final List<lcov.Record> records = await lcov.Parser.parse(
     'coverage/lcov.info',
   );
-  int totalLines = 0;
-  int coveredLines = 0;
-  bool deadLinesError = false;
-  for (final lcov.Record record in records) {
+  var totalLines = 0;
+  var coveredLines = 0;
+  var deadLinesError = false;
+  for (final record in records) {
     if (record.lines != null) {
       totalLines += record.lines!.found ?? 0;
       coveredLines += record.lines!.hit ?? 0;
       if (record.file != null && record.lines!.details != null) {
-        for (int index = 0; index < record.lines!.details!.length; index += 1) {
+        for (var index = 0; index < record.lines!.details!.length; index += 1) {
           if (record.lines!.details![index].hit != null &&
               record.lines!.details![index].line != null) {
-            final LcovLine line = LcovLine(
+            final line = LcovLine(
               record.file!,
               record.lines!.details![index].line!,
             );
@@ -143,7 +140,7 @@ Future<void> main(List<String> arguments) async {
     }
   }
   if (deadLines.isNotEmpty || deadLinesError) {
-    for (final LcovLine line in deadLines) {
+    for (final line in deadLines) {
       print(
         '$line: Line is marked as being undetectably dead code but was not considered reachable.',
       );
@@ -158,8 +155,8 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  final String coveredPercent =
-      (100.0 * coveredLines / totalLines).toStringAsFixed(1);
+  final String coveredPercent = (100.0 * coveredLines / totalLines)
+      .toStringAsFixed(1);
 
   if (targetLines != null) {
     if (targetLines! < totalLines) {
@@ -193,9 +190,7 @@ Future<void> main(List<String> arguments) async {
       'Please add sufficient tests to get coverage back to 100%.',
     );
     print('');
-    print(
-      'When in doubt, ask @Hixie for advice. Thanks!',
-    );
+    print('When in doubt, ask @Hixie for advice. Thanks!');
     exit(1);
   }
 

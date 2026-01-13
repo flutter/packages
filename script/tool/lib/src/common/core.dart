@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -91,6 +91,10 @@ final Map<Version, Version> _dartSdkForFlutterSdk = <Version, Version>{
   Version(3, 29, 0): Version(3, 7, 0),
   Version(3, 29, 3): Version(3, 7, 2),
   Version(3, 32, 0): Version(3, 8, 0),
+  Version(3, 32, 8): Version(3, 8, 1),
+  Version(3, 35, 0): Version(3, 9, 0),
+  Version(3, 35, 7): Version(3, 9, 2),
+  Version(3, 38, 0): Version(3, 10, 0),
 };
 
 /// Returns the version of the Dart SDK that shipped with the given Flutter

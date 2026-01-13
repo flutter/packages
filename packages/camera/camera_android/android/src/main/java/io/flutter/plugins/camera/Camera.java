@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -891,12 +891,7 @@ class Camera
     }
 
     try {
-      if (SdkCapabilityChecker.supportsVideoPause()) {
-        mediaRecorder.pause();
-      } else {
-        throw new Messages.FlutterError(
-            "videoRecordingFailed", "pauseVideoRecording requires Android API +24.", null);
-      }
+      mediaRecorder.pause();
     } catch (IllegalStateException e) {
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }
@@ -908,12 +903,7 @@ class Camera
     }
 
     try {
-      if (SdkCapabilityChecker.supportsVideoPause()) {
-        mediaRecorder.resume();
-      } else {
-        throw new Messages.FlutterError(
-            "videoRecordingFailed", "resumeVideoRecording requires Android API +24.", null);
-      }
+      mediaRecorder.resume();
     } catch (IllegalStateException e) {
       throw new Messages.FlutterError("videoRecordingFailed", e.getMessage(), null);
     }

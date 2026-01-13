@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,7 +7,7 @@ import XCTest
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -28,15 +28,15 @@ final class CameraSessionPresetsTests: XCTestCase {
     }
     let captureFormatMock = MockCaptureDeviceFormat()
     let captureDeviceMock = MockCaptureDevice()
-    captureDeviceMock.formats = [captureFormatMock]
-    captureDeviceMock.activeFormat = captureFormatMock
+    captureDeviceMock.flutterFormats = [captureFormatMock]
+    captureDeviceMock.flutterActiveFormat = captureFormatMock
     captureDeviceMock.lockForConfigurationStub = {
       lockForConfigurationExpectation.fulfill()
     }
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.captureDeviceFactory = { _ in captureDeviceMock }
-    configuration.videoDimensionsForFormat = { format in
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoDimensionsConverter = { format in
       return CMVideoDimensions(width: 1, height: 1)
     }
     configuration.videoCaptureSession = videoSessionMock
@@ -65,7 +65,7 @@ final class CameraSessionPresetsTests: XCTestCase {
     configuration.videoCaptureSession = videoSessionMock
     configuration.mediaSettings = CameraTestUtils.createDefaultMediaSettings(
       resolutionPreset: FCPPlatformResolutionPreset.max)
-    configuration.captureDeviceFactory = { _ in MockCaptureDevice() }
+    configuration.videoCaptureDeviceFactory = { _ in MockCaptureDevice() }
 
     let _ = CameraTestUtils.createTestCamera(configuration)
 

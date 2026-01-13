@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 import 'package:vector_graphics_codec/src/fp16.dart';
 
 double convert(double value) {
-  final ByteData byteData = ByteData(8);
+  final byteData = ByteData(8);
   byteData.setFloat32(0, value);
   toHalf(byteData);
   return toDouble(byteData);
@@ -16,13 +16,16 @@ double convert(double value) {
 
 void main() {
   test('fp16 positive values', () {
-    final List<List<double>> missed = <List<double>>[];
+    final missed = <List<double>>[];
 
     /// Validate that all numbers between [min] and [max] can be converted within [tolerance].
-    void checkRange(
-        {required double min, required double max, required double tolerance}) {
-      final ByteData byteData = ByteData(8);
-      for (double i = min; i < max; i += 1) {
+    void checkRange({
+      required double min,
+      required double max,
+      required double tolerance,
+    }) {
+      final byteData = ByteData(8);
+      for (var i = min; i < max; i += 1) {
         byteData.setFloat32(0, i);
         toHalf(byteData);
 

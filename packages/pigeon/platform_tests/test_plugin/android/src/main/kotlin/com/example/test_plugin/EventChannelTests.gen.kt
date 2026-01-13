@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 //
@@ -37,7 +37,7 @@ private object EventChannelTestsPigeonUtils {
     }
     if (a is Map<*, *> && b is Map<*, *>) {
       return a.size == b.size &&
-          a.all { (b as Map<Any?, Any?>).containsKey(it.key) && deepEquals(it.value, b[it.key]) }
+          a.all { (b as Map<Any?, Any?>).contains(it.key) && deepEquals(it.value, b[it.key]) }
     }
     return a == b
   }
@@ -477,11 +477,11 @@ private open class EventChannelTestsPigeonCodec : StandardMessageCodec() {
     when (value) {
       is EventEnum -> {
         stream.write(129)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       is AnotherEventEnum -> {
         stream.write(130)
-        writeValue(stream, value.raw)
+        writeValue(stream, value.raw.toLong())
       }
       is EventAllNullableTypes -> {
         stream.write(131)
@@ -575,6 +575,10 @@ abstract class StreamIntsStreamHandler : EventChannelTestsPigeonEventChannelWrap
           .setStreamHandler(internalStreamHandler)
     }
   }
+  // Implement methods from EventChannelTestsPigeonEventChannelWrapper
+  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
+
+  override fun onCancel(p0: Any?) {}
 }
 
 abstract class StreamEventsStreamHandler :
@@ -595,6 +599,10 @@ abstract class StreamEventsStreamHandler :
           .setStreamHandler(internalStreamHandler)
     }
   }
+  // Implement methods from EventChannelTestsPigeonEventChannelWrapper
+  override fun onListen(p0: Any?, sink: PigeonEventSink<PlatformEvent>) {}
+
+  override fun onCancel(p0: Any?) {}
 }
 
 abstract class StreamConsistentNumbersStreamHandler :
@@ -615,4 +623,8 @@ abstract class StreamConsistentNumbersStreamHandler :
           .setStreamHandler(internalStreamHandler)
     }
   }
+  // Implement methods from EventChannelTestsPigeonEventChannelWrapper
+  override fun onListen(p0: Any?, sink: PigeonEventSink<Long>) {}
+
+  override fun onCancel(p0: Any?) {}
 }

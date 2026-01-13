@@ -29,8 +29,8 @@ void writeSvgPathDataToPath(String? svg, PathProxy path) {
     return;
   }
 
-  final SvgPathStringSource parser = SvgPathStringSource(svg);
-  final SvgPathNormalizer normalizer = SvgPathNormalizer();
+  final parser = SvgPathStringSource(svg);
+  final normalizer = SvgPathNormalizer();
   for (final PathSegmentData seg in parser.parseSegments()) {
     normalizer.emitSegment(seg, path);
   }
@@ -56,8 +56,8 @@ abstract class PathProxy {
 @immutable
 class _PathOffset {
   const _PathOffset(this.dx, this.dy)
-      : assert(dx != null), // ignore: unnecessary_null_comparison
-        assert(dy != null); // ignore: unnecessary_null_comparison
+    : assert(dx != null), // ignore: unnecessary_null_comparison
+      assert(dy != null); // ignore: unnecessary_null_comparison
 
   static _PathOffset get zero => const _PathOffset(0.0, 0.0);
   final double dx;
@@ -94,10 +94,10 @@ const double _piOverTwoFloat = math.pi / 2.0;
 
 class SvgPathStringSource {
   SvgPathStringSource(this._string)
-      : assert(_string != null), // ignore: unnecessary_null_comparison
-        _previousCommand = SvgPathSegType.unknown,
-        _idx = 0,
-        _length = _string.length {
+    : assert(_string != null), // ignore: unnecessary_null_comparison
+      _previousCommand = SvgPathSegType.unknown,
+      _idx = 0,
+      _length = _string.length {
     _skipOptionalSvgSpaces();
   }
 
@@ -146,8 +146,9 @@ class SvgPathStringSource {
     }
   }
 
-  void _skipOptionalSvgSpacesOrDelimiter(
-      [int delimiter = AsciiConstants.comma]) {
+  void _skipOptionalSvgSpacesOrDelimiter([
+    int delimiter = AsciiConstants.comma,
+  ]) {
     final int c = _skipOptionalSvgSpaces();
     if (c == delimiter) {
       _idx++;
@@ -208,7 +209,7 @@ class SvgPathStringSource {
     _skipOptionalSvgSpaces();
 
     // Read the sign.
-    int sign = 1;
+    var sign = 1;
     int c = _readCodeUnit();
     if (c == AsciiConstants.plus) {
       c = _readCodeUnit();
@@ -223,7 +224,7 @@ class SvgPathStringSource {
     }
 
     // Read the integer part, build left-to-right.
-    double integer = 0.0;
+    var integer = 0.0;
     while (AsciiConstants.number0 <= c && c <= AsciiConstants.number9) {
       integer = integer * 10 + (c - AsciiConstants.number0);
       c = _readCodeUnit();
@@ -234,7 +235,7 @@ class SvgPathStringSource {
       throw StateError('Numeric overflow');
     }
 
-    double decimal = 0.0;
+    var decimal = 0.0;
     if (c == AsciiConstants.period) {
       // read the decimals
       c = _readCodeUnit();
@@ -244,7 +245,7 @@ class SvgPathStringSource {
         throw StateError('There must be at least one digit following the .');
       }
 
-      double frac = 1.0;
+      var frac = 1.0;
       while (AsciiConstants.number0 <= c && c <= AsciiConstants.number9) {
         frac *= 0.1;
         decimal += (c - AsciiConstants.number0) * frac;
@@ -263,7 +264,7 @@ class SvgPathStringSource {
       c = _readCodeUnit();
 
       // read the sign of the exponent
-      bool exponentIsNegative = false;
+      var exponentIsNegative = false;
       if (c == AsciiConstants.plus) {
         c = _readCodeUnit();
       } else if (c == AsciiConstants.minus) {
@@ -276,7 +277,7 @@ class SvgPathStringSource {
         throw StateError('Missing exponent');
       }
 
-      double exponent = 0.0;
+      var exponent = 0.0;
       while (c >= AsciiConstants.number0 && c <= AsciiConstants.number9) {
         exponent *= 10.0;
         exponent += c - AsciiConstants.number0;
@@ -339,7 +340,7 @@ class SvgPathStringSource {
 
   PathSegmentData parseSegment() {
     assert(hasMoreData);
-    final PathSegmentData segment = PathSegmentData();
+    final segment = PathSegmentData();
     final int lookahead = _string.codeUnitAt(_idx);
     SvgPathSegType command = AsciiConstants.mapLetterToSegmentType(lookahead);
     if (_previousCommand == SvgPathSegType.unknown) {
@@ -384,12 +385,16 @@ class SvgPathStringSource {
         segment.targetPoint = _PathOffset(_parseNumber(), _parseNumber());
       case SvgPathSegType.lineToHorizontalRel:
       case SvgPathSegType.lineToHorizontalAbs:
-        segment.targetPoint =
-            _PathOffset(_parseNumber(), segment.targetPoint.dy);
+        segment.targetPoint = _PathOffset(
+          _parseNumber(),
+          segment.targetPoint.dy,
+        );
       case SvgPathSegType.lineToVerticalRel:
       case SvgPathSegType.lineToVerticalAbs:
-        segment.targetPoint =
-            _PathOffset(segment.targetPoint.dx, _parseNumber());
+        segment.targetPoint = _PathOffset(
+          segment.targetPoint.dx,
+          _parseNumber(),
+        );
       case SvgPathSegType.close:
         _skipOptionalSvgSpaces();
       case SvgPathSegType.quadToRel:
@@ -414,9 +419,13 @@ class SvgPathStringSource {
 @Deprecated('Utility function that should not be public.')
 // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
 _PathOffset reflectedPoint(
-    _PathOffset reflectedIn, _PathOffset pointToReflect) {
-  return _PathOffset(2 * reflectedIn.dx - pointToReflect.dx,
-      2 * reflectedIn.dy - pointToReflect.dy);
+  _PathOffset reflectedIn,
+  _PathOffset pointToReflect,
+) {
+  return _PathOffset(
+    2 * reflectedIn.dx - pointToReflect.dx,
+    2 * reflectedIn.dy - pointToReflect.dy,
+  );
 }
 
 const double _kOneOverThree = 1.0 / 3.0;
@@ -425,8 +434,10 @@ const double _kOneOverThree = 1.0 / 3.0;
 @Deprecated('Utility function that should not be public.')
 // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
 _PathOffset blendPoints(_PathOffset p1, _PathOffset p2) {
-  return _PathOffset((p1.dx + 2 * p2.dx) * _kOneOverThree,
-      (p1.dy + 2 * p2.dy) * _kOneOverThree);
+  return _PathOffset(
+    (p1.dx + 2 * p2.dx) * _kOneOverThree,
+    (p1.dy + 2 * p2.dy) * _kOneOverThree,
+  );
 }
 
 bool isCubicCommand(SvgPathSegType command) {
@@ -447,9 +458,9 @@ bool isQuadraticCommand(SvgPathSegType command) {
 // There are probably better/clearer ways to do it for Dart.
 class PathSegmentData {
   PathSegmentData()
-      : command = SvgPathSegType.unknown,
-        arcSweep = false,
-        arcLarge = false;
+    : command = SvgPathSegType.unknown,
+      arcSweep = false,
+      arcLarge = false;
 
   @Deprecated('Utility member that should not be public.')
   // TODO(kevmoo): Remove this in the next release https://github.com/flutter/flutter/issues/157940
@@ -505,7 +516,7 @@ class SvgPathNormalizer {
   SvgPathSegType _lastCommand = SvgPathSegType.unknown;
 
   void emitSegment(PathSegmentData segment, PathProxy path) {
-    final PathSegmentData normSeg = segment;
+    final normSeg = segment;
     assert(_currentPoint != null); // ignore: unnecessary_null_comparison
     // Convert relative points to absolute points.
     switch (segment.command) {
@@ -528,11 +539,15 @@ class SvgPathNormalizer {
       case SvgPathSegType.arcToRel:
         normSeg.targetPoint += _currentPoint;
       case SvgPathSegType.lineToHorizontalAbs:
-        normSeg.targetPoint =
-            _PathOffset(normSeg.targetPoint.dx, _currentPoint.dy);
+        normSeg.targetPoint = _PathOffset(
+          normSeg.targetPoint.dx,
+          _currentPoint.dy,
+        );
       case SvgPathSegType.lineToVerticalAbs:
-        normSeg.targetPoint =
-            _PathOffset(_currentPoint.dx, normSeg.targetPoint.dy);
+        normSeg.targetPoint = _PathOffset(
+          _currentPoint.dx,
+          normSeg.targetPoint.dy,
+        );
       case SvgPathSegType.close:
         // Reset m_currentPoint for the next path.
         normSeg.targetPoint = _subPathPoint;
@@ -566,10 +581,7 @@ class SvgPathNormalizer {
         if (!isCubicCommand(_lastCommand)) {
           normSeg.point1 = _currentPoint;
         } else {
-          normSeg.point1 = reflectedPoint(
-            _currentPoint,
-            _controlPoint,
-          );
+          normSeg.point1 = reflectedPoint(_currentPoint, _controlPoint);
         }
         continue cubic_abs2;
       case SvgPathSegType.cubicToRel:
@@ -590,10 +602,7 @@ class SvgPathNormalizer {
         if (!isQuadraticCommand(_lastCommand)) {
           normSeg.point1 = _currentPoint;
         } else {
-          normSeg.point1 = reflectedPoint(
-            _currentPoint,
-            _controlPoint,
-          );
+          normSeg.point1 = reflectedPoint(_currentPoint, _controlPoint);
         }
         continue quad_abs2;
       case SvgPathSegType.quadToRel:
@@ -602,10 +611,7 @@ class SvgPathNormalizer {
         // Save the unmodified control point.
         _controlPoint = normSeg.point1;
         normSeg.point1 = blendPoints(_currentPoint, _controlPoint);
-        normSeg.point2 = blendPoints(
-          normSeg.targetPoint,
-          _controlPoint,
-        );
+        normSeg.point2 = blendPoints(normSeg.targetPoint, _controlPoint);
         // normSeg.command = SvgPathSegType.cubicToAbs;
         path.cubicTo(
           normSeg.point1.dx,
@@ -643,10 +649,10 @@ class SvgPathNormalizer {
     _lastCommand = segment.command;
   }
 
-// This works by converting the SVG arc to "simple" beziers.
-// Partly adapted from Niko's code in kdelibs/kdecore/svgicons.
-// See also SVG implementation notes:
-// http://www.w3.org/TR/SVG/implnote.html#ArcConversionEndpointToCenter
+  // This works by converting the SVG arc to "simple" beziers.
+  // Partly adapted from Niko's code in kdelibs/kdecore/svgicons.
+  // See also SVG implementation notes:
+  // http://www.w3.org/TR/SVG/implnote.html#ArcConversionEndpointToCenter
   bool _decomposeArcToCubic(
     _PathOffset currentPoint,
     PathSegmentData arcSegment,
@@ -672,15 +678,12 @@ class SvgPathNormalizer {
     final _PathOffset midPointDistance =
         (currentPoint - arcSegment.targetPoint) * 0.5;
 
-    final Matrix4 pointTransform = Matrix4.identity();
+    final pointTransform = Matrix4.identity();
     pointTransform.rotateZ(-angle);
 
     final _PathOffset transformedMidPoint = _mapPoint(
       pointTransform,
-      _PathOffset(
-        midPointDistance.dx,
-        midPointDistance.dy,
-      ),
+      _PathOffset(midPointDistance.dx, midPointDistance.dy),
     );
 
     final double squareRx = rx * rx;
@@ -716,8 +719,10 @@ class SvgPathNormalizer {
     }
 
     delta = delta * scaleFactor;
-    final _PathOffset centerPoint =
-        ((point1 + point2) * 0.5).translate(-delta.dy, delta.dx);
+    final _PathOffset centerPoint = ((point1 + point2) * 0.5).translate(
+      -delta.dy,
+      delta.dx,
+    );
 
     final double theta1 = (point1 - centerPoint).direction;
     final double theta2 = (point2 - centerPoint).direction;
@@ -738,7 +743,7 @@ class SvgPathNormalizer {
     // enough. So that we get more cubic curves than expected here. Adding 0.001f
     // reduces the count of segments to the correct count.
     final int segments = (thetaArc / (_piOverTwoFloat + 0.001)).abs().ceil();
-    for (int i = 0; i < segments; ++i) {
+    for (var i = 0; i < segments; ++i) {
       final double startTheta = theta1 + i * thetaArc / segments;
       final double endTheta = theta1 + (i + 1) * thetaArc / segments;
 
@@ -761,14 +766,20 @@ class SvgPathNormalizer {
       ).translate(centerPoint.dx, centerPoint.dy);
       point2 = targetPoint.translate(t * sinEndTheta, -t * cosEndTheta);
 
-      final PathSegmentData cubicSegment = PathSegmentData();
+      final cubicSegment = PathSegmentData();
       cubicSegment.command = SvgPathSegType.cubicToAbs;
       cubicSegment.point1 = _mapPoint(pointTransform, point1);
       cubicSegment.point2 = _mapPoint(pointTransform, point2);
       cubicSegment.targetPoint = _mapPoint(pointTransform, targetPoint);
 
-      path.cubicTo(cubicSegment.x1, cubicSegment.y1, cubicSegment.x2,
-          cubicSegment.y2, cubicSegment.x, cubicSegment.y);
+      path.cubicTo(
+        cubicSegment.x1,
+        cubicSegment.y1,
+        cubicSegment.x2,
+        cubicSegment.y2,
+        cubicSegment.x,
+        cubicSegment.y,
+      );
       //consumer_->EmitSegment(cubicSegment);
     }
     return true;

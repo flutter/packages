@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,6 @@ import android.os.Looper;
 import android.util.Log;
 import androidx.annotation.ChecksSdkIntAtLeast;
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import io.flutter.plugin.common.BinaryMessenger;
 
 public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistrar {
@@ -75,7 +74,6 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
     return new WebResourceRequestProxyApi(this);
   }
 
-  @RequiresApi(api = Build.VERSION_CODES.M)
   @NonNull
   @Override
   public PigeonApiWebResourceError getPigeonApiWebResourceError() {
@@ -250,5 +248,17 @@ public class ProxyApiRegistrar extends AndroidWebkitLibraryPigeonProxyApiRegistr
   @NonNull
   public FlutterAssetManager getFlutterAssetManager() {
     return flutterAssetManager;
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiWebViewFeature getPigeonApiWebViewFeature() {
+    return new WebViewFeatureProxyApi(this);
+  }
+
+  @NonNull
+  @Override
+  public PigeonApiWebSettingsCompat getPigeonApiWebSettingsCompat() {
+    return new WebSettingsCompatProxyApi(this);
   }
 }

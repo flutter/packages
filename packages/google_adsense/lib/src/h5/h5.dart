@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,9 +28,7 @@ class H5GamesAdsClient {
   /// Requests an ad placement to the Ad Placement API.
   ///
   /// The [placementConfig] defines the configuration of the ad.
-  void adBreak(
-    AdBreakPlacement placementConfig,
-  ) {
+  void adBreak(AdBreakPlacement placementConfig) {
     // Delay the call to `adBreak` so tap users don't trigger a click on the ad
     // on pointerup. This should leaves enough time for Flutter to settle its
     // tap events, before triggering the H5 ad.
@@ -48,9 +46,7 @@ class H5GamesAdsClient {
   /// Call this function as soon as the sound state of your game changes, as the
   /// Ad Placement API may have to request new creatives, and this gives it the
   /// maximum amount of time to do so. See `sound` in [AdConfigParameters].
-  void adConfig(
-    AdConfigParameters parameters,
-  ) {
+  void adConfig(AdConfigParameters parameters) {
     adsbygoogle.adConfig(parameters);
   }
 }

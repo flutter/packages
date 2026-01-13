@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,7 +11,7 @@ import 'page.dart';
 
 class PlacePolygonPage extends GoogleMapExampleAppPage {
   const PlacePolygonPage({Key? key})
-      : super(const Icon(Icons.linear_scale), 'Place polygon', key: key);
+    : super(const Icon(Icons.linear_scale), 'Place polygon', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +81,10 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
       return;
     }
 
-    final String polygonIdVal = 'polygon_id_$_polygonIdCounter';
-    final PolygonId polygonId = PolygonId(polygonIdVal);
+    final polygonIdVal = 'polygon_id_$_polygonIdCounter';
+    final polygonId = PolygonId(polygonIdVal);
 
-    final Polygon polygon = Polygon(
+    final polygon = Polygon(
       polygonId: polygonId,
       consumeTapEvents: true,
       strokeColor: Colors.orange,
@@ -107,18 +107,14 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   void _toggleGeodesic(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] = polygon.copyWith(
-        geodesicParam: !polygon.geodesic,
-      );
+      polygons[polygonId] = polygon.copyWith(geodesicParam: !polygon.geodesic);
     });
   }
 
   void _toggleVisible(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] = polygon.copyWith(
-        visibleParam: !polygon.visible,
-      );
+      polygons[polygonId] = polygon.copyWith(visibleParam: !polygon.visible);
     });
   }
 
@@ -152,17 +148,16 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   void _addHoles(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] =
-          polygon.copyWith(holesParam: _createHoles(polygonId));
+      polygons[polygonId] = polygon.copyWith(
+        holesParam: _createHoles(polygonId),
+      );
     });
   }
 
   void _removeHoles(PolygonId polygonId) {
     final Polygon polygon = polygons[polygonId]!;
     setState(() {
-      polygons[polygonId] = polygon.copyWith(
-        holesParam: <List<LatLng>>[],
-      );
+      polygons[polygonId] = polygon.copyWith(holesParam: <List<LatLng>>[]);
     });
   }
 
@@ -196,10 +191,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
-                        TextButton(
-                          onPressed: _add,
-                          child: const Text('add'),
-                        ),
+                        TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
                           onPressed: (selectedId == null)
                               ? null
@@ -226,16 +218,16 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                           onPressed: (selectedId == null)
                               ? null
                               : (polygons[selectedId]!.holes.isNotEmpty
-                                  ? null
-                                  : () => _addHoles(selectedId)),
+                                    ? null
+                                    : () => _addHoles(selectedId)),
                           child: const Text('add holes'),
                         ),
                         TextButton(
                           onPressed: (selectedId == null)
                               ? null
                               : (polygons[selectedId]!.holes.isEmpty
-                                  ? null
-                                  : () => _removeHoles(selectedId)),
+                                    ? null
+                                    : () => _removeHoles(selectedId)),
                           child: const Text('remove holes'),
                         ),
                         TextButton(
@@ -257,9 +249,9 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
                           child: const Text('change fill color'),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -269,7 +261,7 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   }
 
   List<LatLng> _createPoints() {
-    final List<LatLng> points = <LatLng>[];
+    final points = <LatLng>[];
     final double offset = _polygonIdCounter.ceilToDouble();
     points.add(_createLatLng(51.2395 + offset, -3.4314));
     points.add(_createLatLng(53.5234 + offset, -3.5314));
@@ -279,17 +271,17 @@ class PlacePolygonBodyState extends State<PlacePolygonBody> {
   }
 
   List<List<LatLng>> _createHoles(PolygonId polygonId) {
-    final List<List<LatLng>> holes = <List<LatLng>>[];
+    final holes = <List<LatLng>>[];
     final double offset = polygonOffsets[polygonId]!;
 
-    final List<LatLng> hole1 = <LatLng>[];
+    final hole1 = <LatLng>[];
     hole1.add(_createLatLng(51.8395 + offset, -3.8814));
     hole1.add(_createLatLng(52.0234 + offset, -3.9914));
     hole1.add(_createLatLng(52.1351 + offset, -4.4435));
     hole1.add(_createLatLng(52.0231 + offset, -4.5829));
     holes.add(hole1);
 
-    final List<LatLng> hole2 = <LatLng>[];
+    final hole2 = <LatLng>[];
     hole2.add(_createLatLng(52.2395 + offset, -3.6814));
     hole2.add(_createLatLng(52.4234 + offset, -3.7914));
     hole2.add(_createLatLng(52.5351 + offset, -4.2435));

@@ -1,3 +1,17 @@
+## 2.14.1
+
+* Replaces internal use of deprecated methods.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 2.14.0
+
+* Adds support for disabling or moving the camera control button on web.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.13.0
+
+* Adds Advanced marker support.
+
 ## 2.12.1
 
 * Fixes the `zIndex` issue in the `copyWith` method.

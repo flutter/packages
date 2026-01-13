@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -7,10 +7,10 @@ import 'package:vector_graphics_compiler/src/util.dart';
 
 void main() {
   test('listEquals', () {
-    final List<int> listA = <int>[1, 2, 3];
-    final List<int> listB = <int>[1, 2, 3];
-    final List<int> listC = <int>[1, 2];
-    final List<int> listD = <int>[3, 2, 1];
+    final listA = <int>[1, 2, 3];
+    final listB = <int>[1, 2, 3];
+    final listC = <int>[1, 2];
+    final listD = <int>[3, 2, 1];
 
     expect(listEquals<void>(null, null), isTrue);
     expect(listEquals(listA, null), isFalse);

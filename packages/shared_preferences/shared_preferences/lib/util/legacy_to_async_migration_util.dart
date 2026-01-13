@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -29,8 +29,9 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
   required SharedPreferencesOptions sharedPreferencesAsyncOptions,
   required String migrationCompletedKey,
 }) async {
-  final SharedPreferencesAsync sharedPreferencesAsyncInstance =
-      SharedPreferencesAsync(options: sharedPreferencesAsyncOptions);
+  final sharedPreferencesAsyncInstance = SharedPreferencesAsync(
+    options: sharedPreferencesAsyncOptions,
+  );
 
   if (await sharedPreferencesAsyncInstance.containsKey(migrationCompletedKey)) {
     return;
@@ -39,7 +40,7 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
   await legacySharedPreferencesInstance.reload();
   final Set<String> keys = legacySharedPreferencesInstance.getKeys();
 
-  for (final String key in keys) {
+  for (final key in keys) {
     final Object? value = legacySharedPreferencesInstance.get(key);
     switch (value.runtimeType) {
       case const (bool):
@@ -56,8 +57,12 @@ Future<void> migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary({
       case const (List<dynamic>):
         try {
           await sharedPreferencesAsyncInstance.setStringList(
-              key, (value! as List<Object?>).cast<String>());
-        } on TypeError catch (_) {} // Pass over Lists containing non-String values.
+            key,
+            (value! as List<Object?>).cast<String>(),
+          );
+        } on TypeError catch (
+          _
+        ) {} // Pass over Lists containing non-String values.
     }
   }
 

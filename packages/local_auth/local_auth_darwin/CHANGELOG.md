@@ -1,5 +1,28 @@
-## NEXT
+## 2.0.1
 
+* Updates to Pigeon 26.
+
+## 2.0.0
+
+* **BREAKING CHANGES:**
+  * Switches to `LocalAuthException` for error reporting.
+  * Removes support for `useErrorDialogs`.
+
+## 1.6.1
+
+* Removes code for versions of iOS older than 13.0.
+* Updates minimum supported SDK version to Flutter 3.35.
+
+## 1.6.0
+
+*  Provides more specific error codes on iOS for authentication failures.
+    * `LockedOut` is now returned for biometric lockout.
+    * `UserCancelled` is now returned when the user cancels the prompt.
+    * `UserFallback` is now returned when the user selects the fallback option.
+
+## 1.5.0
+
+* Converts implementation to Swift.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 1.4.3

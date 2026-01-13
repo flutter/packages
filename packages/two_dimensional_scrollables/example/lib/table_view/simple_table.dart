@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -143,7 +143,7 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableSpan _buildColumnSpan(int index) {
-    const TableSpanDecoration decoration = TableSpanDecoration(
+    const decoration = TableSpanDecoration(
       border: TableSpanBorder(trailing: BorderSide()),
     );
 
@@ -156,10 +156,10 @@ class _TableExampleState extends State<TableExample> {
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap column $index'),
-            ),
+                  () => TapGestureRecognizer(),
+                  (TapGestureRecognizer t) =>
+                      t.onTap = () => print('Tap column $index'),
+                ),
           },
         );
       case 1:
@@ -195,7 +195,7 @@ class _TableExampleState extends State<TableExample> {
   }
 
   TableSpan _buildRowSpan(int index) {
-    final TableSpanDecoration decoration = TableSpanDecoration(
+    final decoration = TableSpanDecoration(
       color: index.isEven ? Colors.purple[100] : null,
       border: const TableSpanBorder(trailing: BorderSide(width: 3)),
     );
@@ -208,10 +208,10 @@ class _TableExampleState extends State<TableExample> {
           recognizerFactories: <Type, GestureRecognizerFactory>{
             TapGestureRecognizer:
                 GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
-              () => TapGestureRecognizer(),
-              (TapGestureRecognizer t) =>
-                  t.onTap = () => print('Tap row $index'),
-            ),
+                  () => TapGestureRecognizer(),
+                  (TapGestureRecognizer t) =>
+                      t.onTap = () => print('Tap row $index'),
+                ),
           },
         );
       case 1:

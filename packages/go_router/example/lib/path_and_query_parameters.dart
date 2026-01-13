@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -64,10 +64,10 @@ class App extends StatelessWidget {
   // add the login info into the tree as app state that can change over time
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-        routerConfig: _router,
-        title: title,
-        debugShowCheckedModeBanner: false,
-      );
+    routerConfig: _router,
+    title: title,
+    debugShowCheckedModeBanner: false,
+  );
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
@@ -77,14 +77,15 @@ class App extends StatelessWidget {
             const HomeScreen(),
         routes: <GoRoute>[
           GoRoute(
-              name: 'family',
-              path: 'family/:fid',
-              builder: (BuildContext context, GoRouterState state) {
-                return FamilyScreen(
-                  fid: state.pathParameters['fid']!,
-                  asc: state.uri.queryParameters['sort'] == 'asc',
-                );
-              }),
+            name: 'family',
+            path: 'family/:fid',
+            builder: (BuildContext context, GoRouterState state) {
+              return FamilyScreen(
+                fid: state.pathParameters['fid']!,
+                asc: state.uri.queryParameters['sort'] == 'asc',
+              );
+            },
+          ),
         ],
       ),
     ],
@@ -99,16 +100,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(App.title),
-      ),
+      appBar: AppBar(title: const Text(App.title)),
       body: ListView(
         children: <Widget>[
           for (final MapEntry<String, Family> entry in _families.entries)
             ListTile(
               title: Text(entry.value.name),
               onTap: () => context.go('/family/${entry.key}'),
-            )
+            ),
         ],
       ),
     );
@@ -129,9 +128,7 @@ class FamilyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Map<String, String> newQueries;
-    final List<String> names = _families[fid]!
-        .people
-        .values
+    final List<String> names = _families[fid]!.people.values
         .map<String>((Person p) => p.name)
         .toList();
     names.sort();
@@ -145,20 +142,20 @@ class FamilyScreen extends StatelessWidget {
         title: Text(_families[fid]!.name),
         actions: <Widget>[
           IconButton(
-            onPressed: () => context.goNamed('family',
-                pathParameters: <String, String>{'fid': fid},
-                queryParameters: newQueries),
+            onPressed: () => context.goNamed(
+              'family',
+              pathParameters: <String, String>{'fid': fid},
+              queryParameters: newQueries,
+            ),
             tooltip: 'sort ascending or descending',
             icon: const Icon(Icons.sort),
-          )
+          ),
         ],
       ),
       body: ListView(
         children: <Widget>[
           for (final String name in asc ? names : names.reversed)
-            ListTile(
-              title: Text(name),
-            ),
+            ListTile(title: Text(name)),
         ],
       ),
     );

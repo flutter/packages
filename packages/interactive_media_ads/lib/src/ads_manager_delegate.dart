@@ -1,7 +1,8 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'ad.dart';
 import 'platform_interface/platform_interface.dart';
 
 /// Delegate for ad events or errors that occur during ad or stream
@@ -36,11 +37,12 @@ class AdsManagerDelegate {
     void Function(AdEvent event)? onAdEvent,
     void Function(AdErrorEvent event)? onAdErrorEvent,
   }) : this.fromPlatformCreationParams(
-          PlatformAdsManagerDelegateCreationParams(
-            onAdEvent: onAdEvent,
-            onAdErrorEvent: onAdErrorEvent,
-          ),
-        );
+         PlatformAdsManagerDelegateCreationParams(
+           onAdEvent: (PlatformAdEvent event) =>
+               onAdEvent?.call(AdEvent._fromPlatform(event)),
+           onAdErrorEvent: onAdErrorEvent,
+         ),
+       );
 
   /// Constructs an [AdsManagerDelegate] from creation params for a specific platform.
   ///
@@ -80,10 +82,28 @@ class AdsManagerDelegate {
   final PlatformAdsManagerDelegate platform;
 
   /// Invoked when there is an [AdEvent].
-  void Function(AdEvent event)? get onAdEvent => platform.params.onAdEvent;
+  void Function(AdEvent event)? get onAdEvent =>
+      (AdEvent event) => platform.params.onAdEvent?.call(event.platform);
 
   /// Invoked when there was an error playing the ad. Log the error and resume
   /// playing content.
   void Function(AdErrorEvent event)? get onAdErrorEvent =>
       platform.params.onAdErrorEvent;
+}
+
+/// Simple data class used to transport ad playback information.
+class AdEvent {
+  AdEvent._fromPlatform(this.platform);
+
+  /// Implementation of [PlatformAdEvent] for the current platform.
+  final PlatformAdEvent platform;
+
+  /// The type of event that occurred.
+  AdEventType get type => platform.type;
+
+  /// The ad with which this event is associated.
+  Ad? get ad => platform.ad != null ? Ad.fromPlatform(platform.ad!) : null;
+
+  /// A map containing any extra ad data for the event, if needed.
+  Map<String, String> get adData => platform.adData;
 }

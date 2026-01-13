@@ -8,7 +8,7 @@ A Flutter plugin that provides a [Google Maps](https://developers.google.com/map
 
 |             | Android | iOS     | Web                              |
 |-------------|---------|---------|----------------------------------|
-| **Support** | SDK 21+ | iOS 14+ | Same as [Flutter's][web-support] |
+| **Support** | SDK 24+ | iOS 14+ | Same as [Flutter's][web-support] |
 
 [web-support]: https://docs.flutter.dev/reference/supported-platforms
 
@@ -137,10 +137,11 @@ class MapSampleState extends State<MapSample> {
   );
 
   static const CameraPosition _kLake = CameraPosition(
-      bearing: 192.8334901395799,
-      target: LatLng(37.43296265331129, -122.08832357078792),
-      tilt: 59.440717697143555,
-      zoom: 19.151926040649414);
+    bearing: 192.8334901395799,
+    target: LatLng(37.43296265331129, -122.08832357078792),
+    tilt: 59.440717697143555,
+    zoom: 19.151926040649414,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -165,6 +166,7 @@ class MapSampleState extends State<MapSample> {
     await controller.animateCamera(CameraUpdate.newCameraPosition(_kLake));
   }
 }
+
 ```
 
 See the `example` directory for a complete sample app.

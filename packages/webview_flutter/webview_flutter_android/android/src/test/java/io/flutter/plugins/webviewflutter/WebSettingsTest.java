@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -165,5 +165,15 @@ public class WebSettingsTest {
     when(instance.getUserAgentString()).thenReturn(value);
 
     assertEquals(value, api.getUserAgentString(instance));
+  }
+
+  @Test
+  public void setMixedContentMode() {
+    final PigeonApiWebSettings api = new TestProxyApiRegistrar().getPigeonApiWebSettings();
+
+    final WebSettings instance = mock(WebSettings.class);
+    api.setMixedContentMode(instance, MixedContentMode.COMPATIBILITY_MODE);
+
+    verify(instance).setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
   }
 }

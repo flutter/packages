@@ -1,8 +1,6 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-// Platform views are only supported on iOS as of now. Ifdef is used to avoid compilation errors.
 
 #import <Foundation/Foundation.h>
 

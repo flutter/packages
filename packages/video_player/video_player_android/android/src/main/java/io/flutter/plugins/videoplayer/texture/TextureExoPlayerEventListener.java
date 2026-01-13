@@ -1,10 +1,9 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 package io.flutter.plugins.videoplayer.texture;
 
-import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.OptIn;
 import androidx.media3.common.Format;
@@ -15,7 +14,7 @@ import io.flutter.plugins.videoplayer.VideoPlayerCallbacks;
 import java.util.Objects;
 
 public final class TextureExoPlayerEventListener extends ExoPlayerEventListener {
-  private boolean surfaceProducerHandlesCropAndRotation;
+  private final boolean surfaceProducerHandlesCropAndRotation;
 
   public TextureExoPlayerEventListener(
       @NonNull ExoPlayer exoPlayer,
@@ -32,24 +31,9 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
     int width = videoSize.width;
     int height = videoSize.height;
     if (width != 0 && height != 0) {
-      if (Build.VERSION.SDK_INT <= 21) {
-        // On API 21 and below, Exoplayer may not internally handle rotation correction
-        // and reports it through VideoSize.unappliedRotationDegrees. We may apply it to
-        // fix the case of upside-down playback.
-        try {
-          RotationDegrees unappliedRotation =
-              RotationDegrees.fromDegrees(videoSize.unappliedRotationDegrees);
-          rotationCorrection = getRotationCorrectionFromUnappliedRotation(unappliedRotation);
-        } catch (IllegalArgumentException e) {
-          // Unapplied rotation other than 0, 90, 180, 270 reported by VideoSize. Because this is
-          // unexpected, we apply no rotation correction.
-          rotationCorrection = RotationDegrees.ROTATE_0;
-        }
-      } else if (surfaceProducerHandlesCropAndRotation) {
-        // When the SurfaceTexture backend for Impeller is used, the preview should already
-        // be correctly rotated.
-        rotationCorrection = RotationDegrees.ROTATE_0;
-      } else {
+      // When the SurfaceTexture backend for Impeller is used, the preview should already
+      // be correctly rotated.
+      if (!surfaceProducerHandlesCropAndRotation) {
         // The video's Format also provides a rotation correction that may be used to
         // correct the rotation, so we try to use that to correct the video rotation
         // when the ImageReader backend for Impeller is used.
@@ -65,21 +49,6 @@ public final class TextureExoPlayerEventListener extends ExoPlayerEventListener 
       }
     }
     events.onInitialized(width, height, exoPlayer.getDuration(), rotationCorrection.getDegrees());
-  }
-
-  private RotationDegrees getRotationCorrectionFromUnappliedRotation(
-      RotationDegrees unappliedRotationDegrees) {
-    RotationDegrees rotationCorrection = RotationDegrees.ROTATE_0;
-
-    // Rotating the video with ExoPlayer does not seem to be possible with a Surface,
-    // so inform the Flutter code that the widget needs to be rotated to prevent
-    // upside-down playback for videos with unappliedRotationDegrees of 180 (other orientations
-    // work correctly without correction).
-    if (unappliedRotationDegrees == RotationDegrees.ROTATE_180) {
-      rotationCorrection = unappliedRotationDegrees;
-    }
-
-    return rotationCorrection;
   }
 
   @OptIn(markerClass = androidx.media3.common.util.UnstableApi.class)

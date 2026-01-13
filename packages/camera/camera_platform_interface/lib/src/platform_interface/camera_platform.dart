@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -114,12 +114,15 @@ abstract class CameraPlatform extends PlatformInterface {
   /// - Should support all 4 orientations.
   Stream<DeviceOrientationChangedEvent> onDeviceOrientationChanged() {
     throw UnimplementedError(
-        'onDeviceOrientationChanged() is not implemented.');
+      'onDeviceOrientationChanged() is not implemented.',
+    );
   }
 
   /// Locks the capture orientation.
   Future<void> lockCaptureOrientation(
-      int cameraId, DeviceOrientation orientation) {
+    int cameraId,
+    DeviceOrientation orientation,
+  ) {
     throw UnimplementedError('lockCaptureOrientation() is not implemented.');
   }
 
@@ -144,7 +147,8 @@ abstract class CameraPlatform extends PlatformInterface {
   Future<void> startVideoRecording(
     int cameraId, {
     @Deprecated(
-        'This parameter is unused, and will be ignored on all platforms')
+      'This parameter is unused, and will be ignored on all platforms',
+    )
     Duration? maxVideoDuration,
   }) {
     throw UnimplementedError('startVideoRecording() is not implemented.');
@@ -186,8 +190,10 @@ abstract class CameraPlatform extends PlatformInterface {
   ///
   // TODO(bmparr): Add options to control streaming settings (e.g.,
   // resolution and FPS).
-  Stream<CameraImageData> onStreamedFrameAvailable(int cameraId,
-      {CameraImageStreamOptions? options}) {
+  Stream<CameraImageData> onStreamedFrameAvailable(
+    int cameraId, {
+    CameraImageStreamOptions? options,
+  }) {
     throw UnimplementedError('onStreamedFrameAvailable() is not implemented.');
   }
 
@@ -275,6 +281,34 @@ abstract class CameraPlatform extends PlatformInterface {
     throw UnimplementedError('setZoomLevel() is not implemented.');
   }
 
+  /// Gets a list of video stabilization modes that are supported for the selected camera.
+  Future<Iterable<VideoStabilizationMode>> getSupportedVideoStabilizationModes(
+    int cameraId,
+  ) => Future<List<VideoStabilizationMode>>.value(<VideoStabilizationMode>[]);
+
+  /// Sets the video stabilization mode for the selected camera.
+  Future<void> setVideoStabilizationMode(
+    int cameraId,
+    VideoStabilizationMode mode,
+  ) {
+    throw UnimplementedError('setVideoStabilizationMode() is not implemented.');
+  }
+
+  /// Gets the fallback mode of video stabilization [mode].
+  ///
+  /// This method returns the video stabilization mode that [setVideoStabilizationMode]
+  /// should set when the device does not support the given [mode].
+  static VideoStabilizationMode? getFallbackVideoStabilizationMode(
+    VideoStabilizationMode mode,
+  ) {
+    return switch (mode) {
+      VideoStabilizationMode.off => null,
+      VideoStabilizationMode.level1 => VideoStabilizationMode.off,
+      VideoStabilizationMode.level2 => VideoStabilizationMode.level1,
+      VideoStabilizationMode.level3 => VideoStabilizationMode.level2,
+    };
+  }
+
   /// Pause the active preview on the current frame for the selected camera.
   Future<void> pausePreview(int cameraId) {
     throw UnimplementedError('pausePreview() is not implemented.');
@@ -286,9 +320,14 @@ abstract class CameraPlatform extends PlatformInterface {
   }
 
   /// Sets the active camera while recording.
+  ///
+  /// On Android, you must start the recording with [startVideoCapturing]
+  /// with `enablePersistentRecording` set to `true`
+  /// to avoid cancelling any active recording.
   Future<void> setDescriptionWhileRecording(CameraDescription description) {
     throw UnimplementedError(
-        'setDescriptionWhileRecording() is not implemented.');
+      'setDescriptionWhileRecording() is not implemented.',
+    );
   }
 
   /// Returns a widget showing a live camera preview.

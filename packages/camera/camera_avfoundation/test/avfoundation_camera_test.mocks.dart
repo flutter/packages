@@ -27,31 +27,33 @@ import 'package:mockito/src/dummies.dart' as _i3;
 /// See the documentation for Mockito's code generation for more information.
 class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
   @override
-  String get pigeonVar_messageChannelSuffix => (super.noSuchMethod(
-        Invocation.getter(#pigeonVar_messageChannelSuffix),
-        returnValue: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-        returnValueForMissingStub: _i3.dummyValue<String>(
-          this,
-          Invocation.getter(#pigeonVar_messageChannelSuffix),
-        ),
-      ) as String);
+  String get pigeonVar_messageChannelSuffix =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeonVar_messageChannelSuffix),
+            returnValue: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+            returnValueForMissingStub: _i3.dummyValue<String>(
+              this,
+              Invocation.getter(#pigeonVar_messageChannelSuffix),
+            ),
+          )
+          as String);
 
   @override
   _i4.Future<List<_i2.PlatformCameraDescription>> getAvailableCameras() =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAvailableCameras,
-          [],
-        ),
-        returnValue: _i4.Future<List<_i2.PlatformCameraDescription>>.value(
-            <_i2.PlatformCameraDescription>[]),
-        returnValueForMissingStub:
-            _i4.Future<List<_i2.PlatformCameraDescription>>.value(
-                <_i2.PlatformCameraDescription>[]),
-      ) as _i4.Future<List<_i2.PlatformCameraDescription>>);
+            Invocation.method(#getAvailableCameras, []),
+            returnValue: _i4.Future<List<_i2.PlatformCameraDescription>>.value(
+              <_i2.PlatformCameraDescription>[],
+            ),
+            returnValueForMissingStub:
+                _i4.Future<List<_i2.PlatformCameraDescription>>.value(
+                  <_i2.PlatformCameraDescription>[],
+                ),
+          )
+          as _i4.Future<List<_i2.PlatformCameraDescription>>);
 
   @override
   _i4.Future<int> create(
@@ -59,16 +61,11 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
     _i2.PlatformMediaSettings? settings,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #create,
-          [
-            cameraName,
-            settings,
-          ],
-        ),
-        returnValue: _i4.Future<int>.value(0),
-        returnValueForMissingStub: _i4.Future<int>.value(0),
-      ) as _i4.Future<int>);
+            Invocation.method(#create, [cameraName, settings]),
+            returnValue: _i4.Future<int>.value(0),
+            returnValueForMissingStub: _i4.Future<int>.value(0),
+          )
+          as _i4.Future<int>);
 
   @override
   _i4.Future<void> initialize(
@@ -76,320 +73,268 @@ class MockCameraApi extends _i1.Mock implements _i2.CameraApi {
     _i2.PlatformImageFormatGroup? imageFormat,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #initialize,
-          [
-            cameraId,
-            imageFormat,
-          ],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#initialize, [cameraId, imageFormat]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> startImageStream() => (super.noSuchMethod(
-        Invocation.method(
-          #startImageStream,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> startImageStream() =>
+      (super.noSuchMethod(
+            Invocation.method(#startImageStream, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> stopImageStream() => (super.noSuchMethod(
-        Invocation.method(
-          #stopImageStream,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> stopImageStream() =>
+      (super.noSuchMethod(
+            Invocation.method(#stopImageStream, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> receivedImageStreamData() => (super.noSuchMethod(
-        Invocation.method(
-          #receivedImageStreamData,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> receivedImageStreamData() =>
+      (super.noSuchMethod(
+            Invocation.method(#receivedImageStreamData, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> dispose(int? cameraId) => (super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [cameraId],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> dispose(int? cameraId) =>
+      (super.noSuchMethod(
+            Invocation.method(#dispose, [cameraId]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> lockCaptureOrientation(
-          _i2.PlatformDeviceOrientation? orientation) =>
+    _i2.PlatformDeviceOrientation? orientation,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #lockCaptureOrientation,
-          [orientation],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#lockCaptureOrientation, [orientation]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> unlockCaptureOrientation() => (super.noSuchMethod(
-        Invocation.method(
-          #unlockCaptureOrientation,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> unlockCaptureOrientation() =>
+      (super.noSuchMethod(
+            Invocation.method(#unlockCaptureOrientation, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<String> takePicture() => (super.noSuchMethod(
-        Invocation.method(
-          #takePicture,
-          [],
-        ),
-        returnValue: _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #takePicture,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #takePicture,
-            [],
-          ),
-        )),
-      ) as _i4.Future<String>);
+  _i4.Future<String> takePicture() =>
+      (super.noSuchMethod(
+            Invocation.method(#takePicture, []),
+            returnValue: _i4.Future<String>.value(
+              _i3.dummyValue<String>(this, Invocation.method(#takePicture, [])),
+            ),
+            returnValueForMissingStub: _i4.Future<String>.value(
+              _i3.dummyValue<String>(this, Invocation.method(#takePicture, [])),
+            ),
+          )
+          as _i4.Future<String>);
 
   @override
-  _i4.Future<void> prepareForVideoRecording() => (super.noSuchMethod(
-        Invocation.method(
-          #prepareForVideoRecording,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> prepareForVideoRecording() =>
+      (super.noSuchMethod(
+            Invocation.method(#prepareForVideoRecording, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> startVideoRecording(bool? enableStream) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #startVideoRecording,
-          [enableStream],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#startVideoRecording, [enableStream]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<String> stopVideoRecording() => (super.noSuchMethod(
-        Invocation.method(
-          #stopVideoRecording,
-          [],
-        ),
-        returnValue: _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #stopVideoRecording,
-            [],
-          ),
-        )),
-        returnValueForMissingStub:
-            _i4.Future<String>.value(_i3.dummyValue<String>(
-          this,
-          Invocation.method(
-            #stopVideoRecording,
-            [],
-          ),
-        )),
-      ) as _i4.Future<String>);
+  _i4.Future<String> stopVideoRecording() =>
+      (super.noSuchMethod(
+            Invocation.method(#stopVideoRecording, []),
+            returnValue: _i4.Future<String>.value(
+              _i3.dummyValue<String>(
+                this,
+                Invocation.method(#stopVideoRecording, []),
+              ),
+            ),
+            returnValueForMissingStub: _i4.Future<String>.value(
+              _i3.dummyValue<String>(
+                this,
+                Invocation.method(#stopVideoRecording, []),
+              ),
+            ),
+          )
+          as _i4.Future<String>);
 
   @override
-  _i4.Future<void> pauseVideoRecording() => (super.noSuchMethod(
-        Invocation.method(
-          #pauseVideoRecording,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> pauseVideoRecording() =>
+      (super.noSuchMethod(
+            Invocation.method(#pauseVideoRecording, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> resumeVideoRecording() => (super.noSuchMethod(
-        Invocation.method(
-          #resumeVideoRecording,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> resumeVideoRecording() =>
+      (super.noSuchMethod(
+            Invocation.method(#resumeVideoRecording, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setFlashMode(_i2.PlatformFlashMode? mode) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setFlashMode,
-          [mode],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setFlashMode, [mode]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setExposureMode(_i2.PlatformExposureMode? mode) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setExposureMode,
-          [mode],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setExposureMode, [mode]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setExposurePoint(_i2.PlatformPoint? point) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setExposurePoint,
-          [point],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setExposurePoint, [point]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<double> getMinExposureOffset() => (super.noSuchMethod(
-        Invocation.method(
-          #getMinExposureOffset,
-          [],
-        ),
-        returnValue: _i4.Future<double>.value(0.0),
-        returnValueForMissingStub: _i4.Future<double>.value(0.0),
-      ) as _i4.Future<double>);
+  _i4.Future<double> getMinExposureOffset() =>
+      (super.noSuchMethod(
+            Invocation.method(#getMinExposureOffset, []),
+            returnValue: _i4.Future<double>.value(0.0),
+            returnValueForMissingStub: _i4.Future<double>.value(0.0),
+          )
+          as _i4.Future<double>);
 
   @override
-  _i4.Future<double> getMaxExposureOffset() => (super.noSuchMethod(
-        Invocation.method(
-          #getMaxExposureOffset,
-          [],
-        ),
-        returnValue: _i4.Future<double>.value(0.0),
-        returnValueForMissingStub: _i4.Future<double>.value(0.0),
-      ) as _i4.Future<double>);
+  _i4.Future<double> getMaxExposureOffset() =>
+      (super.noSuchMethod(
+            Invocation.method(#getMaxExposureOffset, []),
+            returnValue: _i4.Future<double>.value(0.0),
+            returnValueForMissingStub: _i4.Future<double>.value(0.0),
+          )
+          as _i4.Future<double>);
 
   @override
-  _i4.Future<void> setExposureOffset(double? offset) => (super.noSuchMethod(
-        Invocation.method(
-          #setExposureOffset,
-          [offset],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> setExposureOffset(double? offset) =>
+      (super.noSuchMethod(
+            Invocation.method(#setExposureOffset, [offset]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setFocusMode(_i2.PlatformFocusMode? mode) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setFocusMode,
-          [mode],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setFocusMode, [mode]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setFocusPoint(_i2.PlatformPoint? point) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setFocusPoint,
-          [point],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setFocusPoint, [point]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<double> getMinZoomLevel() => (super.noSuchMethod(
-        Invocation.method(
-          #getMinZoomLevel,
-          [],
-        ),
-        returnValue: _i4.Future<double>.value(0.0),
-        returnValueForMissingStub: _i4.Future<double>.value(0.0),
-      ) as _i4.Future<double>);
+  _i4.Future<double> getMinZoomLevel() =>
+      (super.noSuchMethod(
+            Invocation.method(#getMinZoomLevel, []),
+            returnValue: _i4.Future<double>.value(0.0),
+            returnValueForMissingStub: _i4.Future<double>.value(0.0),
+          )
+          as _i4.Future<double>);
 
   @override
-  _i4.Future<double> getMaxZoomLevel() => (super.noSuchMethod(
-        Invocation.method(
-          #getMaxZoomLevel,
-          [],
-        ),
-        returnValue: _i4.Future<double>.value(0.0),
-        returnValueForMissingStub: _i4.Future<double>.value(0.0),
-      ) as _i4.Future<double>);
+  _i4.Future<double> getMaxZoomLevel() =>
+      (super.noSuchMethod(
+            Invocation.method(#getMaxZoomLevel, []),
+            returnValue: _i4.Future<double>.value(0.0),
+            returnValueForMissingStub: _i4.Future<double>.value(0.0),
+          )
+          as _i4.Future<double>);
 
   @override
-  _i4.Future<void> setZoomLevel(double? zoom) => (super.noSuchMethod(
-        Invocation.method(
-          #setZoomLevel,
-          [zoom],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> setZoomLevel(double? zoom) =>
+      (super.noSuchMethod(
+            Invocation.method(#setZoomLevel, [zoom]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> pausePreview() => (super.noSuchMethod(
-        Invocation.method(
-          #pausePreview,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> pausePreview() =>
+      (super.noSuchMethod(
+            Invocation.method(#pausePreview, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
-  _i4.Future<void> resumePreview() => (super.noSuchMethod(
-        Invocation.method(
-          #resumePreview,
-          [],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+  _i4.Future<void> resumePreview() =>
+      (super.noSuchMethod(
+            Invocation.method(#resumePreview, []),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> updateDescriptionWhileRecording(String? cameraName) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #updateDescriptionWhileRecording,
-          [cameraName],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#updateDescriptionWhileRecording, [cameraName]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 
   @override
   _i4.Future<void> setImageFileFormat(_i2.PlatformImageFileFormat? format) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setImageFileFormat,
-          [format],
-        ),
-        returnValue: _i4.Future<void>.value(),
-        returnValueForMissingStub: _i4.Future<void>.value(),
-      ) as _i4.Future<void>);
+            Invocation.method(#setImageFileFormat, [format]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
 }

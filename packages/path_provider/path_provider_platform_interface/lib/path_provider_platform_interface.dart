@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -46,7 +46,8 @@ abstract class PathProviderPlatform extends PlatformInterface {
   /// files.
   Future<String?> getApplicationSupportPath() {
     throw UnimplementedError(
-        'getApplicationSupportPath() has not been implemented.');
+      'getApplicationSupportPath() has not been implemented.',
+    );
   }
 
   /// Path to the directory where application can store files that are persistent,
@@ -59,13 +60,15 @@ abstract class PathProviderPlatform extends PlatformInterface {
   /// user-generated, or that cannot otherwise be recreated by your application.
   Future<String?> getApplicationDocumentsPath() {
     throw UnimplementedError(
-        'getApplicationDocumentsPath() has not been implemented.');
+      'getApplicationDocumentsPath() has not been implemented.',
+    );
   }
 
   /// Path to a directory where application specific cache data can be stored.
   Future<String?> getApplicationCachePath() {
     throw UnimplementedError(
-        'getApplicationCachePath() has not been implemented.');
+      'getApplicationCachePath() has not been implemented.',
+    );
   }
 
   /// Path to a directory where the application may access top level storage.
@@ -73,7 +76,8 @@ abstract class PathProviderPlatform extends PlatformInterface {
   /// function call, as this functionality is only available on Android.
   Future<String?> getExternalStoragePath() {
     throw UnimplementedError(
-        'getExternalStoragePath() has not been implemented.');
+      'getExternalStoragePath() has not been implemented.',
+    );
   }
 
   /// Paths to directories where application specific external cache data can be
@@ -82,7 +86,8 @@ abstract class PathProviderPlatform extends PlatformInterface {
   /// available.
   Future<List<String>?> getExternalCachePaths() {
     throw UnimplementedError(
-        'getExternalCachePaths() has not been implemented.');
+      'getExternalCachePaths() has not been implemented.',
+    );
   }
 
   /// Paths to directories where application specific data can be stored.
@@ -94,7 +99,8 @@ abstract class PathProviderPlatform extends PlatformInterface {
     StorageDirectory? type,
   }) {
     throw UnimplementedError(
-        'getExternalStoragePaths() has not been implemented.');
+      'getExternalStoragePaths() has not been implemented.',
+    );
   }
 
   /// Path to the directory where downloaded files can be stored.

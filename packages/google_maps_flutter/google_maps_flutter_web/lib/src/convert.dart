@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,8 +6,10 @@ part of '../google_maps_flutter_web.dart';
 
 // Default values for when the gmaps objects return null/undefined values.
 final gmaps.LatLng _nullGmapsLatLng = gmaps.LatLng(0, 0);
-final gmaps.LatLngBounds _nullGmapsLatLngBounds =
-    gmaps.LatLngBounds(_nullGmapsLatLng, _nullGmapsLatLng);
+final gmaps.LatLngBounds _nullGmapsLatLngBounds = gmaps.LatLngBounds(
+  _nullGmapsLatLng,
+  _nullGmapsLatLng,
+);
 
 // The TrustedType Policy used by this plugin. Used to sanitize InfoWindow contents.
 TrustedTypePolicy? _gmapsTrustedTypePolicy;
@@ -24,17 +26,20 @@ final Map<int, String> _bitmapBlobUrlCache = <int, String>{};
 
 // Converts a [Color] into a valid CSS value #RRGGBB.
 String _getCssColor(Color color) {
-  return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2)}';
+  return '#${color.toARGB32().toRadixString(16).padLeft(8, '0').substring(2)}';
 }
 
 // Extracts the opacity from a [Color].
 double _getCssOpacity(Color color) {
-  return color.opacity;
+  return color.a;
 }
 
 // Converts a [Color] into a valid CSS value rgba(R, G, B, A).
 String _getCssColorWithAlpha(Color color) {
-  return 'rgba(${color.red}, ${color.green}, ${color.blue}, ${(color.alpha / 255).toStringAsFixed(2)})';
+  return 'rgba(${(color.r * 255.0).round().clamp(0, 255)}, '
+      '${(color.g * 255.0).round().clamp(0, 255)}, '
+      '${(color.b * 255.0).round().clamp(0, 255)}, '
+      '${color.a.toStringAsFixed(2)})';
 }
 
 // Converts options from the plugin into gmaps.MapOptions that can be used by the JS SDK.
@@ -54,8 +59,10 @@ String _getCssColorWithAlpha(Color color) {
 // buildingsEnabled seems to not have an equivalent in web
 // padding seems to behave differently in web than mobile. You can't move UI elements in web.
 gmaps.MapOptions _configurationAndStyleToGmapsOptions(
-    MapConfiguration configuration, List<gmaps.MapTypeStyle> styles) {
-  final gmaps.MapOptions options = gmaps.MapOptions();
+  MapConfiguration configuration,
+  List<gmaps.MapTypeStyle> styles,
+) {
+  final options = gmaps.MapOptions();
 
   if (configuration.mapType != null) {
     options.mapTypeId = _gmapTypeIDForPluginType(configuration.mapType!);
@@ -91,6 +98,22 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
     options.gestureHandling = WebGestureHandling.auto.name;
   }
 
+  if (configuration.webCameraControlEnabled != null) {
+    options.cameraControl = configuration.webCameraControlEnabled;
+  }
+
+  if (configuration.webCameraControlPosition != null) {
+    final gmaps.ControlPosition? controlPosition = _toControlPosition(
+      configuration.webCameraControlPosition!,
+    );
+
+    if (controlPosition != null) {
+      options.cameraControlOptions = gmaps.CameraControlOptions(
+        position: controlPosition,
+      );
+    }
+  }
+
   if (configuration.fortyFiveDegreeImageryEnabled != null) {
     options.rotateControl = configuration.fortyFiveDegreeImageryEnabled;
   }
@@ -101,10 +124,12 @@ gmaps.MapOptions _configurationAndStyleToGmapsOptions(
   options.fullscreenControl = false;
   options.streetViewControl = false;
 
-  // See updateMapConfiguration for why this is not using configuration.style.
-  options.styles = styles;
+  // If using cloud map, do not set options.styles
+  if (configuration.mapId == null) {
+    options.styles = styles;
+  }
 
-  options.mapId = configuration.cloudMapId;
+  options.mapId = configuration.mapId;
 
   return options;
 }
@@ -137,7 +162,9 @@ gmaps.MapOptions _applyInitialPosition(
   // Adjust the initial position, if passed...
   options.zoom = initialPosition.zoom;
   options.center = gmaps.LatLng(
-      initialPosition.target.latitude, initialPosition.target.longitude);
+    initialPosition.target.latitude,
+    initialPosition.target.longitude,
+  );
   return options;
 }
 
@@ -155,26 +182,31 @@ bool _isJsonMapStyle(Map<String, Object?> value) {
 
 // Converts an incoming JSON-encoded Style info, into the correct gmaps array.
 List<gmaps.MapTypeStyle> _mapStyles(String? mapStyleJson) {
-  List<gmaps.MapTypeStyle> styles = <gmaps.MapTypeStyle>[];
+  var styles = <gmaps.MapTypeStyle>[];
   if (mapStyleJson != null) {
     try {
       styles =
-          (json.decode(mapStyleJson, reviver: (Object? key, Object? value) {
-        if (value is Map && _isJsonMapStyle(value as Map<String, Object?>)) {
-          List<MapStyler> stylers = <MapStyler>[];
-          if (value['stylers'] != null) {
-            stylers = (value['stylers']! as List<Object?>)
-                .whereType<Map<String, Object?>>()
-                .map(MapStyler.fromJson)
-                .toList();
-          }
-          return gmaps.MapTypeStyle()
-            ..elementType = value['elementType'] as String?
-            ..featureType = value['featureType'] as String?
-            ..stylers = stylers;
-        }
-        return value;
-      }) as List<Object?>)
+          (json.decode(
+                    mapStyleJson,
+                    reviver: (Object? key, Object? value) {
+                      if (value is Map &&
+                          _isJsonMapStyle(value as Map<String, Object?>)) {
+                        var stylers = <MapStyler>[];
+                        if (value['stylers'] != null) {
+                          stylers = (value['stylers']! as List<Object?>)
+                              .whereType<Map<String, Object?>>()
+                              .map(MapStyler.fromJson)
+                              .toList();
+                        }
+                        return gmaps.MapTypeStyle()
+                          ..elementType = value['elementType'] as String?
+                          ..featureType = value['featureType'] as String?
+                          ..stylers = stylers;
+                      }
+                      return value;
+                    },
+                  )
+                  as List<Object?>)
               .where((Object? element) => element != null)
               .cast<gmaps.MapTypeStyle>()
               .toList();
@@ -205,14 +237,17 @@ LatLngBounds gmLatLngBoundsTolatLngBounds(gmaps.LatLngBounds latLngBounds) {
 
 /// Converts a [LatLngBounds] into a [gmaps.LatLngBounds].
 gmaps.LatLngBounds latLngBoundsToGmlatLngBounds(LatLngBounds latLngBounds) {
-  return gmaps.LatLngBounds(_latLngToGmLatLng(latLngBounds.southwest),
-      _latLngToGmLatLng(latLngBounds.northeast));
+  return gmaps.LatLngBounds(
+    _latLngToGmLatLng(latLngBounds.southwest),
+    _latLngToGmLatLng(latLngBounds.northeast),
+  );
 }
 
 CameraPosition _gmViewportToCameraPosition(gmaps.Map map) {
   return CameraPosition(
-    target:
-        gmLatLngToLatLng(map.isCenterDefined() ? map.center : _nullGmapsLatLng),
+    target: gmLatLngToLatLng(
+      map.isCenterDefined() ? map.center : _nullGmapsLatLng,
+    ),
     bearing: map.isHeadingDefined() ? map.heading.toDouble() : 0,
     tilt: map.isTiltDefined() ? map.tilt.toDouble() : 0,
     zoom: map.isZoomDefined() ? map.zoom.toDouble() : 0,
@@ -238,10 +273,9 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
     ..id = 'gmaps-marker-${marker.markerId.value}-infowindow';
 
   if (markerTitle.isNotEmpty) {
-    final HTMLHeadingElement title =
-        (document.createElement('h3') as HTMLHeadingElement)
-          ..className = 'infowindow-title'
-          ..innerText = markerTitle;
+    final title = (document.createElement('h3') as HTMLHeadingElement)
+      ..className = 'infowindow-title'
+      ..innerText = markerTitle;
     container.appendChild(title);
   }
   if (markerSnippet.isNotEmpty) {
@@ -260,8 +294,9 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
         ),
       );
 
-      snippet.trustedInnerHTML =
-          _gmapsTrustedTypePolicy!.createHTMLNoArgs(markerSnippet);
+      snippet.trustedInnerHTML = _gmapsTrustedTypePolicy!.createHTMLNoArgs(
+        markerSnippet,
+      );
     } else {
       // `sanitizeHtml` is used to clean the (potential) user input from (potential)
       // XSS attacks through the contents of the marker InfoWindow.
@@ -286,23 +321,17 @@ gmaps.InfoWindowOptions? _infoWindowOptionsFromMarker(Marker marker) {
 gmaps.Size? _gmSizeFromIconConfig(List<Object?> iconConfig, int sizeIndex) {
   gmaps.Size? size;
   if (iconConfig.length >= sizeIndex + 1) {
-    final List<Object?>? rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
+    final rawIconSize = iconConfig[sizeIndex] as List<Object?>?;
     if (rawIconSize != null) {
-      size = gmaps.Size(
-        rawIconSize[0]! as double,
-        rawIconSize[1]! as double,
-      );
+      size = gmaps.Size(rawIconSize[0]! as double, rawIconSize[1]! as double);
     }
   }
   return size;
 }
 
 /// Sets the size of the Google Maps icon.
-void _setIconSize({
-  required Size size,
-  required gmaps.Icon icon,
-}) {
-  final gmaps.Size gmapsSize = gmaps.Size(size.width, size.height);
+void _setIconSize({required Size size, required gmaps.Icon icon}) {
+  final gmapsSize = gmaps.Size(size.width, size.height);
   icon.size = gmapsSize;
   icon.scaledSize = gmapsSize;
 }
@@ -312,7 +341,7 @@ void _setIconAnchor({
   required Offset anchor,
   required gmaps.Icon icon,
 }) {
-  final gmaps.Point gmapsAnchor = gmaps.Point(
+  final gmapsAnchor = gmaps.Point(
     size.width * anchor.dx,
     size.height * anchor.dy,
   );
@@ -334,7 +363,9 @@ Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
     return Size(width, height);
   } else {
     assert(
-        url.isNotEmpty, 'URL must not be empty when calculating dimensions.');
+      url.isNotEmpty,
+      'URL must not be empty when calculating dimensions.',
+    );
 
     final Size? bitmapSize = await _bitmapSizeFutureCache.putIfAbsent(url, () {
       return _fetchBitmapSize(url);
@@ -368,7 +399,7 @@ Future<Size?> _getBitmapSize(MapBitmap mapBitmap, String url) async {
 ///
 /// This method attempts to fetch the image size for a given [url].
 Future<Size?> _fetchBitmapSize(String url) async {
-  final HTMLImageElement image = HTMLImageElement()..src = url;
+  final image = HTMLImageElement()..src = url;
 
   // Wait for the onLoad or onError event.
   await Future.any(<Future<Event>>[image.onLoad.first, image.onError.first]);
@@ -394,7 +425,9 @@ void _cleanUpBitmapConversionCaches() {
 
 // Converts a [BitmapDescriptor] into a [gmaps.Icon] that can be used in Markers.
 Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
-    BitmapDescriptor bitmapDescriptor, Offset anchor) async {
+  BitmapDescriptor bitmapDescriptor,
+  Offset anchor,
+) async {
   gmaps.Icon? icon;
 
   if (bitmapDescriptor is MapBitmap) {
@@ -417,7 +450,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
 
   // The following code is for the deprecated BitmapDescriptor.fromBytes
   // and BitmapDescriptor.fromAssetImage.
-  final List<Object?> iconConfig = bitmapDescriptor.toJson() as List<Object?>;
+  final iconConfig = bitmapDescriptor.toJson() as List<Object?>;
   if (iconConfig[0] == 'fromAssetImage') {
     assert(iconConfig.length >= 2);
     // iconConfig[2] contains the DPIs of the screen, but that information is
@@ -433,7 +466,7 @@ Future<gmaps.Icon?> _gmIconFromBitmapDescriptor(
     }
   } else if (iconConfig[0] == 'fromBytes') {
     // Grab the bytes, and put them into a blob
-    final List<int> bytes = iconConfig[1]! as List<int>;
+    final bytes = iconConfig[1]! as List<int>;
     // Create a Blob from bytes, but let the browser figure out the encoding
     final Blob blob;
 
@@ -482,7 +515,7 @@ Future<gmaps.MarkerOptions> _markerOptionsFromMarker(
 }
 
 gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
-  final gmaps.CircleOptions circleOptions = gmaps.CircleOptions()
+  final circleOptions = gmaps.CircleOptions()
     ..strokeColor = _getCssColor(circle.strokeColor)
     ..strokeOpacity = _getCssOpacity(circle.strokeColor)
     ..strokeWeight = circle.strokeWidth
@@ -491,48 +524,52 @@ gmaps.CircleOptions _circleOptionsFromCircle(Circle circle) {
     ..center = gmaps.LatLng(circle.center.latitude, circle.center.longitude)
     ..radius = circle.radius
     ..visible = circle.visible
-    ..zIndex = circle.zIndex;
+    ..zIndex = circle.zIndex
+    ..clickable = circle.consumeTapEvents;
   return circleOptions;
 }
 
 visualization.HeatmapLayerOptions _heatmapOptionsFromHeatmap(Heatmap heatmap) {
-  final Iterable<Color>? gradientColors =
-      heatmap.gradient?.colors.map((HeatmapGradientColor e) => e.color);
-  final visualization.HeatmapLayerOptions heatmapOptions =
-      visualization.HeatmapLayerOptions()
-        ..data = heatmap.data
-            .map(
-              (WeightedLatLng e) => visualization.WeightedLocation()
-                ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
-                ..weight = e.weight,
-            )
-            .toList()
-            .toJS
-        ..dissipating = heatmap.dissipating
-        ..gradient = gradientColors == null
-            ? null
-            : <Color>[
-                // Web needs a first color with 0 alpha
-                gradientColors.first.withAlpha(0),
-                ...gradientColors,
-              ].map(_getCssColorWithAlpha).toList()
-        ..maxIntensity = heatmap.maxIntensity
-        ..opacity = heatmap.opacity
-        ..radius = heatmap.radius.radius;
+  final Iterable<Color>? gradientColors = heatmap.gradient?.colors.map(
+    (HeatmapGradientColor e) => e.color,
+  );
+  final heatmapOptions = visualization.HeatmapLayerOptions()
+    ..data = heatmap.data
+        .map(
+          (WeightedLatLng e) => visualization.WeightedLocation()
+            ..location = gmaps.LatLng(e.point.latitude, e.point.longitude)
+            ..weight = e.weight,
+        )
+        .toList()
+        .toJS
+    ..dissipating = heatmap.dissipating
+    ..gradient = gradientColors == null
+        ? null
+        : <Color>[
+            // Web needs a first color with 0 alpha
+            gradientColors.first.withAlpha(0),
+            ...gradientColors,
+          ].map(_getCssColorWithAlpha).toList()
+    ..maxIntensity = heatmap.maxIntensity
+    ..opacity = heatmap.opacity
+    ..radius = heatmap.radius.radius;
   return heatmapOptions;
 }
 
 gmaps.PolygonOptions _polygonOptionsFromPolygon(
-    gmaps.Map googleMap, Polygon polygon) {
+  gmaps.Map googleMap,
+  Polygon polygon,
+) {
   // Convert all points to GmLatLng
-  final List<gmaps.LatLng> path =
-      polygon.points.map(_latLngToGmLatLng).toList();
+  final List<gmaps.LatLng> path = polygon.points
+      .map(_latLngToGmLatLng)
+      .toList();
 
   final bool isClockwisePolygon = _isPolygonClockwise(path);
 
-  final List<List<gmaps.LatLng>> paths = <List<gmaps.LatLng>>[path];
+  final paths = <List<gmaps.LatLng>>[path];
 
-  for (int i = 0; i < polygon.holes.length; i++) {
+  for (var i = 0; i < polygon.holes.length; i++) {
     final List<LatLng> hole = polygon.holes[i];
     final List<gmaps.LatLng> correctHole = _ensureHoleHasReverseWinding(
       hole,
@@ -552,7 +589,8 @@ gmaps.PolygonOptions _polygonOptionsFromPolygon(
     ..fillOpacity = _getCssOpacity(polygon.fillColor)
     ..visible = polygon.visible
     ..zIndex = polygon.zIndex
-    ..geodesic = polygon.geodesic;
+    ..geodesic = polygon.geodesic
+    ..clickable = polygon.consumeTapEvents;
 }
 
 List<gmaps.LatLng> _ensureHoleHasReverseWinding(
@@ -567,9 +605,11 @@ List<gmaps.LatLng> _ensureHoleHasReverseWinding(
   if (holeIsClockwise == polyIsClockwise) {
     holePath = holePath.reversed.toList();
     if (kDebugMode) {
-      print('Hole [$holeId] in Polygon [${polygonId.value}] has been reversed.'
-          ' Ensure holes in polygons are "wound in the opposite direction to the outer path."'
-          ' More info: https://github.com/flutter/flutter/issues/74096');
+      print(
+        'Hole [$holeId] in Polygon [${polygonId.value}] has been reversed.'
+        ' Ensure holes in polygons are "wound in the opposite direction to the outer path."'
+        ' More info: https://github.com/flutter/flutter/issues/74096',
+      );
     }
   }
 
@@ -588,9 +628,10 @@ List<gmaps.LatLng> _ensureHoleHasReverseWinding(
 /// the `path` is a transformed version of [Polygon.points] or each of the
 /// [Polygon.holes], guaranteeing that `lat` and `lng` can be accessed with `!`.
 bool _isPolygonClockwise(List<gmaps.LatLng> path) {
-  double direction = 0.0;
-  for (int i = 0; i < path.length; i++) {
-    direction = direction +
+  var direction = 0.0;
+  for (var i = 0; i < path.length; i++) {
+    direction =
+        direction +
         ((path[(i + 1) % path.length].lat - path[i].lat) *
             (path[(i + 1) % path.length].lng + path[i].lng));
   }
@@ -598,9 +639,12 @@ bool _isPolygonClockwise(List<gmaps.LatLng> path) {
 }
 
 gmaps.PolylineOptions _polylineOptionsFromPolyline(
-    gmaps.Map googleMap, Polyline polyline) {
-  final List<gmaps.LatLng> paths =
-      polyline.points.map(_latLngToGmLatLng).toList();
+  gmaps.Map googleMap,
+  Polyline polyline,
+) {
+  final List<gmaps.LatLng> paths = polyline.points
+      .map(_latLngToGmLatLng)
+      .toList();
 
   return gmaps.PolylineOptions()
     ..path = paths.toJS
@@ -609,12 +653,13 @@ gmaps.PolylineOptions _polylineOptionsFromPolyline(
     ..strokeOpacity = _getCssOpacity(polyline.color)
     ..visible = polyline.visible
     ..zIndex = polyline.zIndex
-    ..geodesic = polyline.geodesic;
-//  this.endCap = Cap.buttCap,
-//  this.jointType = JointType.mitered,
-//  this.patterns = const <PatternItem>[],
-//  this.startCap = Cap.buttCap,
-//  this.width = 10,
+    ..geodesic = polyline.geodesic
+    ..clickable = polyline.consumeTapEvents;
+  //  this.endCap = Cap.buttCap,
+  //  this.jointType = JointType.mitered,
+  //  this.patterns = const <PatternItem>[],
+  //  this.startCap = Cap.buttCap,
+  //  this.width = 10,
 }
 
 // Translates a [CameraUpdate] into operations on a [gmaps.Map].
@@ -630,16 +675,14 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
     return value as List<Object?>;
   }
 
-  final List<dynamic> json = update.toJson() as List<dynamic>;
+  final json = update.toJson() as List<dynamic>;
   switch (json[0]) {
     case 'newCameraPosition':
       final Map<String, Object?> position = asJsonObject(json[1]);
       final List<Object?> latLng = asJsonList(position['target']);
       map.heading = position['bearing']! as num;
       map.zoom = position['zoom']! as num;
-      map.panTo(
-        gmaps.LatLng(latLng[0]! as num, latLng[1]! as num),
-      );
+      map.panTo(gmaps.LatLng(latLng[0]! as num, latLng[1]! as num));
       map.tilt = position['tilt']! as num;
     case 'newLatLng':
       final List<Object?> latLng = asJsonList(json[1]);
@@ -652,7 +695,7 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       final List<Object?> latLngPair = asJsonList(json[1]);
       final List<Object?> latLng1 = asJsonList(latLngPair[0]);
       final List<Object?> latLng2 = asJsonList(latLngPair[1]);
-      final double padding = json[2] as double;
+      final padding = json[2] as double;
       map.fitBounds(
         gmaps.LatLngBounds(
           gmaps.LatLng(latLng1[0]! as num, latLng1[1]! as num),
@@ -666,14 +709,18 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
       gmaps.LatLng? focusLatLng;
       final double zoomDelta = json[1] as double? ?? 0;
       // Web only supports integer changes...
-      final int newZoomDelta =
-          zoomDelta < 0 ? zoomDelta.floor() : zoomDelta.ceil();
+      final int newZoomDelta = zoomDelta < 0
+          ? zoomDelta.floor()
+          : zoomDelta.ceil();
       if (json.length == 3) {
         final List<Object?> latLng = asJsonList(json[2]);
         // With focus
         try {
-          focusLatLng =
-              _pixelToLatLng(map, latLng[0]! as int, latLng[1]! as int);
+          focusLatLng = _pixelToLatLng(
+            map,
+            latLng[0]! as int,
+            latLng[1]! as int,
+          );
         } catch (e) {
           // https://github.com/a14n/dart-google-maps/issues/87
           // print('Error computing new focus LatLng. JS Error: ' + e.toString());
@@ -697,16 +744,19 @@ void _applyCameraUpdate(gmaps.Map map, CameraUpdate update) {
 /// Converts a [MapBitmap] into a URL.
 String urlFromMapBitmap(MapBitmap mapBitmap) {
   return switch (mapBitmap) {
-    (final BytesMapBitmap bytesMapBitmap) =>
-      _bitmapBlobUrlCache.putIfAbsent(bytesMapBitmap.byteData.hashCode, () {
-        final Blob blob =
-            Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
+    (final BytesMapBitmap bytesMapBitmap) => _bitmapBlobUrlCache.putIfAbsent(
+      bytesMapBitmap.byteData.hashCode,
+      () {
+        final blob = Blob(<JSUint8Array>[bytesMapBitmap.byteData.toJS].toJS);
         return URL.createObjectURL(blob as JSObject);
-      }),
-    (final AssetMapBitmap assetMapBitmap) =>
-      ui_web.assetManager.getAssetUrl(assetMapBitmap.assetName),
+      },
+    ),
+    (final AssetMapBitmap assetMapBitmap) => ui_web.assetManager.getAssetUrl(
+      assetMapBitmap.assetName,
+    ),
     _ => throw UnimplementedError(
-        'Only BytesMapBitmap and AssetMapBitmap are supported.'),
+      'Only BytesMapBitmap and AssetMapBitmap are supported.',
+    ),
   };
 }
 
@@ -716,11 +766,17 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
   final gmaps.Projection? projection = map.projection;
 
   assert(
-      bounds != null, 'Map Bounds required to compute LatLng of screen x/y.');
-  assert(projection != null,
-      'Map Projection required to compute LatLng of screen x/y');
-  assert(map.isZoomDefined(),
-      'Current map zoom level required to compute LatLng of screen x/y');
+    bounds != null,
+    'Map Bounds required to compute LatLng of screen x/y.',
+  );
+  assert(
+    projection != null,
+    'Map Projection required to compute LatLng of screen x/y',
+  );
+  assert(
+    map.isZoomDefined(),
+    'Current map zoom level required to compute LatLng of screen x/y',
+  );
 
   final num zoom = map.zoom;
 
@@ -732,8 +788,66 @@ gmaps.LatLng _pixelToLatLng(gmaps.Map map, int x, int y) {
 
   final int scale = 1 << (zoom.toInt()); // 2 ^ zoom
 
-  final gmaps.Point point =
-      gmaps.Point((x / scale) + bottomLeft.x, (y / scale) + topRight.y);
+  final point = gmaps.Point(
+    (x / scale) + bottomLeft.x,
+    (y / scale) + topRight.y,
+  );
 
   return projection.fromPointToLatLng(point)!;
+}
+
+/// Converts a [WebCameraControlPosition] to [gmaps.ControlPosition].
+gmaps.ControlPosition? _toControlPosition(
+  WebCameraControlPosition webCameraControlPosition,
+) {
+  switch (webCameraControlPosition) {
+    case WebCameraControlPosition.blockEndInlineCenter:
+      return gmaps.ControlPosition.BLOCK_END_INLINE_CENTER;
+    case WebCameraControlPosition.blockEndInlineEnd:
+      return gmaps.ControlPosition.BLOCK_END_INLINE_END;
+    case WebCameraControlPosition.blockEndInlineStart:
+      return gmaps.ControlPosition.BLOCK_END_INLINE_START;
+    case WebCameraControlPosition.blockStartInlineCenter:
+      return gmaps.ControlPosition.BLOCK_START_INLINE_CENTER;
+    case WebCameraControlPosition.blockStartInlineEnd:
+      return gmaps.ControlPosition.BLOCK_START_INLINE_END;
+    case WebCameraControlPosition.blockStartInlineStart:
+      return gmaps.ControlPosition.BLOCK_START_INLINE_START;
+    case WebCameraControlPosition.bottomCenter:
+      return gmaps.ControlPosition.BOTTOM_CENTER;
+    case WebCameraControlPosition.bottomLeft:
+      return gmaps.ControlPosition.BOTTOM_LEFT;
+    case WebCameraControlPosition.bottomRight:
+      return gmaps.ControlPosition.BOTTOM_RIGHT;
+    case WebCameraControlPosition.inlineEndBlockCenter:
+      return gmaps.ControlPosition.INLINE_END_BLOCK_CENTER;
+    case WebCameraControlPosition.inlineEndBlockEnd:
+      return gmaps.ControlPosition.INLINE_END_BLOCK_END;
+    case WebCameraControlPosition.inlineEndBlockStart:
+      return gmaps.ControlPosition.INLINE_END_BLOCK_START;
+    case WebCameraControlPosition.inlineStartBlockCenter:
+      return gmaps.ControlPosition.INLINE_START_BLOCK_CENTER;
+    case WebCameraControlPosition.inlineStartBlockEnd:
+      return gmaps.ControlPosition.INLINE_START_BLOCK_END;
+    case WebCameraControlPosition.inlineStartBlockStart:
+      return gmaps.ControlPosition.INLINE_START_BLOCK_START;
+    case WebCameraControlPosition.leftBottom:
+      return gmaps.ControlPosition.LEFT_BOTTOM;
+    case WebCameraControlPosition.leftCenter:
+      return gmaps.ControlPosition.LEFT_CENTER;
+    case WebCameraControlPosition.leftTop:
+      return gmaps.ControlPosition.LEFT_TOP;
+    case WebCameraControlPosition.rightBottom:
+      return gmaps.ControlPosition.RIGHT_BOTTOM;
+    case WebCameraControlPosition.rightCenter:
+      return gmaps.ControlPosition.RIGHT_CENTER;
+    case WebCameraControlPosition.rightTop:
+      return gmaps.ControlPosition.RIGHT_TOP;
+    case WebCameraControlPosition.topCenter:
+      return gmaps.ControlPosition.TOP_CENTER;
+    case WebCameraControlPosition.topLeft:
+      return gmaps.ControlPosition.TOP_LEFT;
+    case WebCameraControlPosition.topRight:
+      return gmaps.ControlPosition.TOP_RIGHT;
+  }
 }

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -12,7 +12,7 @@ import 'page.dart';
 
 class PlacePolylinePage extends GoogleMapExampleAppPage {
   const PlacePolylinePage({Key? key})
-      : super(const Icon(Icons.linear_scale), 'Place polyline', key: key);
+    : super(const Icon(Icons.linear_scale), 'Place polyline', key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
   List<JointType> jointTypes = <JointType>[
     JointType.mitered,
     JointType.bevel,
-    JointType.round
+    JointType.round,
   ];
 
   // Values when toggling polyline end cap type
@@ -71,7 +71,7 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
       PatternItem.dash(30.0),
       PatternItem.gap(20.0),
       PatternItem.dot,
-      PatternItem.gap(20.0)
+      PatternItem.gap(20.0),
     ],
     <PatternItem>[PatternItem.dash(30.0), PatternItem.gap(20.0)],
     <PatternItem>[PatternItem.dot, PatternItem.gap(10.0)],
@@ -109,11 +109,11 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
       return;
     }
 
-    final String polylineIdVal = 'polyline_id_$_polylineIdCounter';
+    final polylineIdVal = 'polyline_id_$_polylineIdCounter';
     _polylineIdCounter++;
-    final PolylineId polylineId = PolylineId(polylineIdVal);
+    final polylineId = PolylineId(polylineIdVal);
 
-    final Polyline polyline = Polyline(
+    final polyline = Polyline(
       polylineId: polylineId,
       consumeTapEvents: true,
       color: Colors.orange,
@@ -234,10 +234,7 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                   children: <Widget>[
                     Column(
                       children: <Widget>[
-                        TextButton(
-                          onPressed: _add,
-                          child: const Text('add'),
-                        ),
+                        TextButton(onPressed: _add, child: const Text('add')),
                         TextButton(
                           onPressed: (selectedId == null)
                               ? null
@@ -297,9 +294,9 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
                           child: const Text('change pattern'),
                         ),
                       ],
-                    )
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ),
@@ -309,7 +306,7 @@ class PlacePolylineBodyState extends State<PlacePolylineBody> {
   }
 
   List<LatLng> _createPoints() {
-    final List<LatLng> points = <LatLng>[];
+    final points = <LatLng>[];
     final double offset = _polylineIdCounter.ceilToDouble();
     points.add(_createLatLng(51.4816 + offset, -3.1791));
     points.add(_createLatLng(53.0430 + offset, -2.9925));

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -123,13 +123,13 @@ class PricingPhaseWrapper {
 
   @override
   int get hashCode => Object.hash(
-        billingCycleCount,
-        billingPeriod,
-        formattedPrice,
-        priceAmountMicros,
-        priceCurrencyCode,
-        recurrenceMode,
-      );
+    billingCycleCount,
+    billingPeriod,
+    formattedPrice,
+    priceAmountMicros,
+    priceCurrencyCode,
+    recurrenceMode,
+  );
 }
 
 /// Represents additional details of an installment subscription plan.

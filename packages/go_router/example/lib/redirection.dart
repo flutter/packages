@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -49,13 +49,13 @@ class App extends StatelessWidget {
   // add the login info into the tree as app state that can change over time
   @override
   Widget build(BuildContext context) => ChangeNotifierProvider<LoginInfo>.value(
-        value: _loginInfo,
-        child: MaterialApp.router(
-          routerConfig: _router,
-          title: title,
-          debugShowCheckedModeBanner: false,
-        ),
-      );
+    value: _loginInfo,
+    child: MaterialApp.router(
+      routerConfig: _router,
+      title: title,
+      debugShowCheckedModeBanner: false,
+    ),
+  );
 
   late final GoRouter _router = GoRouter(
     routes: <GoRoute>[
@@ -75,7 +75,7 @@ class App extends StatelessWidget {
     redirect: (BuildContext context, GoRouterState state) {
       // if the user is not logged in, they need to login
       final bool loggedIn = _loginInfo.loggedIn;
-      final bool loggingIn = state.matchedLocation == '/login';
+      final loggingIn = state.matchedLocation == '/login';
       if (!loggedIn) {
         return '/login';
       }
@@ -102,20 +102,20 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text(App.title)),
-        body: Center(
-          child: ElevatedButton(
-            onPressed: () {
-              // log a user in, letting all the listeners know
-              context.read<LoginInfo>().login('test-user');
+    appBar: AppBar(title: const Text(App.title)),
+    body: Center(
+      child: ElevatedButton(
+        onPressed: () {
+          // log a user in, letting all the listeners know
+          context.read<LoginInfo>().login('test-user');
 
-              // router will automatically redirect from /login to / using
-              // refreshListenable
-            },
-            child: const Text('Login'),
-          ),
-        ),
-      );
+          // router will automatically redirect from /login to / using
+          // refreshListenable
+        },
+        child: const Text('Login'),
+      ),
+    ),
+  );
 }
 
 /// The home screen.
@@ -135,12 +135,10 @@ class HomeScreen extends StatelessWidget {
             onPressed: info.logout,
             tooltip: 'Logout: ${info.userName}',
             icon: const Icon(Icons.logout),
-          )
+          ),
         ],
       ),
-      body: const Center(
-        child: Text('HomeScreen'),
-      ),
+      body: const Center(child: Text('HomeScreen')),
     );
   }
 }

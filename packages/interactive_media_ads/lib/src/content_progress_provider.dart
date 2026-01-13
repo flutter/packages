@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -35,9 +35,9 @@ class ContentProgressProvider {
   /// See [ContentProgressProvider.fromPlatformCreationParams] for setting
   /// parameters for a specific platform.
   ContentProgressProvider()
-      : this.fromPlatformCreationParams(
-          const PlatformContentProgressProviderCreationParams(),
-        );
+    : this.fromPlatformCreationParams(
+        const PlatformContentProgressProviderCreationParams(),
+      );
 
   /// Constructs an [ContentProgressProvider] from creation params for a
   /// specific platform.

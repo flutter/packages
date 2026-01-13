@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -15,9 +15,11 @@ void main() {
 // #docregion Android_Options
 const SharedPreferencesAsyncAndroidOptions options =
     SharedPreferencesAsyncAndroidOptions(
-        backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
-        originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
-            fileName: 'the_name_of_a_file'));
+      backend: SharedPreferencesAndroidBackendLibrary.SharedPreferences,
+      originalSharedPreferencesOptions: AndroidSharedPreferencesStoreOptions(
+        fileName: 'the_name_of_a_file',
+      ),
+    );
 // #enddocregion Android_Options
 
 class MyApp extends StatelessWidget {
@@ -75,29 +77,29 @@ class SharedPreferencesDemoState extends State<SharedPreferencesDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SharedPreferences Demo'),
-      ),
+      appBar: AppBar(title: const Text('SharedPreferences Demo')),
       body: Center(
-          child: FutureBuilder<int>(
-              future: _counter,
-              builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                switch (snapshot.connectionState) {
-                  case ConnectionState.none:
-                  case ConnectionState.waiting:
-                    return const CircularProgressIndicator();
-                  case ConnectionState.active:
-                  case ConnectionState.done:
-                    if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return Text(
-                        'Button tapped ${snapshot.data} time${snapshot.data == 1 ? '' : 's'}.\n\n'
-                        'This should persist across restarts.',
-                      );
-                    }
+        child: FutureBuilder<int>(
+          future: _counter,
+          builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+            switch (snapshot.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return const CircularProgressIndicator();
+              case ConnectionState.active:
+              case ConnectionState.done:
+                if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  return Text(
+                    'Button tapped ${snapshot.data} time${snapshot.data == 1 ? '' : 's'}.\n\n'
+                    'This should persist across restarts.',
+                  );
                 }
-              })),
+            }
+          },
+        ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _incrementCounter,
         tooltip: 'Increment',

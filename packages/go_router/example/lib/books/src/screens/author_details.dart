@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -11,10 +11,7 @@ import '../widgets/book_list.dart';
 /// The author detail screen.
 class AuthorDetailsScreen extends StatelessWidget {
   /// Creates an author detail screen.
-  const AuthorDetailsScreen({
-    required this.author,
-    super.key,
-  });
+  const AuthorDetailsScreen({required this.author, super.key});
 
   /// The author to be displayed.
   final Author? author;
@@ -22,16 +19,10 @@ class AuthorDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (author == null) {
-      return const Scaffold(
-        body: Center(
-          child: Text('No author found.'),
-        ),
-      );
+      return const Scaffold(body: Center(child: Text('No author found.')));
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Text(author!.name),
-      ),
+      appBar: AppBar(title: Text(author!.name)),
       body: Center(
         child: Column(
           children: <Widget>[

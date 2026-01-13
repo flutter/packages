@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -6,6 +6,8 @@
 #import <GoogleMaps/GoogleMaps.h>
 
 #import "messages.g.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 // Defines circle controllable by Flutter.
 @interface FLTGoogleMapCircleController : NSObject
@@ -24,3 +26,5 @@
 - (void)didTapCircleWithIdentifier:(NSString *)identifier;
 - (bool)hasCircleWithIdentifier:(NSString *)identifier;
 @end
+
+NS_ASSUME_NONNULL_END

@@ -24,7 +24,7 @@ A Flutter plugin to use the camera from your Flutter app.
   }
   s.dependency 'Flutter'
 
-  s.platform = :ios, '12.0'
+  s.platform = :ios, '13.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'camera_avfoundation_privacy' => ['camera_avfoundation/Sources/camera_avfoundation/Resources/PrivacyInfo.xcprivacy']}
 end

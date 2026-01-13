@@ -1,10 +1,10 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 @testable import camera_avfoundation
 
-// Import Objectice-C part of the implementation when SwiftPM is used.
+// Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
   import camera_avfoundation_objc
 #endif
@@ -65,6 +65,15 @@ final class MockCamera: NSObject, Camera {
   var isPreviewPaused: Bool = false
   var isStreamingImages: Bool = false
 
+  var deviceOrientation: UIDeviceOrientation {
+    get {
+      preconditionFailure("Attempted to access unimplemented property: deviceOrientation")
+    }
+    set {
+      setDeviceOrientationStub?(newValue)
+    }
+  }
+
   var minimumExposureOffset: CGFloat {
     return getMinimumExposureOffsetStub?() ?? 0
   }
@@ -118,10 +127,6 @@ final class MockCamera: NSObject, Camera {
 
   func captureToFile(completion: @escaping (String?, FlutterError?) -> Void) {
     captureToFileStub?(completion)
-  }
-
-  func setDeviceOrientation(_ orientation: UIDeviceOrientation) {
-    setDeviceOrientationStub?(orientation)
   }
 
   func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation) {

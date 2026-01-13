@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('translates correctly from platform interface classes', () {
-    final CameraImageData originalImage = CameraImageData(
+    final originalImage = CameraImageData(
       format: const CameraImageFormat(ImageFormatGroup.jpeg, raw: 1234),
       planes: <CameraImagePlane>[
         CameraImagePlane(
@@ -34,7 +34,7 @@ void main() {
       sensorSensitivity: 1.3,
     );
 
-    final CameraImage image = CameraImage.fromPlatformInterface(originalImage);
+    final image = CameraImage.fromPlatformInterface(originalImage);
     // Simple values.
     expect(image.width, 640);
     expect(image.height, 480);
@@ -46,14 +46,18 @@ void main() {
     expect(image.format.raw, 1234);
     // Planes.
     expect(image.planes.length, originalImage.planes.length);
-    for (int i = 0; i < image.planes.length; i++) {
+    for (var i = 0; i < image.planes.length; i++) {
       expect(
-          image.planes[i].bytes.length, originalImage.planes[i].bytes.length);
-      for (int j = 0; j < image.planes[i].bytes.length; j++) {
+        image.planes[i].bytes.length,
+        originalImage.planes[i].bytes.length,
+      );
+      for (var j = 0; j < image.planes[i].bytes.length; j++) {
         expect(image.planes[i].bytes[j], originalImage.planes[i].bytes[j]);
       }
       expect(
-          image.planes[i].bytesPerPixel, originalImage.planes[i].bytesPerPixel);
+        image.planes[i].bytesPerPixel,
+        originalImage.planes[i].bytesPerPixel,
+      );
       expect(image.planes[i].bytesPerRow, originalImage.planes[i].bytesPerRow);
       expect(image.planes[i].width, originalImage.planes[i].width);
       expect(image.planes[i].height, originalImage.planes[i].height);
@@ -63,8 +67,7 @@ void main() {
   group('legacy constructors', () {
     test('$CameraImage can be created', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
-      final CameraImage cameraImage =
-          CameraImage.fromPlatformData(<dynamic, dynamic>{
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
         'format': 35,
         'height': 1,
         'width': 4,
@@ -77,9 +80,9 @@ void main() {
             'bytesPerPixel': 1,
             'bytesPerRow': 4,
             'height': 1,
-            'width': 4
-          }
-        ]
+            'width': 4,
+          },
+        ],
       });
       expect(cameraImage.height, 1);
       expect(cameraImage.width, 4);
@@ -90,8 +93,7 @@ void main() {
     test('$CameraImage has ImageFormatGroup.yuv420 for iOS', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      final CameraImage cameraImage =
-          CameraImage.fromPlatformData(<dynamic, dynamic>{
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
         'format': 875704438,
         'height': 1,
         'width': 4,
@@ -104,9 +106,9 @@ void main() {
             'bytesPerPixel': 1,
             'bytesPerRow': 4,
             'height': 1,
-            'width': 4
-          }
-        ]
+            'width': 4,
+          },
+        ],
       });
       expect(cameraImage.format.group, ImageFormatGroup.yuv420);
     });
@@ -114,8 +116,7 @@ void main() {
     test('$CameraImage has ImageFormatGroup.yuv420 for Android', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-      final CameraImage cameraImage =
-          CameraImage.fromPlatformData(<dynamic, dynamic>{
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
         'format': 35,
         'height': 1,
         'width': 4,
@@ -128,9 +129,9 @@ void main() {
             'bytesPerPixel': 1,
             'bytesPerRow': 4,
             'height': 1,
-            'width': 4
-          }
-        ]
+            'width': 4,
+          },
+        ],
       });
       expect(cameraImage.format.group, ImageFormatGroup.yuv420);
     });
@@ -138,8 +139,7 @@ void main() {
     test('$CameraImage has ImageFormatGroup.nv21 for android', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.android;
 
-      final CameraImage cameraImage =
-          CameraImage.fromPlatformData(<dynamic, dynamic>{
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
         'format': 17,
         'height': 1,
         'width': 4,
@@ -152,9 +152,9 @@ void main() {
             'bytesPerPixel': 1,
             'bytesPerRow': 4,
             'height': 1,
-            'width': 4
-          }
-        ]
+            'width': 4,
+          },
+        ],
       });
       expect(cameraImage.format.group, ImageFormatGroup.nv21);
     });
@@ -162,8 +162,7 @@ void main() {
     test('$CameraImage has ImageFormatGroup.bgra8888 for iOS', () {
       debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
 
-      final CameraImage cameraImage =
-          CameraImage.fromPlatformData(<dynamic, dynamic>{
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
         'format': 1111970369,
         'height': 1,
         'width': 4,
@@ -176,16 +175,15 @@ void main() {
             'bytesPerPixel': 1,
             'bytesPerRow': 4,
             'height': 1,
-            'width': 4
-          }
-        ]
+            'width': 4,
+          },
+        ],
       });
       expect(cameraImage.format.group, ImageFormatGroup.bgra8888);
     });
 
     test('$CameraImage has ImageFormatGroup.unknown', () {
-      final CameraImage cameraImage =
-          CameraImage.fromPlatformData(<dynamic, dynamic>{
+      final cameraImage = CameraImage.fromPlatformData(<dynamic, dynamic>{
         'format': null,
         'height': 1,
         'width': 4,
@@ -198,9 +196,9 @@ void main() {
             'bytesPerPixel': 1,
             'bytesPerRow': 4,
             'height': 1,
-            'width': 4
-          }
-        ]
+            'width': 4,
+          },
+        ],
       });
       expect(cameraImage.format.group, ImageFormatGroup.unknown);
     });

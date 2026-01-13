@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -26,7 +26,7 @@ void main() {
     late MockGoogleMapController controller;
     late GoogleMapsPlugin plugin;
     late Completer<int> reportedMapIdCompleter;
-    int numberOnPlatformViewCreatedCalls = 0;
+    var numberOnPlatformViewCreatedCalls = 0;
 
     void onPlatformViewCreated(int id) {
       reportedMapIdCompleter.complete(id);
@@ -51,8 +51,9 @@ void main() {
           plugin.debugSetMapById(<int, GoogleMapController>{0: controller});
         });
 
-        testWidgets('cannot call methods after dispose',
-            (WidgetTester tester) async {
+        testWidgets('cannot call methods after dispose', (
+          WidgetTester tester,
+        ) async {
           plugin.dispose(mapId: 0);
 
           verify(controller.dispose());
@@ -66,50 +67,49 @@ void main() {
     });
 
     group('buildView', () {
-      const int testMapId = 33930;
-      const CameraPosition initialCameraPosition =
-          CameraPosition(target: LatLng(0, 0));
+      const testMapId = 33930;
+      const initialCameraPosition = CameraPosition(target: LatLng(0, 0));
 
       testWidgets(
-          'returns an HtmlElementView and caches the controller for later',
-          (WidgetTester tester) async {
-        final Map<int, GoogleMapController> cache =
-            <int, GoogleMapController>{};
-        plugin.debugSetMapById(cache);
+        'returns an HtmlElementView and caches the controller for later',
+        (WidgetTester tester) async {
+          final cache = <int, GoogleMapController>{};
+          plugin.debugSetMapById(cache);
 
-        final Widget widget = plugin.buildViewWithConfiguration(
-          testMapId,
-          onPlatformViewCreated,
-          widgetConfiguration: const MapWidgetConfiguration(
-            initialCameraPosition: initialCameraPosition,
-            textDirection: TextDirection.ltr,
-          ),
-        );
+          final Widget widget = plugin.buildViewWithConfiguration(
+            testMapId,
+            onPlatformViewCreated,
+            widgetConfiguration: const MapWidgetConfiguration(
+              initialCameraPosition: initialCameraPosition,
+              textDirection: TextDirection.ltr,
+            ),
+          );
 
-        expect(widget, isA<HtmlElementView>());
-        expect(
-          (widget as HtmlElementView).viewType,
-          contains('$testMapId'),
-          reason:
-              'view type should contain the mapId passed when creating the map.',
-        );
-        expect(cache, contains(testMapId));
-        expect(
-          cache[testMapId],
-          isNotNull,
-          reason: 'cached controller cannot be null.',
-        );
-        expect(
-          cache[testMapId]!.isInitialized,
-          isTrue,
-          reason: 'buildView calls init on the controller',
-        );
-      });
+          expect(widget, isA<HtmlElementView>());
+          expect(
+            (widget as HtmlElementView).viewType,
+            contains('$testMapId'),
+            reason:
+                'view type should contain the mapId passed when creating the map.',
+          );
+          expect(cache, contains(testMapId));
+          expect(
+            cache[testMapId],
+            isNotNull,
+            reason: 'cached controller cannot be null.',
+          );
+          expect(
+            cache[testMapId]!.isInitialized,
+            isTrue,
+            reason: 'buildView calls init on the controller',
+          );
+        },
+      );
 
-      testWidgets('returns cached instance if it already exists',
-          (WidgetTester tester) async {
-        const HtmlElementView expected =
-            HtmlElementView(viewType: 'only-for-testing');
+      testWidgets('returns cached instance if it already exists', (
+        WidgetTester tester,
+      ) async {
+        const expected = HtmlElementView(viewType: 'only-for-testing');
         when(controller.widget).thenReturn(expected);
         plugin.debugSetMapById(<int, GoogleMapController>{
           testMapId: controller,
@@ -128,65 +128,66 @@ void main() {
       });
 
       testWidgets(
-          'asynchronously reports onPlatformViewCreated the first time it happens',
-          (WidgetTester tester) async {
-        final Map<int, GoogleMapController> cache =
-            <int, GoogleMapController>{};
-        plugin.debugSetMapById(cache);
+        'asynchronously reports onPlatformViewCreated the first time it happens',
+        (WidgetTester tester) async {
+          final cache = <int, GoogleMapController>{};
+          plugin.debugSetMapById(cache);
 
-        plugin.buildViewWithConfiguration(
-          testMapId,
-          onPlatformViewCreated,
-          widgetConfiguration: const MapWidgetConfiguration(
-            initialCameraPosition: initialCameraPosition,
-            textDirection: TextDirection.ltr,
-          ),
-        );
+          plugin.buildViewWithConfiguration(
+            testMapId,
+            onPlatformViewCreated,
+            widgetConfiguration: const MapWidgetConfiguration(
+              initialCameraPosition: initialCameraPosition,
+              textDirection: TextDirection.ltr,
+            ),
+          );
 
-        // Simulate Google Maps JS SDK being "ready"
-        cache[testMapId]!.stream.add(WebMapReadyEvent(testMapId));
+          // Simulate Google Maps JS SDK being "ready"
+          cache[testMapId]!.stream.add(WebMapReadyEvent(testMapId));
 
-        expect(
-          cache[testMapId]!.isInitialized,
-          isTrue,
-          reason: 'buildView calls init on the controller',
-        );
-        expect(
-          await reportedMapIdCompleter.future,
-          testMapId,
-          reason: 'Should call onPlatformViewCreated with the mapId',
-        );
+          expect(
+            cache[testMapId]!.isInitialized,
+            isTrue,
+            reason: 'buildView calls init on the controller',
+          );
+          expect(
+            await reportedMapIdCompleter.future,
+            testMapId,
+            reason: 'Should call onPlatformViewCreated with the mapId',
+          );
 
-        // Fire repeated event again...
-        cache[testMapId]!.stream.add(WebMapReadyEvent(testMapId));
-        expect(
-          numberOnPlatformViewCreatedCalls,
-          equals(1),
-          reason:
-              'Should not call onPlatformViewCreated for the same controller multiple times',
-        );
-      });
+          // Fire repeated event again...
+          cache[testMapId]!.stream.add(WebMapReadyEvent(testMapId));
+          expect(
+            numberOnPlatformViewCreatedCalls,
+            equals(1),
+            reason:
+                'Should not call onPlatformViewCreated for the same controller multiple times',
+          );
+        },
+      );
     });
 
     group('setMapStyles', () {
-      const String mapStyle = '''
+      const mapStyle = '''
 [{
   "featureType": "poi.park",
   "elementType": "labels.text.fill",
   "stylers": [{"color": "#6b9a76"}]
 }]''';
 
-      testWidgets('translates styles for controller',
-          (WidgetTester tester) async {
+      testWidgets('translates styles for controller', (
+        WidgetTester tester,
+      ) async {
         plugin.debugSetMapById(<int, GoogleMapController>{0: controller});
 
         await plugin.setMapStyle(mapStyle, mapId: 0);
 
-        final dynamic captured =
-            verify(controller.updateStyles(captureThat(isList))).captured[0];
+        final dynamic captured = verify(
+          controller.updateStyles(captureThat(isList)),
+        ).captured[0];
 
-        final List<gmaps.MapTypeStyle> styles =
-            captured as List<gmaps.MapTypeStyle>;
+        final styles = captured as List<gmaps.MapTypeStyle>;
         expect(styles.length, 1);
         // Let's peek inside the styles...
         final gmaps.MapTypeStyle style = styles[0];
@@ -196,8 +197,9 @@ void main() {
         expect((style.stylers[0]['color']! as JSString).toDart, '#6b9a76');
       });
 
-      testWidgets('throws MapStyleException for invalid styles',
-          (WidgetTester tester) async {
+      testWidgets('throws MapStyleException for invalid styles', (
+        WidgetTester tester,
+      ) async {
         plugin.debugSetMapById(<int, GoogleMapController>{0: controller});
 
         expect(() async {
@@ -209,14 +211,13 @@ void main() {
     // These methods only pass-through values from the plugin to the controller
     // so we verify them all together here...
     group('Pass-through methods:', () {
-      const int mapId = 0;
+      const mapId = 0;
       setUp(() {
         plugin.debugSetMapById(<int, GoogleMapController>{mapId: controller});
       });
       // Options
       testWidgets('updateMapConfiguration', (WidgetTester tester) async {
-        const MapConfiguration configuration =
-            MapConfiguration(mapType: MapType.satellite);
+        const configuration = MapConfiguration(mapType: MapType.satellite);
 
         await plugin.updateMapConfiguration(configuration, mapId: mapId);
 
@@ -224,7 +225,7 @@ void main() {
       });
       // Geometry
       testWidgets('updateMarkers', (WidgetTester tester) async {
-        final MarkerUpdates expectedUpdates = MarkerUpdates.from(
+        final expectedUpdates = MarkerUpdates.from(
           const <Marker>{},
           const <Marker>{},
         );
@@ -234,7 +235,7 @@ void main() {
         verify(controller.updateMarkers(expectedUpdates));
       });
       testWidgets('updatePolygons', (WidgetTester tester) async {
-        final PolygonUpdates expectedUpdates = PolygonUpdates.from(
+        final expectedUpdates = PolygonUpdates.from(
           const <Polygon>{},
           const <Polygon>{},
         );
@@ -244,7 +245,7 @@ void main() {
         verify(controller.updatePolygons(expectedUpdates));
       });
       testWidgets('updatePolylines', (WidgetTester tester) async {
-        final PolylineUpdates expectedUpdates = PolylineUpdates.from(
+        final expectedUpdates = PolylineUpdates.from(
           const <Polyline>{},
           const <Polyline>{},
         );
@@ -254,7 +255,7 @@ void main() {
         verify(controller.updatePolylines(expectedUpdates));
       });
       testWidgets('updateCircles', (WidgetTester tester) async {
-        final CircleUpdates expectedUpdates = CircleUpdates.from(
+        final expectedUpdates = CircleUpdates.from(
           const <Circle>{},
           const <Circle>{},
         );
@@ -264,7 +265,7 @@ void main() {
         verify(controller.updateCircles(expectedUpdates));
       });
       testWidgets('updateHeatmaps', (WidgetTester tester) async {
-        final HeatmapUpdates expectedUpdates = HeatmapUpdates.from(
+        final expectedUpdates = HeatmapUpdates.from(
           const <Heatmap>{},
           const <Heatmap>{},
         );
@@ -275,17 +276,19 @@ void main() {
       });
       // Tile Overlays
       testWidgets('updateTileOverlays', (WidgetTester tester) async {
-        final Set<TileOverlay> expectedOverlays = <TileOverlay>{
-          const TileOverlay(tileOverlayId: TileOverlayId('overlay'))
+        final expectedOverlays = <TileOverlay>{
+          const TileOverlay(tileOverlayId: TileOverlayId('overlay')),
         };
 
         await plugin.updateTileOverlays(
-            newTileOverlays: expectedOverlays, mapId: mapId);
+          newTileOverlays: expectedOverlays,
+          mapId: mapId,
+        );
 
         verify(controller.updateTileOverlays(expectedOverlays));
       });
       testWidgets('clearTileCache', (WidgetTester tester) async {
-        const TileOverlayId tileOverlayId = TileOverlayId('Dory');
+        const tileOverlayId = TileOverlayId('Dory');
 
         await plugin.clearTileCache(tileOverlayId, mapId: mapId);
 
@@ -313,11 +316,12 @@ void main() {
 
       // Viewport
       testWidgets('getVisibleRegion', (WidgetTester tester) async {
-        when(controller.getVisibleRegion())
-            .thenAnswer((_) async => LatLngBounds(
-                  northeast: const LatLng(47.2359634, -68.0192019),
-                  southwest: const LatLng(34.5019594, -120.4974629),
-                ));
+        when(controller.getVisibleRegion()).thenAnswer(
+          (_) async => LatLngBounds(
+            northeast: const LatLng(47.2359634, -68.0192019),
+            southwest: const LatLng(34.5019594, -120.4974629),
+          ),
+        );
         await plugin.getVisibleRegion(mapId: mapId);
 
         verify(controller.getVisibleRegion());
@@ -332,10 +336,10 @@ void main() {
 
       testWidgets('getScreenCoordinate', (WidgetTester tester) async {
         when(controller.getScreenCoordinate(any)).thenAnswer(
-            (_) async => const ScreenCoordinate(x: 320, y: 240) // fake return
-            );
+          (_) async => const ScreenCoordinate(x: 320, y: 240), // fake return
+        );
 
-        const LatLng latLng = LatLng(43.3613, -5.8499);
+        const latLng = LatLng(43.3613, -5.8499);
 
         await plugin.getScreenCoordinate(latLng, mapId: mapId);
 
@@ -344,10 +348,10 @@ void main() {
 
       testWidgets('getLatLng', (WidgetTester tester) async {
         when(controller.getLatLng(any)).thenAnswer(
-            (_) async => const LatLng(43.3613, -5.8499) // fake return
-            );
+          (_) async => const LatLng(43.3613, -5.8499), // fake return
+        );
 
-        const ScreenCoordinate coordinates = ScreenCoordinate(x: 19, y: 26);
+        const coordinates = ScreenCoordinate(x: 19, y: 26);
 
         await plugin.getLatLng(coordinates, mapId: mapId);
 
@@ -356,7 +360,7 @@ void main() {
 
       // InfoWindows
       testWidgets('showMarkerInfoWindow', (WidgetTester tester) async {
-        const MarkerId markerId = MarkerId('testing-123');
+        const markerId = MarkerId('testing-123');
 
         await plugin.showMarkerInfoWindow(markerId, mapId: mapId);
 
@@ -364,7 +368,7 @@ void main() {
       });
 
       testWidgets('hideMarkerInfoWindow', (WidgetTester tester) async {
-        const MarkerId markerId = MarkerId('testing-123');
+        const markerId = MarkerId('testing-123');
 
         await plugin.hideMarkerInfoWindow(markerId, mapId: mapId);
 
@@ -372,7 +376,7 @@ void main() {
       });
 
       testWidgets('isMarkerInfoWindowShown', (WidgetTester tester) async {
-        const MarkerId markerId = MarkerId('testing-123');
+        const markerId = MarkerId('testing-123');
 
         when(controller.isInfoWindowShown(markerId)).thenReturn(true);
 
@@ -384,18 +388,21 @@ void main() {
 
     // Verify all event streams are filtered correctly from the main one...
     group('Event Streams', () {
-      const int mapId = 0;
+      const mapId = 0;
       late StreamController<MapEvent<Object?>> streamController;
       setUp(() {
         streamController = StreamController<MapEvent<Object?>>.broadcast();
-        when(controller.events)
-            .thenAnswer((Invocation realInvocation) => streamController.stream);
+        when(
+          controller.events,
+        ).thenAnswer((Invocation realInvocation) => streamController.stream);
         plugin.debugSetMapById(<int, GoogleMapController>{mapId: controller});
       });
 
       // Dispatches a few events in the global streamController, and expects *only* the passed event to be there.
       Future<void> testStreamFiltering(
-          Stream<MapEvent<Object?>> stream, MapEvent<Object?> event) async {
+        Stream<MapEvent<Object?>> stream,
+        MapEvent<Object?> event,
+      ) async {
         Timer.run(() {
           streamController.add(_OtherMapEvent(mapId));
           streamController.add(event);
@@ -411,120 +418,111 @@ void main() {
 
       // Camera events
       testWidgets('onCameraMoveStarted', (WidgetTester tester) async {
-        final CameraMoveStartedEvent event = CameraMoveStartedEvent(mapId);
+        final event = CameraMoveStartedEvent(mapId);
 
-        final Stream<CameraMoveStartedEvent> stream =
-            plugin.onCameraMoveStarted(mapId: mapId);
+        final Stream<CameraMoveStartedEvent> stream = plugin
+            .onCameraMoveStarted(mapId: mapId);
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onCameraMoveStarted', (WidgetTester tester) async {
-        final CameraMoveEvent event = CameraMoveEvent(
+        final event = CameraMoveEvent(
           mapId,
-          const CameraPosition(
-            target: LatLng(43.3790, -5.8660),
-          ),
+          const CameraPosition(target: LatLng(43.3790, -5.8660)),
         );
 
-        final Stream<CameraMoveEvent> stream =
-            plugin.onCameraMove(mapId: mapId);
+        final Stream<CameraMoveEvent> stream = plugin.onCameraMove(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onCameraIdle', (WidgetTester tester) async {
-        final CameraIdleEvent event = CameraIdleEvent(mapId);
+        final event = CameraIdleEvent(mapId);
 
-        final Stream<CameraIdleEvent> stream =
-            plugin.onCameraIdle(mapId: mapId);
+        final Stream<CameraIdleEvent> stream = plugin.onCameraIdle(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       // Marker events
       testWidgets('onMarkerTap', (WidgetTester tester) async {
-        final MarkerTapEvent event = MarkerTapEvent(
-          mapId,
-          const MarkerId('test-123'),
-        );
+        final event = MarkerTapEvent(mapId, const MarkerId('test-123'));
 
         final Stream<MarkerTapEvent> stream = plugin.onMarkerTap(mapId: mapId);
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onInfoWindowTap', (WidgetTester tester) async {
-        final InfoWindowTapEvent event = InfoWindowTapEvent(
-          mapId,
-          const MarkerId('test-123'),
-        );
+        final event = InfoWindowTapEvent(mapId, const MarkerId('test-123'));
 
-        final Stream<InfoWindowTapEvent> stream =
-            plugin.onInfoWindowTap(mapId: mapId);
+        final Stream<InfoWindowTapEvent> stream = plugin.onInfoWindowTap(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onMarkerDragStart', (WidgetTester tester) async {
-        final MarkerDragStartEvent event = MarkerDragStartEvent(
+        final event = MarkerDragStartEvent(
           mapId,
           const LatLng(43.3677, -5.8372),
           const MarkerId('test-123'),
         );
 
-        final Stream<MarkerDragStartEvent> stream =
-            plugin.onMarkerDragStart(mapId: mapId);
+        final Stream<MarkerDragStartEvent> stream = plugin.onMarkerDragStart(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onMarkerDrag', (WidgetTester tester) async {
-        final MarkerDragEvent event = MarkerDragEvent(
+        final event = MarkerDragEvent(
           mapId,
           const LatLng(43.3677, -5.8372),
           const MarkerId('test-123'),
         );
 
-        final Stream<MarkerDragEvent> stream =
-            plugin.onMarkerDrag(mapId: mapId);
+        final Stream<MarkerDragEvent> stream = plugin.onMarkerDrag(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onMarkerDragEnd', (WidgetTester tester) async {
-        final MarkerDragEndEvent event = MarkerDragEndEvent(
+        final event = MarkerDragEndEvent(
           mapId,
           const LatLng(43.3677, -5.8372),
           const MarkerId('test-123'),
         );
 
-        final Stream<MarkerDragEndEvent> stream =
-            plugin.onMarkerDragEnd(mapId: mapId);
+        final Stream<MarkerDragEndEvent> stream = plugin.onMarkerDragEnd(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       // Geometry
       testWidgets('onPolygonTap', (WidgetTester tester) async {
-        final PolygonTapEvent event = PolygonTapEvent(
-          mapId,
-          const PolygonId('test-123'),
-        );
+        final event = PolygonTapEvent(mapId, const PolygonId('test-123'));
 
-        final Stream<PolygonTapEvent> stream =
-            plugin.onPolygonTap(mapId: mapId);
+        final Stream<PolygonTapEvent> stream = plugin.onPolygonTap(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onPolylineTap', (WidgetTester tester) async {
-        final PolylineTapEvent event = PolylineTapEvent(
-          mapId,
-          const PolylineId('test-123'),
-        );
+        final event = PolylineTapEvent(mapId, const PolylineId('test-123'));
 
-        final Stream<PolylineTapEvent> stream =
-            plugin.onPolylineTap(mapId: mapId);
+        final Stream<PolylineTapEvent> stream = plugin.onPolylineTap(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onCircleTap', (WidgetTester tester) async {
-        final CircleTapEvent event = CircleTapEvent(
-          mapId,
-          const CircleId('test-123'),
-        );
+        final event = CircleTapEvent(mapId, const CircleId('test-123'));
 
         final Stream<CircleTapEvent> stream = plugin.onCircleTap(mapId: mapId);
 
@@ -532,23 +530,18 @@ void main() {
       });
       // Map taps
       testWidgets('onTap', (WidgetTester tester) async {
-        final MapTapEvent event = MapTapEvent(
-          mapId,
-          const LatLng(43.3597, -5.8458),
-        );
+        final event = MapTapEvent(mapId, const LatLng(43.3597, -5.8458));
 
         final Stream<MapTapEvent> stream = plugin.onTap(mapId: mapId);
 
         await testStreamFiltering(stream, event);
       });
       testWidgets('onLongPress', (WidgetTester tester) async {
-        final MapLongPressEvent event = MapLongPressEvent(
-          mapId,
-          const LatLng(43.3608, -5.8425),
-        );
+        final event = MapLongPressEvent(mapId, const LatLng(43.3608, -5.8425));
 
-        final Stream<MapLongPressEvent> stream =
-            plugin.onLongPress(mapId: mapId);
+        final Stream<MapLongPressEvent> stream = plugin.onLongPress(
+          mapId: mapId,
+        );
 
         await testStreamFiltering(stream, event);
       });

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -22,9 +22,11 @@ File childFileWithSubcomponents(Directory base, List<String> components) {
 ///   childFileWithSubcomponents(rootDir, ['foo', 'bar'])
 /// creates a File representing /rootDir/foo/bar/.
 Directory childDirectoryWithSubcomponents(
-    Directory base, List<String> components) {
-  Directory dir = base;
-  for (final String directoryName in components) {
+  Directory base,
+  List<String> components,
+) {
+  var dir = base;
+  for (final directoryName in components) {
     dir = dir.childDirectory(directoryName);
   }
   return dir;

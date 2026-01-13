@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -86,11 +86,7 @@ mixin TreeViewStateMixin<T> {
 /// Provided to [RenderTreeViewport] as part of
 /// [RenderTreeViewport.activeAnimations] by [TreeView] to properly offset
 /// animating children.
-typedef TreeViewNodesAnimation = ({
-  int fromIndex,
-  int toIndex,
-  double value,
-});
+typedef TreeViewNodesAnimation = ({int fromIndex, int toIndex, double value});
 
 /// The style of indentation for [TreeViewNode]s in a [TreeView], as handled
 /// by [RenderTreeViewport].
@@ -126,8 +122,9 @@ class TreeViewIndentationType {
   /// [TreeView.treeNodeBuilder] instead for more customization options.
   ///
   /// Child nodes will not be offset in the tree.
-  static const TreeViewIndentationType none =
-      TreeViewIndentationType._internal(0.0);
+  static const TreeViewIndentationType none = TreeViewIndentationType._internal(
+    0.0,
+  );
 
   /// Configures a custom offset for indenting child nodes in a [TreeView].
   ///

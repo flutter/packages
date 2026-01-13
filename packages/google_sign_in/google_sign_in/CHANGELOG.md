@@ -1,3 +1,28 @@
+## NEXT
+
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
+## 7.2.0
+
+* Adds a `clearAuthorizationToken` method to remove an access token from the
+  cache.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 7.1.1
+
+* Adds more documentation about the requirement to call `initialize` exactly
+  once.
+* Adds information about `GoogleSignInException` to the migration guide.
+
+## 7.1.0
+
+* Adds the missing export of `GoogleSignInExceptionCode`, to allow for
+  structured error handling as intended by the API.
+
 ## 7.0.0
 
 * **BREAKING CHANGE**: Many APIs have changed or been replaced to reflect the

@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -59,9 +59,10 @@ void main() {
 
   testWidgets('getContainerDirectory', (WidgetTester tester) async {
     if (Platform.isIOS) {
-      final PathProviderFoundation provider = PathProviderFoundation();
+      final provider = PathProviderFoundation();
       final String? result = await provider.getContainerPath(
-          appGroupIdentifier: 'group.flutter.appGroupTest');
+        appGroupIdentifier: 'group.flutter.appGroupTest',
+      );
       _verifySampleFile(result, 'appGroup');
     }
   });
@@ -76,8 +77,8 @@ void _verifySampleFile(String? directoryPath, String name) {
   if (directoryPath == null) {
     return;
   }
-  final Directory directory = Directory(directoryPath);
-  final File file = File('${directory.path}${Platform.pathSeparator}$name');
+  final directory = Directory(directoryPath);
+  final file = File('${directory.path}${Platform.pathSeparator}$name');
 
   if (file.existsSync()) {
     file.deleteSync();

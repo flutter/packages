@@ -1,31 +1,30 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:interactive_media_ads/src/ios/interactive_media_ads.g.dart';
-import 'package:interactive_media_ads/src/ios/interactive_media_ads_proxy.dart';
 import 'package:interactive_media_ads/src/ios/ios_content_progress_provider.dart';
+import 'package:interactive_media_ads/src/platform_interface/platform_interface.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
 import 'content_progress_provider_test.mocks.dart';
 
-@GenerateNiceMocks(<MockSpec<Object>>[
-  MockSpec<IMAContentPlayhead>(),
-])
+@GenerateNiceMocks(<MockSpec<Object>>[MockSpec<IMAContentPlayhead>()])
 void main() {
+  setUp(() {
+    PigeonOverrides.pigeon_reset();
+  });
+
   group('IOSContentProgressProvider', () {
     test('setProgress', () async {
-      final MockIMAContentPlayhead mockContentPlayhead =
-          MockIMAContentPlayhead();
+      final mockContentPlayhead = MockIMAContentPlayhead();
 
-      final IOSContentProgressProvider provider = IOSContentProgressProvider(
-        IOSContentProgressProviderCreationParams(
-          proxy: InteractiveMediaAdsProxy(
-            newIMAContentPlayhead: () => mockContentPlayhead,
-          ),
-        ),
+      PigeonOverrides.iMAContentPlayhead_new = () => mockContentPlayhead;
+
+      final provider = IOSContentProgressProvider(
+        const PlatformContentProgressProviderCreationParams(),
       );
 
       await provider.setProgress(

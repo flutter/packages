@@ -1,17 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  input: 'pigeons/messages.dart',
-  gobjectHeaderOut: 'linux/messages.g.h',
-  gobjectSourceOut: 'linux/messages.g.cc',
-  gobjectOptions: GObjectOptions(module: 'Ffs'),
-  dartOut: 'lib/src/messages.g.dart',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    input: 'pigeons/messages.dart',
+    gobjectHeaderOut: 'linux/messages.g.h',
+    gobjectSourceOut: 'linux/messages.g.cc',
+    gobjectOptions: GObjectOptions(module: 'Ffs'),
+    dartOut: 'lib/src/messages.g.dart',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// A Pigeon representation of the GTK_FILE_CHOOSER_ACTION_* options.
 enum PlatformFileChooserActionType { open, chooseDirectory, save }
 
@@ -38,6 +39,7 @@ class PlatformFileChooserOptions {
     required this.currentName,
     required this.acceptButtonLabel,
     this.selectMultiple,
+    this.createFolders,
   });
 
   final List<PlatformTypeGroup>? allowedFileTypes;
@@ -49,14 +51,21 @@ class PlatformFileChooserOptions {
   ///
   /// Nullable because it does not apply to the "save" action.
   final bool? selectMultiple;
+
+  /// Whether to allow new folder creation.
+  ///
+  /// Nullable because it does not apply to the "open" action.
+  final bool? createFolders;
 }
 
-@HostApi(dartHostTestHandler: 'TestFileSelectorApi')
+@HostApi()
 abstract class FileSelectorApi {
   /// Shows an file chooser with the given [type] and [options], returning the
   /// list of selected paths.
   ///
   /// An empty list corresponds to a cancelled selection.
   List<String> showFileChooser(
-      PlatformFileChooserActionType type, PlatformFileChooserOptions options);
+    PlatformFileChooserActionType type,
+    PlatformFileChooserOptions options,
+  );
 }

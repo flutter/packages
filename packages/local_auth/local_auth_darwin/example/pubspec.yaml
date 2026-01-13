@@ -3,8 +3,8 @@ description: Demonstrates how to use the local_auth_darwin plugin.
 publish_to: none
 
 environment:
-  sdk: ^3.6.0
-  flutter: ">=3.27.0"
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
 
 dependencies:
   flutter:
@@ -16,7 +16,7 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  local_auth_platform_interface: ^1.0.0
+  local_auth_platform_interface: ^1.1.0
 
 dev_dependencies:
   flutter_test:

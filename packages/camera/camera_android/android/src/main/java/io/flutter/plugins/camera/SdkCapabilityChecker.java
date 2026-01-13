@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -34,22 +34,10 @@ public class SdkCapabilityChecker {
     return SDK_VERSION >= Build.VERSION_CODES.S;
   }
 
-  @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.M)
-  public static boolean supportsMarshmallowNoiseReductionModes() {
-    // See https://developer.android.com/reference/android/hardware/camera2/CameraCharacteristics#NOISE_REDUCTION_AVAILABLE_NOISE_REDUCTION_MODES
-    return SDK_VERSION >= Build.VERSION_CODES.M;
-  }
-
   @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.P)
   public static boolean supportsSessionConfiguration() {
     // See https://developer.android.com/reference/android/hardware/camera2/params/SessionConfiguration
     return SDK_VERSION >= Build.VERSION_CODES.P;
-  }
-
-  @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.N)
-  public static boolean supportsVideoPause() {
-    // See https://developer.android.com/reference/androidx/camera/video/VideoRecordEvent.Pause
-    return SDK_VERSION >= Build.VERSION_CODES.N;
   }
 
   @ChecksSdkIntAtLeast(api = Build.VERSION_CODES.R)

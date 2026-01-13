@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -50,19 +50,20 @@ List<int> encodeMDnsQuery(
   assert(ResourceRecordType.debugAssertValid(type));
 
   final List<String> nameParts = processDnsNameParts(name);
-  final List<List<int>> rawNameParts =
-      nameParts.map<List<int>>((String part) => utf8.encode(part)).toList();
+  final List<List<int>> rawNameParts = nameParts
+      .map<List<int>>((String part) => utf8.encode(part))
+      .toList();
 
   // Calculate the size of the packet.
   int size = _kHeaderSize;
-  for (int i = 0; i < rawNameParts.length; i++) {
+  for (var i = 0; i < rawNameParts.length; i++) {
     size += 1 + rawNameParts[i].length;
   }
 
   size += 1; // End with empty part
   size += 4; // Trailer (QTYPE and QCLASS).
-  final Uint8List data = Uint8List(size);
-  final ByteData packetByteData = ByteData.view(data.buffer);
+  final data = Uint8List(size);
+  final packetByteData = ByteData.view(data.buffer);
   // Query identifier - just use 0.
   packetByteData.setUint16(_kIdOffset, 0);
   // Flags - 0 for query.
@@ -76,7 +77,7 @@ List<int> encodeMDnsQuery(
   // Number of resource records - 0 for query.
   packetByteData.setUint16(_kArcountOffset, 0);
   int offset = _kHeaderSize;
-  for (int i = 0; i < rawNameParts.length; i++) {
+  for (var i = 0; i < rawNameParts.length; i++) {
     data[offset++] = rawNameParts[i].length;
     data.setRange(offset, offset + rawNameParts[i].length, rawNameParts[i]);
     offset += rawNameParts[i].length;
@@ -87,9 +88,10 @@ List<int> encodeMDnsQuery(
   packetByteData.setUint16(offset, type); // QTYPE.
   offset += 2;
   packetByteData.setUint16(
-      offset,
-      ResourceRecordClass.internet |
-          (multicast ? QuestionType.multicast : QuestionType.unicast));
+    offset,
+    ResourceRecordClass.internet |
+        (multicast ? QuestionType.multicast : QuestionType.unicast),
+  );
 
   return data;
 }
@@ -114,9 +116,10 @@ class _FQDNReadResult {
 
 /// Reads a FQDN from raw packet data.
 String readFQDN(List<int> packet, [int offset = 0]) {
-  final Uint8List data =
-      packet is Uint8List ? packet : Uint8List.fromList(packet);
-  final ByteData byteData = ByteData.view(data.buffer);
+  final Uint8List data = packet is Uint8List
+      ? packet
+      : Uint8List.fromList(packet);
+  final byteData = ByteData.view(data.buffer);
 
   return _readFQDN(data, byteData, offset, data.length).fqdn;
 }
@@ -126,18 +129,22 @@ String readFQDN(List<int> packet, [int offset = 0]) {
 //
 // If decoding fails (e.g. due to an invalid packet) `null` is returned.
 _FQDNReadResult _readFQDN(
-    Uint8List data, ByteData byteData, int offset, int length) {
+  Uint8List data,
+  ByteData byteData,
+  int offset,
+  int length,
+) {
   void checkLength(int required) {
     if (length < required) {
       throw MDnsDecodeException(required);
     }
   }
 
-  final List<String> parts = <String>[];
-  final int prevOffset = offset;
-  final List<int> offsetsToVisit = <int>[offset];
-  int upperLimitOffset = offset;
-  int highestOffsetRead = offset;
+  final parts = <String>[];
+  final prevOffset = offset;
+  final offsetsToVisit = <int>[offset];
+  var upperLimitOffset = offset;
+  var highestOffsetRead = offset;
 
   while (offsetsToVisit.isNotEmpty) {
     offset = offsetsToVisit.removeLast();
@@ -168,8 +175,7 @@ _FQDNReadResult _readFQDN(
         offset++;
         if (partLength > 0) {
           checkLength(offset + partLength);
-          final Uint8List partBytes =
-              Uint8List.view(data.buffer, offset, partLength);
+          final partBytes = Uint8List.view(data.buffer, offset, partLength);
           offset += partLength;
           // According to the RFC, this is supposed to be utf-8 encoded, but
           // we should continue decoding even if it isn't to avoid dropping the
@@ -197,9 +203,10 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
     return null;
   }
 
-  final Uint8List data =
-      packet is Uint8List ? packet : Uint8List.fromList(packet);
-  final ByteData packetBytes = ByteData.view(data.buffer);
+  final Uint8List data = packet is Uint8List
+      ? packet
+      : Uint8List.fromList(packet);
+  final packetBytes = ByteData.view(data.buffer);
 
   final int answerCount = packetBytes.getUint16(_kAncountOffset);
   final int authorityCount = packetBytes.getUint16(_kNscountOffset);
@@ -250,7 +257,7 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
     switch (type) {
       case ResourceRecordType.addressIPv4:
         checkLength(offset + readDataLength);
-        final StringBuffer addr = StringBuffer();
+        final addr = StringBuffer();
         final int stop = offset + readDataLength;
         addr.write(packetBytes.getUint8(offset));
         offset++;
@@ -258,11 +265,14 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
           addr.write('.');
           addr.write(packetBytes.getUint8(offset));
         }
-        return IPAddressResourceRecord(fqdn, validUntil,
-            address: InternetAddress(addr.toString()));
+        return IPAddressResourceRecord(
+          fqdn,
+          validUntil,
+          address: InternetAddress(addr.toString()),
+        );
       case ResourceRecordType.addressIPv6:
         checkLength(offset + readDataLength);
-        final StringBuffer addr = StringBuffer();
+        final addr = StringBuffer();
         final int stop = offset + readDataLength;
         addr.write(packetBytes.getUint16(offset).toRadixString(16));
         offset += 2;
@@ -285,8 +295,12 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
         checkLength(offset + 2);
         final int port = packetBytes.getUint16(offset);
         offset += 2;
-        final _FQDNReadResult result =
-            _readFQDN(data, packetBytes, offset, length);
+        final _FQDNReadResult result = _readFQDN(
+          data,
+          packetBytes,
+          offset,
+          length,
+        );
         offset += result.bytesRead;
         return SrvResourceRecord(
           fqdn,
@@ -298,21 +312,21 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
         );
       case ResourceRecordType.serverPointer:
         checkLength(offset + readDataLength);
-        final _FQDNReadResult result =
-            _readFQDN(data, packetBytes, offset, length);
-        offset += readDataLength;
-        return PtrResourceRecord(
-          fqdn,
-          validUntil,
-          domainName: result.fqdn,
+        final _FQDNReadResult result = _readFQDN(
+          data,
+          packetBytes,
+          offset,
+          length,
         );
+        offset += readDataLength;
+        return PtrResourceRecord(fqdn, validUntil, domainName: result.fqdn);
       case ResourceRecordType.text:
         checkLength(offset + readDataLength);
         // The first byte of the buffer is the length of the first string of
         // the TXT record. Further length-prefixed strings may follow. We
         // concatenate them with newlines.
-        final StringBuffer strings = StringBuffer();
-        int index = 0;
+        final strings = StringBuffer();
+        var index = 0;
         while (index < readDataLength) {
           final int txtLength = data[offset + index];
           index++;
@@ -338,17 +352,21 @@ List<ResourceRecord>? decodeMDnsResponse(List<int> packet) {
   // This list can't be fixed length right now because we might get
   // resource record types we don't support, and consumers expect this list
   // to not have null entries.
-  final List<ResourceRecord> result = <ResourceRecord>[];
+  final result = <ResourceRecord>[];
 
   try {
-    for (int i = 0; i < questionCount; i++) {
-      final _FQDNReadResult result =
-          _readFQDN(data, packetBytes, offset, length);
+    for (var i = 0; i < questionCount; i++) {
+      final _FQDNReadResult result = _readFQDN(
+        data,
+        packetBytes,
+        offset,
+        length,
+      );
       offset += result.bytesRead;
       checkLength(offset + 4);
       offset += 4;
     }
-    for (int i = 0; i < remainingCount; i++) {
+    for (var i = 0; i < remainingCount; i++) {
       final ResourceRecord? record = readResourceRecord();
       if (record != null) {
         result.add(record);

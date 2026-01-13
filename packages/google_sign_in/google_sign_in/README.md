@@ -4,7 +4,7 @@ A Flutter plugin for [Google Sign In](https://developers.google.com/identity/).
 
 |             | Android | iOS   | macOS  | Web |
 |-------------|---------|-------|--------|-----|
-| **Support** | SDK 21+ | 12.0+ | 10.15+ | Any |
+| **Support** | SDK 24+ | 13.0+ | 10.15+ | Any |
 
 ## Setup
 
@@ -31,18 +31,20 @@ authentication process:
 <?code-excerpt "example/lib/main.dart (Setup)"?>
 ```dart
 final GoogleSignIn signIn = GoogleSignIn.instance;
-unawaited(signIn
-    .initialize(clientId: clientId, serverClientId: serverClientId)
-    .then((_) {
-  signIn.authenticationEvents
-      .listen(_handleAuthenticationEvent)
-      .onError(_handleAuthenticationError);
+unawaited(
+  signIn.initialize(clientId: clientId, serverClientId: serverClientId).then((
+    _,
+  ) {
+    signIn.authenticationEvents
+        .listen(_handleAuthenticationEvent)
+        .onError(_handleAuthenticationError);
 
-  /// This example always uses the stream-based approach to determining
-  /// which UI state to show, rather than using the future returned here,
-  /// if any, to conditionally skip directly to the signed-in state.
-  signIn.attemptLightweightAuthentication();
-}));
+    /// This example always uses the stream-based approach to determining
+    /// which UI state to show, rather than using the future returned here,
+    /// if any, to conditionally skip directly to the signed-in state.
+    signIn.attemptLightweightAuthentication();
+  }),
+);
 ```
 
 If the user isn't signed in by the lightweight method, you can show UI to
@@ -69,7 +71,7 @@ else ...<Widget>[
   if (kIsWeb)
     web.renderButton()
   // ···
-]
+],
 ```
 
 ## Authorization
@@ -85,8 +87,9 @@ const List<String> scopes = <String>[
   'https://www.googleapis.com/auth/contacts.readonly',
 ];
     final GoogleSignInAccount? user = // ...
-    final GoogleSignInClientAuthorization? authorization =
-        await user?.authorizationClient.authorizationForScopes(scopes);
+    final GoogleSignInClientAuthorization? authorization = await user
+        ?.authorizationClient
+        .authorizationForScopes(scopes);
 ```
 
 [Full list of available scopes](https://developers.google.com/identity/protocols/googlescopes).
@@ -100,8 +103,9 @@ this request **must be initiated from a user interaction** like a button press.
 
 <?code-excerpt "example/lib/main.dart (RequestScopes)"?>
 ```dart
-final GoogleSignInClientAuthorization authorization =
-    await user.authorizationClient.authorizeScopes(scopes);
+final GoogleSignInClientAuthorization authorization = await user
+    .authorizationClient
+    .authorizeScopes(scopes);
 ```
 
 ### Authorization expiration
@@ -123,8 +127,9 @@ request a server auth code to send to the server:
 
 <?code-excerpt "example/lib/main.dart (RequestServerAuth)"?>
 ```dart
-final GoogleSignInServerAuthorization? serverAuth =
-    await user.authorizationClient.authorizeServer(scopes);
+final GoogleSignInServerAuthorization? serverAuth = await user
+    .authorizationClient
+    .authorizeServer(scopes);
 ```
 
 Server auth codes are not always available on all platforms. For instance, on

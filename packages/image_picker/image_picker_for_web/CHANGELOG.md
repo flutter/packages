@@ -1,5 +1,11 @@
-## NEXT
+## 3.1.1
 
+* Uses `CanvasRenderingContext2D.drawImage` instead of the deprecated `drawImageScaled`.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 3.1.0
+
+* Adds support for `getMultiVideoWithOptions`.
 * Updates minimum supported SDK version to Flutter 3.27/Dart 3.6.
 
 ## 3.0.6

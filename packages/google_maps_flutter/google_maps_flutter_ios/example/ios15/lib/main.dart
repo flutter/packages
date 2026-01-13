@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -25,25 +25,28 @@ import 'package:maps_example_dart/snapshot.dart';
 import 'package:maps_example_dart/tile_overlay.dart';
 
 void main() {
-  runApp(const MaterialApp(
+  runApp(
+    const MaterialApp(
       home: MapsDemo(<GoogleMapExampleAppPage>[
-    MapUiPage(),
-    MapCoordinatesPage(),
-    MapClickPage(),
-    AnimateCameraPage(),
-    MoveCameraPage(),
-    PlaceMarkerPage(),
-    MarkerIconsPage(),
-    ScrollingMapPage(),
-    PlacePolylinePage(),
-    PlacePolygonPage(),
-    PlaceCirclePage(),
-    PaddingPage(),
-    SnapshotPage(),
-    LiteModePage(),
-    TileOverlayPage(),
-    GroundOverlayPage(),
-    ClusteringPage(),
-    MapIdPage(),
-  ])));
+        MapUiPage(),
+        MapCoordinatesPage(),
+        MapClickPage(),
+        AnimateCameraPage(),
+        MoveCameraPage(),
+        PlaceMarkerPage(),
+        MarkerIconsPage(),
+        ScrollingMapPage(),
+        PlacePolylinePage(),
+        PlacePolygonPage(),
+        PlaceCirclePage(),
+        PaddingPage(),
+        SnapshotPage(),
+        LiteModePage(),
+        TileOverlayPage(),
+        GroundOverlayPage(),
+        ClusteringPage(),
+        MapIdPage(),
+      ]),
+    ),
+  );
 }

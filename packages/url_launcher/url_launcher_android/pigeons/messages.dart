@@ -1,16 +1,18 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:pigeon/pigeon.dart';
 
-@ConfigurePigeon(PigeonOptions(
-  dartOut: 'lib/src/messages.g.dart',
-  javaOptions: JavaOptions(package: 'io.flutter.plugins.urllauncher'),
-  javaOut: 'android/src/main/java/io/flutter/plugins/urllauncher/Messages.java',
-  copyrightHeader: 'pigeons/copyright.txt',
-))
-
+@ConfigurePigeon(
+  PigeonOptions(
+    dartOut: 'lib/src/messages.g.dart',
+    javaOptions: JavaOptions(package: 'io.flutter.plugins.urllauncher'),
+    javaOut:
+        'android/src/main/java/io/flutter/plugins/urllauncher/Messages.java',
+    copyrightHeader: 'pigeons/copyright.txt',
+  ),
+)
 /// Configuration options for an in-app WebView.
 class WebViewOptions {
   const WebViewOptions({
@@ -38,7 +40,11 @@ abstract class UrlLauncherApi {
   bool canLaunchUrl(String url);
 
   /// Opens the URL externally, returning true if successful.
-  bool launchUrl(String url, Map<String, String> headers);
+  bool launchUrl(
+    String url,
+    Map<String, String> headers,
+    bool requireNonBrowser,
+  );
 
   /// Opens the URL in an in-app Custom Tab or WebView, returning true if it
   /// opens successfully.

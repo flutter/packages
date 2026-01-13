@@ -1,4 +1,4 @@
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -28,8 +28,7 @@ public class PlatformVideoViewFactoryTest {
     when(videoPlayer.getExoPlayer()).thenReturn(exoPlayer);
 
     final PlatformVideoViewFactory factory = new PlatformVideoViewFactory(videoPlayerProvider);
-    final Messages.PlatformVideoViewCreationParams args =
-        new Messages.PlatformVideoViewCreationParams.Builder().setPlayerId(playerId).build();
+    final PlatformVideoViewCreationParams args = new PlatformVideoViewCreationParams(playerId);
 
     final PlatformView view = factory.create(context, 0, args);
 
