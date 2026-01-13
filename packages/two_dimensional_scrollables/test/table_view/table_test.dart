@@ -2131,7 +2131,9 @@ void main() {
         );
       });
 
-      testWidgets('Binary search correctly finds first/last non-pinned cells', (WidgetTester tester,) async {
+      testWidgets('Binary search correctly finds first/last non-pinned cells', (
+        WidgetTester tester,
+      ) async {
         Future<void> runScrollTest(Widget tableView) async {
           await tester.pumpWidget(MaterialApp(home: tableView));
           await tester.pumpAndSettle();
@@ -2159,9 +2161,7 @@ void main() {
 
         // single rows & columns
         await tester.pumpWidget(
-          MaterialApp(
-            home: getTableView(columnCount: 1, rowCount: 1),
-          ),
+          MaterialApp(home: getTableView(columnCount: 1, rowCount: 1)),
         );
         await tester.pumpAndSettle();
         expect(find.text('R0:C0'), findsOneWidget);

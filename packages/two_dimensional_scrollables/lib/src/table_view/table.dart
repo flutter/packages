@@ -731,7 +731,10 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
   /// Binary search to find the first index with [_Span] matching the condition.
   /// [map]: Index-[_Span] map, [condition]: Match rule
   /// Returns the first matched index or null if not found.
-  int? _binarySearchFirstFromMap(Map<int, _Span> map, bool Function(_Span) condition) {
+  int? _binarySearchFirstFromMap(
+    Map<int, _Span> map,
+    bool Function(_Span) condition,
+  ) {
     if (map.isEmpty) {
       return null;
     }
@@ -776,11 +779,13 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // Binary search replaces for-loop to reduce computation.
     _firstNonPinnedColumn = _binarySearchFirstFromMap(
       _columnMetrics,
-          (span) => !span.isPinned && span.trailingOffset >= _targetLeadingColumnPixel,
+      (span) =>
+          !span.isPinned && span.trailingOffset >= _targetLeadingColumnPixel,
     );
     _lastNonPinnedColumn = _binarySearchFirstFromMap(
       _columnMetrics,
-          (span) => !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
+      (span) =>
+          !span.isPinned && span.trailingOffset >= _targetTrailingColumnPixel,
     );
     if (_firstNonPinnedColumn != null) {
       _lastNonPinnedColumn ??= _columnMetrics.length - 1;
@@ -806,11 +811,12 @@ class RenderTableViewport extends RenderTwoDimensionalViewport {
     // Binary search replaces for-loop to reduce computation.
     _firstNonPinnedRow = _binarySearchFirstFromMap(
       _rowMetrics,
-          (span) => !span.isPinned && span.trailingOffset >= _targetLeadingRowPixel,
+      (span) => !span.isPinned && span.trailingOffset >= _targetLeadingRowPixel,
     );
     _lastNonPinnedRow = _binarySearchFirstFromMap(
       _rowMetrics,
-          (span) => !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
+      (span) =>
+          !span.isPinned && span.trailingOffset >= _targetTrailingRowPixel,
     );
     if (_firstNonPinnedRow != null) {
       _lastNonPinnedRow ??= _rowMetrics.length - 1;
