@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import GoogleSignIn
-import XCTest
+import Testing
 import google_sign_in_ios
 
 #if os(OSX)
@@ -216,48 +216,33 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
   #endif
 }
 
-class FLTGoogleSignInPluginTest: XCTestCase {
+struct FLTGoogleSignInPluginTest {
+  // A fake that replaces the real global GoogleSignIn instance for tests.
+  var fakeSignIn = TestSignIn()
 
-  var viewProvider: TestViewProvider!
-  var plugin: FLTGoogleSignInPlugin!
-  var fakeSignIn: TestSignIn!
-  var googleServiceInfo: [String: Any]?
-
-  override func setUp() {
-    super.setUp()
-    viewProvider = TestViewProvider()
-    fakeSignIn = TestSignIn()
-    plugin = FLTGoogleSignInPlugin(signIn: fakeSignIn, viewProvider: viewProvider)
-
-    if let plistPath = Bundle(for: type(of: self)).path(
-      forResource: "GoogleService-Info", ofType: "plist")
-    {
-      googleServiceInfo = NSDictionary(contentsOfFile: plistPath) as? [String: Any]
-    }
-  }
-
-  func testSignOut() {
+  @Test func signOut() {
+    let plugin = createTestPlugin()
     var error: FlutterError?
     plugin.signOutWithError(&error)
-    XCTAssertTrue(fakeSignIn.signOutCalled)
-    XCTAssertNil(error)
+    #expect(fakeSignIn.signOutCalled == true)
+    #expect(error == nil)
   }
 
-  func testDisconnect() async {
-    let expectation = self.expectation(description: "expect result returns true")
-    plugin.disconnect { error in
-      XCTAssertNil(error)
-      expectation.fulfill()
+  @Test func disconnect() async {
+    let plugin = createTestPlugin()
+    await confirmation("expect result returns true") { confirmed in
+      plugin.disconnect { error in
+        #expect(error == nil)
+        confirmed()
+      }
     }
-    await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - Configure
 
-  func testInitNoClientIdNoError() {
+  @Test func initNoClientIdNoError() {
     // Init plugin without GoogleService-Info.plist.
-    plugin = FLTGoogleSignInPlugin(
-      signIn: fakeSignIn, viewProvider: viewProvider, googleServiceProperties: nil)
+    let plugin = createTestPlugin(googleServiceProperties: nil)
 
     // init call does not provide a clientId.
     let params = FSIPlatformConfigurationParams.make(
@@ -267,12 +252,11 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
     var error: FlutterError?
     plugin.configure(withParameters: params, error: &error)
-    XCTAssertNil(error)
+    #expect(error == nil)
   }
 
-  func testInitGoogleServiceInfoPlist() {
-    plugin = FLTGoogleSignInPlugin(
-      signIn: fakeSignIn, viewProvider: viewProvider, googleServiceProperties: googleServiceInfo)
+  @Test func initGoogleServiceInfoPlist() {
+    let plugin = createTestPlugin(googleServiceProperties: loadGoogleServiceInfo())
     let params = FSIPlatformConfigurationParams.make(
       withClientId: nil,
       serverClientId: nil,
@@ -280,19 +264,18 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
     var error: FlutterError?
     plugin.configure(withParameters: params, error: &error)
-    XCTAssertNil(error)
-    XCTAssertEqual(fakeSignIn.configuration?.hostedDomain, "example.com")
+    #expect(error == nil)
+    #expect(fakeSignIn.configuration?.hostedDomain == "example.com")
     // Set in example app GoogleService-Info.plist.
-    XCTAssertEqual(
-      fakeSignIn.configuration?.clientID,
-      "479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com")
-    XCTAssertEqual(fakeSignIn.configuration?.serverClientID, "YOUR_SERVER_CLIENT_ID")
+    #expect(
+      fakeSignIn.configuration?.clientID
+        == "479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com")
+    #expect(fakeSignIn.configuration?.serverClientID == "YOUR_SERVER_CLIENT_ID")
   }
 
-  func testInitDynamicClientIdNullDomain() {
+  @Test func initDynamicClientIdNullDomain() {
     // Init plugin without GoogleService-Info.plist.
-    plugin = FLTGoogleSignInPlugin(
-      signIn: fakeSignIn, viewProvider: viewProvider, googleServiceProperties: nil)
+    let plugin = createTestPlugin(googleServiceProperties: nil)
 
     let params = FSIPlatformConfigurationParams.make(
       withClientId: "mockClientId",
@@ -301,16 +284,15 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
     var error: FlutterError?
     plugin.configure(withParameters: params, error: &error)
-    XCTAssertNil(error)
-    XCTAssertNil(fakeSignIn.configuration?.hostedDomain)
-    XCTAssertEqual(fakeSignIn.configuration?.clientID, "mockClientId")
-    XCTAssertNil(fakeSignIn.configuration?.serverClientID)
+    #expect(error == nil)
+    #expect(fakeSignIn.configuration?.hostedDomain == nil)
+    #expect(fakeSignIn.configuration?.clientID == "mockClientId")
+    #expect(fakeSignIn.configuration?.serverClientID == nil)
   }
 
-  func testInitDynamicServerClientIdNullDomain() {
+  @Test func initDynamicServerClientIdNullDomain() {
     // Init plugin without GoogleService-Info.plist.
-    plugin = FLTGoogleSignInPlugin(
-      signIn: fakeSignIn, viewProvider: viewProvider, googleServiceProperties: googleServiceInfo)
+    let plugin = createTestPlugin(googleServiceProperties: loadGoogleServiceInfo())
     let params = FSIPlatformConfigurationParams.make(
       withClientId: nil,
       serverClientId: "mockServerClientId",
@@ -318,17 +300,18 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
     var error: FlutterError?
     plugin.configure(withParameters: params, error: &error)
-    XCTAssertNil(error)
-    XCTAssertNil(fakeSignIn.configuration?.hostedDomain)
+    #expect(error == nil)
+    #expect(fakeSignIn.configuration?.hostedDomain == nil)
     // Set in example app GoogleService-Info.plist.
-    XCTAssertEqual(
-      fakeSignIn.configuration?.clientID,
-      "479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com")
+    #expect(
+      fakeSignIn.configuration?.clientID
+        == "479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com")
     // Overridden by params.
-    XCTAssertEqual(fakeSignIn.configuration?.serverClientID, "mockServerClientId")
+    #expect(fakeSignIn.configuration?.serverClientID == "mockServerClientId")
   }
 
-  func testInitInfoPlist() {
+  @Test func initInfoPlist() {
+    let plugin = createTestPlugin()
     let params = FSIPlatformConfigurationParams.make(
       withClientId: nil,
       serverClientId: nil,
@@ -336,60 +319,60 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
     var error: FlutterError?
     plugin.configure(withParameters: params, error: &error)
-    XCTAssertNil(error)
+    #expect(error == nil)
     // No configuration should be set, allowing the SDK to use its default behavior
     // (which is to load configuration information from Info.plist).
-    XCTAssertNil(fakeSignIn.configuration)
+    #expect(fakeSignIn.configuration == nil)
   }
 
   // MARK: - restorePreviousSignIn
 
-  func testSignInSilently() async {
+  @Test func signInSilently() async {
+    let plugin = createTestPlugin()
     let fakeUser = TestGoogleUser("mockID")
-      let fakeUserProfile = TestProfileData(
-        name: "mockDisplay", email: "mock@example.com",
-        imageURL: URL(string: "https://example.com/profile.png"))
-      fakeUser.profile = fakeUserProfile
+    let fakeUserProfile = TestProfileData(
+      name: "mockDisplay", email: "mock@example.com",
+      imageURL: URL(string: "https://example.com/profile.png"))
+    fakeUser.profile = fakeUserProfile
     fakeSignIn.user = fakeUser
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.restorePreviousSignIn { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.error)
-      XCTAssertNotNil(result?.success)
-      let user = result?.success?.user
-        XCTAssertEqual(user?.displayName, fakeUserProfile.name)
-        XCTAssertEqual(user?.email, fakeUserProfile.email)
-        XCTAssertEqual(user?.userId, fakeUser.userID)
-        XCTAssertEqual(user?.photoUrl, fakeUserProfile.imageURL?.absoluteString)
-        XCTAssertEqual(result?.success?.accessToken, fakeUser.accessToken.tokenString)
-        XCTAssertNil(result?.success?.serverAuthCode)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.restorePreviousSignIn { result, error in
+        #expect(error == nil)
+        #expect(result?.error == nil)
+        #expect(result?.success != nil)
+        #expect(result?.success?.user.displayName == fakeUserProfile.name)
+        #expect(result?.success?.user.email == fakeUserProfile.email)
+        #expect(result?.success?.user.userId == fakeUser.userID)
+        #expect(result?.success?.user.photoUrl == fakeUserProfile.imageURL?.absoluteString)
+        #expect(result?.success?.accessToken == fakeUser.accessToken.tokenString)
+        #expect(result?.success?.serverAuthCode == nil)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRestorePreviousSignInWithError() async {
+  @Test func restorePreviousSignInWithError() async {
+    let plugin = createTestPlugin()
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.hasNoAuthInKeychain.rawValue,
       userInfo: nil)
     fakeSignIn.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.restorePreviousSignIn { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.noAuthInKeychain)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.restorePreviousSignIn { result, error in
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == FSIGoogleSignInErrorCode.noAuthInKeychain)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - signIn
 
-  func testSignIn() async {
-    plugin = FLTGoogleSignInPlugin(
-      signIn: fakeSignIn, viewProvider: viewProvider, googleServiceProperties: googleServiceInfo)
+  @Test func signIn() async {
+    let plugin = createTestPlugin()
     let fakeUser = TestGoogleUser("mockID")
     let fakeUserProfile = TestProfileData(
       name: "mockDisplay", email: "mock@example.com",
@@ -404,22 +387,22 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
     fakeSignIn.signInResult = fakeSignInResult
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-      XCTAssertNil(error)
-      let user = result?.success?.user
-      XCTAssertEqual(user?.displayName, "mockDisplay")
-      XCTAssertEqual(user?.email, "mock@example.com")
-      XCTAssertEqual(user?.userId, "mockID")
-      XCTAssertEqual(user?.photoUrl, "https://example.com/profile.png")
-      XCTAssertEqual(result?.success?.accessToken, accessToken)
-      XCTAssertEqual(result?.success?.serverAuthCode, serverAuthCode)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+        #expect(error == nil)
+        #expect(result?.success?.user.displayName == "mockDisplay")
+        #expect(result?.success?.user.email == "mock@example.com")
+        #expect(result?.success?.user.userId == "mockID")
+        #expect(result?.success?.user.photoUrl == "https://example.com/profile.png")
+        #expect(result?.success?.accessToken == accessToken)
+        #expect(result?.success?.serverAuthCode == serverAuthCode)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testSignInWithScopeHint() async {
+  @Test func signInWithScopeHint() async {
+    let plugin = createTestPlugin()
     var initializationError: FlutterError?
     plugin.configure(
       withParameters: FSIPlatformConfigurationParams.make(
@@ -427,7 +410,7 @@ class FLTGoogleSignInPluginTest: XCTestCase {
         serverClientId: nil,
         hostedDomain: nil),
       error: &initializationError)
-    XCTAssertNil(initializationError)
+    #expect(initializationError == nil)
 
     let fakeUser = TestGoogleUser("mockID")
     let fakeSignInResult = TestSignInResult(user: fakeUser)
@@ -435,19 +418,20 @@ class FLTGoogleSignInPluginTest: XCTestCase {
     let requestedScopes = ["scope1", "scope2"]
     fakeSignIn.signInResult = fakeSignInResult
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.signIn(withScopeHint: requestedScopes, nonce: nil) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.error)
-      XCTAssertEqual(result?.success?.user.userId, "mockID")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.signIn(withScopeHint: requestedScopes, nonce: nil) { result, error in
+        #expect(error == nil)
+        #expect(result?.error == nil)
+        #expect(result?.success?.user.userId == "mockID")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
 
-    XCTAssertEqual(Set(fakeSignIn.additionalScopes ?? []), Set(requestedScopes))
+    #expect(Set(fakeSignIn.additionalScopes ?? []) == Set(requestedScopes))
   }
 
-  func testSignInWithNonce() async {
+  @Test func signInWithNonce() async {
+    let plugin = createTestPlugin()
     var initializationError: FlutterError?
     plugin.configure(
       withParameters: FSIPlatformConfigurationParams.make(
@@ -455,7 +439,7 @@ class FLTGoogleSignInPluginTest: XCTestCase {
         serverClientId: nil,
         hostedDomain: nil),
       error: &initializationError)
-    XCTAssertNil(initializationError)
+    #expect(initializationError == nil)
 
     let fakeUser = TestGoogleUser("mockID")
     let fakeSignInResult = TestSignInResult(user: fakeUser)
@@ -463,19 +447,20 @@ class FLTGoogleSignInPluginTest: XCTestCase {
     let nonce = "A nonce"
     fakeSignIn.signInResult = fakeSignInResult
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.signIn(withScopeHint: [], nonce: nonce) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.error)
-      XCTAssertEqual(result?.success?.user.userId, "mockID")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.signIn(withScopeHint: [], nonce: nonce) { result, error in
+        #expect(error == nil)
+        #expect(result?.error == nil)
+        #expect(result?.success?.user.userId == "mockID")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
 
-    XCTAssertEqual(fakeSignIn.nonce, nonce)
+    #expect(fakeSignIn.nonce == nonce)
   }
 
-  func testSignInAlreadyGranted() async {
+  @Test func signInAlreadyGranted() async {
+    let plugin = createTestPlugin()
     let fakeUser = TestGoogleUser("mockID")
     let fakeSignInResult = TestSignInResult(user: fakeUser)
 
@@ -486,155 +471,164 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       userInfo: nil)
     fakeSignIn.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.error)
-      XCTAssertEqual(result?.success?.user.userId, "mockID")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+        #expect(error == nil)
+        #expect(result?.error == nil)
+        #expect(result?.success?.user.userId == "mockID")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testSignInError() async {
+  @Test func signInError() async {
+    let plugin = createTestPlugin()
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.canceled.rawValue, userInfo: nil)
     fakeSignIn.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-      // Known errors from the SDK are returned as structured data, not
-      // FlutterError.
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.canceled)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+        // Known errors from the SDK are returned as structured data, not
+        // FlutterError.
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == .canceled)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testSignInExceptionReturnsError() async {
+  @Test func signInExceptionReturnsError() async {
+    let plugin = createTestPlugin()
     fakeSignIn.exception = NSException(
       name: NSExceptionName(rawValue: "MockName"),
       reason: "MockReason",
       userInfo: nil)
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-      // Unexpected errors, such as runtime exceptions, are returned as
-      // FlutterError.
-      XCTAssertNil(result)
-      XCTAssertEqual(error?.code, "google_sign_in")
-      XCTAssertEqual(error?.message, "MockReason")
-      XCTAssertEqual(error?.details as! String, "MockName")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+        // Unexpected errors, such as runtime exceptions, are returned as
+        // FlutterError.
+        #expect(result == nil)
+        #expect(error?.code == "google_sign_in")
+        #expect(error?.message == "MockReason")
+        #expect(error?.details as! String == "MockName")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - refreshedAuthorizationTokens
 
-  func testRefreshTokens() async {
-    let fakeUser = addSignedInUser()
+  @Test func refreshTokens() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
     // TestGoogleUser passes itself as the result's user property, so set the
     // fake result data on this object.
     fakeUser.idToken = TestToken("mockIdToken")
     fakeUser.accessToken = TestToken("mockAccessToken")
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.error)
-      XCTAssertEqual(result?.success?.user.idToken, "mockIdToken")
-      XCTAssertEqual(result?.success?.accessToken, "mockAccessToken")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+        #expect(error == nil)
+        #expect(result?.error == nil)
+        #expect(result?.success?.user.idToken == "mockIdToken")
+        #expect(result?.success?.accessToken == "mockAccessToken")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensUnkownUser() async {
-    let expectation = self.expectation(description: "completion called")
-    plugin.refreshedAuthorizationTokens(forUser: "unknownUser") { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.userMismatch)
-      XCTAssertEqual(result?.error?.message, "The user is no longer signed in.")
-      expectation.fulfill()
+  @Test func refreshTokensUnkownUser() async {
+    let plugin = createTestPlugin()
+    await confirmation("completion called") { confirmed in
+      plugin.refreshedAuthorizationTokens(forUser: "unknownUser") { result, error in
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == .userMismatch)
+        #expect(result?.error?.message == "The user is no longer signed in.")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensNoAuthKeychainError() async {
-    let fakeUser = addSignedInUser()
+  @Test func refreshTokensNoAuthKeychainError() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.hasNoAuthInKeychain.rawValue,
       userInfo: nil)
     fakeUser.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.noAuthInKeychain)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == .noAuthInKeychain)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensCancelledError() async {
-    let fakeUser = addSignedInUser()
+  @Test func refreshTokensCancelledError() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.canceled.rawValue, userInfo: nil)
     fakeUser.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.canceled)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == .canceled)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensURLError() async {
-    let fakeUser = addSignedInUser()
+  @Test func refreshTokensURLError() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut, userInfo: nil)
     fakeUser.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(result?.error)
-      XCTAssertNil(result?.success)
-      let expectedCode = "\(NSURLErrorDomain): \(NSURLErrorTimedOut)"
-      XCTAssertEqual(error?.code, expectedCode)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+        #expect(result?.error == nil)
+        #expect(result?.success == nil)
+        let expectedCode = "\(NSURLErrorDomain): \(NSURLErrorTimedOut)"
+        #expect(error?.code == expectedCode)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensUnknownError() async {
-    let fakeUser = addSignedInUser()
+  @Test func refreshTokensUnknownError() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(domain: "BogusDomain", code: 42, userInfo: nil)
     fakeUser.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(error?.code, "BogusDomain: 42")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+        #expect(result?.success == nil)
+        #expect(error?.code == "BogusDomain: 42")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - addScopes
 
-  func testRequestScopesPassesScopes() async {
-    let fakeUser = addSignedInUser()
+  @Test func requestScopesPassesScopes() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
     // Create a different instance to return in the result, to avoid a retain cycle.
     let fakeResultUser = TestGoogleUser(fakeUser.userID!)
     let fakeSignInResult = TestSignInResult(user: fakeResultUser)
@@ -642,100 +636,123 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
     let scopes = ["mockScope1"]
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.addScopes(scopes, forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNotNil(result?.success)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.addScopes(scopes, forUser: fakeUser.userID!) { result, error in
+        #expect(error == nil)
+        #expect(result?.success != nil)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
-    XCTAssertEqual(fakeUser.requestedScopes?.first, scopes.first)
+    #expect(fakeUser.requestedScopes?.first == scopes.first)
   }
 
-  func testRequestScopesResultErrorIfNotSignedIn() async {
-    let expectation = self.expectation(description: "completion called")
-    plugin.addScopes(["mockScope1"], forUser: "unknownUser") { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.userMismatch)
-      expectation.fulfill()
+  @Test func requestScopesResultErrorIfNotSignedIn() async {
+    let plugin = createTestPlugin()
+    await confirmation("completion called") { confirmed in
+      plugin.addScopes(["mockScope1"], forUser: "unknownUser") { result, error in
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == .userMismatch)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesIfNoMissingScope() async {
-    let fakeUser = addSignedInUser()
+  @Test func requestScopesIfNoMissingScope() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.scopesAlreadyGranted.rawValue,
       userInfo: nil)
     fakeUser.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.scopesAlreadyGranted)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == .scopesAlreadyGranted)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesResultErrorIfMismatchingUser() async {
-    let fakeUser = addSignedInUser()
+  @Test func requestScopesResultErrorIfMismatchingUser() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.mismatchWithCurrentUser.rawValue,
       userInfo: nil)
     fakeUser.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(error)
-      XCTAssertNil(result?.success)
-      XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.userMismatch)
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
+        #expect(error == nil)
+        #expect(result?.success == nil)
+        #expect(result?.error?.type == .userMismatch)
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesWithUnknownError() async {
-    let fakeUser = addSignedInUser()
+  @Test func requestScopesWithUnknownError() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(domain: "BogusDomain", code: 42, userInfo: nil)
     fakeUser.error = sdkError
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(result)
-      XCTAssertEqual(error?.code, "BogusDomain: 42")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
+        #expect(result == nil)
+        #expect(error?.code == "BogusDomain: 42")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesException() async {
-    let fakeUser = addSignedInUser()
+  @Test func requestScopesException() async {
+    let plugin = createTestPlugin()
+    let fakeUser = addSignedInUser(to: plugin)
 
     fakeUser.exception = NSException(
       name: NSExceptionName(rawValue: "MockName"),
       reason: "MockReason",
       userInfo: nil)
 
-    let expectation = self.expectation(description: "completion called")
-    plugin.addScopes([], forUser: fakeUser.userID!) { result, error in
-      XCTAssertNil(result)
-      XCTAssertEqual(error?.code, "request_scopes")
-      XCTAssertEqual(error?.message, "MockReason")
-      XCTAssertEqual(error?.details as! String, "MockName")
-      expectation.fulfill()
+    await confirmation("completion called") { confirmed in
+      plugin.addScopes([], forUser: fakeUser.userID!) { result, error in
+        #expect(result == nil)
+        #expect(error?.code == "request_scopes")
+        #expect(error?.message == "MockReason")
+        #expect(error?.details as! String == "MockName")
+        confirmed()
+      }
     }
-      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - Utils
 
-  func addSignedInUser() -> TestGoogleUser {
+  func loadGoogleServiceInfo() -> [String: Any]? {
+    if let plistPath = Bundle(for: type(of: fakeSignIn)).path(
+      forResource: "GoogleService-Info", ofType: "plist")
+    {
+      return NSDictionary(contentsOfFile: plistPath) as? [String: Any]
+    }
+    return nil
+  }
+
+  func createTestPlugin(
+    viewProvider: TestViewProvider = TestViewProvider(),
+    googleServiceProperties: [String: Any]? = nil
+  ) -> FLTGoogleSignInPlugin {
+    return FLTGoogleSignInPlugin(
+      signIn: fakeSignIn, viewProvider: viewProvider,
+      googleServiceProperties: googleServiceProperties)
+  }
+
+  func addSignedInUser(to plugin: FLTGoogleSignInPlugin) -> TestGoogleUser {
     let identifier = "fakeID"
     let user = TestGoogleUser(identifier)
     plugin.usersByIdentifier[identifier] = user
