@@ -7,11 +7,11 @@
 /// Internal APIs exposed for unit testing
 @interface FLTGoogleMapHeatmapController (Test)
 
-/// Updates the underlying GMUHeatmapTileLayer with the properties from the given options.
+/// Updates the underlying GMUHeatmapTileLayer with the properties from the given platform heatmap.
 ///
 /// Setting the heatmap to visible will set its map to the given mapView.
 + (void)updateHeatmap:(GMUHeatmapTileLayer *)heatmapTileLayer
-          fromOptions:(NSDictionary<NSString *, id> *)options
-          withMapView:(GMSMapView *)mapView;
+    fromPlatformHeatmap:(FGMPlatformHeatmap *)platformHeatmap
+            withMapView:(GMSMapView *)mapView;
 
 @end
