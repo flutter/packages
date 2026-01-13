@@ -243,13 +243,13 @@ class FLTGoogleSignInPluginTest: XCTestCase {
     XCTAssertNil(error)
   }
 
-  func testDisconnect() {
+  func testDisconnect() async {
     let expectation = self.expectation(description: "expect result returns true")
     plugin.disconnect { error in
       XCTAssertNil(error)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+    await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - Configure
@@ -344,8 +344,12 @@ class FLTGoogleSignInPluginTest: XCTestCase {
 
   // MARK: - restorePreviousSignIn
 
-  func testSignInSilently() {
+  func testSignInSilently() async {
     let fakeUser = TestGoogleUser("mockID")
+      let fakeUserProfile = TestProfileData(
+        name: "mockDisplay", email: "mock@example.com",
+        imageURL: URL(string: "https://example.com/profile.png"))
+      fakeUser.profile = fakeUserProfile
     fakeSignIn.user = fakeUser
 
     let expectation = self.expectation(description: "completion called")
@@ -354,18 +358,18 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertNil(result?.error)
       XCTAssertNotNil(result?.success)
       let user = result?.success?.user
-      XCTAssertNil(user?.displayName)
-      XCTAssertNil(user?.email)
-      XCTAssertEqual(user?.userId, "mockID")
-      XCTAssertNil(user?.photoUrl)
-      XCTAssertNil(result?.success?.accessToken)
-      XCTAssertNil(result?.success?.serverAuthCode)
+        XCTAssertEqual(user?.displayName, fakeUserProfile.name)
+        XCTAssertEqual(user?.email, fakeUserProfile.email)
+        XCTAssertEqual(user?.userId, fakeUser.userID)
+        XCTAssertEqual(user?.photoUrl, fakeUserProfile.imageURL?.absoluteString)
+        XCTAssertEqual(result?.success?.accessToken, fakeUser.accessToken.tokenString)
+        XCTAssertNil(result?.success?.serverAuthCode)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRestorePreviousSignInWithError() {
+  func testRestorePreviousSignInWithError() async {
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.hasNoAuthInKeychain.rawValue,
       userInfo: nil)
@@ -378,12 +382,12 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.noAuthInKeychain)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - signIn
 
-  func testSignIn() {
+  func testSignIn() async {
     plugin = FLTGoogleSignInPlugin(
       signIn: fakeSignIn, viewProvider: viewProvider, googleServiceProperties: googleServiceInfo)
     let fakeUser = TestGoogleUser("mockID")
@@ -412,10 +416,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.success?.serverAuthCode, serverAuthCode)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testSignInWithScopeHint() {
+  func testSignInWithScopeHint() async {
     var initializationError: FlutterError?
     plugin.configure(
       withParameters: FSIPlatformConfigurationParams.make(
@@ -438,12 +442,12 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.success?.user.userId, "mockID")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
 
     XCTAssertEqual(Set(fakeSignIn.additionalScopes ?? []), Set(requestedScopes))
   }
 
-  func testSignInWithNonce() {
+  func testSignInWithNonce() async {
     var initializationError: FlutterError?
     plugin.configure(
       withParameters: FSIPlatformConfigurationParams.make(
@@ -466,12 +470,12 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.success?.user.userId, "mockID")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
 
     XCTAssertEqual(fakeSignIn.nonce, nonce)
   }
 
-  func testSignInAlreadyGranted() {
+  func testSignInAlreadyGranted() async {
     let fakeUser = TestGoogleUser("mockID")
     let fakeSignInResult = TestSignInResult(user: fakeUser)
 
@@ -489,10 +493,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.success?.user.userId, "mockID")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testSignInError() {
+  func testSignInError() async {
     let sdkError = NSError(
       domain: kGIDSignInErrorDomain, code: GIDSignInError.canceled.rawValue, userInfo: nil)
     fakeSignIn.error = sdkError
@@ -506,10 +510,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.canceled)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testSignInExceptionReturnsError() {
+  func testSignInExceptionReturnsError() async {
     fakeSignIn.exception = NSException(
       name: NSExceptionName(rawValue: "MockName"),
       reason: "MockReason",
@@ -525,12 +529,12 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(error?.details as! String, "MockName")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - refreshedAuthorizationTokens
 
-  func testRefreshTokens() {
+  func testRefreshTokens() async {
     let fakeUser = addSignedInUser()
     // TestGoogleUser passes itself as the result's user property, so set the
     // fake result data on this object.
@@ -545,10 +549,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.success?.accessToken, "mockAccessToken")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensUnkownUser() {
+  func testRefreshTokensUnkownUser() async {
     let expectation = self.expectation(description: "completion called")
     plugin.refreshedAuthorizationTokens(forUser: "unknownUser") { result, error in
       XCTAssertNil(error)
@@ -557,10 +561,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.message, "The user is no longer signed in.")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensNoAuthKeychainError() {
+  func testRefreshTokensNoAuthKeychainError() async {
     let fakeUser = addSignedInUser()
 
     let sdkError = NSError(
@@ -575,10 +579,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.noAuthInKeychain)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensCancelledError() {
+  func testRefreshTokensCancelledError() async {
     let fakeUser = addSignedInUser()
 
     let sdkError = NSError(
@@ -592,10 +596,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.canceled)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensURLError() {
+  func testRefreshTokensURLError() async {
     let fakeUser = addSignedInUser()
 
     let sdkError = NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut, userInfo: nil)
@@ -609,10 +613,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(error?.code, expectedCode)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRefreshTokensUnknownError() {
+  func testRefreshTokensUnknownError() async {
     let fakeUser = addSignedInUser()
 
     let sdkError = NSError(domain: "BogusDomain", code: 42, userInfo: nil)
@@ -624,12 +628,12 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(error?.code, "BogusDomain: 42")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - addScopes
 
-  func testRequestScopesPassesScopes() {
+  func testRequestScopesPassesScopes() async {
     let fakeUser = addSignedInUser()
     // Create a different instance to return in the result, to avoid a retain cycle.
     let fakeResultUser = TestGoogleUser(fakeUser.userID!)
@@ -644,11 +648,11 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertNotNil(result?.success)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
     XCTAssertEqual(fakeUser.requestedScopes?.first, scopes.first)
   }
 
-  func testRequestScopesResultErrorIfNotSignedIn() {
+  func testRequestScopesResultErrorIfNotSignedIn() async {
     let expectation = self.expectation(description: "completion called")
     plugin.addScopes(["mockScope1"], forUser: "unknownUser") { result, error in
       XCTAssertNil(error)
@@ -656,10 +660,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.userMismatch)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesIfNoMissingScope() {
+  func testRequestScopesIfNoMissingScope() async {
     let fakeUser = addSignedInUser()
 
     let sdkError = NSError(
@@ -674,10 +678,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.scopesAlreadyGranted)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesResultErrorIfMismatchingUser() {
+  func testRequestScopesResultErrorIfMismatchingUser() async {
     let fakeUser = addSignedInUser()
 
     let sdkError = NSError(
@@ -692,10 +696,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(result?.error?.type, FSIGoogleSignInErrorCode.userMismatch)
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesWithUnknownError() {
+  func testRequestScopesWithUnknownError() async {
     let fakeUser = addSignedInUser()
 
     let sdkError = NSError(domain: "BogusDomain", code: 42, userInfo: nil)
@@ -707,10 +711,10 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(error?.code, "BogusDomain: 42")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
-  func testRequestScopesException() {
+  func testRequestScopesException() async {
     let fakeUser = addSignedInUser()
 
     fakeUser.exception = NSException(
@@ -726,7 +730,7 @@ class FLTGoogleSignInPluginTest: XCTestCase {
       XCTAssertEqual(error?.details as! String, "MockName")
       expectation.fulfill()
     }
-    waitForExpectations(timeout: 5.0, handler: nil)
+      await fulfillment(of: [expectation], timeout: 5.0)
   }
 
   // MARK: - Utils
