@@ -110,7 +110,7 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
   }
 
   @override
-  Stream<List<int>> openRead([int? start, int? end]) async* {
+  Stream<Uint8List> openRead([int? start, int? end]) async* {
     final Blob blob = await getBlob();
     final Blob slice = blob.slice(start ?? 0, end ?? blob.size, blob.type);
     yield await blobToBytes(slice);
