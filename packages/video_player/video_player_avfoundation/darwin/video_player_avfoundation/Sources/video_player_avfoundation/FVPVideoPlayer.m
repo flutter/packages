@@ -471,8 +471,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                       completionHandler:^{
                         dispatch_async(dispatch_get_main_queue(), ^{
                           NSError *error = nil;
-                          AVKeyValueStatus status = [urlAsset statusOfValueForKey:kFVPAssetVariantsKey
-                                                                            error:&error];
+                          AVKeyValueStatus status =
+                              [urlAsset statusOfValueForKey:kFVPAssetVariantsKey error:&error];
 
                           if (status == AVKeyValueStatusLoaded) {
                             NSArray<AVAssetVariant *> *variants = urlAsset.variants;
@@ -498,9 +498,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                                 }
                               }
 
-                              // Determine if this variant is currently selected by comparing bitrates.
-                              // Since AVPlayer doesn't expose the exact selected variant, we use a 10%
-                              // tolerance to account for minor bitrate variations in adaptive streaming.
+                              // Determine if this variant is currently selected by comparing
+                              // bitrates. Since AVPlayer doesn't expose the exact selected variant,
+                              // we use a 10% tolerance to account for minor bitrate variations in
+                              // adaptive streaming.
                               BOOL isSelected =
                                   (currentBitrate > 0 &&
                                    fabs(peakBitRate - currentBitrate) < peakBitRate * 0.1);
@@ -508,7 +509,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                               // Generate a human-readable resolution label (e.g., "1080p")
                               NSString *resolutionLabel = nil;
                               if (videoSize.height > 0) {
-                                resolutionLabel = [NSString stringWithFormat:@"%.0fp", videoSize.height];
+                                resolutionLabel =
+                                    [NSString stringWithFormat:@"%.0fp", videoSize.height];
                               }
 
                               FVPMediaSelectionVideoTrackData *trackData =
@@ -524,9 +526,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
                             }
                           }
 
-                          FVPNativeVideoTrackData *result = [FVPNativeVideoTrackData
-                               makeWithAssetTracks:nil
-                              mediaSelectionTracks:mediaSelectionTracks];
+                          FVPNativeVideoTrackData *result =
+                              [FVPNativeVideoTrackData makeWithAssetTracks:nil
+                                                      mediaSelectionTracks:mediaSelectionTracks];
                           completion(result, nil);
                         });
                       }];
@@ -540,12 +542,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 /// Creates a video track data object with the given parameters, converting values to NSNumber
 /// where appropriate and returning nil for invalid/zero values.
 - (FVPMediaSelectionVideoTrackData *)createVideoTrackDataWithIndex:(NSInteger)index
-                                                              label:(NSString *)label
-                                                        peakBitRate:(double)peakBitRate
-                                                          videoSize:(CGSize)videoSize
-                                                          frameRate:(double)frameRate
-                                                              codec:(NSString *)codec
-                                                         isSelected:(BOOL)isSelected {
+                                                             label:(NSString *)label
+                                                       peakBitRate:(double)peakBitRate
+                                                         videoSize:(CGSize)videoSize
+                                                         frameRate:(double)frameRate
+                                                             codec:(NSString *)codec
+                                                        isSelected:(BOOL)isSelected {
   return [FVPMediaSelectionVideoTrackData
       makeWithVariantIndex:index
                      label:label

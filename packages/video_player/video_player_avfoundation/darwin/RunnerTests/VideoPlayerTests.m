@@ -1054,7 +1054,8 @@
 #pragma mark - Video Track Tests
 
 // Integration test for getVideoTracks with a non-HLS MP4 video over a live network request.
-// Non-HLS MP4 files don't have adaptive bitrate variants, so we expect empty media selection tracks.
+// Non-HLS MP4 files don't have adaptive bitrate variants, so we expect empty media selection
+// tracks.
 - (void)testGetVideoTracksWithRealMP4Video {
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
