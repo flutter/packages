@@ -56,7 +56,11 @@ class TestSignIn: NSObject, FSIGIDSignIn {
     if let exception = exception {
       exception.raise()
     }
-    completion?(user, user != nil ? nil : error)
+    if let user {
+      completion?(user, nil)
+    } else {
+      completion?(nil, error)
+    }
   }
 
   func signOut() {
@@ -85,7 +89,11 @@ class TestSignIn: NSObject, FSIGIDSignIn {
       self.hint = hint
       self.additionalScopes = additionalScopes
       self.nonce = nonce
-      completion?(signInResult, signInResult != nil ? nil : error)
+      if let signInResult {
+        completion?(signInResult, nil)
+      } else {
+        completion?(nil, error)
+      }
     }
   #else
     func signIn(
@@ -102,7 +110,11 @@ class TestSignIn: NSObject, FSIGIDSignIn {
       self.hint = hint
       self.additionalScopes = additionalScopes
       self.nonce = nonce
-      completion?(signInResult, signInResult != nil ? nil : error)
+      if let signInResult {
+        completion?(signInResult, nil)
+      } else {
+        completion?(nil, error)
+      }
     }
   #endif
 }
@@ -155,7 +167,7 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
   var userID: String?
   var profile: FSIGIDProfileData?
   var grantedScopes: [String]?
-  var accessToken: FSIGIDToken = TestToken("Acces")
+  var accessToken: FSIGIDToken = TestToken("Access")
   var refreshToken: FSIGIDToken = TestToken("Refresh")
   var idToken: FSIGIDToken?
 
@@ -513,7 +525,7 @@ struct FLTGoogleSignInPluginTest {
         #expect(result == nil)
         #expect(error?.code == "google_sign_in")
         #expect(error?.message == "MockReason")
-        #expect(error?.details as! String == "MockName")
+        #expect(error?.details as? String == "MockName")
         confirmed()
       }
     }
@@ -726,7 +738,7 @@ struct FLTGoogleSignInPluginTest {
         #expect(result == nil)
         #expect(error?.code == "request_scopes")
         #expect(error?.message == "MockReason")
-        #expect(error?.details as! String == "MockName")
+        #expect(error?.details as? String == "MockName")
         confirmed()
       }
     }
