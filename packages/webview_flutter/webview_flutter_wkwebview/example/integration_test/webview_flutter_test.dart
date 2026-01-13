@@ -17,10 +17,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:leak_tracker/leak_tracker.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
-import 'package:webview_flutter_wkwebview/src/common/platform_webview.dart';
 import 'package:webview_flutter_wkwebview/src/common/weak_reference_utils.dart';
 import 'package:webview_flutter_wkwebview/src/common/web_kit.g.dart';
-import 'package:webview_flutter_wkwebview/src/webkit_proxy.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 Future<void> main() async {
@@ -63,6 +61,10 @@ Future<void> main() async {
   final headersUrl = '$prefixUrl/headers';
   final basicAuthUrl = '$prefixUrl/http-basic-authentication';
 
+  setUp(() {
+    PigeonOverrides.pigeon_reset();
+  });
+
   testWidgets(
     'withWeakReferenceTo allows encapsulating class to be garbage collected',
     (WidgetTester tester) async {
@@ -98,6 +100,40 @@ Future<void> main() async {
         }
       });
 
+      PigeonOverrides.uIViewWKWebView_new =
+          ({
+            required WKWebViewConfiguration initialConfiguration,
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            final webView = UIViewWKWebView.pigeon_new(
+              initialConfiguration: initialConfiguration,
+            );
+            finalizer.attach(webView, webViewToken);
+            return webView;
+          };
+      PigeonOverrides.nSViewWKWebView_new =
+          ({
+            required WKWebViewConfiguration initialConfiguration,
+            void Function(
+              NSObject pigeonInstance,
+              String? keyPath,
+              NSObject? object,
+              Map<KeyValueChangeKey, Object?>? change,
+            )?
+            observeValue,
+          }) {
+            final webView = NSViewWKWebView.pigeon_new(
+              initialConfiguration: initialConfiguration,
+            );
+            finalizer.attach(webView, webViewToken);
+            return webView;
+          };
       // Wait for any WebView to be garbage collected.
       await tester.pumpWidget(
         Builder(
@@ -105,31 +141,7 @@ Future<void> main() async {
             return PlatformWebViewWidget(
               WebKitWebViewWidgetCreationParams(
                 controller: PlatformWebViewController(
-                  WebKitWebViewControllerCreationParams(
-                    webKitProxy: WebKitProxy(
-                      newPlatformWebView:
-                          ({
-                            required WKWebViewConfiguration
-                            initialConfiguration,
-                            void Function(
-                              NSObject,
-                              String?,
-                              NSObject?,
-                              Map<KeyValueChangeKey, Object?>?,
-                            )?
-                            observeValue,
-                          }) {
-                            final platformWebView = PlatformWebView(
-                              initialConfiguration: initialConfiguration,
-                            );
-                            finalizer.attach(
-                              platformWebView.nativeWebView,
-                              webViewToken,
-                            );
-                            return platformWebView;
-                          },
-                    ),
-                  ),
+                  WebKitWebViewControllerCreationParams(),
                 ),
               ),
             ).build(context);

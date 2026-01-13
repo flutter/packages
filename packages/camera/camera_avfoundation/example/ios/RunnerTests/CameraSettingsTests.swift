@@ -72,7 +72,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
     if let bitrate = outputSettings?[AVEncoderBitRateKey] as? Int, bitrate == testAudioBitrate {
       audioSettingsExpectation.fulfill()
@@ -81,7 +81,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
   }
 
   override func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
     if let compressionProperties = outputSettings?[AVVideoCompressionPropertiesKey]
       as? [String: Any],
@@ -101,7 +101,7 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     return MockAssetWriterInput()
   }
 
-  override func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
+  override func addInput(_ writerInput: AssetWriterInput, to writer: AssetWriter) {
     // No-op.
   }
 
@@ -161,7 +161,7 @@ final class CameraSettingsTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: MockGlobalEventApi(),
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in mockDevice },
       captureSessionFactory: { mockSession },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),
@@ -203,7 +203,7 @@ final class CameraSettingsTests: XCTestCase {
     configuration.mediaSettings = settings
     let camera = CameraTestUtils.createTestCamera(configuration)
 
-    let range = camera.captureDevice.flutterActiveFormat.videoSupportedFrameRateRanges[0]
+    let range = camera.captureDevice.flutterActiveFormat.flutterVideoSupportedFrameRateRanges[0]
     XCTAssertLessThanOrEqual(range.minFrameRate, 60)
     XCTAssertGreaterThanOrEqual(range.maxFrameRate, 60)
   }

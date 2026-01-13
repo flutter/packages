@@ -1,3 +1,11 @@
+## 2.16.0
+
+* Adds compatibility with SDK version 10.x for apps targeting iOS 16+.
+
+## 2.15.8
+
+* Replaces internal use of deprecated methods.
+
 ## 2.15.7
 
 * Updates to Pigeon 26.

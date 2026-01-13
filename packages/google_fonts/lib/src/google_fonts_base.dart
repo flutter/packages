@@ -296,7 +296,7 @@ int _computeMatch(GoogleFontsVariant a, GoogleFontsVariant b) {
   if (a == b) {
     return 0;
   }
-  int score = (a.fontWeight.index - b.fontWeight.index).abs();
+  int score = (a.fontWeight.value - b.fontWeight.value).abs() ~/ 100;
   if (a.fontStyle != b.fontStyle) {
     score += 2;
   }

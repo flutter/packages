@@ -24,7 +24,7 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       messenger: MockFlutterBinaryMessenger(),
       globalAPI: mockGlobalEventApi,
       deviceDiscoverer: MockCameraDeviceDiscoverer(),
-      permissionManager: MockFLTCameraPermissionManager(),
+      permissionManager: MockCameraPermissionManager(),
       deviceFactory: { _ in MockCaptureDevice() },
       captureSessionFactory: { MockCaptureSession() },
       captureDeviceInputFactory: MockCaptureDeviceInputFactory(),

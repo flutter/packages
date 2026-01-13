@@ -11,7 +11,7 @@ On Android the WebView widget is backed by a [WebView](https://developer.android
 
 |             | Android | iOS   | macOS  |
 |-------------|---------|-------|--------|
-| **Support** | SDK 24+ | 12.0+ | 10.14+ |
+| **Support** | SDK 24+ | 13.0+ | 10.15+ |
 
 ## Usage
 

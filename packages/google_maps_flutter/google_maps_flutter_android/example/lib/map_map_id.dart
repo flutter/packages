@@ -53,6 +53,7 @@ class MapIdBodyState extends State<MapIdBody> {
     switch (_initializedRenderer) {
       case AndroidMapRenderer.latest:
         return 'latest';
+      // ignore: deprecated_member_use
       case AndroidMapRenderer.legacy:
         return 'legacy';
       case AndroidMapRenderer.platformDefault:
@@ -80,7 +81,7 @@ class MapIdBodyState extends State<MapIdBody> {
         zoom: 7.0,
       ),
       key: _key,
-      cloudMapId: _mapId,
+      mapId: _mapId,
     );
 
     final columnChildren = <Widget>[

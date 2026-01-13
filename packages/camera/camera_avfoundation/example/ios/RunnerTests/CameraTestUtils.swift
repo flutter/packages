@@ -39,17 +39,17 @@ enum CameraTestUtils {
     let frameRateRangeMock1 = MockFrameRateRange.init(minFrameRate: 3, maxFrameRate: 30)
 
     let captureDeviceFormatMock1 = MockCaptureDeviceFormat()
-    captureDeviceFormatMock1.videoSupportedFrameRateRanges = [frameRateRangeMock1]
+    captureDeviceFormatMock1.flutterVideoSupportedFrameRateRanges = [frameRateRangeMock1]
 
     let frameRateRangeMock2 = MockFrameRateRange.init(minFrameRate: 3, maxFrameRate: 60)
 
     let captureDeviceFormatMock2 = MockCaptureDeviceFormat()
-    captureDeviceFormatMock2.videoSupportedFrameRateRanges = [frameRateRangeMock2]
+    captureDeviceFormatMock2.flutterVideoSupportedFrameRateRanges = [frameRateRangeMock2]
 
     let captureDeviceMock = MockCaptureDevice()
     captureDeviceMock.flutterFormats = [captureDeviceFormatMock1, captureDeviceFormatMock2]
 
-    var currentFormat: FLTCaptureDeviceFormat = captureDeviceFormatMock1
+    var currentFormat: CaptureDeviceFormat = captureDeviceFormatMock1
 
     captureDeviceMock.activeFormatStub = { currentFormat }
     captureDeviceMock.setActiveFormatStub = { format in

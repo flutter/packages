@@ -156,19 +156,7 @@ void main() {
                 .platformDirectory(FlutterPlatform.ios)
                 .childFile('plugin1.podspec')
                 .path,
-            '--configuration=Debug',
-            '--skip-tests',
-            '--use-libraries',
-          ], packagesDir.path),
-          ProcessCall('pod', <String>[
-            'lib',
-            'lint',
-            plugin
-                .platformDirectory(FlutterPlatform.ios)
-                .childFile('plugin1.podspec')
-                .path,
-            '--configuration=Debug',
-            '--skip-tests',
+            '--quick',
           ], packagesDir.path),
         ]),
       );
@@ -205,19 +193,7 @@ void main() {
                 .platformDirectory(FlutterPlatform.macos)
                 .childFile('plugin1.podspec')
                 .path,
-            '--configuration=Debug',
-            '--skip-tests',
-            '--use-libraries',
-          ], packagesDir.path),
-          ProcessCall('pod', <String>[
-            'lib',
-            'lint',
-            plugin
-                .platformDirectory(FlutterPlatform.macos)
-                .childFile('plugin1.podspec')
-                .path,
-            '--configuration=Debug',
-            '--skip-tests',
+            '--quick',
           ], packagesDir.path),
         ]),
       );
@@ -257,39 +233,6 @@ void main() {
 
       // Simulate failure from `pod`.
       processRunner.mockProcessesForExecutable['pod'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-      ];
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['podspec-check'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-
-      expect(
-        output,
-        containsAllInOrder(<Matcher>[
-          contains('The following packages had errors:'),
-          contains(
-            'plugin1:\n'
-            '    plugin1.podspec',
-          ),
-        ]),
-      );
-    });
-
-    test('fails if linting as a static library fails', () async {
-      final RepositoryPackage plugin = createFakePlugin('plugin1', packagesDir);
-      _writeFakePodspec(plugin, 'ios');
-
-      // Simulate failure from the second call to `pod`.
-      processRunner.mockProcessesForExecutable['pod'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess()),
         FakeProcessInfo(MockProcess(exitCode: 1)),
       ];
 

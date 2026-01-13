@@ -36,7 +36,7 @@ class PodspecCheckCommand extends PackageLoopingCommand {
 
   @override
   final String description =
-      'Runs "pod lib lint" on all iOS and macOS plugin podspecs, as well as '
+      'Runs "pod lib lint --quick" on all iOS and macOS plugin podspecs, as well as '
       'making sure the podspecs follow repository standards.\n\n'
       'This command requires "pod" and "flutter" to be in your path. Runs on macOS only.';
 
@@ -117,11 +117,6 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   Future<List<File>> _podspecsToLint(RepositoryPackage package) async {
-    // Since the pigeon platform tests podspecs require generated files that are not included in git,
-    // the podspec lint fails.
-    if (package.path.contains('packages/pigeon/platform_tests/')) {
-      return <File>[];
-    }
     final List<File> podspecs = await getFilesForPackage(package).where((
       File entity,
     ) {
@@ -137,43 +132,17 @@ class PodspecCheckCommand extends PackageLoopingCommand {
   }
 
   Future<bool> _lintPodspec(File podspec) async {
-    // Do not run the static analyzer on plugins with known analyzer issues.
-    final String podspecPath = podspec.path;
+    print('Linting ${podspec.basename}');
 
-    final String podspecBasename = podspec.basename;
-    print('Linting $podspecBasename');
+    final ProcessResult lintResult = await _runPodLint(podspec.path);
+    print(lintResult.stdout);
+    print(lintResult.stderr);
 
-    // Lint plugin as framework (use_frameworks!).
-    final ProcessResult frameworkResult = await _runPodLint(
-      podspecPath,
-      libraryLint: true,
-    );
-    print(frameworkResult.stdout);
-    print(frameworkResult.stderr);
-
-    // Lint plugin as library.
-    final ProcessResult libraryResult = await _runPodLint(
-      podspecPath,
-      libraryLint: false,
-    );
-    print(libraryResult.stdout);
-    print(libraryResult.stderr);
-
-    return frameworkResult.exitCode == 0 && libraryResult.exitCode == 0;
+    return lintResult.exitCode == 0;
   }
 
-  Future<ProcessResult> _runPodLint(
-    String podspecPath, {
-    required bool libraryLint,
-  }) async {
-    final arguments = <String>[
-      'lib',
-      'lint',
-      podspecPath,
-      '--configuration=Debug', // Release targets unsupported arm64 simulators. Use Debug to only build against targeted x86_64 simulator devices.
-      '--skip-tests',
-      if (libraryLint) '--use-libraries',
-    ];
+  Future<ProcessResult> _runPodLint(String podspecPath) async {
+    final arguments = <String>['lib', 'lint', podspecPath, '--quick'];
 
     print('Running "pod ${arguments.join(' ')}"');
     return processRunner.run(

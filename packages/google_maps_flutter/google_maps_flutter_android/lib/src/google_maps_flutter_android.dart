@@ -16,9 +16,6 @@ import 'google_map_inspector_android.dart';
 import 'messages.g.dart';
 import 'serialization.dart';
 
-// TODO(stuartmorgan): Remove the dependency on platform interface toJson
-// methods. Channel serialization details should all be package-internal.
-
 /// The non-test implementation of `_apiProvider`.
 MapsApi _productionApiProvider(int mapId) {
   return MapsApi(messageChannelSuffix: mapId.toString());
@@ -770,8 +767,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(
       consumeTapEvents: circle.consumeTapEvents,
-      fillColor: circle.fillColor.value,
-      strokeColor: circle.strokeColor.value,
+      fillColor: PlatformColor(argbValue: circle.fillColor.toARGB32()),
+      strokeColor: PlatformColor(argbValue: circle.strokeColor.toARGB32()),
       visible: circle.visible,
       strokeWidth: circle.strokeWidth,
       zIndex: circle.zIndex.toDouble(),
@@ -858,12 +855,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
-      fillColor: polygon.fillColor.value,
+      fillColor: PlatformColor(argbValue: polygon.fillColor.toARGB32()),
       geodesic: polygon.geodesic,
       consumesTapEvents: polygon.consumeTapEvents,
       points: points,
       holes: holes,
-      strokeColor: polygon.strokeColor.value,
+      strokeColor: PlatformColor(argbValue: polygon.strokeColor.toARGB32()),
       strokeWidth: polygon.strokeWidth,
       zIndex: polygon.zIndex,
       visible: polygon.visible,
@@ -880,7 +877,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
-      color: polyline.color.value,
+      color: PlatformColor(argbValue: polyline.color.toARGB32()),
       startCap: platformCapFromCap(polyline.startCap),
       endCap: platformCapFromCap(polyline.endCap),
       geodesic: polyline.geodesic,
@@ -1368,7 +1365,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
-    cloudMapId: config.cloudMapId,
+    mapId: config.mapId,
     style: config.style,
   );
 }
@@ -1413,7 +1410,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
     liteModeEnabled: options['liteModeEnabled'] as bool?,
-    cloudMapId: options['cloudMapId'] as String?,
+    mapId: options['cloudMapId'] as String?,
     style: options['style'] as String?,
   );
 }
