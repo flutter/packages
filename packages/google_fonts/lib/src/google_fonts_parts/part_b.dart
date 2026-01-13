@@ -228,6 +228,267 @@ class PartB {
     );
   }
 
+  /// Applies the BBH Bartle font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BBH+Bartle
+  static TextStyle bbhBartle({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'db5ad12f640b2a5676895edbea74af7369d0fa3e03ea4f99df00c09bb6441a4e',
+        17088,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BBHBartle',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the BBH Bartle font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BBH+Bartle
+  static TextTheme bbhBartleTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: bbhBartle(textStyle: textTheme.displayLarge),
+      displayMedium: bbhBartle(textStyle: textTheme.displayMedium),
+      displaySmall: bbhBartle(textStyle: textTheme.displaySmall),
+      headlineLarge: bbhBartle(textStyle: textTheme.headlineLarge),
+      headlineMedium: bbhBartle(textStyle: textTheme.headlineMedium),
+      headlineSmall: bbhBartle(textStyle: textTheme.headlineSmall),
+      titleLarge: bbhBartle(textStyle: textTheme.titleLarge),
+      titleMedium: bbhBartle(textStyle: textTheme.titleMedium),
+      titleSmall: bbhBartle(textStyle: textTheme.titleSmall),
+      bodyLarge: bbhBartle(textStyle: textTheme.bodyLarge),
+      bodyMedium: bbhBartle(textStyle: textTheme.bodyMedium),
+      bodySmall: bbhBartle(textStyle: textTheme.bodySmall),
+      labelLarge: bbhBartle(textStyle: textTheme.labelLarge),
+      labelMedium: bbhBartle(textStyle: textTheme.labelMedium),
+      labelSmall: bbhBartle(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the BBH Bogle font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BBH+Bogle
+  static TextStyle bbhBogle({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5348e3e6388f662b9e3539ba42ebde59883e8c715f34c347e57fc261369cd839',
+        14936,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BBHBogle',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the BBH Bogle font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BBH+Bogle
+  static TextTheme bbhBogleTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: bbhBogle(textStyle: textTheme.displayLarge),
+      displayMedium: bbhBogle(textStyle: textTheme.displayMedium),
+      displaySmall: bbhBogle(textStyle: textTheme.displaySmall),
+      headlineLarge: bbhBogle(textStyle: textTheme.headlineLarge),
+      headlineMedium: bbhBogle(textStyle: textTheme.headlineMedium),
+      headlineSmall: bbhBogle(textStyle: textTheme.headlineSmall),
+      titleLarge: bbhBogle(textStyle: textTheme.titleLarge),
+      titleMedium: bbhBogle(textStyle: textTheme.titleMedium),
+      titleSmall: bbhBogle(textStyle: textTheme.titleSmall),
+      bodyLarge: bbhBogle(textStyle: textTheme.bodyLarge),
+      bodyMedium: bbhBogle(textStyle: textTheme.bodyMedium),
+      bodySmall: bbhBogle(textStyle: textTheme.bodySmall),
+      labelLarge: bbhBogle(textStyle: textTheme.labelLarge),
+      labelMedium: bbhBogle(textStyle: textTheme.labelMedium),
+      labelSmall: bbhBogle(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the BBH Hegarty font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BBH+Hegarty
+  static TextStyle bbhHegarty({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3b03e807afdee0de7cd7ea40df7a77b66d94e3287fbfcc2fc83d4aa0000945d2',
+        22784,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'BBHHegarty',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the BBH Hegarty font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/BBH+Hegarty
+  static TextTheme bbhHegartyTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: bbhHegarty(textStyle: textTheme.displayLarge),
+      displayMedium: bbhHegarty(textStyle: textTheme.displayMedium),
+      displaySmall: bbhHegarty(textStyle: textTheme.displaySmall),
+      headlineLarge: bbhHegarty(textStyle: textTheme.headlineLarge),
+      headlineMedium: bbhHegarty(textStyle: textTheme.headlineMedium),
+      headlineSmall: bbhHegarty(textStyle: textTheme.headlineSmall),
+      titleLarge: bbhHegarty(textStyle: textTheme.titleLarge),
+      titleMedium: bbhHegarty(textStyle: textTheme.titleMedium),
+      titleSmall: bbhHegarty(textStyle: textTheme.titleSmall),
+      bodyLarge: bbhHegarty(textStyle: textTheme.bodyLarge),
+      bodyMedium: bbhHegarty(textStyle: textTheme.bodyMedium),
+      bodySmall: bbhHegarty(textStyle: textTheme.bodySmall),
+      labelLarge: bbhHegarty(textStyle: textTheme.labelLarge),
+      labelMedium: bbhHegarty(textStyle: textTheme.labelMedium),
+      labelSmall: bbhHegarty(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the BIZ UDGothic font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -447,15 +708,15 @@ class PartB {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '291a29a027700852f46a4f2d9773b3cf930ec51914ae072f7dbb89516ab40761',
-        3392156,
+        '9e3470b9baedc83b8f9455d13ba70a720c67dd11a0b0ae0dd8eebf8955bf7085',
+        3459140,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '019120f98e56d3019702d5dc0dd916c4f9afb4e8baab3a34175068441125a1f2',
-        3376824,
+        '092a23377707a2a7495946d36ba0905291d2c8d17e34db61e34400bdd1b4eeb5',
+        3443692,
       ),
     };
 
@@ -11111,8 +11372,8 @@ class PartB {
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '783316b33c744e63516c15b94e9f31dba7bb17f181a8cb31c173c021cf367cf7',
-        143872,
+        '6893593db3c57496d94fd139ca5a2f13ea27168533c592d8a7cdaa9c84feb044',
+        148192,
       ),
     };
 

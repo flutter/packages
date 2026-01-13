@@ -1,3 +1,30 @@
+## 8.0.0
+
+- Added fonts:
+  - `Amarna`
+  - `BBH Bartle`
+  - `BBH Bogle`
+  - `BBH Hegarty`
+  - `Cause`
+  - `Elms Sans`
+  - `Geom`
+  - `Google Sans`
+  - `Google Sans Flex`
+  - `Kedebideri`
+  - `Lilex`
+  - `Momo Signature`
+  - `Momo Trust Display`
+  - `Momo Trust Sans`
+  - `Noto Sans Syriac Western`
+  - `Science Gothic`
+  - `Sekuya`
+  - `Stack Sans Headline`
+  - `Stack Sans Notch`
+  - `Stack Sans Text`
+- Removed fonts:
+  - `Chiron GoRound TC`
+  - `Chiron Sung HK`
+
 ## 7.0.2
 
 - Adds missing public API documentation
