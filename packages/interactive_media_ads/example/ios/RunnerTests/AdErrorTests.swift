@@ -4,12 +4,12 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdErrorTests: XCTestCase {
-  func testType() {
+struct AdErrorTests {
+  @Test func type() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
 
@@ -17,10 +17,10 @@ final class AdErrorTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, .loadingFailed)
+    #expect(value == .loadingFailed)
   }
 
-  func testCode() {
+  @Test func code() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
 
@@ -28,10 +28,10 @@ final class AdErrorTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.code(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, .apiError)
+    #expect(value == .apiError)
   }
 
-  func testMessage() {
+  @Test func message() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
 
@@ -39,7 +39,7 @@ final class AdErrorTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.message(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, "message")
+    #expect(value == "message")
   }
 }
 

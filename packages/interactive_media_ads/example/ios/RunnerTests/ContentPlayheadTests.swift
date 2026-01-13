@@ -4,22 +4,22 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class ContentPlayheadTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+struct ContentPlayheadTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAContentPlayhead(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api)
 
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  func testSetCurrentTime() {
+  @Test func setCurrentTime() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAContentPlayhead(registrar)
 
@@ -27,6 +27,6 @@ final class ContentPlayheadTests: XCTestCase {
     try? api.pigeonDelegate.setCurrentTime(
       pigeonApi: api, pigeonInstance: instance, timeInterval: 12)
 
-    XCTAssertEqual(instance.currentTime, 12)
+    #expect(instance.currentTime == 12)
   }
 }

@@ -4,12 +4,13 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdsManagerTests: XCTestCase {
-  func testSetDelegate() {
+@MainActor
+struct AdsManagerTests {
+  @Test func setDelegate() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -20,10 +21,10 @@ final class AdsManagerTests: XCTestCase {
     try? api.pigeonDelegate.setDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
-    XCTAssertIdentical(instance.delegate, delegate)
+    #expect(instance.delegate === delegate)
   }
 
-  func testInitialize() {
+  @Test func initialize() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -33,10 +34,10 @@ final class AdsManagerTests: XCTestCase {
     try? api.pigeonDelegate.initialize(
       pigeonApi: api, pigeonInstance: instance, adsRenderingSettings: renderingSettings)
 
-    XCTAssertEqual(instance.renderingSettings, renderingSettings)
+    #expect(instance.renderingSettings == renderingSettings)
   }
 
-  func testStart() {
+  @Test func start() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -44,10 +45,10 @@ final class AdsManagerTests: XCTestCase {
 
     try? api.pigeonDelegate.start(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.startCalled)
+    #expect(instance.startCalled)
   }
 
-  func testPause() {
+  @Test func pause() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -55,10 +56,10 @@ final class AdsManagerTests: XCTestCase {
 
     try? api.pigeonDelegate.pause(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.pauseCalled)
+    #expect(instance.pauseCalled)
   }
 
-  func testSkip() {
+  @Test func skip() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -66,10 +67,10 @@ final class AdsManagerTests: XCTestCase {
 
     try? api.pigeonDelegate.skip(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.skipCalled)
+    #expect(instance.skipCalled)
   }
 
-  func testDiscardAdBreak() {
+  @Test func discardAdBreak() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -77,10 +78,10 @@ final class AdsManagerTests: XCTestCase {
 
     try? api.pigeonDelegate.discardAdBreak(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.discardAdBreakCalled)
+    #expect(instance.discardAdBreakCalled)
   }
 
-  func testResume() {
+  @Test func resume() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -88,10 +89,10 @@ final class AdsManagerTests: XCTestCase {
 
     try? api.pigeonDelegate.resume(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.resumeCalled)
+    #expect(instance.resumeCalled)
   }
 
-  func testDestroy() {
+  @Test func destroy() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -99,10 +100,10 @@ final class AdsManagerTests: XCTestCase {
 
     try? api.pigeonDelegate.destroy(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.destroyCalled)
+    #expect(instance.destroyCalled)
   }
 
-  func testAdCuePoints() {
+  @Test func adCuePoints() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -110,7 +111,7 @@ final class AdsManagerTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.adCuePoints(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, [2.2, 3.3])
+    #expect(value as! [Double] == [2.2, 3.3])
   }
 }
 

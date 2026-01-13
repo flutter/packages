@@ -4,20 +4,20 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-class SettingsTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+struct SettingsTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  func testSetPPID() {
+  @Test func setPPID() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -25,10 +25,10 @@ class SettingsTests: XCTestCase {
     let ppid = "myString"
     try? api.pigeonDelegate.setPPID(pigeonApi: api, pigeonInstance: instance, ppid: ppid)
 
-    XCTAssertEqual(instance.ppid, ppid)
+    #expect(instance.ppid == ppid)
   }
 
-  func testSetLanguage() {
+  @Test func setLanguage() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -37,10 +37,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setLanguage(
       pigeonApi: api, pigeonInstance: instance, language: language)
 
-    XCTAssertEqual(instance.language, language)
+    #expect(instance.language == language)
   }
 
-  func testSetMaxRedirects() {
+  @Test func setMaxRedirects() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -49,10 +49,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setMaxRedirects(
       pigeonApi: api, pigeonInstance: instance, max: Int64(max))
 
-    XCTAssertEqual(instance.maxRedirects, UInt(max))
+    #expect(instance.maxRedirects == UInt(max))
   }
 
-  func testSetFeatureFlags() {
+  @Test func setFeatureFlags() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -60,10 +60,10 @@ class SettingsTests: XCTestCase {
     let flags = ["myString": "myString"]
     try? api.pigeonDelegate.setFeatureFlags(pigeonApi: api, pigeonInstance: instance, flags: flags)
 
-    XCTAssertEqual(instance.featureFlags, flags)
+    #expect(instance.featureFlags == flags)
   }
 
-  func testSetEnableBackgroundPlayback() {
+  @Test func setEnableBackgroundPlayback() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -72,10 +72,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setEnableBackgroundPlayback(
       pigeonApi: api, pigeonInstance: instance, enabled: enabled)
 
-    XCTAssertEqual(instance.enableBackgroundPlayback, enabled)
+    #expect(instance.enableBackgroundPlayback == enabled)
   }
 
-  func testSetAutoPlayAdBreaks() {
+  @Test func setAutoPlayAdBreaks() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -84,10 +84,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setAutoPlayAdBreaks(
       pigeonApi: api, pigeonInstance: instance, autoPlay: autoPlay)
 
-    XCTAssertEqual(instance.autoPlayAdBreaks, autoPlay)
+    #expect(instance.autoPlayAdBreaks == autoPlay)
   }
 
-  func testSetDisableNowPlayingInfo() {
+  @Test func setDisableNowPlayingInfo() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -96,10 +96,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setDisableNowPlayingInfo(
       pigeonApi: api, pigeonInstance: instance, disable: disable)
 
-    XCTAssertEqual(instance.disableNowPlayingInfo, disable)
+    #expect(instance.disableNowPlayingInfo == disable)
   }
 
-  func testSetPlayerType() {
+  @Test func setPlayerType() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -107,10 +107,10 @@ class SettingsTests: XCTestCase {
     let type = "myString"
     try? api.pigeonDelegate.setPlayerType(pigeonApi: api, pigeonInstance: instance, type: type)
 
-    XCTAssertEqual(instance.playerType, type)
+    #expect(instance.playerType == type)
   }
 
-  func testSetPlayerVersion() {
+  @Test func setPlayerVersion() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -119,10 +119,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setPlayerVersion(
       pigeonApi: api, pigeonInstance: instance, version: version)
 
-    XCTAssertEqual(instance.playerVersion, version)
+    #expect(instance.playerVersion == version)
   }
 
-  func testSetSessionID() {
+  @Test func setSessionID() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -131,10 +131,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setSessionID(
       pigeonApi: api, pigeonInstance: instance, sessionID: sessionID)
 
-    XCTAssertEqual(instance.sessionID, sessionID)
+    #expect(instance.sessionID == sessionID)
   }
 
-  func testSetSameAppKeyEnabled() {
+  @Test func setSameAppKeyEnabled() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -143,10 +143,10 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setSameAppKeyEnabled(
       pigeonApi: api, pigeonInstance: instance, enabled: enabled)
 
-    XCTAssertEqual(instance.sameAppKeyEnabled, enabled)
+    #expect(instance.sameAppKeyEnabled == enabled)
   }
 
-  func testSetEnableDebugMode() {
+  @Test func setEnableDebugMode() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMASettings(registrar)
 
@@ -155,6 +155,6 @@ class SettingsTests: XCTestCase {
     try? api.pigeonDelegate.setEnableDebugMode(
       pigeonApi: api, pigeonInstance: instance, enable: enable)
 
-    XCTAssertEqual(instance.enableDebugMode, enable)
+    #expect(instance.enableDebugMode == enable)
   }
 }

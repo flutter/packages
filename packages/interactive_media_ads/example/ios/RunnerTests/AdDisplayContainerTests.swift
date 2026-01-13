@@ -4,42 +4,43 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdDisplayContainerTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct AdDisplayContainerTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, adContainer: UIView(), companionSlots: [],
       adContainerViewController: UIViewController())
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  func testAdContainer() {
+  @Test func adContainer() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
     let instance = TestAdDisplayContainer()
     let value = try? api.pigeonDelegate.adContainer(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.adContainer)
+    #expect(value == instance.adContainer)
   }
 
-  func testCompanionSlots() {
+  @Test func companionSlots() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
     let instance = TestAdDisplayContainer()
     let value = try? api.pigeonDelegate.companionSlots(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.companionSlots)
+    #expect(value == instance.companionSlots)
   }
 
-  func testSetAdContainerViewController() {
+  @Test func setAdContainerViewController() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
@@ -48,10 +49,10 @@ final class AdDisplayContainerTests: XCTestCase {
     try? api.pigeonDelegate.setAdContainerViewController(
       pigeonApi: api, pigeonInstance: instance, controller: controller)
 
-    XCTAssertEqual(instance.adContainerViewController, controller)
+    #expect(instance.adContainerViewController == controller)
   }
 
-  func testGetAdContainerViewController() {
+  @Test func getAdContainerViewController() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
@@ -61,10 +62,10 @@ final class AdDisplayContainerTests: XCTestCase {
     let value = try? api.pigeonDelegate.getAdContainerViewController(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, adContainerViewController)
+    #expect(value == adContainerViewController)
   }
 
-  func testRegisterFriendlyObstruction() {
+  @Test func registerFriendlyObstruction() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
@@ -74,10 +75,10 @@ final class AdDisplayContainerTests: XCTestCase {
     try? api.pigeonDelegate.registerFriendlyObstruction(
       pigeonApi: api, pigeonInstance: instance, friendlyObstruction: friendlyObstruction)
 
-    XCTAssertEqual(instance.registerFriendlyObstructionArgs, [friendlyObstruction])
+    #expect(instance.registerFriendlyObstructionArgs as! [AnyHashable] == [friendlyObstruction])
   }
 
-  func testUnregisterAllFriendlyObstructions() {
+  @Test func unregisterAllFriendlyObstructions() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
@@ -85,10 +86,11 @@ final class AdDisplayContainerTests: XCTestCase {
     try? api.pigeonDelegate.unregisterAllFriendlyObstructions(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.unregisterAllFriendlyObstructionsCalled)
+    #expect(instance.unregisterAllFriendlyObstructionsCalled)
   }
 }
 
+@MainActor
 class TestAdDisplayContainer: IMAAdDisplayContainer {
   private var adContainerTestValue = UIView()
   private var companionSlotsTestValue = [IMACompanionAdSlot(view: UIView())]

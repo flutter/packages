@@ -4,12 +4,12 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdEventTests: XCTestCase {
-  func testType() {
+struct AdEventTests {
+  @Test func type() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
@@ -17,10 +17,10 @@ final class AdEventTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, .adBreakEnded)
+    #expect(value == .adBreakEnded)
   }
 
-  func testMessage() {
+  @Test func message() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
@@ -28,10 +28,10 @@ final class AdEventTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.typeString(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, "message")
+    #expect(value == "message")
   }
 
-  func testAdData() {
+  @Test func adData() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
@@ -39,18 +39,18 @@ final class AdEventTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.adData(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value as! [String: String], ["my": "string"])
+    #expect((value as! [String: String]) == ["my": "string"])
   }
 
-  func testAd() {
+  @Test func ad() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
     let instance = TestAdEvent.customInit()
     let value = try? api.pigeonDelegate.ad(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertNotNil(value)
-    XCTAssertEqual(value, instance.ad)
+    #expect(value != nil)
+    #expect(value == instance.ad)
   }
 }
 

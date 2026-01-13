@@ -3,38 +3,39 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class ViewControllerTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct ViewControllerTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api)
 
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 
-  func testView() {
+  @Test func view() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
     let instance = UIViewController()
     let view = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertNotNil(view)
+    #expect(view != nil)
   }
 
-  func testViewDidAppear() {
+  @Test func viewDidAppear() {
     let api = TestUIViewControllerApi()
     let instance = ViewControllerImpl(api: api)
 
     instance.viewDidAppear(true)
 
-    XCTAssertEqual(api.viewDidAppearArgs, [instance, true])
+    #expect(api.viewDidAppearArgs as! [AnyHashable] == [instance, true])
   }
 }
 

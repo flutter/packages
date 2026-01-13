@@ -4,12 +4,13 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdsRequestTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct AdsRequestTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -19,14 +20,14 @@ final class AdsRequestTests: XCTestCase {
       pigeonApi: api, adTagUrl: "adTag?", adDisplayContainer: container,
       contentPlayhead: contentPlayhead)
 
-    XCTAssertNotNil(instance)
-    XCTAssertEqual(
-      instance?.adTagUrl,
-      "adTag?&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)")
-    XCTAssertIdentical(instance?.adDisplayContainer, container)
+    #expect(instance != nil)
+    #expect(
+      instance?.adTagUrl
+        == "adTag?&request_agent=Flutter-IMA-\(AdsRequestProxyAPIDelegate.pluginVersion)")
+    #expect(instance?.adDisplayContainer === container)
   }
 
-  func testPigeonDefaultConstructorDoesNotAddRequestAgentToIncompatibleURLs() {
+  @Test func pigeonDefaultConstructorDoesNotAddRequestAgentToIncompatibleURLs() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -36,21 +37,17 @@ final class AdsRequestTests: XCTestCase {
     var instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, adTagUrl: "adTag#", adDisplayContainer: container,
       contentPlayhead: contentPlayhead)
-    XCTAssertNotNil(instance)
-    XCTAssertEqual(
-      instance?.adTagUrl,
-      "adTag#")
+    #expect(instance != nil)
+    #expect(instance?.adTagUrl == "adTag#")
 
     instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, adTagUrl: "adTag#?", adDisplayContainer: container,
       contentPlayhead: contentPlayhead)
-    XCTAssertNotNil(instance)
-    XCTAssertEqual(
-      instance?.adTagUrl,
-      "adTag#?")
+    #expect(instance != nil)
+    #expect(instance?.adTagUrl == "adTag#?")
   }
 
-  func testWithAdsResponse() {
+  @Test func withAdsResponse() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -60,14 +57,12 @@ final class AdsRequestTests: XCTestCase {
       pigeonApi: api, adsResponse: "response", adDisplayContainer: container,
       contentPlayhead: contentPlayhead)
 
-    XCTAssertNotNil(instance)
-    XCTAssertEqual(
-      instance?.adsResponse,
-      "response")
-    XCTAssertIdentical(instance?.adDisplayContainer, container)
+    #expect(instance != nil)
+    #expect(instance?.adsResponse == "response")
+    #expect(instance?.adDisplayContainer === container)
   }
 
-  func testGetAdTagUrl() {
+  @Test func getAdTagUrl() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -80,10 +75,10 @@ final class AdsRequestTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.getAdTagUrl(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, adTagUrl)
+    #expect(value == adTagUrl)
   }
 
-  func testGetAdsResponse() {
+  @Test func getAdsResponse() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -96,10 +91,10 @@ final class AdsRequestTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.getAdsResponse(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, adsResponse)
+    #expect(value == adsResponse)
   }
 
-  func testGetAdDisplayContainer() {
+  @Test func getAdDisplayContainer() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -112,10 +107,10 @@ final class AdsRequestTests: XCTestCase {
     let value = try? api.pigeonDelegate.getAdDisplayContainer(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, container)
+    #expect(value == container)
   }
 
-  func testSetAdWillAutoPlay() {
+  @Test func setAdWillAutoPlay() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -129,10 +124,10 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setAdWillAutoPlay(
       pigeonApi: api, pigeonInstance: instance, adWillAutoPlay: adWillAutoPlay)
 
-    XCTAssertEqual(instance.adWillAutoPlay, adWillAutoPlay)
+    #expect(instance.adWillAutoPlay == adWillAutoPlay)
   }
 
-  func testSetAdWillPlayMuted() {
+  @Test func setAdWillPlayMuted() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -146,10 +141,10 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setAdWillPlayMuted(
       pigeonApi: api, pigeonInstance: instance, adWillPlayMuted: adWillPlayMuted)
 
-    XCTAssertEqual(instance.adWillPlayMuted, adWillPlayMuted)
+    #expect(instance.adWillPlayMuted == adWillPlayMuted)
   }
 
-  func testSetContinuousPlayback() {
+  @Test func setContinuousPlayback() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -163,10 +158,10 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setContinuousPlayback(
       pigeonApi: api, pigeonInstance: instance, continuousPlayback: continuousPlayback)
 
-    XCTAssertEqual(instance.continuousPlayback, continuousPlayback)
+    #expect(instance.continuousPlayback == continuousPlayback)
   }
 
-  func testSetContentDuration() {
+  @Test func setContentDuration() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -180,10 +175,10 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setContentDuration(
       pigeonApi: api, pigeonInstance: instance, duration: duration)
 
-    XCTAssertEqual(instance.contentDuration, Float(duration))
+    #expect(instance.contentDuration == Float(duration))
   }
 
-  func testSetContentKeywords() {
+  @Test func setContentKeywords() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -197,10 +192,10 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setContentKeywords(
       pigeonApi: api, pigeonInstance: instance, keywords: keywords)
 
-    XCTAssertEqual(instance.contentKeywords, keywords)
+    #expect(instance.contentKeywords == keywords)
   }
 
-  func testSetContentTitle() {
+  @Test func setContentTitle() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -213,10 +208,10 @@ final class AdsRequestTests: XCTestCase {
     let title = "hello"
     try? api.pigeonDelegate.setContentTitle(pigeonApi: api, pigeonInstance: instance, title: title)
 
-    XCTAssertEqual(instance.contentTitle, title)
+    #expect(instance.contentTitle == title)
   }
 
-  func testSetContentURL() {
+  @Test func setContentURL() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -230,10 +225,10 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setContentURL(
       pigeonApi: api, pigeonInstance: instance, contentURL: contentURL)
 
-    XCTAssertEqual(instance.contentURL, URL(string: contentURL))
+    #expect(instance.contentURL == URL(string: contentURL))
   }
 
-  func testSetVastLoadTimeout() {
+  @Test func setVastLoadTimeout() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -247,10 +242,10 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setVastLoadTimeout(
       pigeonApi: api, pigeonInstance: instance, timeout: timeout)
 
-    XCTAssertEqual(instance.vastLoadTimeout, Float(timeout))
+    #expect(instance.vastLoadTimeout == Float(timeout))
   }
 
-  func testSetLiveStreamPrefetchSeconds() {
+  @Test func setLiveStreamPrefetchSeconds() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRequest(registrar)
 
@@ -264,6 +259,6 @@ final class AdsRequestTests: XCTestCase {
     try? api.pigeonDelegate.setLiveStreamPrefetchSeconds(
       pigeonApi: api, pigeonInstance: instance, seconds: seconds)
 
-    XCTAssertEqual(instance.liveStreamPrefetchSeconds, Float(seconds))
+    #expect(instance.liveStreamPrefetchSeconds == Float(seconds))
   }
 }

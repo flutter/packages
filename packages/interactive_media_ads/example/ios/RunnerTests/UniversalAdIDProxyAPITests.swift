@@ -4,29 +4,31 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-class UniversalAdIDProxyAPITests: XCTestCase {
-  func testAdIDValue() {
+struct UniversalAdIDProxyAPITests {
+  @Test
+  func adIDValue() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAUniversalAdID(registrar)
 
     let instance = TestUniversalAdID.customInit()
     let value = try? api.pigeonDelegate.adIDValue(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.adIDValue)
+    #expect(value == instance.adIDValue)
   }
 
-  func testAdIDRegistry() {
+  @Test
+  func adIDRegistry() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAUniversalAdID(registrar)
 
     let instance = TestUniversalAdID.customInit()
     let value = try? api.pigeonDelegate.adIDRegistry(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.adIDRegistry)
+    #expect(value == instance.adIDRegistry)
   }
 }
 

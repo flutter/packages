@@ -4,49 +4,53 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-class CompanionAdProxyApiTests: XCTestCase {
-  func testResourceValue() {
+struct CompanionAdProxyApiTests {
+  @Test
+  func resourceValue() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
     let value = try? api.pigeonDelegate.resourceValue(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.resourceValue)
+    #expect(value == instance.resourceValue)
   }
 
-  func testApiFramework() {
+  @Test
+  func apiFramework() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
     let value = try? api.pigeonDelegate.apiFramework(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.apiFramework)
+    #expect(value == instance.apiFramework)
   }
 
-  func testWidth() {
+  @Test
+  func width() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
     let value = try? api.pigeonDelegate.width(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, Int64(instance.width))
+    #expect(value == Int64(instance.width))
   }
 
-  func testHeight() {
+  @Test
+  func height() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
     let value = try? api.pigeonDelegate.height(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, Int64(instance.height))
+    #expect(value == Int64(instance.height))
   }
 
 }

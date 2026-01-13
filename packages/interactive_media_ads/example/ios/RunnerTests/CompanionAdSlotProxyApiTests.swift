@@ -4,46 +4,51 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
+import Testing
 import UIKit
-import XCTest
 
 @testable import interactive_media_ads
 
-class CompanionAdSlotProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct CompanionAdSlotProxyApiTests {
+  @Test
+  func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAdSlot(registrar)
 
     let view = UIView()
-    let instance = try! api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, view: view)
-    XCTAssertEqual(instance.view, view)
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api, view: view)
+    #expect(instance.view == view)
   }
 
-  func testSize() {
+  @Test
+  func size() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAdSlot(registrar)
 
     let view = UIView()
     let width = 0
     let height = 1
-    let instance = try! api.pigeonDelegate.size(
+    let instance = try api.pigeonDelegate.size(
       pigeonApi: api, view: view, width: Int64(width), height: Int64(height))
-    XCTAssertEqual(instance.view, view)
-    XCTAssertEqual(instance.width, width)
-    XCTAssertEqual(instance.height, height)
+    #expect(instance.view == view)
+    #expect(instance.width == width)
+    #expect(instance.height == height)
   }
 
-  func testView() {
+  @Test
+  func view() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAdSlot(registrar)
 
     let instance = IMACompanionAdSlot(view: UIView())
     let value = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.view)
+    #expect(value == instance.view)
   }
 
-  func testSetDelegate() {
+  @Test
+  func setDelegate() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAdSlot(registrar)
 
@@ -53,6 +58,6 @@ class CompanionAdSlotProxyApiTests: XCTestCase {
     try? api.pigeonDelegate.setDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
-    XCTAssertIdentical(instance.delegate, delegate)
+    #expect(instance.delegate === delegate)
   }
 }

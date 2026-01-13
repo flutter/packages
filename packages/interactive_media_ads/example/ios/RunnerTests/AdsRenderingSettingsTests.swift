@@ -4,22 +4,23 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdsRenderingSettingsTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct AdsRenderingSettingsTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api)
 
-    XCTAssertTrue(instance != nil)
+    #expect(instance != nil)
   }
 
-  func testSetMimeTypes() {
+  @Test func setMimeTypes() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
@@ -27,10 +28,10 @@ final class AdsRenderingSettingsTests: XCTestCase {
     let types = ["myString"]
     try? api.pigeonDelegate.setMimeTypes(pigeonApi: api, pigeonInstance: instance, types: types)
 
-    XCTAssertEqual(instance.mimeTypes, types)
+    #expect(instance.mimeTypes == types)
   }
 
-  func testSetBitrate() {
+  @Test func setBitrate() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
@@ -39,10 +40,10 @@ final class AdsRenderingSettingsTests: XCTestCase {
     try? api.pigeonDelegate.setBitrate(
       pigeonApi: api, pigeonInstance: instance, bitrate: Int64(bitrate))
 
-    XCTAssertEqual(instance.bitrate, bitrate)
+    #expect(instance.bitrate == bitrate)
   }
 
-  func testSetLoadVideoTimeout() {
+  @Test func setLoadVideoTimeout() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
@@ -51,10 +52,10 @@ final class AdsRenderingSettingsTests: XCTestCase {
     try? api.pigeonDelegate.setLoadVideoTimeout(
       pigeonApi: api, pigeonInstance: instance, seconds: seconds)
 
-    XCTAssertEqual(instance.loadVideoTimeout, seconds)
+    #expect(instance.loadVideoTimeout == seconds)
   }
 
-  func testSetPlayAdsAfterTime() {
+  @Test func setPlayAdsAfterTime() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
@@ -63,10 +64,10 @@ final class AdsRenderingSettingsTests: XCTestCase {
     try? api.pigeonDelegate.setPlayAdsAfterTime(
       pigeonApi: api, pigeonInstance: instance, seconds: seconds)
 
-    XCTAssertEqual(instance.playAdsAfterTime, seconds)
+    #expect(instance.playAdsAfterTime == seconds)
   }
 
-  func testSetUIElements() {
+  @Test func setUIElements() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
@@ -74,11 +75,11 @@ final class AdsRenderingSettingsTests: XCTestCase {
     let types = [UIElementType.adAttribution]
     try? api.pigeonDelegate.setUIElements(pigeonApi: api, pigeonInstance: instance, types: types)
 
-    XCTAssertEqual(
-      instance.uiElements, [IMAUiElementType.elements_AD_ATTRIBUTION.rawValue as NSNumber])
+    #expect(
+      instance.uiElements == [IMAUiElementType.elements_AD_ATTRIBUTION.rawValue as NSNumber])
   }
 
-  func testSetEnablePreloading() {
+  @Test func setEnablePreloading() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
@@ -87,10 +88,10 @@ final class AdsRenderingSettingsTests: XCTestCase {
     try? api.pigeonDelegate.setEnablePreloading(
       pigeonApi: api, pigeonInstance: instance, enable: enable)
 
-    XCTAssertTrue(instance.enablePreloading)
+    #expect(instance.enablePreloading)
   }
 
-  func testSetLinkOpenerPresentingController() {
+  @Test func setLinkOpenerPresentingController() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
@@ -99,6 +100,6 @@ final class AdsRenderingSettingsTests: XCTestCase {
     try? api.pigeonDelegate.setLinkOpenerPresentingController(
       pigeonApi: api, pigeonInstance: instance, controller: controller)
 
-    XCTAssertEqual(instance.linkOpenerPresentingController, controller)
+    #expect(instance.linkOpenerPresentingController == controller)
   }
 }

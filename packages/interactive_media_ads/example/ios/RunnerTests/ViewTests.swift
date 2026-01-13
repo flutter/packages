@@ -3,18 +3,19 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class ViewTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct ViewTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIView(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api)
 
-    XCTAssertNotNil(instance)
+    #expect(instance != nil)
   }
 }
