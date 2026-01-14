@@ -7,25 +7,38 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+import 'clustering.dart';
 import 'example_google_map.dart';
 import 'page.dart';
+import 'place_advanced_marker.dart';
 
-/// Page for demonstrating marker clustering support.
-class ClusteringPage extends GoogleMapExampleAppPage {
-  /// Default Constructor.
-  const ClusteringPage({Key? key})
-    : super(const Icon(Icons.place), 'Manage clustering', key: key);
+/// Page for demonstrating advanced marker clustering support.
+/// Same as [ClusteringPage] but works with [AdvancedMarker].
+class AdvancedMarkersClusteringPage extends GoogleMapExampleAppPage {
+  /// Default constructor.
+  const AdvancedMarkersClusteringPage({Key? key, required this.mapId})
+    : super(
+        key: key,
+        const Icon(Icons.place_outlined),
+        'Manage clusters of advanced markers',
+      );
+
+  /// Map ID to use for the GoogleMap.
+  final String? mapId;
 
   @override
   Widget build(BuildContext context) {
-    return const _ClusteringBody();
+    return _ClusteringBody(mapId: mapId);
   }
 }
 
 /// Body of the clustering page.
 class _ClusteringBody extends StatefulWidget {
   /// Default Constructor.
-  const _ClusteringBody();
+  const _ClusteringBody({required this.mapId});
+
+  /// Map ID to use for the GoogleMap.
+  final String? mapId;
 
   @override
   State<StatefulWidget> createState() => _ClusteringBodyState();
@@ -71,7 +84,7 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
       <ClusterManagerId, ClusterManager>{};
 
   /// Map of markers with identifier as the key.
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  Map<MarkerId, AdvancedMarker> markers = <MarkerId, AdvancedMarker>{};
 
   /// Id of the currently selected marker.
   MarkerId? selectedMarker;
@@ -90,25 +103,23 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
     this.controller = controller;
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   void _onMarkerTapped(MarkerId markerId) {
-    final Marker? tappedMarker = markers[markerId];
+    final AdvancedMarker? tappedMarker = markers[markerId];
     if (tappedMarker != null) {
       setState(() {
         final MarkerId? previousMarkerId = selectedMarker;
         if (previousMarkerId != null && markers.containsKey(previousMarkerId)) {
-          final Marker resetOld = _copyWithSelectedState(
+          final AdvancedMarker resetOld = copyWithSelectedState(
             markers[previousMarkerId]!,
             false,
           );
           markers[previousMarkerId] = resetOld;
         }
         selectedMarker = markerId;
-        final Marker newMarker = _copyWithSelectedState(tappedMarker, true);
+        final AdvancedMarker newMarker = copyWithSelectedState(
+          tappedMarker,
+          true,
+        );
         markers[markerId] = newMarker;
       });
     }
@@ -140,7 +151,7 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
     setState(() {
       // Remove markers managed by cluster manager to be removed.
       markers.removeWhere(
-        (MarkerId key, Marker marker) =>
+        (MarkerId key, AdvancedMarker marker) =>
             marker.clusterManagerId == clusterManager.clusterManagerId,
       );
       // Remove cluster manager.
@@ -164,7 +175,7 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
       final double clusterManagerLongitudeOffset =
           clusterManagerIndex * _clusterManagerLongitudeOffset;
 
-      final marker = Marker(
+      final marker = AdvancedMarker(
         markerId: markerId,
         clusterManagerId: clusterManager.clusterManagerId,
         position: LatLng(
@@ -173,6 +184,11 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
         ),
         infoWindow: InfoWindow(title: markerIdVal, snippet: '*'),
         onTap: () => _onMarkerTapped(markerId),
+        icon: BitmapDescriptor.pinConfig(
+          backgroundColor: Colors.white,
+          borderColor: Colors.blue,
+          glyph: const CircleGlyph(color: Colors.blue),
+        ),
       );
       markers[markerId] = marker;
     }
@@ -193,7 +209,7 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
 
   void _changeMarkersAlpha() {
     for (final MarkerId markerId in markers.keys) {
-      final Marker marker = markers[markerId]!;
+      final AdvancedMarker marker = markers[markerId]!;
       final double current = marker.alpha;
       markers[markerId] = marker.copyWith(
         alphaParam: current == _fullyVisibleAlpha
@@ -205,26 +221,39 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
   }
 
   /// Returns selected or unselected state of the given [marker].
-  Marker _copyWithSelectedState(Marker marker, bool isSelected) {
+  AdvancedMarker copyWithSelectedState(AdvancedMarker marker, bool isSelected) {
     return marker.copyWith(
       iconParam: isSelected
-          ? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen)
-          : BitmapDescriptor.defaultMarker,
+          ? BitmapDescriptor.pinConfig(
+              backgroundColor: Colors.blue,
+              borderColor: Colors.white,
+              glyph: const CircleGlyph(color: Colors.white),
+            )
+          : BitmapDescriptor.pinConfig(
+              backgroundColor: Colors.white,
+              borderColor: Colors.blue,
+              glyph: const CircleGlyph(color: Colors.blue),
+            ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     final MarkerId? selectedId = selectedMarker;
+    final Cluster? lastCluster = this.lastCluster;
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        AdvancedMarkersCapabilityStatus(controller: controller),
         Expanded(
           child: ExampleGoogleMap(
+            mapId: widget.mapId,
+            markerType: MarkerType.advancedMarker,
             onMapCreated: _onMapCreated,
             initialCameraPosition: initialCameraPosition,
-            markers: Set<Marker>.of(markers.values),
+            markers: Set<AdvancedMarker>.of(markers.values),
             clusterManagers: Set<ClusterManager>.of(clusterManagers.values),
           ),
         ),
@@ -280,7 +309,7 @@ class _ClusteringBodyState extends State<_ClusteringBody> {
           Padding(
             padding: const EdgeInsets.all(10),
             child: Text(
-              'Cluster with ${lastCluster!.count} markers clicked at ${lastCluster!.position}',
+              'Cluster with ${lastCluster.count} markers clicked at ${lastCluster.position}',
             ),
           ),
       ],

@@ -332,6 +332,15 @@ class MockMapsApi extends _i1.Mock implements _i2.MapsApi {
           as _i4.Future<bool>);
 
   @override
+  _i4.Future<bool> isAdvancedMarkersAvailable() =>
+      (super.noSuchMethod(
+            Invocation.method(#isAdvancedMarkersAvailable, []),
+            returnValue: _i4.Future<bool>.value(false),
+            returnValueForMissingStub: _i4.Future<bool>.value(false),
+          )
+          as _i4.Future<bool>);
+
+  @override
   _i4.Future<void> clearTileCache(String? tileOverlayId) =>
       (super.noSuchMethod(
             Invocation.method(#clearTileCache, [tileOverlayId]),
