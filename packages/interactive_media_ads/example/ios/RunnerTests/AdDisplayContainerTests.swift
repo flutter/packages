@@ -15,8 +15,8 @@ struct AdDisplayContainerTests {
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
     let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
-        pigeonApi: api, adContainer: UIView(), companionSlots: [],
-        adContainerViewController: UIViewController())
+      pigeonApi: api, adContainer: UIView(), companionSlots: [],
+      adContainerViewController: UIViewController())
   }
 
   @Test func adContainer() throws {
@@ -65,7 +65,7 @@ struct AdDisplayContainerTests {
     let adContainerViewController = UIViewController()
     instance.adContainerViewController = adContainerViewController
     let value = try api.pigeonDelegate.getAdContainerViewController(
-        pigeonApi: api, pigeonInstance: instance)
+      pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == adContainerViewController)
   }

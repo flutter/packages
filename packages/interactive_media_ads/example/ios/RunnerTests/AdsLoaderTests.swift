@@ -17,7 +17,7 @@ struct AdsLoaderTests {
     let settings = IMASettings()
     settings.ppid = "ppid"
     let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
-        pigeonApi: api, settings: settings)
+      pigeonApi: api, settings: settings)
 
     #expect(instance.settings.ppid == settings.ppid)
   }
