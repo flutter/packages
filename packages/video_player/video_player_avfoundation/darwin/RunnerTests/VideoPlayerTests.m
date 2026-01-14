@@ -1089,10 +1089,15 @@
         });
 
     StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil output:nil];
-    FVPVideoPlayer *player =
-        [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
-                                         avFactory:stubAVFactory
-                                      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+    StubViewProvider *stubViewProvider =
+#if TARGET_OS_OSX
+        [[StubViewProvider alloc] initWithView:nil];
+#else
+        [[StubViewProvider alloc] initWithViewController:nil];
+#endif
+    FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
+                                                              avFactory:stubAVFactory
+                                                           viewProvider:stubViewProvider];
     (void)player;  // Keep reference
 
     [self waitForExpectationsWithTimeout:5.0 handler:nil];
