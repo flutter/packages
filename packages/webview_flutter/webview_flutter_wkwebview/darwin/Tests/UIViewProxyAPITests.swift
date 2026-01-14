@@ -12,7 +12,7 @@ import XCTest
 
 class UIViewProxyAPITests: XCTestCase {
   #if os(iOS)
-    @MainActor func testSetBackgroundColor() {
+    func testSetBackgroundColor() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIView(registrar)
 
@@ -30,7 +30,7 @@ class UIViewProxyAPITests: XCTestCase {
         instance.backgroundColor, UIColor(red: red, green: green, blue: blue, alpha: alpha))
     }
 
-    @MainActor func testSetOpaque() {
+    func testSetOpaque() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIView(registrar)
 

@@ -49,7 +49,7 @@ class AdProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.adSystem)
   }
 
-  @MainActor func testCompanionAds() {
+  func testCompanionAds() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
@@ -185,7 +185,7 @@ class AdProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.skipTimeOffset)
   }
 
-  @MainActor func testAdPodInfo() {
+  func testAdPodInfo() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
@@ -226,7 +226,7 @@ class AdProxyAPITests: XCTestCase {
     XCTAssertEqual(value, instance.creativeAdID)
   }
 
-  @MainActor func testUniversalAdIDs() {
+  func testUniversalAdIDs() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 

@@ -179,7 +179,7 @@ void main() {
         ...extraFlags,
         if (treatWarningsAsErrors) ...<String>[
           'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
-          r'OTHER_SWIFT_FLAGS=$(inherited) -strict-concurrency=complete',
+          // r'OTHER_SWIFT_FLAGS=$(inherited) -strict-concurrency=complete',
         ],
       ], package.path);
     }
