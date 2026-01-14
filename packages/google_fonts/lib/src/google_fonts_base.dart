@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// TODO(stuartmorgan): Revisit the use of print for reporting errors.
-// ignore_for_file: avoid_print
-
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -185,22 +182,22 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
     }
   } catch (e) {
     _loadedFonts.remove(familyWithVariantString);
-    print(
+    debugPrint(
       'Error: google_fonts was unable to load font $fontName because the '
       'following exception occurred:\n$e',
     );
     if (file_io.isTest) {
-      print(
+      debugPrint(
         '\nThere is likely something wrong with your test. Please see '
         'https://github.com/flutter/packages/blob/main/packages/google_fonts/example/test '
         'for examples of how to test with google_fonts.',
       );
     } else if (file_io.isMacOS || file_io.isAndroid) {
-      print(
+      debugPrint(
         '\nSee https://docs.flutter.dev/development/data-and-backend/networking#platform-notes.',
       );
     }
-    print(
+    debugPrint(
       "If troubleshooting doesn't solve the problem, please file an issue "
       'at https://github.com/flutter/flutter/issues/new/choose.\n',
     );
