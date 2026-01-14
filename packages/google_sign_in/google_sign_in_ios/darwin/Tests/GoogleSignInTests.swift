@@ -4,7 +4,7 @@
 
 import GoogleSignIn
 import Testing
-import google_sign_in_ios
+@testable import google_sign_in_ios
 
 #if os(OSX)
   import FlutterMacOS
