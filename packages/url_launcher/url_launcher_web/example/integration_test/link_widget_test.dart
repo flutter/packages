@@ -239,8 +239,8 @@ void main() {
       expect(buttonFinder, findsOneWidget);
 
       final Element buttonElement = tester.element(buttonFinder);
-      final MergeSemantics? parentWidget =
-          buttonElement.findAncestorWidgetOfExactType<MergeSemantics>();
+      final MergeSemantics? parentWidget = buttonElement
+          .findAncestorWidgetOfExactType<MergeSemantics>();
       expect(parentWidget, isNotNull);
     });
   });
