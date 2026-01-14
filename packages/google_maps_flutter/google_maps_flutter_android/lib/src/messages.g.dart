@@ -2295,17 +2295,17 @@ class PlatformBitmapPinConfig {
     this.glyphTextColor,
   });
 
-  int? backgroundColor;
+  PlatformColor? backgroundColor;
 
-  int? borderColor;
+  PlatformColor? borderColor;
 
-  int? glyphColor;
+  PlatformColor? glyphColor;
 
   PlatformBitmap? glyphBitmap;
 
   String? glyphText;
 
-  int? glyphTextColor;
+  PlatformColor? glyphTextColor;
 
   List<Object?> _toList() {
     return <Object?>[
@@ -2325,12 +2325,12 @@ class PlatformBitmapPinConfig {
   static PlatformBitmapPinConfig decode(Object result) {
     result as List<Object?>;
     return PlatformBitmapPinConfig(
-      backgroundColor: result[0] as int?,
-      borderColor: result[1] as int?,
-      glyphColor: result[2] as int?,
+      backgroundColor: result[0] as PlatformColor?,
+      borderColor: result[1] as PlatformColor?,
+      glyphColor: result[2] as PlatformColor?,
       glyphBitmap: result[3] as PlatformBitmap?,
       glyphText: result[4] as String?,
-      glyphTextColor: result[5] as int?,
+      glyphTextColor: result[5] as PlatformColor?,
     );
   }
 
