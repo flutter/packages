@@ -1,8 +1,3 @@
-
-import 'cross_file_darwin_platform_interface.dart';
-
-class CrossFileDarwin {
-  Future<String?> getPlatformVersion() {
-    return CrossFileDarwinPlatform.instance.getPlatformVersion();
-  }
-}
+// Copyright 2013 The Flutter Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
