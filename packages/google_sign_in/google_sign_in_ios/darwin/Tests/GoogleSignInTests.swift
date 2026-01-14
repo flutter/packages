@@ -228,12 +228,9 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
   #endif
 }
 
-struct FLTGoogleSignInPluginTest {
-  // A fake that replaces the real global GoogleSignIn instance for tests.
-  var fakeSignIn = TestSignIn()
-
+struct GoogleSignInPluginTests {
   @Test func signOut() {
-    let plugin = createTestPlugin()
+    let (plugin, fakeSignIn) = createTestPlugin()
     var error: FlutterError?
     plugin.signOutWithError(&error)
     #expect(fakeSignIn.signOutCalled == true)
@@ -241,7 +238,7 @@ struct FLTGoogleSignInPluginTest {
   }
 
   @Test func disconnect() async {
-    let plugin = createTestPlugin()
+    let (plugin, _) = createTestPlugin()
     await confirmation("expect result returns true") { confirmed in
       plugin.disconnect { error in
         #expect(error == nil)
@@ -250,489 +247,472 @@ struct FLTGoogleSignInPluginTest {
     }
   }
 
-  // MARK: - Configure
-
-  @Test func initNoClientIdNoError() {
-    // Init plugin without GoogleService-Info.plist.
-    let plugin = createTestPlugin(googleServiceProperties: nil)
-
-    // init call does not provide a clientId.
-    let params = FSIPlatformConfigurationParams.make(
-      withClientId: nil,
-      serverClientId: nil,
-      hostedDomain: nil)
-
-    var error: FlutterError?
-    plugin.configure(withParameters: params, error: &error)
-    #expect(error == nil)
-  }
-
-  @Test func initGoogleServiceInfoPlist() {
-    let plugin = createTestPlugin(googleServiceProperties: loadGoogleServiceInfo())
-    let params = FSIPlatformConfigurationParams.make(
-      withClientId: nil,
-      serverClientId: nil,
-      hostedDomain: "example.com")
-
-    var error: FlutterError?
-    plugin.configure(withParameters: params, error: &error)
-    #expect(error == nil)
-    #expect(fakeSignIn.configuration?.hostedDomain == "example.com")
-    // Set in example app GoogleService-Info.plist.
-    #expect(
-      fakeSignIn.configuration?.clientID
-        == "479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com")
-    #expect(fakeSignIn.configuration?.serverClientID == "YOUR_SERVER_CLIENT_ID")
-  }
-
-  @Test func initDynamicClientIdNullDomain() {
-    // Init plugin without GoogleService-Info.plist.
-    let plugin = createTestPlugin(googleServiceProperties: nil)
-
-    let params = FSIPlatformConfigurationParams.make(
-      withClientId: "mockClientId",
-      serverClientId: nil,
-      hostedDomain: nil)
-
-    var error: FlutterError?
-    plugin.configure(withParameters: params, error: &error)
-    #expect(error == nil)
-    #expect(fakeSignIn.configuration?.hostedDomain == nil)
-    #expect(fakeSignIn.configuration?.clientID == "mockClientId")
-    #expect(fakeSignIn.configuration?.serverClientID == nil)
-  }
-
-  @Test func initDynamicServerClientIdNullDomain() {
-    // Init plugin without GoogleService-Info.plist.
-    let plugin = createTestPlugin(googleServiceProperties: loadGoogleServiceInfo())
-    let params = FSIPlatformConfigurationParams.make(
-      withClientId: nil,
-      serverClientId: "mockServerClientId",
-      hostedDomain: nil)
-
-    var error: FlutterError?
-    plugin.configure(withParameters: params, error: &error)
-    #expect(error == nil)
-    #expect(fakeSignIn.configuration?.hostedDomain == nil)
-    // Set in example app GoogleService-Info.plist.
-    #expect(
-      fakeSignIn.configuration?.clientID
-        == "479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com")
-    // Overridden by params.
-    #expect(fakeSignIn.configuration?.serverClientID == "mockServerClientId")
-  }
-
-  @Test func initInfoPlist() {
-    let plugin = createTestPlugin()
-    let params = FSIPlatformConfigurationParams.make(
-      withClientId: nil,
-      serverClientId: nil,
-      hostedDomain: "example.com")
-
-    var error: FlutterError?
-    plugin.configure(withParameters: params, error: &error)
-    #expect(error == nil)
-    // No configuration should be set, allowing the SDK to use its default behavior
-    // (which is to load configuration information from Info.plist).
-    #expect(fakeSignIn.configuration == nil)
-  }
-
-  // MARK: - restorePreviousSignIn
-
-  @Test func signInSilently() async {
-    let plugin = createTestPlugin()
-    let fakeUser = TestGoogleUser("mockID")
-    let fakeUserProfile = TestProfileData(
-      name: "mockDisplay", email: "mock@example.com",
-      imageURL: URL(string: "https://example.com/profile.png"))
-    fakeUser.profile = fakeUserProfile
-    fakeSignIn.user = fakeUser
-
-    await confirmation("completion called") { confirmed in
-      plugin.restorePreviousSignIn { result, error in
-        #expect(error == nil)
-        #expect(result?.error == nil)
-        #expect(result?.success != nil)
-        #expect(result?.success?.user.displayName == fakeUserProfile.name)
-        #expect(result?.success?.user.email == fakeUserProfile.email)
-        #expect(result?.success?.user.userId == fakeUser.userID)
-        #expect(result?.success?.user.photoUrl == fakeUserProfile.imageURL?.absoluteString)
-        #expect(result?.success?.accessToken == fakeUser.accessToken.tokenString)
-        #expect(result?.success?.serverAuthCode == nil)
-        confirmed()
-      }
-    }
-  }
-
-  @Test func restorePreviousSignInWithError() async {
-    let plugin = createTestPlugin()
-    let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: GIDSignInError.hasNoAuthInKeychain.rawValue,
-      userInfo: nil)
-    fakeSignIn.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.restorePreviousSignIn { result, error in
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == FSIGoogleSignInErrorCode.noAuthInKeychain)
-        confirmed()
-      }
-    }
-  }
-
-  // MARK: - signIn
-
-  @Test func signIn() async {
-    let plugin = createTestPlugin()
-    let fakeUser = TestGoogleUser("mockID")
-    let fakeUserProfile = TestProfileData(
-      name: "mockDisplay", email: "mock@example.com",
-      imageURL: URL(string: "https://example.com/profile.png"))
-
-    let accessToken = "mockAccessToken"
-    let serverAuthCode = "mockAuthCode"
-    fakeUser.profile = fakeUserProfile
-    fakeUser.accessToken = TestToken(accessToken)
-
-    let fakeSignInResult = TestSignInResult(user: fakeUser, serverAuthCode: serverAuthCode)
-
-    fakeSignIn.signInResult = fakeSignInResult
-
-    await confirmation("completion called") { confirmed in
-      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-        #expect(error == nil)
-        #expect(result?.success?.user.displayName == "mockDisplay")
-        #expect(result?.success?.user.email == "mock@example.com")
-        #expect(result?.success?.user.userId == "mockID")
-        #expect(result?.success?.user.photoUrl == "https://example.com/profile.png")
-        #expect(result?.success?.accessToken == accessToken)
-        #expect(result?.success?.serverAuthCode == serverAuthCode)
-        confirmed()
-      }
-    }
-  }
-
-  @Test func signInWithScopeHint() async {
-    let plugin = createTestPlugin()
-    var initializationError: FlutterError?
-    plugin.configure(
-      withParameters: FSIPlatformConfigurationParams.make(
+  @Suite("configure") struct ConfigureTests {
+    @Test func configureFromAppInfoPlist() {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let params = FSIPlatformConfigurationParams.make(
         withClientId: nil,
         serverClientId: nil,
-        hostedDomain: nil),
-      error: &initializationError)
-    #expect(initializationError == nil)
+        hostedDomain: "example.com")
 
-    let fakeUser = TestGoogleUser("mockID")
-    let fakeSignInResult = TestSignInResult(user: fakeUser)
-
-    let requestedScopes = ["scope1", "scope2"]
-    fakeSignIn.signInResult = fakeSignInResult
-
-    await confirmation("completion called") { confirmed in
-      plugin.signIn(withScopeHint: requestedScopes, nonce: nil) { result, error in
-        #expect(error == nil)
-        #expect(result?.error == nil)
-        #expect(result?.success?.user.userId == "mockID")
-        confirmed()
-      }
+      var error: FlutterError?
+      plugin.configure(withParameters: params, error: &error)
+      #expect(error == nil)
+      // No configuration should be set, allowing the SDK to use its default behavior
+      // (which is to load configuration information from the app's Info.plist).
+      #expect(fakeSignIn.configuration == nil)
     }
 
-    #expect(Set(fakeSignIn.additionalScopes ?? []) == Set(requestedScopes))
-  }
-
-  @Test func signInWithNonce() async {
-    let plugin = createTestPlugin()
-    var initializationError: FlutterError?
-    plugin.configure(
-      withParameters: FSIPlatformConfigurationParams.make(
-        withClientId: nil,
-        serverClientId: nil,
-        hostedDomain: nil),
-      error: &initializationError)
-    #expect(initializationError == nil)
-
-    let fakeUser = TestGoogleUser("mockID")
-    let fakeSignInResult = TestSignInResult(user: fakeUser)
-
-    let nonce = "A nonce"
-    fakeSignIn.signInResult = fakeSignInResult
-
-    await confirmation("completion called") { confirmed in
-      plugin.signIn(withScopeHint: [], nonce: nonce) { result, error in
-        #expect(error == nil)
-        #expect(result?.error == nil)
-        #expect(result?.success?.user.userId == "mockID")
-        confirmed()
-      }
-    }
-
-    #expect(fakeSignIn.nonce == nonce)
-  }
-
-  @Test func signInAlreadyGranted() async {
-    let plugin = createTestPlugin()
-    let fakeUser = TestGoogleUser("mockID")
-    let fakeSignInResult = TestSignInResult(user: fakeUser)
-
-    fakeSignIn.signInResult = fakeSignInResult
-
-    let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: GIDSignInError.scopesAlreadyGranted.rawValue,
-      userInfo: nil)
-    fakeSignIn.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-        #expect(error == nil)
-        #expect(result?.error == nil)
-        #expect(result?.success?.user.userId == "mockID")
-        confirmed()
-      }
-    }
-  }
-
-  @Test func signInError() async {
-    let plugin = createTestPlugin()
-    let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: GIDSignInError.canceled.rawValue, userInfo: nil)
-    fakeSignIn.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-        // Known errors from the SDK are returned as structured data, not
-        // FlutterError.
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == .canceled)
-        confirmed()
-      }
-    }
-  }
-
-  @Test func signInExceptionReturnsError() async {
-    let plugin = createTestPlugin()
-    fakeSignIn.exception = NSException(
-      name: NSExceptionName(rawValue: "MockName"),
-      reason: "MockReason",
-      userInfo: nil)
-
-    await confirmation("completion called") { confirmed in
-      plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
-        // Unexpected errors, such as runtime exceptions, are returned as
-        // FlutterError.
-        #expect(result == nil)
-        #expect(error?.code == "google_sign_in")
-        #expect(error?.message == "MockReason")
-        #expect(error?.details as? String == "MockName")
-        confirmed()
-      }
-    }
-  }
-
-  // MARK: - refreshedAuthorizationTokens
-
-  @Test func refreshTokens() async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-    // TestGoogleUser passes itself as the result's user property, so set the
-    // fake result data on this object.
-    fakeUser.idToken = TestToken("mockIdToken")
-    fakeUser.accessToken = TestToken("mockAccessToken")
-
-    await confirmation("completion called") { confirmed in
-      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-        #expect(error == nil)
-        #expect(result?.error == nil)
-        #expect(result?.success?.user.idToken == "mockIdToken")
-        #expect(result?.success?.accessToken == "mockAccessToken")
-        confirmed()
-      }
-    }
-  }
-
-  @Test func refreshTokensUnkownUser() async {
-    let plugin = createTestPlugin()
-    await confirmation("completion called") { confirmed in
-      plugin.refreshedAuthorizationTokens(forUser: "unknownUser") { result, error in
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == .userMismatch)
-        #expect(result?.error?.message == "The user is no longer signed in.")
-        confirmed()
-      }
-    }
-  }
-
-  @Test(arguments: [
-    (GIDSignInError.hasNoAuthInKeychain.rawValue, FSIGoogleSignInErrorCode.noAuthInKeychain),
-    (GIDSignInError.canceled.rawValue, .canceled),
-  ]) func refreshTokensGIDSignInErrorDomainErrors(
-    signInSDKErrorCode: Int,
-    expectedPigeonErrorCode: FSIGoogleSignInErrorCode
-  ) async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: signInSDKErrorCode,
-      userInfo: nil)
-    fakeUser.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == expectedPigeonErrorCode)
-        confirmed()
-      }
-    }
-  }
-
-  @Test(arguments: [
-    (NSURLErrorDomain, NSURLErrorTimedOut),
-    ("BogusDomain", 42),
-  ]) func refreshTokensOtherDomainErrors(
-    errorDomain: String,
-    errorCode: Int
-  ) async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    let sdkError = NSError(domain: errorDomain, code: errorCode, userInfo: nil)
-    fakeUser.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-        #expect(result?.error == nil)
-        #expect(result?.success == nil)
-        let expectedCode = "\(errorDomain): \(errorCode)"
-        #expect(error?.code == expectedCode)
-        confirmed()
-      }
-    }
-  }
-
-  // MARK: - addScopes
-
-  @Test func requestScopesPassesScopes() async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-    // Create a different instance to return in the result, to avoid a retain cycle.
-    let fakeResultUser = TestGoogleUser(fakeUser.userID!)
-    let fakeSignInResult = TestSignInResult(user: fakeResultUser)
-    fakeUser.result = fakeSignInResult
-
-    let scopes = ["mockScope1"]
-
-    await confirmation("completion called") { confirmed in
-      plugin.addScopes(scopes, forUser: fakeUser.userID!) { result, error in
-        #expect(error == nil)
-        #expect(result?.success != nil)
-        confirmed()
-      }
-    }
-    #expect(fakeUser.requestedScopes?.first == scopes.first)
-  }
-
-  @Test func requestScopesResultErrorIfNotSignedIn() async {
-    let plugin = createTestPlugin()
-    await confirmation("completion called") { confirmed in
-      plugin.addScopes(["mockScope1"], forUser: "unknownUser") { result, error in
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == .userMismatch)
-        confirmed()
-      }
-    }
-  }
-
-  @Test(arguments: [
-    (GIDSignInError.scopesAlreadyGranted.rawValue, FSIGoogleSignInErrorCode.scopesAlreadyGranted),
-    (GIDSignInError.mismatchWithCurrentUser.rawValue, FSIGoogleSignInErrorCode.userMismatch),
-  ]) func requestScopesGIDSignInErrorDomainErrors(
-    signInSDKErrorCode: Int,
-    expectedPigeonErrorCode: FSIGoogleSignInErrorCode
-  ) async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: signInSDKErrorCode,
-      userInfo: nil)
-    fakeUser.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == expectedPigeonErrorCode)
-        confirmed()
-      }
-    }
-  }
-
-  @Test func requestScopesWithUnknownError() async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    let sdkError = NSError(domain: "BogusDomain", code: 42, userInfo: nil)
-    fakeUser.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-        #expect(result == nil)
-        #expect(error?.code == "BogusDomain: 42")
-        confirmed()
-      }
-    }
-  }
-
-  @Test func requestScopesException() async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    fakeUser.exception = NSException(
-      name: NSExceptionName(rawValue: "MockName"),
-      reason: "MockReason",
-      userInfo: nil)
-
-    await confirmation("completion called") { confirmed in
-      plugin.addScopes([], forUser: fakeUser.userID!) { result, error in
-        #expect(result == nil)
-        #expect(error?.code == "request_scopes")
-        #expect(error?.message == "MockReason")
-        #expect(error?.details as? String == "MockName")
-        confirmed()
-      }
-    }
-  }
-
-  // MARK: - Utils
-
-  func loadGoogleServiceInfo() -> [String: Any]? {
-    if let plistPath = Bundle(for: type(of: fakeSignIn)).path(
-      forResource: "GoogleService-Info", ofType: "plist")
+    @Test(
+      arguments: [
+        // Use GoogleService-Info.plist, but add a domain.
+        (nil, nil, "example.com", true),
+        // Use GoogleService-Info.plist, but override the server client ID.
+        (nil, "overridingServerClientId", nil, true),
+        // No plist, providing only some values.
+        ("runtimeClientId", nil, nil, false),
+        ("runtimeClientId", "runtimeSeverClientId", nil, false),
+      ] as [(String?, String?, String?, Bool)]) func configureFromExplicitValues(
+        dynamicClientId: String?,
+        dynamicServerClientId: String?,
+        dynamicHostedDomain: String?,
+        useGoogleServiceInfoPlist: Bool
+      )
     {
-      return NSDictionary(contentsOfFile: plistPath) as? [String: Any]
+      let (plugin, fakeSignIn) = createTestPlugin(
+        googleServiceProperties: useGoogleServiceInfoPlist ? loadGoogleServiceInfo() : nil)
+      let params = FSIPlatformConfigurationParams.make(
+        withClientId: dynamicClientId,
+        serverClientId: dynamicServerClientId,
+        hostedDomain: dynamicHostedDomain)
+
+      // Default configuration values are nil, or the values from GoogleService-Info.plist if
+      // that's being used.
+      var expectedClientId: String? =
+        useGoogleServiceInfoPlist
+        ? "479882132969-9i9aqik3jfjd7qhci1nqf0bm2g71rm1u.apps.googleusercontent.com" : nil
+      var expectedServerClientId: String? =
+        useGoogleServiceInfoPlist ? "YOUR_SERVER_CLIENT_ID" : nil
+      var expectedDomain: String? = nil
+      // Any value passed in at runtime should override the default.
+      if let dynamicClientId {
+        expectedClientId = dynamicClientId
+      }
+      if let dynamicServerClientId {
+        expectedServerClientId = dynamicServerClientId
+      }
+      if let dynamicHostedDomain {
+        expectedDomain = dynamicHostedDomain
+      }
+
+      var error: FlutterError?
+      plugin.configure(withParameters: params, error: &error)
+      #expect(error == nil)
+      #expect(
+        fakeSignIn.configuration?.clientID
+          == expectedClientId)
+      #expect(fakeSignIn.configuration?.serverClientID == expectedServerClientId)
+      #expect(fakeSignIn.configuration?.hostedDomain == expectedDomain)
     }
-    return nil
   }
 
-  func createTestPlugin(
-    viewProvider: TestViewProvider = TestViewProvider(),
-    googleServiceProperties: [String: Any]? = nil
-  ) -> FLTGoogleSignInPlugin {
-    return FLTGoogleSignInPlugin(
+  @Suite("restorePreviousSignIn") struct RestorePreviousSignInTests {
+    @Test func restorePreviousSignInSuccess() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let fakeUser = TestGoogleUser("mockID")
+      let fakeUserProfile = TestProfileData(
+        name: "mockDisplay", email: "mock@example.com",
+        imageURL: URL(string: "https://example.com/profile.png"))
+      fakeUser.profile = fakeUserProfile
+      fakeSignIn.user = fakeUser
+
+      await confirmation("completion called") { confirmed in
+        plugin.restorePreviousSignIn { result, error in
+          #expect(error == nil)
+          #expect(result?.error == nil)
+          #expect(result?.success != nil)
+          #expect(result?.success?.user.displayName == fakeUserProfile.name)
+          #expect(result?.success?.user.email == fakeUserProfile.email)
+          #expect(result?.success?.user.userId == fakeUser.userID)
+          #expect(result?.success?.user.photoUrl == fakeUserProfile.imageURL?.absoluteString)
+          #expect(result?.success?.accessToken == fakeUser.accessToken.tokenString)
+          #expect(result?.success?.serverAuthCode == nil)
+          confirmed()
+        }
+      }
+    }
+
+    @Test func restorePreviousSignInError() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let sdkError = NSError(
+        domain: kGIDSignInErrorDomain, code: GIDSignInError.hasNoAuthInKeychain.rawValue,
+        userInfo: nil)
+      fakeSignIn.error = sdkError
+
+      await confirmation("completion called") { confirmed in
+        plugin.restorePreviousSignIn { result, error in
+          #expect(error == nil)
+          #expect(result?.success == nil)
+          #expect(result?.error?.type == FSIGoogleSignInErrorCode.noAuthInKeychain)
+          confirmed()
+        }
+      }
+    }
+  }
+
+  @Suite("signIn") struct SignInTests {
+    @Test func signInWithoutParameters() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let fakeUser = TestGoogleUser("mockID")
+      let fakeUserProfile = TestProfileData(
+        name: "mockDisplay", email: "mock@example.com",
+        imageURL: URL(string: "https://example.com/profile.png"))
+
+      let accessToken = "mockAccessToken"
+      let serverAuthCode = "mockAuthCode"
+      fakeUser.profile = fakeUserProfile
+      fakeUser.accessToken = TestToken(accessToken)
+
+      let fakeSignInResult = TestSignInResult(user: fakeUser, serverAuthCode: serverAuthCode)
+
+      fakeSignIn.signInResult = fakeSignInResult
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+          #expect(error == nil)
+          #expect(result?.success?.user.displayName == "mockDisplay")
+          #expect(result?.success?.user.email == "mock@example.com")
+          #expect(result?.success?.user.userId == "mockID")
+          #expect(result?.success?.user.photoUrl == "https://example.com/profile.png")
+          #expect(result?.success?.accessToken == accessToken)
+          #expect(result?.success?.serverAuthCode == serverAuthCode)
+          confirmed()
+        }
+      }
+    }
+
+    @Test func signInWithScopeHint() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      var initializationError: FlutterError?
+      plugin.configure(
+        withParameters: FSIPlatformConfigurationParams.make(
+          withClientId: nil,
+          serverClientId: nil,
+          hostedDomain: nil),
+        error: &initializationError)
+      #expect(initializationError == nil)
+
+      let fakeUser = TestGoogleUser("mockID")
+      let fakeSignInResult = TestSignInResult(user: fakeUser)
+
+      let requestedScopes = ["scope1", "scope2"]
+      fakeSignIn.signInResult = fakeSignInResult
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: requestedScopes, nonce: nil) { result, error in
+          #expect(error == nil)
+          #expect(result?.error == nil)
+          #expect(result?.success?.user.userId == "mockID")
+          confirmed()
+        }
+      }
+
+      #expect(Set(fakeSignIn.additionalScopes ?? []) == Set(requestedScopes))
+    }
+
+    @Test func signInWithNonce() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      var initializationError: FlutterError?
+      plugin.configure(
+        withParameters: FSIPlatformConfigurationParams.make(
+          withClientId: nil,
+          serverClientId: nil,
+          hostedDomain: nil),
+        error: &initializationError)
+      #expect(initializationError == nil)
+
+      let fakeUser = TestGoogleUser("mockID")
+      let fakeSignInResult = TestSignInResult(user: fakeUser)
+
+      let nonce = "A nonce"
+      fakeSignIn.signInResult = fakeSignInResult
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nonce) { result, error in
+          #expect(error == nil)
+          #expect(result?.error == nil)
+          #expect(result?.success?.user.userId == "mockID")
+          confirmed()
+        }
+      }
+
+      #expect(fakeSignIn.nonce == nonce)
+    }
+
+    @Test func signInAlreadyGranted() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let fakeUser = TestGoogleUser("mockID")
+      let fakeSignInResult = TestSignInResult(user: fakeUser)
+
+      fakeSignIn.signInResult = fakeSignInResult
+
+      let sdkError = NSError(
+        domain: kGIDSignInErrorDomain, code: GIDSignInError.scopesAlreadyGranted.rawValue,
+        userInfo: nil)
+      fakeSignIn.error = sdkError
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+          #expect(error == nil)
+          #expect(result?.error == nil)
+          #expect(result?.success?.user.userId == "mockID")
+          confirmed()
+        }
+      }
+    }
+
+    @Test func signInCanceled() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      let sdkError = NSError(
+        domain: kGIDSignInErrorDomain, code: GIDSignInError.canceled.rawValue, userInfo: nil)
+      fakeSignIn.error = sdkError
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+          // Known errors from the SDK are returned as structured data, not
+          // FlutterError.
+          #expect(error == nil)
+          #expect(result?.success == nil)
+          #expect(result?.error?.type == .canceled)
+          confirmed()
+        }
+      }
+    }
+
+    @Test func signInExceptionReturnsError() async {
+      let (plugin, fakeSignIn) = createTestPlugin()
+      fakeSignIn.exception = NSException(
+        name: NSExceptionName(rawValue: "MockName"),
+        reason: "MockReason",
+        userInfo: nil)
+
+      await confirmation("completion called") { confirmed in
+        plugin.signIn(withScopeHint: [], nonce: nil) { result, error in
+          // Unexpected errors, such as runtime exceptions, are returned as
+          // FlutterError.
+          #expect(result == nil)
+          #expect(error?.code == "google_sign_in")
+          #expect(error?.message == "MockReason")
+          #expect(error?.details as? String == "MockName")
+          confirmed()
+        }
+      }
+    }
+  }
+
+  @Suite("refreshedAuthorizationTokens") struct RefreshTests {
+    @Test func refreshTokensSuccess() async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+      // TestGoogleUser passes itself as the result's user property, so set the
+      // fake result data on this object.
+      fakeUser.idToken = TestToken("mockIdToken")
+      fakeUser.accessToken = TestToken("mockAccessToken")
+
+      await confirmation("completion called") { confirmed in
+        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+          #expect(error == nil)
+          #expect(result?.error == nil)
+          #expect(result?.success?.user.idToken == "mockIdToken")
+          #expect(result?.success?.accessToken == "mockAccessToken")
+          confirmed()
+        }
+      }
+    }
+
+    @Test func refreshTokensUnkownUser() async {
+      let (plugin, _) = createTestPlugin()
+      await confirmation("completion called") { confirmed in
+        plugin.refreshedAuthorizationTokens(forUser: "unknownUser") { result, error in
+          #expect(error == nil)
+          #expect(result?.success == nil)
+          #expect(result?.error?.type == .userMismatch)
+          #expect(result?.error?.message == "The user is no longer signed in.")
+          confirmed()
+        }
+      }
+    }
+
+    @Test(arguments: [
+      (GIDSignInError.hasNoAuthInKeychain.rawValue, FSIGoogleSignInErrorCode.noAuthInKeychain),
+      (GIDSignInError.canceled.rawValue, .canceled),
+    ]) func refreshTokensGIDSignInErrorDomainErrors(
+      signInSDKErrorCode: Int,
+      expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+    ) async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+
+      let sdkError = NSError(
+        domain: kGIDSignInErrorDomain, code: signInSDKErrorCode,
+        userInfo: nil)
+      fakeUser.error = sdkError
+
+      await confirmation("completion called") { confirmed in
+        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+          #expect(error == nil)
+          #expect(result?.success == nil)
+          #expect(result?.error?.type == expectedPigeonErrorCode)
+          confirmed()
+        }
+      }
+    }
+
+    @Test(arguments: [
+      (NSURLErrorDomain, NSURLErrorTimedOut),
+      ("BogusDomain", 42),
+    ]) func refreshTokensOtherDomainErrors(
+      errorDomain: String,
+      errorCode: Int
+    ) async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+
+      let sdkError = NSError(domain: errorDomain, code: errorCode, userInfo: nil)
+      fakeUser.error = sdkError
+
+      await confirmation("completion called") { confirmed in
+        plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
+          #expect(result?.error == nil)
+          #expect(result?.success == nil)
+          let expectedCode = "\(errorDomain): \(errorCode)"
+          #expect(error?.code == expectedCode)
+          confirmed()
+        }
+      }
+    }
+  }
+
+  @Suite("addScopes") struct AddScopesTests {
+    @Test func addScopesPassesScopes() async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+      // Create a different instance to return in the result, to avoid a retain cycle.
+      let fakeResultUser = TestGoogleUser(fakeUser.userID!)
+      let fakeSignInResult = TestSignInResult(user: fakeResultUser)
+      fakeUser.result = fakeSignInResult
+
+      let scopes = ["mockScope1"]
+
+      await confirmation("completion called") { confirmed in
+        plugin.addScopes(scopes, forUser: fakeUser.userID!) { result, error in
+          #expect(error == nil)
+          #expect(result?.success != nil)
+          confirmed()
+        }
+      }
+      #expect(fakeUser.requestedScopes?.first == scopes.first)
+    }
+
+    @Test func addScopesErrorsIfNotSignedIn() async {
+      let (plugin, _) = createTestPlugin()
+      await confirmation("completion called") { confirmed in
+        plugin.addScopes(["mockScope1"], forUser: "unknownUser") { result, error in
+          #expect(error == nil)
+          #expect(result?.success == nil)
+          #expect(result?.error?.type == .userMismatch)
+          confirmed()
+        }
+      }
+    }
+
+    @Test(arguments: [
+      (GIDSignInError.scopesAlreadyGranted.rawValue, FSIGoogleSignInErrorCode.scopesAlreadyGranted),
+      (GIDSignInError.mismatchWithCurrentUser.rawValue, FSIGoogleSignInErrorCode.userMismatch),
+    ]) func addScopesGIDSignInErrorDomainErrors(
+      signInSDKErrorCode: Int,
+      expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+    ) async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+
+      let sdkError = NSError(
+        domain: kGIDSignInErrorDomain, code: signInSDKErrorCode,
+        userInfo: nil)
+      fakeUser.error = sdkError
+
+      await confirmation("completion called") { confirmed in
+        plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
+          #expect(error == nil)
+          #expect(result?.success == nil)
+          #expect(result?.error?.type == expectedPigeonErrorCode)
+          confirmed()
+        }
+      }
+    }
+
+    @Test func addScopesUnknownError() async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+
+      let sdkError = NSError(domain: "BogusDomain", code: 42, userInfo: nil)
+      fakeUser.error = sdkError
+
+      await confirmation("completion called") { confirmed in
+        plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "BogusDomain: 42")
+          confirmed()
+        }
+      }
+    }
+
+    @Test func addScopesException() async {
+      let (plugin, _) = createTestPlugin()
+      let fakeUser = addSignedInUser(to: plugin)
+
+      fakeUser.exception = NSException(
+        name: NSExceptionName(rawValue: "MockName"),
+        reason: "MockReason",
+        userInfo: nil)
+
+      await confirmation("completion called") { confirmed in
+        plugin.addScopes([], forUser: fakeUser.userID!) { result, error in
+          #expect(result == nil)
+          #expect(error?.code == "request_scopes")
+          #expect(error?.message == "MockReason")
+          #expect(error?.details as? String == "MockName")
+          confirmed()
+        }
+      }
+    }
+  }
+}
+
+func loadGoogleServiceInfo() -> [String: Any]? {
+  if let plistPath = Bundle(for: TestSignIn.self).path(
+    forResource: "GoogleService-Info", ofType: "plist")
+  {
+    return NSDictionary(contentsOfFile: plistPath) as? [String: Any]
+  }
+  return nil
+}
+
+func createTestPlugin(
+  viewProvider: TestViewProvider = TestViewProvider(),
+  googleServiceProperties: [String: Any]? = nil
+) -> (FLTGoogleSignInPlugin, TestSignIn) {
+  let fakeSignIn = TestSignIn()
+  return (
+    FLTGoogleSignInPlugin(
       signIn: fakeSignIn, viewProvider: viewProvider,
-      googleServiceProperties: googleServiceProperties)
-  }
+      googleServiceProperties: googleServiceProperties), fakeSignIn
+  )
+}
 
-  func addSignedInUser(to plugin: FLTGoogleSignInPlugin) -> TestGoogleUser {
-    let identifier = "fakeID"
-    let user = TestGoogleUser(identifier)
-    plugin.usersByIdentifier[identifier] = user
-    return user
-  }
+func addSignedInUser(to plugin: FLTGoogleSignInPlugin) -> TestGoogleUser {
+  let identifier = "fakeID"
+  let user = TestGoogleUser(identifier)
+  plugin.usersByIdentifier[identifier] = user
+  return user
 }
