@@ -4,6 +4,7 @@
 
 import GoogleSignIn
 import Testing
+
 @testable import google_sign_in_ios
 
 #if os(OSX)
@@ -31,9 +32,9 @@ class TestSignIn: NSObject, FSIGIDSignIn {
   var exception: NSException?
 
   // Results to use in completion callbacks.
-  var user: FSIGIDGoogleUser?
+  var user: (any FSIGIDGoogleUser)?
   var error: Error?
-  var signInResult: FSIGIDSignInResult?
+  var signInResult: (any FSIGIDSignInResult)?
 
   // Passed parameters.
   var hint: String?
@@ -52,7 +53,7 @@ class TestSignIn: NSObject, FSIGIDSignIn {
     return true
   }
 
-  func restorePreviousSignIn(completion: ((FSIGIDGoogleUser?, Error?) -> Void)?) {
+  func restorePreviousSignIn(completion: (((any FSIGIDGoogleUser)?, Error?) -> Void)?) {
     if let exception = exception {
       exception.raise()
     }
@@ -101,7 +102,7 @@ class TestSignIn: NSObject, FSIGIDSignIn {
       hint: String?,
       additionalScopes: [String]?,
       nonce: String?,
-      completion: ((FSIGIDSignInResult?, Error?) -> Void)?
+      completion: (((any FSIGIDSignInResult)?, Error?) -> Void)?
     ) {
       if let exception = exception {
         exception.raise()
@@ -154,10 +155,10 @@ final class TestToken: NSObject, FSIGIDToken {
 
 // Test implementation of FSIGIDSignInResult.
 class TestSignInResult: NSObject, FSIGIDSignInResult {
-  var user: FSIGIDGoogleUser
+  var user: any FSIGIDGoogleUser
   var serverAuthCode: String?
 
-  init(user: FSIGIDGoogleUser, serverAuthCode: String? = nil) {
+  init(user: any FSIGIDGoogleUser, serverAuthCode: String? = nil) {
     self.user = user
     self.serverAuthCode = serverAuthCode
   }
@@ -166,17 +167,17 @@ class TestSignInResult: NSObject, FSIGIDSignInResult {
 // Test implementation of FSIGIDGoogleUser.
 class TestGoogleUser: NSObject, FSIGIDGoogleUser {
   var userID: String?
-  var profile: FSIGIDProfileData?
+  var profile: (any FSIGIDProfileData)?
   var grantedScopes: [String]?
-  var accessToken: FSIGIDToken = TestToken("Access")
-  var refreshToken: FSIGIDToken = TestToken("Refresh")
-  var idToken: FSIGIDToken?
+  var accessToken: any FSIGIDToken = TestToken("Access")
+  var refreshToken: any FSIGIDToken = TestToken("Refresh")
+  var idToken: (any FSIGIDToken)?
 
   // An exception to throw from methods.
   var exception: NSException?
 
   // The result to return from addScopes:presentingViewController:completion:.
-  var result: FSIGIDSignInResult?
+  var result: (any FSIGIDSignInResult)?
 
   // The error to return from methods.
   var error: Error?
@@ -193,7 +194,7 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
     userID = userIdentifier
   }
 
-  func refreshTokensIfNeeded(completion: @escaping (FSIGIDGoogleUser?, Error?) -> Void) {
+  func refreshTokensIfNeeded(completion: @escaping ((any FSIGIDGoogleUser)?, Error?) -> Void) {
     if let exception = exception {
       exception.raise()
     }
@@ -204,7 +205,7 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
     func addScopes(
       _ scopes: [String],
       presenting presentingViewController: UIViewController,
-      completion: ((FSIGIDSignInResult?, Error?) -> Void)?
+      completion: (((any FSIGIDSignInResult)?, Error?) -> Void)?
     ) {
       self.requestedScopes = scopes
       self.presentingViewController = presentingViewController
@@ -217,7 +218,7 @@ class TestGoogleUser: NSObject, FSIGIDGoogleUser {
     func addScopes(
       _ scopes: [String],
       presenting presentingWindow: NSWindow,
-      completion: ((FSIGIDSignInResult?, Error?) -> Void)?
+      completion: (((any FSIGIDSignInResult)?, Error?) -> Void)?
     ) {
       self.requestedScopes = scopes
       self.presentingWindow = presentingWindow
