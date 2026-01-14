@@ -3201,7 +3201,7 @@ void main() {
     // Expect 1 circle path centered at 50%,50% = 100,100
     expect(instructions.paths.length, 1);
     // Circle paths are represented as ovals, check they're centered correctly
-    final commands = instructions.paths[0].commands.toList();
+    final List<PathCommand> commands = instructions.paths[0].commands.toList();
     expect(commands.isNotEmpty, true);
     // The first command should move to the top of the circle (100, 100-40 = 60)
     expect(commands[0], const MoveToCommand(100.0, 60.0));
