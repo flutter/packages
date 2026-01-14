@@ -35,7 +35,8 @@
       [[FLTMarkersController alloc] initWithMapView:mapView
                                     callbackHandler:handler
                           clusterManagersController:clusterManagersController
-                                          registrar:registrar];
+                                          registrar:registrar
+                                         markerType:FGMPlatformMarkerTypeMarker];
 
   // Add cluster managers.
   NSString *clusterManagerId = @"cm";
@@ -71,7 +72,8 @@
                                                         visible:YES
                                                          zIndex:1
                                                        markerId:markerId1
-                                               clusterManagerId:clusterManagerId];
+                                               clusterManagerId:clusterManagerId
+                                              collisionBehavior:NULL];
   FGMPlatformMarker *marker2 = [FGMPlatformMarker makeWithAlpha:1
                                                          anchor:zeroPoint
                                                consumeTapEvents:NO
@@ -84,7 +86,8 @@
                                                         visible:YES
                                                          zIndex:1
                                                        markerId:markerId2
-                                               clusterManagerId:clusterManagerId];
+                                               clusterManagerId:clusterManagerId
+                                              collisionBehavior:NULL];
 
   [markersController addMarkers:@[ marker1, marker2 ]];
 

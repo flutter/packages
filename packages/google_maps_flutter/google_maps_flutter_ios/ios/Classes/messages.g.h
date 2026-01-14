@@ -28,6 +28,18 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapType) {
 - (instancetype)initWithValue:(FGMPlatformMapType)value;
 @end
 
+typedef NS_ENUM(NSUInteger, FGMPlatformMarkerCollisionBehavior) {
+  FGMPlatformMarkerCollisionBehaviorRequiredDisplay = 0,
+  FGMPlatformMarkerCollisionBehaviorOptionalAndHidesLowerPriority = 1,
+  FGMPlatformMarkerCollisionBehaviorRequiredAndHidesOptional = 2,
+};
+
+/// Wrapper for FGMPlatformMarkerCollisionBehavior to allow for nullability.
+@interface FGMPlatformMarkerCollisionBehaviorBox : NSObject
+@property(nonatomic, assign) FGMPlatformMarkerCollisionBehavior value;
+- (instancetype)initWithValue:(FGMPlatformMarkerCollisionBehavior)value;
+@end
+
 /// Join types for polyline joints.
 typedef NS_ENUM(NSUInteger, FGMPlatformJointType) {
   FGMPlatformJointTypeMitered = 0,
@@ -52,6 +64,17 @@ typedef NS_ENUM(NSUInteger, FGMPlatformPatternItemType) {
 @interface FGMPlatformPatternItemTypeBox : NSObject
 @property(nonatomic, assign) FGMPlatformPatternItemType value;
 - (instancetype)initWithValue:(FGMPlatformPatternItemType)value;
+@end
+
+typedef NS_ENUM(NSUInteger, FGMPlatformMarkerType) {
+  FGMPlatformMarkerTypeMarker = 0,
+  FGMPlatformMarkerTypeAdvancedMarker = 1,
+};
+
+/// Wrapper for FGMPlatformMarkerType to allow for nullability.
+@interface FGMPlatformMarkerTypeBox : NSObject
+@property(nonatomic, assign) FGMPlatformMarkerType value;
+- (instancetype)initWithValue:(FGMPlatformMarkerType)value;
 @end
 
 /// Pigeon equivalent of [MapBitmapScaling].
@@ -108,6 +131,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @class FGMPlatformBitmapAssetImage;
 @class FGMPlatformBitmapAssetMap;
 @class FGMPlatformBitmapBytesMap;
+@class FGMPlatformBitmapPinConfig;
 
 /// Pigeon representatation of a CameraPosition.
 @interface FGMPlatformCameraPosition : NSObject
@@ -322,7 +346,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                       visible:(BOOL)visible
                        zIndex:(NSInteger)zIndex
                      markerId:(NSString *)markerId
-             clusterManagerId:(nullable NSString *)clusterManagerId;
+             clusterManagerId:(nullable NSString *)clusterManagerId
+            collisionBehavior:(nullable FGMPlatformMarkerCollisionBehaviorBox *)collisionBehavior;
 @property(nonatomic, assign) double alpha;
 @property(nonatomic, strong) FGMPlatformPoint *anchor;
 @property(nonatomic, assign) BOOL consumeTapEvents;
@@ -336,6 +361,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, assign) NSInteger zIndex;
 @property(nonatomic, copy) NSString *markerId;
 @property(nonatomic, copy, nullable) NSString *clusterManagerId;
+@property(nonatomic, strong, nullable) FGMPlatformMarkerCollisionBehaviorBox *collisionBehavior;
 @end
 
 /// Pigeon equivalent of the Polygon class.
@@ -542,6 +568,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
                      indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
                         trafficEnabled:(nullable NSNumber *)trafficEnabled
                       buildingsEnabled:(nullable NSNumber *)buildingsEnabled
+                            markerType:(nullable FGMPlatformMarkerTypeBox *)markerType
                                  mapId:(nullable NSString *)mapId
                                  style:(nullable NSString *)style;
 @property(nonatomic, strong, nullable) NSNumber *compassEnabled;
@@ -559,6 +586,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, strong, nullable) NSNumber *indoorViewEnabled;
 @property(nonatomic, strong, nullable) NSNumber *trafficEnabled;
 @property(nonatomic, strong, nullable) NSNumber *buildingsEnabled;
+@property(nonatomic, strong, nullable) FGMPlatformMarkerTypeBox *markerType;
 @property(nonatomic, copy, nullable) NSString *mapId;
 @property(nonatomic, copy, nullable) NSString *style;
 @end
@@ -699,6 +727,22 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @property(nonatomic, strong, nullable) NSNumber *height;
 @end
 
+/// Pigeon equivalent of [PinConfig].
+@interface FGMPlatformBitmapPinConfig : NSObject
++ (instancetype)makeWithBackgroundColor:(nullable FGMPlatformColor *)backgroundColor
+                            borderColor:(nullable FGMPlatformColor *)borderColor
+                             glyphColor:(nullable FGMPlatformColor *)glyphColor
+                         glyphTextColor:(nullable FGMPlatformColor *)glyphTextColor
+                              glyphText:(nullable NSString *)glyphText
+                            glyphBitmap:(nullable FGMPlatformBitmap *)glyphBitmap;
+@property(nonatomic, strong, nullable) FGMPlatformColor *backgroundColor;
+@property(nonatomic, strong, nullable) FGMPlatformColor *borderColor;
+@property(nonatomic, strong, nullable) FGMPlatformColor *glyphColor;
+@property(nonatomic, strong, nullable) FGMPlatformColor *glyphTextColor;
+@property(nonatomic, copy, nullable) NSString *glyphText;
+@property(nonatomic, strong, nullable) FGMPlatformBitmap *glyphBitmap;
+@end
+
 /// The codec used by all APIs.
 NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
 
@@ -811,6 +855,10 @@ NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
 /// Takes a snapshot of the map and returns its image data.
 - (nullable FlutterStandardTypedData *)takeSnapshotWithError:
     (FlutterError *_Nullable *_Nonnull)error;
+/// Returns true if the map supports advanced markers.
+///
+/// @return `nil` only when `error != nil`.
+- (nullable NSNumber *)isAdvancedMarkersAvailable:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFGMMapsApi(id<FlutterBinaryMessenger> binaryMessenger,

@@ -214,6 +214,7 @@ class PlatformMarker {
     this.visible = true,
     this.zIndex = 0,
     this.clusterManagerId,
+    this.collisionBehavior,
   });
 
   final double alpha;
@@ -230,6 +231,13 @@ class PlatformMarker {
   final int zIndex;
   final String markerId;
   final String? clusterManagerId;
+  final PlatformMarkerCollisionBehavior? collisionBehavior;
+}
+
+enum PlatformMarkerCollisionBehavior {
+  requiredDisplay,
+  optionalAndHidesLowerPriority,
+  requiredAndHidesOptional,
 }
 
 /// Pigeon equivalent of the Polygon class.
@@ -430,6 +438,8 @@ class PlatformMapViewCreationParams {
   final List<PlatformGroundOverlay> initialGroundOverlays;
 }
 
+enum PlatformMarkerType { marker, advancedMarker }
+
 /// Pigeon equivalent of MapConfiguration.
 class PlatformMapConfiguration {
   PlatformMapConfiguration({
@@ -448,6 +458,7 @@ class PlatformMapConfiguration {
     required this.indoorViewEnabled,
     required this.trafficEnabled,
     required this.buildingsEnabled,
+    required this.markerType,
     required this.mapId,
     required this.style,
   });
@@ -467,6 +478,7 @@ class PlatformMapConfiguration {
   final bool? indoorViewEnabled;
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
+  final PlatformMarkerType? markerType;
   final String? mapId;
   final String? style;
 }
@@ -611,6 +623,26 @@ class PlatformBitmapBytesMap {
 /// Pigeon equivalent of [MapBitmapScaling].
 enum PlatformMapBitmapScaling { auto, none }
 
+/// Pigeon equivalent of [PinConfig].
+class PlatformBitmapPinConfig {
+  PlatformBitmapPinConfig({
+    required this.backgroundColor,
+    required this.borderColor,
+    required this.glyphColor,
+    required this.glyphTextColor,
+    required this.glyphText,
+    required this.glyphBitmap,
+  });
+
+  final PlatformColor? backgroundColor;
+  final PlatformColor? borderColor;
+
+  final PlatformColor? glyphColor;
+  final PlatformColor? glyphTextColor;
+  final String? glyphText;
+  final PlatformBitmap? glyphBitmap;
+}
+
 /// Interface for non-test interactions with the native SDK.
 ///
 /// For test-only state queries, see [MapsInspectorApi].
@@ -753,6 +785,10 @@ abstract class MapsApi {
 
   /// Takes a snapshot of the map and returns its image data.
   Uint8List? takeSnapshot();
+
+  /// Returns true if the map supports advanced markers.
+  @ObjCSelector('isAdvancedMarkersAvailable')
+  bool isAdvancedMarkersAvailable();
 }
 
 /// Interface for calls from the native SDK to Dart.
