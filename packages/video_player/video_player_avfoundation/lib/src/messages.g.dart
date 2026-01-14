@@ -154,6 +154,200 @@ class TexturePlayerIds {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Video track data from AVAssetVariant (HLS variants) for iOS 15+.
+class MediaSelectionVideoTrackData {
+  MediaSelectionVideoTrackData({
+    required this.variantIndex,
+    this.label,
+    this.bitrate,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+    required this.isSelected,
+  });
+
+  int variantIndex;
+
+  String? label;
+
+  int? bitrate;
+
+  int? width;
+
+  int? height;
+
+  double? frameRate;
+
+  String? codec;
+
+  bool isSelected;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      variantIndex,
+      label,
+      bitrate,
+      width,
+      height,
+      frameRate,
+      codec,
+      isSelected,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static MediaSelectionVideoTrackData decode(Object result) {
+    result as List<Object?>;
+    return MediaSelectionVideoTrackData(
+      variantIndex: result[0]! as int,
+      label: result[1] as String?,
+      bitrate: result[2] as int?,
+      width: result[3] as int?,
+      height: result[4] as int?,
+      frameRate: result[5] as double?,
+      codec: result[6] as String?,
+      isSelected: result[7]! as bool,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! MediaSelectionVideoTrackData ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Video track data from AVAssetTrack (regular videos).
+class AssetVideoTrackData {
+  AssetVideoTrackData({
+    required this.trackId,
+    this.label,
+    this.width,
+    this.height,
+    this.frameRate,
+    this.codec,
+    required this.isSelected,
+  });
+
+  int trackId;
+
+  String? label;
+
+  int? width;
+
+  int? height;
+
+  double? frameRate;
+
+  String? codec;
+
+  bool isSelected;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      trackId,
+      label,
+      width,
+      height,
+      frameRate,
+      codec,
+      isSelected,
+    ];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static AssetVideoTrackData decode(Object result) {
+    result as List<Object?>;
+    return AssetVideoTrackData(
+      trackId: result[0]! as int,
+      label: result[1] as String?,
+      width: result[2] as int?,
+      height: result[3] as int?,
+      frameRate: result[4] as double?,
+      codec: result[5] as String?,
+      isSelected: result[6]! as bool,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! AssetVideoTrackData || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Container for video track data from iOS.
+class NativeVideoTrackData {
+  NativeVideoTrackData({this.assetTracks, this.mediaSelectionTracks});
+
+  /// Asset-based tracks (for regular videos)
+  List<AssetVideoTrackData>? assetTracks;
+
+  /// Media selection tracks (for HLS variants on iOS 15+)
+  List<MediaSelectionVideoTrackData>? mediaSelectionTracks;
+
+  List<Object?> _toList() {
+    return <Object?>[assetTracks, mediaSelectionTracks];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NativeVideoTrackData decode(Object result) {
+    result as List<Object?>;
+    return NativeVideoTrackData(
+      assetTracks: (result[0] as List<Object?>?)?.cast<AssetVideoTrackData>(),
+      mediaSelectionTracks: (result[1] as List<Object?>?)
+          ?.cast<MediaSelectionVideoTrackData>(),
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NativeVideoTrackData || other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -170,6 +364,15 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is TexturePlayerIds) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
+    } else if (value is MediaSelectionVideoTrackData) {
+      buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is AssetVideoTrackData) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeVideoTrackData) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -184,6 +387,12 @@ class _PigeonCodec extends StandardMessageCodec {
         return CreationOptions.decode(readValue(buffer)!);
       case 131:
         return TexturePlayerIds.decode(readValue(buffer)!);
+      case 132:
+        return MediaSelectionVideoTrackData.decode(readValue(buffer)!);
+      case 133:
+        return AssetVideoTrackData.decode(readValue(buffer)!);
+      case 134:
+        return NativeVideoTrackData.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -568,6 +777,66 @@ class VideoPlayerInstanceApi {
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Gets the available video tracks for the video.
+  Future<NativeVideoTrackData> getVideoTracks() async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.getVideoTracks$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NativeVideoTrackData?)!;
+    }
+  }
+
+  /// Selects a video track by setting preferredPeakBitRate.
+  /// Pass 0 to enable auto quality selection.
+  Future<void> selectVideoTrack(int bitrate) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.selectVideoTrack$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[bitrate],
+    );
     final List<Object?>? pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
