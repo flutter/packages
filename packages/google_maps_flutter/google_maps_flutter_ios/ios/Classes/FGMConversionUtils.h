@@ -64,12 +64,27 @@ extern FGMPlatformGroundOverlay *FGMGetPigeonGroundOverlay(GMSGroundOverlay *gro
                                                            BOOL isCreatedWithBounds,
                                                            NSNumber *_Nullable zoomLevel);
 
+extern GMUGradient *FGMGetGradientForPigeonHeatmapGradient(FGMPlatformHeatmapGradient *gradient);
+
+extern FGMPlatformHeatmapGradient *FGMGetPigeonHeatmapGradientForGradient(GMUGradient *gradient);
+
+/// Creates a GMUWeightedLatLng array from its Pigeon equivalent.
+extern NSArray<GMUWeightedLatLng *> *FGMGetWeightedDataForPigeonWeightedData(
+    NSArray<FGMPlatformWeightedLatLng *> *weightedLatLngs);
+
+/// Converts a GMUWeightedLatLng array to its Pigeon equivalent.
+extern NSArray<FGMPlatformWeightedLatLng *> *FGMGetPigeonWeightedDataForWeightedData(
+    NSArray<GMUWeightedLatLng *> *weightedLatLngs);
+
 /// Creates a GMSCameraUpdate from its Pigeon equivalent.
 extern GMSCameraUpdate *_Nullable FGMGetCameraUpdateForPigeonCameraUpdate(
     FGMPlatformCameraUpdate *update);
 
-/// Creates a UIColor from its RGBA components, expressed as an integer.
+/// Creates a UIColor from its Pigeon representation.
 extern UIColor *FGMGetColorForPigeonColor(FGMPlatformColor *color);
+
+/// Converts a UIColor to its Pigeon representation.
+extern FGMPlatformColor *FGMGetPigeonColorForColor(UIColor *color);
 
 /// Creates an array of GMSStrokeStyles using the given patterns and stroke color.
 extern NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
@@ -78,36 +93,5 @@ extern NSArray<GMSStrokeStyle *> *FGMGetStrokeStylesFromPatterns(
 /// Creates an array of span lengths using the given patterns.
 extern NSArray<NSNumber *> *FGMGetSpanLengthsFromPatterns(
     NSArray<FGMPlatformPatternItem *> *patterns);
-
-/// Legacy conversion utils for heatmaps, which are still using a JSON
-/// representation instead of structured Pigeon data.
-// TODO(stuartmorgan): Remove this once heatmaps are migrated to Pigeon.
-@interface FGMHeatmapConversions : NSObject
-
-extern NSString *const kHeatmapsToAddKey;
-extern NSString *const kHeatmapIdKey;
-extern NSString *const kHeatmapDataKey;
-extern NSString *const kHeatmapGradientKey;
-extern NSString *const kHeatmapOpacityKey;
-extern NSString *const kHeatmapRadiusKey;
-extern NSString *const kHeatmapMinimumZoomIntensityKey;
-extern NSString *const kHeatmapMaximumZoomIntensityKey;
-extern NSString *const kHeatmapGradientColorsKey;
-extern NSString *const kHeatmapGradientStartPointsKey;
-extern NSString *const kHeatmapGradientColorMapSizeKey;
-
-+ (CLLocationCoordinate2D)locationFromLatLong:(NSArray *)latlong;
-+ (CGPoint)pointFromArray:(NSArray *)array;
-+ (NSArray *)arrayFromLocation:(CLLocationCoordinate2D)location;
-+ (UIColor *)colorFromRGBA:(NSNumber *)data;
-+ (NSNumber *)RGBAFromColor:(UIColor *)color;
-+ (nullable GMUWeightedLatLng *)weightedLatLngFromArray:(NSArray<id> *)data;
-+ (NSArray<id> *)arrayFromWeightedLatLng:(GMUWeightedLatLng *)weightedLatLng;
-+ (NSArray<GMUWeightedLatLng *> *)weightedDataFromArray:(NSArray<NSArray<id> *> *)data;
-+ (NSArray<NSArray<id> *> *)arrayFromWeightedData:(NSArray<GMUWeightedLatLng *> *)weightedData;
-+ (GMUGradient *)gradientFromDictionary:(NSDictionary<NSString *, id> *)data;
-+ (NSDictionary<NSString *, id> *)dictionaryFromGradient:(GMUGradient *)gradient;
-
-@end
 
 NS_ASSUME_NONNULL_END
