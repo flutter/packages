@@ -1062,4 +1062,41 @@
   return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
 }
 
+- (void)testLoadTracksWithMediaTypeIsCalledOnNewerOS {
+  if (@available(iOS 15.0, macOS 12.0, *)) {
+    AVAsset *mockAsset = OCMClassMock([AVAsset class]);
+    AVPlayerItem *mockItem = OCMClassMock([AVPlayerItem class]);
+    OCMStub([mockItem asset]).andReturn(mockAsset);
+
+    // Stub loadValuesAsynchronouslyForKeys to immediately call completion
+    OCMStub([mockAsset loadValuesAsynchronouslyForKeys:[OCMArg any]
+                                     completionHandler:[OCMArg invokeBlock]]);
+
+    // Stub statusOfValueForKey to return Loaded
+    OCMStub([mockAsset statusOfValueForKey:@"tracks" error:[OCMArg anyObjectRef]])
+        .andReturn(AVKeyValueStatusLoaded);
+
+    // Expect loadTracksWithMediaType:completionHandler:
+    XCTestExpectation *expectation =
+        [self expectationWithDescription:@"loadTracksWithMediaType called"];
+    OCMExpect([mockAsset loadTracksWithMediaType:AVMediaTypeVideo completionHandler:[OCMArg any]])
+        .andDo(^(NSInvocation *invocation) {
+          [expectation fulfill];
+          // Invoke the completion handler to prevent leaks or hangs if the code waits for it
+          void (^completion)(NSArray<AVAssetTrack *> *, NSError *);
+          [invocation getArgument:&completion atIndex:3];
+          completion(@[], nil);
+        });
+
+    StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil output:nil];
+    FVPVideoPlayer *player =
+        [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
+                                         avFactory:stubAVFactory
+                                      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+    (void)player;  // Keep reference
+
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  }
+}
+
 @end

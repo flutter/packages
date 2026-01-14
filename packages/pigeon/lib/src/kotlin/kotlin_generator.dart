@@ -1234,6 +1234,10 @@ if (wrapped == null) {
               EventChannel(messenger, channelName, ${generatorOptions.fileSpecificClassNameComponent}$_pigeonMethodChannelCodec).setStreamHandler(internalStreamHandler)
             }
           }
+        // Implement methods from ${generatorOptions.fileSpecificClassNameComponent}PigeonEventChannelWrapper
+        override fun onListen(p0: Any?, sink: PigeonEventSink<${_kotlinTypeForDartType(func.returnType)}>) {}
+
+        override fun onCancel(p0: Any?) {}
         }
       ''');
     }

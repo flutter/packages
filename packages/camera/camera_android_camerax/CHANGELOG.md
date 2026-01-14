@@ -1,3 +1,11 @@
+## 0.6.27
+
+* Changes `availableCameras` to get the camera name from `Camera2CameraInfo.getCameraId`.
+
+## 0.6.26+3
+
+* Bumps kotlin_version to 2.3.0.
+
 ## 0.6.26+2
 
 * Updates pigeon generation to prevent crash when objects call to Dart after a hot restart.

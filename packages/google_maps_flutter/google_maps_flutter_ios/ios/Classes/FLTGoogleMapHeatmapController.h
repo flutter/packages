@@ -16,30 +16,16 @@ NS_ASSUME_NONNULL_BEGIN
 /// Initializes an instance of this class with a heatmap tile layer, a map view, and additional
 /// configuration options.
 ///
-/// @param heatmapTileLayer The heatmap tile layer (of type GMUHeatmapTileLayer) that will be used
-/// to display heatmap data on the map.
-/// @param mapView The map view (of type GMSMapView) where the heatmap layer will be overlaid.
-/// @param options A dictionary (NSDictionary) containing any additional options or configuration
-/// settings for customizing the heatmap layer. The options dictionary is expected to have the
-/// following structure:
-///
-/// @code
-/// {
-///   "heatmapId": NSString,
-///   "data": NSArray, // Array of serialized weighted lat/lng
-///   "gradient": NSDictionary?, // Serialized heatmap gradient
-///   "opacity": NSNumber,
-///   "radius": NSNumber,
-///   "minimumZoomIntensity": NSNumber,
-///   "maximumZoomIntensity": NSNumber
-/// }
-/// @endcode
+/// @param heatmap The heatmap data to display.
+/// @param heatmapTileLayer The heatmap tile layer that will be used to display heatmap data on the
+/// map.
+/// @param mapView The map view where the heatmap layer will be overlaid.
 ///
 /// @return An initialized instance of this class, configured with the specified heatmap tile layer,
 /// map view, and additional options.
-- (instancetype)initWithHeatmapTileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
-                                 mapView:(GMSMapView *)mapView
-                                 options:(NSDictionary<NSString *, id> *)options;
+- (instancetype)initWithHeatmap:(FGMPlatformHeatmap *)heatmap
+                      tileLayer:(GMUHeatmapTileLayer *)heatmapTileLayer
+                        mapView:(GMSMapView *)mapView;
 
 /// Removes this heatmap from the map.
 - (void)removeHeatmap;
@@ -66,9 +52,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// Returns true if a heatmap with the given identifier exists on the map.
 - (BOOL)hasHeatmapWithIdentifier:(NSString *)identifier;
 
-/// Returns the JSON data of the heatmap with the given identifier. The JSON structure is equivalent
-/// to the `options` parameter above.
-- (nullable NSDictionary<NSString *, id> *)heatmapInfoWithIdentifier:(NSString *)identifier;
+/// Returns the heatmap with the given identifier.
+- (nullable FGMPlatformHeatmap *)heatmapWithIdentifier:(NSString *)identifier;
 @end
 
 NS_ASSUME_NONNULL_END
