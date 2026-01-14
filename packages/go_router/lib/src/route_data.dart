@@ -619,3 +619,31 @@ class NoOpPage extends Page<void> {
   Route<void> createRoute(BuildContext context) =>
       throw UnsupportedError('Should never be called');
 }
+
+/// Annotation to override the URI name for a route parameter.
+@Target({TargetKind.parameter})
+class TypedGoRouteParameter {
+  /// Annotation to override the URI name for a route parameter.
+  const TypedGoRouteParameter({this.name});
+
+  /// The name of the parameter in the URI.
+  ///
+  /// If `null`, the kebab-case version of the parameter name will be used.
+  ///
+  /// {@template go_router_builder.TypedGoRouteParameter.name.usage}
+  /// For example:
+  /// ```dart
+  /// class MyRoute extends GoRouteData with $MyRoute {
+  ///   const MyRoute({
+  ///     @TypedGoRouteParameter(name: 'custom_name') this.myParameter,
+  ///   });
+  ///  final String myParameter;
+  /// }
+  /// ```
+  ///
+  /// This will result in a route that matches
+  /// `/my_route?custom_name=some_value` instead of the default
+  /// `/my_route?my-parameter=some_value`.
+  /// {@endtemplate}
+  final String? name;
+}
