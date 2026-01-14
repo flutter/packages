@@ -1,3 +1,7 @@
+## 4.2.0
+
+- Adds supports for `TypedGoRouteParameter` annotation.
+
 ## 4.1.3
 
 * Requires `analyzer` 8.2 or higher, to avoid experimental APIs.
