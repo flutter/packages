@@ -565,12 +565,18 @@ struct FLTGoogleSignInPluginTest {
     }
   }
 
-  @Test func refreshTokensNoAuthKeychainError() async {
+  @Test(arguments: [
+    (GIDSignInError.hasNoAuthInKeychain.rawValue, FSIGoogleSignInErrorCode.noAuthInKeychain),
+    (GIDSignInError.canceled.rawValue, .canceled),
+  ]) func refreshTokensGIDSignInErrorDomainErrors(
+    signInSDKErrorCode: Int,
+    expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+  ) async {
     let plugin = createTestPlugin()
     let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: GIDSignInError.hasNoAuthInKeychain.rawValue,
+      domain: kGIDSignInErrorDomain, code: signInSDKErrorCode,
       userInfo: nil)
     fakeUser.error = sdkError
 
@@ -578,59 +584,31 @@ struct FLTGoogleSignInPluginTest {
       plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
         #expect(error == nil)
         #expect(result?.success == nil)
-        #expect(result?.error?.type == .noAuthInKeychain)
+        #expect(result?.error?.type == expectedPigeonErrorCode)
         confirmed()
       }
     }
   }
 
-  @Test func refreshTokensCancelledError() async {
+  @Test(arguments: [
+    (NSURLErrorDomain, NSURLErrorTimedOut),
+    ("BogusDomain", 42),
+  ]) func refreshTokensOtherDomainErrors(
+    errorDomain: String,
+    errorCode: Int
+  ) async {
     let plugin = createTestPlugin()
     let fakeUser = addSignedInUser(to: plugin)
 
-    let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: GIDSignInError.canceled.rawValue, userInfo: nil)
-    fakeUser.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == .canceled)
-        confirmed()
-      }
-    }
-  }
-
-  @Test func refreshTokensURLError() async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    let sdkError = NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut, userInfo: nil)
+    let sdkError = NSError(domain: errorDomain, code: errorCode, userInfo: nil)
     fakeUser.error = sdkError
 
     await confirmation("completion called") { confirmed in
       plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
         #expect(result?.error == nil)
         #expect(result?.success == nil)
-        let expectedCode = "\(NSURLErrorDomain): \(NSURLErrorTimedOut)"
+        let expectedCode = "\(errorDomain): \(errorCode)"
         #expect(error?.code == expectedCode)
-        confirmed()
-      }
-    }
-  }
-
-  @Test func refreshTokensUnknownError() async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    let sdkError = NSError(domain: "BogusDomain", code: 42, userInfo: nil)
-    fakeUser.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.refreshedAuthorizationTokens(forUser: fakeUser.userID!) { result, error in
-        #expect(result?.success == nil)
-        #expect(error?.code == "BogusDomain: 42")
         confirmed()
       }
     }
@@ -670,12 +648,18 @@ struct FLTGoogleSignInPluginTest {
     }
   }
 
-  @Test func requestScopesIfNoMissingScope() async {
+  @Test(arguments: [
+    (GIDSignInError.scopesAlreadyGranted.rawValue, FSIGoogleSignInErrorCode.scopesAlreadyGranted),
+    (GIDSignInError.mismatchWithCurrentUser.rawValue, FSIGoogleSignInErrorCode.userMismatch),
+  ]) func requestScopesGIDSignInErrorDomainErrors(
+    signInSDKErrorCode: Int,
+    expectedPigeonErrorCode: FSIGoogleSignInErrorCode
+  ) async {
     let plugin = createTestPlugin()
     let fakeUser = addSignedInUser(to: plugin)
 
     let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: GIDSignInError.scopesAlreadyGranted.rawValue,
+      domain: kGIDSignInErrorDomain, code: signInSDKErrorCode,
       userInfo: nil)
     fakeUser.error = sdkError
 
@@ -683,26 +667,7 @@ struct FLTGoogleSignInPluginTest {
       plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
         #expect(error == nil)
         #expect(result?.success == nil)
-        #expect(result?.error?.type == .scopesAlreadyGranted)
-        confirmed()
-      }
-    }
-  }
-
-  @Test func requestScopesResultErrorIfMismatchingUser() async {
-    let plugin = createTestPlugin()
-    let fakeUser = addSignedInUser(to: plugin)
-
-    let sdkError = NSError(
-      domain: kGIDSignInErrorDomain, code: GIDSignInError.mismatchWithCurrentUser.rawValue,
-      userInfo: nil)
-    fakeUser.error = sdkError
-
-    await confirmation("completion called") { confirmed in
-      plugin.addScopes(["mockScope1"], forUser: fakeUser.userID!) { result, error in
-        #expect(error == nil)
-        #expect(result?.success == nil)
-        #expect(result?.error?.type == .userMismatch)
+        #expect(result?.error?.type == expectedPigeonErrorCode)
         confirmed()
       }
     }
