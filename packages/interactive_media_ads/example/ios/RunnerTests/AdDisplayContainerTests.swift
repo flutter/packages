@@ -24,7 +24,8 @@ struct AdDisplayContainerTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     let value = try? api.pigeonDelegate.adContainer(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adContainer)
@@ -34,7 +35,10 @@ struct AdDisplayContainerTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(),
+      viewController: UIViewController(),
+      companionSlots: [IMACompanionAdSlot(view: UIView())])
     let value = try? api.pigeonDelegate.companionSlots(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.companionSlots)
@@ -44,7 +48,8 @@ struct AdDisplayContainerTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     let controller = UIViewController()
     try? api.pigeonDelegate.setAdContainerViewController(
       pigeonApi: api, pigeonInstance: instance, controller: controller)
@@ -56,7 +61,8 @@ struct AdDisplayContainerTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     let adContainerViewController = UIViewController()
     instance.adContainerViewController = adContainerViewController
     let value = try? api.pigeonDelegate.getAdContainerViewController(
@@ -69,7 +75,8 @@ struct AdDisplayContainerTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     let friendlyObstruction = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
     try? api.pigeonDelegate.registerFriendlyObstruction(
@@ -82,7 +89,8 @@ struct AdDisplayContainerTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     try? api.pigeonDelegate.unregisterAllFriendlyObstructions(
       pigeonApi: api, pigeonInstance: instance)
 
@@ -90,24 +98,9 @@ struct AdDisplayContainerTests {
   }
 }
 
-@MainActor
-class TestAdDisplayContainer: IMAAdDisplayContainer {
-  private var adContainerTestValue = UIView()
-  private var companionSlotsTestValue = [IMACompanionAdSlot(view: UIView())]
+class TestAdDisplayContainer: IMAAdDisplayContainer, @unchecked Sendable {
   var registerFriendlyObstructionArgs: [AnyHashable?]? = nil
   var unregisterAllFriendlyObstructionsCalled = false
-
-  convenience init() {
-    self.init(adContainer: UIView(), viewController: UIViewController())
-  }
-
-  override var adContainer: UIView {
-    return adContainerTestValue
-  }
-
-  override var companionSlots: [IMACompanionAdSlot] {
-    return companionSlotsTestValue
-  }
 
   override func register(_ friendlyObstruction: IMAFriendlyObstruction) {
     registerFriendlyObstructionArgs = [friendlyObstruction]

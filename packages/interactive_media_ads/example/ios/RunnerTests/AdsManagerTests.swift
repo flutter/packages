@@ -111,7 +111,7 @@ struct AdsManagerTests {
 
     let value = try? api.pigeonDelegate.adCuePoints(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(value as! [Double] == [2.2, 3.3])
+    #expect(value! == [2.2, 3.3])
   }
 }
 
