@@ -10,31 +10,30 @@ import Testing
 
 @MainActor
 struct AdsLoaderTests {
-  @Test func pigeonDefaultConstructor() {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
     let settings = IMASettings()
     settings.ppid = "ppid"
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
-      pigeonApi: api, settings: settings)
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
+        pigeonApi: api, settings: settings)
 
-    #expect(instance != nil)
-    #expect(instance?.settings.ppid == settings.ppid)
+    #expect(instance.settings.ppid == settings.ppid)
   }
 
-  @Test func contentComplete() {
+  @Test func contentComplete() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
     let instance = TestAdsLoader(settings: nil)
 
-    try? api.pigeonDelegate.contentComplete(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.contentComplete(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.contentCompleteCalled)
   }
 
-  @Test func requestAds() {
+  @Test func requestAds() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
@@ -44,13 +43,13 @@ struct AdsLoaderTests {
       adTagUrl: "",
       adDisplayContainer: IMAAdDisplayContainer(adContainer: UIView(), viewController: nil),
       contentPlayhead: ContentPlayheadImpl(), userContext: nil)
-    try? api.pigeonDelegate.requestAds(
+    try api.pigeonDelegate.requestAds(
       pigeonApi: api, pigeonInstance: instance, request: request)
 
     #expect(instance.adsRequested === request)
   }
 
-  @Test func setDelegate() {
+  @Test func setDelegate() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoader(registrar)
 
@@ -58,7 +57,7 @@ struct AdsLoaderTests {
 
     let delegate = AdsLoaderDelegateImpl(
       api: registrar.apiDelegate.pigeonApiIMAAdsLoaderDelegate(registrar))
-    try? api.pigeonDelegate.setDelegate(
+    try api.pigeonDelegate.setDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     #expect(instance.delegate === delegate)

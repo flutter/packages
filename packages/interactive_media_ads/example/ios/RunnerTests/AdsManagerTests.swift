@@ -10,7 +10,7 @@ import Testing
 
 @MainActor
 struct AdsManagerTests {
-  @Test func setDelegate() {
+  @Test func setDelegate() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
@@ -18,100 +18,100 @@ struct AdsManagerTests {
 
     let delegate = AdsManagerDelegateImpl(
       api: registrar.apiDelegate.pigeonApiIMAAdsManagerDelegate(registrar))
-    try? api.pigeonDelegate.setDelegate(
+    try api.pigeonDelegate.setDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     #expect(instance.delegate === delegate)
   }
 
-  @Test func initialize() {
+  @Test func initialize() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
     let renderingSettings = IMAAdsRenderingSettings()
-    try? api.pigeonDelegate.initialize(
+    try api.pigeonDelegate.initialize(
       pigeonApi: api, pigeonInstance: instance, adsRenderingSettings: renderingSettings)
 
     #expect(instance.renderingSettings == renderingSettings)
   }
 
-  @Test func start() {
+  @Test func start() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
-    try? api.pigeonDelegate.start(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.start(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.startCalled)
   }
 
-  @Test func pause() {
+  @Test func pause() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
-    try? api.pigeonDelegate.pause(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.pause(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.pauseCalled)
   }
 
-  @Test func skip() {
+  @Test func skip() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
-    try? api.pigeonDelegate.skip(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.skip(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.skipCalled)
   }
 
-  @Test func discardAdBreak() {
+  @Test func discardAdBreak() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
-    try? api.pigeonDelegate.discardAdBreak(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.discardAdBreak(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.discardAdBreakCalled)
   }
 
-  @Test func resume() {
+  @Test func resume() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
-    try? api.pigeonDelegate.resume(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.resume(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.resumeCalled)
   }
 
-  @Test func destroy() {
+  @Test func destroy() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
-    try? api.pigeonDelegate.destroy(pigeonApi: api, pigeonInstance: instance)
+    try api.pigeonDelegate.destroy(pigeonApi: api, pigeonInstance: instance)
 
     #expect(instance.destroyCalled)
   }
 
-  @Test func adCuePoints() {
+  @Test func adCuePoints() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManager(registrar)
 
     let instance = TestAdsManager.customInit()
 
-    let value = try? api.pigeonDelegate.adCuePoints(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adCuePoints(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(value! == [2.2, 3.3])
+    #expect(value == [2.2, 3.3])
   }
 }
 
