@@ -142,12 +142,13 @@ class TestProfileData: NSObject, FSIGIDProfileData {
 }
 
 // Test implementation of FSIGIDToken.
-class TestToken: NSObject, FSIGIDToken {
-  var tokenString: String
-  var expirationDate: Date?
+final class TestToken: NSObject, FSIGIDToken {
+  let tokenString: String
+  let expirationDate: Date?
 
-  init(_ token: String) {
+  init(_ token: String, expiration: Date? = nil) {
     tokenString = token
+    expirationDate = expiration
   }
 }
 
@@ -319,11 +320,15 @@ struct GoogleSignInPluginTests {
   @Suite("restorePreviousSignIn") struct RestorePreviousSignInTests {
     @Test func restorePreviousSignInSuccess() async {
       let (plugin, fakeSignIn) = createTestPlugin()
-      let fakeUser = TestGoogleUser("mockID")
-      let fakeUserProfile = TestProfileData(
-        name: "mockDisplay", email: "mock@example.com",
-        imageURL: URL(string: "https://example.com/profile.png"))
-      fakeUser.profile = fakeUserProfile
+      let userID = "mockID"
+      let fakeUser = TestGoogleUser(userID)
+      let accessToken = fakeUser.accessToken.tokenString
+      let name = "mockDislayName"
+      let email = "mock@example.com"
+      let imageURLString = "https://example.com/profile.png"
+      fakeUser.profile = TestProfileData(
+        name: name, email: email,
+        imageURL: URL(string: imageURLString))
       fakeSignIn.user = fakeUser
 
       await confirmation("completion called") { confirmed in
@@ -331,11 +336,11 @@ struct GoogleSignInPluginTests {
           #expect(error == nil)
           #expect(result?.error == nil)
           #expect(result?.success != nil)
-          #expect(result?.success?.user.displayName == fakeUserProfile.name)
-          #expect(result?.success?.user.email == fakeUserProfile.email)
-          #expect(result?.success?.user.userId == fakeUser.userID)
-          #expect(result?.success?.user.photoUrl == fakeUserProfile.imageURL?.absoluteString)
-          #expect(result?.success?.accessToken == fakeUser.accessToken.tokenString)
+          #expect(result?.success?.user.displayName == name)
+          #expect(result?.success?.user.email == email)
+          #expect(result?.success?.user.userId == userID)
+          #expect(result?.success?.user.photoUrl == imageURLString)
+          #expect(result?.success?.accessToken == accessToken)
           #expect(result?.success?.serverAuthCode == nil)
           confirmed()
         }
