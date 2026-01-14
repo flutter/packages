@@ -793,12 +793,7 @@
 - (nullable FGMPlatformHeatmap *)
     heatmapWithIdentifier:(nonnull NSString *)heatmapId
                     error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
-  NSDictionary<NSString *, id> *heatmapInfo =
-      [self.controller.heatmapsController heatmapInfoWithIdentifier:heatmapId];
-  if (!heatmapInfo) {
-    return nil;
-  }
-  return [FGMPlatformHeatmap makeWithJson:heatmapInfo];
+  return [self.controller.heatmapsController heatmapWithIdentifier:heatmapId];
 }
 
 - (nullable NSArray<FGMPlatformCluster *> *)
