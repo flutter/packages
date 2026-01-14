@@ -9,35 +9,35 @@ import Testing
 @testable import interactive_media_ads
 
 struct AdErrorTests {
-  @Test func type() {
+  @Test func type() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
 
     let instance = TestAdError.customInit()
 
-    let value = try? api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == .loadingFailed)
   }
 
-  @Test func code() {
+  @Test func code() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
 
     let instance = TestAdError.customInit()
 
-    let value = try? api.pigeonDelegate.code(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.code(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == .apiError)
   }
 
-  @Test func message() {
+  @Test func message() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdError(registrar)
 
     let instance = TestAdError.customInit()
 
-    let value = try? api.pigeonDelegate.message(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.message(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == "message")
   }

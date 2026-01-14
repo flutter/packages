@@ -9,45 +9,45 @@ import Testing
 @testable import interactive_media_ads
 
 struct AdEventTests {
-  @Test func type() {
+  @Test func type() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
     let instance = TestAdEvent.customInit()
 
-    let value = try? api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.type(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == .adBreakEnded)
   }
 
-  @Test func message() {
+  @Test func message() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
     let instance = TestAdEvent.customInit()
 
-    let value = try? api.pigeonDelegate.typeString(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.typeString(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == "message")
   }
 
-  @Test func adData() {
+  @Test func adData() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
     let instance = TestAdEvent.customInit()
 
-    let value = try? api.pigeonDelegate.adData(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adData(pigeonApi: api, pigeonInstance: instance)
 
     #expect((value as! [String: String]) == ["my": "string"])
   }
 
-  @Test func ad() {
+  @Test func ad() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdEvent(registrar)
 
     let instance = TestAdEvent.customInit()
-    let value = try? api.pigeonDelegate.ad(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.ad(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value != nil)
     #expect(value == instance.ad)

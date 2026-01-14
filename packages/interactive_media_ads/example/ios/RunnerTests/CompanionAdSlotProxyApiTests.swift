@@ -37,25 +37,25 @@ struct CompanionAdSlotProxyApiTests {
   }
 
   @Test
-  func view() {
+  func view() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAdSlot(registrar)
 
     let instance = IMACompanionAdSlot(view: UIView())
-    let value = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.view)
   }
 
   @Test
-  func setDelegate() {
+  func setDelegate() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAdSlot(registrar)
 
     let instance = IMACompanionAdSlot(view: UIView())
     let delegate = CompanionDelegateImpl(
       api: registrar.apiDelegate.pigeonApiIMACompanionDelegate(registrar))
-    try? api.pigeonDelegate.setDelegate(
+    try api.pigeonDelegate.setDelegate(
       pigeonApi: api, pigeonInstance: instance, delegate: delegate)
 
     #expect(instance.delegate === delegate)

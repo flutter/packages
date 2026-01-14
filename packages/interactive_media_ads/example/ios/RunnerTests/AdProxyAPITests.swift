@@ -10,85 +10,85 @@ import Testing
 
 struct AdProxyAPITests {
   @Test
-  func adId() {
+  func adId() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.adId(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adId(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adId)
   }
 
   @Test
-  func adTitle() {
+  func adTitle() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.adTitle(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adTitle(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adTitle)
   }
 
   @Test
-  func adDescription() {
+  func adDescription() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.adDescription(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adDescription(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adDescription)
   }
 
   @Test
-  func adSystem() {
+  func adSystem() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.adSystem(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adSystem(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adSystem)
   }
 
   @MainActor
   @Test
-  func companionAds() {
+  func companionAds() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try! api.pigeonDelegate.companionAds(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.companionAds(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.companionAds)
   }
 
   @Test
-  func contentType() {
+  func contentType() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.contentType(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.contentType(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.contentType)
   }
 
   @Test
-  func duration() {
+  func duration() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.duration(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.duration(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.duration)
   }
 
   @Test
-  func uiElements() {
+  func uiElements() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
@@ -96,13 +96,13 @@ struct AdProxyAPITests {
     elementArray.add(NSNumber(value: IMAUiElementType.elements_AD_ATTRIBUTION.rawValue))
     let instance = TestAd.customInit()
     instance.testElements = elementArray
-    let value = try? api.pigeonDelegate.uiElements(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.uiElements(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == [UIElementType.adAttribution])
   }
 
   @Test
-  func uiElementsWithStrings() {
+  func uiElementsWithStrings() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
@@ -110,7 +110,7 @@ struct AdProxyAPITests {
     elementArray.add("adAttribution")
     let instance = TestAd.customInit()
     instance.testElements = elementArray
-    let value = try? api.pigeonDelegate.uiElements(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.uiElements(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == [UIElementType.adAttribution])
   }
@@ -121,9 +121,9 @@ struct AdProxyAPITests {
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.width(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.width(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(try #require(value) == Int64(instance.width))
+    #expect(value == Int64(instance.width))
   }
 
   @Test
@@ -132,9 +132,9 @@ struct AdProxyAPITests {
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.height(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.height(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(try #require(value) == Int64(instance.height))
+    #expect(value == Int64(instance.height))
   }
 
   @Test
@@ -143,9 +143,9 @@ struct AdProxyAPITests {
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.vastMediaWidth(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.vastMediaWidth(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(try #require(value) == Int64(instance.vastMediaWidth))
+    #expect(value == Int64(instance.vastMediaWidth))
   }
 
   @Test
@@ -154,9 +154,9 @@ struct AdProxyAPITests {
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.vastMediaHeight(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.vastMediaHeight(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(try #require(value) == Int64(instance.vastMediaHeight))
+    #expect(value == Int64(instance.vastMediaHeight))
   }
 
   @Test
@@ -165,164 +165,164 @@ struct AdProxyAPITests {
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.vastMediaBitrate(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.vastMediaBitrate(pigeonApi: api, pigeonInstance: instance)
 
-    #expect(try #require(value) == Int64(instance.vastMediaBitrate))
+    #expect(value == Int64(instance.vastMediaBitrate))
   }
 
   @Test
-  func isLinear() {
+  func isLinear() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.isLinear(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.isLinear(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.isLinear)
   }
 
   @Test
-  func isSkippable() {
+  func isSkippable() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.isSkippable(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.isSkippable(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.isSkippable)
   }
 
   @Test
-  func skipTimeOffset() {
+  func skipTimeOffset() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.skipTimeOffset(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.skipTimeOffset(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.skipTimeOffset)
   }
 
   @MainActor
   @Test
-  func adPodInfo() {
+  func adPodInfo() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.adPodInfo(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adPodInfo(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adPodInfo)
   }
 
   @Test
-  func traffickingParameters() {
+  func traffickingParameters() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.traffickingParameters(
+    let value = try api.pigeonDelegate.traffickingParameters(
       pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.traffickingParameters)
   }
 
   @Test
-  func creativeID() {
+  func creativeID() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.creativeID(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.creativeID(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.creativeID)
   }
 
   @Test
-  func creativeAdID() {
+  func creativeAdID() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.creativeAdID(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.creativeAdID(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.creativeAdID)
   }
 
   @MainActor
   @Test
-  func universalAdIDs() {
+  func universalAdIDs() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try! api.pigeonDelegate.universalAdIDs(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.universalAdIDs(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.universalAdIDs)
   }
 
   @Test
-  func advertiserName() {
+  func advertiserName() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.advertiserName(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.advertiserName(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.advertiserName)
   }
 
   @Test
-  func surveyURL() {
+  func surveyURL() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.surveyURL(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.surveyURL(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.surveyURL)
   }
 
   @Test
-  func dealID() {
+  func dealID() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.dealID(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.dealID(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.dealID)
   }
 
   @Test
-  func wrapperAdIDs() {
+  func wrapperAdIDs() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.wrapperAdIDs(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.wrapperAdIDs(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.wrapperAdIDs)
   }
 
   @Test
-  func wrapperCreativeIDs() {
+  func wrapperCreativeIDs() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.wrapperCreativeIDs(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.wrapperCreativeIDs(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.wrapperCreativeIDs)
   }
 
   @Test
-  func wrapperSystems() {
+  func wrapperSystems() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAd(registrar)
 
     let instance = TestAd.customInit()
-    let value = try? api.pigeonDelegate.wrapperSystems(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.wrapperSystems(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.wrapperSystems)
   }

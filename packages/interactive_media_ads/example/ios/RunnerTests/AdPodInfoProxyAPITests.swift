@@ -10,67 +10,67 @@ import Testing
 
 struct AdPodInfoProxyAPITests {
   @Test
-  func adPosition() {
+  func adPosition() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.adPosition(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adPosition(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.adPosition))
   }
 
   @Test
-  func maxDuration() {
+  func maxDuration() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.maxDuration(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.maxDuration(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.maxDuration)
   }
 
   @Test
-  func podIndex() {
+  func podIndex() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.podIndex(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.podIndex(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.podIndex))
   }
 
   @Test
-  func timeOffset() {
+  func timeOffset() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.timeOffset(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.timeOffset(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.timeOffset)
   }
 
   @Test
-  func totalAds() {
+  func totalAds() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.totalAds(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.totalAds(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.totalAds))
   }
 
   @Test
-  func isBumper() {
+  func isBumper() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdPodInfo(registrar)
 
     let instance = TestAdPodInfo.customInit()
-    let value = try? api.pigeonDelegate.isBumper(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.isBumper(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.isBumper)
   }

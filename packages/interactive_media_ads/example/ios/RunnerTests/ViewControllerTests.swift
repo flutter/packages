@@ -9,24 +9,21 @@ import Testing
 
 @MainActor
 struct ViewControllerTests {
-  @Test func pigeonDefaultConstructor() {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
-      pigeonApi: api)
-
-    #expect(instance != nil)
+    let instance = try #require(
+      try api.pigeonDelegate.pigeonDefaultConstructor(
+        pigeonApi: api))
   }
 
-  @Test func view() {
+  @Test func view() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
     let instance = UIViewController()
-    let view = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
-
-    #expect(view != nil)
+    let view = try #require(try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance))
   }
 
   @Test func viewDidAppear() {

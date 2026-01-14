@@ -11,13 +11,13 @@ import UIKit
 
 @MainActor
 struct FriendlyObstructionProxyApiTests {
-  @Test func pigeonDefaultConstructor() {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
-      pigeonApi: api, view: UIView(), purpose: .mediaControls, detailedReason: "myString")
-    #expect(instance != nil)
+    let instance = try #require(
+      try api.pigeonDelegate.pigeonDefaultConstructor(
+        pigeonApi: api, view: UIView(), purpose: .mediaControls, detailedReason: "myString"))
   }
 
   @Test func pigeonDefaultConstructorWithUnknownPurpose() throws {
@@ -30,35 +30,35 @@ struct FriendlyObstructionProxyApiTests {
     }
   }
 
-  @Test func view() {
+  @Test func view() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
     let instance = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
-    let value = try? api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.view)
   }
 
-  @Test func purpose() {
+  @Test func purpose() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
     let instance = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
-    let value = try? api.pigeonDelegate.purpose(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.purpose(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == FriendlyObstructionPurpose.closeAd)
   }
 
-  @Test func detailedReason() {
+  @Test func detailedReason() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
     let instance = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
-    let value = try? api.pigeonDelegate.detailedReason(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.detailedReason(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.detailedReason)
   }

@@ -10,45 +10,45 @@ import Testing
 
 struct CompanionAdProxyApiTests {
   @Test
-  func resourceValue() {
+  func resourceValue() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
-    let value = try? api.pigeonDelegate.resourceValue(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.resourceValue(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.resourceValue)
   }
 
   @Test
-  func apiFramework() {
+  func apiFramework() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
-    let value = try? api.pigeonDelegate.apiFramework(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.apiFramework(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.apiFramework)
   }
 
   @Test
-  func width() {
+  func width() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
-    let value = try? api.pigeonDelegate.width(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.width(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.width))
   }
 
   @Test
-  func height() {
+  func height() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionAd(registrar)
 
     let instance = TestCompanionAd.customInit()
-    let value = try? api.pigeonDelegate.height(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.height(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == Int64(instance.height))
   }

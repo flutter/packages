@@ -10,23 +10,23 @@ import Testing
 
 struct UniversalAdIDProxyAPITests {
   @Test
-  func adIDValue() {
+  func adIDValue() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAUniversalAdID(registrar)
 
     let instance = TestUniversalAdID.customInit()
-    let value = try? api.pigeonDelegate.adIDValue(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adIDValue(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adIDValue)
   }
 
   @Test
-  func adIDRegistry() {
+  func adIDRegistry() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAUniversalAdID(registrar)
 
     let instance = TestUniversalAdID.customInit()
-    let value = try? api.pigeonDelegate.adIDRegistry(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adIDRegistry(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value == instance.adIDRegistry)
   }

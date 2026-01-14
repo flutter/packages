@@ -10,94 +10,94 @@ import Testing
 
 @MainActor
 struct AdsRenderingSettingsTests {
-  @Test func pigeonDefaultConstructor() {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api)
 
     #expect(instance != nil)
   }
 
-  @Test func setMimeTypes() {
+  @Test func setMimeTypes() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
     let types = ["myString"]
-    try? api.pigeonDelegate.setMimeTypes(pigeonApi: api, pigeonInstance: instance, types: types)
+    try api.pigeonDelegate.setMimeTypes(pigeonApi: api, pigeonInstance: instance, types: types)
 
     #expect(instance.mimeTypes == types)
   }
 
-  @Test func setBitrate() {
+  @Test func setBitrate() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
     let bitrate = 0
-    try? api.pigeonDelegate.setBitrate(
+    try api.pigeonDelegate.setBitrate(
       pigeonApi: api, pigeonInstance: instance, bitrate: Int64(bitrate))
 
     #expect(instance.bitrate == bitrate)
   }
 
-  @Test func setLoadVideoTimeout() {
+  @Test func setLoadVideoTimeout() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
     let seconds = 1.0
-    try? api.pigeonDelegate.setLoadVideoTimeout(
+    try api.pigeonDelegate.setLoadVideoTimeout(
       pigeonApi: api, pigeonInstance: instance, seconds: seconds)
 
     #expect(instance.loadVideoTimeout == seconds)
   }
 
-  @Test func setPlayAdsAfterTime() {
+  @Test func setPlayAdsAfterTime() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
     let seconds = 1.0
-    try? api.pigeonDelegate.setPlayAdsAfterTime(
+    try api.pigeonDelegate.setPlayAdsAfterTime(
       pigeonApi: api, pigeonInstance: instance, seconds: seconds)
 
     #expect(instance.playAdsAfterTime == seconds)
   }
 
-  @Test func setUIElements() {
+  @Test func setUIElements() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
     let types = [UIElementType.adAttribution]
-    try? api.pigeonDelegate.setUIElements(pigeonApi: api, pigeonInstance: instance, types: types)
+    try api.pigeonDelegate.setUIElements(pigeonApi: api, pigeonInstance: instance, types: types)
 
     #expect(
       instance.uiElements == [IMAUiElementType.elements_AD_ATTRIBUTION.rawValue as NSNumber])
   }
 
-  @Test func setEnablePreloading() {
+  @Test func setEnablePreloading() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
     let enable = true
-    try? api.pigeonDelegate.setEnablePreloading(
+    try api.pigeonDelegate.setEnablePreloading(
       pigeonApi: api, pigeonInstance: instance, enable: enable)
 
     #expect(instance.enablePreloading)
   }
 
-  @Test func setLinkOpenerPresentingController() {
+  @Test func setLinkOpenerPresentingController() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsRenderingSettings(registrar)
 
     let instance = IMAAdsRenderingSettings()
     let controller = UIViewController()
-    try? api.pigeonDelegate.setLinkOpenerPresentingController(
+    try api.pigeonDelegate.setLinkOpenerPresentingController(
       pigeonApi: api, pigeonInstance: instance, controller: controller)
 
     #expect(instance.linkOpenerPresentingController == controller)

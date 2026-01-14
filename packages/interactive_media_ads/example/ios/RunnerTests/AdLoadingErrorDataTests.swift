@@ -9,13 +9,13 @@ import Testing
 @testable import interactive_media_ads
 
 struct AdLoadingErrorTests {
-  @Test func adError() {
+  @Test func adError() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdLoadingErrorData(registrar)
 
     let instance = TestAdLoadingErrorData.customInit()
 
-    let value = try? api.pigeonDelegate.adError(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adError(pigeonApi: api, pigeonInstance: instance)
 
     #expect(value is TestAdError)
   }

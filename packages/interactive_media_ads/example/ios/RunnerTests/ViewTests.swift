@@ -9,13 +9,12 @@ import Testing
 
 @MainActor
 struct ViewTests {
-  @Test func pigeonDefaultConstructor() {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIView(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
-      pigeonApi: api)
-
-    #expect(instance != nil)
+    let instance = try #require(
+      try api.pigeonDelegate.pigeonDefaultConstructor(
+        pigeonApi: api))
   }
 }

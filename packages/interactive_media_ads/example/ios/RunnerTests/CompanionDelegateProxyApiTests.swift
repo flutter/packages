@@ -12,12 +12,11 @@ import UIKit
 @MainActor
 struct CompanionDelegateProxyApiTests {
   @Test
-  func pigeonDefaultConstructor() {
+  func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionDelegate(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-    #expect(instance != nil)
+    let instance = try #require(try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api))
   }
 
   @Test
