@@ -1,6 +1,6 @@
 ## 7.1.0
 
-- Adds support for WOFF2 and WOFF font formats on web platforms for improved performance and smaller bundle sizes.
+- Adds support for WOFF2 and WOFF font formats on web platforms when loading fonts bundled with the app, providing improved performance and smaller bundle sizes.
 
 ## 7.0.2
 
