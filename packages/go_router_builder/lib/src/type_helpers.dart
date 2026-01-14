@@ -859,15 +859,9 @@ extension FormalParameterElementExtension on FormalParameterElement {
     final typedGoRouteParameterReader = ConstantReader(
       _typedGoRouteParameterChecker.firstAnnotationOf(this),
     );
-    final ConstantReader? parameterNameOverrideReader =
-        typedGoRouteParameterReader.isNull
-        ? null
-        : typedGoRouteParameterReader.read('name');
-    final String? parameterNameOverride =
-        parameterNameOverrideReader?.isNull ?? true
-        ? null
-        : parameterNameOverrideReader!.stringValue;
-    final String name = parameterNameOverride ?? displayName.kebab;
+    final String name =
+        typedGoRouteParameterReader.peek('name')?.stringValue ??
+        displayName.kebab;
     return escapeDartString(name);
   }
 }
