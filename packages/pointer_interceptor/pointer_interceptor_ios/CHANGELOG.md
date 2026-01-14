@@ -1,7 +1,3 @@
-## NEXT
-
-* Migrates XCTest to Swift Testing.
-
 ## 0.10.1+1
 
 * Updates minimum supported version to iOS 13.
