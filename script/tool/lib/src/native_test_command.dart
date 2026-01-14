@@ -564,8 +564,10 @@ this command.
         extraFlags: <String>[
           if (testTarget != null) '-only-testing:$testTarget',
           ...extraFlags,
-          if (!_xcodeWarningsExceptions.contains(plugin.directory.basename))
+          if (!_xcodeWarningsExceptions.contains(plugin.directory.basename)) ...<String>[
             'GCC_TREAT_WARNINGS_AS_ERRORS=YES',
+            r'OTHER_SWIFT_FLAGS=$(inherited) -strict-concurrency=complete',
+          ],
         ],
       );
 
