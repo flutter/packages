@@ -1,7 +1,3 @@
-## NEXT
-
-* Migrates unit tests to Swift Testing.
-
 ## 6.4.0
 
 * Improves compatibility with `UIScene`.
