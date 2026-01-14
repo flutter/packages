@@ -1,7 +1,3 @@
-## NEXT
-
-* Migrates XCTest to Swift Testing.
-
 ## 3.2.5
 
 * Updates to Pigeon 26.
