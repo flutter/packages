@@ -334,17 +334,50 @@ void _writeDartFile(String path, String content) {
 
 /// Remove variable-font entries when a static entry of the same
 /// weight/italic exists. Keep variable only if no static equivalent.
+/// Also deduplicate static variants by keeping only default width (100.0).
 ///
 // TODO(guidezpl): Add explicit variable-font support, see
 // https://github.com/flutter/flutter/issues/174575 and
 // https://github.com/flutter/flutter/issues/174567
+// TODO(guidezpl): Add font width/stretch support to google_fonts API to properly
+// handle width variants (condensed, normal, extended) instead of deduplicating them.
 List<Font> _deduplicateFonts(List<Font> fonts) {
-  final filteredVariants = <Font>[];
-  for (final variant in fonts) {
-    if (!variant.isVf) {
-      filteredVariants.add(variant);
-      continue;
+  // First, identify variable fonts, and group static fonts by weight/italic to
+  // find the best width variant.
+  final List<Font> variableFonts = [];
+  final Map<String, List<Font>> staticGroups = {};
+  for (final font in fonts) {
+    if (font.isVf) {
+      variableFonts.add(font);
+    } else {
+      final key = '${font.weight.start}_${font.italic.start.round()}';
+      staticGroups.putIfAbsent(key, () => []).add(font);
     }
+  }
+
+  // For each static group, keep a single width (default to 100.0) variant.
+  final filteredVariants = <Font>[];
+  for (final List<Font> group in staticGroups.values) {
+    Font? defaultWidthVariant;
+    for (final font in group) {
+      if (font.width.start == 100.0) {
+        defaultWidthVariant = font;
+        break;
+      }
+    }
+
+    if (defaultWidthVariant == null) {
+      // If no default width, and more than one variant, we'll have to revise
+      // this logic to understand which width to prefer.
+      assert(group.length == 1);
+    }
+
+    filteredVariants.add(defaultWidthVariant ?? group.first);
+  }
+
+  // Now, for each variable font, check if a static equivalent exists.
+  // If so, skip the variable font.
+  for (final variant in variableFonts) {
     var hasStaticEquivalent = false;
     for (final other in fonts) {
       if (!other.isVf &&
@@ -358,6 +391,7 @@ List<Font> _deduplicateFonts(List<Font> fonts) {
       filteredVariants.add(variant);
     }
   }
+
   return filteredVariants;
 }
 
