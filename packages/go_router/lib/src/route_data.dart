@@ -630,7 +630,6 @@ class TypedGoRouteParameter {
   ///
   /// If `null`, the kebab-case version of the parameter name will be used.
   ///
-  /// {@template go_router_builder.TypedGoRouteParameter.name.usage}
   /// For example:
   /// ```dart
   /// class MyRoute extends GoRouteData with $MyRoute {
@@ -642,8 +641,7 @@ class TypedGoRouteParameter {
   /// ```
   ///
   /// This will result in a route that matches
-  /// `/my_route?custom_name=some_value` instead of the default
-  /// `/my_route?my-parameter=some_value`.
-  /// {@endtemplate}
+  /// `/my-route?custom_name=some_value` instead of the default
+  /// `/my-route?my-parameter=some_value`.
   final String? name;
 }
