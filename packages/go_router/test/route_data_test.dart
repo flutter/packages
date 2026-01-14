@@ -794,4 +794,10 @@ void main() {
           ),
     );
   });
+
+  test('TypedGoRouteParameter stores the name', () {
+    const parameter = TypedGoRouteParameter(name: 'customName');
+
+    expect(parameter.name, 'customName');
+  });
 }
