@@ -191,6 +191,7 @@ class PublishCommand extends PackageLoopingCommand {
 
   @override
   Stream<PackageEnumerationEntry> getPackagesToProcess() async* {
+    final String batchReleaseBranchName = getStringArg(_batchReleaseBranchFlag);
     if (getBoolArg(_allChangedFlag)) {
       print(
         'Publishing all packages that have changed relative to "$baseSha"\n',
@@ -206,10 +207,10 @@ class PublishCommand extends PackageLoopingCommand {
         final String packageName = p.basename(p.dirname(pubspecPath));
         bool isBatchReleasePackage;
         try {
-          final File ciConfigFile = packagesDir.fileSystem
-              .file(pubspecPath)
-              .parent
-              .childFile('ci_config.yaml');
+          final File ciConfigFile = RepositoryPackage(
+            packagesDir.fileSystem.file(pubspecPath).parent,
+          ).ciConfigFile;
+
           if (!ciConfigFile.existsSync()) {
             isBatchReleasePackage = false;
           } else {
@@ -218,23 +219,20 @@ class PublishCommand extends PackageLoopingCommand {
           }
         } catch (e) {
           printError('Could not parse ci_config.yaml for $packageName: $e');
-          continue;
+          throw ToolExit(exitCommandFoundErrors);
         }
-
-        final String batchReleaseBranchName = getStringArg(_batchReleaseBranchFlag);
 
         // When releasing from the main branch, skip the batch release packages.
         if (batchReleaseBranchName.isEmpty) {
           if (isBatchReleasePackage) {
             continue;
           }
-        }
-        // When releasing from a batch release branch, verify the package has
-        // the opt-in flag and that the package name matches the branch suffix.
-        // Example: branch "release-go_router" matches package "go_router".
-        if (batchReleaseBranchName.isNotEmpty) {
-          if (!(isBatchReleasePackage &&
-              batchReleaseBranchName.contains(packageName))) {
+        } else {
+          // When releasing from a batch release branch, verify the package has
+          // the opt-in flag and that the package name matches the branch suffix.
+          // Example: branch "release-go_router" matches package "go_router".
+          if (!isBatchReleasePackage ||
+              batchReleaseBranchName != 'release-$packageName') {
             continue;
           }
         }
