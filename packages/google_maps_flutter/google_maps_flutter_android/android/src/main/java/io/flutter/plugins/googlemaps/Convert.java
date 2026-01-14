@@ -255,8 +255,8 @@ class Convert {
     return null;
   }
 
-  private static @Nullable Integer nullableColor(@Nullable Long color) {
-    return color == null ? null : toInt(color);
+  private static @Nullable Integer nullableColor(@Nullable Messages.PlatformColor color) {
+    return color == null ? null : color.getArgbValue().intValue();
   }
 
   private static <T> void applyIfNotNull(@Nullable T value, Consumer<T> setter) {

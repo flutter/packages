@@ -635,13 +635,13 @@ class PlatformBitmapPinConfig {
     required this.glyphTextColor,
   });
 
-  final int? backgroundColor;
-  final int? borderColor;
-  final int? glyphColor;
+  final PlatformColor? backgroundColor;
+  final PlatformColor? borderColor;
+  final PlatformColor? glyphColor;
   final PlatformBitmap? glyphBitmap;
 
   final String? glyphText;
-  final int? glyphTextColor;
+  final PlatformColor? glyphTextColor;
 }
 
 /// Interface for non-test interactions with the native SDK.

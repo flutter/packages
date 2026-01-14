@@ -1065,16 +1065,18 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
         );
       case final PinConfig pinConfig:
         final AdvancedMarkerGlyph? glyph = pinConfig.glyph;
-        Color? glyphColor;
+        PlatformColor? glyphColor;
         String? glyphText;
-        Color? glyphTextColor;
+        PlatformColor? glyphTextColor;
         BitmapDescriptor? glyphBitmapDescriptor;
         switch (glyph) {
           case final CircleGlyph circleGlyph:
-            glyphColor = circleGlyph.color;
+            glyphColor = PlatformColor(argbValue: circleGlyph.color.toARGB32());
           case final TextGlyph textGlyph:
             glyphText = textGlyph.text;
-            glyphTextColor = textGlyph.textColor;
+            glyphTextColor = textGlyph.textColor != null
+                ? PlatformColor(argbValue: textGlyph.textColor!.toARGB32())
+                : null;
           case final BitmapGlyph bitmapGlyph:
             glyphBitmapDescriptor = bitmapGlyph.bitmap;
           case null:
@@ -1083,11 +1085,17 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
 
         return PlatformBitmap(
           bitmap: PlatformBitmapPinConfig(
-            backgroundColor: pinConfig.backgroundColor?.value,
-            borderColor: pinConfig.borderColor?.value,
-            glyphColor: glyphColor?.value,
+            backgroundColor: pinConfig.backgroundColor != null
+                ? PlatformColor(
+                    argbValue: pinConfig.backgroundColor!.toARGB32(),
+                  )
+                : null,
+            borderColor: pinConfig.borderColor != null
+                ? PlatformColor(argbValue: pinConfig.borderColor!.toARGB32())
+                : null,
+            glyphColor: glyphColor,
             glyphText: glyphText,
-            glyphTextColor: glyphTextColor?.value,
+            glyphTextColor: glyphTextColor,
             glyphBitmap: glyphBitmapDescriptor != null
                 ? platformBitmapFromBitmapDescriptor(glyphBitmapDescriptor)
                 : null,
