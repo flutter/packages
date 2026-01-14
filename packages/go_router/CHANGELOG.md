@@ -1,3 +1,7 @@
+# 17.1.0
+
+- Adds `TypedGoRouteParameter` annotation to override parameter names in `TypedGoRoute` constructors.
+
 ## 17.0.1
 
 - Fixes an issue where `onEnter` blocking causes navigation stack loss (stale state restoration).
