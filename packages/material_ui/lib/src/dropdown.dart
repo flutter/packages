@@ -1034,6 +1034,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.barrierDismissible = true,
     this.mouseCursor,
     this.dropdownMenuItemMouseCursor,
+    this.enabled = true,
     // When adding new arguments, consider adding similar arguments to
     // DropdownButtonFormField.
   }) : assert(
@@ -1060,7 +1061,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.value,
     this.hint,
     this.disabledHint,
-    required this.onChanged,
+    this.onChanged,
     this.onTap,
     this.elevation = 8,
     this.style,
@@ -1087,6 +1088,7 @@ class DropdownButton<T> extends StatefulWidget {
     this.dropdownMenuItemMouseCursor,
     required this._inputDecoration,
     required this._isEmpty,
+    this.enabled = true,
   }) : assert(
          items == null ||
              items.isEmpty ||
@@ -1362,6 +1364,14 @@ class DropdownButton<T> extends StatefulWidget {
   /// If this property is null, [WidgetStateMouseCursor.adaptiveClickable] will be used.
   final MouseCursor? dropdownMenuItemMouseCursor;
 
+  /// Whether the [DropdownButton] is enabled.
+  ///
+  /// When set to false, the field is disabled and does not allow user
+  /// interaction or value changes, regardless of the `onChanged` callback.
+  ///
+  /// Defaults to true.
+  final bool enabled;
+
   final InputDecoration? _inputDecoration;
 
   final bool _isEmpty;
@@ -1574,7 +1584,7 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
     }
   }
 
-  bool get _enabled => widget.items != null && widget.items!.isNotEmpty && widget.onChanged != null;
+  bool get _enabled => widget.items != null && widget.items!.isNotEmpty && widget.enabled;
 
   Orientation _getOrientation(BuildContext context) {
     Orientation? result = MediaQuery.maybeOrientationOf(context);
@@ -1839,7 +1849,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     T? initialValue,
     Widget? hint,
     Widget? disabledHint,
-    required this.onChanged,
+    this.onChanged,
     VoidCallback? onTap,
     int elevation = 8,
     TextStyle? style,
@@ -1859,6 +1869,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
     super.validator,
     super.errorBuilder,
     super.forceErrorText,
+    super.enabled,
     AutovalidateMode? autovalidateMode,
     double? menuMaxHeight,
     bool? enableFeedback,
@@ -1900,7 +1911,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
            final bool showSelectedItem =
                items != null &&
                items.where((DropdownMenuItem<T> item) => item.value == state.value).isNotEmpty;
-           final bool isDropdownEnabled = onChanged != null && items != null && items.isNotEmpty;
+           final bool isDropdownEnabled = enabled && items != null && items.isNotEmpty;
            // If decoration hintText is provided, use it as the default value for both hint and disabledHint.
            final Widget? decorationHint = effectiveDecoration.hintText != null
                ? Text(effectiveDecoration.hintText!)
@@ -1939,7 +1950,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  value: state.value,
                  hint: effectiveHint,
                  disabledHint: effectiveDisabledHint,
-                 onChanged: onChanged == null ? null : state.didChange,
+                 onChanged: state.didChange,
                  onTap: onTap,
                  elevation: elevation,
                  style: style,
@@ -1964,6 +1975,7 @@ class DropdownButtonFormField<T> extends FormField<T> {
                  barrierDismissible: barrierDismissible,
                  mouseCursor: mouseCursor,
                  dropdownMenuItemMouseCursor: dropdownMenuItemMouseCursor,
+                 enabled: isDropdownEnabled,
                ),
              ),
            );
