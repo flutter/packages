@@ -47,14 +47,26 @@ base class IOXFile extends PlatformXFile with IOXFileExtension {
   PlatformXFileExtension? get extension => this;
 
   @override
-  Future<DateTime> lastModified() async => file.lastModifiedSync();
+  Future<DateTime?> lastModified() async {
+    try {
+      return file.lastModifiedSync();
+    } on FileSystemException {
+      return null;
+    }
+  }
 
   @override
-  Future<int> length() => file.length();
+  Future<int?> length() async {
+    try {
+      return file.length();
+    } on FileSystemException {
+      return null;
+    }
+  }
 
   @override
-  Stream<List<int>> openRead([int? start, int? end]) =>
-      file.openRead(start, end);
+  Stream<Uint8List> openRead([int? start, int? end]) =>
+      file.openRead(start, end).cast();
 
   @override
   Future<Uint8List> readAsBytes() => file.readAsBytes();

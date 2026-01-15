@@ -24,7 +24,7 @@ void main() {
         PlatformXFileCreationParams(uri: testFile.path),
       );
 
-      expect(await file.lastModified(), await testFile.lastModified());
+      expect(await file.lastModified(), testFile.lastModifiedSync());
     });
 
     test('length', () async {
