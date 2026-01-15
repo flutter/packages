@@ -9,8 +9,8 @@ import 'src/third_party/path_provider.g.dart';
 
 /// The Android implementation of [PathProviderPlatform].
 class PathProviderAndroid extends PathProviderPlatform {
-  late final Context _applicationContext = Context.fromReference(
-    Jni.getCachedApplicationContext(),
+  late final Context _applicationContext = Jni.androidApplicationContext.as(
+    Context.type,
   );
 
   /// Registers this class as the default instance of [PathProviderPlatform].

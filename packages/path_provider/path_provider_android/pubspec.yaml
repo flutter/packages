@@ -20,13 +20,13 @@ flutter:
 dependencies:
   flutter:
     sdk: flutter
-  jni: ^0.14.2
+  jni: ^0.15.2
   path_provider_platform_interface: ^2.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  jnigen: ^0.14.2
+  jnigen: ^0.15.0
   test: ^1.16.0
 
 topics:
