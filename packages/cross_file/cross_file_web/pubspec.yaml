@@ -17,13 +17,13 @@ flutter:
         fileName: cross_file_web.dart
 
 dependencies:
+  cross_file_platform_interface:
+    path: ../cross_file_platform_interface
   flutter:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
   web: ">=0.5.1 <2.0.0"
-  cross_file_platform_interface:
-    path: ../cross_file_platform_interface
 
 dev_dependencies:
   flutter_test:

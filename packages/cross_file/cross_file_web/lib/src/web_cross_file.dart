@@ -95,17 +95,17 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
   }
 
   @override
-  Future<DateTime> lastModified() async {
+  Future<DateTime?> lastModified() async {
     final Blob blob = await getBlob();
     if (blob is File) {
       return DateTime.fromMillisecondsSinceEpoch(blob.lastModified);
     }
 
-    return DateTime.now();
+    return null;
   }
 
   @override
-  Future<int> length() async {
+  Future<int?> length() async {
     return (await getBlob()).size;
   }
 
