@@ -314,30 +314,6 @@ class _PigeonFfiCodec {
       }''';
     }).join()}
     }
-      // } else if (value.isA<NSByteArray>(NSByteArray.type)) {
-      //   final Uint8List list = Uint8List(value.as(NSByteArray.type).length)
-      //   for (int i = 0; i < value.as(NSByteArray.type).length; i++) {
-      //     list[i] = value.as(NSByteArray.type)[i]
-      //   }
-      //   return list
-      // } else if (value.isA<NSIntArray>(NSIntArray.type)) {
-      //   final Int32List list = Int32List(value.as(NSIntArray.type).length)
-      //   for (int i = 0; i < value.as(NSIntArray.type).length; i++) {
-      //     list[i] = value.as(NSIntArray.type)[i]
-      //   }
-      //   return list
-      //   // } else if (value.isA<NSLongArray>(NSLongArray.type)) {
-      //   final Int64List list = Int64List(value.as(NSLongArray.type).length)
-      //   //   for (int i = 0; i < value.as(NSLongArray.type).length; i++) {
-      //     list[i] = value.as(NSLongArray.type)[i]
-      //   //   }
-      //   return list
-      //   // } else if (value.isA<NSDoubleArray>(NSDoubleArray.type)) {
-      //   final Float64List list = Float64List(value.as(NSDoubleArray.type).length)
-      //   //   for (int i = 0; i < value.as(NSDoubleArray.type).length; i++) {
-      //     list[i] = value.as(NSDoubleArray.type)[i]
-      //   //   }
-      //   return list
     if (value is NSMutableArray || value is NSArray) {
       var res: Array<Any?> = []
       for item in (value as! NSArray) {
@@ -391,34 +367,6 @@ class _PigeonFfiCodec {
       }''';
     }).join()}
     }
-    // } else if (isTypeOrNullableType<NSByteArray>(T)) {
-    //   value as List<int>
-    //   final NSByteArray array = NSByteArray(value.length)
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i]
-    //   }
-    //   return array
-    // } else if (isTypeOrNullableType<NSIntArray>(T)) {
-    //   value as List<int>
-    //   final NSIntArray array = NSIntArray(value.length)
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i]
-    //   }
-    //   return array
-    // } else if (isTypeOrNullableType<NSLongArray>(T)) {
-    //   value as List<int>
-    //   final NSLongArray array = NSLongArray(value.length)
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i]
-    //   }
-    //   return array
-    // } else if (isTypeOrNullableType<NSDoubleArray>(T)) {
-    //   value as List<double>
-    //   final NSDoubleArray array = NSDoubleArray(value.length)
-    //   for (int i = 0; i < value.length; i++) {
-    //     array[i] = value[i]
-    //   }
-    //   return array
     if (value is [Any]) {
       let res: NSMutableArray = NSMutableArray()
       for item in (value as! [Any]) {
@@ -1337,6 +1285,7 @@ if (wrapped == nil) {
     indent.writeln(
       '$_docCommentPrefix Generated setup class from Pigeon to register implemented ${api.name} classes.',
     );
+    indent.writeln('@available(iOS 13, macOS 16.0.0, *)');
     indent.writeScoped('@objc class ${api.name}Setup: NSObject {', '}', () {
       if (generatorOptions.useFfi) {
         indent.writeln('private var api: ${api.name}?');
@@ -1347,14 +1296,18 @@ if (wrapped == nil) {
           () {
             indent.writeln('let wrapper = ${api.name}Setup()');
             indent.writeln('wrapper.api = api');
-            indent.writeln('instancesOf${api.name}[name] = wrapper');
+            indent.writeln(
+              '${api.name}InstanceTracker.instancesOf${api.name}[name] = wrapper',
+            );
           },
         );
         indent.writeScoped(
           '@objc static func getInstance(name: String) -> ${api.name}Setup? {',
           '}',
           () {
-            indent.writeln('return instancesOf${api.name}[name] ?? nil');
+            indent.writeln(
+              'return ${api.name}InstanceTracker.instancesOf${api.name}[name] ?? nil',
+            );
           },
         );
       }
@@ -1364,14 +1317,13 @@ if (wrapped == nil) {
           method.documentationComments,
           _docCommentSpec,
         );
-        indent.writeln('@available(iOS 13, macOS 16.0.0, *)');
         indent.write(
           _getMethodSignature(
             name: method.name,
             parameters: method.parameters,
             returnType: method.returnType,
             errorTypeName: generatorOptions.errorClassName ?? 'Error',
-            useFfi: generatorOptions.useFfi,
+            ffiBridgeApi: generatorOptions.useFfi,
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,
           ),
@@ -1385,7 +1337,7 @@ if (wrapped == nil) {
                 method.returnType.baseName == 'Float32List' ||
                 method.returnType.baseName == 'Float64List') {
               indent.writeln(
-                'let res = try api!.${method.name}(${method.parameters.map((NamedType param) {
+                'let res = try ${method.isAsynchronous ? 'await ' : ''}api!.${method.name}(${method.parameters.map((NamedType param) {
                   return '${param.name}: ${_varToSwift(param.name, param.type)}';
                 }).join(', ')})${method.returnType.isEnum ? '?.rawValue' : ''}',
               );
@@ -1394,7 +1346,7 @@ if (wrapped == nil) {
               );
             } else {
               indent.writeln(
-                'return try ${_swiftToFfiConversion(method.returnType, 'api!.${method.name}(${method.parameters.map((NamedType param) {
+                'return try ${method.isAsynchronous ? 'await ' : ''}${_swiftToFfiConversion(method.returnType, 'api!.${method.name}(${method.parameters.map((NamedType param) {
                   return '${param.name}: ${_varToSwift(param.name, param.type)}';
                 }).join(', ')})')}',
               );
@@ -1438,9 +1390,12 @@ if (wrapped == nil) {
   }) {
     final String apiName = api.name;
     if (generatorOptions.useFfi) {
-      indent.writeln(
-        'var instancesOf$apiName = Dictionary<String, ${apiName}Setup?>()',
-      );
+      indent.format('''
+        @available(iOS 13, macOS 16.0.0, *)
+        class ${apiName}InstanceTracker {
+          static var instancesOf$apiName = [String: ${apiName}Setup?]()
+        }
+        ''');
     }
 
     const List<String> generatedComments = <String>[
@@ -1453,6 +1408,7 @@ if (wrapped == nil) {
       generatorComments: generatedComments,
     );
 
+    indent.writeln('@available(iOS 13, macOS 16.0.0, *)');
     indent.write('protocol $apiName ');
     indent.addScoped('{', '}', () {
       for (final Method method in api.methods) {
@@ -1469,7 +1425,7 @@ if (wrapped == nil) {
             errorTypeName: 'Error',
             isAsynchronous: method.isAsynchronous,
             swiftFunction: method.swiftFunction,
-            useFfiTypedData: generatorOptions.useFfi,
+            ffiUserApi: generatorOptions.useFfi,
           ),
         );
       }
@@ -4029,9 +3985,9 @@ String _getMethodSignature({
   required TypeDeclaration returnType,
   required String errorTypeName,
   bool isAsynchronous = false,
-  bool useFfi = false,
+  bool ffiUserApi = false,
   String? swiftFunction,
-  bool useFfiTypedData = false,
+  bool ffiBridgeApi = false,
   String Function(int index, NamedType argument) getParameterName =
       _getArgumentName,
 }) {
@@ -4045,14 +4001,11 @@ String _getMethodSignature({
   String returnTypeString =
       returnType.isVoid
           ? 'Void'
-          : _nullSafeSwiftTypeForDartType(
-            returnType,
-            ffiTypedData: useFfiTypedData,
-          );
+          : _nullSafeSwiftTypeForDartType(returnType, ffiTypedData: ffiUserApi);
 
   Iterable<String> types = parameters.map(
     (NamedType e) =>
-        _nullSafeSwiftTypeForDartType(e.type, ffiTypedData: useFfiTypedData),
+        _nullSafeSwiftTypeForDartType(e.type, ffiTypedData: ffiUserApi),
   );
   final Iterable<String> labels = indexMap(components.arguments, (
     int index,
@@ -4061,19 +4014,20 @@ String _getMethodSignature({
     return argument.label ?? _getArgumentName(index, argument.namedType);
   });
 
-  final String objc = useFfi ? '@objc ' : '';
+  final String objc = ffiBridgeApi ? '@objc ' : '';
   String throwString = ' throws';
   String errorParam =
-      isAsynchronous
+      isAsynchronous && !ffiUserApi
           ? '${parameters.isEmpty ? '' : ', '}completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void'
           : '';
+  String asyncString = '';
 
-  if (useFfi) {
+  if (ffiBridgeApi) {
     methodName = name;
-    returnTypeString = _nullSafeFfiTypeForDartType(
-      returnType,
-      forceNullable: true,
-    );
+    returnTypeString =
+        returnType.isVoid
+            ? ''
+            : _nullSafeFfiTypeForDartType(returnType, forceNullable: true);
     types = parameters.map(
       (NamedType e) => _nullSafeFfiTypeForDartType(e.type),
     );
@@ -4081,6 +4035,10 @@ String _getMethodSignature({
     errorParam =
         '${parameters.isEmpty ? '' : ', '}wrappedError: $errorTypeName';
   }
+  asyncString =
+      ffiUserApi || ffiBridgeApi
+          ? ' async${ffiUserApi ? ' throws' : ''}${returnType.isVoid ? '' : ' -> $returnTypeString'}'
+          : '';
 
   final Iterable<String> names = indexMap(parameters, getParameterName);
   final String parameterSignature = map3(types, labels, names, (
@@ -4092,7 +4050,7 @@ String _getMethodSignature({
   }).join(', ');
 
   if (isAsynchronous) {
-    return '${objc}func $methodName($parameterSignature$errorParam)';
+    return '${objc}func $methodName($parameterSignature$errorParam)$asyncString';
   } else {
     if (returnType.isVoid) {
       return '${objc}func $methodName($parameterSignature$errorParam)$throwString';

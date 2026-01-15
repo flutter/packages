@@ -1140,6 +1140,27 @@ void _throwNoInstanceError(String channelName) {
   throw ArgumentError(error);
 }
 
+void _throwIfFfiError(ffi_bridge.NiTestsError error) {
+  if (error.code != null) {
+    throw _wrapFfiError(error);
+  }
+}
+
+PlatformException _wrapFfiError(ffi_bridge.NiTestsError error) =>
+    PlatformException(
+      code: error.code!.toDartString(),
+      message: error.message?.toDartString(),
+      details: error.details != null && NSString.isA(error.details!)
+          ? error.details!.toDartString()
+          : error.details,
+    );
+
+PlatformException _wrapJniException(JniException e) => PlatformException(
+  code: 'PlatformException',
+  message: e.message,
+  stacktrace: e.stackTrace,
+);
+
 enum NIAnEnum {
   one,
   two,
@@ -2595,28 +2616,13 @@ class NIHostIntegrationCoreApiForNativeInterop {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
         _ffiApi.noopWithWrappedError(error);
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          return;
-        }
+        _throwIfFfiError(error);
+        return;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAllTypes echoAllTypes(NIAllTypes everything) {
@@ -2629,29 +2635,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
               everything.toFfi(),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAllTypes dartTypeRes = NIAllTypes.fromFfi(res)!;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAllTypes dartTypeRes = NIAllTypes.fromFfi(res)!;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Object? throwError() {
@@ -2660,29 +2651,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
         final ObjCObject? res = _ffiApi.throwErrorWithWrappedError(error);
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   void throwErrorFromVoid() {
@@ -2691,28 +2667,13 @@ class NIHostIntegrationCoreApiForNativeInterop {
       } else if (_ffiApi != null) {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
         _ffiApi.throwErrorFromVoidWithWrappedError(error);
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          return;
-        }
+        _throwIfFfiError(error);
+        return;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Object? throwFlutterError() {
@@ -2723,29 +2684,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final ObjCObject? res = _ffiApi.throwFlutterErrorWithWrappedError(
           error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   int echoInt(int anInt) {
@@ -2757,29 +2703,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           anInt,
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final int dartTypeRes = res!.longValue;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final int dartTypeRes = res!.longValue;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   double echoDouble(double aDouble) {
@@ -2791,29 +2722,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           aDouble,
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final double dartTypeRes = res!.doubleValue;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final double dartTypeRes = res!.doubleValue;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   bool echoBool(bool aBool) {
@@ -2825,29 +2741,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           aBool,
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final bool dartTypeRes = res!.boolValue;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final bool dartTypeRes = res!.boolValue;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   String echoString(String aString) {
@@ -2859,29 +2760,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSString>(aString),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final String dartTypeRes = res!.toDartString();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final String dartTypeRes = res!.toDartString();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Uint8List echoUint8List(Uint8List aUint8List) {
@@ -2896,30 +2782,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Uint8List dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Uint8List);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Uint8List dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Uint8List);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Int32List echoInt32List(Int32List aInt32List) {
@@ -2934,30 +2805,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Int32List dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Int32List);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Int32List dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Int32List);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Int64List echoInt64List(Int64List aInt64List) {
@@ -2972,30 +2828,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Int64List dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Int64List);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Int64List dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Int64List);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Float64List echoFloat64List(Float64List aFloat64List) {
@@ -3010,30 +2851,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Float64List dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Float64List);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Float64List dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Float64List);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Object echoObject(Object anObject) {
@@ -3045,29 +2871,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Object dartTypeRes = _PigeonFfiCodec.readValue(res)!;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Object dartTypeRes = _PigeonFfiCodec.readValue(res)!;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<Object?> echoList(List<Object?> list) {
@@ -3079,31 +2890,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(list),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<Object?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>)
-                  .cast<Object?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<Object?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<Object?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<String?> echoStringList(List<String?> stringList) {
@@ -3115,31 +2910,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(stringList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<String?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>)
-                  .cast<String?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<String?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<String?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<int?> echoIntList(List<int?> intList) {
@@ -3151,30 +2930,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(intList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<int?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<int?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<int?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<int?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<double?> echoDoubleList(List<double?> doubleList) {
@@ -3186,31 +2950,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(doubleList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<double?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>)
-                  .cast<double?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<double?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<double?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<bool?> echoBoolList(List<bool?> boolList) {
@@ -3222,30 +2970,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(boolList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<bool?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<bool?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<bool?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<bool?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAnEnum?> echoEnumList(List<NIAnEnum?> enumList) {
@@ -3257,31 +2990,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAnEnum?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>)
-                  .cast<NIAnEnum?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAnEnum?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>)
+                .cast<NIAnEnum?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAllNullableTypesWithoutRecursion?> echoClassList(
@@ -3295,31 +3013,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAllNullableTypesWithoutRecursion?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>)
-                  .cast<NIAllNullableTypesWithoutRecursion?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAllNullableTypesWithoutRecursion?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>)
+                .cast<NIAllNullableTypesWithoutRecursion?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAnEnum> echoNonNullEnumList(List<NIAnEnum> enumList) {
@@ -3331,31 +3034,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAnEnum> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>)
-                  .cast<NIAnEnum>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAnEnum> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>).cast<NIAnEnum>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAllNullableTypesWithoutRecursion> echoNonNullClassList(
@@ -3369,31 +3056,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAllNullableTypesWithoutRecursion> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as List<Object?>)
-                  .cast<NIAllNullableTypesWithoutRecursion>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAllNullableTypesWithoutRecursion> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as List<Object?>)
+                .cast<NIAllNullableTypesWithoutRecursion>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<Object?, Object?> echoMap(Map<Object?, Object?> map) {
@@ -3405,31 +3077,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(map),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<Object?, Object?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<Object?, Object?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<Object?, Object?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<Object?, Object?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<String?, String?> echoStringMap(Map<String?, String?> stringMap) {
@@ -3441,31 +3098,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<String?, String?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<String?, String?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<String?, String?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<String?, String?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int?, int?> echoIntMap(Map<int?, int?> intMap) {
@@ -3477,31 +3119,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int?, int?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<int?, int?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int?, int?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<int?, int?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<NIAnEnum?, NIAnEnum?> echoEnumMap(Map<NIAnEnum?, NIAnEnum?> enumMap) {
@@ -3513,31 +3140,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<NIAnEnum?, NIAnEnum?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<NIAnEnum?, NIAnEnum?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<NIAnEnum?, NIAnEnum?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<NIAnEnum?, NIAnEnum?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int?, NIAllNullableTypesWithoutRecursion?> echoClassMap(
@@ -3551,31 +3163,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int?, NIAllNullableTypesWithoutRecursion?> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<int?, NIAllNullableTypesWithoutRecursion?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int?, NIAllNullableTypesWithoutRecursion?> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<int?, NIAllNullableTypesWithoutRecursion?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<String, String> echoNonNullStringMap(Map<String, String> stringMap) {
@@ -3587,31 +3184,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<String, String> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<String, String>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<String, String> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<String, String>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int, int> echoNonNullIntMap(Map<int, int> intMap) {
@@ -3623,31 +3205,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int, int> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<int, int>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int, int> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<int, int>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<NIAnEnum, NIAnEnum> echoNonNullEnumMap(Map<NIAnEnum, NIAnEnum> enumMap) {
@@ -3659,31 +3226,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<NIAnEnum, NIAnEnum> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<NIAnEnum, NIAnEnum>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<NIAnEnum, NIAnEnum> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<NIAnEnum, NIAnEnum>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int, NIAllNullableTypesWithoutRecursion> echoNonNullClassMap(
@@ -3697,31 +3249,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int, NIAllNullableTypesWithoutRecursion> dartTypeRes =
-              (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
-                  .cast<int, NIAllNullableTypesWithoutRecursion>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int, NIAllNullableTypesWithoutRecursion> dartTypeRes =
+            (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                .cast<int, NIAllNullableTypesWithoutRecursion>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAllClassesWrapper echoClassWrapper(NIAllClassesWrapper wrapper) {
@@ -3731,31 +3268,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllClassesWrapperBridge? res = _ffiApi
             .echoClassWrapperWithWrapper(wrapper.toFfi(), wrappedError: error);
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAllClassesWrapper dartTypeRes = NIAllClassesWrapper.fromFfi(
-            res,
-          )!;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAllClassesWrapper dartTypeRes = NIAllClassesWrapper.fromFfi(
+          res,
+        )!;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAnEnum echoEnum(NIAnEnum anEnum) {
@@ -3767,30 +3289,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           ffi_bridge.NIAnEnum.values[anEnum.index],
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAnEnum dartTypeRes =
-              (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAnEnum dartTypeRes =
+            (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAnotherEnum echoAnotherEnum(NIAnotherEnum anotherEnum) {
@@ -3802,30 +3309,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAnotherEnum dartTypeRes =
-              (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAnotherEnum dartTypeRes =
+            (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAllNullableTypes? echoAllNullableTypes(NIAllNullableTypes? everything) {
@@ -3838,31 +3330,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
               everything == null ? null : everything.toFfi(),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromFfi(
-            res,
-          );
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromFfi(res);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAllNullableTypesWithoutRecursion? echoAllNullableTypesWithoutRecursion(
@@ -3877,30 +3352,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               everything == null ? null : everything.toFfi(),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAllNullableTypesWithoutRecursion? dartTypeRes =
-              NIAllNullableTypesWithoutRecursion.fromFfi(res);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAllNullableTypesWithoutRecursion? dartTypeRes =
+            NIAllNullableTypesWithoutRecursion.fromFfi(res);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   String? extractNestedNullableString(NIAllClassesWrapper wrapper) {
@@ -3912,29 +3372,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           wrapper.toFfi(),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final String? dartTypeRes = res?.toDartString();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final String? dartTypeRes = res?.toDartString();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAllClassesWrapper createNestedNullableString(String? nullableString) {
@@ -3947,31 +3392,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
               _PigeonFfiCodec.writeValue<NSString?>(nullableString),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAllClassesWrapper dartTypeRes = NIAllClassesWrapper.fromFfi(
-            res,
-          )!;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAllClassesWrapper dartTypeRes = NIAllClassesWrapper.fromFfi(
+          res,
+        )!;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypes(
@@ -3992,30 +3422,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAllNullableTypesWithoutRecursion dartTypeRes =
-              NIAllNullableTypesWithoutRecursion.fromFfi(res)!;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAllNullableTypesWithoutRecursion dartTypeRes =
+            NIAllNullableTypesWithoutRecursion.fromFfi(res)!;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
@@ -4036,30 +3451,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAllNullableTypesWithoutRecursion dartTypeRes =
-              NIAllNullableTypesWithoutRecursion.fromFfi(res)!;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAllNullableTypesWithoutRecursion dartTypeRes =
+            NIAllNullableTypesWithoutRecursion.fromFfi(res)!;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   int? echoNullableInt(int? aNullableInt) {
@@ -4071,29 +3471,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final int? dartTypeRes = res?.longValue;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final int? dartTypeRes = res?.longValue;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   double? echoNullableDouble(double? aNullableDouble) {
@@ -4105,29 +3490,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableDouble),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final double? dartTypeRes = res?.doubleValue;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final double? dartTypeRes = res?.doubleValue;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   bool? echoNullableBool(bool? aNullableBool) {
@@ -4139,29 +3509,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final bool? dartTypeRes = res?.boolValue;
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final bool? dartTypeRes = res?.boolValue;
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   String? echoNullableString(String? aNullableString) {
@@ -4173,29 +3528,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final String? dartTypeRes = res?.toDartString();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final String? dartTypeRes = res?.toDartString();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Uint8List? echoNullableUint8List(Uint8List? aNullableUint8List) {
@@ -4210,30 +3550,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Uint8List? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Uint8List?);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Uint8List? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Uint8List?);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Int32List? echoNullableInt32List(Int32List? aNullableInt32List) {
@@ -4248,30 +3573,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Int32List? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Int32List?);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Int32List? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Int32List?);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Int64List? echoNullableInt64List(Int64List? aNullableInt64List) {
@@ -4286,30 +3596,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Int64List? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Int64List?);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Int64List? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Int64List?);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Float64List? echoNullableFloat64List(Float64List? aNullableFloat64List) {
@@ -4324,30 +3619,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
               ),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Float64List? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Float64List?);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Float64List? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Float64List?);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Object? echoNullableObject(Object? aNullableObject) {
@@ -4359,29 +3639,14 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSObject>(aNullableObject, generic: true),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<Object?>? echoNullableList(List<Object?>? aNullableList) {
@@ -4393,31 +3658,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray?>(aNullableList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<Object?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as List<Object?>?)
-                  ?.cast<Object?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<Object?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAnEnum?>? echoNullableEnumList(List<NIAnEnum?>? enumList) {
@@ -4429,31 +3678,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAnEnum?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as List<Object?>?)
-                  ?.cast<NIAnEnum?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAnEnum?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                ?.cast<NIAnEnum?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAllNullableTypesWithoutRecursion?>? echoNullableClassList(
@@ -4467,31 +3701,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAllNullableTypesWithoutRecursion?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as List<Object?>?)
-                  ?.cast<NIAllNullableTypesWithoutRecursion?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAllNullableTypesWithoutRecursion?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                ?.cast<NIAllNullableTypesWithoutRecursion?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAnEnum>? echoNullableNonNullEnumList(List<NIAnEnum>? enumList) {
@@ -4503,31 +3722,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAnEnum>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as List<Object?>?)
-                  ?.cast<NIAnEnum>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAnEnum>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                ?.cast<NIAnEnum>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   List<NIAllNullableTypesWithoutRecursion>? echoNullableNonNullClassList(
@@ -4541,31 +3745,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final List<NIAllNullableTypesWithoutRecursion>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as List<Object?>?)
-                  ?.cast<NIAllNullableTypesWithoutRecursion>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final List<NIAllNullableTypesWithoutRecursion>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                ?.cast<NIAllNullableTypesWithoutRecursion>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) {
@@ -4577,31 +3766,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary?>(map),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<Object?, Object?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<Object?, Object?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<Object?, Object?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<Object?, Object?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<String?, String?>? echoNullableStringMap(
@@ -4615,31 +3789,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<String?, String?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<String?, String?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<String?, String?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<String?, String?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap) {
@@ -4651,31 +3810,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int?, int?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<int?, int?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int?, int?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<int?, int?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
@@ -4689,31 +3833,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<NIAnEnum?, NIAnEnum?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<NIAnEnum?, NIAnEnum?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<NIAnEnum?, NIAnEnum?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<NIAnEnum?, NIAnEnum?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int?, NIAllNullableTypesWithoutRecursion?>? echoNullableClassMap(
@@ -4727,31 +3856,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int?, NIAllNullableTypesWithoutRecursion?>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<int?, NIAllNullableTypesWithoutRecursion?>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int?, NIAllNullableTypesWithoutRecursion?>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<int?, NIAllNullableTypesWithoutRecursion?>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<String, String>? echoNullableNonNullStringMap(
@@ -4766,31 +3880,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
               _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<String, String>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<String, String>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<String, String>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<String, String>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap) {
@@ -4802,31 +3901,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int, int>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<int, int>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int, int>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<int, int>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
@@ -4840,31 +3924,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<NIAnEnum, NIAnEnum>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<NIAnEnum, NIAnEnum>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<NIAnEnum, NIAnEnum>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<NIAnEnum, NIAnEnum>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   Map<int, NIAllNullableTypesWithoutRecursion>? echoNullableNonNullClassMap(
@@ -4879,31 +3948,16 @@ class NIHostIntegrationCoreApiForNativeInterop {
               _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
               wrappedError: error,
             );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final Map<int, NIAllNullableTypesWithoutRecursion>? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
-                  ?.cast<int, NIAllNullableTypesWithoutRecursion>();
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final Map<int, NIAllNullableTypesWithoutRecursion>? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                ?.cast<int, NIAllNullableTypesWithoutRecursion>();
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAnEnum? echoNullableEnum(NIAnEnum? anEnum) {
@@ -4915,30 +3969,15 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAnEnum? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAnEnum? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
   }
 
   NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? anotherEnum) {
@@ -4950,30 +3989,1251 @@ class NIHostIntegrationCoreApiForNativeInterop {
           _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
           wrappedError: error,
         );
-        if (error.code != null) {
-          throw PlatformException(
-            code: error.code!.toDartString(),
-            message: error.message?.toDartString(),
-            details: error.details != null && NSString.isA(error.details!)
-                ? error.details!.toDartString()
-                : error.details,
-          );
-        } else {
-          final NIAnotherEnum? dartTypeRes =
-              (_PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?);
-          return dartTypeRes;
-        }
+        _throwIfFfiError(error);
+        final NIAnotherEnum? dartTypeRes =
+            (_PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?);
+        return dartTypeRes;
       }
     } on JniException catch (e) {
-      throw PlatformException(
-        code: 'PlatformException',
-        message: e.message,
-        stacktrace: e.stackTrace,
-      );
-    } catch (e) {
-      rethrow;
+      throw _wrapJniException(e);
     }
-    throw Exception("this shouldn't be possible");
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<void> noopAsync() async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<void> completer = Completer<void>();
+        _ffiApi.noopAsyncWithWrappedError(
+          error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid.listener(() {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete();
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<int> echoAsyncInt(int anInt) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<int> completer = Completer<int>();
+        _ffiApi.echoAsyncIntWithAnInt(
+          anInt,
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res!.longValue);
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<double> echoAsyncDouble(double aDouble) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<double> completer = Completer<double>();
+        _ffiApi.echoAsyncDoubleWithADouble(
+          aDouble,
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res!.doubleValue);
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<bool> echoAsyncBool(bool aBool) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<bool> completer = Completer<bool>();
+        _ffiApi.echoAsyncBoolWithABool(
+          aBool,
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res!.boolValue);
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<String> echoAsyncString(String aString) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<String> completer = Completer<String>();
+        _ffiApi.echoAsyncStringWithAString(
+          _PigeonFfiCodec.writeValue<NSString>(aString),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
+            NSString? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res!.toDartString());
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Uint8List> echoAsyncUint8List(Uint8List aUint8List) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Uint8List> completer = Completer<Uint8List>();
+        _ffiApi.echoAsyncUint8ListWithAUint8List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aUint8List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res)! as Uint8List),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Int32List> echoAsyncInt32List(Int32List aInt32List) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Int32List> completer = Completer<Int32List>();
+        _ffiApi.echoAsyncInt32ListWithAInt32List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aInt32List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res)! as Int32List),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Int64List> echoAsyncInt64List(Int64List aInt64List) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Int64List> completer = Completer<Int64List>();
+        _ffiApi.echoAsyncInt64ListWithAInt64List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aInt64List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res)! as Int64List),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Float64List> echoAsyncFloat64List(Float64List aFloat64List) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Float64List> completer = Completer<Float64List>();
+        _ffiApi.echoAsyncFloat64ListWithAFloat64List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aFloat64List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res)! as Float64List),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<List<Object?>> echoAsyncList(List<Object?> list) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<List<Object?>> completer = Completer<List<Object?>>();
+        _ffiApi.echoAsyncListWithList(
+          _PigeonFfiCodec.writeValue<NSMutableArray>(list),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
+            NSArray? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res)! as List<Object?>)
+                    .cast<Object?>(),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<List<NIAnEnum?>> echoAsyncEnumList(List<NIAnEnum?> enumList) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<List<NIAnEnum?>> completer =
+            Completer<List<NIAnEnum?>>();
+        _ffiApi.echoAsyncEnumListWithEnumList(
+          _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
+            NSArray? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res)! as List<Object?>)
+                    .cast<NIAnEnum?>(),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<List<NIAllNullableTypes?>> echoAsyncClassList(
+    List<NIAllNullableTypes?> classList,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<List<NIAllNullableTypes?>> completer =
+            Completer<List<NIAllNullableTypes?>>();
+        _ffiApi.echoAsyncClassListWithClassList(
+          _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
+            NSArray? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res)! as List<Object?>)
+                    .cast<NIAllNullableTypes?>(),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<Object?, Object?>> echoAsyncMap(Map<Object?, Object?> map) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<Object?, Object?>> completer =
+            Completer<Map<Object?, Object?>>();
+        _ffiApi.echoAsyncMapWithMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(map),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                      .cast<Object?, Object?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<String?, String?>> echoAsyncStringMap(
+    Map<String?, String?> stringMap,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<String?, String?>> completer =
+            Completer<Map<String?, String?>>();
+        _ffiApi.echoAsyncStringMapWithStringMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                      .cast<String?, String?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<int?, int?>> echoAsyncIntMap(Map<int?, int?> intMap) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<int?, int?>> completer =
+            Completer<Map<int?, int?>>();
+        _ffiApi.echoAsyncIntMapWithIntMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                      .cast<int?, int?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<NIAnEnum?, NIAnEnum?>> echoAsyncEnumMap(
+    Map<NIAnEnum?, NIAnEnum?> enumMap,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<NIAnEnum?, NIAnEnum?>> completer =
+            Completer<Map<NIAnEnum?, NIAnEnum?>>();
+        _ffiApi.echoAsyncEnumMapWithEnumMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                      .cast<NIAnEnum?, NIAnEnum?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<int?, NIAllNullableTypes?>> echoAsyncClassMap(
+    Map<int?, NIAllNullableTypes?> classMap,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<int?, NIAllNullableTypes?>> completer =
+            Completer<Map<int?, NIAllNullableTypes?>>();
+        _ffiApi.echoAsyncClassMapWithClassMap(
+          _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res)! as Map<Object?, Object?>)
+                      .cast<int?, NIAllNullableTypes?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<NIAnEnum> echoAsyncEnum(NIAnEnum anEnum) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<NIAnEnum> completer = Completer<NIAnEnum>();
+        _ffiApi.echoAsyncEnumWithAnEnum(
+          ffi_bridge.NIAnEnum.values[anEnum.index],
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<NIAnotherEnum> echoAnotherAsyncEnum(NIAnotherEnum anotherEnum) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<NIAnotherEnum> completer = Completer<NIAnotherEnum>();
+        _ffiApi.echoAnotherAsyncEnumWithAnotherEnum(
+          ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res, NIAnotherEnum)!
+                    as NIAnotherEnum),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<void> throwAsyncErrorFromVoid() async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<void> completer = Completer<void>();
+        _ffiApi.throwAsyncErrorFromVoidWithWrappedError(
+          error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid.listener(() {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete();
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<NIAllTypes> echoAsyncNIAllTypes(NIAllTypes everything) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<NIAllTypes> completer = Completer<NIAllTypes>();
+        _ffiApi.echoAsyncNIAllTypesWithEverything(
+          everything.toFfi(),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_NIAllTypesBridge.listener((
+                ffi_bridge.NIAllTypesBridge? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(NIAllTypes.fromFfi(res)!);
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<NIAllNullableTypes?> echoAsyncNullableNIAllNullableTypes(
+    NIAllNullableTypes? everything,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<NIAllNullableTypes?> completer =
+            Completer<NIAllNullableTypes?>();
+        _ffiApi.echoAsyncNullableNIAllNullableTypesWithEverything(
+          everything == null ? null : everything.toFfi(),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_NIAllNullableTypesBridge.listener((
+                ffi_bridge.NIAllNullableTypesBridge? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(NIAllNullableTypes.fromFfi(res));
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<NIAllNullableTypesWithoutRecursion?>
+  echoAsyncNullableNIAllNullableTypesWithoutRecursion(
+    NIAllNullableTypesWithoutRecursion? everything,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<NIAllNullableTypesWithoutRecursion?> completer =
+            Completer<NIAllNullableTypesWithoutRecursion?>();
+        _ffiApi.echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything(
+          everything == null ? null : everything.toFfi(),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge
+                  .ObjCBlock_ffiVoid_NIAllNullableTypesWithoutRecursionBridge.listener(
+                (ffi_bridge.NIAllNullableTypesWithoutRecursionBridge? res) {
+                  if (error.code != null) {
+                    completer.completeError(_wrapFfiError(error));
+                  } else {
+                    completer.complete(
+                      NIAllNullableTypesWithoutRecursion.fromFfi(res),
+                    );
+                  }
+                },
+              ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<int?> echoAsyncNullableInt(int? anInt) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<int?> completer = Completer<int?>();
+        _ffiApi.echoAsyncNullableIntWithAnInt(
+          _PigeonFfiCodec.writeValue<NSNumber?>(anInt),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res?.longValue);
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<double?> echoAsyncNullableDouble(double? aDouble) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<double?> completer = Completer<double?>();
+        _ffiApi.echoAsyncNullableDoubleWithADouble(
+          _PigeonFfiCodec.writeValue<NSNumber?>(aDouble),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res?.doubleValue);
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<bool?> echoAsyncNullableBool(bool? aBool) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<bool?> completer = Completer<bool?>();
+        _ffiApi.echoAsyncNullableBoolWithABool(
+          _PigeonFfiCodec.writeValue<NSNumber?>(aBool),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res?.boolValue);
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<String?> echoAsyncNullableString(String? aString) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<String?> completer = Completer<String?>();
+        _ffiApi.echoAsyncNullableStringWithAString(
+          _PigeonFfiCodec.writeValue<NSString?>(aString),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSString.listener((
+            NSString? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(res?.toDartString());
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Uint8List?> echoAsyncNullableUint8List(Uint8List? aUint8List) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Uint8List?> completer = Completer<Uint8List?>();
+        _ffiApi.echoAsyncNullableUint8ListWithAUint8List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aUint8List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res) as Uint8List?),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Int32List?> echoAsyncNullableInt32List(Int32List? aInt32List) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Int32List?> completer = Completer<Int32List?>();
+        _ffiApi.echoAsyncNullableInt32ListWithAInt32List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aInt32List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res) as Int32List?),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Int64List?> echoAsyncNullableInt64List(Int64List? aInt64List) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Int64List?> completer = Completer<Int64List?>();
+        _ffiApi.echoAsyncNullableInt64ListWithAInt64List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aInt64List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res) as Int64List?),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Float64List?> echoAsyncNullableFloat64List(
+    Float64List? aFloat64List,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Float64List?> completer = Completer<Float64List?>();
+        _ffiApi.echoAsyncNullableFloat64ListWithAFloat64List(
+          _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aFloat64List),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_PigeonTypedData.listener((
+                ffi_bridge.PigeonTypedData? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(
+                    (_PigeonFfiCodec.readValue(res) as Float64List?),
+                  );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<List<Object?>?> echoAsyncNullableList(List<Object?>? list) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<List<Object?>?> completer = Completer<List<Object?>?>();
+        _ffiApi.echoAsyncNullableListWithList(
+          _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
+            NSArray? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                    ?.cast<Object?>(),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<List<NIAnEnum?>?> echoAsyncNullableEnumList(
+    List<NIAnEnum?>? enumList,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<List<NIAnEnum?>?> completer =
+            Completer<List<NIAnEnum?>?>();
+        _ffiApi.echoAsyncNullableEnumListWithEnumList(
+          _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
+            NSArray? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                    ?.cast<NIAnEnum?>(),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<List<NIAllNullableTypes?>?> echoAsyncNullableClassList(
+    List<NIAllNullableTypes?>? classList,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<List<NIAllNullableTypes?>?> completer =
+            Completer<List<NIAllNullableTypes?>?>();
+        _ffiApi.echoAsyncNullableClassListWithClassList(
+          _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSArray.listener((
+            NSArray? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res) as List<Object?>?)
+                    ?.cast<NIAllNullableTypes?>(),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<Object?, Object?>?> echoAsyncNullableMap(
+    Map<Object?, Object?>? map,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<Object?, Object?>?> completer =
+            Completer<Map<Object?, Object?>?>();
+        _ffiApi.echoAsyncNullableMapWithMap(
+          _PigeonFfiCodec.writeValue<NSDictionary?>(map),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                      ?.cast<Object?, Object?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<String?, String?>?> echoAsyncNullableStringMap(
+    Map<String?, String?>? stringMap,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<String?, String?>?> completer =
+            Completer<Map<String?, String?>?>();
+        _ffiApi.echoAsyncNullableStringMapWithStringMap(
+          _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                      ?.cast<String?, String?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<int?, int?>?> echoAsyncNullableIntMap(
+    Map<int?, int?>? intMap,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<int?, int?>?> completer =
+            Completer<Map<int?, int?>?>();
+        _ffiApi.echoAsyncNullableIntMapWithIntMap(
+          _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                      ?.cast<int?, int?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<NIAnEnum?, NIAnEnum?>?> echoAsyncNullableEnumMap(
+    Map<NIAnEnum?, NIAnEnum?>? enumMap,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<NIAnEnum?, NIAnEnum?>?> completer =
+            Completer<Map<NIAnEnum?, NIAnEnum?>?>();
+        _ffiApi.echoAsyncNullableEnumMapWithEnumMap(
+          _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                      ?.cast<NIAnEnum?, NIAnEnum?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Map<int?, NIAllNullableTypes?>?> echoAsyncNullableClassMap(
+    Map<int?, NIAllNullableTypes?>? classMap,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Map<int?, NIAllNullableTypes?>?> completer =
+            Completer<Map<int?, NIAllNullableTypes?>?>();
+        _ffiApi.echoAsyncNullableClassMapWithClassMap(
+          _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSDictionary.listener(
+            (NSDictionary? res) {
+              if (error.code != null) {
+                completer.completeError(_wrapFfiError(error));
+              } else {
+                completer.complete(
+                  (_PigeonFfiCodec.readValue(res) as Map<Object?, Object?>?)
+                      ?.cast<int?, NIAllNullableTypes?>(),
+                );
+              }
+            },
+          ),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<NIAnEnum?> echoAsyncNullableEnum(NIAnEnum? anEnum) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<NIAnEnum?> completer = Completer<NIAnEnum?>();
+        _ffiApi.echoAsyncNullableEnumWithAnEnum(
+          _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<NIAnotherEnum?> echoAnotherAsyncNullableEnum(
+    NIAnotherEnum? anotherEnum,
+  ) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<NIAnotherEnum?> completer = Completer<NIAnotherEnum?>();
+        _ffiApi.echoAnotherAsyncNullableEnumWithAnotherEnum(
+          _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
+          wrappedError: error,
+          completionHandler: ffi_bridge.ObjCBlock_ffiVoid_NSNumber.listener((
+            NSNumber? res,
+          ) {
+            if (error.code != null) {
+              completer.completeError(_wrapFfiError(error));
+            } else {
+              completer.complete(
+                (_PigeonFfiCodec.readValue(res, NIAnotherEnum)
+                    as NIAnotherEnum?),
+              );
+            }
+          }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
   }
 }
 
@@ -7385,6 +7645,1454 @@ class NIHostIntegrationCoreApi {
     }
     final String pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherNullableEnum$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anotherEnum],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAnotherEnum?);
+    }
+  }
+
+  /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  Future<void> noopAsync() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.noopAsync();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.noopAsync$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns passed in int asynchronously.
+  Future<int> echoAsyncInt(int anInt) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncInt(anInt);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncInt$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anInt],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as int?)!;
+    }
+  }
+
+  /// Returns passed in double asynchronously.
+  Future<double> echoAsyncDouble(double aDouble) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncDouble(aDouble);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncDouble$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aDouble],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as double?)!;
+    }
+  }
+
+  /// Returns the passed in boolean asynchronously.
+  Future<bool> echoAsyncBool(bool aBool) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncBool(aBool);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncBool$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aBool],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?)!;
+    }
+  }
+
+  /// Returns the passed string asynchronously.
+  Future<String> echoAsyncString(String aString) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncString(aString);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncString$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aString],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?)!;
+    }
+  }
+
+  /// Returns the passed in Uint8List asynchronously.
+  Future<Uint8List> echoAsyncUint8List(Uint8List aUint8List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncUint8List(aUint8List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncUint8List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aUint8List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Uint8List?)!;
+    }
+  }
+
+  /// Returns the passed in Int32List asynchronously.
+  Future<Int32List> echoAsyncInt32List(Int32List aInt32List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncInt32List(aInt32List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncInt32List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aInt32List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int32List?)!;
+    }
+  }
+
+  /// Returns the passed in Int64List asynchronously.
+  Future<Int64List> echoAsyncInt64List(Int64List aInt64List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncInt64List(aInt64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncInt64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aInt64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int64List?)!;
+    }
+  }
+
+  /// Returns the passed in Float64List asynchronously.
+  Future<Float64List> echoAsyncFloat64List(Float64List aFloat64List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncFloat64List(aFloat64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncFloat64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aFloat64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Float64List?)!;
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<Object?>> echoAsyncList(List<Object?> list) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncList(list);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[list],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<Object?>();
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<NIAnEnum?>> echoAsyncEnumList(List<NIAnEnum?> enumList) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncEnumList(enumList);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncEnumList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[enumList],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<NIAnEnum?>();
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<NIAllNullableTypes?>> echoAsyncClassList(
+    List<NIAllNullableTypes?> classList,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncClassList(classList);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncClassList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classList],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<NIAllNullableTypes?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<Object?, Object?>> echoAsyncMap(Map<Object?, Object?> map) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncMap(map);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[map],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<Object?, Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<String?, String?>> echoAsyncStringMap(
+    Map<String?, String?> stringMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncStringMap(stringMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[stringMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<String?, String?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<int?, int?>> echoAsyncIntMap(Map<int?, int?> intMap) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncIntMap(intMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[intMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int?, int?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<NIAnEnum?, NIAnEnum?>> echoAsyncEnumMap(
+    Map<NIAnEnum?, NIAnEnum?> enumMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncEnumMap(enumMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncEnumMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[enumMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<NIAnEnum?, NIAnEnum?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<int?, NIAllNullableTypes?>> echoAsyncClassMap(
+    Map<int?, NIAllNullableTypes?> classMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncClassMap(classMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncClassMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)!
+          .cast<int?, NIAllNullableTypes?>();
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<NIAnEnum> echoAsyncEnum(NIAnEnum anEnum) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncEnum(anEnum);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncEnum$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anEnum],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAnEnum?)!;
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<NIAnotherEnum> echoAnotherAsyncEnum(NIAnotherEnum anotherEnum) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAnotherAsyncEnum(anotherEnum);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherAsyncEnum$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anotherEnum],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAnotherEnum?)!;
+    }
+  }
+
+  /// Responds with an error from an async void function.
+  Future<void> throwAsyncErrorFromVoid() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.throwAsyncErrorFromVoid();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwAsyncErrorFromVoid$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  /// Returns the passed object, to test async serialization and deserialization.
+  Future<NIAllTypes> echoAsyncNIAllTypes(NIAllTypes everything) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNIAllTypes(everything);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNIAllTypes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[everything],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAllTypes?)!;
+    }
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<NIAllNullableTypes?> echoAsyncNullableNIAllNullableTypes(
+    NIAllNullableTypes? everything,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableNIAllNullableTypes(everything);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableNIAllNullableTypes$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[everything],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAllNullableTypes?);
+    }
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  Future<NIAllNullableTypesWithoutRecursion?>
+  echoAsyncNullableNIAllNullableTypesWithoutRecursion(
+    NIAllNullableTypesWithoutRecursion? everything,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi
+          .echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableNIAllNullableTypesWithoutRecursion$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[everything],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAllNullableTypesWithoutRecursion?);
+    }
+  }
+
+  /// Returns passed in int asynchronously.
+  Future<int?> echoAsyncNullableInt(int? anInt) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableInt(anInt);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableInt$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anInt],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as int?);
+    }
+  }
+
+  /// Returns passed in double asynchronously.
+  Future<double?> echoAsyncNullableDouble(double? aDouble) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableDouble(aDouble);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableDouble$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aDouble],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as double?);
+    }
+  }
+
+  /// Returns the passed in boolean asynchronously.
+  Future<bool?> echoAsyncNullableBool(bool? aBool) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableBool(aBool);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableBool$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aBool],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as bool?);
+    }
+  }
+
+  /// Returns the passed string asynchronously.
+  Future<String?> echoAsyncNullableString(String? aString) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableString(aString);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableString$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aString],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as String?);
+    }
+  }
+
+  /// Returns the passed in Uint8List asynchronously.
+  Future<Uint8List?> echoAsyncNullableUint8List(Uint8List? aUint8List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableUint8List(aUint8List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableUint8List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aUint8List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Uint8List?);
+    }
+  }
+
+  /// Returns the passed in Int32List asynchronously.
+  Future<Int32List?> echoAsyncNullableInt32List(Int32List? aInt32List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableInt32List(aInt32List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableInt32List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aInt32List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int32List?);
+    }
+  }
+
+  /// Returns the passed in Int64List asynchronously.
+  Future<Int64List?> echoAsyncNullableInt64List(Int64List? aInt64List) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableInt64List(aInt64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableInt64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aInt64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Int64List?);
+    }
+  }
+
+  /// Returns the passed in Float64List asynchronously.
+  Future<Float64List?> echoAsyncNullableFloat64List(
+    Float64List? aFloat64List,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableFloat64List(aFloat64List);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableFloat64List$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[aFloat64List],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Float64List?);
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<Object?>?> echoAsyncNullableList(List<Object?>? list) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableList(list);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[list],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<Object?>();
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<NIAnEnum?>?> echoAsyncNullableEnumList(
+    List<NIAnEnum?>? enumList,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableEnumList(enumList);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableEnumList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[enumList],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)?.cast<NIAnEnum?>();
+    }
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  Future<List<NIAllNullableTypes?>?> echoAsyncNullableClassList(
+    List<NIAllNullableTypes?>? classList,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableClassList(classList);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableClassList$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classList],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as List<Object?>?)
+          ?.cast<NIAllNullableTypes?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<Object?, Object?>?> echoAsyncNullableMap(
+    Map<Object?, Object?>? map,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableMap(map);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[map],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<Object?, Object?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<String?, String?>?> echoAsyncNullableStringMap(
+    Map<String?, String?>? stringMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableStringMap(stringMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableStringMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[stringMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<String?, String?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<int?, int?>?> echoAsyncNullableIntMap(
+    Map<int?, int?>? intMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableIntMap(intMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableIntMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[intMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<int?, int?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<NIAnEnum?, NIAnEnum?>?> echoAsyncNullableEnumMap(
+    Map<NIAnEnum?, NIAnEnum?>? enumMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableEnumMap(enumMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableEnumMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[enumMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<NIAnEnum?, NIAnEnum?>();
+    }
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  Future<Map<int?, NIAllNullableTypes?>?> echoAsyncNullableClassMap(
+    Map<int?, NIAllNullableTypes?>? classMap,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableClassMap(classMap);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableClassMap$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[classMap],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as Map<Object?, Object?>?)
+          ?.cast<int?, NIAllNullableTypes?>();
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<NIAnEnum?> echoAsyncNullableEnum(NIAnEnum? anEnum) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableEnum(anEnum);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableEnum$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anEnum],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NIAnEnum?);
+    }
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  Future<NIAnotherEnum?> echoAnotherAsyncNullableEnum(
+    NIAnotherEnum? anotherEnum,
+  ) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAnotherAsyncNullableEnum(anotherEnum);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherAsyncNullableEnum$pigeonVar_messageChannelSuffix';
     final BasicMessageChannel<Object?> pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,

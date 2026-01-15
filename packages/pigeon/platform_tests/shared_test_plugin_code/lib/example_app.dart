@@ -47,7 +47,8 @@ class _ExampleAppState extends State<ExampleApp> {
       // api!.echoStringList(stringList);
       // api!.echoAllTypes(genericNIAllTypes);
       // api!.echoObject(genericNIAllNullableTypesWithoutRecursion);
-      api!.echoObject(true);
+      // api!.echoObject(true);
+      await api!.echoAsyncInt(2);
       // api!.echoAllNullableTypesWithoutRecursion(
       //   genericNIAllNullableTypesWithoutRecursion,
       // );

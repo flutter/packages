@@ -14,6 +14,46 @@ import 'dart:ffi' as ffi;
 import 'package:objective_c/objective_c.dart' as objc;
 import 'package:ffi/ffi.dart' as pkg_ffi;
 
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _test_plugin_wrapListenerBlock_1pl9qdv(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+);
+
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(
+    ffi.Pointer<objc.ObjCBlockImpl>,
+    ffi.Pointer<objc.ObjCBlockImpl>,
+    ffi.Pointer<objc.DOBJC_Context>,
+  )
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _test_plugin_wrapBlockingBlock_1pl9qdv(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+  ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
+  ffi.Pointer<objc.DOBJC_Context> context,
+);
+
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(ffi.Pointer<objc.ObjCBlockImpl>)
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _test_plugin_wrapListenerBlock_xtuoz7(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+);
+
+@ffi.Native<
+  ffi.Pointer<objc.ObjCBlockImpl> Function(
+    ffi.Pointer<objc.ObjCBlockImpl>,
+    ffi.Pointer<objc.ObjCBlockImpl>,
+    ffi.Pointer<objc.DOBJC_Context>,
+  )
+>(isLeaf: true)
+external ffi.Pointer<objc.ObjCBlockImpl> _test_plugin_wrapBlockingBlock_xtuoz7(
+  ffi.Pointer<objc.ObjCBlockImpl> block,
+  ffi.Pointer<objc.ObjCBlockImpl> listnerBlock,
+  ffi.Pointer<objc.DOBJC_Context> context,
+);
+
 late final _class_NIAllClassesWrapperBridge = objc.getClass(
   "test_plugin.NIAllClassesWrapperBridge",
 );
@@ -4845,11 +4885,2627 @@ late final _sel_echoNullableEnumWithAnEnum_wrappedError_ = objc.registerName(
 late final _sel_echoAnotherNullableEnumWithAnotherEnum_wrappedError_ = objc
     .registerName("echoAnotherNullableEnumWithAnotherEnum:wrappedError:");
 
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function()>`.
+abstract final class ObjCBlock_ffiVoid {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function()> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function()>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function()> fromFunctionPointer(
+    ffi.Pointer<ffi.NativeFunction<ffi.Void Function()>> ptr,
+  ) => objc.ObjCBlock<ffi.Void Function()>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function()> fromFunction(
+    void Function() fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function()>(
+    objc.newClosureBlock(_closureCallable, () => fn(), keepIsolateAlive),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function()> listener(
+    void Function() fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      () => fn(),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_1pl9qdv(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function()>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function()> blocking(
+    void Function() fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      () => fn(),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      () => fn(),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_1pl9qdv(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function()>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(ffi.Pointer<objc.ObjCBlockImpl> block) {
+    (objc.getBlockClosure(block) as void Function())();
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>)>
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>)
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+  ) {
+    try {
+      (objc.getBlockClosure(block) as void Function())();
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>, ffi.Pointer<ffi.Void>)
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(ffi.Pointer<objc.ObjCBlockImpl> block) => block
+      .ref
+      .target
+      .cast<ffi.NativeFunction<ffi.Void Function()>>()
+      .asFunction<void Function()>()();
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>)
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(ffi.Pointer<objc.ObjCBlockImpl> block) =>
+      (objc.getBlockClosure(block) as void Function())();
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl>)
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function()>`.
+extension ObjCBlock_ffiVoid$CallExtension
+    on objc.ObjCBlock<ffi.Void Function()> {
+  void call() =>
+      ref.pointer.ref.invoke
+          .cast<
+            ffi.NativeFunction<
+              ffi.Void Function(ffi.Pointer<objc.ObjCBlockImpl> block)
+            >
+          >()
+          .asFunction<void Function(ffi.Pointer<objc.ObjCBlockImpl>)>()(
+        ref.pointer,
+      );
+}
+
+late final _sel_noopAsyncWithWrappedError_completionHandler_ = objc
+    .registerName("noopAsyncWithWrappedError:completionHandler:");
+final _objc_msgSend_o762yo = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>`.
+abstract final class ObjCBlock_ffiVoid_NSNumber {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> fromFunction(
+    void Function(objc.NSNumber?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSNumber.fromPointer(arg0, retain: true, release: true),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> listener(
+    void Function(objc.NSNumber?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> blocking(
+    void Function(objc.NSNumber?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSNumber.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>`.
+extension ObjCBlock_ffiVoid_NSNumber$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)> {
+  void call(objc.NSNumber? arg0) => ref.pointer.ref.invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncIntWithAnInt_wrappedError_completionHandler_ = objc
+    .registerName("echoAsyncIntWithAnInt:wrappedError:completionHandler:");
+final _objc_msgSend_1bf2hie = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Int64,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+late final _sel_echoAsyncDoubleWithADouble_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncDoubleWithADouble:wrappedError:completionHandler:",
+    );
+final _objc_msgSend_f15nnv = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Double,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        double,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+late final _sel_echoAsyncBoolWithABool_wrappedError_completionHandler_ = objc
+    .registerName("echoAsyncBoolWithABool:wrappedError:completionHandler:");
+final _objc_msgSend_1oby3xk = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Bool,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        bool,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(objc.NSString?)>`.
+abstract final class ObjCBlock_ffiVoid_NSString {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSString?)> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSString?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSString?)> fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(objc.NSString?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSString?)> fromFunction(
+    void Function(objc.NSString?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSString?)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSString.fromPointer(arg0, retain: true, release: true),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSString?)> listener(
+    void Function(objc.NSString?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSString.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSString?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSString?)> blocking(
+    void Function(objc.NSString?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSString.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSString.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSString?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(objc.NSString?)>`.
+extension ObjCBlock_ffiVoid_NSString$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(objc.NSString?)> {
+  void call(objc.NSString? arg0) => ref.pointer.ref.invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncStringWithAString_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncStringWithAString:wrappedError:completionHandler:",
+    );
+final _objc_msgSend_18qun1e = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>`.
+abstract final class ObjCBlock_ffiVoid_PigeonTypedData {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)> fromFunction(
+    void Function(PigeonTypedData?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : PigeonTypedData.fromPointer(arg0, retain: true, release: true),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)> listener(
+    void Function(PigeonTypedData?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : PigeonTypedData.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)> blocking(
+    void Function(PigeonTypedData?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : PigeonTypedData.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : PigeonTypedData.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>`.
+extension ObjCBlock_ffiVoid_PigeonTypedData$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)> {
+  void call(PigeonTypedData? arg0) => ref.pointer.ref.invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncUint8ListWithAUint8List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncUint8ListWithAUint8List:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncInt32ListWithAInt32List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncInt32ListWithAInt32List:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncInt64ListWithAInt64List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncInt64ListWithAInt64List:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncFloat64ListWithAFloat64List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncFloat64ListWithAFloat64List:wrappedError:completionHandler:",
+    );
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(objc.NSArray?)>`.
+abstract final class ObjCBlock_ffiVoid_NSArray {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSArray?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(objc.NSArray?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> fromFunction(
+    void Function(objc.NSArray?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSArray?)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSArray.fromPointer(arg0, retain: true, release: true),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> listener(
+    void Function(objc.NSArray?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSArray.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSArray?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> blocking(
+    void Function(objc.NSArray?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSArray.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSArray.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSArray?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(objc.NSArray?)>`.
+extension ObjCBlock_ffiVoid_NSArray$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> {
+  void call(objc.NSArray? arg0) => ref.pointer.ref.invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncListWithList_wrappedError_completionHandler_ = objc
+    .registerName("echoAsyncListWithList:wrappedError:completionHandler:");
+late final _sel_echoAsyncEnumListWithEnumList_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncEnumListWithEnumList:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncClassListWithClassList_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncClassListWithClassList:wrappedError:completionHandler:",
+    );
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>`.
+abstract final class ObjCBlock_ffiVoid_NSDictionary {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> fromFunction(
+    void Function(objc.NSDictionary?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSDictionary.fromPointer(arg0, retain: true, release: true),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> listener(
+    void Function(objc.NSDictionary?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSDictionary.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> blocking(
+    void Function(objc.NSDictionary?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSDictionary.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : objc.NSDictionary.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>`.
+extension ObjCBlock_ffiVoid_NSDictionary$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)> {
+  void call(objc.NSDictionary? arg0) => ref.pointer.ref.invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncMapWithMap_wrappedError_completionHandler_ = objc
+    .registerName("echoAsyncMapWithMap:wrappedError:completionHandler:");
+late final _sel_echoAsyncStringMapWithStringMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncStringMapWithStringMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncIntMapWithIntMap_wrappedError_completionHandler_ = objc
+    .registerName("echoAsyncIntMapWithIntMap:wrappedError:completionHandler:");
+late final _sel_echoAsyncEnumMapWithEnumMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncEnumMapWithEnumMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncClassMapWithClassMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncClassMapWithClassMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncEnumWithAnEnum_wrappedError_completionHandler_ = objc
+    .registerName("echoAsyncEnumWithAnEnum:wrappedError:completionHandler:");
+final _objc_msgSend_1yka6e5 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+late final _sel_echoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:",
+    );
+final _objc_msgSend_1ht8su5 = objc.msgSendPointer
+    .cast<
+      ffi.NativeFunction<
+        ffi.Void Function(
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCSelector>,
+          ffi.Long,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+          ffi.Pointer<objc.ObjCBlockImpl>,
+        )
+      >
+    >()
+    .asFunction<
+      void Function(
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCSelector>,
+        int,
+        ffi.Pointer<objc.ObjCObjectImpl>,
+        ffi.Pointer<objc.ObjCBlockImpl>,
+      )
+    >();
+late final _sel_throwAsyncErrorFromVoidWithWrappedError_completionHandler_ =
+    objc.registerName(
+      "throwAsyncErrorFromVoidWithWrappedError:completionHandler:",
+    );
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>`.
+abstract final class ObjCBlock_ffiVoid_NIAllTypesBridge {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)> fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)> fromFunction(
+    void Function(NIAllTypesBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllTypesBridge.fromPointer(arg0, retain: true, release: true),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)> listener(
+    void Function(NIAllTypesBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllTypesBridge.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)> blocking(
+    void Function(NIAllTypesBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllTypesBridge.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllTypesBridge.fromPointer(arg0, retain: false, release: true),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>`.
+extension ObjCBlock_ffiVoid_NIAllTypesBridge$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)> {
+  void call(NIAllTypesBridge? arg0) => ref.pointer.ref.invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncNIAllTypesWithEverything_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNIAllTypesWithEverything:wrappedError:completionHandler:",
+    );
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>`.
+abstract final class ObjCBlock_ffiVoid_NIAllNullableTypesBridge {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) => objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>(
+    pointer,
+    retain: retain,
+    release: release,
+  );
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) => objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>(
+    objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>
+  fromFunction(
+    void Function(NIAllNullableTypesBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) => objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>(
+    objc.newClosureBlock(
+      _closureCallable,
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllNullableTypesBridge.fromPointer(
+                arg0,
+                retain: true,
+                release: true,
+              ),
+      ),
+      keepIsolateAlive,
+    ),
+    retain: false,
+    release: true,
+  );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)> listener(
+    void Function(NIAllNullableTypesBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllNullableTypesBridge.fromPointer(
+                arg0,
+                retain: false,
+                release: true,
+              ),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)> blocking(
+    void Function(NIAllNullableTypesBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllNullableTypesBridge.fromPointer(
+                arg0,
+                retain: false,
+                release: true,
+              ),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllNullableTypesBridge.fromPointer(
+                arg0,
+                retain: false,
+                release: true,
+              ),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>(
+      wrapper,
+      retain: false,
+      release: true,
+    );
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>`.
+extension ObjCBlock_ffiVoid_NIAllNullableTypesBridge$CallExtension
+    on objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)> {
+  void call(NIAllNullableTypesBridge? arg0) => ref.pointer.ref.invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncNullableNIAllNullableTypesWithEverything_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableNIAllNullableTypesWithEverything:wrappedError:completionHandler:",
+    );
+
+/// Construction methods for `objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)>`.
+abstract final class ObjCBlock_ffiVoid_NIAllNullableTypesWithoutRecursionBridge {
+  /// Returns a block that wraps the given raw block pointer.
+  static objc.ObjCBlock<
+    ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+  >
+  fromPointer(
+    ffi.Pointer<objc.ObjCBlockImpl> pointer, {
+    bool retain = false,
+    bool release = false,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+      >(pointer, retain: retain, release: release);
+
+  /// Creates a block from a C function pointer.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  static objc.ObjCBlock<
+    ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+  >
+  fromFunctionPointer(
+    ffi.Pointer<
+      ffi.NativeFunction<
+        ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+      >
+    >
+    ptr,
+  ) =>
+      objc.ObjCBlock<
+        ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+      >(
+        objc.newPointerBlock(_fnPtrCallable, ptr.cast()),
+        retain: false,
+        release: true,
+      );
+
+  /// Creates a block from a Dart function.
+  ///
+  /// This block must be invoked by native code running on the same thread as
+  /// the isolate that registered it. Invoking the block on the wrong thread
+  /// will result in a crash.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<
+    ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+  >
+  fromFunction(
+    void Function(NIAllNullableTypesWithoutRecursionBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) =>
+      objc.ObjCBlock<
+        ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+      >(
+        objc.newClosureBlock(
+          _closureCallable,
+          (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+            arg0.address == 0
+                ? null
+                : NIAllNullableTypesWithoutRecursionBridge.fromPointer(
+                    arg0,
+                    retain: true,
+                    release: true,
+                  ),
+          ),
+          keepIsolateAlive,
+        ),
+        retain: false,
+        release: true,
+      );
+
+  /// Creates a listener block from a Dart function.
+  ///
+  /// This is based on FFI's NativeCallable.listener, and has the same
+  /// capabilities and limitations. This block can be invoked from any thread,
+  /// but only supports void functions, and is not run synchronously. See
+  /// NativeCallable.listener for more details.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC.
+  static objc.ObjCBlock<
+    ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+  >
+  listener(
+    void Function(NIAllNullableTypesWithoutRecursionBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _listenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllNullableTypesWithoutRecursionBridge.fromPointer(
+                arg0,
+                retain: false,
+                release: true,
+              ),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapListenerBlock_xtuoz7(raw);
+    objc.objectRelease(raw.cast());
+    return objc.ObjCBlock<
+      ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+    >(wrapper, retain: false, release: true);
+  }
+
+  /// Creates a blocking block from a Dart function.
+  ///
+  /// This callback can be invoked from any native thread, and will block the
+  /// caller until the callback is handled by the Dart isolate that created
+  /// the block. Async functions are not supported.
+  ///
+  /// If `keepIsolateAlive` is true, this block will keep this isolate alive
+  /// until it is garbage collected by both Dart and ObjC. If the owner isolate
+  /// has shut down, and the block is invoked by native code, it may block
+  /// indefinitely, or have other undefined behavior.
+  static objc.ObjCBlock<
+    ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+  >
+  blocking(
+    void Function(NIAllNullableTypesWithoutRecursionBridge?) fn, {
+    bool keepIsolateAlive = true,
+  }) {
+    final raw = objc.newClosureBlock(
+      _blockingCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllNullableTypesWithoutRecursionBridge.fromPointer(
+                arg0,
+                retain: false,
+                release: true,
+              ),
+      ),
+      keepIsolateAlive,
+    );
+    final rawListener = objc.newClosureBlock(
+      _blockingListenerCallable.nativeFunction.cast(),
+      (ffi.Pointer<objc.ObjCObjectImpl> arg0) => fn(
+        arg0.address == 0
+            ? null
+            : NIAllNullableTypesWithoutRecursionBridge.fromPointer(
+                arg0,
+                retain: false,
+                release: true,
+              ),
+      ),
+      keepIsolateAlive,
+    );
+    final wrapper = _test_plugin_wrapBlockingBlock_xtuoz7(
+      raw,
+      rawListener,
+      objc.objCContext,
+    );
+    objc.objectRelease(raw.cast());
+    objc.objectRelease(rawListener.cast());
+    return objc.ObjCBlock<
+      ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+    >(wrapper, retain: false, release: true);
+  }
+
+  static void _listenerTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    (objc.getBlockClosure(block)
+        as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    objc.objectRelease(block.cast());
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _listenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_listenerTrampoline)
+        ..keepIsolateAlive = false;
+  static void _blockingTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<ffi.Void> waiter,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) {
+    try {
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+    } catch (e) {
+    } finally {
+      objc.signalWaiter(waiter);
+      objc.objectRelease(block.cast());
+    }
+  }
+
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.isolateLocal(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static ffi.NativeCallable<
+    ffi.Void Function(
+      ffi.Pointer<objc.ObjCBlockImpl>,
+      ffi.Pointer<ffi.Void>,
+      ffi.Pointer<objc.ObjCObjectImpl>,
+    )
+  >
+  _blockingListenerCallable =
+      ffi.NativeCallable<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl>,
+            ffi.Pointer<ffi.Void>,
+            ffi.Pointer<objc.ObjCObjectImpl>,
+          )
+        >.listener(_blockingTrampoline)
+        ..keepIsolateAlive = false;
+  static void _fnPtrTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) => block.ref.target
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(ffi.Pointer<objc.ObjCObjectImpl> arg0)
+        >
+      >()
+      .asFunction<void Function(ffi.Pointer<objc.ObjCObjectImpl>)>()(arg0);
+  static ffi.Pointer<ffi.Void> _fnPtrCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_fnPtrTrampoline)
+          .cast();
+  static void _closureTrampoline(
+    ffi.Pointer<objc.ObjCBlockImpl> block,
+    ffi.Pointer<objc.ObjCObjectImpl> arg0,
+  ) =>
+      (objc.getBlockClosure(block)
+          as void Function(ffi.Pointer<objc.ObjCObjectImpl>))(arg0);
+  static ffi.Pointer<ffi.Void> _closureCallable =
+      ffi.Pointer.fromFunction<
+            ffi.Void Function(
+              ffi.Pointer<objc.ObjCBlockImpl>,
+              ffi.Pointer<objc.ObjCObjectImpl>,
+            )
+          >(_closureTrampoline)
+          .cast();
+}
+
+/// Call operator for `objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)>`.
+extension ObjCBlock_ffiVoid_NIAllNullableTypesWithoutRecursionBridge$CallExtension
+    on
+        objc.ObjCBlock<
+          ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+        > {
+  void call(NIAllNullableTypesWithoutRecursionBridge? arg0) => ref
+      .pointer
+      .ref
+      .invoke
+      .cast<
+        ffi.NativeFunction<
+          ffi.Void Function(
+            ffi.Pointer<objc.ObjCBlockImpl> block,
+            ffi.Pointer<objc.ObjCObjectImpl> arg0,
+          )
+        >
+      >()
+      .asFunction<
+        void Function(
+          ffi.Pointer<objc.ObjCBlockImpl>,
+          ffi.Pointer<objc.ObjCObjectImpl>,
+        )
+      >()(ref.pointer, arg0?.ref.pointer ?? ffi.nullptr);
+}
+
+late final _sel_echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableIntWithAnInt_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableIntWithAnInt:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableDoubleWithADouble_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableDoubleWithADouble:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableBoolWithABool_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableBoolWithABool:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableStringWithAString_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableStringWithAString:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableUint8ListWithAUint8List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableUint8ListWithAUint8List:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableInt32ListWithAInt32List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableInt32ListWithAInt32List:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableInt64ListWithAInt64List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableInt64ListWithAInt64List:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableFloat64ListWithAFloat64List_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableFloat64ListWithAFloat64List:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableListWithList_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableListWithList:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableEnumListWithEnumList_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableEnumListWithEnumList:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableClassListWithClassList_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableClassListWithClassList:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableMapWithMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableMapWithMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableStringMapWithStringMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableStringMapWithStringMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableIntMapWithIntMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableIntMapWithIntMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableEnumMapWithEnumMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableEnumMapWithEnumMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableClassMapWithClassMap_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableClassMapWithClassMap:wrappedError:completionHandler:",
+    );
+late final _sel_echoAsyncNullableEnumWithAnEnum_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAsyncNullableEnumWithAnEnum:wrappedError:completionHandler:",
+    );
+late final _sel_echoAnotherAsyncNullableEnumWithAnotherEnum_wrappedError_completionHandler_ =
+    objc.registerName(
+      "echoAnotherAsyncNullableEnumWithAnotherEnum:wrappedError:completionHandler:",
+    );
+
 /// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
+///
+/// iOS: introduced 13.0.0
+/// macOS: introduced 16.0.0
 extension type NIHostIntegrationCoreApiSetup._(objc.ObjCObject object$)
     implements objc.ObjCObject, objc.NSObject {
   /// Constructs a [NIHostIntegrationCoreApiSetup] that points to the same underlying object as [other].
   NIHostIntegrationCoreApiSetup.as(objc.ObjCObject other) : object$ = other {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     assert(isA(object$));
   }
 
@@ -4859,6 +7515,11 @@ extension type NIHostIntegrationCoreApiSetup._(objc.ObjCObject object$)
     bool retain = false,
     bool release = false,
   }) : object$ = objc.ObjCObject(other, retain: retain, release: release) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     assert(isA(object$));
   }
 
@@ -4899,9 +7560,17 @@ extension type NIHostIntegrationCoreApiSetup._(objc.ObjCObject object$)
   }
 
   /// getInstanceWithName:
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
   static NIHostIntegrationCoreApiSetup? getInstanceWithName(
     objc.NSString name,
   ) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.getInstanceWithName:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
     final $ret = _objc_msgSend_1sotr3r(
       _class_NIHostIntegrationCoreApiSetup,
       _sel_getInstanceWithName_,
@@ -5045,6 +7714,54 @@ extension NIHostIntegrationCoreApiSetup$Methods
         : NIAllTypesBridge.fromPointer($ret, retain: true, release: true);
   }
 
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAnotherAsyncEnumWithAnotherEnum(
+    NIAnotherEnum anotherEnum, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAnotherAsyncEnumWithAnotherEnum:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_1ht8su5(
+      object$.ref.pointer,
+      _sel_echoAnotherAsyncEnumWithAnotherEnum_wrappedError_completionHandler_,
+      anotherEnum.value,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAnotherAsyncNullableEnumWithAnotherEnum(
+    objc.NSNumber? anotherEnum, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAnotherAsyncNullableEnumWithAnotherEnum:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAnotherAsyncNullableEnumWithAnotherEnum_wrappedError_completionHandler_,
+      anotherEnum?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
   /// Returns the passed enum to test serialization and deserialization.
   ///
   /// iOS: introduced 13.0.0
@@ -5091,6 +7808,890 @@ extension NIHostIntegrationCoreApiSetup$Methods
     return $ret.address == 0
         ? null
         : objc.NSNumber.fromPointer($ret, retain: true, release: true);
+  }
+
+  /// Returns the passed in boolean asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncBoolWithABool(
+    bool aBool, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncBoolWithABool:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_1oby3xk(
+      object$.ref.pointer,
+      _sel_echoAsyncBoolWithABool_wrappedError_completionHandler_,
+      aBool,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncClassListWithClassList(
+    objc.NSArray classList, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncClassListWithClassList:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncClassListWithClassList_wrappedError_completionHandler_,
+      classList.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncClassMapWithClassMap(
+    objc.NSDictionary classMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncClassMapWithClassMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncClassMapWithClassMap_wrappedError_completionHandler_,
+      classMap.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns passed in double asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncDoubleWithADouble(
+    double aDouble, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncDoubleWithADouble:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_f15nnv(
+      object$.ref.pointer,
+      _sel_echoAsyncDoubleWithADouble_wrappedError_completionHandler_,
+      aDouble,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncEnumListWithEnumList(
+    objc.NSArray enumList, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncEnumListWithEnumList:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncEnumListWithEnumList_wrappedError_completionHandler_,
+      enumList.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncEnumMapWithEnumMap(
+    objc.NSDictionary enumMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncEnumMapWithEnumMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncEnumMapWithEnumMap_wrappedError_completionHandler_,
+      enumMap.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncEnumWithAnEnum(
+    NIAnEnum anEnum, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncEnumWithAnEnum:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_1yka6e5(
+      object$.ref.pointer,
+      _sel_echoAsyncEnumWithAnEnum_wrappedError_completionHandler_,
+      anEnum.value,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Float64List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncFloat64ListWithAFloat64List(
+    PigeonTypedData aFloat64List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncFloat64ListWithAFloat64List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncFloat64ListWithAFloat64List_wrappedError_completionHandler_,
+      aFloat64List.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Int32List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncInt32ListWithAInt32List(
+    PigeonTypedData aInt32List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncInt32ListWithAInt32List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncInt32ListWithAInt32List_wrappedError_completionHandler_,
+      aInt32List.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Int64List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncInt64ListWithAInt64List(
+    PigeonTypedData aInt64List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncInt64ListWithAInt64List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncInt64ListWithAInt64List_wrappedError_completionHandler_,
+      aInt64List.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncIntMapWithIntMap(
+    objc.NSDictionary intMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncIntMapWithIntMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncIntMapWithIntMap_wrappedError_completionHandler_,
+      intMap.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns passed in int asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncIntWithAnInt(
+    int anInt, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncIntWithAnInt:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_1bf2hie(
+      object$.ref.pointer,
+      _sel_echoAsyncIntWithAnInt_wrappedError_completionHandler_,
+      anInt,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncListWithList(
+    objc.NSArray list, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncListWithList:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncListWithList_wrappedError_completionHandler_,
+      list.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncMapWithMap(
+    objc.NSDictionary map, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncMapWithMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncMapWithMap_wrappedError_completionHandler_,
+      map.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed object, to test async serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNIAllTypesWithEverything(
+    NIAllTypesBridge everything, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(NIAllTypesBridge?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNIAllTypesWithEverything:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNIAllTypesWithEverything_wrappedError_completionHandler_,
+      everything.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in boolean asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableBoolWithABool(
+    objc.NSNumber? aBool, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableBoolWithABool:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableBoolWithABool_wrappedError_completionHandler_,
+      aBool?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableClassListWithClassList(
+    objc.NSArray? classList, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableClassListWithClassList:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableClassListWithClassList_wrappedError_completionHandler_,
+      classList?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableClassMapWithClassMap(
+    objc.NSDictionary? classMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableClassMapWithClassMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableClassMapWithClassMap_wrappedError_completionHandler_,
+      classMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns passed in double asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableDoubleWithADouble(
+    objc.NSNumber? aDouble, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableDoubleWithADouble:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableDoubleWithADouble_wrappedError_completionHandler_,
+      aDouble?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableEnumListWithEnumList(
+    objc.NSArray? enumList, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableEnumListWithEnumList:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableEnumListWithEnumList_wrappedError_completionHandler_,
+      enumList?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableEnumMapWithEnumMap(
+    objc.NSDictionary? enumMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableEnumMapWithEnumMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableEnumMapWithEnumMap_wrappedError_completionHandler_,
+      enumMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed enum, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableEnumWithAnEnum(
+    objc.NSNumber? anEnum, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableEnumWithAnEnum:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableEnumWithAnEnum_wrappedError_completionHandler_,
+      anEnum?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Float64List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableFloat64ListWithAFloat64List(
+    PigeonTypedData? aFloat64List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableFloat64ListWithAFloat64List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableFloat64ListWithAFloat64List_wrappedError_completionHandler_,
+      aFloat64List?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Int32List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableInt32ListWithAInt32List(
+    PigeonTypedData? aInt32List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableInt32ListWithAInt32List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableInt32ListWithAInt32List_wrappedError_completionHandler_,
+      aInt32List?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Int64List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableInt64ListWithAInt64List(
+    PigeonTypedData? aInt64List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableInt64ListWithAInt64List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableInt64ListWithAInt64List_wrappedError_completionHandler_,
+      aInt64List?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableIntMapWithIntMap(
+    objc.NSDictionary? intMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableIntMapWithIntMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableIntMapWithIntMap_wrappedError_completionHandler_,
+      intMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns passed in int asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableIntWithAnInt(
+    objc.NSNumber? anInt, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSNumber?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableIntWithAnInt:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableIntWithAnInt_wrappedError_completionHandler_,
+      anInt?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed list, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableListWithList(
+    objc.NSArray? list, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSArray?)> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableListWithList:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableListWithList_wrappedError_completionHandler_,
+      list?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableMapWithMap(
+    objc.NSDictionary? map, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableMapWithMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableMapWithMap_wrappedError_completionHandler_,
+      map?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableNIAllNullableTypesWithEverything(
+    NIAllNullableTypesBridge? everything, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(NIAllNullableTypesBridge?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableNIAllNullableTypesWithEverything:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableNIAllNullableTypesWithEverything_wrappedError_completionHandler_,
+      everything?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed object, to test serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything(
+    NIAllNullableTypesWithoutRecursionBridge? everything, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<
+      ffi.Void Function(NIAllNullableTypesWithoutRecursionBridge?)
+    >
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything_wrappedError_completionHandler_,
+      everything?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableStringMapWithStringMap(
+    objc.NSDictionary? stringMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableStringMapWithStringMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableStringMapWithStringMap_wrappedError_completionHandler_,
+      stringMap?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed string asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableStringWithAString(
+    objc.NSString? aString, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSString?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableStringWithAString:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableStringWithAString_wrappedError_completionHandler_,
+      aString?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Uint8List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncNullableUint8ListWithAUint8List(
+    PigeonTypedData? aUint8List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncNullableUint8ListWithAUint8List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncNullableUint8ListWithAUint8List_wrappedError_completionHandler_,
+      aUint8List?.ref.pointer ?? ffi.nullptr,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed map, to test asynchronous serialization and deserialization.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncStringMapWithStringMap(
+    objc.NSDictionary stringMap, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSDictionary?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncStringMapWithStringMap:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncStringMapWithStringMap_wrappedError_completionHandler_,
+      stringMap.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed string asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncStringWithAString(
+    objc.NSString aString, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(objc.NSString?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncStringWithAString:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncStringWithAString_wrappedError_completionHandler_,
+      aString.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// Returns the passed in Uint8List asynchronously.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void echoAsyncUint8ListWithAUint8List(
+    PigeonTypedData aUint8List, {
+    required NiTestsError wrappedError,
+    required objc.ObjCBlock<ffi.Void Function(PigeonTypedData?)>
+    completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.echoAsyncUint8ListWithAUint8List:wrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_18qun1e(
+      object$.ref.pointer,
+      _sel_echoAsyncUint8ListWithAUint8List_wrappedError_completionHandler_,
+      aUint8List.ref.pointer,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
   }
 
   /// Returns the passed list, to test serialization and deserialization.
@@ -6413,6 +10014,28 @@ extension NIHostIntegrationCoreApiSetup$Methods
   }
 
   /// A no-op function taking no arguments and returning no value, to sanity
+  /// test basic asynchronous calling.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void noopAsyncWithWrappedError(
+    NiTestsError wrappedError, {
+    required objc.ObjCBlock<ffi.Void Function()> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.noopAsyncWithWrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_o762yo(
+      object$.ref.pointer,
+      _sel_noopAsyncWithWrappedError_completionHandler_,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
+  }
+
+  /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
   ///
   /// iOS: introduced 13.0.0
@@ -6494,6 +10117,27 @@ extension NIHostIntegrationCoreApiSetup$Methods
             retain: true,
             release: true,
           );
+  }
+
+  /// Responds with an error from an async void function.
+  ///
+  /// iOS: introduced 13.0.0
+  /// macOS: introduced 16.0.0
+  void throwAsyncErrorFromVoidWithWrappedError(
+    NiTestsError wrappedError, {
+    required objc.ObjCBlock<ffi.Void Function()> completionHandler,
+  }) {
+    objc.checkOsVersionInternal(
+      'NIHostIntegrationCoreApiSetup.throwAsyncErrorFromVoidWithWrappedError:completionHandler:',
+      iOS: (false, (13, 0, 0)),
+      macOS: (false, (16, 0, 0)),
+    );
+    _objc_msgSend_o762yo(
+      object$.ref.pointer,
+      _sel_throwAsyncErrorFromVoidWithWrappedError_completionHandler_,
+      wrappedError.ref.pointer,
+      completionHandler.ref.pointer,
+    );
   }
 
   /// Returns an error from a void function, to test error handling.

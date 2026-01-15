@@ -45,7 +45,7 @@ Future<void> main() async {
         '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.ffi.dart',
       ),
       objectiveCFile: Uri.file(
-        '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/shared_test_plugin_code/lib/src/generated/ni_tests.gen.m',
+        '/Users/tarrinneal/work/packages/packages/pigeon/platform_tests/test_plugin/darwin/test_plugin/Sources/test_plugin/NiTests.gen.m',
       ),
       preamble: '''
   // Copyright 2013 The Flutter Authors

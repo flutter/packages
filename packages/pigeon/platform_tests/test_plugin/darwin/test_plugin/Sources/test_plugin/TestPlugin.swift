@@ -1216,6 +1216,200 @@ public class TestPlugin: NSObject, FlutterPlugin, HostIntegrationCoreApi {
 }
 
 class NITestsClass: NSObject, NIHostIntegrationCoreApi {
+  func echoAsyncUint8List(aUint8List: [UInt8]) async throws -> [UInt8] {
+    return aUint8List
+  }
+
+  func echoAsyncInt32List(aInt32List: [Int32]) async throws -> [Int32] {
+    return aInt32List
+  }
+
+  func echoAsyncInt64List(aInt64List: [Int64]) async throws -> [Int64] {
+    return aInt64List
+  }
+
+  func echoAsyncFloat64List(aFloat64List: [Float64]) async throws -> [Float64] {
+    return aFloat64List
+  }
+
+  func echoAsyncObject(anObject: Any) async throws -> Any {
+    return anObject
+  }
+
+  func echoAsyncList(list: [Any?]) async throws -> [Any?] {
+    return list
+  }
+
+  func echoAsyncEnumList(enumList: [NIAnEnum?]) async throws -> [NIAnEnum?] {
+    return enumList
+  }
+
+  func echoAsyncClassList(classList: [NIAllNullableTypes?]) async throws -> [NIAllNullableTypes?] {
+    return classList
+  }
+
+  func echoAsyncMap(map: [AnyHashable?: Any?]) async throws -> [AnyHashable?: Any?] {
+    return map
+  }
+
+  func echoAsyncStringMap(stringMap: [String?: String?]) async throws -> [String?: String?] {
+    return stringMap
+  }
+
+  func echoAsyncIntMap(intMap: [Int64?: Int64?]) async throws -> [Int64?: Int64?] {
+    return intMap
+  }
+
+  func echoAsyncEnumMap(enumMap: [NIAnEnum?: NIAnEnum?]) async throws -> [NIAnEnum?: NIAnEnum?] {
+    return enumMap
+  }
+
+  func echoAsyncClassMap(classMap: [Int64?: NIAllNullableTypes?]) async throws -> [Int64?:
+    NIAllNullableTypes?]
+  {
+    return classMap
+  }
+
+  func echoAsyncEnum(anEnum: NIAnEnum) async throws -> NIAnEnum {
+    return anEnum
+  }
+
+  func echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum) async throws -> NIAnotherEnum {
+    return anotherEnum
+  }
+
+  func throwAsyncError() async throws -> Any? {
+    throw PigeonError(code: "code ", message: "message", details: "details")
+  }
+
+  func throwAsyncErrorFromVoid() async throws {
+    throw PigeonError(code: "code ", message: "message", details: "details")
+  }
+
+  func throwAsyncFlutterError() async throws -> Any? {
+    throw PigeonError(code: "code ", message: "message", details: "details")
+  }
+
+  func echoAsyncNIAllTypes(everything: NIAllTypes) async throws -> NIAllTypes {
+    return everything
+  }
+
+  func echoAsyncNullableNIAllNullableTypes(everything: NIAllNullableTypes?) async throws
+    -> NIAllNullableTypes?
+  {
+    return everything
+  }
+
+  func echoAsyncNullableNIAllNullableTypesWithoutRecursion(
+    everything: NIAllNullableTypesWithoutRecursion?
+  ) async throws -> NIAllNullableTypesWithoutRecursion? {
+    return everything
+  }
+
+  func echoAsyncNullableInt(anInt: Int64?) async throws -> Int64? {
+    return anInt
+  }
+
+  func echoAsyncNullableDouble(aDouble: Double?) async throws -> Double? {
+    return aDouble
+  }
+
+  func echoAsyncNullableBool(aBool: Bool?) async throws -> Bool? {
+    return aBool
+  }
+
+  func echoAsyncNullableString(aString: String?) async throws -> String? {
+    return aString
+  }
+
+  func echoAsyncNullableUint8List(aUint8List: [UInt8]?) async throws -> [UInt8]? {
+    return aUint8List
+  }
+
+  func echoAsyncNullableInt32List(aInt32List: [Int32]?) async throws -> [Int32]? {
+    return aInt32List
+  }
+
+  func echoAsyncNullableInt64List(aInt64List: [Int64]?) async throws -> [Int64]? {
+    return aInt64List
+  }
+
+  func echoAsyncNullableFloat64List(aFloat64List: [Float64]?) async throws -> [Float64]? {
+    return aFloat64List
+  }
+
+  func echoAsyncNullableObject(anObject: Any?) async throws -> Any? {
+    return anObject
+  }
+
+  func echoAsyncNullableList(list: [Any?]?) async throws -> [Any?]? {
+    return list
+  }
+
+  func echoAsyncNullableEnumList(enumList: [NIAnEnum?]?) async throws -> [NIAnEnum?]? {
+    return enumList
+  }
+
+  func echoAsyncNullableClassList(classList: [NIAllNullableTypes?]?) async throws
+    -> [NIAllNullableTypes?]?
+  {
+    return classList
+  }
+
+  func echoAsyncNullableMap(map: [AnyHashable?: Any?]?) async throws -> [AnyHashable?: Any?]? {
+    return map
+  }
+
+  func echoAsyncNullableStringMap(stringMap: [String?: String?]?) async throws -> [String?:
+    String?]?
+  {
+    return stringMap
+  }
+
+  func echoAsyncNullableIntMap(intMap: [Int64?: Int64?]?) async throws -> [Int64?: Int64?]? {
+    return intMap
+  }
+
+  func echoAsyncNullableEnumMap(enumMap: [NIAnEnum?: NIAnEnum?]?) async throws -> [NIAnEnum?:
+    NIAnEnum?]?
+  {
+    return enumMap
+  }
+
+  func echoAsyncNullableClassMap(classMap: [Int64?: NIAllNullableTypes?]?) async throws -> [Int64?:
+    NIAllNullableTypes?]?
+  {
+    return classMap
+  }
+
+  func echoAsyncNullableEnum(anEnum: NIAnEnum?) async throws -> NIAnEnum? {
+    return anEnum
+  }
+
+  func echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?) async throws -> NIAnotherEnum? {
+    return anotherEnum
+  }
+
+  func echoAsyncDouble(aDouble: Double) async throws -> Double {
+    return aDouble
+  }
+
+  func echoAsyncBool(aBool: Bool) async throws -> Bool {
+    return aBool
+  }
+
+  func echoAsyncString(aString: String) async throws -> String {
+    return aString
+  }
+
+  func noopAsync() async throws {
+    return
+  }
+
+  func echoAsyncInt(anInt: Int64) async throws -> Int64 {
+    return anInt
+  }
+
   func echoAllNullableTypes(everything: NIAllNullableTypes?) throws -> NIAllNullableTypes? {
     return everything
   }

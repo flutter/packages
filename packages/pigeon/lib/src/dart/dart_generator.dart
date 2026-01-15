@@ -341,9 +341,11 @@ class _FfiType {
   String getFfiCallReturnType({
     bool forceNullable = false,
     bool forceNonNullable = false,
+    bool withPrefix = true,
   }) {
+    final String prefix = withPrefix ? 'ffi_bridge.' : '';
     if (type.isEnum) {
-      return forceNullable ? 'NSNumber?' : 'ffi_bridge.NumberWrapper';
+      return forceNullable ? 'NSNumber?' : '${prefix}NumberWrapper';
     }
     if (type.baseName == 'List') {
       return forceNonNullable ? 'NSArray' : 'NSArray?';
@@ -358,7 +360,7 @@ class _FfiType {
     //         type.baseName == 'String'
     //     ? type.baseName
     //     : ffiName;
-    return '$ffiName${_getNullableSymbol((forceNullable || type.isNullable) && !forceNonNullable)}';
+    return '${ffiName.replaceAll('ffi_bridge.', prefix)}${_getNullableSymbol((forceNullable || type.isNullable) && !forceNonNullable)}';
   }
 
   String getDartReturnType({required bool forceUnwrap}) {
@@ -1760,53 +1762,60 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 indent.writeln(
                   'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();',
                 );
-                indent.writeln(
-                  '$methodCallReturnString${method.isAsynchronous ? 'await ' : ''}_ffiApi.${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
-                );
-                indent.writeScoped('if (error.code != null) {', '}', () {
+                final String forceRes =
+                    !returnType.type.isNullable &&
+                            (returnType.type.baseName == 'int' ||
+                                returnType.type.baseName == 'double' ||
+                                returnType.type.baseName == 'String' ||
+                                returnType.type.baseName == 'bool')
+                        ? '!'
+                        : '';
+                if (method.isAsynchronous) {
+                  indent.format('''
+                    final Completer<${method.returnType.getFullName()}> completer = Completer<${method.returnType.getFullName()}>();
+                    _ffiApi.${_getFfiMethodCallName(method)}(
+                      ${method.parameters.isEmpty ? '' : '${_getFfiMethodCallArguments(method.parameters)},\nwrappedError: '}error,
+                      completionHandler: ffi_bridge.ObjCBlock_ffiVoid${method.returnType.isVoid ? '' : '_${returnType.getFfiCallReturnType(withPrefix: false, forceNullable: true).replaceAll('?', '')}'}.listener(
+                        (${method.returnType.isVoid ? '' : '${returnType.getFfiCallReturnType(forceNullable: true)} res'}) {
+                          if (error.code != null) {
+                            completer.completeError(_wrapFfiError(error));
+                          } else {
+                            completer.complete(${method.returnType.isVoid ? '' : returnType.getToDartCall(method.returnType, varName: 'res$forceRes', forceConversion: true)});
+                          }
+                        },
+                      ),
+                    );
+                    return await completer.future;
+                    ''');
+                } else {
                   indent.writeln(
-                    'throw PlatformException(code: error.code!.toDartString(), message: error.message?.toDartString(), details: error.details != null && NSString.isA(error.details!) ? error.details!.toDartString() : error.details);',
+                    '$methodCallReturnString _ffiApi.${_getFfiMethodCallName(method)}(${_getFfiMethodCallArguments(method.parameters)}${method.parameters.isEmpty ? '' : ', wrappedError: '}error);',
                   );
-                }, addTrailingNewline: false);
-                indent.addScoped(' else {', '}', () {
+                  indent.writeln('_throwIfFfiError(error);');
                   if (!returnType.type.isVoid) {
-                    final String forceRes =
-                        !returnType.type.isNullable &&
-                                (returnType.type.baseName == 'int' ||
-                                    returnType.type.baseName == 'double' ||
-                                    returnType.type.baseName == 'String' ||
-                                    returnType.type.baseName == 'bool')
-                            ? '!'
-                            : '';
                     indent.writeln(
-                      'final ${returnType.getDartReturnType(forceUnwrap: method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res$forceRes', forceConversion: method.isAsynchronous)};',
+                      'final ${returnType.getDartReturnType(forceUnwrap: method.isAsynchronous)} dartTypeRes = ${returnType.getToDartCall(method.returnType, varName: 'res$forceRes')};',
                     );
                     indent.writeln('return dartTypeRes;');
                   } else {
                     indent.writeln('return;');
                   }
-                });
+                }
               });
             }, addTrailingNewline: false);
             indent.addScoped(' on JniException catch (e) {', '}', () {
-              indent.writeln(
-                "throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);",
-              );
-            }, addTrailingNewline: false);
-            indent.addScoped(' catch (e) {', '}', () {
-              indent.writeln('rethrow;');
+              indent.writeln('throw _wrapJniException(e);');
             });
-            // indent.addScoped(' on FfiException catch (e) {', '}', () {
-            //   indent.writeln(
-            //     "throw PlatformException(code: 'PlatformException', message: e.message, stacktrace: e.stackTrace,);",
-            //   );
-            // });
-            indent.writeln('throw Exception("this shouldn\'t be possible");');
+            indent.writeln("throw Exception('No JNI or FFI api available');");
           },
         );
         indent.newln();
       }
     });
+  }
+
+  String _getFfiMethodCallName(Method method) {
+    return '${method.name}${method.parameters.isNotEmpty ? 'With${toUpperCamelCase(method.parameters.first.name)}' : 'WithWrappedError'}';
   }
 
   String _getJniMethodCallArguments(Iterable<Parameter> parameters) {
@@ -2467,6 +2476,27 @@ ${api.name}({
     final String error = 'No instance $nameString has been registered.';
     throw ArgumentError(error);
   }
+
+  void _throwIfFfiError(ffi_bridge.NiTestsError error) {
+    if (error.code != null) {
+      throw _wrapFfiError(error);
+    }
+  }
+
+  PlatformException _wrapFfiError(ffi_bridge.NiTestsError error) =>
+      PlatformException(
+        code: error.code!.toDartString(),
+        message: error.message?.toDartString(),
+        details: error.details != null && NSString.isA(error.details!)
+            ? error.details!.toDartString()
+            : error.details,
+      );
+
+  PlatformException _wrapJniException(JniException e) => PlatformException(
+    code: 'PlatformException',
+    message: e.message,
+    stacktrace: e.stackTrace,
+  );
   ''');
     }
   }

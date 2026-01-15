@@ -231,6 +231,7 @@ class MessagesPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+@available(iOS 13, macOS 16.0.0, *)
 protocol ExampleHostApi {
   func getHostLanguage() throws -> String
   func add(_ a: Int64, to b: Int64) throws -> Int64

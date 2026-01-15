@@ -795,6 +795,109 @@ abstract class NIHostIntegrationCoreApi {
   abstract fun echoNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
 
   abstract fun echoAnotherNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  abstract suspend fun noopAsync()
+  /** Returns passed in int asynchronously. */
+  abstract suspend fun echoAsyncInt(anInt: Long): Long
+  /** Returns passed in double asynchronously. */
+  abstract suspend fun echoAsyncDouble(aDouble: Double): Double
+  /** Returns the passed in boolean asynchronously. */
+  abstract suspend fun echoAsyncBool(aBool: Boolean): Boolean
+  /** Returns the passed string asynchronously. */
+  abstract suspend fun echoAsyncString(aString: String): String
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray
+  /** Returns the passed in Int32List asynchronously. */
+  abstract suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray
+  /** Returns the passed in Int64List asynchronously. */
+  abstract suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray
+  /** Returns the passed in Float64List asynchronously. */
+  abstract suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncList(list: List<Any?>): List<Any?>
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?>
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncClassList(
+      classList: List<NIAllNullableTypes?>
+  ): List<NIAllNullableTypes?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncEnumMap(
+      enumMap: Map<NIAnEnum?, NIAnEnum?>
+  ): Map<NIAnEnum?, NIAnEnum?>
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, NIAllNullableTypes?>
+  ): Map<Long?, NIAllNullableTypes?>
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  /** Responds with an error from an async void function. */
+  abstract suspend fun throwAsyncErrorFromVoid()
+  /** Returns the passed object, to test async serialization and deserialization. */
+  abstract suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableNIAllNullableTypes(
+      everything: NIAllNullableTypes?
+  ): NIAllNullableTypes?
+  /** Returns the passed object, to test serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(
+      everything: NIAllNullableTypesWithoutRecursion?
+  ): NIAllNullableTypesWithoutRecursion?
+  /** Returns passed in int asynchronously. */
+  abstract suspend fun echoAsyncNullableInt(anInt: Long?): Long?
+  /** Returns passed in double asynchronously. */
+  abstract suspend fun echoAsyncNullableDouble(aDouble: Double?): Double?
+  /** Returns the passed in boolean asynchronously. */
+  abstract suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean?
+  /** Returns the passed string asynchronously. */
+  abstract suspend fun echoAsyncNullableString(aString: String?): String?
+  /** Returns the passed in Uint8List asynchronously. */
+  abstract suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray?
+  /** Returns the passed in Int32List asynchronously. */
+  abstract suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray?
+  /** Returns the passed in Int64List asynchronously. */
+  abstract suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray?
+  /** Returns the passed in Float64List asynchronously. */
+  abstract suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray?
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>?
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableClassList(
+      classList: List<NIAllNullableTypes?>?
+  ): List<NIAllNullableTypes?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<NIAnEnum?, NIAnEnum?>?
+  ): Map<NIAnEnum?, NIAnEnum?>?
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, NIAllNullableTypes?>?
+  ): Map<Long?, NIAllNullableTypes?>?
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum?
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  abstract suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum?
 }
 
 @Keep
@@ -1569,6 +1672,478 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoAnotherNullableEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /**
+   * A no-op function taking no arguments and returning no value, to sanity test basic asynchronous
+   * calling.
+   */
+  override suspend fun noopAsync() {
+    api?.let {
+      try {
+        return api!!.noopAsync()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int asynchronously. */
+  override suspend fun echoAsyncInt(anInt: Long): Long {
+    api?.let {
+      try {
+        return api!!.echoAsyncInt(anInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in double asynchronously. */
+  override suspend fun echoAsyncDouble(aDouble: Double): Double {
+    api?.let {
+      try {
+        return api!!.echoAsyncDouble(aDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in boolean asynchronously. */
+  override suspend fun echoAsyncBool(aBool: Boolean): Boolean {
+    api?.let {
+      try {
+        return api!!.echoAsyncBool(aBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed string asynchronously. */
+  override suspend fun echoAsyncString(aString: String): String {
+    api?.let {
+      try {
+        return api!!.echoAsyncString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List asynchronously. */
+  override suspend fun echoAsyncUint8List(aUint8List: ByteArray): ByteArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncUint8List(aUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List asynchronously. */
+  override suspend fun echoAsyncInt32List(aInt32List: IntArray): IntArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncInt32List(aInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List asynchronously. */
+  override suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncInt64List(aInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List asynchronously. */
+  override suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray {
+    api?.let {
+      try {
+        return api!!.echoAsyncFloat64List(aFloat64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncEnumList(enumList: List<NIAnEnum?>): List<NIAnEnum?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncClassList(
+      classList: List<NIAllNullableTypes?>
+  ): List<NIAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncMap(map: Map<Any?, Any?>): Map<Any?, Any?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncStringMap(stringMap: Map<String?, String?>): Map<String?, String?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncIntMap(intMap: Map<Long?, Long?>): Map<Long?, Long?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncEnumMap(
+      enumMap: Map<NIAnEnum?, NIAnEnum?>
+  ): Map<NIAnEnum?, NIAnEnum?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncClassMap(
+      classMap: Map<Long?, NIAllNullableTypes?>
+  ): Map<Long?, NIAllNullableTypes?> {
+    api?.let {
+      try {
+        return api!!.echoAsyncClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum {
+    api?.let {
+      try {
+        return api!!.echoAsyncEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum {
+    api?.let {
+      try {
+        return api!!.echoAnotherAsyncEnum(anotherEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Responds with an error from an async void function. */
+  override suspend fun throwAsyncErrorFromVoid() {
+    api?.let {
+      try {
+        return api!!.throwAsyncErrorFromVoid()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test async serialization and deserialization. */
+  override suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes {
+    api?.let {
+      try {
+        return api!!.echoAsyncNIAllTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  override suspend fun echoAsyncNullableNIAllNullableTypes(
+      everything: NIAllNullableTypes?
+  ): NIAllNullableTypes? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableNIAllNullableTypes(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed object, to test serialization and deserialization. */
+  override suspend fun echoAsyncNullableNIAllNullableTypesWithoutRecursion(
+      everything: NIAllNullableTypesWithoutRecursion?
+  ): NIAllNullableTypesWithoutRecursion? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in int asynchronously. */
+  override suspend fun echoAsyncNullableInt(anInt: Long?): Long? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableInt(anInt)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns passed in double asynchronously. */
+  override suspend fun echoAsyncNullableDouble(aDouble: Double?): Double? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableDouble(aDouble)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in boolean asynchronously. */
+  override suspend fun echoAsyncNullableBool(aBool: Boolean?): Boolean? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableBool(aBool)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed string asynchronously. */
+  override suspend fun echoAsyncNullableString(aString: String?): String? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableString(aString)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Uint8List asynchronously. */
+  override suspend fun echoAsyncNullableUint8List(aUint8List: ByteArray?): ByteArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableUint8List(aUint8List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int32List asynchronously. */
+  override suspend fun echoAsyncNullableInt32List(aInt32List: IntArray?): IntArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableInt32List(aInt32List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Int64List asynchronously. */
+  override suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableInt64List(aInt64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in Float64List asynchronously. */
+  override suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableFloat64List(aFloat64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableList(list)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableEnumList(enumList: List<NIAnEnum?>?): List<NIAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableEnumList(enumList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed list, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableClassList(
+      classList: List<NIAllNullableTypes?>?
+  ): List<NIAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableClassList(classList)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableMap(map: Map<Any?, Any?>?): Map<Any?, Any?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableMap(map)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableStringMap(
+      stringMap: Map<String?, String?>?
+  ): Map<String?, String?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableStringMap(stringMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableIntMap(intMap: Map<Long?, Long?>?): Map<Long?, Long?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableIntMap(intMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableEnumMap(
+      enumMap: Map<NIAnEnum?, NIAnEnum?>?
+  ): Map<NIAnEnum?, NIAnEnum?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableEnumMap(enumMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed map, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableClassMap(
+      classMap: Map<Long?, NIAllNullableTypes?>?
+  ): Map<Long?, NIAllNullableTypes?>? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableClassMap(classMap)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAsyncNullableEnum(anEnum: NIAnEnum?): NIAnEnum? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableEnum(anEnum)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed enum, to test asynchronous serialization and deserialization. */
+  override suspend fun echoAnotherAsyncNullableEnum(anotherEnum: NIAnotherEnum?): NIAnotherEnum? {
+    api?.let {
+      try {
+        return api!!.echoAnotherAsyncNullableEnum(anotherEnum)
       } catch (e: Exception) {
         throw e
       }

@@ -832,6 +832,7 @@ class CoreTestsPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
 /// platform_test integration tests.
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+@available(iOS 13, macOS 16.0.0, *)
 protocol HostIntegrationCoreApi {
   /// A no-op function taking no arguments and returning no value, to sanity
   /// test basic calling.
@@ -5855,6 +5856,7 @@ class FlutterIntegrationCoreApi: FlutterIntegrationCoreApiProtocol {
 /// An API that can be implemented for minimal, compile-only tests.
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+@available(iOS 13, macOS 16.0.0, *)
 protocol HostTrivialApi {
   func noop() throws
 }
@@ -5887,6 +5889,7 @@ class HostTrivialApiSetup {
 /// A simple API implemented in some unit tests.
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+@available(iOS 13, macOS 16.0.0, *)
 protocol HostSmallApi {
   func echo(aString: String, completion: @escaping (Result<String, Error>) -> Void)
   func voidVoid(completion: @escaping (Result<Void, Error>) -> Void)

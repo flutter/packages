@@ -460,141 +460,224 @@ typedef SWIFT_ENUM(NSInteger, NIAnotherEnum, closed) {
 
 @class NiTestsError;
 /// Generated setup class from Pigeon to register implemented NIHostIntegrationCoreApi classes.
-SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup")
+SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup") SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13)
 @interface NIHostIntegrationCoreApiSetup : NSObject
 - (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
 + (NIHostIntegrationCoreApiSetup * _Nullable)getInstanceWithName:(NSString * _Nonnull)name SWIFT_WARN_UNUSED_RESULT;
 /// A no-op function taking no arguments and returning no value, to sanity
 /// test basic calling.
-- (void)noopWithWrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (void)noopWithWrappedError:(NiTestsError * _Nonnull)wrappedError;
 /// Returns the passed object, to test serialization and deserialization.
-- (NIAllTypesBridge * _Nullable)echoAllTypesWithEverything:(NIAllTypesBridge * _Nonnull)everything wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NIAllTypesBridge * _Nullable)echoAllTypesWithEverything:(NIAllTypesBridge * _Nonnull)everything wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns an error, to test error handling.
-- (NSObject * _Nullable)throwErrorWithWrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSObject * _Nullable)throwErrorWithWrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns an error from a void function, to test error handling.
-- (void)throwErrorFromVoidWithWrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (void)throwErrorFromVoidWithWrappedError:(NiTestsError * _Nonnull)wrappedError;
 /// Returns a Flutter error, to test error handling.
-- (NSObject * _Nullable)throwFlutterErrorWithWrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSObject * _Nullable)throwFlutterErrorWithWrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in int.
-- (NSNumber * _Nullable)echoIntWithAnInt:(int64_t)anInt wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoIntWithAnInt:(int64_t)anInt wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in double.
-- (NSNumber * _Nullable)echoDoubleWithADouble:(double)aDouble wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoDoubleWithADouble:(double)aDouble wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in boolean.
-- (NSNumber * _Nullable)echoBoolWithABool:(BOOL)aBool wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoBoolWithABool:(BOOL)aBool wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in string.
-- (NSString * _Nullable)echoStringWithAString:(NSString * _Nonnull)aString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSString * _Nullable)echoStringWithAString:(NSString * _Nonnull)aString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Uint8List.
-- (PigeonTypedData * _Nullable)echoUint8ListWithAUint8List:(PigeonTypedData * _Nonnull)aUint8List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoUint8ListWithAUint8List:(PigeonTypedData * _Nonnull)aUint8List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int32List.
-- (PigeonTypedData * _Nullable)echoInt32ListWithAInt32List:(PigeonTypedData * _Nonnull)aInt32List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoInt32ListWithAInt32List:(PigeonTypedData * _Nonnull)aInt32List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int64List.
-- (PigeonTypedData * _Nullable)echoInt64ListWithAInt64List:(PigeonTypedData * _Nonnull)aInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoInt64ListWithAInt64List:(PigeonTypedData * _Nonnull)aInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Float64List.
-- (PigeonTypedData * _Nullable)echoFloat64ListWithAFloat64List:(PigeonTypedData * _Nonnull)aFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoFloat64ListWithAFloat64List:(PigeonTypedData * _Nonnull)aFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in generic Object.
-- (NSObject * _Nullable)echoObjectWithAnObject:(NSObject * _Nonnull)anObject wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSObject * _Nullable)echoObjectWithAnObject:(NSObject * _Nonnull)anObject wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoListWithList:(NSArray<NSObject *> * _Nonnull)list wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoListWithList:(NSArray<NSObject *> * _Nonnull)list wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoStringListWithStringList:(NSArray<NSObject *> * _Nonnull)stringList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoStringListWithStringList:(NSArray<NSObject *> * _Nonnull)stringList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoIntListWithIntList:(NSArray<NSObject *> * _Nonnull)intList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoIntListWithIntList:(NSArray<NSObject *> * _Nonnull)intList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoDoubleListWithDoubleList:(NSArray<NSObject *> * _Nonnull)doubleList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoDoubleListWithDoubleList:(NSArray<NSObject *> * _Nonnull)doubleList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoBoolListWithBoolList:(NSArray<NSObject *> * _Nonnull)boolList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoBoolListWithBoolList:(NSArray<NSObject *> * _Nonnull)boolList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoEnumListWithEnumList:(NSArray<NSObject *> * _Nonnull)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoEnumListWithEnumList:(NSArray<NSObject *> * _Nonnull)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoClassListWithClassList:(NSArray<NSObject *> * _Nonnull)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoClassListWithClassList:(NSArray<NSObject *> * _Nonnull)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoNonNullEnumListWithEnumList:(NSArray<NSObject *> * _Nonnull)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoNonNullEnumListWithEnumList:(NSArray<NSObject *> * _Nonnull)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoNonNullClassListWithClassList:(NSArray<NSObject *> * _Nonnull)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoNonNullClassListWithClassList:(NSArray<NSObject *> * _Nonnull)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoMapWithMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)map wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoMapWithMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)map wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNonNullClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed class to test nested class serialization and deserialization.
-- (NIAllClassesWrapperBridge * _Nullable)echoClassWrapperWithWrapper:(NIAllClassesWrapperBridge * _Nonnull)wrapper wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NIAllClassesWrapperBridge * _Nullable)echoClassWrapperWithWrapper:(NIAllClassesWrapperBridge * _Nonnull)wrapper wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
-- (NSNumber * _Nullable)echoEnumWithAnEnum:(enum NIAnEnum)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoEnumWithAnEnum:(enum NIAnEnum)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed enum to test serialization and deserialization.
-- (NSNumber * _Nullable)echoAnotherEnumWithAnotherEnum:(enum NIAnotherEnum)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoAnotherEnumWithAnotherEnum:(enum NIAnotherEnum)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed object, to test serialization and deserialization.
-- (NIAllNullableTypesBridge * _Nullable)echoAllNullableTypesWithEverything:(NIAllNullableTypesBridge * _Nullable)everything wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NIAllNullableTypesBridge * _Nullable)echoAllNullableTypesWithEverything:(NIAllNullableTypesBridge * _Nullable)everything wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed object, to test serialization and deserialization.
-- (NIAllNullableTypesWithoutRecursionBridge * _Nullable)echoAllNullableTypesWithoutRecursionWithEverything:(NIAllNullableTypesWithoutRecursionBridge * _Nullable)everything wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NIAllNullableTypesWithoutRecursionBridge * _Nullable)echoAllNullableTypesWithoutRecursionWithEverything:(NIAllNullableTypesWithoutRecursionBridge * _Nullable)everything wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the inner <code>aString</code> value from the wrapped object, to test
 /// sending of nested objects.
-- (NSString * _Nullable)extractNestedNullableStringWithWrapper:(NIAllClassesWrapperBridge * _Nonnull)wrapper wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSString * _Nullable)extractNestedNullableStringWithWrapper:(NIAllClassesWrapperBridge * _Nonnull)wrapper wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the inner <code>aString</code> value from the wrapped object, to test
 /// sending of nested objects.
-- (NIAllClassesWrapperBridge * _Nullable)createNestedNullableStringWithNullableString:(NSString * _Nullable)nullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
-- (NIAllNullableTypesWithoutRecursionBridge * _Nullable)sendMultipleNullableTypesWithANullableBool:(NSNumber * _Nullable)aNullableBool aNullableInt:(NSNumber * _Nullable)aNullableInt aNullableString:(NSString * _Nullable)aNullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
-- (NIAllNullableTypesWithoutRecursionBridge * _Nullable)sendMultipleNullableTypesWithoutRecursionWithANullableBool:(NSNumber * _Nullable)aNullableBool aNullableInt:(NSNumber * _Nullable)aNullableInt aNullableString:(NSString * _Nullable)aNullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NIAllClassesWrapperBridge * _Nullable)createNestedNullableStringWithNullableString:(NSString * _Nullable)nullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (NIAllNullableTypesWithoutRecursionBridge * _Nullable)sendMultipleNullableTypesWithANullableBool:(NSNumber * _Nullable)aNullableBool aNullableInt:(NSNumber * _Nullable)aNullableInt aNullableString:(NSString * _Nullable)aNullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (NIAllNullableTypesWithoutRecursionBridge * _Nullable)sendMultipleNullableTypesWithoutRecursionWithANullableBool:(NSNumber * _Nullable)aNullableBool aNullableInt:(NSNumber * _Nullable)aNullableInt aNullableString:(NSString * _Nullable)aNullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in int.
-- (NSNumber * _Nullable)echoNullableIntWithANullableInt:(NSNumber * _Nullable)aNullableInt wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoNullableIntWithANullableInt:(NSNumber * _Nullable)aNullableInt wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns passed in double.
-- (NSNumber * _Nullable)echoNullableDoubleWithANullableDouble:(NSNumber * _Nullable)aNullableDouble wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoNullableDoubleWithANullableDouble:(NSNumber * _Nullable)aNullableDouble wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in boolean.
-- (NSNumber * _Nullable)echoNullableBoolWithANullableBool:(NSNumber * _Nullable)aNullableBool wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSNumber * _Nullable)echoNullableBoolWithANullableBool:(NSNumber * _Nullable)aNullableBool wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in string.
-- (NSString * _Nullable)echoNullableStringWithANullableString:(NSString * _Nullable)aNullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSString * _Nullable)echoNullableStringWithANullableString:(NSString * _Nullable)aNullableString wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Uint8List.
-- (PigeonTypedData * _Nullable)echoNullableUint8ListWithANullableUint8List:(PigeonTypedData * _Nullable)aNullableUint8List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoNullableUint8ListWithANullableUint8List:(PigeonTypedData * _Nullable)aNullableUint8List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int32List.
-- (PigeonTypedData * _Nullable)echoNullableInt32ListWithANullableInt32List:(PigeonTypedData * _Nullable)aNullableInt32List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoNullableInt32ListWithANullableInt32List:(PigeonTypedData * _Nullable)aNullableInt32List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Int64List.
-- (PigeonTypedData * _Nullable)echoNullableInt64ListWithANullableInt64List:(PigeonTypedData * _Nullable)aNullableInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoNullableInt64ListWithANullableInt64List:(PigeonTypedData * _Nullable)aNullableInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in Float64List.
-- (PigeonTypedData * _Nullable)echoNullableFloat64ListWithANullableFloat64List:(PigeonTypedData * _Nullable)aNullableFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (PigeonTypedData * _Nullable)echoNullableFloat64ListWithANullableFloat64List:(PigeonTypedData * _Nullable)aNullableFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed in generic Object.
-- (NSObject * _Nullable)echoNullableObjectWithANullableObject:(NSObject * _Nonnull)aNullableObject wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSObject * _Nullable)echoNullableObjectWithANullableObject:(NSObject * _Nonnull)aNullableObject wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoNullableListWithANullableList:(NSArray<NSObject *> * _Nullable)aNullableList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoNullableListWithANullableList:(NSArray<NSObject *> * _Nullable)aNullableList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoNullableEnumListWithEnumList:(NSArray<NSObject *> * _Nullable)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoNullableEnumListWithEnumList:(NSArray<NSObject *> * _Nullable)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoNullableClassListWithClassList:(NSArray<NSObject *> * _Nullable)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoNullableClassListWithClassList:(NSArray<NSObject *> * _Nullable)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoNullableNonNullEnumListWithEnumList:(NSArray<NSObject *> * _Nullable)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoNullableNonNullEnumListWithEnumList:(NSArray<NSObject *> * _Nullable)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed list, to test serialization and deserialization.
-- (NSArray<NSObject *> * _Nullable)echoNullableNonNullClassListWithClassList:(NSArray<NSObject *> * _Nullable)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSArray<NSObject *> * _Nullable)echoNullableNonNullClassListWithClassList:(NSArray<NSObject *> * _Nullable)classList wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableMapWithMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)map wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableMapWithMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)map wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
 /// Returns the passed map, to test serialization and deserialization.
-- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
-- (NSNumber * _Nullable)echoNullableEnumWithAnEnum:(NSNumber * _Nullable)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
-- (NSNumber * _Nullable)echoAnotherNullableEnumWithAnotherEnum:(NSNumber * _Nullable)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT SWIFT_AVAILABILITY(macos,introduced=16.0.0) SWIFT_AVAILABILITY(ios,introduced=13);
+- (NSDictionary<id <NSCopying>, NSObject *> * _Nullable)echoNullableNonNullClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber * _Nullable)echoNullableEnumWithAnEnum:(NSNumber * _Nullable)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+- (NSNumber * _Nullable)echoAnotherNullableEnumWithAnotherEnum:(NSNumber * _Nullable)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError SWIFT_WARN_UNUSED_RESULT;
+/// A no-op function taking no arguments and returning no value, to sanity
+/// test basic asynchronous calling.
+- (void)noopAsyncWithWrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(void))completionHandler;
+/// Returns passed in int asynchronously.
+- (void)echoAsyncIntWithAnInt:(int64_t)anInt wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns passed in double asynchronously.
+- (void)echoAsyncDoubleWithADouble:(double)aDouble wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns the passed in boolean asynchronously.
+- (void)echoAsyncBoolWithABool:(BOOL)aBool wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns the passed string asynchronously.
+- (void)echoAsyncStringWithAString:(NSString * _Nonnull)aString wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSString * _Nullable))completionHandler;
+/// Returns the passed in Uint8List asynchronously.
+- (void)echoAsyncUint8ListWithAUint8List:(PigeonTypedData * _Nonnull)aUint8List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in Int32List asynchronously.
+- (void)echoAsyncInt32ListWithAInt32List:(PigeonTypedData * _Nonnull)aInt32List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in Int64List asynchronously.
+- (void)echoAsyncInt64ListWithAInt64List:(PigeonTypedData * _Nonnull)aInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in Float64List asynchronously.
+- (void)echoAsyncFloat64ListWithAFloat64List:(PigeonTypedData * _Nonnull)aFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and deserialization.
+- (void)echoAsyncListWithList:(NSArray<NSObject *> * _Nonnull)list wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and deserialization.
+- (void)echoAsyncEnumListWithEnumList:(NSArray<NSObject *> * _Nonnull)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and deserialization.
+- (void)echoAsyncClassListWithClassList:(NSArray<NSObject *> * _Nonnull)classList wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncMapWithMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)map wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nonnull)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAsyncEnumWithAnEnum:(enum NIAnEnum)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncEnumWithAnotherEnum:(enum NIAnotherEnum)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Responds with an error from an async void function.
+- (void)throwAsyncErrorFromVoidWithWrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(void))completionHandler;
+/// Returns the passed object, to test async serialization and deserialization.
+- (void)echoAsyncNIAllTypesWithEverything:(NIAllTypesBridge * _Nonnull)everything wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NIAllTypesBridge * _Nullable))completionHandler;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)echoAsyncNullableNIAllNullableTypesWithEverything:(NIAllNullableTypesBridge * _Nullable)everything wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NIAllNullableTypesBridge * _Nullable))completionHandler;
+/// Returns the passed object, to test serialization and deserialization.
+- (void)echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything:(NIAllNullableTypesWithoutRecursionBridge * _Nullable)everything wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NIAllNullableTypesWithoutRecursionBridge * _Nullable))completionHandler;
+/// Returns passed in int asynchronously.
+- (void)echoAsyncNullableIntWithAnInt:(NSNumber * _Nullable)anInt wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns passed in double asynchronously.
+- (void)echoAsyncNullableDoubleWithADouble:(NSNumber * _Nullable)aDouble wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns the passed in boolean asynchronously.
+- (void)echoAsyncNullableBoolWithABool:(NSNumber * _Nullable)aBool wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns the passed string asynchronously.
+- (void)echoAsyncNullableStringWithAString:(NSString * _Nullable)aString wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSString * _Nullable))completionHandler;
+/// Returns the passed in Uint8List asynchronously.
+- (void)echoAsyncNullableUint8ListWithAUint8List:(PigeonTypedData * _Nullable)aUint8List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in Int32List asynchronously.
+- (void)echoAsyncNullableInt32ListWithAInt32List:(PigeonTypedData * _Nullable)aInt32List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in Int64List asynchronously.
+- (void)echoAsyncNullableInt64ListWithAInt64List:(PigeonTypedData * _Nullable)aInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in Float64List asynchronously.
+- (void)echoAsyncNullableFloat64ListWithAFloat64List:(PigeonTypedData * _Nullable)aFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableListWithList:(NSArray<NSObject *> * _Nullable)list wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableEnumListWithEnumList:(NSArray<NSObject *> * _Nullable)enumList wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
+/// Returns the passed list, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableClassListWithClassList:(NSArray<NSObject *> * _Nullable)classList wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableMapWithMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)map wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableStringMapWithStringMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)stringMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableIntMapWithIntMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)intMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableEnumMapWithEnumMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)enumMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed map, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableClassMapWithClassMap:(NSDictionary<id <NSCopying>, NSObject *> * _Nullable)classMap wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSDictionary<id <NSCopying>, NSObject *> * _Nullable))completionHandler;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAsyncNullableEnumWithAnEnum:(NSNumber * _Nullable)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Returns the passed enum, to test asynchronous serialization and deserialization.
+- (void)echoAnotherAsyncNullableEnumWithAnotherEnum:(NSNumber * _Nullable)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
 @end
 
 /// Generated bridge class from Pigeon that moves data from Swift to Objective-C.

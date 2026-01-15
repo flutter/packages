@@ -103,7 +103,7 @@ import 'package:swiftgen/swiftgen.dart';
     output: Output(
       module: '${generatorOptions.swiftOptions.ffiModuleName ?? ''}',
       dartFile: Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.ffi.dart'),
-      objectiveCFile:  Uri.file('${path.posix.join(generatorOptions.basePath ?? '', path.withoutExtension(generatorOptions.dartOut ?? ''))}.m'),
+      objectiveCFile:  Uri.file('${generatorOptions.swiftOptions.swiftOut.replaceAll('.swift', '.m')}'),
       preamble: \'''
 // ${generatorOptions.swiftOptions.copyrightHeader?.join('\n// ') ?? ''}
 
