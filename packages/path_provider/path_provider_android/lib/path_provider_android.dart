@@ -126,7 +126,7 @@ JString _toNativeStorageDirectory(StorageDirectory directory) {
 }
 
 List<String> _toStringList(JArray<File?> files) {
-  final List<String> paths = <String>[];
+  final paths = <String>[];
   final Iterator<File?> filesIterator = files.iterator;
   while (filesIterator.moveNext()) {
     final File? file = filesIterator.current;
