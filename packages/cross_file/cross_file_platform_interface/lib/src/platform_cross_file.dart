@@ -97,13 +97,13 @@ abstract base class PlatformXFile extends PlatformXFileEntity {
   /// Date and time when the resource was last modified, if the information is
   /// available.
   ///
-  /// Platforms may throw an exception if the information is not available.
-  Future<DateTime> lastModified();
+  /// Returns null if file doesn't exist or information is not available.
+  Future<DateTime?> lastModified();
 
   /// The length of the data represented by this uri, in bytes.
   ///
-  /// Platforms may throw an exception if the information is not available.
-  Future<int> length();
+  /// Returns null if file doesn't exist or information is not available.
+  Future<int?> length();
 
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead();
@@ -135,5 +135,7 @@ abstract base class PlatformXFile extends PlatformXFileEntity {
   /// The name of the resource represented by this object.
   ///
   /// The path is excluded from this value.
+  ///
+  /// Returns null if file doesn't exist or information is not available.
   Future<String?> name();
 }
