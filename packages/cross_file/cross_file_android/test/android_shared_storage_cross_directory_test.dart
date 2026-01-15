@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_android/src/android_library.g.dart' as android;
-import 'package:cross_file_android/src/android_shared_storage_cross_directory.dart';
+import 'package:cross_file_android/src/android_scoped_storage_cross_directory.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -31,8 +31,8 @@ void main() {
           return mockDocumentFile;
         };
 
-    final file = AndroidSharedStorageXDirectory(
-      const PlatformSharedStorageXDirectoryCreationParams(uri: uri),
+    final file = AndroidScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
     );
 
     expect(await file.exists(), true);
@@ -61,8 +61,8 @@ void main() {
           return mockFile;
         };
 
-    final dir = AndroidSharedStorageXDirectory(
-      const PlatformSharedStorageXDirectoryCreationParams(uri: uri),
+    final dir = AndroidScopedStorageXDirectory(
+      const PlatformScopedStorageXDirectoryCreationParams(uri: uri),
     );
 
     final List<String> entityUris = await dir

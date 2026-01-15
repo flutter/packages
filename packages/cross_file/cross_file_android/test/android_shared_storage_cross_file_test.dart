@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:cross_file_android/src/android_library.g.dart' as android;
-import 'package:cross_file_android/src/android_shared_storage_cross_file.dart';
+import 'package:cross_file_android/src/android_scoped_storage_cross_file.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
@@ -38,8 +38,8 @@ void main() {
           return mockDocumentFile;
         };
 
-    final file = AndroidSharedStorageXFile(
-      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
     expect(
@@ -60,8 +60,8 @@ void main() {
           return mockDocumentFile;
         };
 
-    final file = AndroidSharedStorageXFile(
-      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
     expect(await file.length(), length);
@@ -130,8 +130,8 @@ void main() {
       ).thenAnswer((_) async => mockInputStream);
       android.PigeonOverrides.contentResolver_instance = mockContentResolver;
 
-      final file = AndroidSharedStorageXFile(
-        const PlatformSharedStorageXFileCreationParams(uri: uri),
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
       );
 
       expect(combineLists(await file.openRead().toList()), testBytes);
@@ -141,7 +141,7 @@ void main() {
       'openRead finishes successfully with file larger than max array len',
       () async {
         final testBytes = Uint8List.fromList(
-          List.filled(AndroidSharedStorageXFile.maxByteArrayLen + 1, 0),
+          List.filled(AndroidScopedStorageXFile.maxByteArrayLen + 1, 0),
         );
 
         final mockDocumentFile = MockDocumentFile();
@@ -165,8 +165,8 @@ void main() {
         ).thenAnswer((_) async => mockInputStream);
         android.PigeonOverrides.contentResolver_instance = mockContentResolver;
 
-        final file = AndroidSharedStorageXFile(
-          const PlatformSharedStorageXFileCreationParams(uri: uri),
+        final file = AndroidScopedStorageXFile(
+          const PlatformScopedStorageXFileCreationParams(uri: uri),
         );
 
         expect(combineLists(await file.openRead().toList()), testBytes);
@@ -195,8 +195,8 @@ void main() {
       ).thenAnswer((_) async => mockInputStream);
       android.PigeonOverrides.contentResolver_instance = mockContentResolver;
 
-      final file = AndroidSharedStorageXFile(
-        const PlatformSharedStorageXFileCreationParams(uri: uri),
+      final file = AndroidScopedStorageXFile(
+        const PlatformScopedStorageXFileCreationParams(uri: uri),
       );
 
       expect(combineLists(await file.openRead(3, 6).toList()), <int>[1, 1, 1]);
@@ -225,8 +225,8 @@ void main() {
     ).thenAnswer((_) async => mockInputStream);
     android.PigeonOverrides.contentResolver_instance = mockContentResolver;
 
-    final file = AndroidSharedStorageXFile(
-      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
     expect(await file.readAsBytes(), testBytes);
@@ -255,8 +255,8 @@ void main() {
     ).thenAnswer((_) async => mockInputStream);
     android.PigeonOverrides.contentResolver_instance = mockContentResolver;
 
-    final file = AndroidSharedStorageXFile(
-      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
     expect(await file.readAsString(), testString);
@@ -274,8 +274,8 @@ void main() {
           return mockDocumentFile;
         };
 
-    final file = AndroidSharedStorageXFile(
-      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
     expect(await file.canRead(), canRead);
@@ -293,8 +293,8 @@ void main() {
           return mockDocumentFile;
         };
 
-    final file = AndroidSharedStorageXFile(
-      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
     expect(await file.exists(), true);
@@ -312,8 +312,8 @@ void main() {
           return mockDocumentFile;
         };
 
-    final file = AndroidSharedStorageXFile(
-      const PlatformSharedStorageXFileCreationParams(uri: uri),
+    final file = AndroidScopedStorageXFile(
+      const PlatformScopedStorageXFileCreationParams(uri: uri),
     );
 
     expect(await file.name(), name);

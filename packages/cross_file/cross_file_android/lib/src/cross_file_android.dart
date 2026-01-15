@@ -5,8 +5,8 @@
 import 'package:cross_file_io/cross_file_io.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
-import 'android_shared_storage_cross_directory.dart';
-import 'android_shared_storage_cross_file.dart';
+import 'android_scoped_storage_cross_directory.dart';
+import 'android_scoped_storage_cross_file.dart';
 
 /// Implementation of [CrossFilePlatform] for Android.
 base class CrossFileAndroid extends CrossFileIO {
@@ -16,16 +16,16 @@ base class CrossFileAndroid extends CrossFileIO {
   }
 
   @override
-  AndroidSharedStorageXFile createPlatformSharedStorageXFile(
-    PlatformSharedStorageXFileCreationParams params,
+  AndroidScopedStorageXFile createPlatformScopedStorageXFile(
+    PlatformScopedStorageXFileCreationParams params,
   ) {
-    return AndroidSharedStorageXFile(params);
+    return AndroidScopedStorageXFile(params);
   }
 
   @override
-  PlatformSharedStorageXDirectory createPlatformSharedStorageXDirectory(
-    PlatformSharedStorageXDirectoryCreationParams params,
+  AndroidScopedStorageXDirectory createPlatformScopedStorageXDirectory(
+    PlatformScopedStorageXDirectoryCreationParams params,
   ) {
-    return AndroidSharedStorageXDirectory(params);
+    return AndroidScopedStorageXDirectory(params);
   }
 }

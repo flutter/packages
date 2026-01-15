@@ -10,10 +10,10 @@ import 'package:flutter/foundation.dart';
 
 import 'android_library.g.dart' as android;
 
-/// Implementation of [PlatformSharedStorageXFile] for Android.
-base class AndroidSharedStorageXFile extends PlatformSharedStorageXFile {
-  /// Constructs an [AndroidSharedStorageXFile].
-  AndroidSharedStorageXFile(super.params) : super.implementation();
+/// Implementation of [PlatformScopedStorageXFile] for Android.
+base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
+  /// Constructs an [AndroidScopedStorageXFile].
+  AndroidScopedStorageXFile(super.params) : super.implementation();
 
   late final android.DocumentFile _documentFile =
       android.DocumentFile.fromSingleUri(singleUri: params.uri);
