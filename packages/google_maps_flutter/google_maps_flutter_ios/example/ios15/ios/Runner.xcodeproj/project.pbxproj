@@ -20,6 +20,7 @@
 		AF2E6994ED025F4BCE652A48 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0D457E156D08F0B45EA2F6FF /* Pods_Runner.framework */; };
 		F269303B2BB389BF00BF17C4 /* assets in Resources */ = {isa = PBXBuildFile; fileRef = F269303A2BB389BF00BF17C4 /* assets */; };
 		F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */; };
+		F7151F17265D7ED70028CB92 /* ExtractPinConfigFromDataTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F7151F16265D7ED70028CB92 /* ExtractPinConfigFromDataTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,6 +53,7 @@
 		28D4666EF03E57DB7D03E916 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		733AFAB37683A9DA7512F09C /* Pods-RunnerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release.xcconfig"; sourceTree = "<group>"; };
+		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7AFFD8ED1D35381100E5BB4D /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		7AFFD8EE1D35381100E5BB4D /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 		F7151F10265D7ED70028CB91 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsTests.m; sourceTree = "<group>"; };
 		F7151F14265D7ED70028CB91 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F7151F16265D7ED70028CB92 /* ExtractPinConfigFromDataTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ExtractPinConfigFromDataTests.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +110,7 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
+				78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */,
 				3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */,
 				9740EEB21CF90195004384FC /* Debug.xcconfig */,
 				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
@@ -175,6 +179,7 @@
 			isa = PBXGroup;
 			children = (
 				F269303A2BB389BF00BF17C4 /* assets */,
+				F7151F16265D7ED70028CB92 /* ExtractPinConfigFromDataTests.m */,
 				F7151F12265D7ED70028CB91 /* GoogleMapsTests.m */,
 				982F2A6A27BADE17003C81F4 /* PartiallyMockedMapView.h */,
 				982F2A6B27BADE17003C81F4 /* PartiallyMockedMapView.m */,
@@ -440,6 +445,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F7151F17265D7ED70028CB92 /* ExtractPinConfigFromDataTests.m in Sources */,
 				F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */,
 				982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */,
 			);

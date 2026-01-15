@@ -472,6 +472,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return _hostApi(mapId).getLastStyleError();
   }
 
+  @override
+  Future<bool> isAdvancedMarkersAvailable({required int mapId}) {
+    return _hostApi(mapId).isAdvancedMarkersAvailable();
+  }
+
   Widget _buildView(
     int creationId,
     PlatformViewCreatedCallback onPlatformViewCreated, {
@@ -650,18 +655,8 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(
       consumeTapEvents: circle.consumeTapEvents,
-      fillColor: PlatformColor(
-        red: circle.fillColor.r,
-        green: circle.fillColor.g,
-        blue: circle.fillColor.b,
-        alpha: circle.fillColor.a,
-      ),
-      strokeColor: PlatformColor(
-        red: circle.strokeColor.r,
-        green: circle.strokeColor.g,
-        blue: circle.strokeColor.b,
-        alpha: circle.strokeColor.a,
-      ),
+      fillColor: _platformColorFromColor(circle.fillColor),
+      strokeColor: _platformColorFromColor(circle.strokeColor),
       visible: circle.visible,
       strokeWidth: circle.strokeWidth,
       zIndex: circle.zIndex.toDouble(),
@@ -694,14 +689,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     }
     return PlatformHeatmapGradient(
       colors: gradient.colors
-          .map(
-            (HeatmapGradientColor c) => PlatformColor(
-              red: c.color.r,
-              green: c.color.g,
-              blue: c.color.b,
-              alpha: c.color.a,
-            ),
-          )
+          .map((HeatmapGradientColor c) => _platformColorFromColor(c.color))
           .toList(),
       startPoints: gradient.colors
           .map((HeatmapGradientColor c) => c.startPoint)
@@ -735,6 +723,11 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
       zIndex: marker.zIndexInt,
       markerId: marker.markerId.value,
       clusterManagerId: marker.clusterManagerId?.value,
+      collisionBehavior: marker is AdvancedMarker
+          ? platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+              marker.collisionBehavior,
+            )
+          : null,
     );
   }
 
@@ -771,22 +764,12 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
-      fillColor: PlatformColor(
-        red: polygon.fillColor.r,
-        green: polygon.fillColor.g,
-        blue: polygon.fillColor.b,
-        alpha: polygon.fillColor.a,
-      ),
+      fillColor: _platformColorFromColor(polygon.fillColor),
       geodesic: polygon.geodesic,
       consumesTapEvents: polygon.consumeTapEvents,
       points: points,
       holes: holes,
-      strokeColor: PlatformColor(
-        red: polygon.strokeColor.r,
-        green: polygon.strokeColor.g,
-        blue: polygon.strokeColor.b,
-        alpha: polygon.strokeColor.a,
-      ),
+      strokeColor: _platformColorFromColor(polygon.strokeColor),
       strokeWidth: polygon.strokeWidth,
       zIndex: polygon.zIndex,
       visible: polygon.visible,
@@ -803,12 +786,7 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
-      color: PlatformColor(
-        red: polyline.color.r,
-        green: polyline.color.g,
-        blue: polyline.color.b,
-        alpha: polyline.color.a,
-      ),
+      color: _platformColorFromColor(polyline.color),
       geodesic: polyline.geodesic,
       visible: polyline.visible,
       width: polyline.width,
@@ -932,6 +910,23 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
     return PlatformMapBitmapScaling.auto;
   }
 
+  /// Converts [MarkersCollisionBehavior] from platform interface to
+  /// [PlatformMarkerCollisionBehavior] Pigeon.
+  @visibleForTesting
+  static PlatformMarkerCollisionBehavior
+  platformMarkerCollisionBehaviorFromMarkerCollisionBehavior(
+    MarkerCollisionBehavior collisionBehavior,
+  ) {
+    return switch (collisionBehavior) {
+      MarkerCollisionBehavior.requiredDisplay =>
+        PlatformMarkerCollisionBehavior.requiredDisplay,
+      MarkerCollisionBehavior.optionalAndHidesLowerPriority =>
+        PlatformMarkerCollisionBehavior.optionalAndHidesLowerPriority,
+      MarkerCollisionBehavior.requiredAndHidesOptional =>
+        PlatformMarkerCollisionBehavior.requiredAndHidesOptional,
+    };
+  }
+
   /// Converts [BitmapDescriptor] from platform interface to [PlatformBitmap] pigeon.
   @visibleForTesting
   static PlatformBitmap platformBitmapFromBitmapDescriptor(
@@ -991,6 +986,51 @@ class GoogleMapsFlutterIOS extends GoogleMapsFlutterPlatform {
             height: bytes.height,
           ),
         );
+      case final PinConfig pinConfig:
+        final PlatformColor? backgroundColor = pinConfig.backgroundColor != null
+            ? _platformColorFromColor(pinConfig.backgroundColor!)
+            : null;
+        final PlatformColor? borderColor = pinConfig.borderColor != null
+            ? _platformColorFromColor(pinConfig.borderColor!)
+            : null;
+        switch (pinConfig.glyph) {
+          case final CircleGlyph circleGlyph:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                glyphColor: _platformColorFromColor(circleGlyph.color),
+              ),
+            );
+          case final TextGlyph textGlyph:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                glyphText: textGlyph.text,
+                glyphTextColor: textGlyph.textColor != null
+                    ? _platformColorFromColor(textGlyph.textColor!)
+                    : null,
+              ),
+            );
+          case final BitmapGlyph bitmapGlyph:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+                glyphBitmap: platformBitmapFromBitmapDescriptor(
+                  bitmapGlyph.bitmap,
+                ),
+              ),
+            );
+          case null:
+            return PlatformBitmap(
+              bitmap: PlatformBitmapPinConfig(
+                backgroundColor: backgroundColor,
+                borderColor: borderColor,
+              ),
+            );
+        }
       default:
         throw ArgumentError(
           'Unrecognized type of bitmap ${bitmap.runtimeType}',
@@ -1163,6 +1203,15 @@ class HostMapMessageHandler implements MapsCallbackApi {
   }
 }
 
+PlatformColor _platformColorFromColor(Color color) {
+  return PlatformColor(
+    red: color.r,
+    green: color.g,
+    blue: color.b,
+    alpha: color.a,
+  );
+}
+
 LatLng _latLngFromPlatformLatLng(PlatformLatLng latLng) {
   return LatLng(latLng.latitude, latLng.longitude);
 }
@@ -1281,9 +1330,18 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     indoorViewEnabled: config.indoorViewEnabled,
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
+    markerType: _platformMarkerTypeFromMarkerType(config.markerType),
     mapId: config.mapId,
     style: config.style,
   );
+}
+
+PlatformMarkerType? _platformMarkerTypeFromMarkerType(MarkerType? markerType) {
+  return switch (markerType) {
+    MarkerType.marker => PlatformMarkerType.marker,
+    MarkerType.advancedMarker => PlatformMarkerType.advancedMarker,
+    null => null,
+  };
 }
 
 // For supporting the deprecated updateMapOptions API.
@@ -1323,7 +1381,8 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     indoorViewEnabled: options['indoorEnabled'] as bool?,
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
-    mapId: options['cloudMapId'] as String?,
+    markerType: PlatformMarkerType.marker,
+    mapId: options['mapId'] as String?,
     style: options['style'] as String?,
   );
 }
