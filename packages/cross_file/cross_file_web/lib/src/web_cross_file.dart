@@ -71,7 +71,7 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
   late final WebXFileCreationParams params =
       super.params is WebXFileCreationParams
       ? super.params as WebXFileCreationParams
-      : UrlWebXFileCreationParams(objectUrl: params.uri);
+      : UrlWebXFileCreationParams(objectUrl: super.params.uri);
 
   @override
   Future<Blob> getBlob() async {
