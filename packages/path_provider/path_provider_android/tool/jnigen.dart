@@ -21,7 +21,6 @@ void main() {
         androidExample: 'example/',
       ),
       classes: <String>[
-        'android.app.Application',
         'android.content.Context',
         'io.flutter.util.PathUtils',
         'java.io.File',
