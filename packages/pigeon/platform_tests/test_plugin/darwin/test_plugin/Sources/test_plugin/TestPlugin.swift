@@ -1279,15 +1279,15 @@ class NITestsClass: NSObject, NIHostIntegrationCoreApi {
   }
 
   func throwAsyncError() async throws -> Any? {
-    throw PigeonError(code: "code ", message: "message", details: "details")
+    throw NiTestsError(code: "code", message: "message", details: "details")
   }
 
   func throwAsyncErrorFromVoid() async throws {
-    throw PigeonError(code: "code ", message: "message", details: "details")
+    throw NiTestsError(code: "code", message: "message", details: "details")
   }
 
   func throwAsyncFlutterError() async throws -> Any? {
-    throw PigeonError(code: "code ", message: "message", details: "details")
+    throw NiTestsError(code: "code", message: "message", details: "details")
   }
 
   func echoAsyncNIAllTypes(everything: NIAllTypes) async throws -> NIAllTypes {

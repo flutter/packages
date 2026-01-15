@@ -614,6 +614,8 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup") SWIFT_AVAILABILI
 - (void)echoAsyncInt64ListWithAInt64List:(PigeonTypedData * _Nonnull)aInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
 /// Returns the passed in Float64List asynchronously.
 - (void)echoAsyncFloat64ListWithAFloat64List:(PigeonTypedData * _Nonnull)aFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in generic Object asynchronously.
+- (void)echoAsyncObjectWithAnObject:(NSObject * _Nonnull)anObject wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSObject * _Nullable))completionHandler;
 /// Returns the passed list, to test asynchronous serialization and deserialization.
 - (void)echoAsyncListWithList:(NSArray<NSObject *> * _Nonnull)list wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
 /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -634,8 +636,12 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup") SWIFT_AVAILABILI
 - (void)echoAsyncEnumWithAnEnum:(enum NIAnEnum)anEnum wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
 /// Returns the passed enum, to test asynchronous serialization and deserialization.
 - (void)echoAnotherAsyncEnumWithAnotherEnum:(enum NIAnotherEnum)anotherEnum wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSNumber * _Nullable))completionHandler;
+/// Responds with an error from an async function returning a value.
+- (void)throwAsyncErrorWithWrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSObject * _Nullable))completionHandler;
 /// Responds with an error from an async void function.
 - (void)throwAsyncErrorFromVoidWithWrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(void))completionHandler;
+/// Responds with a Flutter error from an async function returning a value.
+- (void)throwAsyncFlutterErrorWithWrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSObject * _Nullable))completionHandler;
 /// Returns the passed object, to test async serialization and deserialization.
 - (void)echoAsyncNIAllTypesWithEverything:(NIAllTypesBridge * _Nonnull)everything wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NIAllTypesBridge * _Nullable))completionHandler;
 /// Returns the passed object, to test serialization and deserialization.
@@ -658,6 +664,8 @@ SWIFT_CLASS("_TtC11test_plugin29NIHostIntegrationCoreApiSetup") SWIFT_AVAILABILI
 - (void)echoAsyncNullableInt64ListWithAInt64List:(PigeonTypedData * _Nullable)aInt64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
 /// Returns the passed in Float64List asynchronously.
 - (void)echoAsyncNullableFloat64ListWithAFloat64List:(PigeonTypedData * _Nullable)aFloat64List wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(PigeonTypedData * _Nullable))completionHandler;
+/// Returns the passed in generic Object asynchronously.
+- (void)echoAsyncNullableObjectWithAnObject:(NSObject * _Nonnull)anObject wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSObject * _Nullable))completionHandler;
 /// Returns the passed list, to test asynchronous serialization and deserialization.
 - (void)echoAsyncNullableListWithList:(NSArray<NSObject *> * _Nullable)list wrappedError:(NiTestsError * _Nonnull)wrappedError completionHandler:(void (^ _Nonnull)(NSArray<NSObject *> * _Nullable))completionHandler;
 /// Returns the passed list, to test asynchronous serialization and deserialization.

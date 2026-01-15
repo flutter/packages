@@ -4252,6 +4252,34 @@ class NIHostIntegrationCoreApiForNativeInterop {
     throw Exception('No JNI or FFI api available');
   }
 
+  Future<Object> echoAsyncObject(Object anObject) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Object> completer = Completer<Object>();
+        _ffiApi.echoAsyncObjectWithAnObject(
+          _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_dispatchdatat.listener((
+                ObjCObject? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(_PigeonFfiCodec.readValue(res)!);
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
   Future<List<Object?>> echoAsyncList(List<Object?> list) async {
     try {
       if (_jniApi != null) {
@@ -4566,6 +4594,33 @@ class NIHostIntegrationCoreApiForNativeInterop {
     throw Exception('No JNI or FFI api available');
   }
 
+  Future<Object?> throwAsyncError() async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Object?> completer = Completer<Object?>();
+        _ffiApi.throwAsyncErrorWithWrappedError(
+          error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_dispatchdatat.listener((
+                ObjCObject? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(_PigeonFfiCodec.readValue(res));
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
   Future<void> throwAsyncErrorFromVoid() async {
     try {
       if (_jniApi != null) {
@@ -4581,6 +4636,33 @@ class NIHostIntegrationCoreApiForNativeInterop {
               completer.complete();
             }
           }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Object?> throwAsyncFlutterError() async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Object?> completer = Completer<Object?>();
+        _ffiApi.throwAsyncFlutterErrorWithWrappedError(
+          error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_dispatchdatat.listener((
+                ObjCObject? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(_PigeonFfiCodec.readValue(res));
+                }
+              }),
         );
         return await completer.future;
       }
@@ -4903,6 +4985,34 @@ class NIHostIntegrationCoreApiForNativeInterop {
                   completer.complete(
                     (_PigeonFfiCodec.readValue(res) as Float64List?),
                   );
+                }
+              }),
+        );
+        return await completer.future;
+      }
+    } on JniException catch (e) {
+      throw _wrapJniException(e);
+    }
+    throw Exception('No JNI or FFI api available');
+  }
+
+  Future<Object?> echoAsyncNullableObject(Object? anObject) async {
+    try {
+      if (_jniApi != null) {
+      } else if (_ffiApi != null) {
+        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final Completer<Object?> completer = Completer<Object?>();
+        _ffiApi.echoAsyncNullableObjectWithAnObject(
+          _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
+          wrappedError: error,
+          completionHandler:
+              ffi_bridge.ObjCBlock_ffiVoid_dispatchdatat.listener((
+                ObjCObject? res,
+              ) {
+                if (error.code != null) {
+                  completer.completeError(_wrapFfiError(error));
+                } else {
+                  completer.complete(_PigeonFfiCodec.readValue(res));
                 }
               }),
         );
@@ -7996,6 +8106,43 @@ class NIHostIntegrationCoreApi {
     }
   }
 
+  /// Returns the passed in generic Object asynchronously.
+  Future<Object> echoAsyncObject(Object anObject) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncObject(anObject);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncObject$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anObject],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return pigeonVar_replyList[0]!;
+    }
+  }
+
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   Future<List<Object?>> echoAsyncList(List<Object?> list) async {
     if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
@@ -8380,6 +8527,36 @@ class NIHostIntegrationCoreApi {
     }
   }
 
+  /// Responds with an error from an async function returning a value.
+  Future<Object?> throwAsyncError() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.throwAsyncError();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwAsyncError$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return pigeonVar_replyList[0];
+    }
+  }
+
   /// Responds with an error from an async void function.
   Future<void> throwAsyncErrorFromVoid() async {
     if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
@@ -8407,6 +8584,36 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return;
+    }
+  }
+
+  /// Responds with a Flutter error from an async function returning a value.
+  Future<Object?> throwAsyncFlutterError() async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.throwAsyncFlutterError();
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwAsyncFlutterError$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return pigeonVar_replyList[0];
     }
   }
 
@@ -8772,6 +8979,38 @@ class NIHostIntegrationCoreApi {
       );
     } else {
       return (pigeonVar_replyList[0] as Float64List?);
+    }
+  }
+
+  /// Returns the passed in generic Object asynchronously.
+  Future<Object?> echoAsyncNullableObject(Object? anObject) async {
+    if ((Platform.isAndroid || Platform.isIOS || Platform.isMacOS) &&
+        _nativeInteropApi != null) {
+      return _nativeInteropApi.echoAsyncNullableObject(anObject);
+    }
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableObject$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+          pigeonVar_channelName,
+          pigeonChannelCodec,
+          binaryMessenger: pigeonVar_binaryMessenger,
+        );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[anObject],
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return pigeonVar_replyList[0];
     }
   }
 

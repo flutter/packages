@@ -342,15 +342,21 @@ class _FfiType {
     bool forceNullable = false,
     bool forceNonNullable = false,
     bool withPrefix = true,
+    bool asyncBlockMethod = false,
   }) {
     final String prefix = withPrefix ? 'ffi_bridge.' : '';
     if (type.isEnum) {
-      return forceNullable ? 'NSNumber?' : '${prefix}NumberWrapper';
+      return forceNullable || asyncBlockMethod
+          ? 'NSNumber?'
+          : '${prefix}NumberWrapper';
     }
     if (type.baseName == 'List') {
       return forceNonNullable ? 'NSArray' : 'NSArray?';
     }
     if (type.baseName == 'Object') {
+      if (asyncBlockMethod) {
+        return 'dispatchdatat';
+      }
       return forceNonNullable ? 'ObjCObject' : 'ObjCObject?';
     }
     // final String name = !(type.isNullable || forceUnwrap || forceNullable) &&
@@ -1775,7 +1781,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                     final Completer<${method.returnType.getFullName()}> completer = Completer<${method.returnType.getFullName()}>();
                     _ffiApi.${_getFfiMethodCallName(method)}(
                       ${method.parameters.isEmpty ? '' : '${_getFfiMethodCallArguments(method.parameters)},\nwrappedError: '}error,
-                      completionHandler: ffi_bridge.ObjCBlock_ffiVoid${method.returnType.isVoid ? '' : '_${returnType.getFfiCallReturnType(withPrefix: false, forceNullable: true).replaceAll('?', '')}'}.listener(
+                      completionHandler: ffi_bridge.ObjCBlock_ffiVoid${method.returnType.isVoid ? '' : '_${returnType.getFfiCallReturnType(withPrefix: false, asyncBlockMethod: true).replaceAll('?', '')}'}.listener(
                         (${method.returnType.isVoid ? '' : '${returnType.getFfiCallReturnType(forceNullable: true)} res'}) {
                           if (error.code != null) {
                             completer.completeError(_wrapFfiError(error));

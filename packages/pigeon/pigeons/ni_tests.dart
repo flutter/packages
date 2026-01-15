@@ -724,11 +724,11 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echoAsync(_:)')
   Float64List echoAsyncFloat64List(Float64List aFloat64List);
 
-  // /// Returns the passed in generic Object asynchronously.
-  // @async
-  // @ObjCSelector('echoAsyncObject:')
-  // // @SwiftFunction('echoAsync(_:)')
-  // Object echoAsyncObject(Object anObject);
+  /// Returns the passed in generic Object asynchronously.
+  @async
+  @ObjCSelector('echoAsyncObject:')
+  // @SwiftFunction('echoAsync(_:)')
+  Object echoAsyncObject(Object anObject);
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   @async
@@ -794,17 +794,17 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echoAsync(_:)')
   NIAnotherEnum echoAnotherAsyncEnum(NIAnotherEnum anotherEnum);
 
-  // /// Responds with an error from an async function returning a value.
-  // @async
-  // Object? throwAsyncError();
+  /// Responds with an error from an async function returning a value.
+  @async
+  Object? throwAsyncError();
 
   /// Responds with an error from an async void function.
   @async
   void throwAsyncErrorFromVoid();
 
-  // /// Responds with a Flutter error from an async function returning a value.
-  // @async
-  // Object? throwAsyncFlutterError();
+  /// Responds with a Flutter error from an async function returning a value.
+  @async
+  Object? throwAsyncFlutterError();
 
   /// Returns the passed object, to test async serialization and deserialization.
   @async
@@ -877,11 +877,11 @@ abstract class NIHostIntegrationCoreApi {
   // @SwiftFunction('echoAsyncNullable(_:)')
   Float64List? echoAsyncNullableFloat64List(Float64List? aFloat64List);
 
-  // /// Returns the passed in generic Object asynchronously.
-  // @async
-  // @ObjCSelector('echoAsyncNullableObject:')
-  // // @SwiftFunction('echoAsyncNullable(_:)')
-  // Object? echoAsyncNullableObject(Object? anObject);
+  /// Returns the passed in generic Object asynchronously.
+  @async
+  @ObjCSelector('echoAsyncNullableObject:')
+  // @SwiftFunction('echoAsyncNullable(_:)')
+  Object? echoAsyncNullableObject(Object? anObject);
 
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   @async

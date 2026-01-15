@@ -1308,7 +1308,7 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     //       final String? receivedNullString = api!.echoNamedNullableString();
     //       expect(receivedNullString, null);
     //     });
-    //   });
+  });
 
     group('Host async API tests', () {
       testWidgets('basic void->void call works', (WidgetTester _) async {
@@ -1318,16 +1318,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         expect(api!.noopAsync(), completes);
       });
 
-      // testWidgets('async errors are returned from non void methods correctly', (
-      //   WidgetTester _,
-      // ) async {
-      //   final NIHostIntegrationCoreApiForNativeInterop? api =
-      //       NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets('async errors are returned from non void methods correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-      //   expect(() async {
-      //     await api!.throwAsyncError();
-      //   }, throwsA(isA<PlatformException>()));
-      // });
+      expect(() async {
+        await api!.throwAsyncError();
+      }, throwsA(isA<PlatformException>()));
+    });
 
       testWidgets('async errors are returned from void methods correctly', (
         WidgetTester _,
@@ -1340,20 +1340,33 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         }, throwsA(isA<PlatformException>()));
       });
 
-      // testWidgets(
-      // 'async flutter errors are returned from non void methods correctly',
-      //     (WidgetTester _) async {
-      //   final NIHostIntegrationCoreApiForNativeInterop? api =
-      //       NIHostIntegrationCoreApiForNativeInterop.getInstance();
+    testWidgets(
+      'async flutter errors are returned from non void methods correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
 
-      //   expect(
-      //       () => api!.throwAsyncFlutterError(),
-      //       throwsA((dynamic e) =>
-      //           e is PlatformException &&
-      //           e.code == 'code' &&
-      //           e.message == 'message' &&
-      //           e.details == 'details'));
-      // });
+        expect(
+          () async {
+            await api!.throwAsyncFlutterError();
+          },
+          throwsA(
+            isA<PlatformException>()
+                .having((PlatformException e) => e.code, 'code', 'code')
+                .having(
+                  (PlatformException e) => e.message,
+                  'message',
+                  'message',
+                )
+                .having(
+                  (PlatformException e) => e.details,
+                  'details',
+                  'details',
+                ),
+          ),
+        );
+      },
+    );
 
       testWidgets('all datatypes async serialize and deserialize correctly', (
         WidgetTester _,
@@ -1508,20 +1521,20 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         expect(receivedUint8List, sentUint8List);
       });
 
-      // testWidgets('generic Objects async serialize and deserialize correctly', (
-      //   WidgetTester _,
-      // ) async {
-      //   final NIHostIntegrationCoreApiForNativeInterop? api =
-      //       NIHostIntegrationCoreApiForNativeInterop.getInstance();
-      //   const Object sentString = "I'm a computer";
-      //   final Object receivedString = await api!.echoAsyncObject(sentString);
-      //   expect(receivedString, sentString);
+    testWidgets('generic Objects async serialize and deserialize correctly', (
+      WidgetTester _,
+    ) async {
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      const Object sentString = "I'm a computer";
+      final Object receivedString = await api!.echoAsyncObject(sentString);
+      expect(receivedString, sentString);
 
-      //   // Echo a second type as well to ensure the handling is generic.
-      //   const Object sentInt = regularInt;
-      //   final Object receivedInt = await api.echoAsyncObject(sentInt);
-      //   expect(receivedInt, sentInt);
-      // });
+      // Echo a second type as well to ensure the handling is generic.
+      const Object sentInt = regularInt;
+      final Object receivedInt = await api.echoAsyncObject(sentInt);
+      expect(receivedInt, sentInt);
+    });
 
       testWidgets('lists serialize and deserialize correctly', (
         WidgetTester _,
@@ -1736,25 +1749,23 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         },
       );
 
-      // testWidgets(
-      //   'nullable generic Objects async serialize and deserialize correctly',
-      //   (WidgetTester _) async {
-      //     final NIHostIntegrationCoreApiForNativeInterop? api =
-      //         NIHostIntegrationCoreApiForNativeInterop.getInstance();
-      //     const Object sentString = "I'm a computer";
-      //     final Object? receivedString = await api!.echoAsyncNullableObject(
-      //       sentString,
-      //     );
-      //     expect(receivedString, sentString);
+    testWidgets(
+      'nullable generic Objects async serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+        const Object sentString = "I'm a computer";
+        final Object? receivedString = await api!.echoAsyncNullableObject(
+          sentString,
+        );
+        expect(receivedString, sentString);
 
-      //     // Echo a second type as well to ensure the handling is generic.
-      //     const Object sentInt = regularInt;
-      //     final Object? receivedInt = await api.echoAsyncNullableObject(
-      //       sentInt,
-      //     );
-      //     expect(receivedInt, sentInt);
-      //   },
-      // );
+        // Echo a second type as well to ensure the handling is generic.
+        const Object sentInt = regularInt;
+        final Object? receivedInt = await api.echoAsyncNullableObject(sentInt);
+        expect(receivedInt, sentInt);
+      },
+    );
 
       testWidgets('nullable lists serialize and deserialize correctly', (
         WidgetTester _,
@@ -1933,17 +1944,15 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
         expect(receivedUint8List, null);
       });
 
-      // testWidgets(
-      //   'null generic Objects async serialize and deserialize correctly',
-      //   (WidgetTester _) async {
-      //     final NIHostIntegrationCoreApiForNativeInterop? api =
-      //         NIHostIntegrationCoreApiForNativeInterop.getInstance();
-      //     final Object? receivedString = await api!.echoAsyncNullableObject(
-      //       null,
-      //     );
-      //     expect(receivedString, null);
-      //   },
-      // );
+    testWidgets(
+      'null generic Objects async serialize and deserialize correctly',
+      (WidgetTester _) async {
+        final NIHostIntegrationCoreApiForNativeInterop? api =
+            NIHostIntegrationCoreApiForNativeInterop.getInstance();
+        final Object? receivedString = await api!.echoAsyncNullableObject(null);
+        expect(receivedString, null);
+      },
+    );
 
       testWidgets('null lists serialize and deserialize correctly', (
         WidgetTester _,
@@ -3122,289 +3131,289 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
     //     //   final String echoString = await api.callFlutterEchoAsyncString(aString);
     //     //   expect(echoString, aString);
     //     // });
-  });
+  // });
 }
 
-// class _NIFlutterIntegrationCoreApiImpl extends NIFlutterIntegrationCoreApi {
-//   @override
-//   String echoString(String value) {
-//     return value;
-//   }
+  // class _NIFlutterIntegrationCoreApiImpl extends NIFlutterIntegrationCoreApi {
+  //   @override
+  //   String echoString(String value) {
+  //     return value;
+  //   }
 
-//   @override
-//   void noop() {
-//     return;
-//   }
+  //   @override
+  //   void noop() {
+  //     return;
+  //   }
 
-//   @override
-//   int echoInt(int anInt) {
-//     return anInt;
-//   }
+  //   @override
+  //   int echoInt(int anInt) {
+  //     return anInt;
+  //   }
 
-//   @override
-//   bool echoBool(bool aBool) {
-//     return aBool;
-//   }
+  //   @override
+  //   bool echoBool(bool aBool) {
+  //     return aBool;
+  //   }
 
-//   @override
-//   NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? anotherEnum) {
-//     return anotherEnum;
-//   }
+  //   @override
+  //   NIAnotherEnum? echoAnotherNullableEnum(NIAnotherEnum? anotherEnum) {
+  //     return anotherEnum;
+  //   }
 
-//   // @override
-//   // Future<String> echoAsyncString(String aString) async {
-//   //   return aString;
-//   // }
+  //   // @override
+  //   // Future<String> echoAsyncString(String aString) async {
+  //   //   return aString;
+  //   // }
 
-//   @override
-//   List<NIAllNullableTypes?> echoClassList(List<NIAllNullableTypes?> classList) {
-//     return classList;
-//   }
+  //   @override
+  //   List<NIAllNullableTypes?> echoClassList(List<NIAllNullableTypes?> classList) {
+  //     return classList;
+  //   }
 
-//   @override
-//   Map<int?, NIAllNullableTypes?> echoClassMap(
-//       Map<int?, NIAllNullableTypes?> classMap) {
-//     return classMap;
-//   }
+  //   @override
+  //   Map<int?, NIAllNullableTypes?> echoClassMap(
+  //       Map<int?, NIAllNullableTypes?> classMap) {
+  //     return classMap;
+  //   }
 
-//   @override
-//   double echoDouble(double aDouble) {
-//     return aDouble;
-//   }
+  //   @override
+  //   double echoDouble(double aDouble) {
+  //     return aDouble;
+  //   }
 
-//   @override
-//   NIAnEnum echoEnum(NIAnEnum anEnum) {
-//     return anEnum;
-//   }
+  //   @override
+  //   NIAnEnum echoEnum(NIAnEnum anEnum) {
+  //     return anEnum;
+  //   }
 
-//   @override
-//   List<NIAnEnum?> echoEnumList(List<NIAnEnum?> enumList) {
-//     return enumList;
-//   }
+  //   @override
+  //   List<NIAnEnum?> echoEnumList(List<NIAnEnum?> enumList) {
+  //     return enumList;
+  //   }
 
-//   @override
-//   Map<NIAnEnum?, NIAnEnum?> echoEnumMap(Map<NIAnEnum?, NIAnEnum?> enumMap) {
-//     return enumMap;
-//   }
+  //   @override
+  //   Map<NIAnEnum?, NIAnEnum?> echoEnumMap(Map<NIAnEnum?, NIAnEnum?> enumMap) {
+  //     return enumMap;
+  //   }
 
-//   @override
-//   Map<int?, int?> echoIntMap(Map<int?, int?> intMap) {
-//     return intMap;
-//   }
+  //   @override
+  //   Map<int?, int?> echoIntMap(Map<int?, int?> intMap) {
+  //     return intMap;
+  //   }
 
-//   @override
-//   NIAllNullableTypes? echoNIAllNullableTypes(NIAllNullableTypes? everything) {
-//     return everything;
-//   }
+  //   @override
+  //   NIAllNullableTypes? echoNIAllNullableTypes(NIAllNullableTypes? everything) {
+  //     return everything;
+  //   }
 
-//   @override
-//   NIAllNullableTypesWithoutRecursion? echoNIAllNullableTypesWithoutRecursion(
-//       NIAllNullableTypesWithoutRecursion? everything) {
-//     return everything;
-//   }
+  //   @override
+  //   NIAllNullableTypesWithoutRecursion? echoNIAllNullableTypesWithoutRecursion(
+  //       NIAllNullableTypesWithoutRecursion? everything) {
+  //     return everything;
+  //   }
 
-//   @override
-//   NIAllTypes echoNIAllTypes(NIAllTypes everything) {
-//     return everything;
-//   }
+  //   @override
+  //   NIAllTypes echoNIAllTypes(NIAllTypes everything) {
+  //     return everything;
+  //   }
 
-//   @override
-//   NIAnotherEnum echoNIAnotherEnum(NIAnotherEnum anotherEnum) {
-//     return anotherEnum;
-//   }
+  //   @override
+  //   NIAnotherEnum echoNIAnotherEnum(NIAnotherEnum anotherEnum) {
+  //     return anotherEnum;
+  //   }
 
-//   @override
-//   List<Object?> echoList(List<Object?> list) {
-//     return list;
-//   }
+  //   @override
+  //   List<Object?> echoList(List<Object?> list) {
+  //     return list;
+  //   }
 
-//   @override
-//   Map<Object?, Object?> echoMap(Map<Object?, Object?> map) {
-//     return map;
-//   }
+  //   @override
+  //   Map<Object?, Object?> echoMap(Map<Object?, Object?> map) {
+  //     return map;
+  //   }
 
-//   @override
-//   List<NIAllNullableTypes> echoNonNullClassList(
-//       List<NIAllNullableTypes> classList) {
-//     return classList;
-//   }
+  //   @override
+  //   List<NIAllNullableTypes> echoNonNullClassList(
+  //       List<NIAllNullableTypes> classList) {
+  //     return classList;
+  //   }
 
-//   @override
-//   Map<int, NIAllNullableTypes> echoNonNullClassMap(
-//       Map<int, NIAllNullableTypes> classMap) {
-//     return classMap;
-//   }
+  //   @override
+  //   Map<int, NIAllNullableTypes> echoNonNullClassMap(
+  //       Map<int, NIAllNullableTypes> classMap) {
+  //     return classMap;
+  //   }
 
-//   @override
-//   List<NIAnEnum> echoNonNullEnumList(List<NIAnEnum> enumList) {
-//     return enumList;
-//   }
+  //   @override
+  //   List<NIAnEnum> echoNonNullEnumList(List<NIAnEnum> enumList) {
+  //     return enumList;
+  //   }
 
-//   @override
-//   Map<NIAnEnum, NIAnEnum> echoNonNullEnumMap(Map<NIAnEnum, NIAnEnum> enumMap) {
-//     return enumMap;
-//   }
+  //   @override
+  //   Map<NIAnEnum, NIAnEnum> echoNonNullEnumMap(Map<NIAnEnum, NIAnEnum> enumMap) {
+  //     return enumMap;
+  //   }
 
-//   @override
-//   Map<int, int> echoNonNullIntMap(Map<int, int> intMap) {
-//     return intMap;
-//   }
+  //   @override
+  //   Map<int, int> echoNonNullIntMap(Map<int, int> intMap) {
+  //     return intMap;
+  //   }
 
-//   @override
-//   Map<String, String> echoNonNullStringMap(Map<String, String> stringMap) {
-//     return stringMap;
-//   }
+  //   @override
+  //   Map<String, String> echoNonNullStringMap(Map<String, String> stringMap) {
+  //     return stringMap;
+  //   }
 
-//   @override
-//   bool? echoNullableBool(bool? aBool) {
-//     return aBool;
-//   }
+  //   @override
+  //   bool? echoNullableBool(bool? aBool) {
+  //     return aBool;
+  //   }
 
-//   @override
-//   List<NIAllNullableTypes?>? echoNullableClassList(
-//       List<NIAllNullableTypes?>? classList) {
-//     return classList;
-//   }
+  //   @override
+  //   List<NIAllNullableTypes?>? echoNullableClassList(
+  //       List<NIAllNullableTypes?>? classList) {
+  //     return classList;
+  //   }
 
-//   @override
-//   Map<int?, NIAllNullableTypes?>? echoNullableClassMap(
-//       Map<int?, NIAllNullableTypes?>? classMap) {
-//     return classMap;
-//   }
+  //   @override
+  //   Map<int?, NIAllNullableTypes?>? echoNullableClassMap(
+  //       Map<int?, NIAllNullableTypes?>? classMap) {
+  //     return classMap;
+  //   }
 
-//   @override
-//   double? echoNullableDouble(double? aDouble) {
-//     return aDouble;
-//   }
+  //   @override
+  //   double? echoNullableDouble(double? aDouble) {
+  //     return aDouble;
+  //   }
 
-//   @override
-//   NIAnEnum? echoNullableEnum(NIAnEnum? anEnum) {
-//     return anEnum;
-//   }
+  //   @override
+  //   NIAnEnum? echoNullableEnum(NIAnEnum? anEnum) {
+  //     return anEnum;
+  //   }
 
-//   @override
-//   List<NIAnEnum?>? echoNullableEnumList(List<NIAnEnum?>? enumList) {
-//     return enumList;
-//   }
+  //   @override
+  //   List<NIAnEnum?>? echoNullableEnumList(List<NIAnEnum?>? enumList) {
+  //     return enumList;
+  //   }
 
-//   @override
-//   Map<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
-//       Map<NIAnEnum?, NIAnEnum?>? enumMap) {
-//     return enumMap;
-//   }
+  //   @override
+  //   Map<NIAnEnum?, NIAnEnum?>? echoNullableEnumMap(
+  //       Map<NIAnEnum?, NIAnEnum?>? enumMap) {
+  //     return enumMap;
+  //   }
 
-//   @override
-//   int? echoNullableInt(int? anInt) {
-//     return anInt;
-//   }
+  //   @override
+  //   int? echoNullableInt(int? anInt) {
+  //     return anInt;
+  //   }
 
-//   @override
-//   Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap) {
-//     return intMap;
-//   }
+  //   @override
+  //   Map<int?, int?>? echoNullableIntMap(Map<int?, int?>? intMap) {
+  //     return intMap;
+  //   }
 
-//   @override
-//   List<Object?>? echoNullableList(List<Object?>? list) {
-//     return list;
-//   }
+  //   @override
+  //   List<Object?>? echoNullableList(List<Object?>? list) {
+  //     return list;
+  //   }
 
-//   @override
-//   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) {
-//     return map;
-//   }
+  //   @override
+  //   Map<Object?, Object?>? echoNullableMap(Map<Object?, Object?>? map) {
+  //     return map;
+  //   }
 
-//   @override
-//   List<NIAllNullableTypes>? echoNullableNonNullClassList(
-//       List<NIAllNullableTypes>? classList) {
-//     return classList;
-//   }
+  //   @override
+  //   List<NIAllNullableTypes>? echoNullableNonNullClassList(
+  //       List<NIAllNullableTypes>? classList) {
+  //     return classList;
+  //   }
 
-//   @override
-//   Map<int, NIAllNullableTypes>? echoNullableNonNullClassMap(
-//       Map<int, NIAllNullableTypes>? classMap) {
-//     return classMap;
-//   }
+  //   @override
+  //   Map<int, NIAllNullableTypes>? echoNullableNonNullClassMap(
+  //       Map<int, NIAllNullableTypes>? classMap) {
+  //     return classMap;
+  //   }
 
-//   @override
-//   List<NIAnEnum>? echoNullableNonNullEnumList(List<NIAnEnum>? enumList) {
-//     return enumList;
-//   }
+  //   @override
+  //   List<NIAnEnum>? echoNullableNonNullEnumList(List<NIAnEnum>? enumList) {
+  //     return enumList;
+  //   }
 
-//   @override
-//   Map<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
-//       Map<NIAnEnum, NIAnEnum>? enumMap) {
-//     return enumMap;
-//   }
+  //   @override
+  //   Map<NIAnEnum, NIAnEnum>? echoNullableNonNullEnumMap(
+  //       Map<NIAnEnum, NIAnEnum>? enumMap) {
+  //     return enumMap;
+  //   }
 
-//   @override
-//   Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap) {
-//     return intMap;
-//   }
+  //   @override
+  //   Map<int, int>? echoNullableNonNullIntMap(Map<int, int>? intMap) {
+  //     return intMap;
+  //   }
 
-//   @override
-//   Map<String, String>? echoNullableNonNullStringMap(
-//       Map<String, String>? stringMap) {
-//     return stringMap;
-//   }
+  //   @override
+  //   Map<String, String>? echoNullableNonNullStringMap(
+  //       Map<String, String>? stringMap) {
+  //     return stringMap;
+  //   }
 
-//   @override
-//   String? echoNullableString(String? aString) {
-//     return aString;
-//   }
+  //   @override
+  //   String? echoNullableString(String? aString) {
+  //     return aString;
+  //   }
 
-//   @override
-//   Map<String?, String?>? echoNullableStringMap(
-//       Map<String?, String?>? stringMap) {
-//     return stringMap;
-//   }
+  //   @override
+  //   Map<String?, String?>? echoNullableStringMap(
+  //       Map<String?, String?>? stringMap) {
+  //     return stringMap;
+  //   }
 
-//   @override
-//   Uint8List? echoNullableUint8List(Uint8List? list) {
-//     return list;
-//   }
+  //   @override
+  //   Uint8List? echoNullableUint8List(Uint8List? list) {
+  //     return list;
+  //   }
 
-//   @override
-//   Map<String?, String?> echoStringMap(Map<String?, String?> stringMap) {
-//     return stringMap;
-//   }
+  //   @override
+  //   Map<String?, String?> echoStringMap(Map<String?, String?> stringMap) {
+  //     return stringMap;
+  //   }
 
-//   @override
-//   Uint8List echoUint8List(Uint8List list) {
-//     return list;
-//   }
+  //   @override
+  //   Uint8List echoUint8List(Uint8List list) {
+  //     return list;
+  //   }
 
-//   // @override
-//   // Future<void> noopAsync() async {
-//   //   return;
-//   // }
+  //   // @override
+  //   // Future<void> noopAsync() async {
+  //   //   return;
+  //   // }
 
-//   @override
-//   NIAllNullableTypes sendMultipleNullableTypes(
-//       bool? aNullableBool, int? aNullableInt, String? aNullableString) {
-//     return NIAllNullableTypes(
-//       aNullableBool: aNullableBool,
-//       aNullableInt: aNullableInt,
-//       aNullableString: aNullableString,
-//     );
-//   }
+  //   @override
+  //   NIAllNullableTypes sendMultipleNullableTypes(
+  //       bool? aNullableBool, int? aNullableInt, String? aNullableString) {
+  //     return NIAllNullableTypes(
+  //       aNullableBool: aNullableBool,
+  //       aNullableInt: aNullableInt,
+  //       aNullableString: aNullableString,
+  //     );
+  //   }
 
-//   @override
-//   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
-//       bool? aNullableBool, int? aNullableInt, String? aNullableString) {
-//     return NIAllNullableTypesWithoutRecursion(
-//       aNullableBool: aNullableBool,
-//       aNullableInt: aNullableInt,
-//       aNullableString: aNullableString,
-//     );
-//   }
+  //   @override
+  //   NIAllNullableTypesWithoutRecursion sendMultipleNullableTypesWithoutRecursion(
+  //       bool? aNullableBool, int? aNullableInt, String? aNullableString) {
+  //     return NIAllNullableTypesWithoutRecursion(
+  //       aNullableBool: aNullableBool,
+  //       aNullableInt: aNullableInt,
+  //       aNullableString: aNullableString,
+  //     );
+  //   }
 
-//   @override
-//   Object? throwError() {
-//     throw FlutterError('this is an error');
-//   }
+  //   @override
+  //   Object? throwError() {
+  //     throw FlutterError('this is an error');
+  //   }
 
-//   @override
-//   void throwErrorFromVoid() {
-//     throw FlutterError('this is an error');
-//   }
+  //   @override
+  //   void throwErrorFromVoid() {
+  //     throw FlutterError('this is an error');
+  //   }
 // }

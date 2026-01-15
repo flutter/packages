@@ -1826,6 +1826,8 @@ protocol NIHostIntegrationCoreApi {
   func echoAsyncInt64List(aInt64List: [Int64]) async throws -> [Int64]
   /// Returns the passed in Float64List asynchronously.
   func echoAsyncFloat64List(aFloat64List: [Float64]) async throws -> [Float64]
+  /// Returns the passed in generic Object asynchronously.
+  func echoAsyncObject(anObject: Any) async throws -> Any
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncList(list: [Any?]) async throws -> [Any?]
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -1847,8 +1849,12 @@ protocol NIHostIntegrationCoreApi {
   func echoAsyncEnum(anEnum: NIAnEnum) async throws -> NIAnEnum
   /// Returns the passed enum, to test asynchronous serialization and deserialization.
   func echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum) async throws -> NIAnotherEnum
+  /// Responds with an error from an async function returning a value.
+  func throwAsyncError() async throws -> Any?
   /// Responds with an error from an async void function.
   func throwAsyncErrorFromVoid() async throws
+  /// Responds with a Flutter error from an async function returning a value.
+  func throwAsyncFlutterError() async throws -> Any?
   /// Returns the passed object, to test async serialization and deserialization.
   func echoAsyncNIAllTypes(everything: NIAllTypes) async throws -> NIAllTypes
   /// Returns the passed object, to test serialization and deserialization.
@@ -1874,6 +1880,8 @@ protocol NIHostIntegrationCoreApi {
   func echoAsyncNullableInt64List(aInt64List: [Int64]?) async throws -> [Int64]?
   /// Returns the passed in Float64List asynchronously.
   func echoAsyncNullableFloat64List(aFloat64List: [Float64]?) async throws -> [Float64]?
+  /// Returns the passed in generic Object asynchronously.
+  func echoAsyncNullableObject(anObject: Any?) async throws -> Any?
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   func echoAsyncNullableList(list: [Any?]?) async throws -> [Any?]?
   /// Returns the passed list, to test asynchronous serialization and deserialization.
@@ -3272,6 +3280,23 @@ protocol NIHostIntegrationCoreApi {
     }
     return nil
   }
+  /// Returns the passed in generic Object asynchronously.
+  @objc func echoAsyncObject(anObject: NSObject, wrappedError: NiTestsError) async -> NSObject? {
+    do {
+      return try await _PigeonFfiCodec.writeValue(
+        value: api!.echoAsyncObject(anObject: _PigeonFfiCodec.readValue(value: anObject)!),
+        isObject: true) as? NSObject
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Returns the passed list, to test asynchronous serialization and deserialization.
   @objc func echoAsyncList(list: [NSObject], wrappedError: NiTestsError) async -> [NSObject]? {
     do {
@@ -3461,6 +3486,22 @@ protocol NIHostIntegrationCoreApi {
     }
     return nil
   }
+  /// Responds with an error from an async function returning a value.
+  @objc func throwAsyncError(wrappedError: NiTestsError) async -> NSObject? {
+    do {
+      return try await _PigeonFfiCodec.writeValue(value: api!.throwAsyncError(), isObject: true)
+        as? NSObject
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
   /// Responds with an error from an async void function.
   @objc func throwAsyncErrorFromVoid(wrappedError: NiTestsError) async {
     do {
@@ -3475,6 +3516,22 @@ protocol NIHostIntegrationCoreApi {
       wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
     }
     return
+  }
+  /// Responds with a Flutter error from an async function returning a value.
+  @objc func throwAsyncFlutterError(wrappedError: NiTestsError) async -> NSObject? {
+    do {
+      return try await _PigeonFfiCodec.writeValue(
+        value: api!.throwAsyncFlutterError(), isObject: true) as? NSObject
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
   }
   /// Returns the passed object, to test async serialization and deserialization.
   @objc func echoAsyncNIAllTypes(everything: NIAllTypesBridge, wrappedError: NiTestsError) async
@@ -3665,6 +3722,25 @@ protocol NIHostIntegrationCoreApi {
       let res = try await api!.echoAsyncNullableFloat64List(
         aFloat64List: isNullish(aFloat64List) ? nil : aFloat64List!.toFloat64Array())
       return isNullish(res) ? nil : PigeonTypedData(res!)
+    } catch let error as NiTestsError {
+      wrappedError.code = error.code
+      wrappedError.message = error.message
+      wrappedError.details = error.details
+    } catch let error {
+      wrappedError.code = "\(error)"
+      wrappedError.message = "\(type(of: error))"
+      wrappedError.details = "Stacktrace: \(Thread.callStackSymbols)"
+    }
+    return nil
+  }
+  /// Returns the passed in generic Object asynchronously.
+  @objc func echoAsyncNullableObject(anObject: NSObject, wrappedError: NiTestsError) async
+    -> NSObject?
+  {
+    do {
+      return try await _PigeonFfiCodec.writeValue(
+        value: api!.echoAsyncNullableObject(anObject: _PigeonFfiCodec.readValue(value: anObject)),
+        isObject: true) as? NSObject
     } catch let error as NiTestsError {
       wrappedError.code = error.code
       wrappedError.message = error.message

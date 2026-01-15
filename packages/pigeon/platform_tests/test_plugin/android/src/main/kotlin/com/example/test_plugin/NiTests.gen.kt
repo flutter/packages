@@ -816,6 +816,8 @@ abstract class NIHostIntegrationCoreApi {
   abstract suspend fun echoAsyncInt64List(aInt64List: LongArray): LongArray
   /** Returns the passed in Float64List asynchronously. */
   abstract suspend fun echoAsyncFloat64List(aFloat64List: DoubleArray): DoubleArray
+  /** Returns the passed in generic Object asynchronously. */
+  abstract suspend fun echoAsyncObject(anObject: Any): Any
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncList(list: List<Any?>): List<Any?>
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
@@ -842,8 +844,12 @@ abstract class NIHostIntegrationCoreApi {
   abstract suspend fun echoAsyncEnum(anEnum: NIAnEnum): NIAnEnum
   /** Returns the passed enum, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAnotherAsyncEnum(anotherEnum: NIAnotherEnum): NIAnotherEnum
+  /** Responds with an error from an async function returning a value. */
+  abstract suspend fun throwAsyncError(): Any?
   /** Responds with an error from an async void function. */
   abstract suspend fun throwAsyncErrorFromVoid()
+  /** Responds with a Flutter error from an async function returning a value. */
+  abstract suspend fun throwAsyncFlutterError(): Any?
   /** Returns the passed object, to test async serialization and deserialization. */
   abstract suspend fun echoAsyncNIAllTypes(everything: NIAllTypes): NIAllTypes
   /** Returns the passed object, to test serialization and deserialization. */
@@ -870,6 +876,8 @@ abstract class NIHostIntegrationCoreApi {
   abstract suspend fun echoAsyncNullableInt64List(aInt64List: LongArray?): LongArray?
   /** Returns the passed in Float64List asynchronously. */
   abstract suspend fun echoAsyncNullableFloat64List(aFloat64List: DoubleArray?): DoubleArray?
+  /** Returns the passed in generic Object asynchronously. */
+  abstract suspend fun echoAsyncNullableObject(anObject: Any?): Any?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   abstract suspend fun echoAsyncNullableList(list: List<Any?>?): List<Any?>?
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
@@ -1780,6 +1788,17 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
+  /** Returns the passed in generic Object asynchronously. */
+  override suspend fun echoAsyncObject(anObject: Any): Any {
+    api?.let {
+      try {
+        return api!!.echoAsyncObject(anObject)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
   /** Returns the passed list, to test asynchronous serialization and deserialization. */
   override suspend fun echoAsyncList(list: List<Any?>): List<Any?> {
     api?.let {
@@ -1896,11 +1915,33 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     }
     error("NIHostIntegrationCoreApi has not been set")
   }
+  /** Responds with an error from an async function returning a value. */
+  override suspend fun throwAsyncError(): Any? {
+    api?.let {
+      try {
+        return api!!.throwAsyncError()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
   /** Responds with an error from an async void function. */
   override suspend fun throwAsyncErrorFromVoid() {
     api?.let {
       try {
         return api!!.throwAsyncErrorFromVoid()
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Responds with a Flutter error from an async function returning a value. */
+  override suspend fun throwAsyncFlutterError(): Any? {
+    api?.let {
+      try {
+        return api!!.throwAsyncFlutterError()
       } catch (e: Exception) {
         throw e
       }
@@ -2026,6 +2067,17 @@ class NIHostIntegrationCoreApiRegistrar : NIHostIntegrationCoreApi() {
     api?.let {
       try {
         return api!!.echoAsyncNullableFloat64List(aFloat64List)
+      } catch (e: Exception) {
+        throw e
+      }
+    }
+    error("NIHostIntegrationCoreApi has not been set")
+  }
+  /** Returns the passed in generic Object asynchronously. */
+  override suspend fun echoAsyncNullableObject(anObject: Any?): Any? {
+    api?.let {
+      try {
+        return api!!.echoAsyncNullableObject(anObject)
       } catch (e: Exception) {
         throw e
       }
