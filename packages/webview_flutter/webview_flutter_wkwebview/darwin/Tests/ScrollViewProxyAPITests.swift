@@ -12,7 +12,7 @@ import XCTest
 
 class ScrollViewProxyAPITests: XCTestCase {
   #if os(iOS)
-    func testGetContentOffset() {
+    @MainActor func testGetContentOffset() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
@@ -22,7 +22,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       XCTAssertEqual(value, [instance.contentOffset.x, instance.contentOffset.y])
     }
 
-    func testScrollBy() {
+    @MainActor func testScrollBy() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
@@ -33,7 +33,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       XCTAssertEqual(instance.setContentOffsetArgs as? [Double], [2.0, 2.0])
     }
 
-    func testSetContentOffset() {
+    @MainActor func testSetContentOffset() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
@@ -45,7 +45,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       XCTAssertEqual(instance.setContentOffsetArgs as? [Double], [x, y])
     }
 
-    func testSetDelegate() {
+    @MainActor func testSetDelegate() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 
@@ -58,6 +58,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       XCTAssertEqual(instance.setDelegateArgs, [delegate])
     }
 
+    @MainActor
     func testSetBounces() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
@@ -71,6 +72,7 @@ class ScrollViewProxyAPITests: XCTestCase {
 
     #if compiler(>=6.0)
       @available(iOS 17.4, *)
+      @MainActor
       func testSetBouncesHorizontally() {
         let registrar = TestProxyApiRegistrar()
         let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
@@ -84,6 +86,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       }
 
       @available(iOS 17.4, *)
+      @MainActor
       func testSetBouncesVertically() {
         let registrar = TestProxyApiRegistrar()
         let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
@@ -97,6 +100,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       }
     #endif
 
+    @MainActor
     func testSetAlwaysBounceVertical() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
@@ -134,7 +138,7 @@ class ScrollViewProxyAPITests: XCTestCase {
       XCTAssertEqual(instance.showsVerticalScrollIndicator, value)
     }
 
-    func testSetShowsHorizontalScrollIndicator() {
+    @MainActor func testSetShowsHorizontalScrollIndicator() {
       let registrar = TestProxyApiRegistrar()
       let api = registrar.apiDelegate.pigeonApiUIScrollView(registrar)
 

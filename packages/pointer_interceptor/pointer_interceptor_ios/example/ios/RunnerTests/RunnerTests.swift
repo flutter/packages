@@ -7,7 +7,6 @@ import UIKit
 
 @testable import pointer_interceptor_ios
 
-@MainActor
 struct RunnerTests {
   @Test(arguments: [
     (false, UIColor.clear),
