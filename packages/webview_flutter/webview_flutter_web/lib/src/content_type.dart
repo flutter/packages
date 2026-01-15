@@ -13,12 +13,14 @@ class ContentType {
         .split(';')
         .map((String e) => e.trim().toLowerCase());
 
-    for (final String chunk in chunks) {
+    for (final chunk in chunks) {
       if (!chunk.contains('=')) {
         _mimeType = chunk;
       } else {
-        final List<String> bits =
-            chunk.split('=').map((String e) => e.trim()).toList();
+        final List<String> bits = chunk
+            .split('=')
+            .map((String e) => e.trim())
+            .toList();
         assert(bits.length == 2);
         switch (bits[0]) {
           case 'charset':

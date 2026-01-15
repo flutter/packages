@@ -7,13 +7,12 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    dartTestOut: 'test/test_api.g.dart',
     swiftOut:
         'darwin/shared_preferences_foundation/Sources/shared_preferences_foundation/messages.g.swift',
     copyrightHeader: 'pigeons/copyright_header.txt',
   ),
 )
-@HostApi(dartHostTestHandler: 'TestUserDefaultsApi')
+@HostApi()
 abstract class LegacyUserDefaultsApi {
   void remove(String key);
   void setBool(String key, bool value);
@@ -28,7 +27,7 @@ class SharedPreferencesPigeonOptions {
   String? suiteName;
 }
 
-@HostApi(dartHostTestHandler: 'TestSharedPreferencesAsyncApi')
+@HostApi()
 abstract class UserDefaultsApi {
   /// Adds property to shared preferences data set of type String.
   @SwiftFunction('set(key:value:options:)')

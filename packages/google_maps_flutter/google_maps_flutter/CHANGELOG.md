@@ -1,3 +1,17 @@
+## 2.14.1
+
+* Replaces internal use of deprecated methods.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Updates README to reflect currently supported OS versions for the latest
+  versions of the endorsed platform implementations.
+  * Applications built with older versions of Flutter will continue to
+    use compatible versions of the platform implementations.
+
+## 2.14.0
+
+* Adds a check that raises a `StateError`
+  when map controller is used after its widget has been disposed.
+
 ## 2.13.1
 
 * Fixes exception when dispose is called while asynchronous update from

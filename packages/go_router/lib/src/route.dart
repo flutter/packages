@@ -498,13 +498,22 @@ abstract class ShellRouteBase extends RouteBase {
     super.redirect,
     required super.routes,
     required super.parentNavigatorKey,
+    this.notifyRootObserver = true,
   }) : super._();
+
+  /// Whether navigation changes will notify the GoRouter's observers.
+  ///
+  /// When `true`, navigation changes within this shell route will notify
+  /// the GoRouter's observers.
+  ///
+  /// Defaults to `true`.
+  final bool notifyRootObserver;
 
   static void _debugCheckSubRouteParentNavigatorKeys(
     List<RouteBase> subRoutes,
     GlobalKey<NavigatorState> navigatorKey,
   ) {
-    for (final RouteBase route in subRoutes) {
+    for (final route in subRoutes) {
       assert(
         route.parentNavigatorKey == null ||
             route.parentNavigatorKey == navigatorKey,
@@ -577,14 +586,27 @@ class ShellRouteContext {
   final NavigatorBuilder navigatorBuilder;
 
   Widget _buildNavigatorForCurrentRoute(
+    BuildContext context,
     List<NavigatorObserver>? observers,
+    bool notifyRootObserver,
     String? restorationScopeId,
   ) {
+    final effectiveObservers = <NavigatorObserver>[...?observers];
+
+    if (notifyRootObserver) {
+      final List<NavigatorObserver>? rootObservers = GoRouter.maybeOf(
+        context,
+      )?.observers;
+      if (rootObservers != null) {
+        effectiveObservers.add(_MergedNavigatorObserver(rootObservers));
+      }
+    }
+
     return navigatorBuilder(
       navigatorKey,
       match,
       routeMatchList,
-      observers,
+      effectiveObservers,
       restorationScopeId,
     );
   }
@@ -691,6 +713,7 @@ class ShellRoute extends ShellRouteBase {
     super.redirect,
     this.builder,
     this.pageBuilder,
+    super.notifyRootObserver,
     this.observers,
     required super.routes,
     super.parentNavigatorKey,
@@ -732,7 +755,9 @@ class ShellRoute extends ShellRouteBase {
   ) {
     if (builder != null) {
       final Widget navigator = shellRouteContext._buildNavigatorForCurrentRoute(
+        context,
         observers,
+        notifyRootObserver,
         restorationScopeId,
       );
       return builder!(context, state, navigator);
@@ -748,7 +773,9 @@ class ShellRoute extends ShellRouteBase {
   ) {
     if (pageBuilder != null) {
       final Widget navigator = shellRouteContext._buildNavigatorForCurrentRoute(
+        context,
         observers,
+        notifyRootObserver,
         restorationScopeId,
       );
       return pageBuilder!(context, state, navigator);
@@ -870,6 +897,7 @@ class StatefulShellRoute extends ShellRouteBase {
     super.redirect,
     this.builder,
     this.pageBuilder,
+    super.notifyRootObserver,
     required this.navigatorContainerBuilder,
     super.parentNavigatorKey,
     this.restorationScopeId,
@@ -900,6 +928,7 @@ class StatefulShellRoute extends ShellRouteBase {
   /// for a complete runnable example using StatefulShellRoute.indexedStack.
   StatefulShellRoute.indexedStack({
     required List<StatefulShellBranch> branches,
+    bool notifyRootObserver = true,
     GoRouterRedirect? redirect,
     StatefulShellRouteBuilder? builder,
     GlobalKey<NavigatorState>? parentNavigatorKey,
@@ -911,6 +940,7 @@ class StatefulShellRoute extends ShellRouteBase {
          redirect: redirect,
          builder: builder,
          pageBuilder: pageBuilder,
+         notifyRootObserver: notifyRootObserver,
          parentNavigatorKey: parentNavigatorKey,
          restorationScopeId: restorationScopeId,
          navigatorContainerBuilder: _indexedStackContainerBuilder,
@@ -1044,7 +1074,7 @@ class StatefulShellRoute extends ShellRouteBase {
   static bool _debugValidateParentNavigatorKeys(
     List<StatefulShellBranch> branches,
   ) {
-    for (final StatefulShellBranch branch in branches) {
+    for (final branch in branches) {
       for (final RouteBase route in branch.routes) {
         if (route is GoRoute) {
           assert(
@@ -1244,8 +1274,7 @@ class StatefulNavigationShell extends StatefulWidget {
   // TODO(chunhtai): figure out a way to avoid putting navigation API in widget
   // class.
   void goBranch(int index, {bool initialLocation = false}) {
-    final StatefulShellRoute route =
-        shellRouteContext.route as StatefulShellRoute;
+    final route = shellRouteContext.route as StatefulShellRoute;
     final StatefulNavigationShellState? shellState =
         route._shellStateKey.currentState;
     if (shellState != null) {
@@ -1269,8 +1298,7 @@ class StatefulNavigationShell extends StatefulWidget {
   /// [StatefulShellBranch.initialLocation], if specified, or the location of the
   /// [StatefulShellBranch.defaultRoute].
   String _effectiveInitialBranchLocation(int index) {
-    final StatefulShellRoute route =
-        shellRouteContext.route as StatefulShellRoute;
+    final route = shellRouteContext.route as StatefulShellRoute;
     final StatefulShellBranch branch = route.branches[index];
     final String? initialLocation = branch.initialLocation;
     if (initialLocation != null) {
@@ -1279,7 +1307,7 @@ class StatefulNavigationShell extends StatefulWidget {
       /// Recursively traverses the routes of the provided StackedShellBranch to
       /// find the first GoRoute, from which a full path will be derived.
       final GoRoute route = branch.defaultRoute!;
-      final List<String> parameters = <String>[];
+      final parameters = <String>[];
       patternToRegExp(
         route.path,
         parameters,
@@ -1299,8 +1327,8 @@ class StatefulNavigationShell extends StatefulWidget {
 
   /// Gets the state for the nearest stateful shell route in the Widget tree.
   static StatefulNavigationShellState of(BuildContext context) {
-    final StatefulNavigationShellState? shellState =
-        context.findAncestorStateOfType<StatefulNavigationShellState>();
+    final StatefulNavigationShellState? shellState = context
+        .findAncestorStateOfType<StatefulNavigationShellState>();
     assert(shellState != null);
     return shellState!;
   }
@@ -1309,8 +1337,8 @@ class StatefulNavigationShell extends StatefulWidget {
   ///
   /// Returns null if no stateful shell route is found.
   static StatefulNavigationShellState? maybeOf(BuildContext context) {
-    final StatefulNavigationShellState? shellState =
-        context.findAncestorStateOfType<StatefulNavigationShellState>();
+    final StatefulNavigationShellState? shellState = context
+        .findAncestorStateOfType<StatefulNavigationShellState>();
     return shellState;
   }
 
@@ -1359,7 +1387,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     bool register = true,
   ]) {
     return _branchState.putIfAbsent(branch, () {
-      final _StatefulShellBranchState branchState = _StatefulShellBranchState(
+      final branchState = _StatefulShellBranchState(
         location: _RestorableRouteMatchList(_router.configuration),
       );
       if (register) {
@@ -1384,8 +1412,8 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   List<RouteMatchBase> _scopeMatches(List<RouteMatchBase> matches) {
-    final List<RouteMatchBase> result = <RouteMatchBase>[];
-    for (final RouteMatchBase match in matches) {
+    final result = <RouteMatchBase>[];
+    for (final match in matches) {
       if (match is ShellRouteMatch) {
         if (match.route == route) {
           result.add(match);
@@ -1415,14 +1443,15 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
     );
     final RouteMatchList previousBranchLocation = branchState.location.value;
     branchState.location.value = currentBranchLocation;
-    final bool hasExistingNavigator = branchState.navigator != null;
+    final hasExistingNavigator = branchState.navigator != null;
 
     /// Only update the Navigator of the route match list has changed
-    final bool locationChanged =
-        previousBranchLocation != currentBranchLocation;
+    final locationChanged = previousBranchLocation != currentBranchLocation;
     if (locationChanged || !hasExistingNavigator) {
       branchState.navigator = shellRouteContext._buildNavigatorForCurrentRoute(
+        context,
         branch.observers,
+        route.notifyRootObserver,
         branch.restorationScopeId,
       );
     }
@@ -1431,7 +1460,7 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   }
 
   void _preloadBranches() {
-    for (int i = 0; i < route.branches.length; i++) {
+    for (var i = 0; i < route.branches.length; i++) {
       final StatefulShellBranch branch = route.branches[i];
       if (i != currentIndex && branch.preload && !_isBranchLoaded(branch)) {
         // Find the match for the current StatefulShellRoute in matchList
@@ -1492,8 +1521,9 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
   /// the branch (see [StatefulShellBranch.initialLocation]).
   void goBranch(int index, {bool initialLocation = false}) {
     assert(index >= 0 && index < route.branches.length);
-    final RouteMatchList? matchList =
-        initialLocation ? null : _matchListForBranch(index);
+    final RouteMatchList? matchList = initialLocation
+        ? null
+        : _matchListForBranch(index);
     if (matchList != null && matchList.isNotEmpty) {
       _router.restore(matchList);
     } else {
@@ -1528,18 +1558,16 @@ class StatefulNavigationShellState extends State<StatefulNavigationShell>
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> children =
-        route.branches
-            .map(
-              (StatefulShellBranch branch) => _BranchNavigatorProxy(
-                key: ObjectKey(branch),
-                branch: branch,
-                navigatorForBranch:
-                    (StatefulShellBranch branch) =>
-                        _branchState[branch]?.navigator,
-              ),
-            )
-            .toList();
+    final List<Widget> children = route.branches
+        .map(
+          (StatefulShellBranch branch) => _BranchNavigatorProxy(
+            key: ObjectKey(branch),
+            branch: branch,
+            navigatorForBranch: (StatefulShellBranch branch) =>
+                _branchState[branch]?.navigator,
+          ),
+        )
+        .toList();
 
     return widget.containerBuilder(context, widget, children);
   }
@@ -1649,16 +1677,12 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> stackItems =
-        children
-            .mapIndexed(
-              (int index, Widget child) => _buildRouteBranchContainer(
-                context,
-                currentIndex == index,
-                child,
-              ),
-            )
-            .toList();
+    final List<Widget> stackItems = children
+        .mapIndexed(
+          (int index, Widget child) =>
+              _buildRouteBranchContainer(context, currentIndex == index, child),
+        )
+        .toList();
 
     return IndexedStack(index: currentIndex, children: stackItems);
   }
@@ -1672,5 +1696,69 @@ class _IndexedStackedRouteBranchContainer extends StatelessWidget {
       offstage: !isActive,
       child: TickerMode(enabled: isActive, child: child),
     );
+  }
+}
+
+/// A wrapper that merges multiple [NavigatorObserver]s into a single observer.
+///
+/// This is necessary because a [NavigatorObserver] can only be attached to one
+/// [NavigatorState] at a time.
+class _MergedNavigatorObserver extends NavigatorObserver {
+  /// Default constructor for the merged navigator observer.
+  _MergedNavigatorObserver(this.observers);
+
+  /// The observers to be merged.
+  final List<NavigatorObserver> observers;
+
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didPush(route, previousRoute);
+    }
+  }
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didPop(route, previousRoute);
+    }
+  }
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didRemove(route, previousRoute);
+    }
+  }
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didReplace(newRoute: newRoute, oldRoute: oldRoute);
+    }
+  }
+
+  @override
+  void didChangeTop(Route<dynamic> topRoute, Route<dynamic>? previousTopRoute) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didChangeTop(topRoute, previousTopRoute);
+    }
+  }
+
+  @override
+  void didStartUserGesture(
+    Route<dynamic> route,
+    Route<dynamic>? previousRoute,
+  ) {
+    for (final NavigatorObserver observer in observers) {
+      observer.didStartUserGesture(route, previousRoute);
+    }
+  }
+
+  @override
+  void didStopUserGesture() {
+    for (final NavigatorObserver observer in observers) {
+      observer.didStopUserGesture();
+    }
   }
 }

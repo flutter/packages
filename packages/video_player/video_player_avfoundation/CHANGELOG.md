@@ -1,6 +1,31 @@
-## NEXT
+## 2.8.10
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Improves compatibility with `UIScene`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.8.9
+
+* Resolve `tracksWithMediaType:` deprecations.
+* Use `loadTracksWithMediaType:completionHandler:` for iOS 15.0+/macOS 12.0+.
+
+## 2.8.8
+
+* Refactors Dart internals for maintainability.
+
+## 2.8.7
+
+* Updates to Pigeon 26.
+
+## 2.8.6
+
+* Fixes a bug where the video player fails to initialize when `AVFoundation` reports a duration of zero.
+* Fixes a bug in the example app that some widgets stop updating after GlobalKey reparenting.
+* Updates the `VideoProgressIndicator` widget in the example app to handle zero-duration videos.
+
+## 2.8.5
+
+* Updates minimum supported version to iOS 13 and macOS 10.15.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 2.8.4
 

@@ -13,7 +13,7 @@ class OpenTextPage extends StatelessWidget {
   const OpenTextPage({super.key});
 
   Future<void> _openTextFile(BuildContext context) async {
-    const XTypeGroup typeGroup = XTypeGroup(
+    const typeGroup = XTypeGroup(
       label: 'text',
       extensions: <String>['txt', 'json'],
       uniformTypeIdentifiers: <String>['public.text'],
@@ -21,8 +21,9 @@ class OpenTextPage extends StatelessWidget {
     // This demonstrates using an initial directory for the prompt, which should
     // only be done in cases where the application can likely predict where the
     // file would be. In most cases, this parameter should not be provided.
-    final String? initialDirectory =
-        kIsWeb ? null : (await getApplicationDocumentsDirectory()).path;
+    final String? initialDirectory = kIsWeb
+        ? null
+        : (await getApplicationDocumentsDirectory()).path;
     final XFile? file = await openFile(
       acceptedTypeGroups: <XTypeGroup>[typeGroup],
       initialDirectory: initialDirectory,

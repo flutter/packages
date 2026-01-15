@@ -20,7 +20,7 @@ A Flutter plugin for making the underlying platform (Android or iOS) launch a UR
       'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
   s.dependency 'Flutter'
-  s.platform = :ios, '12.0'
+  s.platform = :ios, '13.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
   s.resource_bundles = {'url_launcher_ios_privacy' => ['url_launcher_ios/Sources/url_launcher_ios/Resources/PrivacyInfo.xcprivacy']}
 end

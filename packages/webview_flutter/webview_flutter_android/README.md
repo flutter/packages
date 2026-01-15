@@ -106,6 +106,29 @@ androidController.setCustomWidgetCallbacks(
 );
 ```
 
+## Geolocation
+
+By default, WebView does not allow geolocation requests. To allow them, call
+`setGeolocationPermissionsPromptCallbacks` on the `AndroidWebViewController` to
+configure a prompt handler. For example, to unconditionally allow all requests:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (geolocation_example)"?>
+```dart
+await androidController.setGeolocationPermissionsPromptCallbacks(
+  onShowPrompt: (GeolocationPermissionsRequestParams request) async {
+    return const GeolocationPermissionsResponse(allow: true, retain: true);
+  },
+);
+```
+
+**Important:** Geolocation requests should only be allowed unconditionally if
+the web view content is restricted to domains you control or trust. If you are
+showing untrusted content, the `onShowPrompt` implementation should request
+permission from the user before responding.
+
+Your application must have geolocation permissions granted in order for the
+WebView to have access to geolocation.
+
 ## Contributing
 
 For information on contributing to this plugin, see [`CONTRIBUTING.md`](CONTRIBUTING.md).

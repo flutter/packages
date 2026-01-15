@@ -137,13 +137,12 @@ class ClusterManagersController extends GeometryController {
       markerClustererCluster.bounds!,
     );
 
-    final List<MarkerId> markerIds =
-        markerClustererCluster.markers
-            .map<MarkerId>(
-              (gmaps.Marker marker) =>
-                  MarkerId((marker.get('markerId')! as JSString).toDart),
-            )
-            .toList();
+    final List<MarkerId> markerIds = markerClustererCluster.markers
+        .map<MarkerId>(
+          (gmaps.Marker marker) =>
+              MarkerId((marker.get('markerId')! as JSString).toDart),
+        )
+        .toList();
     return Cluster(
       clusterManagerId,
       markerIds,

@@ -5,7 +5,13 @@ framework module google_maps_flutter_ios {
   module * { export * }
 
   explicit module Test {
+    header "FGMGroundOverlayController_Test.h"
+    header "FLTGoogleMapHeatmapController_Test.h"
+    header "FLTGoogleMapTileOverlayController_Test.h"
+    header "GoogleMapCircleController_Test.h"
     header "GoogleMapController_Test.h"
     header "GoogleMapMarkerController_Test.h"
+    header "GoogleMapPolygonController_Test.h"
+    header "GoogleMapPolylineController_Test.h"
   }
 }

@@ -47,4 +47,12 @@ class AdsManagerProxyAPIDelegate: PigeonApiDelegateIMAAdsManager {
   func destroy(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws {
     pigeonInstance.destroy()
   }
+
+  func adCuePoints(pigeonApi: PigeonApiIMAAdsManager, pigeonInstance: IMAAdsManager) throws
+    -> [Double]
+  {
+    return pigeonInstance.adCuePoints.map { cuePoint -> Double in
+      return (cuePoint as! NSNumber).doubleValue
+    }
+  }
 }

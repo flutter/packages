@@ -5,12 +5,14 @@
 package io.flutter.plugins.videoplayer;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.media3.common.C;
 import androidx.media3.common.PlaybackException;
 import androidx.media3.common.Player;
+import androidx.media3.common.Tracks;
 import androidx.media3.exoplayer.ExoPlayer;
 
 public abstract class ExoPlayerEventListener implements Player.Listener {
-  private boolean isBuffering = false;
   private boolean isInitialized = false;
   protected final ExoPlayer exoPlayer;
   protected final VideoPlayerCallbacks events;
@@ -47,47 +49,34 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
     this.events = events;
   }
 
-  private void setBuffering(boolean buffering) {
-    if (isBuffering == buffering) {
-      return;
-    }
-    isBuffering = buffering;
-    if (buffering) {
-      events.onBufferingStart();
-    } else {
-      events.onBufferingEnd();
-    }
-  }
-
   protected abstract void sendInitialized();
 
   @Override
   public void onPlaybackStateChanged(final int playbackState) {
+    PlatformPlaybackState platformState = PlatformPlaybackState.UNKNOWN;
     switch (playbackState) {
       case Player.STATE_BUFFERING:
-        setBuffering(true);
-        events.onBufferingUpdate(exoPlayer.getBufferedPosition());
+        platformState = PlatformPlaybackState.BUFFERING;
         break;
       case Player.STATE_READY:
+        platformState = PlatformPlaybackState.READY;
         if (!isInitialized) {
           isInitialized = true;
           sendInitialized();
         }
         break;
       case Player.STATE_ENDED:
-        events.onCompleted();
+        platformState = PlatformPlaybackState.ENDED;
         break;
       case Player.STATE_IDLE:
+        platformState = PlatformPlaybackState.IDLE;
         break;
     }
-    if (playbackState != Player.STATE_BUFFERING) {
-      setBuffering(false);
-    }
+    events.onPlaybackStateChanged(platformState);
   }
 
   @Override
   public void onPlayerError(@NonNull final PlaybackException error) {
-    setBuffering(false);
     if (error.errorCode == PlaybackException.ERROR_CODE_BEHIND_LIVE_WINDOW) {
       // See
       // https://exoplayer.dev/live-streaming.html#behindlivewindowexception-and-error_code_behind_live_window
@@ -101,5 +90,35 @@ public abstract class ExoPlayerEventListener implements Player.Listener {
   @Override
   public void onIsPlayingChanged(boolean isPlaying) {
     events.onIsPlayingStateUpdate(isPlaying);
+  }
+
+  @Override
+  public void onTracksChanged(@NonNull Tracks tracks) {
+    // Find the currently selected audio track and notify
+    String selectedTrackId = findSelectedAudioTrackId(tracks);
+    events.onAudioTrackChanged(selectedTrackId);
+  }
+
+  /**
+   * Finds the ID of the currently selected audio track.
+   *
+   * @param tracks The current tracks
+   * @return The track ID in format "groupIndex_trackIndex", or null if no audio track is selected
+   */
+  @Nullable
+  private String findSelectedAudioTrackId(@NonNull Tracks tracks) {
+    int groupIndex = 0;
+    for (Tracks.Group group : tracks.getGroups()) {
+      if (group.getType() == C.TRACK_TYPE_AUDIO && group.isSelected()) {
+        // Find the selected track within this group
+        for (int i = 0; i < group.length; i++) {
+          if (group.isTrackSelected(i)) {
+            return groupIndex + "_" + i;
+          }
+        }
+      }
+      groupIndex++;
+    }
+    return null;
   }
 }

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		40A6CE2A2D499A7800DE3915 /* OCMock in Frameworks */ = {isa = PBXBuildFile; productRef = 40A6CE292D499A7800DE3915 /* OCMock */; };
 		5C6F5A6E1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 5C6F5A6D1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.m */; };
 		78A318202AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage in Frameworks */ = {isa = PBXBuildFile; productRef = 78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */; };
 		78A36DA12AF5761E00CBFD43 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7A303C2D1E89D76400B1F19E /* GoogleService-Info.plist */; };
@@ -19,7 +18,7 @@
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		C2FB9CBA01DB0A2DE5F31E12 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0263E28FA425D1CE928BDE15 /* libPods-Runner.a */; };
 		C56D3B06A42F3B35C1F47A43 /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18AD6475292B9C45B529DDC9 /* libPods-RunnerTests.a */; };
-		F76AC1A52666D0540040C8BC /* GoogleSignInTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F76AC1A42666D0540040C8BC /* GoogleSignInTests.m */; };
+		F76AC1A52666D0540040C8BC /* GoogleSignInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76AC1A42666D0540040C8BC /* GoogleSignInTests.swift */; };
 		F76AC1B32666D0610040C8BC /* GoogleSignInUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F76AC1B22666D0610040C8BC /* GoogleSignInUITests.m */; };
 /* End PBXBuildFile section */
 
@@ -61,6 +60,7 @@
 		5A76713E622F06379AEDEBFA /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		5C6F5A6C1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		5C6F5A6D1EC3B4CB008D64B5 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = FlutterGeneratedPluginSwiftPackage; path = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage; sourceTree = "<group>"; };
 		7A303C2D1E89D76400B1F19E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../darwin/Tests/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		7ACDFB0D1E8944C400BE2D00 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
@@ -76,7 +76,7 @@
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F582639B44581540871D9BB0 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		F76AC1A22666D0540040C8BC /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F76AC1A42666D0540040C8BC /* GoogleSignInTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = GoogleSignInTests.m; path = ../../darwin/Tests/GoogleSignInTests.m; sourceTree = SOURCE_ROOT; };
+		F76AC1A42666D0540040C8BC /* GoogleSignInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GoogleSignInTests.swift; path = ../../darwin/Tests/GoogleSignInTests.swift; sourceTree = SOURCE_ROOT; };
 		F76AC1A62666D0540040C8BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F76AC1B02666D0610040C8BC /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F76AC1B22666D0610040C8BC /* GoogleSignInUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoogleSignInUITests.m; sourceTree = "<group>"; };
@@ -97,7 +97,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				40A6CE2A2D499A7800DE3915 /* OCMock in Frameworks */,
 				C56D3B06A42F3B35C1F47A43 /* libPods-RunnerTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -126,6 +125,7 @@
 		9740EEB11CF90186004384FC /* Flutter */ = {
 			isa = PBXGroup;
 			children = (
+				78E0A7A72DC9AD7400C4905E /* FlutterGeneratedPluginSwiftPackage */,
 				7ACDFB0D1E8944C400BE2D00 /* AppFrameworkInfo.plist */,
 				9740EEB21CF90195004384FC /* Debug.xcconfig */,
 				7AFA3C8E1D35360C0083082E /* Release.xcconfig */,
@@ -194,7 +194,7 @@
 			isa = PBXGroup;
 			children = (
 				7A303C2D1E89D76400B1F19E /* GoogleService-Info.plist */,
-				F76AC1A42666D0540040C8BC /* GoogleSignInTests.m */,
+				F76AC1A42666D0540040C8BC /* GoogleSignInTests.swift */,
 				F76AC1A62666D0540040C8BC /* Info.plist */,
 			);
 			path = RunnerTests;
@@ -307,8 +307,7 @@
 			);
 			mainGroup = 97C146E51CF9000F007C117D;
 			packageReferences = (
-				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */,
-				40A6CE282D499A7800DE3915 /* XCRemoteSwiftPackageReference "ocmock" */,
+				781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */,
 			);
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -439,7 +438,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F76AC1A52666D0540040C8BC /* GoogleSignInTests.m in Sources */,
+				F76AC1A52666D0540040C8BC /* GoogleSignInTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -534,7 +533,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -584,7 +583,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -654,6 +653,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
 			name = Debug;
@@ -672,6 +672,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
 			name = Release;
@@ -750,29 +751,13 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage" */ = {
+		781AD8BC2B33823900A9FFBB /* XCLocalSwiftPackageReference "FlutterGeneratedPluginSwiftPackage" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Flutter/ephemeral/Packages/FlutterGeneratedPluginSwiftPackage;
 		};
 /* End XCLocalSwiftPackageReference section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		40A6CE282D499A7800DE3915 /* XCRemoteSwiftPackageReference "ocmock" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/erikdoe/ocmock";
-			requirement = {
-				kind = revision;
-				revision = fe1661a3efed11831a6452f4b1a0c5e6ddc08c3d;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		40A6CE292D499A7800DE3915 /* OCMock */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 40A6CE282D499A7800DE3915 /* XCRemoteSwiftPackageReference "ocmock" */;
-			productName = OCMock;
-		};
 		78A3181F2AECB46A00862997 /* FlutterGeneratedPluginSwiftPackage */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = FlutterGeneratedPluginSwiftPackage;

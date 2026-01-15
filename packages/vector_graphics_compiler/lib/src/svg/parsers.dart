@@ -26,9 +26,9 @@ const Map<String, _MatrixParser> _matrixParsers = <String, _MatrixParser>{
 };
 
 List<double> _parseTransformParams(String params) {
-  final List<double> result = <double>[];
-  String current = '';
-  for (int i = 0; i < params.length; i += 1) {
+  final result = <double>[];
+  var current = '';
+  for (var i = 0; i < params.length; i += 1) {
     final String char = params[i];
     final bool isSeparator = char == ' ' || char == '-' || char == ',';
     final bool isExponent = i > 0 && params[i - 1].toLowerCase() == 'e';
@@ -66,10 +66,12 @@ AffineMatrix? parseTransform(String? transform) {
   if (!_transformValidator.hasMatch(transform)) {
     throw StateError('illegal or unsupported transform: $transform');
   }
-  final Iterable<Match> matches =
-      _transformCommand.allMatches(transform).toList().reversed;
+  final Iterable<Match> matches = _transformCommand
+      .allMatches(transform)
+      .toList()
+      .reversed;
   AffineMatrix result = AffineMatrix.identity;
-  for (final Match m in matches) {
+  for (final m in matches) {
     final String command = m.group(1)!.trim();
     final List<double> params = _parseTransformParams(m.group(2)!.trim());
 

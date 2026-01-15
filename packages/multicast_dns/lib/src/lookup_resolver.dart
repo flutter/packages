@@ -40,9 +40,9 @@ class LookupResolver {
     String name,
     Duration timeout,
   ) {
-    final StreamController<T> controller = StreamController<T>();
-    final PendingRequest request = PendingRequest(type, name, controller);
-    final Timer timer = Timer(timeout, () {
+    final controller = StreamController<T>();
+    final request = PendingRequest(type, name, controller);
+    final timer = Timer(timeout, () {
       request.unlink();
       controller.close();
     });
@@ -54,7 +54,7 @@ class LookupResolver {
   /// Parses [ResoureRecord]s received and delivers them to the appropriate
   /// listener(s) added via [addPendingRequest].
   void handleResponse(List<ResourceRecord> response) {
-    for (final ResourceRecord r in response) {
+    for (final r in response) {
       final int type = r.resourceRecordType;
       String name = r.name.toLowerCase();
       if (name.endsWith('.')) {

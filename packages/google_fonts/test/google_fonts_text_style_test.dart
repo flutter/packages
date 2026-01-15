@@ -46,10 +46,9 @@ final GoogleFontsFile _fakeResponseFile = GoogleFontsFile(
 final Map<GoogleFontsVariant, GoogleFontsFile> fakeFonts =
     <GoogleFontsVariant, GoogleFontsFile>{
       const GoogleFontsVariant(
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.normal,
-          ):
-          _fakeResponseFile,
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): _fakeResponseFile,
     };
 
 void main() {

@@ -135,8 +135,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<ClientAuthorizationTokenData?> clientAuthorizationTokensForScopes(
     ClientAuthorizationTokensForScopesParameters params,
   ) async {
-    final String? accessToken =
-        (await _getAuthorizationTokens(params.request)).accessToken;
+    final String? accessToken = (await _getAuthorizationTokens(
+      params.request,
+    )).accessToken;
     return accessToken == null
         ? null
         : ClientAuthorizationTokenData(accessToken: accessToken);
@@ -146,8 +147,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
   Future<ServerAuthorizationTokenData?> serverAuthorizationTokensForScopes(
     ServerAuthorizationTokensForScopesParameters params,
   ) async {
-    final String? serverAuthCode =
-        (await _getAuthorizationTokens(params.request)).serverAuthCode;
+    final String? serverAuthCode = (await _getAuthorizationTokens(
+      params.request,
+    )).serverAuthCode;
     return serverAuthCode == null
         ? null
         : ServerAuthorizationTokenData(serverAuthCode: serverAuthCode);
@@ -190,10 +192,9 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     }
 
     final bool useExistingAuthorization = !request.promptIfUnauthorized;
-    SignInResult result =
-        useExistingAuthorization
-            ? await _api.getRefreshedAuthorizationTokens(userId)
-            : await _addScopes(request.scopes, userId);
+    SignInResult result = useExistingAuthorization
+        ? await _api.getRefreshedAuthorizationTokens(userId)
+        : await _addScopes(request.scopes, userId);
     if (!useExistingAuthorization &&
         result.error?.type == GoogleSignInErrorCode.scopesAlreadyGranted) {
       // The Google Sign In SDK returns an error when requesting scopes that are
@@ -216,11 +217,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
       // scopes may not report them with the same string as the request.
       // For example, requesting 'email' can instead result in the grant
       // 'https://www.googleapis.com/auth/userinfo.email'.
-      const Set<String> openIdConnectScopes = <String>{
-        'email',
-        'openid',
-        'profile',
-      };
+      const openIdConnectScopes = <String>{'email', 'openid', 'profile'};
       if (success != null) {
         if (request.scopes.any(
           (String scope) =>
@@ -275,7 +272,7 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     SignInSuccess result,
   ) {
     final UserData userData = result.user;
-    final GoogleSignInUserData user = GoogleSignInUserData(
+    final user = GoogleSignInUserData(
       email: userData.email,
       id: userData.userId,
       displayName: userData.displayName,
@@ -292,8 +289,8 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
     // Check for a relevant cached auth code to add if needed.
     final String? cachedAuthCode =
         result != null && result.user.userId == _cachedServerAuthCodeUserId
-            ? _cachedServerAuthCode
-            : null;
+        ? _cachedServerAuthCode
+        : null;
 
     return (
       accessToken: result?.accessToken,
@@ -315,14 +312,12 @@ class GoogleSignInIOS extends GoogleSignInPlatform {
         GoogleSignInExceptionCode.userMismatch,
       // These should never be mapped to a GoogleSignInException; the caller
       // should handle them.
-      GoogleSignInErrorCode.noAuthInKeychain =>
-        throw StateError(
-          '_exceptionCodeForErrorPlatformErrorCode called with no auth.',
-        ),
-      GoogleSignInErrorCode.scopesAlreadyGranted =>
-        throw StateError(
-          '_exceptionCodeForErrorPlatformErrorCode called with scopes already granted.',
-        ),
+      GoogleSignInErrorCode.noAuthInKeychain => throw StateError(
+        '_exceptionCodeForErrorPlatformErrorCode called with no auth.',
+      ),
+      GoogleSignInErrorCode.scopesAlreadyGranted => throw StateError(
+        '_exceptionCodeForErrorPlatformErrorCode called with scopes already granted.',
+      ),
     };
   }
 }

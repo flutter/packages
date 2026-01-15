@@ -23,6 +23,7 @@ import 'package:mockito/src/dummies.dart' as _i3;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
@@ -366,6 +367,15 @@ class MockAdEventListener extends _i1.Mock implements _i2.AdEventListener {
 /// See the documentation for Mockito's code generation for more information.
 class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
   @override
+  List<double> get adCuePoints =>
+      (super.noSuchMethod(
+            Invocation.getter(#adCuePoints),
+            returnValue: <double>[],
+            returnValueForMissingStub: <double>[],
+          )
+          as List<double>);
+
+  @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(
             Invocation.getter(#pigeon_instanceManager),
@@ -406,17 +416,6 @@ class MockAdsManager extends _i1.Mock implements _i2.AdsManager {
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
-
-  @override
-  _i4.Future<List<double>> getAdCuePoints() =>
-      (super.noSuchMethod(
-            Invocation.method(#getAdCuePoints, []),
-            returnValue: _i4.Future<List<double>>.value(<double>[]),
-            returnValueForMissingStub: _i4.Future<List<double>>.value(
-              <double>[],
-            ),
-          )
-          as _i4.Future<List<double>>);
 
   @override
   _i4.Future<void> resume() =>

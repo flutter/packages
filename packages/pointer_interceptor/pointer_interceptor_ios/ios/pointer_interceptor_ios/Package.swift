@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "pointer_interceptor_ios",
   platforms: [
-    .iOS("12.0")
+    .iOS("13.0")
   ],
   products: [
     .library(name: "pointer-interceptor-ios", targets: ["pointer_interceptor_ios"])

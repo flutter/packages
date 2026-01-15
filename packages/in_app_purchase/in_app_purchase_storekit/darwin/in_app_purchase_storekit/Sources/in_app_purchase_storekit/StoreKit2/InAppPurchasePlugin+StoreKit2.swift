@@ -89,32 +89,14 @@ extension InAppPurchasePlugin: InAppPurchase2API {
 
         switch result {
         case .success(let verification):
-          switch verification {
-          case .verified(let transaction):
-            self.sendTransactionUpdate(
-              transaction: transaction, receipt: verification.jwsRepresentation)
-            completion(.success(result.convertToPigeon()))
-          case .unverified(_, let error):
-            completion(.failure(error))
-          }
-        case .pending:
-          completion(
-            .failure(
-              PigeonError(
-                code: "storekit2_purchase_pending",
-                message:
-                  "This transaction is still pending and but may complete in the future. If it completes, it will be delivered via `purchaseStream`",
-                details: "Product ID : \(id)")))
-        case .userCancelled:
-          completion(
-            .failure(
-              PigeonError(
-                code: "storekit2_purchase_cancelled",
-                message: "This transaction has been cancelled by the user.",
-                details: "Product ID : \(id)")))
+          sendTransactionUpdate(
+            transaction: verification.unsafePayloadValue, receipt: verification.jwsRepresentation)
+        case .pending, .userCancelled:
+          break
         @unknown default:
           fatalError("An unknown StoreKit PurchaseResult has been encountered.")
         }
+        completion(.success(result.convertToPigeon()))
       } catch {
         completion(.failure(error))
       }
@@ -245,6 +227,28 @@ extension InAppPurchasePlugin: InAppPurchase2API {
         }
         completion(.success(transactionsMsgs))
       }
+    }
+  }
+
+  /// Wrapper method around StoreKit2's Transaction.unfinished
+  /// https://developer.apple.com/documentation/storekit/transaction/unfinished
+  func unfinishedTransactions(
+    completion: @escaping (Result<[SK2TransactionMessage], Error>) -> Void
+  ) {
+    Task {
+      @MainActor in
+      var transactionsMsgs: [SK2TransactionMessage] = []
+      for await verificationResult in Transaction.unfinished {
+        switch verificationResult {
+        case .verified(let transaction):
+          transactionsMsgs.append(
+            transaction.convertToPigeon(receipt: verificationResult.jwsRepresentation)
+          )
+        case .unverified:
+          break
+        }
+      }
+      completion(.success(transactionsMsgs))
     }
   }
 

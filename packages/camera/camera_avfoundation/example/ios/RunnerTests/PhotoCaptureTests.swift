@@ -174,7 +174,7 @@ final class PhotoCaptureTests: XCTestCase {
       key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
     let configuration = CameraTestUtils.createTestCameraConfiguration()
     configuration.captureSessionQueue = captureSessionQueue
-    configuration.captureDeviceFactory = { _ in captureDeviceMock }
+    configuration.videoCaptureDeviceFactory = { _ in captureDeviceMock }
     let cam = CameraTestUtils.createTestCamera(configuration)
 
     let filePath = "test"

@@ -135,11 +135,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     CameraUpdate cameraUpdate, {
     required int mapId,
   }) async {
-    mapInstances[mapId]
-        ?.animateCameraConfiguration = CameraUpdateWithConfiguration(
-      cameraUpdate: cameraUpdate,
-      configuration: null,
-    );
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+          cameraUpdate: cameraUpdate,
+          configuration: null,
+        );
     await _fakeDelay();
   }
 
@@ -149,11 +149,11 @@ class FakeGoogleMapsFlutterPlatform extends GoogleMapsFlutterPlatform {
     CameraUpdateAnimationConfiguration configuration, {
     required int mapId,
   }) async {
-    mapInstances[mapId]
-        ?.animateCameraConfiguration = CameraUpdateWithConfiguration(
-      cameraUpdate: cameraUpdate,
-      configuration: configuration,
-    );
+    mapInstances[mapId]?.animateCameraConfiguration =
+        CameraUpdateWithConfiguration(
+          cameraUpdate: cameraUpdate,
+          configuration: configuration,
+        );
     await _fakeDelay();
   }
 

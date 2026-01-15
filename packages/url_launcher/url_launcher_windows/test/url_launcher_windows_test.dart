@@ -100,7 +100,7 @@ void main() {
 
   group('supportsMode', () {
     test('returns true for platformDefault', () async {
-      final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+      final launcher = UrlLauncherWindows(api: api);
       expect(
         await launcher.supportsMode(PreferredLaunchMode.platformDefault),
         true,
@@ -108,7 +108,7 @@ void main() {
     });
 
     test('returns true for external application', () async {
-      final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+      final launcher = UrlLauncherWindows(api: api);
       expect(
         await launcher.supportsMode(PreferredLaunchMode.externalApplication),
         true,
@@ -116,7 +116,7 @@ void main() {
     });
 
     test('returns false for other modes', () async {
-      final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+      final launcher = UrlLauncherWindows(api: api);
       expect(
         await launcher.supportsMode(
           PreferredLaunchMode.externalNonBrowserApplication,
@@ -135,7 +135,7 @@ void main() {
   });
 
   test('supportsCloseForMode returns false', () async {
-    final UrlLauncherWindows launcher = UrlLauncherWindows(api: api);
+    final launcher = UrlLauncherWindows(api: api);
     expect(
       await launcher.supportsCloseForMode(PreferredLaunchMode.platformDefault),
       false,
@@ -176,4 +176,12 @@ class _FakeUrlLauncherApi implements UrlLauncherApi {
     }
     return canLaunch;
   }
+
+  @override
+  // ignore: non_constant_identifier_names
+  BinaryMessenger? get pigeonVar_binaryMessenger => null;
+
+  @override
+  // ignore: non_constant_identifier_names
+  String get pigeonVar_messageChannelSuffix => '';
 }

@@ -27,10 +27,9 @@ class TestAppState extends State<TestApp> {
           onPressed: () {},
           child: PointerInterceptorIOS().buildWidget(
             child: TextButton(
-              onPressed:
-                  () => setState(() {
-                    _buttonText = 'Clicked';
-                  }),
+              onPressed: () => setState(() {
+                _buttonText = 'Clicked';
+              }),
               child: Text(_buttonText),
             ),
           ),

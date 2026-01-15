@@ -50,7 +50,7 @@ void main() {
 
   testWidgets('testCompassToggle', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -90,7 +90,7 @@ void main() {
 
   testWidgets('testMapToolbar returns false', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -117,11 +117,10 @@ void main() {
 
   testWidgets('updateMinMaxZoomLevels', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
-    const MinMaxZoomPreference initialZoomLevel = MinMaxZoomPreference(4, 8);
-    const MinMaxZoomPreference finalZoomLevel = MinMaxZoomPreference(6, 10);
+    const initialZoomLevel = MinMaxZoomPreference(4, 8);
+    const finalZoomLevel = MinMaxZoomPreference(6, 10);
 
     await tester.pumpWidget(
       Directionality(
@@ -167,7 +166,7 @@ void main() {
 
   testWidgets('testZoomGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -210,7 +209,7 @@ void main() {
 
   testWidgets('testZoomControlsEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -238,7 +237,7 @@ void main() {
 
   testWidgets('testRotateGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -283,7 +282,7 @@ void main() {
 
   testWidgets('testTiltGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -326,7 +325,7 @@ void main() {
 
   testWidgets('testScrollGesturesEnabled', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -374,8 +373,7 @@ void main() {
     (WidgetTester tester) async {
       await tester.binding.setSurfaceSize(const Size(800, 600));
 
-      final Completer<ExampleGoogleMapController> mapControllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final mapControllerCompleter = Completer<ExampleGoogleMapController>();
       final Key key = GlobalKey();
       await tester.pumpWidget(
         Directionality(
@@ -415,13 +413,12 @@ void main() {
     'testGetVisibleRegion',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final LatLngBounds zeroLatLngBounds = LatLngBounds(
+      final zeroLatLngBounds = LatLngBounds(
         southwest: const LatLng(0, 0),
         northeast: const LatLng(0, 0),
       );
 
-      final Completer<ExampleGoogleMapController> mapControllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final mapControllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -440,8 +437,8 @@ void main() {
       final ExampleGoogleMapController mapController =
           await mapControllerCompleter.future;
 
-      final LatLngBounds firstVisibleRegion =
-          await mapController.getVisibleRegion();
+      final LatLngBounds firstVisibleRegion = await mapController
+          .getVisibleRegion();
 
       expect(firstVisibleRegion, isNotNull);
       expect(firstVisibleRegion.southwest, isNotNull);
@@ -451,15 +448,15 @@ void main() {
 
       // Making a new `LatLngBounds` about (10, 10) distance south west to the `firstVisibleRegion`.
       // The size of the `LatLngBounds` is 10 by 10.
-      final LatLng southWest = LatLng(
+      final southWest = LatLng(
         firstVisibleRegion.southwest.latitude - 20,
         firstVisibleRegion.southwest.longitude - 20,
       );
-      final LatLng northEast = LatLng(
+      final northEast = LatLng(
         firstVisibleRegion.southwest.latitude - 10,
         firstVisibleRegion.southwest.longitude - 10,
       );
-      final LatLng newCenter = LatLng(
+      final newCenter = LatLng(
         (northEast.latitude + southWest.latitude) / 2,
         (northEast.longitude + southWest.longitude) / 2,
       );
@@ -467,7 +464,7 @@ void main() {
       expect(firstVisibleRegion.contains(northEast), isFalse);
       expect(firstVisibleRegion.contains(southWest), isFalse);
 
-      final LatLngBounds latLngBounds = LatLngBounds(
+      final latLngBounds = LatLngBounds(
         southwest: southWest,
         northeast: northEast,
       );
@@ -480,8 +477,8 @@ void main() {
       );
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
-      final LatLngBounds secondVisibleRegion =
-          await mapController.getVisibleRegion();
+      final LatLngBounds secondVisibleRegion = await mapController
+          .getVisibleRegion();
 
       expect(secondVisibleRegion, isNotNull);
       expect(secondVisibleRegion.southwest, isNotNull);
@@ -497,7 +494,7 @@ void main() {
 
   testWidgets('testTraffic', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -538,7 +535,7 @@ void main() {
 
   testWidgets('testBuildings', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -564,7 +561,7 @@ void main() {
 
   testWidgets('testMyLocationButtonToggle', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -611,7 +608,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -639,7 +636,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
 
     await tester.pumpWidget(
       Directionality(
@@ -664,8 +661,7 @@ void main() {
 
   testWidgets('testSetMapStyle valid Json String', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -682,7 +678,7 @@ void main() {
 
     final ExampleGoogleMapController controller =
         await controllerCompleter.future;
-    const String mapStyle =
+    const mapStyle =
         '[{"elementType":"geometry","stylers":[{"color":"#242f3e"}]}]';
     await GoogleMapsFlutterPlatform.instance.setMapStyle(
       mapStyle,
@@ -694,8 +690,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -727,8 +722,7 @@ void main() {
 
   testWidgets('testSetMapStyle null string', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -753,8 +747,7 @@ void main() {
 
   testWidgets('testGetLatLng', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -782,7 +775,7 @@ void main() {
     final LatLng topLeft = await controller.getLatLng(
       const ScreenCoordinate(x: 0, y: 0),
     );
-    final LatLng northWest = LatLng(
+    final northWest = LatLng(
       visibleRegion.northeast.latitude,
       visibleRegion.southwest.longitude,
     );
@@ -794,8 +787,7 @@ void main() {
     'testGetZoomLevel',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final Completer<ExampleGoogleMapController> controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -835,8 +827,7 @@ void main() {
     'testScreenCoordinate',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final Completer<ExampleGoogleMapController> controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -860,7 +851,7 @@ void main() {
       await Future<void>.delayed(const Duration(seconds: 1));
 
       final LatLngBounds visibleRegion = await controller.getVisibleRegion();
-      final LatLng northWest = LatLng(
+      final northWest = LatLng(
         visibleRegion.northeast.latitude,
         visibleRegion.southwest.longitude,
       );
@@ -874,9 +865,8 @@ void main() {
   );
 
   testWidgets('testResizeWidget', (WidgetTester tester) async {
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
-    final ExampleGoogleMap map = ExampleGoogleMap(
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
+    final map = ExampleGoogleMap(
       initialCameraPosition: _kInitialCameraPosition,
       onMapCreated: (ExampleGoogleMapController controller) async {
         controllerCompleter.complete(controller);
@@ -915,14 +905,13 @@ void main() {
   });
 
   testWidgets('testToggleInfoWindow', (WidgetTester tester) async {
-    const Marker marker = Marker(
+    const marker = Marker(
       markerId: MarkerId('marker'),
       infoWindow: InfoWindow(title: 'InfoWindow'),
     );
-    final Set<Marker> markers = <Marker>{marker};
+    final markers = <Marker>{marker};
 
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -960,21 +949,18 @@ void main() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    const Marker marker = Marker(
+    const marker = Marker(
       markerId: MarkerId('marker'),
       infoWindow: InfoWindow(title: 'InfoWindow'),
     );
-    Set<Marker> markers = <Marker>{marker};
+    var markers = <Marker>{marker};
 
-    const ClusterManager clusterManager = ClusterManager(
+    const clusterManager = ClusterManager(
       clusterManagerId: ClusterManagerId('cluster_manager'),
     );
-    final Set<ClusterManager> clusterManagers = <ClusterManager>{
-      clusterManager,
-    };
+    final clusterManagers = <ClusterManager>{clusterManager};
 
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -1029,8 +1015,7 @@ void main() {
   testWidgets(
     'testTakeSnapshot',
     (WidgetTester tester) async {
-      final Completer<ExampleGoogleMapController> controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
 
       await tester.pumpWidget(
         Directionality(
@@ -1056,15 +1041,15 @@ void main() {
   );
 
   testWidgets('set tileOverlay correctly', (WidgetTester tester) async {
-    final Completer<int> mapIdCompleter = Completer<int>();
-    final TileOverlay tileOverlay1 = TileOverlay(
+    final mapIdCompleter = Completer<int>();
+    final tileOverlay1 = TileOverlay(
       tileOverlayId: const TileOverlayId('tile_overlay_1'),
       tileProvider: _DebugTileProvider(),
       zIndex: 2,
       transparency: 0.2,
     );
 
-    final TileOverlay tileOverlay2 = TileOverlay(
+    final tileOverlay2 = TileOverlay(
       tileOverlayId: const TileOverlayId('tile_overlay_2'),
       tileProvider: _DebugTileProvider(),
       zIndex: 1,
@@ -1090,16 +1075,14 @@ void main() {
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
-    final TileOverlay tileOverlayInfo2 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay2.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
+    final TileOverlay tileOverlayInfo2 = (await inspector.getTileOverlayInfo(
+      tileOverlay2.mapsId,
+      mapId: mapId,
+    ))!;
 
     expect(tileOverlayInfo1.visible, isTrue);
     expect(tileOverlayInfo1.fadeIn, isTrue);
@@ -1119,16 +1102,16 @@ void main() {
   });
 
   testWidgets('update tileOverlays correctly', (WidgetTester tester) async {
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
     final Key key = GlobalKey();
-    final TileOverlay tileOverlay1 = TileOverlay(
+    final tileOverlay1 = TileOverlay(
       tileOverlayId: const TileOverlayId('tile_overlay_1'),
       tileProvider: _DebugTileProvider(),
       zIndex: 2,
       transparency: 0.2,
     );
 
-    final TileOverlay tileOverlay2 = TileOverlay(
+    final tileOverlay2 = TileOverlay(
       tileOverlayId: const TileOverlayId('tile_overlay_2'),
       tileProvider: _DebugTileProvider(),
       zIndex: 3,
@@ -1152,7 +1135,7 @@ void main() {
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
 
-    final TileOverlay tileOverlay1New = TileOverlay(
+    final tileOverlay1New = TileOverlay(
       tileOverlayId: const TileOverlayId('tile_overlay_1'),
       tileProvider: _DebugTileProvider(),
       zIndex: 1,
@@ -1177,11 +1160,10 @@ void main() {
 
     await tester.pumpAndSettle(const Duration(seconds: 3));
 
-    final TileOverlay tileOverlayInfo1 =
-        (await inspector.getTileOverlayInfo(
-          tileOverlay1.mapsId,
-          mapId: mapId,
-        ))!;
+    final TileOverlay tileOverlayInfo1 = (await inspector.getTileOverlayInfo(
+      tileOverlay1.mapsId,
+      mapId: mapId,
+    ))!;
     final TileOverlay? tileOverlayInfo2 = await inspector.getTileOverlayInfo(
       tileOverlay2.mapsId,
       mapId: mapId,
@@ -1199,9 +1181,9 @@ void main() {
   });
 
   testWidgets('remove tileOverlays correctly', (WidgetTester tester) async {
-    final Completer<int> mapIdCompleter = Completer<int>();
+    final mapIdCompleter = Completer<int>();
     final Key key = GlobalKey();
-    final TileOverlay tileOverlay1 = TileOverlay(
+    final tileOverlay1 = TileOverlay(
       tileOverlayId: const TileOverlayId('tile_overlay_1'),
       tileProvider: _DebugTileProvider(),
       zIndex: 2,
@@ -1250,27 +1232,21 @@ void main() {
 
   testWidgets('marker clustering', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    const int clusterManagersAmount = 2;
-    const int markersPerClusterManager = 5;
-    final Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-    final Set<ClusterManager> clusterManagers = <ClusterManager>{};
+    const clusterManagersAmount = 2;
+    const markersPerClusterManager = 5;
+    final markers = <MarkerId, Marker>{};
+    final clusterManagers = <ClusterManager>{};
 
-    for (int i = 0; i < clusterManagersAmount; i++) {
-      final ClusterManagerId clusterManagerId = ClusterManagerId(
-        'cluster_manager_$i',
-      );
-      final ClusterManager clusterManager = ClusterManager(
-        clusterManagerId: clusterManagerId,
-      );
+    for (var i = 0; i < clusterManagersAmount; i++) {
+      final clusterManagerId = ClusterManagerId('cluster_manager_$i');
+      final clusterManager = ClusterManager(clusterManagerId: clusterManagerId);
       clusterManagers.add(clusterManager);
     }
 
-    for (final ClusterManager cm in clusterManagers) {
-      for (int i = 0; i < markersPerClusterManager; i++) {
-        final MarkerId markerId = MarkerId(
-          '${cm.clusterManagerId.value}_marker_$i',
-        );
-        final Marker marker = Marker(
+    for (final cm in clusterManagers) {
+      for (var i = 0; i < markersPerClusterManager; i++) {
+        final markerId = MarkerId('${cm.clusterManagerId.value}_marker_$i');
+        final marker = Marker(
           markerId: markerId,
           clusterManagerId: cm.clusterManagerId,
           position: LatLng(
@@ -1282,8 +1258,7 @@ void main() {
       }
     }
 
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     final GoogleMapsInspectorPlatform inspector =
         GoogleMapsInspectorPlatform.instance!;
@@ -1306,7 +1281,7 @@ void main() {
     final ExampleGoogleMapController controller =
         await controllerCompleter.future;
 
-    for (final ClusterManager cm in clusterManagers) {
+    for (final cm in clusterManagers) {
       final List<Cluster> clusters = await inspector.getClusters(
         mapId: controller.mapId,
         clusterManagerId: cm.clusterManagerId,
@@ -1318,14 +1293,13 @@ void main() {
     }
 
     // Move marker from the first cluster manager to the last.
-    final MarkerId markerIdToMove =
-        markers.entries
-            .firstWhere(
-              (MapEntry<MarkerId, Marker> entry) =>
-                  entry.value.clusterManagerId ==
-                  clusterManagers.first.clusterManagerId,
-            )
-            .key;
+    final MarkerId markerIdToMove = markers.entries
+        .firstWhere(
+          (MapEntry<MarkerId, Marker> entry) =>
+              entry.value.clusterManagerId ==
+              clusterManagers.first.clusterManagerId,
+        )
+        .key;
     markers[markerIdToMove] = _copyMarkerWithClusterManagerId(
       markers[markerIdToMove]!,
       clusterManagers.last.clusterManagerId,
@@ -1383,7 +1357,7 @@ void main() {
       ),
     );
 
-    for (final ClusterManager cm in clusterManagers) {
+    for (final cm in clusterManagers) {
       final List<Cluster> clusters = await inspector.getClusters(
         mapId: controller.mapId,
         clusterManagerId: cm.clusterManagerId,
@@ -1401,7 +1375,7 @@ void main() {
         child: ExampleGoogleMap(
           key: key,
           initialCameraPosition: _kInitialCameraPosition,
-          cloudMapId: _kCloudMapId,
+          mapId: _kCloudMapId,
         ),
       ),
     );
@@ -1409,8 +1383,7 @@ void main() {
 
   testWidgets('getStyleError reports last error', (WidgetTester tester) async {
     final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -1436,8 +1409,7 @@ void main() {
     WidgetTester tester,
   ) async {
     final Key key = GlobalKey();
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
 
     await tester.pumpWidget(
       Directionality(
@@ -1461,7 +1433,7 @@ void main() {
   });
 
   testWidgets('markerWithAssetMapBitmap', (WidgetTester tester) async {
-    final Set<Marker> markers = <Marker>{
+    final markers = <Marker>{
       Marker(
         markerId: const MarkerId('1'),
         icon: AssetMapBitmap('assets/red_square.png', imagePixelRatio: 1.0),
@@ -1483,10 +1455,10 @@ void main() {
   });
 
   testWidgets('markerWithAssetMapBitmapCreate', (WidgetTester tester) async {
-    final ImageConfiguration imageConfiguration = ImageConfiguration(
+    final imageConfiguration = ImageConfiguration(
       devicePixelRatio: tester.view.devicePixelRatio,
     );
-    final Set<Marker> markers = <Marker>{
+    final markers = <Marker>{
       Marker(
         markerId: const MarkerId('1'),
         icon: await AssetMapBitmap.create(
@@ -1512,7 +1484,7 @@ void main() {
 
   testWidgets('markerWithBytesMapBitmap', (WidgetTester tester) async {
     final Uint8List bytes = const Base64Decoder().convert(iconImageBase64);
-    final Set<Marker> markers = <Marker>{
+    final markers = <Marker>{
       Marker(
         markerId: const MarkerId('1'),
         icon: BytesMapBitmap(
@@ -1539,11 +1511,11 @@ void main() {
 
   testWidgets('markerWithLegacyAsset', (WidgetTester tester) async {
     //tester.view.devicePixelRatio = 2.0;
-    const ImageConfiguration imageConfiguration = ImageConfiguration(
+    const imageConfiguration = ImageConfiguration(
       devicePixelRatio: 2.0,
       size: Size(100, 100),
     );
-    final Set<Marker> markers = <Marker>{
+    final markers = <Marker>{
       Marker(
         markerId: const MarkerId('1'),
         // Intentionally testing the deprecated code path.
@@ -1554,8 +1526,7 @@ void main() {
         ),
       ),
     };
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -1564,9 +1535,8 @@ void main() {
             target: LatLng(10.0, 15.0),
           ),
           markers: markers,
-          onMapCreated:
-              (ExampleGoogleMapController controller) =>
-                  controllerCompleter.complete(controller),
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
         ),
       ),
     );
@@ -1581,11 +1551,8 @@ void main() {
     // ignore: deprecated_member_use
     final BitmapDescriptor icon = BitmapDescriptor.fromBytes(bytes);
 
-    final Set<Marker> markers = <Marker>{
-      Marker(markerId: const MarkerId('1'), icon: icon),
-    };
-    final Completer<ExampleGoogleMapController> controllerCompleter =
-        Completer<ExampleGoogleMapController>();
+    final markers = <Marker>{Marker(markerId: const MarkerId('1'), icon: icon)};
+    final controllerCompleter = Completer<ExampleGoogleMapController>();
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
@@ -1594,9 +1561,8 @@ void main() {
             target: LatLng(10.0, 15.0),
           ),
           markers: markers,
-          onMapCreated:
-              (ExampleGoogleMapController controller) =>
-                  controllerCompleter.complete(controller),
+          onMapCreated: (ExampleGoogleMapController controller) =>
+              controllerCompleter.complete(controller),
         ),
       ),
     );
@@ -1604,12 +1570,12 @@ void main() {
   });
 
   group('GroundOverlay', () {
-    final LatLngBounds kGroundOverlayBounds = LatLngBounds(
+    final kGroundOverlayBounds = LatLngBounds(
       southwest: const LatLng(37.77483, -122.41942),
       northeast: const LatLng(37.78183, -122.39105),
     );
 
-    final GroundOverlay groundOverlayBounds1 = GroundOverlay.fromBounds(
+    final groundOverlayBounds1 = GroundOverlay.fromBounds(
       groundOverlayId: const GroundOverlayId('bounds_1'),
       bounds: kGroundOverlayBounds,
       image: AssetMapBitmap(
@@ -1619,7 +1585,7 @@ void main() {
       ),
     );
 
-    final GroundOverlay groundOverlayPosition1 = GroundOverlay.fromPosition(
+    final groundOverlayPosition1 = GroundOverlay.fromPosition(
       groundOverlayId: const GroundOverlayId('position_1'),
       position: kGroundOverlayBounds.northeast,
       width: 100,
@@ -1671,8 +1637,8 @@ void main() {
     }
 
     testWidgets('set ground overlays correctly', (WidgetTester tester) async {
-      final Completer<int> mapIdCompleter = Completer<int>();
-      final GroundOverlay groundOverlayBounds2 = GroundOverlay.fromBounds(
+      final mapIdCompleter = Completer<int>();
+      final groundOverlayBounds2 = GroundOverlay.fromBounds(
         groundOverlayId: const GroundOverlayId('bounds_2'),
         bounds: groundOverlayBounds1.bounds!,
         image: groundOverlayBounds1.image,
@@ -1701,18 +1667,12 @@ void main() {
           GoogleMapsInspectorPlatform.instance!;
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBoundsInfo1 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayBoundsInfo2 =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds2.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayPositionInfo1 =
-            (await inspector.getGroundOverlayInfo(
+        final GroundOverlay groundOverlayBoundsInfo1 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayBoundsInfo2 = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds2.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPositionInfo1 = (await inspector
+            .getGroundOverlayInfo(
               groundOverlayPosition1.mapsId,
               mapId: mapId,
             ))!;
@@ -1735,7 +1695,7 @@ void main() {
     testWidgets('update ground overlays correctly', (
       WidgetTester tester,
     ) async {
-      final Completer<int> mapIdCompleter = Completer<int>();
+      final mapIdCompleter = Completer<int>();
       final Key key = GlobalKey();
 
       await tester.pumpWidget(
@@ -1797,13 +1757,10 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 3));
 
       if (inspector.supportsGettingGroundOverlayInfo()) {
-        final GroundOverlay groundOverlayBounds1Info =
-            (await inspector.getGroundOverlayInfo(
-              groundOverlayBounds1.mapsId,
-              mapId: mapId,
-            ))!;
-        final GroundOverlay groundOverlayPosition1Info =
-            (await inspector.getGroundOverlayInfo(
+        final GroundOverlay groundOverlayBounds1Info = (await inspector
+            .getGroundOverlayInfo(groundOverlayBounds1.mapsId, mapId: mapId))!;
+        final GroundOverlay groundOverlayPosition1Info = (await inspector
+            .getGroundOverlayInfo(
               groundOverlayPosition1.mapsId,
               mapId: mapId,
             ))!;
@@ -1822,7 +1779,7 @@ void main() {
     testWidgets('remove ground overlays correctly', (
       WidgetTester tester,
     ) async {
-      final Completer<int> mapIdCompleter = Completer<int>();
+      final mapIdCompleter = Completer<int>();
       final Key key = GlobalKey();
 
       await tester.pumpWidget(
@@ -1877,8 +1834,7 @@ void main() {
     'testAnimateCameraWithoutDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final Completer<ExampleGoogleMapController> controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 
@@ -1971,16 +1927,15 @@ void main() {
     'testAnimateCameraWithDuration',
     (WidgetTester tester) async {
       final Key key = GlobalKey();
-      final Completer<ExampleGoogleMapController> controllerCompleter =
-          Completer<ExampleGoogleMapController>();
+      final controllerCompleter = Completer<ExampleGoogleMapController>();
       final GoogleMapsInspectorPlatform inspector =
           GoogleMapsInspectorPlatform.instance!;
 
       /// Completer to track when the camera has come to rest.
       Completer<void>? cameraIdleCompleter;
 
-      const int shortCameraAnimationDurationMS = 200;
-      const int longCameraAnimationDurationMS = 1000;
+      const shortCameraAnimationDurationMS = 200;
+      const longCameraAnimationDurationMS = 1000;
 
       /// Calculate the midpoint duration of the animation test, which will
       /// serve as a reference to verify that animations complete more quickly
@@ -1989,7 +1944,7 @@ void main() {
           (shortCameraAnimationDurationMS + longCameraAnimationDurationMS) ~/ 2;
 
       // Stopwatch to measure the time taken for the animation to complete.
-      final Stopwatch stopwatch = Stopwatch();
+      final stopwatch = Stopwatch();
 
       await tester.pumpWidget(
         Directionality(
@@ -2131,10 +2086,10 @@ class _DebugTileProvider implements TileProvider {
 
   @override
   Future<Tile> getTile(int x, int y, int? zoom) async {
-    final ui.PictureRecorder recorder = ui.PictureRecorder();
-    final Canvas canvas = Canvas(recorder);
-    final TextSpan textSpan = TextSpan(text: '$x,$y', style: textStyle);
-    final TextPainter textPainter = TextPainter(
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    final textSpan = TextSpan(text: '$x,$y', style: textStyle);
+    final textPainter = TextPainter(
       text: textSpan,
       textDirection: TextDirection.ltr,
     );
@@ -2214,7 +2169,7 @@ Future<void> _checkCameraUpdateByType(
 ) async {
   // As the target might differ a bit from the expected target, a threshold is
   // used.
-  const double latLngThreshold = 0.05;
+  const latLngThreshold = 0.05;
 
   switch (type) {
     case CameraUpdateType.newCameraPosition:

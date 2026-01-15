@@ -22,6 +22,7 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakePigeonInstanceManager_0 extends _i1.SmartFake
     implements _i2.PigeonInstanceManager {
@@ -44,6 +45,15 @@ class _FakeIMAAdsRenderingSettings_2 extends _i1.SmartFake
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockIMAAdsManager extends _i1.Mock implements _i2.IMAAdsManager {
+  @override
+  List<double> get adCuePoints =>
+      (super.noSuchMethod(
+            Invocation.getter(#adCuePoints),
+            returnValue: <double>[],
+            returnValueForMissingStub: <double>[],
+          )
+          as List<double>);
+
   @override
   _i2.PigeonInstanceManager get pigeon_instanceManager =>
       (super.noSuchMethod(

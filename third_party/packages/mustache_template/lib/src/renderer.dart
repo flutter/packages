@@ -75,7 +75,7 @@ class Renderer extends Visitor {
 
   void render(List<Node> nodes) {
     if (indent == '') {
-      for (final Node n in nodes) {
+      for (final n in nodes) {
         n.accept(this);
       }
     } else if (nodes.isNotEmpty) {
@@ -116,7 +116,7 @@ class Renderer extends Visitor {
     Object? value = resolveValue(node.name);
 
     if (value is Function) {
-      final LambdaContext context = LambdaContext(node, this);
+      final context = LambdaContext(node, this);
       final Function valueFunction = value;
       // TODO(stuartmorgan): Add function typing in a way that doesn't break
       //  backward compatibility.
@@ -130,11 +130,10 @@ class Renderer extends Visitor {
         throw error('Value was missing for variable tag: ${node.name}.', node);
       }
     } else {
-      final String valueString = (value == null) ? '' : value.toString();
-      final String output =
-          !node.escape || !htmlEscapeValues
-              ? valueString
-              : _htmlEscape(valueString);
+      final valueString = (value == null) ? '' : value.toString();
+      final String output = !node.escape || !htmlEscapeValues
+          ? valueString
+          : _htmlEscape(valueString);
       write(output);
     }
   }
@@ -168,7 +167,7 @@ class Renderer extends Visitor {
         throw error('Value was missing for section tag: ${node.name}.', node);
       }
     } else if (value is Function) {
-      final LambdaContext context = LambdaContext(node, this);
+      final context = LambdaContext(node, this);
       // TODO(stuartmorgan): Add function typing in a way that doesn't break
       //  backward compatibility.
       // ignore: avoid_dynamic_calls
@@ -227,12 +226,11 @@ class Renderer extends Visitor {
   @override
   void visitPartial(PartialNode node) {
     final String partialName = node.name;
-    final Template? template =
-        partialResolver == null
-            ? null
-            : (partialResolver!(partialName) as Template?);
+    final Template? template = partialResolver == null
+        ? null
+        : (partialResolver!(partialName) as Template?);
     if (template != null) {
-      final Renderer renderer = Renderer.partial(this, template, node.indent);
+      final renderer = Renderer.partial(this, template, node.indent);
       final List<Node> nodes = getTemplateNodes(template);
       renderer.render(nodes);
     } else if (lenient) {
@@ -256,7 +254,7 @@ class Renderer extends Visitor {
         break;
       }
     }
-    for (int i = 1; i < parts.length; i++) {
+    for (var i = 1; i < parts.length; i++) {
       if (object == noSuchProperty) {
         return noSuchProperty;
       }
@@ -296,9 +294,9 @@ class Renderer extends Visitor {
   };
 
   String _htmlEscape(String s) {
-    final StringBuffer buffer = StringBuffer();
-    int startIndex = 0;
-    int i = 0;
+    final buffer = StringBuffer();
+    var startIndex = 0;
+    var i = 0;
     for (final int c in s.runes) {
       if (c == _AMP ||
           c == _LT ||

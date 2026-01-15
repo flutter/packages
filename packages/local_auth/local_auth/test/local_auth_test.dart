@@ -40,6 +40,7 @@ void main() {
           const AndroidAuthMessages(),
           const WindowsAuthMessages(),
         ],
+        options: const AuthenticationOptions(useErrorDialogs: false),
       ),
     ).called(1);
   });

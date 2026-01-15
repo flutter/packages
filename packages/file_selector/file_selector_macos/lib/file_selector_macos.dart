@@ -3,12 +3,17 @@
 // found in the LICENSE file.
 
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
+import 'package:flutter/foundation.dart' show visibleForTesting;
 
 import 'src/messages.g.dart';
 
 /// An implementation of [FileSelectorPlatform] for macOS.
 class FileSelectorMacOS extends FileSelectorPlatform {
-  final FileSelectorApi _hostApi = FileSelectorApi();
+  /// Creates a new plugin implementation instance.
+  FileSelectorMacOS({@visibleForTesting FileSelectorApi? api})
+    : _hostApi = api ?? FileSelectorApi();
+
+  final FileSelectorApi _hostApi;
 
   /// Registers the macOS implementation.
   static void registerWith() {
@@ -86,6 +91,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
         directoryPath: options.initialDirectory,
         nameFieldStringValue: options.suggestedName,
         prompt: options.confirmButtonText,
+        canCreateDirectories: options.canCreateDirectories,
       ),
     );
     return path == null ? null : FileSaveLocation(path);
@@ -96,14 +102,25 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<String?> getDirectoryPathWithOptions(FileDialogOptions options) async {
     final List<String?> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: false,
         canChooseDirectories: true,
         canChooseFiles: false,
         baseOptions: SavePanelOptions(
-          directoryPath: initialDirectory,
-          prompt: confirmButtonText,
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
+          canCreateDirectories: options.canCreateDirectories,
         ),
       ),
     );
@@ -115,14 +132,27 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     String? initialDirectory,
     String? confirmButtonText,
   }) async {
+    return getDirectoryPathsWithOptions(
+      FileDialogOptions(
+        initialDirectory: initialDirectory,
+        confirmButtonText: confirmButtonText,
+      ),
+    );
+  }
+
+  @override
+  Future<List<String>> getDirectoryPathsWithOptions(
+    FileDialogOptions options,
+  ) async {
     final List<String?> paths = await _hostApi.displayOpenPanel(
       OpenPanelOptions(
         allowsMultipleSelection: true,
         canChooseDirectories: true,
         canChooseFiles: false,
         baseOptions: SavePanelOptions(
-          directoryPath: initialDirectory,
-          prompt: confirmButtonText,
+          directoryPath: options.initialDirectory,
+          prompt: options.confirmButtonText,
+          canCreateDirectories: options.canCreateDirectories,
         ),
       ),
     );
@@ -135,7 +165,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     if (typeGroups == null || typeGroups.isEmpty) {
       return null;
     }
-    final AllowedTypes allowedTypes = AllowedTypes(
+    final allowedTypes = AllowedTypes(
       extensions: <String>[],
       mimeTypes: <String>[],
       utis: <String>[],

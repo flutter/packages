@@ -10,7 +10,7 @@ import PackageDescription
 let package = Package(
   name: "file_selector_ios",
   platforms: [
-    .iOS("12.0")
+    .iOS("13.0")
   ],
   products: [
     .library(name: "file-selector-ios", targets: ["file_selector_ios"])

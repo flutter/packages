@@ -15,7 +15,12 @@ base class AdsManagerStartParams {}
 abstract class PlatformAdsManager {
   /// Creates a [PlatformAdsManager].
   @protected
-  PlatformAdsManager();
+  PlatformAdsManager({required this.adCuePoints});
+
+  /// List of content time offsets at which ad breaks are scheduled.
+  ///
+  /// The list will be empty if no ad breaks are scheduled.
+  final List<Duration> adCuePoints;
 
   /// Initializes the ad experience using default rendering settings.
   Future<void> init({PlatformAdsRenderingSettings? settings});

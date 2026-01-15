@@ -108,10 +108,9 @@ class GooglePlayProductDetails extends ProductDetails {
         ),
       ];
     } else {
-      final List<GooglePlayProductDetails> productDetailList =
-          <GooglePlayProductDetails>[];
+      final productDetailList = <GooglePlayProductDetails>[];
       for (
-        int subscriptionIndex = 0;
+        var subscriptionIndex = 0;
         subscriptionIndex < productDetails.subscriptionOfferDetails!.length;
         subscriptionIndex++
       ) {
@@ -160,9 +159,9 @@ class GooglePlayProductDetails extends ProductDetails {
   /// object was contructed for, or `null` if it was not a subscription.
   String? get offerToken =>
       subscriptionIndex != null &&
-              productDetails.subscriptionOfferDetails != null
-          ? productDetails
-              .subscriptionOfferDetails![subscriptionIndex!]
-              .offerIdToken
-          : null;
+          productDetails.subscriptionOfferDetails != null
+      ? productDetails
+            .subscriptionOfferDetails![subscriptionIndex!]
+            .offerIdToken
+      : null;
 }

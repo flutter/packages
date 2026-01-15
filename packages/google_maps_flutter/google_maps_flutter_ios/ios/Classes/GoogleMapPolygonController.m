@@ -3,7 +3,20 @@
 // found in the LICENSE file.
 
 #import "GoogleMapPolygonController.h"
-#import "FLTGoogleMapJSONConversions.h"
+#import "GoogleMapPolygonController_Test.h"
+
+#import "FGMConversionUtils.h"
+
+/// Converts a list of holes represented as CLLocation lists to GMSMutablePath lists.
+static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
+    NSArray<NSArray<CLLocation *> *> *locationHoles) {
+  NSMutableArray<GMSMutablePath *> *pathHoles =
+      [NSMutableArray arrayWithCapacity:locationHoles.count];
+  for (NSArray<CLLocation *> *hole in locationHoles) {
+    [pathHoles addObject:FGMGetPathFromPoints(hole)];
+  }
+  return pathHoles;
+}
 
 @interface FLTGoogleMapPolygonController ()
 
@@ -30,52 +43,26 @@
   self.polygon.map = nil;
 }
 
-- (void)setConsumeTapEvents:(BOOL)consumes {
-  self.polygon.tappable = consumes;
-}
-- (void)setVisible:(BOOL)visible {
-  self.polygon.map = visible ? self.mapView : nil;
-}
-- (void)setZIndex:(int)zIndex {
-  self.polygon.zIndex = zIndex;
-}
-- (void)setPoints:(NSArray<CLLocation *> *)points {
-  self.polygon.path = FGMGetPathFromPoints(points);
-}
-- (void)setHoles:(NSArray<NSArray<CLLocation *> *> *)rawHoles {
-  NSMutableArray<GMSMutablePath *> *holes = [[NSMutableArray<GMSMutablePath *> alloc] init];
-
-  for (NSArray<CLLocation *> *points in rawHoles) {
-    GMSMutablePath *path = [GMSMutablePath path];
-    for (CLLocation *location in points) {
-      [path addCoordinate:location.coordinate];
-    }
-    [holes addObject:path];
-  }
-
-  self.polygon.holes = holes;
+- (void)updateFromPlatformPolygon:(FGMPlatformPolygon *)polygon {
+  [FLTGoogleMapPolygonController updatePolygon:self.polygon
+                           fromPlatformPolygon:polygon
+                                   withMapView:self.mapView];
 }
 
-- (void)setFillColor:(UIColor *)color {
-  self.polygon.fillColor = color;
-}
-- (void)setStrokeColor:(UIColor *)color {
-  self.polygon.strokeColor = color;
-}
-- (void)setStrokeWidth:(CGFloat)width {
-  self.polygon.strokeWidth = width;
-}
++ (void)updatePolygon:(GMSPolygon *)polygon
+    fromPlatformPolygon:(FGMPlatformPolygon *)platformPolygon
+            withMapView:(GMSMapView *)mapView {
+  polygon.tappable = platformPolygon.consumesTapEvents;
+  polygon.zIndex = (int)platformPolygon.zIndex;
+  polygon.path = FGMGetPathFromPoints(FGMGetPointsForPigeonLatLngs(platformPolygon.points));
+  polygon.holes =
+      FMGPathHolesFromLocationHoles(FGMGetHolesForPigeonLatLngArrays(platformPolygon.holes));
+  polygon.fillColor = FGMGetColorForPigeonColor(platformPolygon.fillColor);
+  polygon.strokeColor = FGMGetColorForPigeonColor(platformPolygon.strokeColor);
+  polygon.strokeWidth = platformPolygon.strokeWidth;
 
-- (void)updateFromPlatformPolygon:(FGMPlatformPolygon *)polygon
-                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  [self setConsumeTapEvents:polygon.consumesTapEvents];
-  [self setVisible:polygon.visible];
-  [self setZIndex:(int)polygon.zIndex];
-  [self setPoints:FGMGetPointsForPigeonLatLngs(polygon.points)];
-  [self setHoles:FGMGetHolesForPigeonLatLngArrays(polygon.holes)];
-  [self setFillColor:FGMGetColorForRGBA(polygon.fillColor)];
-  [self setStrokeColor:FGMGetColorForRGBA(polygon.strokeColor)];
-  [self setStrokeWidth:polygon.strokeWidth];
+  // This must be done last, to avoid visual flickers of default property values.
+  polygon.map = platformPolygon.visible ? mapView : nil;
 }
 
 @end
@@ -112,7 +99,7 @@
         [[FLTGoogleMapPolygonController alloc] initWithPath:path
                                                  identifier:identifier
                                                     mapView:self.mapView];
-    [controller updateFromPlatformPolygon:polygon registrar:self.registrar];
+    [controller updateFromPlatformPolygon:polygon];
     self.polygonIdentifierToController[identifier] = controller;
   }
 }
@@ -121,7 +108,7 @@
   for (FGMPlatformPolygon *polygon in polygonsToChange) {
     NSString *identifier = polygon.polygonId;
     FLTGoogleMapPolygonController *controller = self.polygonIdentifierToController[identifier];
-    [controller updateFromPlatformPolygon:polygon registrar:self.registrar];
+    [controller updateFromPlatformPolygon:polygon];
   }
 }
 

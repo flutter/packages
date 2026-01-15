@@ -70,8 +70,7 @@ class XTypeGroup {
   @Deprecated('Use uniformTypeIdentifiers instead')
   List<String>? get macUTIs => uniformTypeIdentifiers;
 
-  static List<String>? _removeLeadingDots(List<String>? exts) =>
-      exts
-          ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
-          .toList();
+  static List<String>? _removeLeadingDots(List<String>? exts) => exts
+      ?.map((String ext) => ext.startsWith('.') ? ext.substring(1) : ext)
+      .toList();
 }

@@ -1,6 +1,16 @@
-## NEXT
+## 6.4.0
 
-* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+* Improves compatibility with `UIScene`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 6.3.6
+
+* Updates to Pigeon 26.
+
+## 6.3.5
+
+* Updates minimum supported version to iOS 13.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 * Fixes integration test button text matcher to work on iOS 26.
 
 ## 6.3.4

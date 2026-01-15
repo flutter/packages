@@ -28,7 +28,7 @@ static const int platform_type_group_object_id = 130;
 TEST(FileSelectorPlugin, TestOpenSimple) {
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
-                                            nullptr);
+                                            nullptr, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_OPEN,
@@ -45,7 +45,7 @@ TEST(FileSelectorPlugin, TestOpenMultiple) {
   gboolean select_multiple = true;
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
-                                            &select_multiple);
+                                            &select_multiple, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_OPEN,
@@ -105,7 +105,7 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
 
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(type_groups, nullptr, nullptr,
-                                            nullptr, nullptr);
+                                            nullptr, nullptr, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_OPEN,
@@ -149,7 +149,7 @@ TEST(FileSelectorPlugin, TestOpenWithFilter) {
 TEST(FileSelectorPlugin, TestSaveSimple) {
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
-                                            nullptr);
+                                            nullptr, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE,
@@ -165,7 +165,7 @@ TEST(FileSelectorPlugin, TestSaveSimple) {
 TEST(FileSelectorPlugin, TestSaveWithArguments) {
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, "/tmp", "foo.txt", nullptr,
-                                            nullptr);
+                                            nullptr, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE,
@@ -184,10 +184,48 @@ TEST(FileSelectorPlugin, TestSaveWithArguments) {
   // doesn't in a test context, so that's not currently validated.
 }
 
+TEST(FileSelectorPlugin, TestSaveWithCreateFoldersEnabled) {
+  gboolean create_folders = true;
+  g_autoptr(FfsPlatformFileChooserOptions) options =
+      ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
+                                            nullptr, &create_folders);
+
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
+      nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE,
+      options);
+
+  ASSERT_NE(dialog, nullptr);
+  EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
+            GTK_FILE_CHOOSER_ACTION_SAVE);
+  EXPECT_EQ(gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog)),
+            false);
+  EXPECT_EQ(gtk_file_chooser_get_create_folders(GTK_FILE_CHOOSER(dialog)),
+            create_folders);
+}
+
+TEST(FileSelectorPlugin, TestSaveWithCreateFoldersDisabled) {
+  gboolean create_folders = false;
+  g_autoptr(FfsPlatformFileChooserOptions) options =
+      ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
+                                            nullptr, &create_folders);
+
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
+      nullptr, FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_SAVE,
+      options);
+
+  ASSERT_NE(dialog, nullptr);
+  EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
+            GTK_FILE_CHOOSER_ACTION_SAVE);
+  EXPECT_EQ(gtk_file_chooser_get_select_multiple(GTK_FILE_CHOOSER(dialog)),
+            false);
+  EXPECT_EQ(gtk_file_chooser_get_create_folders(GTK_FILE_CHOOSER(dialog)),
+            create_folders);
+}
+
 TEST(FileSelectorPlugin, TestGetDirectory) {
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
-                                            nullptr);
+                                            nullptr, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr,
@@ -205,7 +243,7 @@ TEST(FileSelectorPlugin, TestGetMultipleDirectories) {
   gboolean select_multiple = true;
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
-                                            &select_multiple);
+                                            &select_multiple, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr,
@@ -219,6 +257,42 @@ TEST(FileSelectorPlugin, TestGetMultipleDirectories) {
             true);
 }
 
+TEST(FileSelectorPlugin, TestGetDirectoryWithCreateFoldersEnabled) {
+  gboolean create_folders = true;
+  g_autoptr(FfsPlatformFileChooserOptions) options =
+      ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
+                                            nullptr, &create_folders);
+
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
+      nullptr,
+      FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_CHOOSE_DIRECTORY,
+      options);
+
+  ASSERT_NE(dialog, nullptr);
+  EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
+            GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+  EXPECT_EQ(gtk_file_chooser_get_create_folders(GTK_FILE_CHOOSER(dialog)),
+            create_folders);
+}
+
+TEST(FileSelectorPlugin, TestGetDirectoryWithCreateFoldersDisabled) {
+  gboolean create_folders = false;
+  g_autoptr(FfsPlatformFileChooserOptions) options =
+      ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
+                                            nullptr, &create_folders);
+
+  g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
+      nullptr,
+      FILE_SELECTOR_LINUX_PLATFORM_FILE_CHOOSER_ACTION_TYPE_CHOOSE_DIRECTORY,
+      options);
+
+  ASSERT_NE(dialog, nullptr);
+  EXPECT_EQ(gtk_file_chooser_get_action(GTK_FILE_CHOOSER(dialog)),
+            GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER);
+  EXPECT_EQ(gtk_file_chooser_get_create_folders(GTK_FILE_CHOOSER(dialog)),
+            create_folders);
+}
+
 static gint mock_run_dialog_cancel(GtkNativeDialog* dialog) {
   return GTK_RESPONSE_CANCEL;
 }
@@ -226,7 +300,7 @@ static gint mock_run_dialog_cancel(GtkNativeDialog* dialog) {
 TEST(FileSelectorPlugin, TestGetDirectoryCancel) {
   g_autoptr(FfsPlatformFileChooserOptions) options =
       ffs_platform_file_chooser_options_new(nullptr, nullptr, nullptr, nullptr,
-                                            nullptr);
+                                            nullptr, nullptr);
 
   g_autoptr(GtkFileChooserNative) dialog = create_dialog_of_type(
       nullptr,

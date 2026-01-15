@@ -16,20 +16,19 @@ void main() {
 
   SharedPreferencesAsyncWindows.registerWith();
 
-  const String stringKey = 'testString';
-  const String boolKey = 'testBool';
-  const String intKey = 'testInt';
-  const String doubleKey = 'testDouble';
-  const String listKey = 'testList';
+  const stringKey = 'testString';
+  const boolKey = 'testBool';
+  const intKey = 'testInt';
+  const doubleKey = 'testDouble';
+  const listKey = 'testList';
 
-  const String testString = 'hello world';
-  const bool testBool = true;
-  const int testInt = 42;
-  const double testDouble = 3.14159;
-  const List<String> testList = <String>['foo', 'bar'];
+  const testString = 'hello world';
+  const testBool = true;
+  const testInt = 42;
+  const testDouble = 3.14159;
+  const testList = <String>['foo', 'bar'];
 
-  const SharedPreferencesWindowsOptions emptyOptions =
-      SharedPreferencesWindowsOptions();
+  const emptyOptions = SharedPreferencesWindowsOptions();
 
   setUp(() {
     fs = MemoryFileSystem.test();
@@ -37,7 +36,7 @@ void main() {
   });
 
   SharedPreferencesAsyncWindows getPreferences() {
-    final SharedPreferencesAsyncWindows prefs = SharedPreferencesAsyncWindows();
+    final prefs = SharedPreferencesAsyncWindows();
     prefs.fs = fs;
     prefs.pathProvider = pathProvider;
     return prefs;

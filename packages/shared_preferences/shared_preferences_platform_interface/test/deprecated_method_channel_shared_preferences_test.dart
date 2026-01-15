@@ -12,11 +12,9 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group(MethodChannelSharedPreferencesStore, () {
-    const MethodChannel channel = MethodChannel(
-      'plugins.flutter.io/shared_preferences',
-    );
+    const channel = MethodChannel('plugins.flutter.io/shared_preferences');
 
-    const Map<String, Object> flutterTestValues = <String, Object>{
+    const flutterTestValues = <String, Object>{
       'flutter.String': 'hello world',
       'flutter.Bool': true,
       'flutter.Int': 42,
@@ -24,7 +22,7 @@ void main() {
       'flutter.StringList': <String>['foo', 'bar'],
     };
 
-    const Map<String, Object> prefixTestValues = <String, Object>{
+    const prefixTestValues = <String, Object>{
       'prefix.String': 'hello world',
       'prefix.Bool': true,
       'prefix.Int': 42,
@@ -32,7 +30,7 @@ void main() {
       'prefix.StringList': <String>['foo', 'bar'],
     };
 
-    const Map<String, Object> nonPrefixTestValues = <String, Object>{
+    const nonPrefixTestValues = <String, Object>{
       'String': 'hello world',
       'Bool': true,
       'Int': 42,
@@ -40,7 +38,7 @@ void main() {
       'StringList': <String>['foo', 'bar'],
     };
 
-    final Map<String, Object> allTestValues = <String, Object>{};
+    final allTestValues = <String, Object>{};
 
     allTestValues.addAll(flutterTestValues);
     allTestValues.addAll(prefixTestValues);
@@ -48,7 +46,7 @@ void main() {
 
     late InMemorySharedPreferencesStore testData;
 
-    final List<MethodCall> log = <MethodCall>[];
+    final log = <MethodCall>[];
     late MethodChannelSharedPreferencesStore store;
 
     setUp(() async {
@@ -69,14 +67,13 @@ void main() {
               final Map<String, Object?> arguments = getArgumentDictionary(
                 methodCall,
               );
-              final String prefix = arguments['prefix']! as String;
+              final prefix = arguments['prefix']! as String;
               Set<String>? allowSet;
-              final List<dynamic>? allowList =
-                  arguments['allowList'] as List<dynamic>?;
+              final allowList = arguments['allowList'] as List<dynamic>?;
               if (allowList != null) {
                 allowSet = <String>{};
-                for (final dynamic key in allowList) {
-                  allowSet.add(key as String);
+                for (final Object? key in allowList) {
+                  allowSet.add(key! as String);
                 }
               }
               return testData.getAllWithParameters(
@@ -92,7 +89,7 @@ void main() {
               final Map<String, Object?> arguments = getArgumentDictionary(
                 methodCall,
               );
-              final String key = arguments['key']! as String;
+              final key = arguments['key']! as String;
               return testData.remove(key);
             }
             if (methodCall.method == 'clear') {
@@ -102,14 +99,13 @@ void main() {
               final Map<String, Object?> arguments = getArgumentDictionary(
                 methodCall,
               );
-              final String prefix = arguments['prefix']! as String;
+              final prefix = arguments['prefix']! as String;
               Set<String>? allowSet;
-              final List<dynamic>? allowList =
-                  arguments['allowList'] as List<dynamic>?;
+              final allowList = arguments['allowList'] as List<dynamic>?;
               if (allowList != null) {
                 allowSet = <String>{};
-                for (final dynamic key in allowList) {
-                  allowSet.add(key as String);
+                for (final Object? key in allowList) {
+                  allowSet.add(key! as String);
                 }
               }
               return testData.clearWithParameters(
@@ -121,14 +117,14 @@ void main() {
                 ),
               );
             }
-            final RegExp setterRegExp = RegExp(r'set(.*)');
+            final setterRegExp = RegExp(r'set(.*)');
             final Match? match = setterRegExp.matchAsPrefix(methodCall.method);
             if (match?.groupCount == 1) {
               final String valueType = match!.group(1)!;
               final Map<String, Object?> arguments = getArgumentDictionary(
                 methodCall,
               );
-              final String key = arguments['key']! as String;
+              final key = arguments['key']! as String;
               final Object value = arguments['value']!;
               return testData.setValue(valueType, key, value);
             }
@@ -185,7 +181,7 @@ void main() {
       });
 
       expect(log, hasLength(4));
-      for (final MethodCall call in log) {
+      for (final call in log) {
         expect(call.method, 'remove');
       }
     });

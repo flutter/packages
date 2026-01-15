@@ -574,7 +574,7 @@ void main() {
   });
 
   testWidgets('Can update style', (WidgetTester tester) async {
-    const String initialStyle = '[]';
+    const initialStyle = '[]';
     await tester.pumpWidget(
       const Directionality(
         textDirection: TextDirection.ltr,

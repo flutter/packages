@@ -9,7 +9,7 @@ import PackageDescription
 let package = Package(
   name: "quick_actions_ios",
   platforms: [
-    .iOS("12.0")
+    .iOS("13.0")
   ],
   products: [
     .library(name: "quick-actions-ios", targets: ["quick_actions_ios"])

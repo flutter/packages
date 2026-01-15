@@ -15,8 +15,8 @@ class _DummyPlatformView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String viewType = 'dummy_platform_view';
-    final Map<String, dynamic> creationParams = <String, dynamic>{};
+    const viewType = 'dummy_platform_view';
+    final creationParams = <String, dynamic>{};
 
     return UiKitView(
       viewType: viewType,
@@ -53,10 +53,9 @@ class _PointerInterceptorIOSExampleState
             PointerInterceptorPlatform.instance.buildWidget(
               child: TextButton(
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child:
-                    _buttonTapped
-                        ? const Text('Tapped')
-                        : const Text('Initial'),
+                child: _buttonTapped
+                    ? const Text('Tapped')
+                    : const Text('Initial'),
                 onPressed: () {
                   setState(() {
                     _buttonTapped = !_buttonTapped;

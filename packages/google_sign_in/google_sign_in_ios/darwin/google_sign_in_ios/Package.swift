@@ -9,7 +9,7 @@ import PackageDescription
 let package = Package(
   name: "google_sign_in_ios",
   platforms: [
-    .iOS("12.0"),
+    .iOS("13.0"),
     .macOS("10.15"),
   ],
   products: [
@@ -25,9 +25,6 @@ let package = Package(
       name: "google_sign_in_ios",
       dependencies: [
         .product(name: "GoogleSignIn", package: "GoogleSignIn-iOS")
-      ],
-      exclude: [
-        "include/google_sign_in_ios-umbrella.h", "include/FLTGoogleSignInPlugin.modulemap",
       ],
       resources: [
         .process("Resources")
