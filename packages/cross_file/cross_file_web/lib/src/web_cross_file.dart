@@ -123,7 +123,7 @@ base class WebXFile extends PlatformXFile with WebXFileExtension {
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) async {
-    return encoding.decode(await readAsBytes());
+    return encoding.decodeStream(openRead());
   }
 
   @override
