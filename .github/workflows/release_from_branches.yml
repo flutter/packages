@@ -2,7 +2,7 @@ name: Batch Release
 on:
   push:
     branches:
-      - 'release-go-router'
+      - 'release-go_router'
 jobs:
   release:
     uses: ./.github/workflows/resuable_release.yml
