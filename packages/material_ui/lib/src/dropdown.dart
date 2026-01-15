@@ -1772,6 +1772,7 @@ class _DropdownButtonState<T> extends State<DropdownButton<T>> with WidgetsBindi
               isEmpty: widget._isEmpty,
               isFocused: _hasPrimaryFocus,
               isHovering: _isHovering,
+              expands: widget.isExpanded,
               child: widget.padding == null
                   ? result
                   : Padding(padding: widget.padding!, child: result),
