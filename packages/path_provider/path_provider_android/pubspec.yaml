@@ -13,8 +13,6 @@ flutter:
     implements: path_provider
     platforms:
       android:
-        package: io.flutter.plugins.pathprovider
-        pluginClass: PathProviderPlugin
         dartPluginClass: PathProviderAndroid
 
 dependencies:

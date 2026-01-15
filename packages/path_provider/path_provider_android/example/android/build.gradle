@@ -22,16 +22,3 @@ subprojects {
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }
-
-// Build the plugin project with warnings enabled. This is here rather than
-// in the plugin itself to avoid breaking clients that have different
-// warnings (e.g., deprecation warnings from a newer SDK than this project
-// builds with).
-gradle.projectsEvaluated {
-    project(":path_provider_android") {
-        tasks.withType(JavaCompile) {
-            // Ignore classfile due to https://issuetracker.google.com/issues/342067844
-            options.compilerArgs << "-Xlint:all" << "-Werror" << "-Xlint:-classfile"
-        }
-    }
-}

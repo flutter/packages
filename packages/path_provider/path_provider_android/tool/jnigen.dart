@@ -20,7 +20,6 @@ void main() {
         addGradleDeps: true,
         androidExample: 'example/',
       ),
-      sourcePath: [packageRoot.resolve('android/src/main/java')],
       classes: <String>[
         'android.app.Application',
         'android.content.Context',
