@@ -95,6 +95,12 @@
     marker.snippet = infoWindow.snippet;
   }
 
+  if ([marker isKindOfClass:[GMSAdvancedMarker class]] && platformMarker.collisionBehavior != nil) {
+    GMSCollisionBehavior collisionBehaviorValue =
+        FGMGetCollisionBehaviorForPigeonCollisionBehavior(platformMarker.collisionBehavior.value);
+    ((GMSAdvancedMarker *)marker).collisionBehavior = collisionBehaviorValue;
+  }
+
   // This must be done last, to avoid visual flickers of default property values.
   if (useOpacityForVisibility) {
     marker.opacity = platformMarker.visible ? platformMarker.alpha : 0.0f;
@@ -114,6 +120,7 @@
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
+@property(nonatomic) FGMPlatformMarkerType markerType;
 
 @end
 
@@ -122,7 +129,8 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                     markerType:(FGMPlatformMarkerType)markerType {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
@@ -130,6 +138,7 @@
     _clusterManagersController = clusterManagersController;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
     _registrar = registrar;
+    _markerType = markerType;
   }
   return self;
 }
@@ -144,7 +153,10 @@
   CLLocationCoordinate2D position = FGMGetCoordinateForPigeonLatLng(markerToAdd.position);
   NSString *markerIdentifier = markerToAdd.markerId;
   NSString *clusterManagerIdentifier = markerToAdd.clusterManagerId;
-  GMSMarker *marker = [GMSMarker markerWithPosition:position];
+  GMSMarker *marker = (self.markerType == FGMPlatformMarkerTypeAdvancedMarker)
+                          ? [GMSAdvancedMarker markerWithPosition:position]
+                          : [GMSMarker markerWithPosition:position];
+
   FLTGoogleMapMarkerController *controller =
       [[FLTGoogleMapMarkerController alloc] initWithMarker:marker
                                           markerIdentifier:markerIdentifier

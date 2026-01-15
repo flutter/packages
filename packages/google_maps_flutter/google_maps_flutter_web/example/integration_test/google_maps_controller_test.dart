@@ -18,7 +18,7 @@ import 'google_maps_controller_test.mocks.dart';
 
 // This value is used when comparing long~num, like
 // LatLng values.
-const String _kCloudMapId = '000000000000000'; // Dummy map ID.
+const String _kMapId = '000000000000000'; // Dummy map ID.
 
 gmaps.Map mapShim() => throw UnimplementedError();
 
@@ -35,7 +35,7 @@ gmaps.Map mapShim() => throw UnimplementedError();
   MockSpec<PolylinesController>(
     fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
-  MockSpec<MarkersController>(
+  MockSpec<MarkersController<Object, Object>>(
     fallbackGenerators: <Symbol, Function>{#googleMap: mapShim},
   ),
   MockSpec<TileOverlaysController>(
@@ -487,7 +487,7 @@ void main() {
             mapConfiguration: const MapConfiguration(
               mapType: MapType.satellite,
               zoomControlsEnabled: true,
-              mapId: _kCloudMapId,
+              mapId: _kMapId,
               fortyFiveDegreeImageryEnabled: false,
             ),
           );
@@ -503,7 +503,7 @@ void main() {
           expect(capturedOptions, isNotNull);
           expect(capturedOptions!.mapTypeId, gmaps.MapTypeId.SATELLITE);
           expect(capturedOptions!.zoomControl, true);
-          expect(capturedOptions!.mapId, _kCloudMapId);
+          expect(capturedOptions!.mapId, _kMapId);
           expect(
             capturedOptions!.gestureHandling,
             'auto',
