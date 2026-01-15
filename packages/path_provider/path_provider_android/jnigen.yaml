@@ -13,7 +13,7 @@ output:
   dart:
     ## Generated dart bindings will be written to this path. They will follow
     ## the same folder hierarchy as the original Java code.
-    path: 'lib/src/third_party/path_provider.g.dart'
+    path: 'lib/src/path_provider.g.dart'
     structure: 'single_file'
 
 ## Classes / packages for which bindings need to be generated.

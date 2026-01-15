@@ -5,7 +5,7 @@
 import 'package:jni/jni.dart';
 import 'package:path_provider_platform_interface/path_provider_platform_interface.dart';
 
-import 'src/third_party/path_provider.g.dart';
+import 'src/path_provider.g.dart';
 
 /// The Android implementation of [PathProviderPlatform].
 class PathProviderAndroid extends PathProviderPlatform {
