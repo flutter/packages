@@ -335,9 +335,10 @@ public class ConvertTest {
   public void GetPinConfigFromPlatformPinConfig_GlyphColor() {
     Messages.PlatformBitmapPinConfig platformBitmap =
         new Messages.PlatformBitmapPinConfig.Builder()
-            .setBackgroundColor(0x00FFFFL)
-            .setBorderColor(0xFF00FFL)
-            .setGlyphColor(0x112233L)
+            .setBackgroundColor(
+                new Messages.PlatformColor.Builder().setArgbValue(0x00FFFFL).build())
+            .setBorderColor(new Messages.PlatformColor.Builder().setArgbValue(0xFF00FFL).build())
+            .setGlyphColor(new Messages.PlatformColor.Builder().setArgbValue(0x112233L).build())
             .build();
 
     PinConfig pinConfig =
@@ -353,7 +354,7 @@ public class ConvertTest {
     Messages.PlatformBitmapPinConfig platformBitmap =
         new Messages.PlatformBitmapPinConfig.Builder()
             .setGlyphText("Hi")
-            .setGlyphTextColor(0xFFFFFFL)
+            .setGlyphTextColor(new Messages.PlatformColor.Builder().setArgbValue(0xFFFFFFL).build())
             .build();
     PinConfig pinConfig =
         getPinConfigFromPlatformPinConfig(
@@ -375,8 +376,9 @@ public class ConvertTest {
         new Messages.PlatformBitmap.Builder().setBitmap(bytesBitmap).build();
     Messages.PlatformBitmapPinConfig platformBitmap =
         new Messages.PlatformBitmapPinConfig.Builder()
-            .setBackgroundColor(0xFFFFFFL)
-            .setBorderColor(0x000000L)
+            .setBackgroundColor(
+                new Messages.PlatformColor.Builder().setArgbValue(0xFFFFFFL).build())
+            .setBorderColor(new Messages.PlatformColor.Builder().setArgbValue(0x000000L).build())
             .setGlyphBitmap(icon)
             .build();
     when(bitmapDescriptorFactoryWrapper.fromBitmap(any())).thenReturn(mockBitmapDescriptor);
