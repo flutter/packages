@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart';
 
 import 'platform_cross_directory.dart';
 import 'platform_cross_file.dart';
-import 'shared_storage/platform_shared_storage_cross_directory.dart';
-import 'shared_storage/platform_shared_storage_cross_file.dart';
+import 'scoped_storage/platform_scoped_storage_cross_directory.dart';
+import 'scoped_storage/platform_scoped_storage_cross_file.dart';
 
 /// Interface for a platform implementation of `cross_file`.
 abstract base class CrossFilePlatform {
@@ -30,21 +30,21 @@ abstract base class CrossFilePlatform {
     );
   }
 
-  /// Creates a new [PlatformSharedStorageXDirectory].
-  PlatformSharedStorageXFile createPlatformSharedStorageXFile(
-    PlatformSharedStorageXFileCreationParams params,
+  /// Creates a new [PlatformScopedStorageXDirectory].
+  PlatformScopedStorageXFile createPlatformScopedStorageXFile(
+    PlatformScopedStorageXFileCreationParams params,
   ) {
     throw UnimplementedError(
-      'createPlatformSharedStorageXFile is not implemented on the current platform.',
+      'createPlatformScopedStorageXFile is not implemented on the current platform.',
     );
   }
 
-  /// Creates a new [PlatformSharedStorageXDirectory].
-  PlatformSharedStorageXDirectory createPlatformSharedStorageXDirectory(
-    PlatformSharedStorageXDirectoryCreationParams params,
+  /// Creates a new [PlatformScopedStorageXDirectory].
+  PlatformScopedStorageXDirectory createPlatformScopedStorageXDirectory(
+    PlatformScopedStorageXDirectoryCreationParams params,
   ) {
     throw UnimplementedError(
-      'createPlatformSharedStorageXDirectory is not implemented on the current platform.',
+      'createPlatformScopedStorageXDirectory is not implemented on the current platform.',
     );
   }
 }
