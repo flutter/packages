@@ -199,10 +199,11 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)bindRemoveObserver:(nonnull UIViewController *)controller
                    context:(nonnull FLTImagePickerMethodCallContext *)context {
   __weak typeof(self) weakSelf = self;
+  __weak FLTImagePickerMethodCallContext *weakContext = context;
   FLTImagePickerRemoveObserverView *removeObserverView =
       [[FLTImagePickerRemoveObserverView alloc] initWithRemoveCallback:^{
         __strong typeof(weakSelf) strongSelf = weakSelf;
-        if (strongSelf && strongSelf.callContext == context && !strongSelf.isProcessingSelection) {
+        if (strongSelf && strongSelf.callContext == weakContext && !strongSelf.dismissReceived) {
           [strongSelf sendCallResultWithSavedPathList:nil];
         }
       }];
@@ -489,6 +490,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)showPhotoLibraryWithPHPicker:(PHPickerViewController *)pickerViewController
     API_AVAILABLE(ios(14)) {
+  self.dismissReceived = NO;
   [self.viewProvider.viewController presentViewController:pickerViewController
                                                  animated:YES
                                                completion:nil];
@@ -515,7 +517,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 #pragma mark - UIAdaptivePresentationControllerDelegate
 
 - (void)presentationControllerDidDismiss:(UIPresentationController *)presentationController {
-  self.isProcessingSelection = YES;
+  self.dismissReceived = YES;
 
   [self sendCallResultWithSavedPathList:nil];
 }
@@ -524,12 +526,12 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)picker:(PHPickerViewController *)picker
     didFinishPicking:(NSArray<PHPickerResult *> *)results API_AVAILABLE(ios(14)) {
+  self.dismissReceived = YES;
   [picker dismissViewControllerAnimated:YES completion:nil];
   if (results.count == 0) {
     [self sendCallResultWithSavedPathList:nil];
     return;
   }
-  self.isProcessingSelection = YES;
   __block NSOperationQueue *saveQueue = [[NSOperationQueue alloc] init];
   saveQueue.name = @"Flutter Save Image Queue";
   saveQueue.qualityOfService = NSQualityOfServiceUserInitiated;
@@ -549,7 +551,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     } else {
       [weakSelf sendCallResultWithSavedPathList:pathList];
     }
-    weakSelf.isProcessingSelection = NO;
+    weakSelf.dismissReceived = NO;
     saveQueue = nil;
   }];
 
@@ -581,7 +583,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)imagePickerController:(UIImagePickerController *)picker
     didFinishPickingMediaWithInfo:(NSDictionary<NSString *, id> *)info {
-  self.isProcessingSelection = YES;
+  self.dismissReceived = YES;
 
   NSURL *videoURL = info[UIImagePickerControllerMediaURL];
   [picker dismissViewControllerAnimated:YES completion:nil];
@@ -590,7 +592,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   // to prevent below code to be unwantly executed multiple times and cause a
   // crash.
   if (!self.callContext) {
-    self.isProcessingSelection = NO;
+    self.dismissReceived = NO;
     return;
   }
   if (videoURL != nil) {
@@ -671,7 +673,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker {
-  self.isProcessingSelection = YES;
+  self.dismissReceived = YES;
 
   [picker dismissViewControllerAnimated:YES completion:nil];
   [self sendCallResultWithSavedPathList:nil];
@@ -715,7 +717,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
     self.callContext.result(pathList ?: [NSArray array], nil);
   }
   self.callContext = nil;
-  self.isProcessingSelection = NO;
+  self.dismissReceived = NO;
 }
 
 /// Sends the given error via `callContext.result` as the result of the original platform channel
@@ -728,7 +730,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   self.callContext.result(nil, error);
   self.callContext = nil;
-  self.isProcessingSelection = NO;
+  self.dismissReceived = NO;
 }
 
 @end

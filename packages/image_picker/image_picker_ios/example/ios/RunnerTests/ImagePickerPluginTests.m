@@ -760,7 +760,8 @@
 #pragma mark - Test immediate picker close detection
 
 - (void)testUIImagePickerImmediateCloseReturnsEmptyArray {
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
@@ -813,7 +814,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
 
@@ -840,7 +842,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *resultExpectation = [self expectationWithDescription:@"result"];
   __block BOOL emptyResultReceived = NO;
@@ -885,7 +888,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
@@ -930,7 +934,8 @@
   OCMStub(ClassMethod([photoLibrary authorizationStatus]))
       .andReturn(PHAuthorizationStatusAuthorized);
 
-  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *plugin =
+      [[FLTImagePickerPlugin alloc] initWithViewProvider:[[StubViewProvider alloc] init]];
   UIImagePickerController *controller = [[UIImagePickerController alloc] init];
   [plugin setImagePickerControllerOverrides:@[ controller ]];
 
