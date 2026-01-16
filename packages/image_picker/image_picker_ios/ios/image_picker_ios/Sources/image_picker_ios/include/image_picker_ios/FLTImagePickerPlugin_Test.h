@@ -64,6 +64,9 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 
 - (instancetype)initWithViewProvider:(NSObject<FIPViewProvider> *)viewProvider;
 
+/// Flag to track if the picker has been dismissed (to prevent observer from interfering)
+@property(nonatomic, assign) BOOL dismissReceived;
+
 /// Validates the provided paths list, then sends it via `callContext.result` as the result of the
 /// original platform channel method call, clearing the in-progress call state.
 ///

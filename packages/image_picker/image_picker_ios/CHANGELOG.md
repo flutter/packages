@@ -1,3 +1,7 @@
+## 0.8.14
+
+* Fixes Future not completing when image picker is dismissed quickly before fully appearing.
+
 ## 0.8.13+4
 
 * Improves compatibility with `UIScene`.
