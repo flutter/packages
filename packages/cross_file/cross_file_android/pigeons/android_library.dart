@@ -30,6 +30,8 @@ abstract class DocumentFile {
   /// Create a DocumentFile representing the single document at the given Uri.
   DocumentFile.fromSingleUri(String singleUri);
 
+  /// Create a DocumentFile representing the document tree rooted at the given
+  /// Uri.
   DocumentFile.fromTreeUri(String treeUri);
 
   /// Indicates whether the current context is allowed to read from this file.
@@ -91,8 +93,13 @@ abstract class ContentResolver {
   ),
 )
 abstract class InputStreamReadBytesResponse {
-  late final int returnValue;
+  /// The total number of bytes read into `bytes`, or -1 if there is no more
+  /// data because the end of the stream has been reached.
+  ///
+  /// The returned value when calling the native `InputStream.readBytes` method.
+  late final int bytesRead;
 
+  /// The byte array into which the data is read.
   late final Uint8List bytes;
 }
 
@@ -104,6 +111,7 @@ abstract class InputStreamReadBytesResponse {
   kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.io.InputStream'),
 )
 abstract class InputStream {
+  // TODO: maybe return empty list instead of new class?
   /// Reads some number of bytes from the input stream and stores them into the
   /// returns them.
   InputStreamReadBytesResponse readBytes(int len);
