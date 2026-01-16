@@ -1,20 +1,40 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.flutter.plugins.imagepickerexample">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Internet permission for Flutter tooling -->
+    <uses-permission android:name="android.permission.INTERNET" />
 
-    <application android:label="Image Picker Example" android:icon="@mipmap/ic_launcher">
-        <activity android:name="io.flutter.embedding.android.FlutterActivity"
-                  android:theme="@android:style/Theme.Black.NoTitleBar"
-                  android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
-                  android:hardwareAccelerated="true"
-                  android:exported="true"
-                  android:windowSoftInputMode="adjustResize">
+    <!-- Backward compatible media permission -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!-- Android 13+ media permission -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+
+    <application
+        android:label="Image Picker Example"
+        android:icon="@mipmap/ic_launcher">
+
+        <activity
+            android:name="io.flutter.embedding.android.FlutterActivity"
+            android:theme="@android:style/Theme.Black.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|layoutDirection"
+            android:hardwareAccelerated="true"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
+
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <meta-data android:name="flutterEmbedding" android:value="2"/>
+
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
     </application>
+
 </manifest>
