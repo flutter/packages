@@ -1501,6 +1501,60 @@ void main() {
           );
         },
       );
+      test(' throw tool exit when could not parse ci config file', () async {
+        // Mock pub.dev responses.
+        mockHttpResponses['package1'] = <String, dynamic>{
+          'name': 'package1',
+          'versions': <String>['0.0.1'],
+        };
+
+        // Mock packages.
+        final RepositoryPackage package1 = createFakePackage(
+          'package1',
+          packagesDir,
+          includeCIConfig: true,
+          version: '0.0.2',
+        );
+
+        package1.ciConfigFile.writeAsStringSync(
+          'wrong format of ci config file',
+        );
+
+        // Mock git diff to show both packages have changed.
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(stdout: '${package1.pubspecFile.path}\n'),
+              ),
+            ];
+
+        mockStdin.readLineOutput = 'y';
+
+        Error? commandError;
+        // Package1 is published in batch realease, pacakge2 is not.
+        final List<String> output = await runCapturingPrint(
+          commandRunner,
+          <String>[
+            'publish',
+            '--all-changed',
+            '--base-sha=HEAD~',
+            '--batch-release-branch=release-package1',
+          ],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Could not parse ci_config.yaml for package1: FormatException: Root of ci_config.yaml must be a map.',
+            ),
+          ]),
+        );
+      });
     });
 
     test('Do not release flutter_plugin_tools', () async {
