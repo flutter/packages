@@ -202,14 +202,17 @@ class PlatformBillingResult {
   PlatformBillingResult({
     required this.responseCode,
     required this.debugMessage,
+    this.subResponseCode = 0,
   });
 
   PlatformBillingResponse responseCode;
 
   String debugMessage;
 
+  int subResponseCode;
+
   List<Object?> _toList() {
-    return <Object?>[responseCode, debugMessage];
+    return <Object?>[responseCode, debugMessage, subResponseCode];
   }
 
   Object encode() {
@@ -221,6 +224,7 @@ class PlatformBillingResult {
     return PlatformBillingResult(
       responseCode: result[0]! as PlatformBillingResponse,
       debugMessage: result[1]! as String,
+      subResponseCode: result[2]! as int,
     );
   }
 
@@ -299,6 +303,7 @@ class PlatformProductDetails {
     required this.productType,
     required this.title,
     this.oneTimePurchaseOfferDetails,
+    this.oneTimePurchaseOfferDetailsList,
     this.subscriptionOfferDetails,
   });
 
@@ -314,6 +319,8 @@ class PlatformProductDetails {
 
   PlatformOneTimePurchaseOfferDetails? oneTimePurchaseOfferDetails;
 
+  List<PlatformOneTimePurchaseOfferDetails>? oneTimePurchaseOfferDetailsList;
+
   List<PlatformSubscriptionOfferDetails>? subscriptionOfferDetails;
 
   List<Object?> _toList() {
@@ -324,6 +331,7 @@ class PlatformProductDetails {
       productType,
       title,
       oneTimePurchaseOfferDetails,
+      oneTimePurchaseOfferDetailsList,
       subscriptionOfferDetails,
     ];
   }
@@ -342,7 +350,9 @@ class PlatformProductDetails {
       title: result[4]! as String,
       oneTimePurchaseOfferDetails:
           result[5] as PlatformOneTimePurchaseOfferDetails?,
-      subscriptionOfferDetails: (result[6] as List<Object?>?)
+      oneTimePurchaseOfferDetailsList: (result[6] as List<Object?>?)
+          ?.cast<PlatformOneTimePurchaseOfferDetails>(),
+      subscriptionOfferDetails: (result[7] as List<Object?>?)
           ?.cast<PlatformSubscriptionOfferDetails>(),
     );
   }
@@ -370,14 +380,17 @@ class PlatformProductDetailsResponse {
   PlatformProductDetailsResponse({
     required this.billingResult,
     required this.productDetails,
+    required this.unfetchedProductList,
   });
 
   PlatformBillingResult billingResult;
 
   List<PlatformProductDetails> productDetails;
 
+  List<PlatformUnfetchedProduct> unfetchedProductList;
+
   List<Object?> _toList() {
-    return <Object?>[billingResult, productDetails];
+    return <Object?>[billingResult, productDetails, unfetchedProductList];
   }
 
   Object encode() {
@@ -390,6 +403,8 @@ class PlatformProductDetailsResponse {
       billingResult: result[0]! as PlatformBillingResult,
       productDetails: (result[1] as List<Object?>?)!
           .cast<PlatformProductDetails>(),
+      unfetchedProductList: (result[2] as List<Object?>?)!
+          .cast<PlatformUnfetchedProduct>(),
     );
   }
 
@@ -1230,6 +1245,43 @@ class PlatformPendingPurchasesParams {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Pigeon version of Java [UnfetchedProduct](https://developer.android.com/reference/com/android/billingclient/api/QueryProductDetailsParams.Product).
+class PlatformUnfetchedProduct {
+  PlatformUnfetchedProduct({required this.productId});
+
+  String productId;
+
+  List<Object?> _toList() {
+    return <Object?>[productId];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static PlatformUnfetchedProduct decode(Object result) {
+    result as List<Object?>;
+    return PlatformUnfetchedProduct(productId: result[0]! as String);
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! PlatformUnfetchedProduct ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -1319,6 +1371,9 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is PlatformPendingPurchasesParams) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
+    } else if (value is PlatformUnfetchedProduct) {
+      buffer.putUint8(156);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -1392,6 +1447,8 @@ class _PigeonCodec extends StandardMessageCodec {
         return PlatformInstallmentPlanDetails.decode(readValue(buffer)!);
       case 155:
         return PlatformPendingPurchasesParams.decode(readValue(buffer)!);
+      case 156:
+        return PlatformUnfetchedProduct.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -1675,41 +1732,6 @@ class InAppPurchaseApi {
       );
     } else {
       return (pigeonVar_replyList[0] as PlatformPurchasesResponse?)!;
-    }
-  }
-
-  /// Wraps BillingClient#queryPurchaseHistoryAsync(QueryPurchaseHistoryParams, PurchaseHistoryResponseListener).
-  Future<PlatformPurchaseHistoryResponse> queryPurchaseHistoryAsync(
-    PlatformProductType productType,
-  ) async {
-    final String pigeonVar_channelName =
-        'dev.flutter.pigeon.in_app_purchase_android.InAppPurchaseApi.queryPurchaseHistoryAsync$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
-        BasicMessageChannel<Object?>(
-          pigeonVar_channelName,
-          pigeonChannelCodec,
-          binaryMessenger: pigeonVar_binaryMessenger,
-        );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[productType],
-    );
-    final List<Object?>? pigeonVar_replyList =
-        await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as PlatformPurchaseHistoryResponse?)!;
     }
   }
 
