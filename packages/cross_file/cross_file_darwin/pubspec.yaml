@@ -1,5 +1,5 @@
 name: cross_file_darwin
-description: "A new Flutter plugin project."
+description: Implementation of cross_file_platform_interface for iOS and macOS.
 repository: https://github.com/flutter/packages/tree/main/packages/cross_file/cross_file_darwin
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+cross_file%22
 version: 0.0.1
@@ -13,9 +13,11 @@ flutter:
     implements: cross_file
     platforms:
       ios:
+        dartPluginClass: CrossFileDarwin
         pluginClass: CrossFileDarwinPlugin
         sharedDarwinSource: true
       macos:
+        dartPluginClass: CrossFileDarwin
         pluginClass: CrossFileDarwinPlugin
         sharedDarwinSource: true
 

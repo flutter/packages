@@ -31,7 +31,7 @@ class FileOpenScreen extends StatelessWidget {
     }
 
     if (file case final XFile file) {
-      switch (mime.lookupMimeType(file.path)) {
+      switch (mime.lookupMimeType(file.name)) {
         case final String mimeType when mimeType.startsWith('text'):
           await showDialog<void>(
             context: context,

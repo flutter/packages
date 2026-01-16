@@ -52,7 +52,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   Stream<Uint8List> openRead([int? start, int? end]) async* {
     final int? fileLength = await length();
     if (fileLength == null) {
-      throw UnsupportedError('Can not access file length.');
+      throw UnsupportedError('Cannot access file length.');
     }
 
     int bytesToRead = (end ?? fileLength) - (start ?? 0);
@@ -92,7 +92,7 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) async {
-    return utf8.decodeStream(openRead());
+    return encoding.decodeStream(openRead());
   }
 
   @override

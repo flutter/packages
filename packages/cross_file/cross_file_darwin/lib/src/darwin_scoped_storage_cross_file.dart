@@ -11,46 +11,50 @@ import 'package:flutter/foundation.dart';
 
 import 'cross_file_darwin_apis.g.dart';
 
-/// Implementation of [PlatformSharedStorageXFileCreationParams] for iOS and
+/// Implementation of [PlatformScopedStorageXFileCreationParams] for iOS and
 /// macOS.
 @immutable
-base class DarwinSharedStorageXFileCreationParams
-    extends PlatformSharedStorageXFileCreationParams {
-  /// Constructs a [DarwinSharedStorageXFileCreationParams].
-  DarwinSharedStorageXFileCreationParams({
+base class DarwinScopedStorageXFileCreationParams
+    extends PlatformScopedStorageXFileCreationParams {
+  /// Constructs a [DarwinScopedStorageXFileCreationParams].
+  DarwinScopedStorageXFileCreationParams({
     required super.uri,
     @visibleForTesting CrossFileDarwinApi? api,
   }) : api = api ?? CrossFileDarwinApi();
 
+  /// The API used to call to native code to interact with files.
   @visibleForTesting
   final CrossFileDarwinApi api;
 }
 
-/// Implementation of [PlatformSharedStorageXFile] for iOS and macOS.
-base class DarwinSharedStorageXFile extends PlatformSharedStorageXFile {
-  /// Constructs a [DarwinSharedStorageXFile].
-  DarwinSharedStorageXFile(super.params) : super.implementation();
+/// Implementation of [PlatformScopedStorageXFile] for iOS and macOS.
+base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
+  /// Constructs a [DarwinScopedStorageXFile].
+  DarwinScopedStorageXFile(super.params) : super.implementation();
 
-  /// Maximum number of bytes to read at a time from the native Android
-  /// InputStream.
+  /// Maximum number of bytes to read at a time from the native iOS
+  /// `FileHandle`.
   ///
   /// Only visible for testing.
   @visibleForTesting
   static const int maxByteArrayLen = 4 * 1024;
 
   @override
-  late final DarwinSharedStorageXFileCreationParams params =
-      super.params is DarwinSharedStorageXFileCreationParams
-      ? super.params as DarwinSharedStorageXFileCreationParams
-      : DarwinSharedStorageXFileCreationParams(uri: params.uri);
+  late final DarwinScopedStorageXFileCreationParams params =
+      super.params is DarwinScopedStorageXFileCreationParams
+      ? super.params as DarwinScopedStorageXFileCreationParams
+      : DarwinScopedStorageXFileCreationParams(uri: super.params.uri);
 
-  Future<DarwinSharedStorageXFileCreationParams?> toBookmarkedFile() async {
+  /// Retrun
+  Future<DarwinScopedStorageXFile?> toBookmarkedFile() async {
     final String? bookmarkedUrl = await params.api.tryCreateBookmarkedUrl(
       params.uri,
     );
 
     return bookmarkedUrl != null
-        ? DarwinSharedStorageXFileCreationParams(uri: bookmarkedUrl)
+        ? DarwinScopedStorageXFile(
+            DarwinScopedStorageXFileCreationParams(uri: bookmarkedUrl),
+          )
         : null;
     // final URL? url = await _originalUrl;
     // if (url case URL url) {
@@ -80,17 +84,17 @@ base class DarwinSharedStorageXFile extends PlatformSharedStorageXFile {
   Future<bool> exists() => params.api.fileExists(params.uri);
 
   @override
-  Future<DateTime> lastModified() async {
+  Future<DateTime?> lastModified() async {
     final int? lastModifiedSinceEpoch = await params.api.fileModificationDate(
       params.uri,
     );
     return lastModifiedSinceEpoch != null
         ? DateTime.fromMillisecondsSinceEpoch(lastModifiedSinceEpoch)
-        : throw UnsupportedError('');
+        : null;
   }
 
   @override
-  Future<int> length() async => await params.api.fileSize(params.uri) ?? 0;
+  Future<int?> length() => params.api.fileSize(params.uri);
 
   @override
   Future<String?> name() {
@@ -99,7 +103,12 @@ base class DarwinSharedStorageXFile extends PlatformSharedStorageXFile {
 
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
-    int bytesToRead = (end ?? await length()) - (start ?? 0);
+    final int? fileLength = await length();
+    if (fileLength == null) {
+      throw UnsupportedError('Cannot access file length.');
+    }
+
+    int bytesToRead = (end ?? fileLength) - (start ?? 0);
     assert(bytesToRead >= 0);
 
     final handle = FileHandle.forReadingFromUrl(url: params.uri);
@@ -114,7 +123,9 @@ base class DarwinSharedStorageXFile extends PlatformSharedStorageXFile {
         );
 
         if (bytes == null) {
-          throw StateError('Failed to read bytes from file: ${params.uri}');
+          throw UnsupportedError(
+            'Failed to read bytes from file: ${params.uri}',
+          );
         } else {
           yield bytes;
         }
@@ -132,7 +143,7 @@ base class DarwinSharedStorageXFile extends PlatformSharedStorageXFile {
     try {
       final Uint8List? bytes = await handle.readToEnd();
       if (bytes == null) {
-        throw StateError('Failed to read bytes from file: ${params.uri}');
+        throw UnsupportedError('Failed to read bytes from file: ${params.uri}');
       }
 
       return bytes;
@@ -143,7 +154,7 @@ base class DarwinSharedStorageXFile extends PlatformSharedStorageXFile {
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) async {
-    return utf8.decodeStream(openRead());
+    return encoding.decodeStream(openRead());
   }
 
   // late final Future<URL?> _originalUrl = URL.fileURLWithPath(params.path);
