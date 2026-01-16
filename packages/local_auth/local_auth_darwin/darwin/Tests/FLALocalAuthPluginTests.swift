@@ -109,7 +109,7 @@ struct LocalAuthPluginTests {
   }
 
   @Test
-  func successfullAuthWithoutBiometrics() async {
+  func successfulAuthWithoutBiometrics() async {
     let stubAuthContext = StubAuthContext()
     let plugin = LocalAuthPlugin(
       contextFactory: StubAuthContextFactory(contexts: [stubAuthContext]))
