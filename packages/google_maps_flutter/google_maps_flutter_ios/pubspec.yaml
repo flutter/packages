@@ -28,8 +28,10 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   mockito: ^5.4.4
+  path: ^1.8.0
   pigeon: ^26.1.0
   plugin_platform_interface: ^2.1.7
+  process: ^5.0.5
 
 topics:
   - google-maps
