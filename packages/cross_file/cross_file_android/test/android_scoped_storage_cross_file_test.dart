@@ -12,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'android_shared_storage_cross_file_test.mocks.dart';
+import 'android_scoped_storage_cross_file_test.mocks.dart';
 
 @GenerateMocks(<Type>[
   android.ContentResolver,
@@ -68,46 +68,6 @@ void main() {
   });
 
   group('openRead', () {
-    void setUpInputStreamWithBytes(
-      MockInputStream mockInputStream,
-      Uint8List bytes,
-    ) {
-      Iterable<int> remainingBytes = bytes.toList();
-
-      when(mockInputStream.skip(any)).thenAnswer((Invocation invocation) async {
-        final amount = invocation.positionalArguments[0] as int;
-        if (amount < 0) {
-          return 0;
-        }
-
-        final Iterable<int> newRemainingBytes = remainingBytes.skip(amount);
-
-        final int diff = remainingBytes.length - newRemainingBytes.length;
-        remainingBytes = newRemainingBytes;
-        return diff;
-      });
-
-      when(mockInputStream.readBytes(any)).thenAnswer((
-        Invocation invocation,
-      ) async {
-        final len = invocation.positionalArguments[0] as int;
-
-        final List<int> bytesRead = remainingBytes.take(len).toList();
-        remainingBytes = remainingBytes.skip(len);
-
-        return android.InputStreamReadBytesResponse.pigeon_detached(
-          returnValue: remainingBytes.isEmpty ? -1 : bytesRead.length,
-          bytes: Uint8List.fromList(bytesRead),
-        );
-      });
-    }
-
-    Uint8List combineLists(List<Uint8List> lists) {
-      return Uint8List.fromList(
-        lists.expand((Uint8List element) => element).toList(),
-      );
-    }
-
     test('openRead finishes successfully', () async {
       final testBytes = Uint8List.fromList([0, 1, 2]);
 
@@ -247,7 +207,7 @@ void main() {
         };
 
     final mockInputStream = MockInputStream();
-    when(mockInputStream.readAllBytes()).thenAnswer((_) async => testBytes);
+    setUpInputStreamWithBytes(mockInputStream, testBytes);
 
     final mockContentResolver = MockContentResolver();
     when(
@@ -318,4 +278,44 @@ void main() {
 
     expect(await file.name(), name);
   });
+}
+
+void setUpInputStreamWithBytes(
+  MockInputStream mockInputStream,
+  Uint8List bytes,
+) {
+  Iterable<int> remainingBytes = bytes.toList();
+
+  when(mockInputStream.skip(any)).thenAnswer((Invocation invocation) async {
+    final amount = invocation.positionalArguments[0] as int;
+    if (amount < 0) {
+      return 0;
+    }
+
+    final Iterable<int> newRemainingBytes = remainingBytes.skip(amount);
+
+    final int diff = remainingBytes.length - newRemainingBytes.length;
+    remainingBytes = newRemainingBytes;
+    return diff;
+  });
+
+  when(mockInputStream.readBytes(any)).thenAnswer((
+    Invocation invocation,
+  ) async {
+    final len = invocation.positionalArguments[0] as int;
+
+    final List<int> bytesRead = remainingBytes.take(len).toList();
+    remainingBytes = remainingBytes.skip(len);
+
+    return android.InputStreamReadBytesResponse.pigeon_detached(
+      returnValue: remainingBytes.isEmpty ? -1 : bytesRead.length,
+      bytes: Uint8List.fromList(bytesRead),
+    );
+  });
+}
+
+Uint8List combineLists(List<Uint8List> lists) {
+  return Uint8List.fromList(
+    lists.expand((Uint8List element) => element).toList(),
+  );
 }

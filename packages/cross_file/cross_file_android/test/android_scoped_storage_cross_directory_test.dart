@@ -9,7 +9,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 
-import 'android_shared_storage_cross_directory_test.mocks.dart';
+import 'android_scoped_storage_cross_directory_test.mocks.dart';
 
 @GenerateMocks(<Type>[android.DocumentFile])
 void main() {

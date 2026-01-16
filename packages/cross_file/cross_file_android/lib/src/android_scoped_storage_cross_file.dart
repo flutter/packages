@@ -29,18 +29,33 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
   static const int maxByteArrayLen = 4 * 1024;
 
   @override
-  Future<DateTime> lastModified() async {
-    return DateTime.fromMillisecondsSinceEpoch(
-      await _documentFile.lastModified(),
-    );
+  Future<DateTime?> lastModified() async {
+    final int msSinceEpoch = await _documentFile.lastModified();
+    if (msSinceEpoch == 0) {
+      return null;
+    }
+
+    return DateTime.fromMillisecondsSinceEpoch(msSinceEpoch);
   }
 
   @override
-  Future<int> length() => _documentFile.length();
+  Future<int?> length() async {
+    final int length = await _documentFile.length();
+    if (length == 0) {
+      return null;
+    }
+
+    return length;
+  }
 
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
-    int bytesToRead = (end ?? await length()) - (start ?? 0);
+    final int? fileLength = await length();
+    if (fileLength == null) {
+      throw UnsupportedError('Can not access file length.');
+    }
+
+    int bytesToRead = (end ?? fileLength) - (start ?? 0);
     assert(bytesToRead >= 0);
 
     final android.InputStream? inputStream = await _contentResolver
