@@ -7,9 +7,14 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut: 'ios/Classes/messages.g.h',
-    objcSourceOut: 'ios/Classes/messages.g.m',
-    objcOptions: ObjcOptions(prefix: 'FGM'),
+    objcHeaderOut:
+        'ios/google_maps_flutter_ios/Sources/google_maps_flutter_ios/include/google_maps_flutter_ios/messages.g.h',
+    objcSourceOut:
+        'ios/google_maps_flutter_ios/Sources/google_maps_flutter_ios/messages.g.m',
+    objcOptions: ObjcOptions(
+      prefix: 'FGM',
+      headerIncludePath: './include/google_maps_flutter_ios/messages.g.h',
+    ),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )

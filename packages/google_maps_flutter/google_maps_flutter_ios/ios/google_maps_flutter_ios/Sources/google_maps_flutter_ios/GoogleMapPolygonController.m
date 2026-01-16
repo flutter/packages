@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "GoogleMapPolygonController.h"
-#import "GoogleMapPolygonController_Test.h"
+#import "./include/google_maps_flutter_ios/GoogleMapPolygonController.h"
+#import "./include/google_maps_flutter_ios/GoogleMapPolygonController_Test.h"
 
-#import "FGMConversionUtils.h"
+#import "./include/google_maps_flutter_ios/FGMConversionUtils.h"
 
 /// Converts a list of holes represented as CLLocation lists to GMSMutablePath lists.
 static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(

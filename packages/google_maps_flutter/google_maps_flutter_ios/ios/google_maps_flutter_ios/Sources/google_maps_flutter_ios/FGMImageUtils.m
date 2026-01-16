@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FGMImageUtils.h"
-#import "Foundation/Foundation.h"
+#import "./include/google_maps_flutter_ios/FGMImageUtils.h"
+
+@import Foundation;
 
 /// This method is deprecated within the context of `BitmapDescriptor.fromBytes` handling in the
 /// flutter google_maps_flutter_platform_interface package which has been replaced by 'bytes'

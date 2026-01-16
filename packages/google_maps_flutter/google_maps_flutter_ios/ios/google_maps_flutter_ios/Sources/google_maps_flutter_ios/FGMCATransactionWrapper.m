@@ -2,8 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FGMCATransactionWrapper.h"
-#import <QuartzCore/QuartzCore.h>
+#import "./include/google_maps_flutter_ios/FGMCATransactionWrapper.h"
+
+@import QuartzCore;
 
 @implementation FGMCATransactionWrapper
 

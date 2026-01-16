@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "FLTGoogleMapTileOverlayController.h"
-#import "FLTGoogleMapTileOverlayController_Test.h"
+#import "./include/google_maps_flutter_ios/FLTGoogleMapTileOverlayController.h"
+#import "./include/google_maps_flutter_ios/FLTGoogleMapTileOverlayController_Test.h"
 
-#import "FGMConversionUtils.h"
+#import "./include/google_maps_flutter_ios/FGMConversionUtils.h"
 
 @interface FLTGoogleMapTileOverlayController ()
 
