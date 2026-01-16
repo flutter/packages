@@ -191,7 +191,9 @@ class PublishCommand extends PackageLoopingCommand {
 
   @override
   Stream<PackageEnumerationEntry> getPackagesToProcess() async* {
-    final String batchReleaseBranchName = getStringArg(_batchReleaseBranchOption);
+    final String batchReleaseBranchName = getStringArg(
+      _batchReleaseBranchOption,
+    );
     if (getBoolArg(_allChangedFlag)) {
       print(
         'Publishing all packages that have changed relative to "$baseSha"\n',

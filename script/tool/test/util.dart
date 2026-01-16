@@ -131,8 +131,8 @@ RepositoryPackage createFakePlugin(
 ///
 /// If non-null, [directoryName] will be used for the directory instead of
 /// [name].
-/// If [includeCIConfig] is true, a fake CI config file will be created. 
-/// [isBatchRelease] will be used in the CI config file. 
+/// If [includeCIConfig] is true, a fake CI config file will be created.
+/// [isBatchRelease] will be used in the CI config file.
 RepositoryPackage createFakePackage(
   String name,
   Directory parentDirectory, {
