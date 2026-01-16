@@ -33,7 +33,7 @@ struct StickyAuthState {
 /// A flutter plugin for local authentication.
 // TODO(stuartmorgan): Remove the @unchecked Sendable, and convert to strict thread enforcement.
 // This was added to minimize the changes while converting from Swift to Objective-C.
-public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unchecked Sendable {
+public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, FlutterSceneLifeCycleDelegate, @unchecked Sendable {
 
   /// The factory to create LAContexts.
   private let authContextFactory: AuthContextFactory
@@ -44,6 +44,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     let instance = LocalAuthPlugin(
       contextFactory: DefaultAuthContextFactory())
     registrar.addApplicationDelegate(instance)
+    registrar.addSceneDelegate(instance)
+
     // Workaround for https://github.com/flutter/flutter/issues/118103.
     #if os(iOS)
       let messenger = registrar.messenger()
@@ -261,6 +263,16 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
           completion: lastCallState.resultHandler)
       }
     }
+
+    public func sceneDidBecomeActive(_ scene: UIScene) {
+      if let lastCallState = self.lastCallState {
+        authenticate(
+          options: lastCallState.options,
+          strings: lastCallState.strings,
+          completion: lastCallState.resultHandler)
+      }
+    }
+
   #endif  // os(iOS)
 
 }
