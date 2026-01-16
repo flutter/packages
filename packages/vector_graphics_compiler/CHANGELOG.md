@@ -1,5 +1,6 @@
 ## NEXT
 
+* Adds support for percentage units in SVG shape attributes (rect, circle, ellipse, line).
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 1.1.19
