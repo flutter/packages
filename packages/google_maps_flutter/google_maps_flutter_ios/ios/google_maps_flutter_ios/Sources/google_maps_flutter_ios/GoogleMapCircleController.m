@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/google_maps_flutter_ios/GoogleMapCircleController.h"
-#import "./include/google_maps_flutter_ios/GoogleMapCircleController_Test.h"
+#import "GoogleMapCircleController.h"
+#import "GoogleMapCircleController_Test.h"
 
-#import "./include/google_maps_flutter_ios/FGMConversionUtils.h"
+#import "FGMConversionUtils.h"
 
 @interface FLTGoogleMapCircleController ()
 

@@ -4,15 +4,15 @@
 
 @import GoogleMapsUtils;
 
-#import "./include/google_maps_flutter_ios/GoogleMapController.h"
-#import "./include/google_maps_flutter_ios/GoogleMapController_Test.h"
+#import "GoogleMapController.h"
+#import "GoogleMapController_Test.h"
 
-#import "./include/google_maps_flutter_ios/FGMConversionUtils.h"
-#import "./include/google_maps_flutter_ios/FGMGroundOverlayController.h"
-#import "./include/google_maps_flutter_ios/FGMMarkerUserData.h"
-#import "./include/google_maps_flutter_ios/FLTGoogleMapHeatmapController.h"
-#import "./include/google_maps_flutter_ios/FLTGoogleMapTileOverlayController.h"
-#import "./include/google_maps_flutter_ios/messages.g.h"
+#import "FGMConversionUtils.h"
+#import "FGMGroundOverlayController.h"
+#import "FGMMarkerUserData.h"
+#import "FLTGoogleMapHeatmapController.h"
+#import "FLTGoogleMapTileOverlayController.h"
+#import "google_maps_flutter_pigeon_messages.g.h"
 
 #pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
 
@@ -36,7 +36,7 @@
 }
 
 - (NSObject<FlutterMessageCodec> *)createArgsCodec {
-  return FGMGetMessagesCodec();
+  return FGMGetGoogleMapsFlutterPigeonMessagesCodec();
 }
 
 - (NSObject<FlutterPlatformView> *)createWithFrame:(CGRect)frame

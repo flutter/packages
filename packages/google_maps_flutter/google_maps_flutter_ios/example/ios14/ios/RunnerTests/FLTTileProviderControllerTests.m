@@ -8,8 +8,6 @@
 
 #import <OCMock/OCMock.h>
 
-#import "messages.g.h"
-
 @interface FLTTileProviderControllerTests : XCTestCase
 @end
 

@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/google_maps_flutter_ios/FLTGoogleMapsPlugin.h"
+#import "FLTGoogleMapsPlugin.h"
 
 #pragma mark - GoogleMaps plugin implementation
 

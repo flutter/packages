@@ -3,12 +3,10 @@
 // found in the LICENSE file.
 
 @import google_maps_flutter_ios;
-@import google_maps_flutter_ios.Test;
 @import XCTest;
 @import GoogleMaps;
 
 #import <OCMock/OCMock.h>
-#import <google_maps_flutter_ios/messages.g.h>
 
 #import "PartiallyMockedMapView.h"
 

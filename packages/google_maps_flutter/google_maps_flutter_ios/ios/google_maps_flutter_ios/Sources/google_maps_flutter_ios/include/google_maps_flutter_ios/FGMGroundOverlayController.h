@@ -2,13 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <CoreLocation/CoreLocation.h>
-#import <Flutter/Flutter.h>
-#import <Foundation/Foundation.h>
-#import <GoogleMaps/GoogleMaps.h>
-#import <UIKit/UIKit.h>
+@import CoreLocation;
+@import Flutter;
+@import Foundation;
+@import GoogleMaps;
+@import UIKit;
 
-#import "messages.g.h"
+#import "google_maps_flutter_pigeon_messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

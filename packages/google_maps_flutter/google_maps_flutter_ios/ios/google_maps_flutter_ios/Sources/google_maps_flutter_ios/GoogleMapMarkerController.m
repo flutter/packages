@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/google_maps_flutter_ios/GoogleMapMarkerController.h"
-#import "./include/google_maps_flutter_ios/GoogleMapMarkerController_Test.h"
+#import "GoogleMapMarkerController.h"
+#import "GoogleMapMarkerController_Test.h"
 
-#import "./include/google_maps_flutter_ios/FGMConversionUtils.h"
-#import "./include/google_maps_flutter_ios/FGMImageUtils.h"
-#import "./include/google_maps_flutter_ios/FGMMarkerUserData.h"
+#import "FGMConversionUtils.h"
+#import "FGMImageUtils.h"
+#import "FGMMarkerUserData.h"
 
 @interface FLTGoogleMapMarkerController ()
 
