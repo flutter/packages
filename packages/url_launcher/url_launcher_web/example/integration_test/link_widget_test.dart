@@ -206,6 +206,43 @@ void main() {
         maxScrolls: 1000,
       );
     });
+
+    testWidgets('MergeSemantics is always present to avoid duplicate nodes', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: Column(
+              children: <Widget>[
+                WebLinkDelegate(
+                  TestLinkInfo(
+                    uri: Uri.parse('https://dart.dev/xyz'),
+                    target: LinkTarget.blank,
+                    builder: (BuildContext context, FollowLink? followLink) {
+                      return ElevatedButton(
+                        onPressed: followLink,
+                        child: const Text('First Button'),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final Finder buttonFinder = find.byType(ElevatedButton);
+      expect(buttonFinder, findsOneWidget);
+
+      final Element buttonElement = tester.element(buttonFinder);
+      final MergeSemantics? parentWidget = buttonElement
+          .findAncestorWidgetOfExactType<MergeSemantics>();
+      expect(parentWidget, isNotNull);
+    });
   });
 
   group('Follows links', () {
@@ -895,17 +932,13 @@ void main() {
           isLink: true,
           identifier: 'test-link-12',
           // linkUrl: 'https://foobar/example?q=1',
-          children: <Matcher>[
-            matchesSemantics(
-              hasTapAction: true,
-              hasEnabledState: true,
-              hasFocusAction: true,
-              isEnabled: true,
-              isButton: true,
-              isFocusable: true,
-              label: 'Button Link Text',
-            ),
-          ],
+          hasTapAction: true,
+          hasEnabledState: true,
+          hasFocusAction: true,
+          isEnabled: true,
+          isButton: true,
+          isFocusable: true,
+          label: 'Button Link Text',
         ),
       );
 
@@ -941,7 +974,9 @@ void main() {
       final Finder linkFinder = find.byKey(linkKey);
       expect(
         tester.getSemantics(
-          find.descendant(of: linkFinder, matching: find.byType(Semantics)),
+          find
+              .descendant(of: linkFinder, matching: find.byType(Semantics))
+              .first,
         ),
         matchesSemantics(
           isLink: true,
