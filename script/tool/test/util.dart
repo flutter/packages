@@ -96,7 +96,6 @@ RepositoryPackage createFakePlugin(
   String? version = '0.0.1',
   String flutterConstraint = _defaultFlutterConstraint,
   String dartConstraint = _defaultDartConstraint,
-  bool? batchRelease,
 }) {
   final RepositoryPackage package = createFakePackage(
     name,
@@ -118,9 +117,6 @@ RepositoryPackage createFakePlugin(
     flutterConstraint: flutterConstraint,
     dartConstraint: dartConstraint,
   );
-  if (batchRelease != null) {
-    createFakeCiConfig(batchRelease, package);
-  }
 
   return package;
 }
@@ -135,6 +131,8 @@ RepositoryPackage createFakePlugin(
 ///
 /// If non-null, [directoryName] will be used for the directory instead of
 /// [name].
+/// If [includeCIConfig] is true, a fake CI config file will be created. 
+/// [isBatchRelease] will be used in the CI config file. 
 RepositoryPackage createFakePackage(
   String name,
   Directory parentDirectory, {
@@ -147,6 +145,8 @@ RepositoryPackage createFakePackage(
   bool includeCommonFiles = true,
   String? directoryName,
   String? publishTo,
+  bool includeCIConfig = false,
+  bool isBatchRelease = false,
 }) {
   final package = RepositoryPackage(
     parentDirectory.childDirectory(directoryName ?? name),
@@ -163,6 +163,9 @@ RepositoryPackage createFakePackage(
     dartConstraint: dartConstraint,
     publishTo: publishTo,
   );
+  if (includeCIConfig) {
+    createFakeCiConfig(isBatchRelease, package);
+  }
   if (includeCommonFiles) {
     package.changelogFile.writeAsStringSync('''
 ## $version

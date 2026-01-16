@@ -83,8 +83,8 @@ class PublishCommand extends PackageLoopingCommand {
           'Release all packages that contains pubspec changes at the current commit compares to the base-sha.\n'
           'The --packages option is ignored if this is on.',
     );
-    argParser.addFlag(
-      _batchReleaseBranchFlag,
+    argParser.addOption(
+      _batchReleaseBranchOption,
       help: 'batch release a package from its release branch',
     );
     argParser.addFlag(
@@ -113,7 +113,7 @@ class PublishCommand extends PackageLoopingCommand {
   static const String _pubFlagsOption = 'pub-publish-flags';
   static const String _remoteOption = 'remote';
   static const String _allChangedFlag = 'all-changed';
-  static const String _batchReleaseBranchFlag = 'batch-release-branch';
+  static const String _batchReleaseBranchOption = 'batch-release-branch';
   static const String _dryRunFlag = 'dry-run';
   static const String _skipConfirmationFlag = 'skip-confirmation';
   static const String _tagForAutoPublishFlag = 'tag-for-auto-publish';
@@ -191,7 +191,7 @@ class PublishCommand extends PackageLoopingCommand {
 
   @override
   Stream<PackageEnumerationEntry> getPackagesToProcess() async* {
-    final String batchReleaseBranchName = getStringArg(_batchReleaseBranchFlag);
+    final String batchReleaseBranchName = getStringArg(_batchReleaseBranchOption);
     if (getBoolArg(_allChangedFlag)) {
       print(
         'Publishing all packages that have changed relative to "$baseSha"\n',
