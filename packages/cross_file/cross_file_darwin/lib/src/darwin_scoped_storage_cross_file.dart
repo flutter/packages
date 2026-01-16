@@ -45,7 +45,8 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
       ? super.params as DarwinScopedStorageXFileCreationParams
       : DarwinScopedStorageXFileCreationParams(uri: super.params.uri);
 
-  /// Retrun
+  /// Attempt to create a bookmarked file that serves as a persistent reference
+  /// to the file.
   Future<DarwinScopedStorageXFile?> toBookmarkedFile() async {
     final String? bookmarkedUrl = await params.api.tryCreateBookmarkedUrl(
       params.uri,

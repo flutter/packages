@@ -21,9 +21,13 @@ abstract class CrossFileDarwinApi {
 
   bool fileExists(String url);
 
+  bool fileIsDirectory(String url);
+
   int? fileModificationDate(String url);
 
   int? fileSize(String url);
+
+  List<String> list(String url);
 }
 
 @ProxyApi()

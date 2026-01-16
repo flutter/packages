@@ -518,8 +518,10 @@ protocol CrossFileDarwinApi {
   func tryCreateBookmarkedUrl(url: String) throws -> String?
   func isReadableFile(url: String) throws -> Bool
   func fileExists(url: String) throws -> Bool
+  func fileIsDirectory(url: String) throws -> Bool
   func fileModificationDate(url: String) throws -> Int64?
   func fileSize(url: String) throws -> Int64?
+  func list(url: String) throws -> [String]
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -573,6 +575,21 @@ class CrossFileDarwinApiSetup {
     } else {
       fileExistsChannel.setMessageHandler(nil)
     }
+    let fileIsDirectoryChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileIsDirectory\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fileIsDirectoryChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let urlArg = args[0] as! String
+        do {
+          let result = try api.fileIsDirectory(url: urlArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      fileIsDirectoryChannel.setMessageHandler(nil)
+    }
     let fileModificationDateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileModificationDate\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       fileModificationDateChannel.setMessageHandler { message, reply in
@@ -602,6 +619,21 @@ class CrossFileDarwinApiSetup {
       }
     } else {
       fileSizeChannel.setMessageHandler(nil)
+    }
+    let listChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.list\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      listChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let urlArg = args[0] as! String
+        do {
+          let result = try api.list(url: urlArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      listChannel.setMessageHandler(nil)
     }
   }
 }
