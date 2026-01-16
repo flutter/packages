@@ -700,7 +700,7 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @end
 
 /// The codec used by all APIs.
-NSObject<FlutterMessageCodec> *FGMGetMessagesCodec(void);
+NSObject<FlutterMessageCodec> *FGMGetGoogleMapsFlutterPigeonMessagesCodec(void);
 
 /// Interface for non-test interactions with the native SDK.
 ///

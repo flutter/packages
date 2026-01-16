@@ -2,11 +2,11 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import "./include/google_maps_flutter_ios/FGMGroundOverlayController.h"
-#import "./include/google_maps_flutter_ios/FGMGroundOverlayController_Test.h"
+#import "FGMGroundOverlayController.h"
+#import "FGMGroundOverlayController_Test.h"
 
-#import "./include/google_maps_flutter_ios/FGMConversionUtils.h"
-#import "./include/google_maps_flutter_ios/FGMImageUtils.h"
+#import "FGMConversionUtils.h"
+#import "FGMImageUtils.h"
 
 @interface FGMGroundOverlayController ()
 

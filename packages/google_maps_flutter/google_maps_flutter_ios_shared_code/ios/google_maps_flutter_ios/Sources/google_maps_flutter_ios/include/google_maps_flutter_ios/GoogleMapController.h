@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#import <Flutter/Flutter.h>
-#import <GoogleMaps/GoogleMaps.h>
+@import Flutter;
+@import GoogleMaps;
 
 #import "FGMCATransactionWrapper.h"
 #import "FGMClusterManagersController.h"
@@ -11,7 +11,7 @@
 #import "GoogleMapMarkerController.h"
 #import "GoogleMapPolygonController.h"
 #import "GoogleMapPolylineController.h"
-#import "messages.g.h"
+#import "google_maps_flutter_pigeon_messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
