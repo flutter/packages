@@ -4,20 +4,20 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdLoadingErrorTests: XCTestCase {
-  func testAdError() {
+struct AdLoadingErrorTests {
+  @Test func adError() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdLoadingErrorData(registrar)
 
     let instance = TestAdLoadingErrorData.customInit()
 
-    let value = try? api.pigeonDelegate.adError(pigeonApi: api, pigeonInstance: instance)
+    let value = try api.pigeonDelegate.adError(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(value is TestAdError)
+    #expect(value is TestAdError)
   }
 }
 

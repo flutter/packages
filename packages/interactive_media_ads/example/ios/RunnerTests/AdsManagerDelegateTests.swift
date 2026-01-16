@@ -4,21 +4,22 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdsManagerDelegateTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct AdsManagerDelegateTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsManagerDelegate(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
 
-    XCTAssertTrue(instance is AdsManagerDelegateImpl)
+    #expect(instance is AdsManagerDelegateImpl)
   }
 
-  func testDidReceiveAdEvent() {
+  @Test func didReceiveAdEvent() {
     let api = TestAdsManagerDelegateApi()
     let instance = AdsManagerDelegateImpl(api: api)
 
@@ -26,10 +27,10 @@ final class AdsManagerDelegateTests: XCTestCase {
     let event = TestAdEvent.customInit()
     instance.adsManager(manager, didReceive: event)
 
-    XCTAssertEqual(api.didReceiveAdEventArgs, [manager, event])
+    #expect(api.didReceiveAdEventArgs as! [AnyHashable] == [manager, event])
   }
 
-  func testDidReceiveAdError() {
+  @Test func didReceiveAdError() {
     let api = TestAdsManagerDelegateApi()
     let instance = AdsManagerDelegateImpl(api: api)
 
@@ -37,27 +38,27 @@ final class AdsManagerDelegateTests: XCTestCase {
     let error = TestAdError.customInit()
     instance.adsManager(manager, didReceive: error)
 
-    XCTAssertEqual(api.didReceiveAdErrorArgs, [manager, error])
+    #expect(api.didReceiveAdErrorArgs as! [AnyHashable] == [manager, error])
   }
 
-  func testDidRequestContentPause() {
+  @Test func didRequestContentPause() {
     let api = TestAdsManagerDelegateApi()
     let instance = AdsManagerDelegateImpl(api: api)
 
     let manager = TestAdsManager.customInit()
     instance.adsManagerDidRequestContentPause(manager)
 
-    XCTAssertEqual(api.didRequestContentPauseArgs, [manager])
+    #expect(api.didRequestContentPauseArgs as! [AnyHashable] == [manager])
   }
 
-  func testDidRequestContentResume() {
+  @Test func didRequestContentResume() {
     let api = TestAdsManagerDelegateApi()
     let instance = AdsManagerDelegateImpl(api: api)
 
     let manager = TestAdsManager.customInit()
     instance.adsManagerDidRequestContentResume(manager)
 
-    XCTAssertEqual(api.didRequestContentResumeArgs, [manager])
+    #expect(api.didRequestContentResumeArgs as! [AnyHashable] == [manager])
   }
 }
 

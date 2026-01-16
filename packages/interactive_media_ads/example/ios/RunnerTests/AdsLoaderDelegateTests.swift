@@ -4,21 +4,22 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdsLoaderDelegateTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct AdsLoaderDelegateTests {
+  @Test func pigeonDefaultConstructor() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoaderDelegate(registrar)
 
     let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
 
-    XCTAssertTrue(instance is AdsLoaderDelegateImpl)
+    #expect(instance is AdsLoaderDelegateImpl)
   }
 
-  func testAdLoaderLoadedWith() {
+  @Test func adLoaderLoadedWith() {
     let api = TestAdsLoaderDelegateApi()
     let instance = AdsLoaderDelegateImpl(api: api)
 
@@ -26,10 +27,10 @@ final class AdsLoaderDelegateTests: XCTestCase {
     let data = TestAdsLoadedData()
     instance.adsLoader(adsLoader, adsLoadedWith: data)
 
-    XCTAssertEqual(api.adLoaderLoadedWithArgs, [adsLoader, data])
+    #expect(api.adLoaderLoadedWithArgs as! [AnyHashable] == [adsLoader, data])
   }
 
-  func testAdsLoaderFailedWithErrorData() {
+  @Test func adsLoaderFailedWithErrorData() {
     let api = TestAdsLoaderDelegateApi()
     let instance = AdsLoaderDelegateImpl(api: api)
 
@@ -37,7 +38,7 @@ final class AdsLoaderDelegateTests: XCTestCase {
     let error = TestAdLoadingErrorData.customInit()
     instance.adsLoader(adsLoader, failedWith: error)
 
-    XCTAssertEqual(api.adsLoaderFailedWithErrorDataArgs, [adsLoader, error])
+    #expect(api.adsLoaderFailedWithErrorDataArgs as! [AnyHashable] == [adsLoader, error])
   }
 }
 
