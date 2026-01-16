@@ -195,6 +195,7 @@ void main() {
             debugMessage: debugMessage,
           ),
           productDetails: <PlatformProductDetails>[],
+          unfetchedProductList: <PlatformUnfetchedProduct>[],
         ),
       );
 
@@ -228,6 +229,7 @@ void main() {
           productDetails: <PlatformProductDetails>[
             convertToPigeonProductDetails(dummyOneTimeProductDetails),
           ],
+          unfetchedProductList: <PlatformUnfetchedProduct>[],
         ),
       );
 
@@ -248,6 +250,35 @@ void main() {
       expect(response.billingResult, equals(billingResult));
       expect(response.productDetailsList, contains(dummyOneTimeProductDetails));
     });
+
+    test('returns unfetchedProductList', () async {
+      const debugMessage = 'dummy message';
+      when(mockApi.queryProductDetailsAsync(any)).thenAnswer(
+        (_) async => PlatformProductDetailsResponse(
+          billingResult: PlatformBillingResult(
+            responseCode: PlatformBillingResponse.ok,
+            debugMessage: debugMessage,
+          ),
+          productDetails: <PlatformProductDetails>[],
+          unfetchedProductList: <PlatformUnfetchedProduct>[
+            PlatformUnfetchedProduct(productId: 'unfetched'),
+          ],
+        ),
+      );
+
+      final ProductDetailsResponseWrapper response = await billingClient
+          .queryProductDetails(
+            productList: <ProductWrapper>[
+              const ProductWrapper(
+                productId: 'unfetched',
+                productType: ProductType.inapp,
+              ),
+            ],
+          );
+
+      expect(response.unfetchedProductList, hasLength(1));
+      expect(response.unfetchedProductList[0].productId, 'unfetched');
+    });
   });
 
   group('launchBillingFlow', () {
@@ -256,6 +287,7 @@ void main() {
       const BillingResponse responseCode = BillingResponse.ok;
       const expectedBillingResult = BillingResultWrapper(
         responseCode: responseCode,
+        subResponseCode: 123,
         debugMessage: debugMessage,
       );
       when(
@@ -525,32 +557,6 @@ void main() {
     });
   });
 
-  group('queryPurchaseHistory', () {
-    test('handles empty purchases', () async {
-      const BillingResponse expectedCode = BillingResponse.userCanceled;
-      const debugMessage = 'dummy message';
-      const expectedBillingResult = BillingResultWrapper(
-        responseCode: expectedCode,
-        debugMessage: debugMessage,
-      );
-      when(mockApi.queryPurchaseHistoryAsync(any)).thenAnswer(
-        (_) async => PlatformPurchaseHistoryResponse(
-          billingResult: PlatformBillingResult(
-            responseCode: PlatformBillingResponse.userCanceled,
-            debugMessage: debugMessage,
-          ),
-          purchases: <PlatformPurchaseHistoryRecord>[],
-        ),
-      );
-
-      final PurchasesHistoryResult response = await billingClient
-          .queryPurchaseHistory(ProductType.inapp);
-
-      expect(response.billingResult, equals(expectedBillingResult));
-      expect(response.purchaseHistoryRecordList, isEmpty);
-    });
-  });
-
   group('consume purchases', () {
     test('consume purchase async success', () async {
       const token = 'dummy token';
@@ -683,6 +689,15 @@ void main() {
           .showAlternativeBillingOnlyInformationDialog();
       expect(result, expected);
     });
+  });
+
+  test('UnfetchedProductWrapper equality', () {
+    const product1 = UnfetchedProductWrapper(productId: 'id');
+    const product2 = UnfetchedProductWrapper(productId: 'id');
+    const product3 = UnfetchedProductWrapper(productId: 'other');
+
+    expect(product1, product2);
+    expect(product1, isNot(product3));
   });
 }
 

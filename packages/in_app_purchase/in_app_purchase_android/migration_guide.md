@@ -1,4 +1,28 @@
 <?code-excerpt path-base="example/lib"?>
+# Migration Guide from 0.4.x to 0.5.0
+
+Version 0.5.0 updates the Android embedding to use Google Play Billing Library 8.0.0. This update includes breaking changes unrelated to the Dart API surface, but specific methods in `BillingClientWrapper` have been removed to align with the native library.
+
+## Removal of `queryPurchaseHistory`
+
+The `queryPurchaseHistory` method in `BillingClientWrapper` has been removed because the underlying
+native method `queryPurchaseHistoryAsync` was removed in Google Play Billing Library 7.0.0.
+
+Instead, use `queryPurchases` (which calls `queryPurchasesAsync` natively) to fetch active purchases.
+This is now the recommended way to check for existing purchases.
+
+`queryPurchaseHistory` previously allowed checking for canceled, refunded, or voided purchases.
+With its removal, this information is no longer available through the Billing Client.
+The [Google Play Developer API](https://developers.google.com/android-publisher/api-ref/rest/v3/purchases.products/get)
+can be used to verify the state of past purchases.
+
+### Enhancements
+
+*   `BillingResultWrapper` and `PlatformBillingResult` now include a `subResponseCode` field.
+*   `ProductDetailsResponseWrapper` and `PlatformProductDetailsResponse` now include an
+`unfetchedProductList` to identify products that could not be retrieved.
+*   `ProductDetailsWrapper` now supports `oneTimePurchaseOfferDetailsList` for products with multiple buy options.
+
 # Migration Guide from 0.2.x to 0.3.0
 
 Starting November 2023, Android Billing Client V4 is no longer supported,
