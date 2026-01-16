@@ -2,7 +2,7 @@ name: path_provider_android
 description: Android implementation of the path_provider plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/path_provider/path_provider_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+path_provider%22
-version: 2.2.22
+version: 2.3.0
 
 environment:
   sdk: ^3.9.0
@@ -13,19 +13,18 @@ flutter:
     implements: path_provider
     platforms:
       android:
-        package: io.flutter.plugins.pathprovider
-        pluginClass: PathProviderPlugin
         dartPluginClass: PathProviderAndroid
 
 dependencies:
   flutter:
     sdk: flutter
+  jni: ^0.15.2
   path_provider_platform_interface: ^2.1.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  pigeon: ^26.1.0
+  jnigen: ^0.15.0
   test: ^1.16.0
 
 topics:
