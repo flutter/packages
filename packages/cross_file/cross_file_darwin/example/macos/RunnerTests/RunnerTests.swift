@@ -2,7 +2,6 @@ import Cocoa
 import FlutterMacOS
 import XCTest
 
-
 @testable import cross_file_darwin
 
 // This demonstrates a simple unit test of the Swift portion of this plugin's implementation.
@@ -18,8 +17,9 @@ class RunnerTests: XCTestCase {
 
     let resultExpectation = expectation(description: "result block must be called.")
     plugin.handle(call) { result in
-      XCTAssertEqual(result as! String,
-                     "macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
+      XCTAssertEqual(
+        result as! String,
+        "macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
       resultExpectation.fulfill()
     }
     waitForExpectations(timeout: 1)
