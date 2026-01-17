@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:crypto/crypto.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -142,7 +143,7 @@ Future<void> loadFontIfNecessary(GoogleFontsDescriptor descriptor) async {
 
     // Check if this font can be loaded by the pre-bundled assets.
     assetManifest ??= await AssetManifest.loadFromAssetBundle(rootBundle);
-    final String? assetPath = _findFamilyWithVariantAssetPath(
+    final String? assetPath = findFamilyWithVariantAssetPath(
       descriptor.familyWithVariant,
       assetManifest?.listAssets(),
     );
@@ -302,21 +303,23 @@ int _computeMatch(GoogleFontsVariant a, GoogleFontsVariant b) {
 
 /// Looks for a matching [familyWithVariant] font, provided the asset manifest.
 /// Returns the path of the font asset if found, otherwise an empty string.
-String? _findFamilyWithVariantAssetPath(
+@visibleForTesting
+String? findFamilyWithVariantAssetPath(
   GoogleFontsFamilyWithVariant familyWithVariant,
-  List<String>? manifestValues,
-) {
+  List<String>? manifestValues, {
+  bool isWeb = kIsWeb,
+}) {
   if (manifestValues == null) {
     return null;
   }
 
   final String apiFilenamePrefix = familyWithVariant.toApiFilenamePrefix();
+  final fileTypes = isWeb
+      ? ['.woff2', '.woff', '.ttf', '.otf']
+      : ['.ttf', '.otf'];
 
   for (final String asset in manifestValues) {
-    for (final String matchingSuffix in <String>[
-      '.ttf',
-      '.otf',
-    ].where(asset.endsWith)) {
+    for (final String matchingSuffix in fileTypes.where(asset.endsWith)) {
       final String assetWithoutExtension = asset.substring(
         0,
         asset.length - matchingSuffix.length,
