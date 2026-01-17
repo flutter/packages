@@ -13,6 +13,12 @@
 
 #import <OCMock/OCMock.h>
 
+@interface FLTImagePickerPlugin (Testing)
+@property(nonatomic, strong) UIWindow *interactionBlockerWindow;
+@property(nonatomic, weak) UIWindow *previousKeyWindow;
+- (void)removeInteractionBlocker;
+@end
+
 @interface MockViewController : UIViewController
 @property(nonatomic, retain) UIViewController *mockPresented;
 @end
@@ -315,6 +321,54 @@
   // To ensure the flow does not crash by multiple cancel call
   [plugin imagePickerControllerDidCancel:controller];
   [plugin imagePickerControllerDidCancel:controller];
+}
+
+- (void)testCameraPickerInteractionBlockerWindowIsAddedAndRemoved {
+  id mockUIImagePicker = OCMClassMock([UIImagePickerController class]);
+  id mockAVCaptureDevice = OCMClassMock([AVCaptureDevice class]);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isSourceTypeAvailable:UIImagePickerControllerSourceTypeCamera]))
+      .andReturn(YES);
+  OCMStub(ClassMethod(
+              [mockUIImagePicker isCameraDeviceAvailable:UIImagePickerControllerCameraDeviceRear]))
+      .andReturn(YES);
+  OCMStub([mockAVCaptureDevice authorizationStatusForMediaType:AVMediaTypeVideo])
+      .andReturn(AVAuthorizationStatusAuthorized);
+
+  UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  UIViewController *rootViewController = [[UIViewController alloc] init];
+  window.rootViewController = rootViewController;
+  if ([rootViewController respondsToSelector:@selector(loadViewIfNeeded)]) {
+    [rootViewController loadViewIfNeeded];
+  } else {
+    [rootViewController view];
+  }
+  [window makeKeyAndVisible];
+
+  StubViewProvider *viewProvider =
+      [[StubViewProvider alloc] initWithViewController:rootViewController];
+  FLTImagePickerPlugin *plugin = [[FLTImagePickerPlugin alloc] initWithViewProvider:viewProvider];
+  UIImagePickerController *controller = [[UIImagePickerController alloc] init];
+  [plugin setImagePickerControllerOverrides:@[ controller ]];
+
+  [plugin pickImageWithSource:[FLTSourceSpecification makeWithType:FLTSourceTypeCamera
+                                                            camera:FLTSourceCameraRear]
+                      maxSize:[[FLTMaxSize alloc] init]
+                      quality:nil
+                 fullMetadata:YES
+                   completion:^(NSString *_Nullable result, FlutterError *_Nullable error){
+                   }];
+
+  XCTAssertNotNil(plugin.interactionBlockerWindow);
+  XCTAssertEqual(plugin.previousKeyWindow, window);
+  XCTAssertGreaterThan(plugin.interactionBlockerWindow.windowLevel, window.windowLevel);
+  XCTAssertFalse(window.isKeyWindow);
+
+  [plugin removeInteractionBlocker];
+
+  XCTAssertNil(plugin.interactionBlockerWindow);
+  XCTAssertNil(plugin.previousKeyWindow);
+  XCTAssertTrue(window.isKeyWindow);
 }
 
 #pragma mark - Test video duration
