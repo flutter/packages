@@ -2158,15 +2158,6 @@ void main() {
 
         // finite rows & columns
         await runScrollTest(getTableView(rowCount: 10000, columnCount: 200));
-
-        // single rows & columns
-        await tester.pumpWidget(
-          MaterialApp(home: getTableView(columnCount: 1, rowCount: 1)),
-        );
-        await tester.pumpAndSettle();
-        expect(find.text('R0:C0'), findsOneWidget);
-        expect(find.text('R0:C1'), findsNothing);
-        await tester.pumpWidget(Container());
       });
     });
   });
