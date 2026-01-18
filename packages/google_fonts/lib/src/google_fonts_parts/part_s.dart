@@ -3351,6 +3351,149 @@ class PartS {
     );
   }
 
+  /// Applies the Science Gothic font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Science+Gothic
+  static TextStyle scienceGothic({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2053a29ccc127969c2d9c007463b1202c45e5086f3875c9f7e42be3244afb577',
+        135880,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '602cc000d827aeac4a15d1d9c5c6d2679005c16a1be0223b2ae20e0d2294d75f',
+        136024,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd751734b0f399047427742bddae9f6140a1cbc925cd89fc9dd19f61938cc537a',
+        135784,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7b7cf5fb25d06cf2e36ef51df0c7f16d4996a594e88804751cdc9b58cf193f69',
+        130996,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5e976cdf4a355d5688b1586424a72c1f3177e019ab585c19c40a8009d2360285',
+        132268,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'fb9d39729b7741f1097aaf0bf18bf2a2963185a6703e7716db9241847f8e4aab',
+        132520,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b59a2a24853849fd685efe72ee686513f972cd23e1527136025b188ca2f4c5f7',
+        132328,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2be01da6a80d4448913310d427db722f748e82dfdc1fc2f0f74665199419d4ce',
+        134168,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bbe0a7cd5b6c340e82f5b2f1f77b55032edeac132ee9d2d3d7d26b1de8ffc551',
+        133928,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'ScienceGothic',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Science Gothic font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Science+Gothic
+  static TextTheme scienceGothicTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: scienceGothic(textStyle: textTheme.displayLarge),
+      displayMedium: scienceGothic(textStyle: textTheme.displayMedium),
+      displaySmall: scienceGothic(textStyle: textTheme.displaySmall),
+      headlineLarge: scienceGothic(textStyle: textTheme.headlineLarge),
+      headlineMedium: scienceGothic(textStyle: textTheme.headlineMedium),
+      headlineSmall: scienceGothic(textStyle: textTheme.headlineSmall),
+      titleLarge: scienceGothic(textStyle: textTheme.titleLarge),
+      titleMedium: scienceGothic(textStyle: textTheme.titleMedium),
+      titleSmall: scienceGothic(textStyle: textTheme.titleSmall),
+      bodyLarge: scienceGothic(textStyle: textTheme.bodyLarge),
+      bodyMedium: scienceGothic(textStyle: textTheme.bodyMedium),
+      bodySmall: scienceGothic(textStyle: textTheme.bodySmall),
+      labelLarge: scienceGothic(textStyle: textTheme.labelLarge),
+      labelMedium: scienceGothic(textStyle: textTheme.labelMedium),
+      labelSmall: scienceGothic(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Scope One font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -3964,6 +4107,93 @@ class PartS {
       labelLarge: sedgwickAveDisplay(textStyle: textTheme.labelLarge),
       labelMedium: sedgwickAveDisplay(textStyle: textTheme.labelMedium),
       labelSmall: sedgwickAveDisplay(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Sekuya font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Sekuya
+  static TextStyle sekuya({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7b5b32df9f001977ee14b9d9c9c008fa8e06c5f34c3c1e5dc6df15008f289864',
+        282652,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Sekuya',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Sekuya font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Sekuya
+  static TextTheme sekuyaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: sekuya(textStyle: textTheme.displayLarge),
+      displayMedium: sekuya(textStyle: textTheme.displayMedium),
+      displaySmall: sekuya(textStyle: textTheme.displaySmall),
+      headlineLarge: sekuya(textStyle: textTheme.headlineLarge),
+      headlineMedium: sekuya(textStyle: textTheme.headlineMedium),
+      headlineSmall: sekuya(textStyle: textTheme.headlineSmall),
+      titleLarge: sekuya(textStyle: textTheme.titleLarge),
+      titleMedium: sekuya(textStyle: textTheme.titleMedium),
+      titleSmall: sekuya(textStyle: textTheme.titleSmall),
+      bodyLarge: sekuya(textStyle: textTheme.bodyLarge),
+      bodyMedium: sekuya(textStyle: textTheme.bodyMedium),
+      bodySmall: sekuya(textStyle: textTheme.bodySmall),
+      labelLarge: sekuya(textStyle: textTheme.labelLarge),
+      labelMedium: sekuya(textStyle: textTheme.labelMedium),
+      labelSmall: sekuya(textStyle: textTheme.labelSmall),
     );
   }
 
@@ -13167,6 +13397,372 @@ class PartS {
       labelLarge: staatliches(textStyle: textTheme.labelLarge),
       labelMedium: staatliches(textStyle: textTheme.labelMedium),
       labelSmall: staatliches(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Stack Sans Headline font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Stack+Sans+Headline
+  static TextStyle stackSansHeadline({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '062b6b9d20a5cdb1d60d5d3b6a84f5bf013c5cac9c608140bd4cc349984834c6',
+        65200,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '46dfa7b79a3805f2046ef2c9702902467dfa36b18ce0c21f36f58dca0d0e6ce4',
+        65296,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8830feb569f59738ccf2ce891d2eb80f4c0a874452b4e5310bde02c01617414c',
+        65252,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3c0589b41d96657c4b20534cc9b8569b0676c10518ef2eaf987759270090370c',
+        65220,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '22d19c094c3df806b4bba7ca2918c16f4d8c405505ea65126161226585577664',
+        65288,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a5eef8de335f2e1ee3babf6ed8d0f578189b9e3e77e0573bba2c36488a8a0f57',
+        65060,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'StackSansHeadline',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Stack Sans Headline font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Stack+Sans+Headline
+  static TextTheme stackSansHeadlineTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: stackSansHeadline(textStyle: textTheme.displayLarge),
+      displayMedium: stackSansHeadline(textStyle: textTheme.displayMedium),
+      displaySmall: stackSansHeadline(textStyle: textTheme.displaySmall),
+      headlineLarge: stackSansHeadline(textStyle: textTheme.headlineLarge),
+      headlineMedium: stackSansHeadline(textStyle: textTheme.headlineMedium),
+      headlineSmall: stackSansHeadline(textStyle: textTheme.headlineSmall),
+      titleLarge: stackSansHeadline(textStyle: textTheme.titleLarge),
+      titleMedium: stackSansHeadline(textStyle: textTheme.titleMedium),
+      titleSmall: stackSansHeadline(textStyle: textTheme.titleSmall),
+      bodyLarge: stackSansHeadline(textStyle: textTheme.bodyLarge),
+      bodyMedium: stackSansHeadline(textStyle: textTheme.bodyMedium),
+      bodySmall: stackSansHeadline(textStyle: textTheme.bodySmall),
+      labelLarge: stackSansHeadline(textStyle: textTheme.labelLarge),
+      labelMedium: stackSansHeadline(textStyle: textTheme.labelMedium),
+      labelSmall: stackSansHeadline(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Stack Sans Notch font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Stack+Sans+Notch
+  static TextStyle stackSansNotch({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '79f8d85b3deae233db7226ebc13f016000216056e00b87a7453efa3afe5c042e',
+        65568,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5d346f96f7901fabba1d43e8b2bf8efc0393074afb65f1f9827b2f4959a8d16c',
+        65668,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '788622688c3f56611c6b527335b4b45f7f1ccfa10385f1dd572b53fc7c83ba4c',
+        65636,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '84d62cadd82ea02cc0321921e2488c234123a66f6bc3f161607c7bc80808839a',
+        65604,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'e203736700d426cd6cb7a7a8a4eeac00842fa8f64c46f059c8544e05744bbe7e',
+        65664,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '733a3b168f8343402f2c12b0fc771d1af352b91a5d324718bfe5e7d3df18643e',
+        65448,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'StackSansNotch',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Stack Sans Notch font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Stack+Sans+Notch
+  static TextTheme stackSansNotchTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: stackSansNotch(textStyle: textTheme.displayLarge),
+      displayMedium: stackSansNotch(textStyle: textTheme.displayMedium),
+      displaySmall: stackSansNotch(textStyle: textTheme.displaySmall),
+      headlineLarge: stackSansNotch(textStyle: textTheme.headlineLarge),
+      headlineMedium: stackSansNotch(textStyle: textTheme.headlineMedium),
+      headlineSmall: stackSansNotch(textStyle: textTheme.headlineSmall),
+      titleLarge: stackSansNotch(textStyle: textTheme.titleLarge),
+      titleMedium: stackSansNotch(textStyle: textTheme.titleMedium),
+      titleSmall: stackSansNotch(textStyle: textTheme.titleSmall),
+      bodyLarge: stackSansNotch(textStyle: textTheme.bodyLarge),
+      bodyMedium: stackSansNotch(textStyle: textTheme.bodyMedium),
+      bodySmall: stackSansNotch(textStyle: textTheme.bodySmall),
+      labelLarge: stackSansNotch(textStyle: textTheme.labelLarge),
+      labelMedium: stackSansNotch(textStyle: textTheme.labelMedium),
+      labelSmall: stackSansNotch(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Stack Sans Text font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Stack+Sans+Text
+  static TextStyle stackSansText({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '3510dd76eb460ca3f8be4c769446c27a6a8f7d9c5744257717f1772411b4a201',
+        65176,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ec6b4ae278905e401389d077b3cb97339ea930530331979fe651eb3c82a4058f',
+        65272,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8775abf97396debc8aa79a1b32c8446ce96618c654d380b2711f159f20f1e03b',
+        65256,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'c5445a90d8a52a5a4ef29653470278839d195acc7d61b2ca1d711b0ea806f641',
+        65236,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5627704c88227ff538fccc522b9b56b24bc974be344d407541a5947808badbef',
+        65300,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b392b9118341c2393657d61ecf1d983c94f71abe8bce98a7a87f2fdffa577b38',
+        65080,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'StackSansText',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Stack Sans Text font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Stack+Sans+Text
+  static TextTheme stackSansTextTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: stackSansText(textStyle: textTheme.displayLarge),
+      displayMedium: stackSansText(textStyle: textTheme.displayMedium),
+      displaySmall: stackSansText(textStyle: textTheme.displaySmall),
+      headlineLarge: stackSansText(textStyle: textTheme.headlineLarge),
+      headlineMedium: stackSansText(textStyle: textTheme.headlineMedium),
+      headlineSmall: stackSansText(textStyle: textTheme.headlineSmall),
+      titleLarge: stackSansText(textStyle: textTheme.titleLarge),
+      titleMedium: stackSansText(textStyle: textTheme.titleMedium),
+      titleSmall: stackSansText(textStyle: textTheme.titleSmall),
+      bodyLarge: stackSansText(textStyle: textTheme.bodyLarge),
+      bodyMedium: stackSansText(textStyle: textTheme.bodyMedium),
+      bodySmall: stackSansText(textStyle: textTheme.bodySmall),
+      labelLarge: stackSansText(textStyle: textTheme.labelLarge),
+      labelMedium: stackSansText(textStyle: textTheme.labelMedium),
+      labelSmall: stackSansText(textStyle: textTheme.labelSmall),
     );
   }
 
