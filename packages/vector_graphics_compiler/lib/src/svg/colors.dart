@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:meta/meta.dart';
+
 import '../paint.dart';
 
 /// Named colors from the SVG standard.
@@ -158,6 +160,68 @@ const Map<String, Color> namedColors = <String, Color>{
   'yellowgreen': Color.fromARGB(255, 154, 205, 50),
 };
 
+/// CSS number pattern matching integers, decimals, and percentages.
+/// Supports optional leading minus sign and trailing decimal point.
+/// Examples: "255", "50%", "-10", "0.5", ".5", "5."
+const String _cssDigit = r'(-?(?:\d*\.?\d+|\d+\.)%?)';
+
+/// Legacy (comma-separated) syntax pattern with named capture groups.
+/// Matches: rgb(R, G, B) or rgb(R, G, B, A)
+final String _legacySyntax =
+    '' // string alignment
+            r'(?<commaRed>%DIGIT%)\s*,\s*'
+            r'(?<commaGreen>%DIGIT%)\s*,\s*'
+            r'(?<commaBlue>%DIGIT%)'
+            r'(?:\s*,\s*(?<commaAlpha>%DIGIT%))?'
+        .replaceAll('%DIGIT%', _cssDigit);
+
+/// Modern (space-separated) syntax pattern with named capture groups.
+/// Matches: rgb(R G B) or rgb(R G B / A)
+final String _modernSyntax =
+    '' // string alignment
+            r'(?<spaceRed>%DIGIT%)\s+'
+            r'(?<spaceGreen>%DIGIT%)\s+'
+            r'(?<spaceBlue>%DIGIT%)'
+            r'(?:\s*\/\s*(?<spaceAlpha>%DIGIT%))?'
+        .replaceAll('%DIGIT%', _cssDigit);
+
+/// Combined regex for matching CSS rgb/rgba color functions.
+/// Supports both legacy (comma) and modern (space) syntax.
+/// https://www.w3.org/TR/css-color-4/#rgb-functions
+final RegExp _cssRgbColorMatcher = RegExp(
+  'rgba?\\(\\s*(?:$_legacySyntax|$_modernSyntax)\\s*\\)',
+  caseSensitive: false,
+);
+
+/// Record type representing parsed CSS RGB values as strings.
+typedef CssRgbRecord = ({String r, String g, String b, String a});
+
+/// Parses a CSS `rgb()` or `rgba()` function string into a record of string values.
+///
+/// Returns a record with r, g, b, and a string values if the input matches
+/// valid CSS rgb/rgba syntax, or null if the syntax is invalid.
+///
+/// Both legacy (comma-separated) and modern (space-separated) syntax are supported:
+/// - Legacy: `rgb(255, 0, 0)` or `rgba(255, 0, 0, 0.5)`
+/// - Modern: `rgb(255 0 0)` or `rgb(255 0 0 / 0.5)`
+@visibleForTesting
+CssRgbRecord? parseCssRgb(String input) {
+  final RegExpMatch? match = _cssRgbColorMatcher.firstMatch(input);
+  if (match == null) {
+    return null;
+  }
+  final String? r =
+      match.namedGroup('commaRed') ?? match.namedGroup('spaceRed');
+  final String? g =
+      match.namedGroup('commaGreen') ?? match.namedGroup('spaceGreen');
+  final String? b =
+      match.namedGroup('commaBlue') ?? match.namedGroup('spaceBlue');
+  final String a =
+      match.namedGroup('commaAlpha') ?? match.namedGroup('spaceAlpha') ?? '1';
+
+  return (r: r!, g: g!, b: b!, a: a);
+}
+
 /// Parses a CSS `rgb()` or `rgba()` function color string and returns a Color.
 ///
 /// The [colorString] should be the full color string including the function
@@ -171,131 +235,44 @@ const Map<String, Color> namedColors = <String, Color>{
 ///
 /// Throws [ArgumentError] if the color string is invalid.
 Color parseRgbFunction(String colorString) {
-  final String content = colorString.substring(
-    colorString.indexOf('(') + 1,
-    colorString.indexOf(')'),
-  );
-
-  if (content.isEmpty) {
-    throw ArgumentError.value(colorString, 'colorString', 'Empty content');
+  final CssRgbRecord? parsed = parseCssRgb(colorString);
+  if (parsed == null) {
+    throw ArgumentError.value(
+      colorString,
+      'colorString',
+      'Invalid CSS rgb/rgba color syntax',
+    );
   }
-  final List<String> stringRgbValues;
-  final String? stringAlphaValue;
-
-  final List<String> commaSplit = content
-      .split(',')
-      .map((String value) => value.trim())
-      .toList();
-
-  if (commaSplit.length > 1) {
-    // We are dealing with comma-separated syntax
-    (stringAlphaValue, stringRgbValues) = switch (commaSplit.length) {
-      3 => (null, commaSplit),
-      4 => (commaSplit.removeLast(), commaSplit),
-      _ => throw ArgumentError.value(
-        colorString,
-        'colorString',
-        'Expected 3 or 4 values, got ${commaSplit.length}',
-      ),
-    };
-  } else {
-    final List<String> slashSplit = content
-        .split('/')
-        .map((String value) => value.trim())
-        .toList();
-
-    final (
-      String tempStringRgbValues,
-      String? tempStringAlphaValue,
-    ) = switch (slashSplit.length) {
-      1 => (slashSplit.first, null),
-      2 => (slashSplit.first, slashSplit.last),
-      _ => throw ArgumentError.value(
-        colorString,
-        'colorString',
-        'Multiple slashes not allowed',
-      ),
-    };
-
-    final List<String> rgbSpaceSplit = tempStringRgbValues
-        .split(' ')
-        .map((String value) => value.trim())
-        .where((String value) => value.isNotEmpty)
-        .toList();
-
-    if (rgbSpaceSplit.length != 3) {
-      throw ArgumentError.value(
-        colorString,
-        'colorString',
-        'Expected 3 space-separated RGB values',
-      );
-    }
-
-    stringRgbValues = rgbSpaceSplit;
-    stringAlphaValue = tempStringAlphaValue;
-  }
-
-  final List<int> rgbIntValues = stringRgbValues
-      .map(
-        (String value) => _parseRgbaFunctionComponent(
-          isAlpha: false,
-          rawComponentValue: value,
-          originalColorString: colorString,
-        ),
-      )
-      .toList();
-
-  final int a = stringAlphaValue == null
-      ? 255
-      : _parseRgbaFunctionComponent(
-          isAlpha: true,
-          rawComponentValue: stringAlphaValue,
-          originalColorString: colorString,
-        );
-
-  return Color.fromARGB(a, rgbIntValues[0], rgbIntValues[1], rgbIntValues[2]);
+  return _cssRgbRecordToColor(parsed);
 }
 
-/// Parses a single RGB/RGBA component value and returns an integer 0-255.
+/// Converts a [CssRgbRecord] to a [Color].
 ///
-/// The [rawComponentValue] can be:
+/// Each component string can be:
 /// - A percentage (e.g., "50%") - converted to 0-255 range
 /// - A decimal number (e.g., "128" or "128.5") - clamped to 0-255 for RGB
-/// - For alpha (index 3): decimal 0-1 range, converted to 0-255
+/// - For alpha: decimal 0-1 range or percentage, converted to 0-255
 ///
 /// Out-of-bounds values are clamped rather than rejected.
-///
-/// Throws [ArgumentError] if the value cannot be parsed as a number.
-int _parseRgbaFunctionComponent({
-  required bool isAlpha,
-  required String rawComponentValue,
-  required String originalColorString,
-}) {
-  if (rawComponentValue.endsWith('%')) {
-    final String numPart = rawComponentValue.substring(
-      0,
-      rawComponentValue.length - 1,
-    );
-    final double? percent = double.tryParse(numPart);
-    if (percent == null) {
-      throw ArgumentError.value(
-        originalColorString,
-        'originalColorString',
-        'invalid percentage "$rawComponentValue"',
-      );
-    }
+Color _cssRgbRecordToColor(CssRgbRecord record) {
+  final int r = _parseColorComponent(record.r, isAlpha: false);
+  final int g = _parseColorComponent(record.g, isAlpha: false);
+  final int b = _parseColorComponent(record.b, isAlpha: false);
+  final int a = _parseColorComponent(record.a, isAlpha: true);
+
+  return Color.fromARGB(a, r, g, b);
+}
+
+/// Parses a single color component value and returns an integer 0-255.
+int _parseColorComponent(String value, {required bool isAlpha}) {
+  if (value.endsWith('%')) {
+    final String numPart = value.substring(0, value.length - 1);
+    final double percent = double.parse(numPart);
     return (percent.clamp(0, 100) * 2.55).round();
   }
-  final double? value = double.tryParse(rawComponentValue);
-  if (value == null) {
-    throw ArgumentError.value(
-      originalColorString,
-      'originalColorString',
-      'invalid value "$rawComponentValue"',
-    );
-  }
+  final double numValue = double.parse(value);
   if (isAlpha) {
-    return (value.clamp(0, 1) * 255).round();
+    return (numValue.clamp(0, 1) * 255).round();
   }
-  return value.clamp(0, 255).round();
+  return numValue.clamp(0, 255).round();
 }
