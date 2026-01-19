@@ -32,13 +32,14 @@ abstract class CrossFileDarwinApi {
 
 @ProxyApi()
 abstract class FileHandle {
-  FileHandle.forReadingFromUrl(String url);
+  @static
+  FileHandle? forReadingFromUrl(String url);
 
   Uint8List? readUpToCount(int count);
 
   Uint8List? readToEnd();
 
-  int seek(int offset);
+  void seek(int offset);
 
   void close();
 }

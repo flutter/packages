@@ -695,13 +695,12 @@ class CrossFileDarwinApiSetup {
   }
 }
 protocol PigeonApiDelegateFileHandle {
-  func forReadingFromUrl(pigeonApi: PigeonApiFileHandle, url: String) throws -> FileHandle
+  func forReadingFromUrl(pigeonApi: PigeonApiFileHandle, url: String) throws -> FileHandle?
   func readUpToCount(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, count: Int64)
     throws -> FlutterStandardTypedData?
   func readToEnd(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws
     -> FlutterStandardTypedData?
   func seek(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, offset: Int64) throws
-    -> Int64
   func close(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws
 }
 
@@ -733,13 +732,10 @@ final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
     if let api = api {
       forReadingFromUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pigeonIdentifierArg = args[0] as! Int64
-        let urlArg = args[1] as! String
+        let urlArg = args[0] as! String
         do {
-          api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
-            try api.pigeonDelegate.forReadingFromUrl(pigeonApi: api, url: urlArg),
-            withIdentifier: pigeonIdentifierArg)
-          reply(wrapResult(nil))
+          let result = try api.pigeonDelegate.forReadingFromUrl(pigeonApi: api, url: urlArg)
+          reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
         }
@@ -793,9 +789,9 @@ final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
         let pigeonInstanceArg = args[0] as! FileHandle
         let offsetArg = args[1] as! Int64
         do {
-          let result = try api.pigeonDelegate.seek(
+          try api.pigeonDelegate.seek(
             pigeonApi: api, pigeonInstance: pigeonInstanceArg, offset: offsetArg)
-          reply(wrapResult(result))
+          reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
         }

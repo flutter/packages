@@ -44,5 +44,4 @@ class FileManagerProxyAPIDelegate: PigeonApiDelegateFileManager {
       try pigeonInstance.attributesOfItem(atPath: atPath) as NSDictionary
     return Int64(attributes.fileSize())
   }
-
 }

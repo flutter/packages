@@ -1,3 +1,7 @@
+// Copyright 2013 The Flutter Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #if os(iOS)
   import Flutter
   import UIKit
@@ -7,6 +11,14 @@
 #endif
 
 public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
+  var proxyApiRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar?
+
+  init(binaryMessenger: FlutterBinaryMessenger) {
+    proxyApiRegistrar = CrossFileDarwinApisPigeonProxyApiRegistrar(
+      binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
+    proxyApiRegistrar?.setUp()
+  }
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     #if os(iOS)
       let messenger = registrar.messenger()
@@ -14,23 +26,21 @@ public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
       let messenger = registrar.messenger
     #endif
 
-    let channel = FlutterMethodChannel(name: "cross_file_darwin", binaryMessenger: messenger)
-    let instance = CrossFileDarwinPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
+    CrossFileDarwinApiSetup.setUp(binaryMessenger: messenger, api: CrossFileDarwinApiImpl())
+    let plugin = CrossFileDarwinPlugin(binaryMessenger: messenger)
+    registrar.publish(plugin)
   }
 
-  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    switch call.method {
-    case "getPlatformVersion":
-      #if os(iOS)
-        result("iOS " + UIDevice.current.systemVersion)
-      #elseif os(macOS)
-        result("macOS " + ProcessInfo.processInfo.operatingSystemVersionString)
-      #else
-        result(FlutterMethodNotImplemented)
-      #endif
-    default:
-      result(FlutterMethodNotImplemented)
-    }
+  public func detachFromEngine(for registrar: FlutterPluginRegistrar) {
+    #if os(iOS)
+      let messenger = registrar.messenger()
+    #elseif os(macOS)
+      let messenger = registrar.messenger
+    #endif
+
+    CrossFileDarwinApiSetup.setUp(binaryMessenger: registrar.messenger(), api: nil)
+    proxyApiRegistrar!.ignoreCallsToDart = true
+    proxyApiRegistrar!.tearDown()
+    proxyApiRegistrar = nil
   }
 }

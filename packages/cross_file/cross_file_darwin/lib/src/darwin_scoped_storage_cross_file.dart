@@ -112,7 +112,11 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
     int bytesToRead = (end ?? fileLength) - (start ?? 0);
     assert(bytesToRead >= 0);
 
-    final handle = FileHandle.forReadingFromUrl(url: params.uri);
+    final FileHandle? handle = await FileHandle.forReadingFromUrl(params.uri);
+    if (handle == null) {
+      throw UnsupportedError('Cannot access file length.');
+    }
+
     try {
       if (start != null && start > 0) {
         await handle.seek(start);
@@ -140,7 +144,7 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
 
   @override
   Future<Uint8List> readAsBytes() async {
-    final handle = FileHandle.forReadingFromUrl(url: params.uri);
+    final FileHandle? handle = await FileHandle.forReadingFromUrl(params.uri);
     try {
       final Uint8List? bytes = await handle.readToEnd();
       if (bytes == null) {
