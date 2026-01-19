@@ -65,7 +65,7 @@ class SavePhotoDelegate: NSObject, AVCapturePhotoCaptureDelegate {
 
       do {
         let data = photoDataProvider()
-        try data?.write(to: strongSelf.path, options: .atomic)
+        try data?.writeToPath(strongSelf.path, options: .atomic)
         strongSelf.completionHandler(strongSelf.path, nil)
       } catch {
         strongSelf.completionHandler(nil, error)

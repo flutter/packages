@@ -9,7 +9,7 @@
 final class MockWritableData: WritableData {
   var writeToFileStub: ((String, Data.WritingOptions) throws -> Void)?
 
-  func write(to path: String, options: Data.WritingOptions) throws {
+  func writeToPath(_ path: String, options: Data.WritingOptions) throws {
     if let stub = self.writeToFileStub {
       try stub(path, options)
     }

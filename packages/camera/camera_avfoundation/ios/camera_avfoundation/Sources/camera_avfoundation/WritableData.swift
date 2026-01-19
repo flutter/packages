@@ -7,14 +7,14 @@ import Foundation
 /// A protocol which abstracts the file writing operation implemented in `Data`.
 /// It exists to allow replacing `Data` in tests.
 protocol WritableData {
-  func write(
-    to path: String,
+  func writeToPath(
+    _ path: String,
     options: Data.WritingOptions
   ) throws
 }
 
 extension Data: WritableData {
-  func write(to path: String, options: Data.WritingOptions) throws {
+  func writeToPath(_ path: String, options: Data.WritingOptions) throws {
     try write(to: URL(fileURLWithPath: path), options: options)
   }
 }
