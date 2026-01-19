@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import Dispatch
+import Foundation
 
 /// Queue-specific context data to be associated with the capture session queue.
 let captureSessionQueueSpecificKey = DispatchSpecificKey<String>()
