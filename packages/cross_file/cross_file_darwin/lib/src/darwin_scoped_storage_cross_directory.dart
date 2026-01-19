@@ -55,6 +55,16 @@ base class DarwinScopedStorageXDirectory
 
   @override
   Stream<PlatformXFileEntity> list(ListParams params) async* {
-    // list files
+    for (final String url in await this.params.api.list(this.params.uri)) {
+      if (await this.params.api.fileIsDirectory(url)) {
+        yield DarwinScopedStorageXDirectory(
+          PlatformScopedStorageXDirectoryCreationParams(uri: url),
+        );
+      } else {
+        yield DarwinScopedStorageXFile(
+          PlatformScopedStorageXFileCreationParams(uri: url),
+        );
+      }
+    }
   }
 }
