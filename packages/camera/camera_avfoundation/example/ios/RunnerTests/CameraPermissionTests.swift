@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
+import Flutter
 import XCTest
 
 @testable import camera_avfoundation

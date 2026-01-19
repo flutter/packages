@@ -2,21 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import camera_avfoundation
+@testable import camera_avfoundation
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
-
-/// A mock implementation of `FLTWritableData` that allows injecting a custom implementation
+/// A mock implementation of `WritableData` that allows injecting a custom implementation
 /// for writing to a file.
-final class MockWritableData: NSObject, FLTWritableData {
-  var writeToFileStub: ((String, NSData.WritingOptions) throws -> Void)?
+final class MockWritableData: WritableData {
+  var writeToFileStub: ((String, Data.WritingOptions) throws -> Void)?
 
-  func write(toFile path: String, options writeOptionsMask: NSData.WritingOptions) throws {
+  func write(to path: String, options: Data.WritingOptions) throws {
     if let stub = self.writeToFileStub {
-      try stub(path, writeOptionsMask)
+      try stub(path, options)
     }
   }
 }
