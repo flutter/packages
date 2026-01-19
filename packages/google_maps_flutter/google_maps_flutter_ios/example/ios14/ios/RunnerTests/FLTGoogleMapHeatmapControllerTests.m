@@ -22,21 +22,34 @@
 
 - (void)testUpdateHeatmapSetsVisibilityLast {
   PropertyOrderValidatingHeatmap *heatmap = [[PropertyOrderValidatingHeatmap alloc] init];
+  FGMPlatformHeatmapGradient *gradient = [FGMPlatformHeatmapGradient makeWithColors:@[
+    [FGMPlatformColor makeWithRed:0 green:0 blue:0 alpha:0],
+    [FGMPlatformColor makeWithRed:1.0 green:1.0 blue:1.0 alpha:1.0],
+  ]
+                                                                        startPoints:@[ @(0), @(1) ]
+                                                                       colorMapSize:256];
   [FLTGoogleMapHeatmapController
-      updateHeatmap:heatmap
-        fromOptions:@{
-          @"data" : @[ @[ @[ @(5), @(5) ], @(0.5) ], @[ @[ @(10), @(10) ], @(0.75) ] ],
-          @"gradient" : @{
-            @"colors" : @[ @(0), @(1) ],
-            @"startPoints" : @[ @(0), @(1) ],
-            @"colorMapSize" : @(256),
-          },
-          @"opacity" : @(0.5),
-          @"radius" : @(1),
-          @"minimumZoomIntensity" : @(1),
-          @"maximumZoomIntensity" : @(2),
-        }
-        withMapView:[GoogleMapsHeatmapControllerTests mapView]];
+            updateHeatmap:heatmap
+      fromPlatformHeatmap:[FGMPlatformHeatmap
+                                 makeWithHeatmapId:@"heatmap"
+                                              data:@[
+                                                [FGMPlatformWeightedLatLng
+                                                    makeWithPoint:[FGMPlatformLatLng
+                                                                      makeWithLatitude:5.0
+                                                                             longitude:5.0]
+                                                           weight:0.5],
+                                                [FGMPlatformWeightedLatLng
+                                                    makeWithPoint:[FGMPlatformLatLng
+                                                                      makeWithLatitude:10.0
+                                                                             longitude:10.0]
+                                                           weight:0.75],
+                                              ]
+                                          gradient:gradient
+                                           opacity:0.5
+                                            radius:1
+                              minimumZoomIntensity:1
+                              maximumZoomIntensity:2]
+              withMapView:[GoogleMapsHeatmapControllerTests mapView]];
   XCTAssertTrue(heatmap.hasSetMap);
 }
 
