@@ -8,7 +8,10 @@ that validates that its copies of these files have not diverged.
 
 This means that for almost all changes to `google_maps_flutter_ios_*`, the
 changes need to be copied here, and to all instances of the package, with any
-instance of the package name itself changed in each copy.
+instance of the package name itself changed in each copy. After making changes
+in an implementation, run:
+- `dart tool/sync_shared_files.dart` to automated most of the file copying.
+- `dart tool/run_tests.dart` to ensure that all shared files match.
 
 See [this design document](https://docs.google.com/document/d/1g_GeFy4FnTHgUg-Kdmh5VOU8qOGaxGZ0J7cW75Gy8Uk/edit?usp=sharing)
 for background on why the packages are structured this way. This approach

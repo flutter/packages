@@ -9,12 +9,13 @@
 // truth. See google_maps_flutter_ios_shared_code/README.md for details.
 //
 // Called from the custom-tests CI action.
-//
-// usage: dart run tool/run_tests.dart
-// (needs a `chrome` executable in $PATH, or a tweak to dart_test.yaml)
+
 import 'dart:async';
 import 'dart:io';
+
 import 'package:path/path.dart' as p;
+
+import 'utils.dart';
 
 Future<void> main(List<String> args) async {
   // There's no reason to run this on multiple platforms in CI, so limit it to
@@ -51,14 +52,15 @@ Future<void> main(List<String> args) async {
 
     // Adjust the paths to account for the package name being part of the
     // directory structure for Swift packages.
-    final String packagePath = p
-        .join(packageRoot.path, relativePath)
-        .replaceAll('/google_maps_flutter_ios/', '/$packageName/');
+    final String packagePath = p.join(
+      packageRoot.path,
+      packageRelativePathForSharedSourceRelativePath(packageName, relativePath),
+    );
 
     print('Validating $packagePath');
     final packageFile = File(packagePath);
-    final String expectedContents = _normalizedFileContents(entity);
-    final String contents = _normalizedFileContents(packageFile);
+    final String expectedContents = normalizedFileContents(entity);
+    final String contents = normalizedFileContents(packageFile);
     if (contents != expectedContents) {
       print('\nFile $relativePath does not match expected contents:');
       await _printDiff(entity, packageFile);
@@ -86,10 +88,6 @@ the google_maps_flutter_ios_shared_code/README.md file.
     ''');
     exit(1);
   }
-}
-
-String _normalizedFileContents(File file) {
-  return file.readAsStringSync().replaceAll(RegExp(r'[\s\n]+'), ' ').trim();
 }
 
 Future<void> _printDiff(File expected, File actual) async {
