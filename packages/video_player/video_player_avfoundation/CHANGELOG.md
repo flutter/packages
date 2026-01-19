@@ -3,6 +3,11 @@
 * Implements `getVideoTracks()` and `selectVideoTrack()` methods for video track (quality) selection using AVFoundation.
 * Video track selection requires iOS 15+ / macOS 12+ for HLS streams.
 
+## 2.8.10
+
+* Improves compatibility with `UIScene`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
 ## 2.8.9
 
 * Resolve `tracksWithMediaType:` deprecations.
