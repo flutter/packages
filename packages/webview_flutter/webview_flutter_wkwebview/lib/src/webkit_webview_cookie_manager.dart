@@ -75,11 +75,11 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
   }
 
   @override
-  Future<List<WebViewCookie>> getCookies(String? domain) async {
+  Future<List<WebViewCookie>> getCookies(Uri? domain) async {
     final List<HTTPCookie> httpCookies = await _webkitParams
         ._websiteDataStore
         .httpCookieStore
-        .getCookies(domain);
+        .getCookies(domain?.host);
 
     final Iterable<Future<WebViewCookie?>> webviewCookies = httpCookies.map((
       cookie,

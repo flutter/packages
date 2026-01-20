@@ -65,11 +65,10 @@ abstract class PlatformWebViewCookieManager extends PlatformInterface {
     );
   }
 
-  /// Gets a list of cookie for specified domain or all domains for all [WebView] instances.
-  ///
-  /// Parameter domain value should match "domain-value" in RFC6265bis:
-  /// https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-02#section-4.1.1
-  Future<List<WebViewCookie>> getCookies(String? domain) {
+  /// Gets a list of existing cookie for all or specified domain for all WebViews.
+  /// Android: Entire domain must be provided alongside scheme
+  /// iOS: ignores scheme and supports partial match based on host
+  Future<List<WebViewCookie>> getCookies(Uri? domain) {
     throw UnimplementedError(
         'getCookie is not implemented on the current platform');
   }
