@@ -31,15 +31,10 @@
 - (void)testFrameObserver {
   id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   CGRect frame = CGRectMake(0, 0, 100, 100);
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-  // TODO(stuartmorgan): Switch to initWithOptions: once we can guarantee we will be using SDK 8.3+.
-  // That API was only added in 8.3, and Cocoapod caches on some machines may not be up-to-date
-  // enough to resolve to that yet even when targeting iOS 14+.
-  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc]
-      initWithFrame:frame
-             camera:[[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0]];
-#pragma clang diagnostic pop
+  GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
+  options.frame = frame;
+  options.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:options];
   FLTGoogleMapController *controller =
       [[FLTGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
