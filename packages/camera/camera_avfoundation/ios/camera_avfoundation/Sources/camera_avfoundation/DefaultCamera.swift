@@ -67,11 +67,11 @@ final class DefaultCamera: NSObject, Camera {
   var capturePhotoOutput: CapturePhotoOutput
   private var captureVideoInput: CaptureInput
 
-  private var videoWriter: FLTAssetWriter?
-  private var videoWriterInput: FLTAssetWriterInput?
-  private var audioWriterInput: FLTAssetWriterInput?
-  private var assetWriterPixelBufferAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
-  private var videoAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
+  private var videoWriter: AssetWriter?
+  private var videoWriterInput: AssetWriterInput?
+  private var audioWriterInput: AssetWriterInput?
+  private var assetWriterPixelBufferAdaptor: AssetWriterInputPixelBufferAdaptor?
+  private var videoAdaptor: AssetWriterInputPixelBufferAdaptor?
 
   /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
   /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
@@ -309,11 +309,11 @@ final class DefaultCamera: NSObject, Camera {
   /// Finds the highest available resolution in terms of pixel count for the given device.
   /// Preferred are formats with the same subtype as current activeFormat.
   private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
-    -> FLTCaptureDeviceFormat?
+    -> CaptureDeviceFormat?
   {
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
       captureDevice.flutterActiveFormat.formatDescription)
-    var bestFormat: FLTCaptureDeviceFormat? = nil
+    var bestFormat: CaptureDeviceFormat? = nil
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
@@ -510,7 +510,7 @@ final class DefaultCamera: NSObject, Camera {
     // didOutputSampleBuffer had chance to call startWriting and lag at start of video
     // https://github.com/flutter/flutter/issues/132016
     // https://github.com/flutter/flutter/issues/151319
-    videoWriter?.startWriting()
+    let _ = videoWriter?.startWriting()
     isFirstVideoSample = true
     isRecording = true
     isRecordingPaused = false
@@ -524,7 +524,7 @@ final class DefaultCamera: NSObject, Camera {
   private func setupWriter(forPath path: String) -> Bool {
     setUpCaptureSessionForAudioIfNeeded()
 
-    let videoWriter: FLTAssetWriter
+    let videoWriter: AssetWriter
 
     do {
       videoWriter = try assetWriterFactory(URL(fileURLWithPath: path), .mp4)
@@ -1218,8 +1218,8 @@ final class DefaultCamera: NSObject, Camera {
         let nextSampleTime = CMTimeSubtract(lastVideoSampleTime, videoTimeOffset)
         // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
         // https://github.com/flutter/flutter/issues/132073
-        if videoWriterInput?.readyForMoreMediaData ?? false {
-          videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+        if videoWriterInput?.isReadyForMoreMediaData ?? false {
+          let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
         }
       } else {
         let dur = CMSampleBufferGetDuration(sampleBuffer)
@@ -1368,7 +1368,7 @@ final class DefaultCamera: NSObject, Camera {
       }
       return
     }
-    if audioWriterInput?.readyForMoreMediaData ?? false {
+    if audioWriterInput?.isReadyForMoreMediaData ?? false {
       if !(audioWriterInput?.append(sampleBuffer) ?? false) {
         reportErrorMessage("Unable to write to audio input")
       }
