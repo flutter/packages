@@ -87,4 +87,30 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
         .getInstanceWithWeakReference(controller.webViewIdentifier)!;
     return _cookieManager.setAcceptThirdPartyCookies(webView, accept);
   }
+
+  @override
+  Future<List<WebViewCookie>> getCookies(String? domain) async {
+    if (domain == null) {
+      throw UnsupportedError('Domain can not be null in android');
+    }
+
+    final String cookies = await _cookieManager.getCookies(domain);
+    if (cookies.isEmpty) {
+      return [];
+    }
+    
+    final List<WebViewCookie> webViewCookies = List.of([]);
+    for (final String cookie in cookies.split('; ')) {
+      final List<String> cookieValue = cookie.split('=');
+      webViewCookies.add(
+        WebViewCookie(
+          name: cookieValue.first,
+          value: cookieValue.last,
+          domain: domain,
+        ),
+      );
+    }
+
+    return webViewCookies;
+  }
 }

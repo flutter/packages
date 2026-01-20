@@ -7,6 +7,14 @@ package io.flutter.plugins.webviewflutter;
 import android.webkit.CookieManager;
 import android.webkit.WebView;
 import androidx.annotation.NonNull;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -52,4 +60,11 @@ public class CookieManagerProxyApi extends PigeonApiCookieManager {
       @NonNull CookieManager pigeon_instance, @NonNull WebView webView, boolean accept) {
     pigeon_instance.setAcceptThirdPartyCookies(webView, accept);
   }
+
+    @Override
+    public @NotNull String getCookies(@NotNull CookieManager pigeon_instance, @NotNull String domain) {
+        final String cookie = pigeon_instance.getCookie(domain);
+        if (cookie == null) return "";
+        return cookie;
+    }
 }

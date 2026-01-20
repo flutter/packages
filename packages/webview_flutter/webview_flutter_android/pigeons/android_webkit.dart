@@ -261,6 +261,10 @@ abstract class CookieManager {
 
   /// Sets whether the `WebView` should allow third party cookies to be set.
   void setAcceptThirdPartyCookies(WebView webView, bool accept);
+
+  /// Gets all the cookies for the given URL. This may return multiple key-value pairs if multiple cookies are associated with this URL, in which case each cookie will be delimited by "; " characters (semicolon followed by a space). Each key-value pair will be of the form "key=value".
+  /// Note: Any cookies set with the "Partitioned" attribute will only be returned for the top-level partition of url.
+  String getCookies(String domain);
 }
 
 /// A View that displays web pages.
