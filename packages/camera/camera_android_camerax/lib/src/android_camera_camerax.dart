@@ -303,7 +303,6 @@ class AndroidCameraCameraX extends CameraPlatform {
         (await processCameraProvider!.getAvailableCameraInfos()).cast();
 
     CameraLensDirection? cameraLensDirection;
-    var cameraCount = 0;
     int? cameraSensorOrientation;
     String? cameraName;
 
@@ -324,13 +323,12 @@ class AndroidCameraCameraX extends CameraPlatform {
       }
 
       cameraSensorOrientation = cameraInfo.sensorRotationDegrees;
-      cameraName = 'Camera $cameraCount';
-      cameraCount++;
+      cameraName = await Camera2CameraInfo.from(
+        cameraInfo: cameraInfo,
+      ).getCameraId();
 
       _savedCameras[cameraName] = cameraInfo;
 
-      // TODO(camsim99): Use camera ID retrieved from Camera2CameraInfo as
-      // camera name: https://github.com/flutter/flutter/issues/147545.
       cameraDescriptions.add(
         CameraDescription(
           name: cameraName,

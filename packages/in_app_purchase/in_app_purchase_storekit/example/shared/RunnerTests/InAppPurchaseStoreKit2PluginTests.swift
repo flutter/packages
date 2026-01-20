@@ -212,7 +212,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
       case .success:
-        XCTFail("Purchase should NOT suceed.")
+        XCTFail("Purchase should NOT succeed.")
       case .failure(let error):
         XCTAssertEqual(
           error.localizedDescription,
@@ -393,7 +393,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     plugin.purchase(id: "consumable", options: nil) { result in
       switch result {
-      case .success(let purchase):
+      case .success(_):
         purchaseExpectation.fulfill()
       case .failure(let error):
         XCTFail("Purchase should NOT fail. Failed with \(error)")

@@ -1,6 +1,10 @@
-## 2.18.9
+## 2.18.10
 
 * Bump com.google.maps.android:android-maps-utils from 3.19.1 to 3.20.1.
+
+## 2.18.9
+
+* Updates heatmaps passed between Dart and native to use typed data.
 
 ## 2.18.8
 

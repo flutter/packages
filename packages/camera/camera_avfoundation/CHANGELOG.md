@@ -1,3 +1,11 @@
+## 0.9.22+8
+
+* Migrates `FLTPermissionServicing` and `FLTCameraPermissionManager` classes to Swift.
+
+## 0.9.22+7
+
+* Migrates `FLTCaptureConnection`, `FLTCaptureDeviceFormat` and `FLTAssetWriter` classes to Swift.
+
 ## 0.9.22+6
 
 * Updates to Pigeon 26.
