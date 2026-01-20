@@ -17,16 +17,15 @@ dependencies:
     # See https://dart.dev/tools/pub/dependencies#version-constraints
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
-    path: ../../
+    path: ../
   google_maps_flutter_platform_interface: ^2.13.0
-  maps_example_dart:
-    path: ../shared/maps_example_dart/
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   integration_test:
     sdk: flutter
+  stream_transform: ^2.0.0
 
 flutter:
   uses-material-design: true
