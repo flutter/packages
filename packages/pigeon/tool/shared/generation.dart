@@ -36,7 +36,6 @@ const Map<String, Set<GeneratorLanguage>> _unsupportedFiles =
         GeneratorLanguage.objc,
       },
       'ni_tests': <GeneratorLanguage>{
-        GeneratorLanguage.swift,
         GeneratorLanguage.cpp,
         GeneratorLanguage.gobject,
         GeneratorLanguage.java,
@@ -163,6 +162,8 @@ Future<int> generateTestPigeons({
               : '$outputBase/darwin/$testPluginName/Sources/$testPluginName/$pascalCaseName.gen.swift',
       swiftErrorClassName: swiftErrorClassName,
       swiftIncludeErrorClass: input != 'primitive',
+      swiftUseFfi: input == 'ni_tests',
+      swiftAppDirectory: '$outputBase/example',
       // Linux
       gobjectHeaderOut:
           skipLanguages.contains(GeneratorLanguage.gobject)
@@ -241,9 +242,12 @@ Future<int> runPigeon({
   String? kotlinErrorClassName,
   bool kotlinUseJni = false,
   bool kotlinIncludeErrorClass = true,
+  String kotlinAppDirectory = '',
   bool swiftIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
+  bool swiftUseFfi = false,
+  String swiftAppDirectory = '',
   String? cppHeaderOut,
   String? cppSourceOut,
   String? cppNamespace,
@@ -328,6 +332,8 @@ Future<int> runPigeon({
       swiftOptions: SwiftOptions(
         errorClassName: swiftErrorClassName,
         includeErrorClass: swiftIncludeErrorClass,
+        useFfi: swiftUseFfi,
+        appDirectory: swiftAppDirectory,
       ),
       basePath: basePath,
       dartPackageName: dartPackageName,

@@ -9,6 +9,11 @@ environment:
 
 dependencies:
   build_runner: ^2.1.10
+  ffi: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffi
+      ref: b45b6aede5e8d0cb32a06fc62c49093dc3cf6232
   flutter:
     sdk: flutter
   # These are normal dependencies rather than dev_dependencies because the
@@ -22,8 +27,35 @@ dependencies:
     git:
       url: https://github.com/dart-lang/native/
       path: pkgs/jni
-      ref: d3c3acb4c67331e5b22010555f7d4f19d4fb5689
+      ref: b45b6aede5e8d0cb32a06fc62c49093dc3cf6232
   mockito: ^5.4.4
+  objective_c: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/objective_c
+      ref: b45b6aede5e8d0cb32a06fc62c49093dc3cf6232
 
 dev_dependencies:
   leak_tracker: any
+
+dependency_overrides:
+  ffi: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffi
+      ref: b45b6aede5e8d0cb32a06fc62c49093dc3cf6232
+  ffigen: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/ffigen
+      ref: b45b6aede5e8d0cb32a06fc62c49093dc3cf6232
+  objective_c: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/objective_c
+      ref: b45b6aede5e8d0cb32a06fc62c49093dc3cf6232
+  swift2objc: 
+    git:
+      url: https://github.com/dart-lang/native/
+      path: pkgs/swift2objc
+      ref: b45b6aede5e8d0cb32a06fc62c49093dc3cf6232

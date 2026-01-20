@@ -8,7 +8,7 @@
 
 import 'dart:async';
 import 'dart:io' show Platform;
-import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart'
     show ReadBuffer, WriteBuffer, immutable, protected, visibleForTesting;

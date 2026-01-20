@@ -25,6 +25,7 @@ import 'kotlin/jnigen_yaml_generator.dart';
 import 'kotlin/kotlin_generator.dart';
 import 'objc/objc_generator.dart';
 import 'pigeon_lib.dart';
+import 'swift/ffigen_config_generator.dart';
 import 'swift/swift_generator.dart';
 
 /// Options used when running the code generator.
@@ -120,6 +121,8 @@ class InternalPigeonOptions {
                 testOut: options.dartTestOut,
                 copyrightHeader: copyrightHeader,
                 useJni: options.kotlinOptions?.useJni ?? false,
+                useFfi: options.swiftOptions?.useFfi ?? false,
+                ffiErrorClassName: options.swiftOptions?.errorClassName,
               ),
       copyrightHeader =
           options.copyrightHeader != null
@@ -522,6 +525,59 @@ class SwiftGeneratorAdapter implements GeneratorAdapter {
         options.swiftOptions?.swiftOut,
         basePath: options.basePath ?? '',
       );
+
+  @override
+  List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
+}
+
+/// A [GeneratorAdapter] that generates FfigenConfig source code.
+class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
+  /// Constructor for [FfigenConfigGeneratorAdapter].
+  FfigenConfigGeneratorAdapter({
+    this.fileTypeList = const <FileType>[FileType.na],
+  });
+
+  @override
+  List<FileType> fileTypeList;
+
+  @override
+  void generate(
+    StringSink sink,
+    InternalPigeonOptions options,
+    Root root,
+    FileType fileType,
+  ) {
+    if (options.swiftOptions == null || options.dartOptions == null) {
+      return;
+    }
+    final FfigenConfigGenerator generator = FfigenConfigGenerator();
+
+    final InternalFfigenConfigOptions ffigenYamlOptions =
+        InternalFfigenConfigOptions(
+          options.dartOptions!,
+          options.swiftOptions!,
+          options.basePath,
+          options.dartOptions?.dartOut,
+          options.swiftOptions!.swiftOut,
+        );
+
+    generator.generate(
+      ffigenYamlOptions,
+      root,
+      sink,
+      dartPackageName: options.dartPackageName,
+    );
+  }
+
+  @override
+  IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
+      options.swiftOptions?.appDirectory != null &&
+              (options.swiftOptions?.useFfi ?? false)
+          ? _openSink(
+            'ffigen_config.dart',
+            basePath: options.swiftOptions?.appDirectory ?? '',
+          )
+          : null;
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];

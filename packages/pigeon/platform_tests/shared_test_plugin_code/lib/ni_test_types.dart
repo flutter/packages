@@ -138,7 +138,7 @@ final Map<Object?, Object?> map = <Object?, Object?>{
   'b': 2.0,
   'c': 'three',
   'd': false,
-  // 'e': null
+  'e': null,
 };
 
 final Map<String?, String?> stringMap = <String?, String?>{
@@ -237,15 +237,14 @@ genericNIAllNullableTypesWithoutRecursion = NIAllNullableTypesWithoutRecursion(
 );
 
 final List<NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionClassList =
-    <NIAllNullableTypesWithoutRecursion?>[
-      genericNIAllNullableTypesWithoutRecursion,
-      NIAllNullableTypesWithoutRecursion(),
-      null,
-    ];
+allNullableTypesWithoutRecursionList = <NIAllNullableTypesWithoutRecursion?>[
+  genericNIAllNullableTypesWithoutRecursion,
+  NIAllNullableTypesWithoutRecursion(),
+  null,
+];
 
 final Map<int, NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionClassMap =
+allNullableTypesWithoutRecursionMap =
     <int, NIAllNullableTypesWithoutRecursion?>{
       0: genericNIAllNullableTypesWithoutRecursion,
       1: NIAllNullableTypesWithoutRecursion(),
@@ -276,8 +275,8 @@ final NIAllTypes genericNIAllTypes = NIAllTypes(
   map: nonNullMap,
   stringMap: nonNullStringMap,
   intMap: nonNullIntMap,
-  //   doubleMap: nonNullDoubleMap,
-  //   boolMap: nonNullBoolMap,
+  // doubleMap: nonNullDoubleMap,
+  // boolMap: nonNullBoolMap,
   enumMap: nonNullEnumMap,
   objectMap: nonNullMap,
   listMap: nonNullListMap,
@@ -300,10 +299,10 @@ final NIAllNullableTypes genericNIAllNullableTypes = NIAllNullableTypes(
   aNullableInt64: biggerThanBigInt,
   aNullableDouble: doublePi,
   aNullableString: 'Hello host!',
-  // aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
-  // aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
-  // aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
-  // aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
+  aNullableByteArray: Uint8List.fromList(<int>[1, 2, 3]),
+  aNullable4ByteArray: Int32List.fromList(<int>[4, 5, 6]),
+  aNullable8ByteArray: Int64List.fromList(<int>[7, 8, 9]),
+  aNullableFloatArray: Float64List.fromList(<double>[2.71828, doublePi]),
   aNullableEnum: NIAnEnum.fourHundredTwentyTwo,
   aNullableObject: 0,
   list: list,
@@ -333,16 +332,23 @@ final Map<int, NIAllNullableTypes> nonNullNIAllNullableTypesMap =
       1: NIAllNullableTypes(),
     };
 
+final List<NIAllNullableTypesWithoutRecursion>
+nonNullNIAllNullableTypesWithoutRecursionList =
+    <NIAllNullableTypesWithoutRecursion>[
+      genericNIAllNullableTypesWithoutRecursion,
+      NIAllNullableTypesWithoutRecursion(),
+    ];
+
+final Map<int, NIAllNullableTypesWithoutRecursion>
+nonNullNIAllNullableTypesWithoutRecursionMap =
+    <int, NIAllNullableTypesWithoutRecursion>{
+      0: genericNIAllNullableTypesWithoutRecursion,
+      1: NIAllNullableTypesWithoutRecursion(),
+    };
+
 final List<NIAllNullableTypes?> allNullableTypesList = <NIAllNullableTypes?>[
   genericNIAllNullableTypes,
   NIAllNullableTypes(),
-  null,
-];
-
-final List<NIAllNullableTypesWithoutRecursion?>
-allNullableTypesWithoutRecursionList = <NIAllNullableTypesWithoutRecursion?>[
-  genericNIAllNullableTypesWithoutRecursion,
-  NIAllNullableTypesWithoutRecursion(),
   null,
 ];
 
@@ -393,7 +399,7 @@ NIAllClassesWrapper classWrapperMaker() {
     allTypes: genericNIAllTypes,
     classList: allTypesClassList,
     classMap: allTypesClassMap,
-    nullableClassList: allNullableTypesWithoutRecursionClassList,
-    nullableClassMap: allNullableTypesWithoutRecursionClassMap,
+    nullableClassList: allNullableTypesWithoutRecursionList,
+    nullableClassMap: allNullableTypesWithoutRecursionMap,
   );
 }

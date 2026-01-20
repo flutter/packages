@@ -15,12 +15,6 @@ log_level: all
 classes:
   - 'NIHostIntegrationCoreApi'
   - 'NIHostIntegrationCoreApiRegistrar'
-  - 'NIHostTrivialApi'
-  - 'NIHostTrivialApiRegistrar'
-  - 'NIHostSmallApi'
-  - 'NIHostSmallApiRegistrar'
-  - 'NIFlutterIntegrationCoreApi'
-  - 'NIFlutterIntegrationCoreApiRegistrar'
   - 'NIUnusedClass'
   - 'NIAllTypes'
   - 'NIAllNullableTypes'

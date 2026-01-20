@@ -1,10 +1,12 @@
-// Copyright 2013 The Flutter Authors
+// Copyright 2013 The Flutter Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
 
 import 'generated.dart';
+import 'src/generated/ni_tests.gen.dart';
+import 'ni_test_types.dart';
 
 void main() {
   runApp(const ExampleApp());
@@ -38,7 +40,24 @@ class _ExampleAppState extends State<ExampleApp> {
     try {
       // Make a single trivial call just to validate that everything is wired
       // up.
-      await api.noop();
+      // await api.noop();
+      final NIHostIntegrationCoreApiForNativeInterop? api =
+          NIHostIntegrationCoreApiForNativeInterop.getInstance();
+      // api!.noop();
+      // api!.echoStringList(stringList);
+      // api!.echoAllTypes(genericNIAllTypes);
+      // api!.echoObject(genericNIAllNullableTypesWithoutRecursion);
+      // api!.echoObject(true);
+      await api!.throwAsyncFlutterError();
+      // api!.echoAllNullableTypesWithoutRecursion(
+      //   genericNIAllNullableTypesWithoutRecursion,
+      // );
+      // final NIAllClassesWrapper classWrapper = classWrapperMaker();
+      // classWrapper.allTypes = null;
+      // final NIAllClassesWrapper receivedClassWrapper =
+      //     api!.echoClassWrapper(classWrapper);
+      // print(receivedClassWrapper);
+      // api!.echoIntMap(intMap);
     } catch (e) {
       setState(() {
         status = 'Failed: $e';
