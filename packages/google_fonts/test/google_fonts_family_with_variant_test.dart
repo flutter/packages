@@ -9,27 +9,25 @@ import 'package:google_fonts/src/google_fonts_variant.dart';
 
 void main() {
   testWidgets('toString() works for normal w400', (WidgetTester tester) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
-        GoogleFontsFamilyWithVariant(
-          family: 'Foo',
-          googleFontsVariant: GoogleFontsVariant(
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w400,
-          ),
-        );
+    const familyWithVariant = GoogleFontsFamilyWithVariant(
+      family: 'Foo',
+      googleFontsVariant: GoogleFontsVariant(
+        fontStyle: FontStyle.normal,
+        fontWeight: FontWeight.w400,
+      ),
+    );
 
     expect(familyWithVariant.toString(), equals('Foo_regular'));
   });
 
   testWidgets('toString() works for italic w100', (WidgetTester tester) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
-        GoogleFontsFamilyWithVariant(
-          family: 'Foo',
-          googleFontsVariant: GoogleFontsVariant(
-            fontStyle: FontStyle.italic,
-            fontWeight: FontWeight.w100,
-          ),
-        );
+    const familyWithVariant = GoogleFontsFamilyWithVariant(
+      family: 'Foo',
+      googleFontsVariant: GoogleFontsVariant(
+        fontStyle: FontStyle.italic,
+        fontWeight: FontWeight.w100,
+      ),
+    );
 
     expect(familyWithVariant.toString(), equals('Foo_100italic'));
   });
@@ -37,14 +35,13 @@ void main() {
   testWidgets('toApiFilenamePrefix() works for italic w100', (
     WidgetTester tester,
   ) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
-        GoogleFontsFamilyWithVariant(
-          family: 'Foo',
-          googleFontsVariant: GoogleFontsVariant(
-            fontWeight: FontWeight.w100,
-            fontStyle: FontStyle.italic,
-          ),
-        );
+    const familyWithVariant = GoogleFontsFamilyWithVariant(
+      family: 'Foo',
+      googleFontsVariant: GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ),
+    );
 
     expect(familyWithVariant.toApiFilenamePrefix(), equals('Foo-ThinItalic'));
   });
@@ -52,14 +49,13 @@ void main() {
   testWidgets('toApiFilenamePrefix() works for regular', (
     WidgetTester tester,
   ) async {
-    const GoogleFontsFamilyWithVariant familyWithVariant =
-        GoogleFontsFamilyWithVariant(
-          family: 'Foo',
-          googleFontsVariant: GoogleFontsVariant(
-            fontWeight: FontWeight.w400,
-            fontStyle: FontStyle.normal,
-          ),
-        );
+    const familyWithVariant = GoogleFontsFamilyWithVariant(
+      family: 'Foo',
+      googleFontsVariant: GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ),
+    );
 
     expect(familyWithVariant.toApiFilenamePrefix(), equals('Foo-Regular'));
   });

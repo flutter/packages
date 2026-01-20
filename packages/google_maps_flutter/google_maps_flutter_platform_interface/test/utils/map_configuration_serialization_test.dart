@@ -11,7 +11,7 @@ const String _kMapId = '000000000000000'; // Dummy map ID.
 
 void main() {
   test('empty serialization', () async {
-    const MapConfiguration config = MapConfiguration();
+    const config = MapConfiguration();
 
     final Map<String, Object> json = jsonForMapConfiguration(config);
 
@@ -19,7 +19,7 @@ void main() {
   });
 
   test('complete serialization', () async {
-    final MapConfiguration config = MapConfiguration(
+    final config = MapConfiguration(
       compassEnabled: false,
       mapToolbarEnabled: false,
       cameraTargetBounds: CameraTargetBounds(
@@ -84,7 +84,7 @@ void main() {
   });
 
   test('mapId preferred over cloudMapId', () {
-    const MapConfiguration config = MapConfiguration(
+    const config = MapConfiguration(
       mapId: 'map-id',
       cloudMapId: 'cloud-map-id',
     );
@@ -93,9 +93,7 @@ void main() {
   });
 
   test('mapId falls back to cloudMapId', () {
-    const MapConfiguration config = MapConfiguration(
-      cloudMapId: 'cloud-map-id',
-    );
+    const config = MapConfiguration(cloudMapId: 'cloud-map-id');
     final Map<String, Object> json = jsonForMapConfiguration(config);
     expect(json, <String, Object>{
       'mapId': 'cloud-map-id',

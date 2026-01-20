@@ -24,8 +24,8 @@ ShortcutItem shortcutItemMessageToShortcutItem(ShortcutItemMessage item) {
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  final _FakeQuickActionsApi api = _FakeQuickActionsApi();
-  final QuickActionsAndroid quickActions = QuickActionsAndroid(api: api);
+  final api = _FakeQuickActionsApi();
+  final quickActions = QuickActionsAndroid(api: api);
 
   test('registerWith() registers correct instance', () {
     QuickActionsAndroid.registerWith();
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('initialize', () async {
-      final Completer<bool> quickActionsHandler = Completer<bool>();
+      final quickActionsHandler = Completer<bool>();
       await quickActions.initialize((_) => quickActionsHandler.complete(true));
 
       expect(quickActionsHandler.future, completion(isTrue));
@@ -49,7 +49,7 @@ void main() {
 
   test('setShortCutItems', () async {
     await quickActions.initialize((String type) {});
-    const ShortcutItem item = ShortcutItem(
+    const item = ShortcutItem(
       type: 'test',
       localizedTitle: 'title',
       icon: 'icon.svg',
@@ -63,7 +63,7 @@ void main() {
 
   test('clearShortCutItems', () {
     quickActions.initialize((String type) {});
-    const ShortcutItem item = ShortcutItem(
+    const item = ShortcutItem(
       type: 'test',
       localizedTitle: 'title',
       icon: 'icon.svg',
@@ -75,11 +75,11 @@ void main() {
   });
 
   test('Shortcut item can be constructed', () {
-    const String type = 'type';
-    const String localizedTitle = 'title';
-    const String icon = 'foo';
+    const type = 'type';
+    const localizedTitle = 'title';
+    const icon = 'foo';
 
-    const ShortcutItem item = ShortcutItem(
+    const item = ShortcutItem(
       type: type,
       localizedTitle: localizedTitle,
       icon: icon,
@@ -110,7 +110,7 @@ class _FakeQuickActionsApi implements AndroidQuickActionsApi {
   @override
   Future<void> setShortcutItems(List<ShortcutItemMessage?> itemsList) async {
     await clearShortcutItems();
-    for (final ShortcutItemMessage? element in itemsList) {
+    for (final element in itemsList) {
       items.add(shortcutItemMessageToShortcutItem(element!));
     }
   }

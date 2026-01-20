@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> {
     String? appSupportDirectory;
     String? documentsDirectory;
     String? cacheDirectory;
-    final PathProviderWindows provider = PathProviderWindows();
+    final provider = PathProviderWindows();
 
     try {
       tempDirectory = await provider.getTemporaryPath();

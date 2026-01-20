@@ -152,7 +152,7 @@ class _SvgMemoryWithBytesFinder extends MatchFinder {
 }
 
 bool _getBytesLoader<T>(Element candidate, bool Function(T loader) matcher) {
-  bool result = false;
+  var result = false;
   final Widget widget = candidate.widget;
   if (widget is SvgPicture) {
     final BytesLoader bytesLoader = widget.bytesLoader;

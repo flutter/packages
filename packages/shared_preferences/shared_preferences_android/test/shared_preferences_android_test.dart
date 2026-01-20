@@ -17,7 +17,7 @@ void main() {
   late _FakeSharedPreferencesApi api;
   late SharedPreferencesAndroid plugin;
 
-  const Map<String, Object> flutterTestValues = <String, Object>{
+  const flutterTestValues = <String, Object>{
     'flutter.String': 'hello world',
     'flutter.Bool': true,
     'flutter.Int': 42,
@@ -25,7 +25,7 @@ void main() {
     'flutter.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> prefixTestValues = <String, Object>{
+  const prefixTestValues = <String, Object>{
     'prefix.String': 'hello world',
     'prefix.Bool': true,
     'prefix.Int': 42,
@@ -33,7 +33,7 @@ void main() {
     'prefix.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+  const nonPrefixTestValues = <String, Object>{
     'String': 'hello world',
     'Bool': true,
     'Int': 42,
@@ -41,16 +41,17 @@ void main() {
     'StringList': <String>['foo', 'bar'],
   };
 
-  final Map<String, Object> allTestValuesForComparison = <String, Object>{};
+  final allTestValuesForComparison = <String, Object>{};
 
   allTestValuesForComparison.addAll(flutterTestValues);
   allTestValuesForComparison.addAll(prefixTestValues);
   allTestValuesForComparison.addAll(nonPrefixTestValues);
 
-  final Map<String, Object> allTestValuesForAddingDirectlyToCache =
-      <String, Object>{...allTestValuesForComparison};
+  final allTestValuesForAddingDirectlyToCache = <String, Object>{
+    ...allTestValuesForComparison,
+  };
 
-  final String encodedListStringValue =
+  final encodedListStringValue =
       '$jsonListPrefix${jsonEncode(<String>['foo', 'bar'])}';
   allTestValuesForAddingDirectlyToCache['flutter.StringList'] =
       encodedListStringValue;
@@ -266,7 +267,7 @@ class _FakeSharedPreferencesApi implements SharedPreferencesApi {
     if (allowList != null) {
       allowSet = Set<String>.from(allowList);
     }
-    final Map<String, Object> filteredItems = <String, Object>{
+    final filteredItems = <String, Object>{
       for (final String key in items.keys)
         if (key.startsWith(prefix) &&
             (allowSet == null || allowSet.contains(key)))

@@ -13,20 +13,28 @@ void main() {
       final FileSystem fileSystem = MemoryFileSystem();
 
       final Directory base = fileSystem.directory('/').childDirectory('base');
-      final File file =
-          childFileWithSubcomponents(base, <String>['foo', 'bar', 'baz.txt']);
+      final File file = childFileWithSubcomponents(base, <String>[
+        'foo',
+        'bar',
+        'baz.txt',
+      ]);
 
       expect(file.absolute.path, '/base/foo/bar/baz.txt');
     });
 
     test('works on Windows', () async {
-      final FileSystem fileSystem =
-          MemoryFileSystem(style: FileSystemStyle.windows);
+      final FileSystem fileSystem = MemoryFileSystem(
+        style: FileSystemStyle.windows,
+      );
 
-      final Directory base =
-          fileSystem.directory(r'C:\').childDirectory('base');
-      final File file =
-          childFileWithSubcomponents(base, <String>['foo', 'bar', 'baz.txt']);
+      final Directory base = fileSystem
+          .directory(r'C:\')
+          .childDirectory('base');
+      final File file = childFileWithSubcomponents(base, <String>[
+        'foo',
+        'bar',
+        'baz.txt',
+      ]);
 
       expect(file.absolute.path, r'C:\base\foo\bar\baz.txt');
     });
@@ -37,20 +45,28 @@ void main() {
       final FileSystem fileSystem = MemoryFileSystem();
 
       final Directory base = fileSystem.directory('/').childDirectory('base');
-      final Directory dir =
-          childDirectoryWithSubcomponents(base, <String>['foo', 'bar', 'baz']);
+      final Directory dir = childDirectoryWithSubcomponents(base, <String>[
+        'foo',
+        'bar',
+        'baz',
+      ]);
 
       expect(dir.absolute.path, '/base/foo/bar/baz');
     });
 
     test('works on Windows', () async {
-      final FileSystem fileSystem =
-          MemoryFileSystem(style: FileSystemStyle.windows);
+      final FileSystem fileSystem = MemoryFileSystem(
+        style: FileSystemStyle.windows,
+      );
 
-      final Directory base =
-          fileSystem.directory(r'C:\').childDirectory('base');
-      final Directory dir =
-          childDirectoryWithSubcomponents(base, <String>['foo', 'bar', 'baz']);
+      final Directory base = fileSystem
+          .directory(r'C:\')
+          .childDirectory('base');
+      final Directory dir = childDirectoryWithSubcomponents(base, <String>[
+        'foo',
+        'bar',
+        'baz',
+      ]);
 
       expect(dir.absolute.path, r'C:\base\foo\bar\baz');
     });

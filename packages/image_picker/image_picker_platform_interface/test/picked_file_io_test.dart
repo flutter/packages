@@ -23,7 +23,7 @@ final String textFilePath = textFile.path;
 
 void main() {
   group('Create with an objectUrl', () {
-    final PickedFile pickedFile = PickedFile(textFilePath);
+    final pickedFile = PickedFile(textFilePath);
 
     test('Can be read as a string', () async {
       expect(await pickedFile.readAsString(), equals(expectedStringContents));

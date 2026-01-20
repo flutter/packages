@@ -12,7 +12,7 @@ Example:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (Instantiate)"?>
 ```dart
-final XFile file = XFile('assets/hello.txt');
+final file = XFile('assets/hello.txt');
 
 print('File information:');
 print('- Path: ${file.path}');

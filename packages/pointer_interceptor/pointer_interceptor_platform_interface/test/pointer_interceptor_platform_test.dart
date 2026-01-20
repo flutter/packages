@@ -15,7 +15,7 @@ void main() {
       final PointerInterceptorPlatform unimplementedPointerInterceptorPlatform =
           UnimplementedPointerInterceptorPlatform();
 
-      final Container testChild = Container();
+      final testChild = Container();
       expect(
         () => unimplementedPointerInterceptorPlatform.buildWidget(
           child: testChild,

@@ -1,6 +1,232 @@
-## NEXT
+## 7.1.0
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+- Adds support for WOFF2 and WOFF font formats on web platforms when loading fonts bundled with the app, providing improved performance and smaller bundle sizes.
+
+## 7.0.2
+
+- Adds missing public API documentation
+
+## 7.0.1
+
+- Excludes variable font entries when a static entry of the same weight and style exists
+
+## 7.0.0
+
+- Added fonts:
+  - `Afacad Flux`
+  - `Agu Display`
+  - `Alan Sans`
+  - `Alumni Sans SC`
+  - `Ancizar Sans`
+  - `Ancizar Serif`
+  - `Asimovian`
+  - `Asta Sans`
+  - `Atkinson Hyperlegible Mono`
+  - `Atkinson Hyperlegible Next`
+  - `Badeen Display`
+  - `Big Shoulders`
+  - `Big Shoulders Inline`
+  - `Big Shoulders Stencil`
+  - `Bitcount`
+  - `Bitcount Grid Double`
+  - `Bitcount Grid Double Ink`
+  - `Bitcount Grid Single`
+  - `Bitcount Grid Single Ink`
+  - `Bitcount Ink`
+  - `Bitcount Prop Double`
+  - `Bitcount Prop Double Ink`
+  - `Bitcount Prop Single`
+  - `Bitcount Prop Single Ink`
+  - `Bitcount Single`
+  - `Bitcount Single Ink`
+  - `Boldonse`
+  - `Bungee Tint`
+  - `Bytesized`
+  - `Cal Sans`
+  - `Cascadia Code`
+  - `Cascadia Mono`
+  - `Chiron GoRound TC`
+  - `Chiron Hei HK`
+  - `Chiron Sung HK`
+  - `Comic Relief`
+  - `Coral Pixels`
+  - `Cossette Texte`
+  - `Cossette Titre`
+  - `Doto`
+  - `Edu AU VIC WA NT Arrows`
+  - `Edu AU VIC WA NT Dots`
+  - `Edu AU VIC WA NT Guides`
+  - `Edu AU VIC WA NT Pre`
+  - `Edu NSW ACT Cursive`
+  - `Edu NSW ACT Hand Pre`
+  - `Edu QLD Hand`
+  - `Edu SA Hand`
+  - `Edu VIC WA NT Hand`
+  - `Edu VIC WA NT Hand Pre`
+  - `Epunda Sans`
+  - `Epunda Slab`
+  - `Exile`
+  - `Faculty Glyphic`
+  - `Funnel Display`
+  - `Funnel Sans`
+  - `Geist`
+  - `Geist Mono`
+  - `Gidole`
+  - `Google Sans Code`
+  - `Hind Mysuru`
+  - `Host Grotesk`
+  - `Hubot Sans`
+  - `Huninn`
+  - `Iansui`
+  - `Intel One Mono`
+  - `Kanchenjunga`
+  - `Kapakana`
+  - `Karla Tamil Inclined`
+  - `Karla Tamil Upright`
+  - `LXGW Marker Gothic`
+  - `Libertinus Keyboard`
+  - `Libertinus Math`
+  - `Libertinus Mono`
+  - `Libertinus Sans`
+  - `Libertinus Serif`
+  - `Libertinus Serif Display`
+  - `Liter`
+  - `Manufacturing Consent`
+  - `Matangi`
+  - `Matemasie`
+  - `Menbere`
+  - `Moderustic`
+  - `Mona Sans`
+  - `Monomakh`
+  - `Montserrat Underline`
+  - `Mozilla Headline`
+  - `Mozilla Text`
+  - `Nata Sans`
+  - `National Park`
+  - `New Amsterdam`
+  - `Noto Sans PhagsPa`
+  - `Noto Sans Sunuwar`
+  - `Noto Serif Dives Akuru`
+  - `Noto Serif Hentaigana`
+  - `Noto Serif Todhri`
+  - `Parastoo`
+  - `Parkinsans`
+  - `Phetsarath`
+  - `Playpen Sans Arabic`
+  - `Playpen Sans Deva`
+  - `Playpen Sans Hebrew`
+  - `Playpen Sans Thai`
+  - `Playwrite AR Guides`
+  - `Playwrite AT Guides`
+  - `Playwrite AU NSW Guides`
+  - `Playwrite AU QLD Guides`
+  - `Playwrite AU SA Guides`
+  - `Playwrite AU TAS Guides`
+  - `Playwrite AU VIC Guides`
+  - `Playwrite BE VLG Guides`
+  - `Playwrite BE WAL Guides`
+  - `Playwrite BR Guides`
+  - `Playwrite CA Guides`
+  - `Playwrite CL Guides`
+  - `Playwrite CO Guides`
+  - `Playwrite CU Guides`
+  - `Playwrite CZ Guides`
+  - `Playwrite DE Grund Guides`
+  - `Playwrite DE LA Guides`
+  - `Playwrite DE SAS Guides`
+  - `Playwrite DE VA Guides`
+  - `Playwrite DK Loopet Guides`
+  - `Playwrite DK Uloopet Guides`
+  - `Playwrite ES Deco Guides`
+  - `Playwrite ES Guides`
+  - `Playwrite FR Moderne Guides`
+  - `Playwrite FR Trad Guides`
+  - `Playwrite GB J Guides`
+  - `Playwrite GB S Guides`
+  - `Playwrite HR Guides`
+  - `Playwrite HR Lijeva Guides`
+  - `Playwrite HU Guides`
+  - `Playwrite ID Guides`
+  - `Playwrite IE Guides`
+  - `Playwrite IN Guides`
+  - `Playwrite IS Guides`
+  - `Playwrite IT Moderna Guides`
+  - `Playwrite IT Trad Guides`
+  - `Playwrite MX Guides`
+  - `Playwrite NG Modern Guides`
+  - `Playwrite NL Guides`
+  - `Playwrite NO Guides`
+  - `Playwrite NZ Guides`
+  - `Playwrite PE Guides`
+  - `Playwrite PL Guides`
+  - `Playwrite PT Guides`
+  - `Playwrite RO Guides`
+  - `Playwrite SK Guides`
+  - `Playwrite TZ Guides`
+  - `Playwrite US Modern Guides`
+  - `Playwrite US Trad Guides`
+  - `Playwrite VN Guides`
+  - `Playwrite ZA Guides`
+  - `Pochaevsk`
+  - `Ponnala`
+  - `Ponomar`
+  - `SUSE`
+  - `SUSE Mono`
+  - `Sankofa Display`
+  - `Sansation`
+  - `Savate`
+  - `Shafarik`
+  - `Sirivennela`
+  - `Sixtyfour Convergence`
+  - `Sour Gummy`
+  - `Special Gothic`
+  - `Special Gothic Condensed One`
+  - `Special Gothic Expanded One`
+  - `Story Script`
+  - `TASA Explorer`
+  - `TASA Orbiter`
+  - `Tagesschrift`
+  - `TikTok Sans`
+  - `Tirra`
+  - `Triodion`
+  - `Tuffy`
+  - `UoqMunThenKhung`
+  - `Vend Sans`
+  - `WDXL Lubrifont JP N`
+  - `WDXL Lubrifont SC`
+  - `WDXL Lubrifont TC`
+  - `Winky Rough`
+  - `Winky Sans`
+  - `Zalando Sans`
+  - `Zalando Sans Expanded`
+  - `Zalando Sans SemiExpanded`
+- Removed fonts:
+  - `Asap Condensed`
+  - `Big Shoulders Display`
+  - `Big Shoulders Inline Display`
+  - `Big Shoulders Inline Text`
+  - `Big Shoulders Stencil Display`
+  - `Big Shoulders Stencil Text`
+  - `Big Shoulders Text`
+  - `BioRhyme Expanded`
+  - `Cabin Condensed`
+  - `Encode Sans Condensed`
+  - `Encode Sans Expanded`
+  - `Encode Sans Semi Condensed`
+  - `Encode Sans Semi Expanded`
+  - `IBM Plex Sans Condensed`
+  - `Montserrat Subrayada`
+  - `Noto Sans Phags Pa`
+  - `Open Sans Condensed`
+  - `Roboto Condensed`
+  - `Saira Condensed`
+  - `Saira Extra Condensed`
+  - `Saira Semi Condensed`
+
+## 6.3.3
+
+- Replaces use of the deprecated `FontWeight.index`.
+- Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 6.3.2
 

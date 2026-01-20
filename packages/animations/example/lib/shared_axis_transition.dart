@@ -152,7 +152,7 @@ class _CourseSwitchState extends State<_CourseSwitch> {
 
   @override
   Widget build(BuildContext context) {
-    final String subtitle = _value ? 'Bundled' : 'Shown Individually';
+    final subtitle = _value ? 'Bundled' : 'Shown Individually';
     return SwitchListTile(
       title: Text(widget.course),
       subtitle: Text(subtitle),

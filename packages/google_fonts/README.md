@@ -94,7 +94,7 @@ class MyApp extends StatelessWidget {
 }
 
 ThemeData _buildTheme(Brightness brightness) {
-  final ThemeData baseTheme = ThemeData(brightness: brightness);
+  final baseTheme = ThemeData(brightness: brightness);
 
   return baseTheme.copyWith(
     textTheme: GoogleFonts.latoTextTheme(baseTheme.textTheme),

@@ -11,7 +11,7 @@ major version of the Android `Lifecycle` API they expect.
 
 |             | Android |
 |-------------|---------|
-| **Support** | SDK 21+ |
+| **Support** | SDK 24+ |
 
 ## Example
 

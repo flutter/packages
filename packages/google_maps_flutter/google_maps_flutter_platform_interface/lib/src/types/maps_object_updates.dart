@@ -82,7 +82,7 @@ class MapsObjectUpdates<T extends MapsObject<T>> {
 
   /// Converts this object to JSON.
   Object toJson() {
-    final Map<String, Object> updateMap = <String, Object>{};
+    final updateMap = <String, Object>{};
 
     void addIfNonNull(String fieldName, Object? value) {
       if (value != null) {
