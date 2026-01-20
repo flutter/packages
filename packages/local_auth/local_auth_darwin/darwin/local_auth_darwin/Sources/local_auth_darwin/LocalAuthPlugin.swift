@@ -255,6 +255,15 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
       ))
   }
 
+  private func retryStickyAuth() {
+    if let lastCallState = self.lastCallState {
+      authenticate(
+        options: lastCallState.options,
+        strings: lastCallState.strings,
+        completion: lastCallState.resultHandler)
+    }
+  }
+
   // MARK: App delegate
 
   // These methods are called when the app is resumed from the background only on iOS.
@@ -263,22 +272,12 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
   #if os(iOS)
     @MainActor
     public func sceneDidBecomeActive(_ scene: UIScene) {
-      if let lastCallState = self.lastCallState {
-        authenticate(
-          options: lastCallState.options,
-          strings: lastCallState.strings,
-          completion: lastCallState.resultHandler)
-      }
+      retryStickyAuth()
     }
 
     @MainActor
     public func applicationDidBecomeActive(_ application: UIApplication) {
-      if let lastCallState = self.lastCallState {
-        authenticate(
-          options: lastCallState.options,
-          strings: lastCallState.strings,
-          completion: lastCallState.resultHandler)
-      }
+      retryStickyAuth()
     }
   #endif  // os(iOS)
 
