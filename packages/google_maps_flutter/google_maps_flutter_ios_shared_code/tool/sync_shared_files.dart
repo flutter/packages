@@ -26,6 +26,15 @@ Future<void> main(List<String> args) async {
     p.join(packageRoot.parent.path, _sharedSourceRootName),
   );
 
+  _syncSharedFiles(packageRoot, packageName, sharedSourceRoot);
+  _reportUnsharedFiles(packageRoot, packageName, sharedSourceRoot);
+}
+
+void _syncSharedFiles(
+  Directory packageRoot,
+  String packageName,
+  Directory sharedSourceRoot,
+) {
   final List<String> otherImplementationPackages = sharedSourceRoot.parent
       .listSync()
       .whereType<Directory>()
@@ -64,15 +73,9 @@ Future<void> main(List<String> args) async {
     final packageFile = File(packagePath);
     final String sharedContents = normalizedFileContents(entity);
     final String newContents = normalizedFileContents(packageFile);
+    final copiedFiles = <String>[];
     if (newContents != sharedContents) {
-      print('$relativePath has local modifications; copying.');
-      if (relativePath.contains('/pigeon/')) {
-        print(
-          '  This is a Pigeon source file, and the generated files are not '
-          'automatically copied.\n'
-          '  Re-run Pigeon generation in the other implementation packages.',
-        );
-      }
+      copiedFiles.add(relativePath);
       // Copy to shared source.
       packageFile.copySync(entity.path);
       // Copy to other implementation packages.
@@ -88,5 +91,77 @@ Future<void> main(List<String> args) async {
         packageFile.copySync(otherPackagePath);
       }
     }
+
+    var changedPigeonSource = false;
+    if (copiedFiles.isNotEmpty) {
+      print('Copied files:');
+      for (final file in copiedFiles) {
+        print('  $file');
+        if (relativePath.contains('/pigeon/')) {
+          changedPigeonSource = true;
+        }
+      }
+    }
+    if (changedPigeonSource) {
+      print(
+        'A Pigeon source file was copied, and the generated files are not '
+        'automatically copied.\n'
+        'Re-run Pigeon generation in the other implementation packages.',
+      );
+    }
   }
+}
+
+void _reportUnsharedFiles(
+  Directory packageRoot,
+  String packageName,
+  Directory sharedSourceRoot,
+) {
+  final List<File> codeFiles = packageRoot
+      .listSync(recursive: true)
+      .whereType<File>()
+      // Only report code files.
+      .where(
+        (file) =>
+            <String>['.swift', '.m', '.h', '.dart'].any(file.path.endsWith),
+      )
+      // Generated files aren't expected to be shared.
+      .where((file) => !file.path.contains('.g.'))
+      // Ignore intermediate file directories.
+      .where((file) => !_isInIntermediateDirectory(file.path))
+      .toList();
+
+  final unsharedFiles = <String>[];
+  for (final file in codeFiles) {
+    final String relativePath = p.relative(file.path, from: packageRoot.path);
+    final String sharedPath = p.join(
+      sharedSourceRoot.path,
+      sharedSourceRelativePathForPackagePath(relativePath),
+    );
+    final sharedFile = File(sharedPath);
+    if (!sharedFile.existsSync()) {
+      unsharedFiles.add(relativePath);
+    }
+  }
+
+  if (unsharedFiles.isNotEmpty) {
+    print('\nThe following code files are not shared with other packages:');
+    for (final file in unsharedFiles) {
+      print('  $file');
+    }
+    print(
+      'If this is not intentional, copy the relevant files to '
+      '$_sharedSourceRootName, then re-run this tool.',
+    );
+  }
+}
+
+bool _isInIntermediateDirectory(String path) {
+  return <String>[
+    '.dart_tool',
+    '.symlinks',
+    '.build',
+    'build',
+    'Pods',
+  ].any((dir) => path.contains('/$dir/'));
 }
