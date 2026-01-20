@@ -1,3 +1,7 @@
+## 2.18.9
+
+* Bump com.google.maps.android:android-maps-utils from 3.19.1 to 3.20.1.
+
 ## 2.18.8
 
 * Bumps com.google.maps.android:android-maps-utils from 3.6.0 to 3.19.1.
