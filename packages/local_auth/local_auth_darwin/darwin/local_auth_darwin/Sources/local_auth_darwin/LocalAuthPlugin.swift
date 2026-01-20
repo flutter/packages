@@ -33,7 +33,9 @@ struct StickyAuthState {
 /// A flutter plugin for local authentication.
 // TODO(stuartmorgan): Remove the @unchecked Sendable, and convert to strict thread enforcement.
 // This was added to minimize the changes while converting from Swift to Objective-C.
-public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unchecked Sendable {
+public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unchecked Sendable,
+  FlutterSceneLifeCycleDelegate
+{
 
   /// The factory to create LAContexts.
   private let authContextFactory: AuthContextFactory
@@ -43,7 +45,13 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin(
       contextFactory: DefaultAuthContextFactory())
-    registrar.addApplicationDelegate(instance)
+    // Register for both application and scene delegates for backward compatibility.
+    // Apps using UIScene lifecycle will receive sceneDidBecomeActive,
+    // while apps not yet migrated will receive applicationDidBecomeActive.
+    #if os(iOS)
+      registrar.addApplicationDelegate(instance)
+    #endif
+    registrar.addSceneDelegate(instance)
     // Workaround for https://github.com/flutter/flutter/issues/118103.
     #if os(iOS)
       let messenger = registrar.messenger()
@@ -251,8 +259,21 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
 
   // MARK: App delegate
 
-  // This method is called when the app is resumed from the background only on iOS
+  // These methods are called when the app is resumed from the background only on iOS.
+  // Both are kept for backward compatibility: sceneDidBecomeActive for apps using UIScene lifecycle,
+  // and applicationDidBecomeActive for apps that haven't migrated yet.
   #if os(iOS)
+    @MainActor
+    public func sceneDidBecomeActive(_ scene: UIScene) {
+      if let lastCallState = self.lastCallState {
+        authenticate(
+          options: lastCallState.options,
+          strings: lastCallState.strings,
+          completion: lastCallState.resultHandler)
+      }
+    }
+
+    @MainActor
     public func applicationDidBecomeActive(_ application: UIApplication) {
       if let lastCallState = self.lastCallState {
         authenticate(
