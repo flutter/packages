@@ -86,4 +86,10 @@ class WebViewCookieManager {
   ///
   /// This is a no op on iOS versions below 11.
   Future<void> setCookie(WebViewCookie cookie) => platform.setCookie(cookie);
+
+  /// Gets a list of existing cookie for all or specified domain for all WebViews.
+  /// Parameter domain value should match "domain-value" in RFC6265bis:
+  /// https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-02#section-4.1.1
+  Future<List<WebViewCookie>> getCookies({String? domain}) =>
+      platform.getCookies(domain);
 }
