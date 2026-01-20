@@ -57,12 +57,17 @@ Future<void> main(List<String> args) async {
       packageRelativePathForSharedSourceRelativePath(packageName, relativePath),
     );
 
-    print('Validating $packagePath');
+    print('Validating $relativePath');
     final packageFile = File(packagePath);
+    if (!packageFile.existsSync()) {
+      print('  File $relativePath does not exist in $packageName');
+      failed = true;
+      continue;
+    }
     final String expectedContents = normalizedFileContents(entity);
     final String contents = normalizedFileContents(packageFile);
     if (contents != expectedContents) {
-      print('\nFile $relativePath does not match expected contents:');
+      print('  File $relativePath does not match expected contents:');
       await _printDiff(entity, packageFile);
       failed = true;
     }
@@ -72,16 +77,13 @@ Future<void> main(List<String> args) async {
     print('''
 
 If the changes you made should be shared with other copies of the
-implementation, copy the changes to google_maps_flutter_ios_* directories.
-In some cases you may need to edit the copies to change references to the
-package name.
+implementation, copy the changes to google_maps_flutter_ios_* directories:
+  dart run tool/sync_shared_files.dart
+To validate that the changes have been shared correctly, run this tool again.
 
 If the changes you made should only be made to one copy of the implementation,
 discuss with your reviewer or #hackers-ecosystem on Discord about the best
 approach to sharing as much code as can still be shared.
-
-To validate that the changes have been shared correctly, run:
-  dart run tool/run_tests.dart
 
 For more information on the code sharing structure used by this package, see
 the google_maps_flutter_ios_shared_code/README.md file.

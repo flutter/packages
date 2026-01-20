@@ -47,6 +47,8 @@ void _syncSharedFiles(
       )
       .toList();
 
+  final copiedFiles = <String>[];
+  final missingFiles = <String>[];
   for (final FileSystemEntity entity in sharedSourceRoot.listSync(
     recursive: true,
   )) {
@@ -71,9 +73,12 @@ void _syncSharedFiles(
     );
 
     final packageFile = File(packagePath);
+    if (!packageFile.existsSync()) {
+      missingFiles.add(relativePath);
+      continue;
+    }
     final String sharedContents = normalizedFileContents(entity);
     final String newContents = normalizedFileContents(packageFile);
-    final copiedFiles = <String>[];
     if (newContents != sharedContents) {
       copiedFiles.add(relativePath);
       // Copy to shared source.
@@ -91,24 +96,35 @@ void _syncSharedFiles(
         packageFile.copySync(otherPackagePath);
       }
     }
-
-    var changedPigeonSource = false;
-    if (copiedFiles.isNotEmpty) {
-      print('Copied files:');
-      for (final file in copiedFiles) {
-        print('  $file');
-        if (relativePath.contains('/pigeon/')) {
-          changedPigeonSource = true;
-        }
+  }
+  
+  var changedPigeonSource = false;
+  if (copiedFiles.isNotEmpty) {
+    print('Copied files:');
+    for (final file in copiedFiles) {
+      print('  $file');
+      if (file.contains('/pigeon/')) {
+        changedPigeonSource = true;
       }
     }
-    if (changedPigeonSource) {
-      print(
-        'A Pigeon source file was copied, and the generated files are not '
-        'automatically copied.\n'
-        'Re-run Pigeon generation in the other implementation packages.',
-      );
+  }
+  if (changedPigeonSource) {
+    print(
+      'A Pigeon source file was copied, and the generated files are not '
+      'automatically copied.\n'
+      'Re-run Pigeon generation in the other implementation packages.',
+    );
+  }
+  if (missingFiles.isNotEmpty) {
+    print(
+      'This package is missing the following files from the shared source:',
+    );
+    for (final file in missingFiles) {
+      print('  $file');
     }
+    print(
+      'If these files should no longer be shared, remove them from the shared source.',
+    );
   }
 }
 
@@ -126,7 +142,11 @@ void _reportUnsharedFiles(
             <String>['.swift', '.m', '.h', '.dart'].any(file.path.endsWith),
       )
       // Generated files aren't expected to be shared.
-      .where((file) => !file.path.contains('.g.'))
+      .where(
+        (file) =>
+            !file.path.contains('.g.') &&
+            !file.path.contains('GeneratedPluginRegistrant'),
+      )
       // Ignore intermediate file directories.
       .where((file) => !_isInIntermediateDirectory(file.path))
       .toList();
@@ -162,6 +182,7 @@ bool _isInIntermediateDirectory(String path) {
     '.symlinks',
     '.build',
     'build',
+    'ephemeral',
     'Pods',
   ].any((dir) => path.contains('/$dir/'));
 }
