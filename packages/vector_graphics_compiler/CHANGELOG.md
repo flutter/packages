@@ -1,7 +1,10 @@
+## 1.1.21
+
+* Adds support for percentage units in SVG shape attributes (rect, circle, ellipse, line).
+
 ## 1.1.20
 
 * Fixes color parsing for modern rgb and rgba CSS syntax.
-* Adds support for percentage units in SVG shape attributes (rect, circle, ellipse, line).
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 1.1.19
