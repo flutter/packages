@@ -13,15 +13,19 @@ import 'package:pigeon/pigeon.dart';
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
+class FileExistsResult {
+  late bool exists;
+
+  late bool isDirectory;
+}
+
 @HostApi()
 abstract class CrossFileDarwinApi {
   String? tryCreateBookmarkedUrl(String url);
 
   bool isReadableFile(String url);
 
-  bool fileExists(String url);
-
-  bool fileIsDirectory(String url);
+  FileExistsResult fileExists(String url);
 
   int? fileModificationDate(String url);
 

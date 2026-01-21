@@ -63,7 +63,10 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<bool> canRead() => params.api.isReadableFile(params.uri);
 
   @override
-  Future<bool> exists() => params.api.fileExists(params.uri);
+  Future<bool> exists() async {
+    final FileExistsResult result = await params.api.fileExists(params.uri);
+    return result.exists && !result.isDirectory;
+  }
 
   @override
   Future<DateTime?> lastModified() async {
@@ -87,7 +90,9 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
   Stream<Uint8List> openRead([int? start, int? end]) async* {
     final int? fileLength = await length();
     if (fileLength == null) {
-      throw UnsupportedError('Cannot access file length.');
+      throw UnsupportedError(
+        'Cannot access file length of file with uri: ${params.uri}.',
+      );
     }
 
     int bytesToRead = (end ?? fileLength) - (start ?? 0);
@@ -95,7 +100,9 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
 
     final FileHandle? handle = await FileHandle.forReadingFromUrl(params.uri);
     if (handle == null) {
-      throw UnsupportedError('Cannot access file length.');
+      throw UnsupportedError(
+        'Cannot create native `FileHandle` with uri: ${params.uri}.',
+      );
     }
 
     try {
@@ -127,7 +134,9 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<Uint8List> readAsBytes() async {
     final FileHandle? handle = await FileHandle.forReadingFromUrl(params.uri);
     if (handle == null) {
-      throw UnsupportedError('Can not create file handle');
+      throw UnsupportedError(
+        'Cannot create native `FileHandle` with uri: ${params.uri}.',
+      );
     }
 
     try {

@@ -59,9 +59,7 @@ private func wrapError(_ error: Any) -> [Any?] {
 }
 
 private func createConnectionError(withChannelName channelName: String) -> PigeonError {
-  return PigeonError(
-    code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.",
-    details: "")
+  return PigeonError(code: "channel-error", message: "Unable to establish connection on channel: '\(channelName)'.", details: "")
 }
 
 private func isNullish(_ value: Any?) -> Bool {
@@ -73,11 +71,75 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
+func deepEqualsCrossFileDarwinApis(_ lhs: Any?, _ rhs: Any?) -> Bool {
+  let cleanLhs = nilOrValue(lhs) as Any?
+  let cleanRhs = nilOrValue(rhs) as Any?
+  switch (cleanLhs, cleanRhs) {
+  case (nil, nil):
+    return true
+
+  case (nil, _), (_, nil):
+    return false
+
+  case is (Void, Void):
+    return true
+
+  case let (cleanLhsHashable, cleanRhsHashable) as (AnyHashable, AnyHashable):
+    return cleanLhsHashable == cleanRhsHashable
+
+  case let (cleanLhsArray, cleanRhsArray) as ([Any?], [Any?]):
+    guard cleanLhsArray.count == cleanRhsArray.count else { return false }
+    for (index, element) in cleanLhsArray.enumerated() {
+      if !deepEqualsCrossFileDarwinApis(element, cleanRhsArray[index]) {
+        return false
+      }
+    }
+    return true
+
+  case let (cleanLhsDictionary, cleanRhsDictionary) as ([AnyHashable: Any?], [AnyHashable: Any?]):
+    guard cleanLhsDictionary.count == cleanRhsDictionary.count else { return false }
+    for (key, cleanLhsValue) in cleanLhsDictionary {
+      guard cleanRhsDictionary.index(forKey: key) != nil else { return false }
+      if !deepEqualsCrossFileDarwinApis(cleanLhsValue, cleanRhsDictionary[key]!) {
+        return false
+      }
+    }
+    return true
+
+  default:
+    // Any other type shouldn't be able to be used with pigeon. File an issue if you find this to be untrue.
+    return false
+  }
+}
+
+func deepHashCrossFileDarwinApis(value: Any?, hasher: inout Hasher) {
+  if let valueList = value as? [AnyHashable] {
+     for item in valueList { deepHashCrossFileDarwinApis(value: item, hasher: &hasher) }
+     return
+  }
+
+  if let valueDict = value as? [AnyHashable: AnyHashable] {
+    for key in valueDict.keys { 
+      hasher.combine(key)
+      deepHashCrossFileDarwinApis(value: valueDict[key]!, hasher: &hasher)
+    }
+    return
+  }
+
+  if let hashableValue = value as? AnyHashable {
+    hasher.combine(hashableValue.hashValue)
+  }
+
+  return hasher.combine(String(describing: value))
+}
+
+    
 /// Handles the callback when an object is deallocated.
 protocol CrossFileDarwinApisPigeonInternalFinalizerDelegate: AnyObject {
   /// Invoked when the strong reference of an object is deallocated in an `InstanceManager`.
   func onDeinit(identifier: Int64)
 }
+
 
 // Attaches to an object to receive a callback when the object is deallocated.
 internal final class CrossFileDarwinApisPigeonInternalFinalizer {
@@ -94,18 +156,14 @@ internal final class CrossFileDarwinApisPigeonInternalFinalizer {
   }
 
   internal static func attach(
-    to instance: AnyObject, identifier: Int64,
-    delegate: CrossFileDarwinApisPigeonInternalFinalizerDelegate
+    to instance: AnyObject, identifier: Int64, delegate: CrossFileDarwinApisPigeonInternalFinalizerDelegate
   ) {
-    let finalizer = CrossFileDarwinApisPigeonInternalFinalizer(
-      identifier: identifier, delegate: delegate)
+    let finalizer = CrossFileDarwinApisPigeonInternalFinalizer(identifier: identifier, delegate: delegate)
     objc_setAssociatedObject(instance, associatedObjectKey, finalizer, .OBJC_ASSOCIATION_RETAIN)
   }
 
   static func detach(from instance: AnyObject) {
-    let finalizer =
-      objc_getAssociatedObject(instance, associatedObjectKey)
-      as? CrossFileDarwinApisPigeonInternalFinalizer
+    let finalizer = objc_getAssociatedObject(instance, associatedObjectKey) as? CrossFileDarwinApisPigeonInternalFinalizer
     if let finalizer = finalizer {
       finalizer.delegate = nil
       objc_setAssociatedObject(instance, associatedObjectKey, nil, .OBJC_ASSOCIATION_ASSIGN)
@@ -116,6 +174,7 @@ internal final class CrossFileDarwinApisPigeonInternalFinalizer {
     delegate?.onDeinit(identifier: identifier)
   }
 }
+
 
 /// Maintains instances used to communicate with the corresponding objects in Dart.
 ///
@@ -220,8 +279,7 @@ final class CrossFileDarwinApisPigeonInstanceManager {
     identifiers.setObject(NSNumber(value: identifier), forKey: instance)
     weakInstances.setObject(instance, forKey: NSNumber(value: identifier))
     strongInstances.setObject(instance, forKey: NSNumber(value: identifier))
-    CrossFileDarwinApisPigeonInternalFinalizer.attach(
-      to: instance, identifier: identifier, delegate: finalizerDelegate)
+    CrossFileDarwinApisPigeonInternalFinalizer.attach(to: instance, identifier: identifier, delegate: finalizerDelegate)
   }
 
   /// Retrieves the identifier paired with an instance.
@@ -302,6 +360,7 @@ final class CrossFileDarwinApisPigeonInstanceManager {
   }
 }
 
+
 private class CrossFileDarwinApisPigeonInstanceManagerApi {
   /// The codec used for serializing messages.
   var codec: FlutterStandardMessageCodec { CrossFileDarwinApisPigeonCodec.shared }
@@ -314,15 +373,9 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
   }
 
   /// Sets up an instance of `CrossFileDarwinApisPigeonInstanceManagerApi` to handle messages through the `binaryMessenger`.
-  static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger,
-    instanceManager: CrossFileDarwinApisPigeonInstanceManager?
-  ) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, instanceManager: CrossFileDarwinApisPigeonInstanceManager?) {
     let codec = CrossFileDarwinApisPigeonCodec.shared
-    let removeStrongReferenceChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let removeStrongReferenceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference", binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       removeStrongReferenceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -337,9 +390,7 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
     } else {
       removeStrongReferenceChannel.setMessageHandler(nil)
     }
-    let clearChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.clear",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let clearChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.clear", binaryMessenger: binaryMessenger, codec: codec)
     if let instanceManager = instanceManager {
       clearChannel.setMessageHandler { _, reply in
         do {
@@ -355,13 +406,9 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
   }
 
   /// Sends a message to the Dart `InstanceManager` to remove the strong reference of the instance associated with `identifier`.
-  func removeStrongReference(
-    identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {
-    let channelName: String =
-      "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference"
-    let channel = FlutterBasicMessageChannel(
-      name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+  func removeStrongReference(identifier identifierArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([identifierArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
@@ -381,8 +428,7 @@ private class CrossFileDarwinApisPigeonInstanceManagerApi {
 protocol CrossFileDarwinApisPigeonProxyApiDelegate {
   /// An implementation of [PigeonApiFileHandle] used to add a new Dart instance of
   /// `FileHandle` to the Dart `InstanceManager` and make calls to Dart.
-  func pigeonApiFileHandle(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar)
-    -> PigeonApiFileHandle
+  func pigeonApiFileHandle(_ registrar: CrossFileDarwinApisPigeonProxyApiRegistrar) -> PigeonApiFileHandle
 }
 
 open class CrossFileDarwinApisPigeonProxyApiRegistrar {
@@ -395,15 +441,12 @@ open class CrossFileDarwinApisPigeonProxyApiRegistrar {
   var codec: FlutterStandardMessageCodec {
     if _codec == nil {
       _codec = FlutterStandardMessageCodec(
-        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(
-          pigeonRegistrar: self))
+        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: self))
     }
     return _codec!
   }
 
-  private class InstanceManagerApiFinalizerDelegate:
-    CrossFileDarwinApisPigeonInternalFinalizerDelegate
-  {
+  private class InstanceManagerApiFinalizerDelegate: CrossFileDarwinApisPigeonInternalFinalizerDelegate {
     let api: CrossFileDarwinApisPigeonInstanceManagerApi
 
     init(_ api: CrossFileDarwinApisPigeonInstanceManagerApi) {
@@ -417,9 +460,7 @@ open class CrossFileDarwinApisPigeonProxyApiRegistrar {
     }
   }
 
-  init(
-    binaryMessenger: FlutterBinaryMessenger, apiDelegate: CrossFileDarwinApisPigeonProxyApiDelegate
-  ) {
+  init(binaryMessenger: FlutterBinaryMessenger, apiDelegate: CrossFileDarwinApisPigeonProxyApiDelegate) {
     self.binaryMessenger = binaryMessenger
     self.apiDelegate = apiDelegate
     self.instanceManager = CrossFileDarwinApisPigeonInstanceManager(
@@ -428,25 +469,18 @@ open class CrossFileDarwinApisPigeonProxyApiRegistrar {
   }
 
   func setUp() {
-    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(
-      binaryMessenger: binaryMessenger, instanceManager: instanceManager)
-    PigeonApiFileHandle.setUpMessageHandlers(
-      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiFileHandle(self))
+    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: instanceManager)
+    PigeonApiFileHandle.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiFileHandle(self))
   }
   func tearDown() {
-    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(
-      binaryMessenger: binaryMessenger, instanceManager: nil)
+    CrossFileDarwinApisPigeonInstanceManagerApi.setUpMessageHandlers(binaryMessenger: binaryMessenger, instanceManager: nil)
     PigeonApiFileHandle.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
-private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter:
-  FlutterStandardReaderWriter
-{
+private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
   unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
 
-  private class CrossFileDarwinApisPigeonInternalProxyApiCodecReader:
-    CrossFileDarwinApisPigeonCodecReader
-  {
+  private class CrossFileDarwinApisPigeonInternalProxyApiCodecReader: CrossFileDarwinApisPigeonCodecReader {
     unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
 
     init(data: Data, pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar) {
@@ -470,9 +504,7 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter:
     }
   }
 
-  private class CrossFileDarwinApisPigeonInternalProxyApiCodecWriter:
-    CrossFileDarwinApisPigeonCodecWriter
-  {
+  private class CrossFileDarwinApisPigeonInternalProxyApiCodecWriter: CrossFileDarwinApisPigeonCodecWriter {
     unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
 
     init(data: NSMutableData, pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar) {
@@ -481,12 +513,11 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter:
     }
 
     override func writeValue(_ value: Any) {
-      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any]
-        || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String
-      {
+      if value is [Any] || value is Bool || value is Data || value is [AnyHashable: Any] || value is Double || value is FlutterStandardTypedData || value is Int64 || value is String {
         super.writeValue(value)
         return
       }
+
 
       if let instance = value as? FileHandle {
         pigeonRegistrar.apiDelegate.pigeonApiFileHandle(pigeonRegistrar).pigeonNewInstance(
@@ -494,13 +525,12 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter:
         ) { _ in }
         super.writeByte(128)
         super.writeValue(
-          pigeonRegistrar.instanceManager.identifierWithStrongReference(
-            forInstance: instance as AnyObject)!)
+          pigeonRegistrar.instanceManager.identifierWithStrongReference(forInstance: instance as AnyObject)!)
         return
       }
 
-      if let instance = value as AnyObject?,
-        pigeonRegistrar.instanceManager.containsInstance(instance)
+
+      if let instance = value as AnyObject?, pigeonRegistrar.instanceManager.containsInstance(instance)
       {
         super.writeByte(128)
         super.writeValue(
@@ -518,20 +548,63 @@ private class CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter:
   }
 
   override func reader(with data: Data) -> FlutterStandardReader {
-    return CrossFileDarwinApisPigeonInternalProxyApiCodecReader(
-      data: data, pigeonRegistrar: pigeonRegistrar)
+    return CrossFileDarwinApisPigeonInternalProxyApiCodecReader(data: data, pigeonRegistrar: pigeonRegistrar)
   }
 
   override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return CrossFileDarwinApisPigeonInternalProxyApiCodecWriter(
-      data: data, pigeonRegistrar: pigeonRegistrar)
+    return CrossFileDarwinApisPigeonInternalProxyApiCodecWriter(data: data, pigeonRegistrar: pigeonRegistrar)
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct FileExistsResult: Hashable {
+  var exists: Bool
+  var isDirectory: Bool
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> FileExistsResult? {
+    let exists = pigeonVar_list[0] as! Bool
+    let isDirectory = pigeonVar_list[1] as! Bool
+
+    return FileExistsResult(
+      exists: exists,
+      isDirectory: isDirectory
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      exists,
+      isDirectory,
+    ]
+  }
+  static func == (lhs: FileExistsResult, rhs: FileExistsResult) -> Bool {
+    return deepEqualsCrossFileDarwinApis(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashCrossFileDarwinApis(value: toList(), hasher: &hasher)
   }
 }
 
 private class CrossFileDarwinApisPigeonCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+    case 129:
+      return FileExistsResult.fromList(self.readValue() as! [Any?])
+    default:
+      return super.readValue(ofType: type)
+    }
+  }
 }
 
 private class CrossFileDarwinApisPigeonCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? FileExistsResult {
+      super.writeByte(129)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
 }
 
 private class CrossFileDarwinApisPigeonCodecReaderWriter: FlutterStandardReaderWriter {
@@ -545,16 +618,14 @@ private class CrossFileDarwinApisPigeonCodecReaderWriter: FlutterStandardReaderW
 }
 
 class CrossFileDarwinApisPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = CrossFileDarwinApisPigeonCodec(
-    readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
+  static let shared = CrossFileDarwinApisPigeonCodec(readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
 }
 
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol CrossFileDarwinApi {
   func tryCreateBookmarkedUrl(url: String) throws -> String?
   func isReadableFile(url: String) throws -> Bool
-  func fileExists(url: String) throws -> Bool
-  func fileIsDirectory(url: String) throws -> Bool
+  func fileExists(url: String) throws -> FileExistsResult
   func fileModificationDate(url: String) throws -> Int64?
   func fileSize(url: String) throws -> Int64?
   func list(url: String) throws -> [String]
@@ -564,15 +635,9 @@ protocol CrossFileDarwinApi {
 class CrossFileDarwinApiSetup {
   static var codec: FlutterStandardMessageCodec { CrossFileDarwinApisPigeonCodec.shared }
   /// Sets up an instance of `CrossFileDarwinApi` to handle messages through the `binaryMessenger`.
-  static func setUp(
-    binaryMessenger: FlutterBinaryMessenger, api: CrossFileDarwinApi?,
-    messageChannelSuffix: String = ""
-  ) {
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: CrossFileDarwinApi?, messageChannelSuffix: String = "") {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
-    let tryCreateBookmarkedUrlChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let tryCreateBookmarkedUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       tryCreateBookmarkedUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -587,10 +652,7 @@ class CrossFileDarwinApiSetup {
     } else {
       tryCreateBookmarkedUrlChannel.setMessageHandler(nil)
     }
-    let isReadableFileChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.isReadableFile\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let isReadableFileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.isReadableFile\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       isReadableFileChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -605,9 +667,7 @@ class CrossFileDarwinApiSetup {
     } else {
       isReadableFileChannel.setMessageHandler(nil)
     }
-    let fileExistsChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileExists\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let fileExistsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileExists\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       fileExistsChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -622,28 +682,7 @@ class CrossFileDarwinApiSetup {
     } else {
       fileExistsChannel.setMessageHandler(nil)
     }
-    let fileIsDirectoryChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileIsDirectory\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      fileIsDirectoryChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let urlArg = args[0] as! String
-        do {
-          let result = try api.fileIsDirectory(url: urlArg)
-          reply(wrapResult(result))
-        } catch {
-          reply(wrapError(error))
-        }
-      }
-    } else {
-      fileIsDirectoryChannel.setMessageHandler(nil)
-    }
-    let fileModificationDateChannel = FlutterBasicMessageChannel(
-      name:
-        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileModificationDate\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let fileModificationDateChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileModificationDate\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       fileModificationDateChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -658,9 +697,7 @@ class CrossFileDarwinApiSetup {
     } else {
       fileModificationDateChannel.setMessageHandler(nil)
     }
-    let fileSizeChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileSize\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let fileSizeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileSize\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       fileSizeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -675,9 +712,7 @@ class CrossFileDarwinApiSetup {
     } else {
       fileSizeChannel.setMessageHandler(nil)
     }
-    let listChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.list\(channelSuffix)",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let listChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.list\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       listChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -696,10 +731,8 @@ class CrossFileDarwinApiSetup {
 }
 protocol PigeonApiDelegateFileHandle {
   func forReadingFromUrl(pigeonApi: PigeonApiFileHandle, url: String) throws -> FileHandle?
-  func readUpToCount(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, count: Int64)
-    throws -> FlutterStandardTypedData?
-  func readToEnd(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws
-    -> FlutterStandardTypedData?
+  func readUpToCount(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, count: Int64) throws -> FlutterStandardTypedData?
+  func readToEnd(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws -> FlutterStandardTypedData?
   func seek(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, offset: Int64) throws
   func close(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle) throws
 }
@@ -707,28 +740,20 @@ protocol PigeonApiDelegateFileHandle {
 protocol PigeonApiProtocolFileHandle {
 }
 
-final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
+final class PigeonApiFileHandle: PigeonApiProtocolFileHandle  {
   unowned let pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar
   let pigeonDelegate: PigeonApiDelegateFileHandle
-  init(
-    pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar,
-    delegate: PigeonApiDelegateFileHandle
-  ) {
+  init(pigeonRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar, delegate: PigeonApiDelegateFileHandle) {
     self.pigeonRegistrar = pigeonRegistrar
     self.pigeonDelegate = delegate
   }
-  static func setUpMessageHandlers(
-    binaryMessenger: FlutterBinaryMessenger, api: PigeonApiFileHandle?
-  ) {
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiFileHandle?) {
     let codec: FlutterStandardMessageCodec =
       api != nil
       ? FlutterStandardMessageCodec(
-        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(
-          pigeonRegistrar: api!.pigeonRegistrar))
+        readerWriter: CrossFileDarwinApisPigeonInternalProxyApiCodecReaderWriter(pigeonRegistrar: api!.pigeonRegistrar))
       : FlutterStandardMessageCodec.sharedInstance()
-    let forReadingFromUrlChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.forReadingFromUrl",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let forReadingFromUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.forReadingFromUrl", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       forReadingFromUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -743,17 +768,14 @@ final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
     } else {
       forReadingFromUrlChannel.setMessageHandler(nil)
     }
-    let readUpToCountChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.readUpToCount",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let readUpToCountChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.readUpToCount", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       readUpToCountChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! FileHandle
         let countArg = args[1] as! Int64
         do {
-          let result = try api.pigeonDelegate.readUpToCount(
-            pigeonApi: api, pigeonInstance: pigeonInstanceArg, count: countArg)
+          let result = try api.pigeonDelegate.readUpToCount(pigeonApi: api, pigeonInstance: pigeonInstanceArg, count: countArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -762,16 +784,13 @@ final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
     } else {
       readUpToCountChannel.setMessageHandler(nil)
     }
-    let readToEndChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.readToEnd",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let readToEndChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.readToEnd", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       readToEndChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! FileHandle
         do {
-          let result = try api.pigeonDelegate.readToEnd(
-            pigeonApi: api, pigeonInstance: pigeonInstanceArg)
+          let result = try api.pigeonDelegate.readToEnd(pigeonApi: api, pigeonInstance: pigeonInstanceArg)
           reply(wrapResult(result))
         } catch {
           reply(wrapError(error))
@@ -780,17 +799,14 @@ final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
     } else {
       readToEndChannel.setMessageHandler(nil)
     }
-    let seekChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.seek",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let seekChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.seek", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       seekChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! FileHandle
         let offsetArg = args[1] as! Int64
         do {
-          try api.pigeonDelegate.seek(
-            pigeonApi: api, pigeonInstance: pigeonInstanceArg, offset: offsetArg)
+          try api.pigeonDelegate.seek(pigeonApi: api, pigeonInstance: pigeonInstanceArg, offset: offsetArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))
@@ -799,9 +815,7 @@ final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
     } else {
       seekChannel.setMessageHandler(nil)
     }
-    let closeChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.close",
-      binaryMessenger: binaryMessenger, codec: codec)
+    let closeChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.FileHandle.close", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       closeChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -819,25 +833,21 @@ final class PigeonApiFileHandle: PigeonApiProtocolFileHandle {
   }
 
   ///Creates a Dart instance of FileHandle and attaches it to [pigeonInstance].
-  func pigeonNewInstance(
-    pigeonInstance: FileHandle, completion: @escaping (Result<Void, PigeonError>) -> Void
-  ) {
+  func pigeonNewInstance(pigeonInstance: FileHandle, completion: @escaping (Result<Void, PigeonError>) -> Void) {
     if pigeonRegistrar.ignoreCallsToDart {
       completion(
         .failure(
           PigeonError(
             code: "ignore-calls-error",
             message: "Calls to Dart are being ignored.", details: "")))
-    } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+    }     else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
       completion(.success(()))
-    } else {
-      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
-        pigeonInstance as AnyObject)
+    }     else {
+      let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeonInstance as AnyObject)
       let binaryMessenger = pigeonRegistrar.binaryMessenger
       let codec = pigeonRegistrar.codec
       let channelName: String = "dev.flutter.pigeon.cross_file_darwin.FileHandle.pigeon_newInstance"
-      let channel = FlutterBasicMessageChannel(
-        name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+      let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
       channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
         guard let listResponse = response as? [Any?] else {
           completion(.failure(createConnectionError(withChannelName: channelName)))

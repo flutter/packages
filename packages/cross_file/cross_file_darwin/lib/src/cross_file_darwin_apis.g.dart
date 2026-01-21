@@ -9,8 +9,7 @@ import 'dart:async';
 import 'dart:io' show Platform;
 import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 
-import 'package:flutter/foundation.dart'
-    show ReadBuffer, WriteBuffer, immutable, protected, visibleForTesting;
+import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer, immutable, protected, visibleForTesting;
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show WidgetsFlutterBinding;
 
@@ -21,11 +20,7 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({
-  Object? result,
-  PlatformException? error,
-  bool empty = false,
-}) {
+List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
   if (empty) {
     return <Object?>[];
   }
@@ -33,6 +28,19 @@ List<Object?> wrapResponse({
     return <Object?>[result];
   }
   return <Object?>[error.code, error.message, error.details];
+}
+bool _deepEquals(Object? a, Object? b) {
+  if (a is List && b is List) {
+    return a.length == b.length &&
+        a.indexed
+        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+  }
+  if (a is Map && b is Map) {
+    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
+        (b as Map<Object?, Object?>).containsKey(entry.key) &&
+        _deepEquals(entry.value, b[entry.key]));
+  }
+  return a == b;
 }
 
 /// Provides overrides for the constructors and static members of each
@@ -65,7 +73,7 @@ abstract class PigeonInternalProxyApiBaseClass {
     this.pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
   }) : pigeon_instanceManager =
-           pigeon_instanceManager ?? PigeonInstanceManager.instance;
+            pigeon_instanceManager ?? PigeonInstanceManager.instance;
 
   /// Sends and receives binary data across the Flutter platform barrier.
   ///
@@ -135,10 +143,9 @@ class PigeonInstanceManager {
   // by calling instanceManager.getIdentifier() inside of `==` while this was a
   // HashMap).
   final Expando<int> _identifiers = Expando<int>();
-  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>>
-  _weakInstances = <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
-  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances =
-      <int, PigeonInternalProxyApiBaseClass>{};
+  final Map<int, WeakReference<PigeonInternalProxyApiBaseClass>> _weakInstances =
+      <int, WeakReference<PigeonInternalProxyApiBaseClass>>{};
+  final Map<int, PigeonInternalProxyApiBaseClass> _strongInstances = <int, PigeonInternalProxyApiBaseClass>{};
   late final Finalizer<int> _finalizer;
   int _nextIdentifier = 0;
 
@@ -151,8 +158,7 @@ class PigeonInstanceManager {
       return PigeonInstanceManager(onWeakReferenceRemoved: (_) {});
     }
     WidgetsFlutterBinding.ensureInitialized();
-    final _PigeonInternalInstanceManagerApi api =
-        _PigeonInternalInstanceManagerApi();
+    final _PigeonInternalInstanceManagerApi api = _PigeonInternalInstanceManagerApi();
     // Clears the native `PigeonInstanceManager` on the initial use of the Dart one.
     api.clear();
     final PigeonInstanceManager instanceManager = PigeonInstanceManager(
@@ -160,12 +166,8 @@ class PigeonInstanceManager {
         api.removeStrongReference(identifier);
       },
     );
-    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(
-      instanceManager: instanceManager,
-    );
-    FileHandle.pigeon_setUpMessageHandlers(
-      pigeon_instanceManager: instanceManager,
-    );
+    _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
+    FileHandle.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
 
@@ -182,9 +184,8 @@ class PigeonInstanceManager {
 
     final int identifier = _nextUniqueIdentifier();
     _identifiers[instance] = identifier;
-    _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(
-      instance,
-    );
+    _weakInstances[identifier] =
+        WeakReference<PigeonInternalProxyApiBaseClass>(instance);
     _finalizer.attach(instance, identifier, detach: instance);
 
     final PigeonInternalProxyApiBaseClass copy = instance.pigeon_copy();
@@ -245,21 +246,15 @@ class PigeonInstanceManager {
   ///
   /// This method also expects the host `InstanceManager` to have a strong
   /// reference to the instance the identifier is associated with.
-  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(
-    int identifier,
-  ) {
-    final PigeonInternalProxyApiBaseClass? weakInstance =
-        _weakInstances[identifier]?.target;
+  T? getInstanceWithWeakReference<T extends PigeonInternalProxyApiBaseClass>(int identifier) {
+    final PigeonInternalProxyApiBaseClass? weakInstance = _weakInstances[identifier]?.target;
 
     if (weakInstance == null) {
-      final PigeonInternalProxyApiBaseClass? strongInstance =
-          _strongInstances[identifier];
+      final PigeonInternalProxyApiBaseClass? strongInstance = _strongInstances[identifier];
       if (strongInstance != null) {
-        final PigeonInternalProxyApiBaseClass copy = strongInstance
-            .pigeon_copy();
+        final PigeonInternalProxyApiBaseClass copy = strongInstance.pigeon_copy();
         _identifiers[copy] = identifier;
-        _weakInstances[identifier] =
-            WeakReference<PigeonInternalProxyApiBaseClass>(copy);
+        _weakInstances[identifier] = WeakReference<PigeonInternalProxyApiBaseClass>(copy);
         _finalizer.attach(copy, identifier, detach: copy);
         return copy as T;
       }
@@ -281,10 +276,7 @@ class PigeonInstanceManager {
   ///
   /// Throws assertion error if the instance or its identifier has already been
   /// added.
-  void addHostCreatedInstance(
-    PigeonInternalProxyApiBaseClass instance,
-    int identifier,
-  ) {
+  void addHostCreatedInstance(PigeonInternalProxyApiBaseClass instance, int identifier) {
     assert(!containsIdentifier(identifier));
     assert(getIdentifier(instance) == null);
     assert(identifier >= 0);
@@ -313,7 +305,7 @@ class PigeonInstanceManager {
 class _PigeonInternalInstanceManagerApi {
   /// Constructor for [_PigeonInternalInstanceManagerApi].
   _PigeonInternalInstanceManagerApi({BinaryMessenger? binaryMessenger})
-    : pigeonVar_binaryMessenger = binaryMessenger;
+      : pigeonVar_binaryMessenger = binaryMessenger;
 
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
@@ -326,35 +318,28 @@ class _PigeonInternalInstanceManagerApi {
   }) {
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference was null.',
-          );
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_identifier = (args[0] as int?);
-          assert(
-            arg_identifier != null,
-            'Argument for dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.',
-          );
+          assert(arg_identifier != null,
+              'Argument for dev.flutter.pigeon.cross_file_darwin.PigeonInternalInstanceManager.removeStrongReference was null, expected non-null int.');
           try {
-            (instanceManager ?? PigeonInstanceManager.instance).remove(
-              arg_identifier!,
-            );
+            (instanceManager ?? PigeonInstanceManager.instance)
+                .remove(arg_identifier!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -369,9 +354,8 @@ class _PigeonInternalInstanceManagerApi {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[identifier],
-    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[identifier]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -414,30 +398,76 @@ class _PigeonInternalInstanceManagerApi {
 }
 
 class _PigeonInternalProxyApiBaseCodec extends _PigeonCodec {
-  const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
-  final PigeonInstanceManager instanceManager;
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonInternalProxyApiBaseClass) {
-      buffer.putUint8(128);
-      writeValue(buffer, instanceManager.getIdentifier(value));
-    } else {
-      super.writeValue(buffer, value);
-    }
+ const _PigeonInternalProxyApiBaseCodec(this.instanceManager);
+ final PigeonInstanceManager instanceManager;
+ @override
+ void writeValue(WriteBuffer buffer, Object? value) {
+   if (value is PigeonInternalProxyApiBaseClass) {
+     buffer.putUint8(128);
+     writeValue(buffer, instanceManager.getIdentifier(value));
+   } else {
+     super.writeValue(buffer, value);
+   }
+ }
+ @override
+ Object? readValueOfType(int type, ReadBuffer buffer) {
+   switch (type) {
+     case 128:
+       return instanceManager
+           .getInstanceWithWeakReference(readValue(buffer)! as int);
+     default:
+       return super.readValueOfType(type, buffer);
+   }
+ }
+}
+
+
+class FileExistsResult {
+  FileExistsResult({
+    required this.exists,
+    required this.isDirectory,
+  });
+
+  bool exists;
+
+  bool isDirectory;
+
+  List<Object?> _toList() {
+    return <Object?>[
+      exists,
+      isDirectory,
+    ];
+  }
+
+  Object encode() {
+    return _toList();  }
+
+  static FileExistsResult decode(Object result) {
+    result as List<Object?>;
+    return FileExistsResult(
+      exists: result[0]! as bool,
+      isDirectory: result[1]! as bool,
+    );
   }
 
   @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128:
-        return instanceManager.getInstanceWithWeakReference(
-          readValue(buffer)! as int,
-        );
-      default:
-        return super.readValueOfType(type, buffer);
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! FileExistsResult || other.runtimeType != runtimeType) {
+      return false;
     }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
   }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList())
+;
 }
+
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -446,6 +476,9 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
+    }    else if (value is FileExistsResult) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -454,6 +487,8 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
+      case 129: 
+        return FileExistsResult.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -464,13 +499,9 @@ class CrossFileDarwinApi {
   /// Constructor for [CrossFileDarwinApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  CrossFileDarwinApi({
-    BinaryMessenger? binaryMessenger,
-    String messageChannelSuffix = '',
-  }) : pigeonVar_binaryMessenger = binaryMessenger,
-       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
-           ? '.$messageChannelSuffix'
-           : '';
+  CrossFileDarwinApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
+      : pigeonVar_binaryMessenger = binaryMessenger,
+        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -478,16 +509,13 @@ class CrossFileDarwinApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<String?> tryCreateBookmarkedUrl(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -503,16 +531,13 @@ class CrossFileDarwinApi {
   }
 
   Future<bool> isReadableFile(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.isReadableFile$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.isReadableFile$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -532,17 +557,14 @@ class CrossFileDarwinApi {
     }
   }
 
-  Future<bool> fileExists(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileExists$pigeonVar_messageChannelSuffix';
+  Future<FileExistsResult> fileExists(String url) async {
+    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileExists$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -558,51 +580,18 @@ class CrossFileDarwinApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as bool?)!;
-    }
-  }
-
-  Future<bool> fileIsDirectory(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileIsDirectory$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (pigeonVar_replyList[0] as bool?)!;
+      return (pigeonVar_replyList[0] as FileExistsResult?)!;
     }
   }
 
   Future<int?> fileModificationDate(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileModificationDate$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileModificationDate$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -618,16 +607,13 @@ class CrossFileDarwinApi {
   }
 
   Future<int?> fileSize(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileSize$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.fileSize$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -643,16 +629,13 @@ class CrossFileDarwinApi {
   }
 
   Future<List<String>> list(String url) async {
-    final pigeonVar_channelName =
-        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.list$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.list$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -672,7 +655,6 @@ class CrossFileDarwinApi {
     }
   }
 }
-
 class FileHandle extends PigeonInternalProxyApiBaseClass {
   /// Constructs [FileHandle] without creating the associated native object.
   ///
@@ -695,46 +677,39 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-          pigeon_instanceManager ?? PigeonInstanceManager.instance,
-        );
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.cross_file_darwin.FileHandle.pigeon_newInstance',
-        pigeonChannelCodec,
-        binaryMessenger: binaryMessenger,
-      );
+          'dev.flutter.pigeon.cross_file_darwin.FileHandle.pigeon_newInstance',
+          pigeonChannelCodec,
+          binaryMessenger: binaryMessenger);
       if (pigeon_clearHandlers) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(
-            message != null,
-            'Argument for dev.flutter.pigeon.cross_file_darwin.FileHandle.pigeon_newInstance was null.',
-          );
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.cross_file_darwin.FileHandle.pigeon_newInstance was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(
-            arg_pigeon_instanceIdentifier != null,
-            'Argument for dev.flutter.pigeon.cross_file_darwin.FileHandle.pigeon_newInstance was null, expected non-null int.',
-          );
+          assert(arg_pigeon_instanceIdentifier != null,
+              'Argument for dev.flutter.pigeon.cross_file_darwin.FileHandle.pigeon_newInstance was null, expected non-null int.');
           try {
             (pigeon_instanceManager ?? PigeonInstanceManager.instance)
                 .addHostCreatedInstance(
-                  pigeon_newInstance?.call() ??
-                      FileHandle.pigeon_detached(
-                        pigeon_binaryMessenger: pigeon_binaryMessenger,
-                        pigeon_instanceManager: pigeon_instanceManager,
-                      ),
-                  arg_pigeon_instanceIdentifier!,
-                );
+              pigeon_newInstance?.call() ??
+                  FileHandle.pigeon_detached(
+                    pigeon_binaryMessenger: pigeon_binaryMessenger,
+                    pigeon_instanceManager: pigeon_instanceManager,
+                  ),
+              arg_pigeon_instanceIdentifier!,
+            );
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
           } catch (e) {
             return wrapResponse(
-              error: PlatformException(code: 'error', message: e.toString()),
-            );
+                error: PlatformException(code: 'error', message: e.toString()));
           }
         });
       }
@@ -751,8 +726,7 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
     }
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _PigeonInternalProxyApiBaseCodec(
-          pigeon_instanceManager ?? PigeonInstanceManager.instance,
-        );
+            pigeon_instanceManager ?? PigeonInstanceManager.instance);
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
         'dev.flutter.pigeon.cross_file_darwin.FileHandle.forReadingFromUrl';
@@ -761,9 +735,8 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[url],
-    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[url]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -789,9 +762,8 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[this, count],
-    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, count]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -817,9 +789,8 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[this],
-    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -845,9 +816,8 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[this, offset],
-    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this, offset]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -873,9 +843,8 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[this],
-    );
+    final Future<Object?> pigeonVar_sendFuture =
+        pigeonVar_channel.send(<Object?>[this]);
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -898,3 +867,4 @@ class FileHandle extends PigeonInternalProxyApiBaseClass {
     );
   }
 }
+

@@ -32,8 +32,10 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
     return FileManager.default.isReadableFile(atPath: url)
   }
 
-  func fileExists(url: String) throws -> Bool {
-    return FileManager.default.fileExists(atPath: url)
+  func fileExists(url: String) throws -> FileExistsResult {
+    var isDirectory: ObjCBool = true
+    let exists = FileManager.default.fileExists(atPath: url, isDirectory: &isDirectory)
+    return FileExistsResult(exists: exists, isDirectory: isDirectory.boolValue)
   }
 
   func fileIsDirectory(url: String) throws -> Bool {

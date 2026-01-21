@@ -51,12 +51,18 @@ base class DarwinScopedStorageXDirectory
   }
 
   @override
-  Future<bool> exists() => params.api.fileExists(params.uri);
+  Future<bool> exists() async {
+    final FileExistsResult result = await params.api.fileExists(params.uri);
+    return result.exists && result.isDirectory;
+  }
 
   @override
   Stream<PlatformXFileEntity> list(ListParams params) async* {
     for (final String url in await this.params.api.list(this.params.uri)) {
-      if (await this.params.api.fileIsDirectory(url)) {
+      final FileExistsResult existsResult = await this.params.api.fileExists(
+        this.params.uri,
+      );
+      if (existsResult.isDirectory) {
         yield DarwinScopedStorageXDirectory(
           PlatformScopedStorageXDirectoryCreationParams(uri: url),
         );
