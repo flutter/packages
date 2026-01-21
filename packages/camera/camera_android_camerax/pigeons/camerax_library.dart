@@ -251,6 +251,9 @@ abstract class CameraInfo {
   /// (default) orientation.
   late int sensorRotationDegrees;
 
+  /// Returns the lens facing of this camera.
+  late LensFacing lensFacing;
+
   /// Returns a ExposureState.
   late ExposureState exposureState;
 

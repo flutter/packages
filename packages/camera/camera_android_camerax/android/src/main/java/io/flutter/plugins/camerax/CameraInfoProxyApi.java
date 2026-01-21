@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
 import androidx.camera.core.CameraInfo;
+import androidx.camera.core.CameraSelector;
 import androidx.camera.core.ExposureState;
 
 /**
@@ -21,6 +22,22 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
   @Override
   public long sensorRotationDegrees(CameraInfo pigeonInstance) {
     return pigeonInstance.getSensorRotationDegrees();
+  }
+
+  @Override
+  public LensFacing lensFacing(CameraInfo pigeonInstance) {
+    int lensFacing = pigeonInstance.getLensFacing();
+    switch (lensFacing) {
+      case CameraSelector.LENS_FACING_FRONT:
+        return LensFacing.FRONT;
+      case CameraSelector.LENS_FACING_BACK:
+        return LensFacing.BACK;
+      case CameraSelector.LENS_FACING_EXTERNAL:
+        return LensFacing.EXTERNAL;
+      case CameraSelector.LENS_FACING_UNKNOWN:
+      default:
+        return LensFacing.UNKNOWN;
+    }
   }
 
   @NonNull
