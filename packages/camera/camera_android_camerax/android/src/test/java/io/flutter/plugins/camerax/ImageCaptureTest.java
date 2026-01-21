@@ -6,6 +6,7 @@ package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -88,11 +89,13 @@ public class ImageCaptureTest {
           @NonNull
           @Override
           ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
-              @NonNull File file, @NonNull Function1<? super Result<String>, Unit> callback) {
+              @NonNull File file,
+              @NonNull SystemServicesManager systemServicesManager,
+              @NonNull Function1<? super Result<String>, Unit> callback) {
             final File mockFile = mock(File.class);
             when(mockFile.getAbsolutePath()).thenReturn(filename);
             final ImageCapture.OnImageSavedCallback imageSavedCallback =
-                super.createOnImageSavedCallback(mockFile, callback);
+                super.createOnImageSavedCallback(mockFile, systemServicesManager, callback);
             imageSavedCallback.onImageSaved(mock(ImageCapture.OutputFileResults.class));
             return imageSavedCallback;
           }
@@ -114,6 +117,7 @@ public class ImageCaptureTest {
       final String[] result = {null};
       api.takePicture(
           instance,
+          mock(SystemServicesManager.class),
           ResultCompat.asCompatCallback(
               reply -> {
                 result[0] = reply.getOrNull();
@@ -155,6 +159,7 @@ public class ImageCaptureTest {
       final Throwable[] result = {null};
       api.takePicture(
           instance,
+          mock(SystemServicesManager.class),
           ResultCompat.asCompatCallback(
               reply -> {
                 result[0] = reply.exceptionOrNull();
@@ -167,10 +172,11 @@ public class ImageCaptureTest {
   }
 
   @Test
-  public void takePicture_onImageSavedCallbackCanSendsError() {
+  public void takePicture_onImageSavedCallbackSendsErrorAndReportsException() {
     final ProxyApiRegistrar mockApiRegistrar = mock(ProxyApiRegistrar.class);
     final Context mockContext = mock(Context.class);
     final File mockOutputDir = mock(File.class);
+    final SystemServicesManager mockSystemServicesManager = mock(SystemServicesManager.class);
     when(mockContext.getCacheDir()).thenReturn(mockOutputDir);
     when(mockApiRegistrar.getContext()).thenReturn(mockContext);
 
@@ -185,9 +191,11 @@ public class ImageCaptureTest {
           @NonNull
           @Override
           ImageCapture.OnImageSavedCallback createOnImageSavedCallback(
-              @NonNull File file, @NonNull Function1<? super Result<String>, Unit> callback) {
+              @NonNull File file,
+              @NonNull SystemServicesManager systemServicesManager,
+              @NonNull Function1<? super Result<String>, Unit> callback) {
             final ImageCapture.OnImageSavedCallback imageSavedCallback =
-                super.createOnImageSavedCallback(mock(File.class), callback);
+                super.createOnImageSavedCallback(mock(File.class), systemServicesManager, callback);
             imageSavedCallback.onError(captureException);
             return imageSavedCallback;
           }
@@ -209,6 +217,7 @@ public class ImageCaptureTest {
       final Throwable[] result = {null};
       api.takePicture(
           instance,
+          mockSystemServicesManager,
           ResultCompat.asCompatCallback(
               reply -> {
                 result[0] = reply.exceptionOrNull();
@@ -220,6 +229,7 @@ public class ImageCaptureTest {
               any(ImageCapture.OutputFileOptions.class),
               any(Executor.class),
               any(ImageCapture.OnImageSavedCallback.class));
+      verify(mockSystemServicesManager).onCameraError(anyString());
       assertEquals(result[0], captureException);
     }
   }

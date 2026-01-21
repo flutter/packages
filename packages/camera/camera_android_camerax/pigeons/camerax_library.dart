@@ -604,7 +604,7 @@ abstract class ImageCapture extends UseCase {
 
   /// Captures a new still image for in memory access.
   @async
-  String takePicture();
+  String takePicture(SystemServicesManager systemServicesManager);
 
   /// Sets the desired rotation of the output image.
   void setTargetRotation(int rotation);

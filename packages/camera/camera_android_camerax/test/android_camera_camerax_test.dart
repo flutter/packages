@@ -3854,20 +3854,27 @@ void main() {
       final mockProcessCameraProvider = MockProcessCameraProvider();
       final mockCamera = MockCamera();
       final mockCameraInfo = MockCameraInfo();
+      final mockImageCapture = MockImageCapture();
       const testPicturePath = 'test/absolute/path/to/picture';
 
       // Set directly for test versus calling createCamera.
-      camera.imageCapture = MockImageCapture();
+      camera.imageCapture = mockImageCapture;
       camera.processCameraProvider = mockProcessCameraProvider;
       camera.cameraSelector = MockCameraSelector();
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
 
-      // Tell plugin to create detached camera state observers.
+      // Tell plugin to create detached camera state observers and mock systemServicesManager.
       GenericsPigeonOverrides.observerNew =
           <T>({required void Function(Observer<T>, T) onChanged}) {
             return Observer<T>.detached(onChanged: onChanged);
+          };
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
           };
 
       when(
@@ -3884,7 +3891,7 @@ void main() {
         mockCameraInfo.getCameraState(),
       ).thenAnswer((_) async => MockLiveCameraState());
       when(
-        camera.imageCapture!.takePicture(),
+        mockImageCapture.takePicture(argThat(isA<SystemServicesManager>())),
       ).thenAnswer((_) async => testPicturePath);
 
       final XFile imageFile = await camera.takePicture(3);
@@ -3907,7 +3914,7 @@ void main() {
       camera.imageCapture = mockImageCapture;
       camera.processCameraProvider = mockProcessCameraProvider;
 
-      // Tell plugin to mock call to get current photo orientation.
+      // Tell plugin to mock call to get current photo orientation and systemServicesManager.
       PigeonOverrides.deviceOrientationManager_new =
           ({
             required void Function(DeviceOrientationManager, String)
@@ -3919,12 +3926,18 @@ void main() {
             ).thenAnswer((_) async => defaultTargetRotation);
             return mockDeviceOrientationManager;
           };
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
+          };
 
       when(
         mockProcessCameraProvider.isBound(camera.imageCapture),
       ).thenAnswer((_) async => true);
       when(
-        camera.imageCapture!.takePicture(),
+        mockImageCapture.takePicture(argThat(isA<SystemServicesManager>())),
       ).thenAnswer((_) async => 'test/absolute/path/to/picture');
 
       // Orientation is unlocked and plugin does not need to set default target
@@ -3969,6 +3982,14 @@ void main() {
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
 
+      // Tell plugin to mock call to get systemServicesManager.
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
+          };
+
       when(
         mockProcessCameraProvider.isBound(camera.imageCapture),
       ).thenAnswer((_) async => true);
@@ -3994,6 +4015,14 @@ void main() {
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
       camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Tell plugin to mock call to get current photo orientation and systemServicesManager.
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
+          };
 
       when(
         mockProcessCameraProvider.isBound(camera.imageCapture),
