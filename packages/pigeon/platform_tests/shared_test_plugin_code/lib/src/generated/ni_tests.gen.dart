@@ -178,157 +178,146 @@ class _PigeonJniCodec {
         array[i] = value[i];
       }
       return array as T;
-    } else if (value is List<bool> &&
-        isTypeOrNullableType<JList<JBoolean>>(T)) {
+    } else if (isTypeOrNullableType<JList<JBoolean>>(T)) {
       final JList<JBoolean> res = JList<JBoolean>.array(JBoolean.type);
-      for (final bool entry in value) {
+      for (final bool entry in value as List<bool>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<double> &&
-        isTypeOrNullableType<JList<JDouble>>(T)) {
+    } else if (isTypeOrNullableType<JList<JDouble>>(T)) {
       final JList<JDouble> res = JList<JDouble>.array(JDouble.type);
-      for (final double entry in value) {
+      for (final double entry in value as List<double>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<int> && isTypeOrNullableType<JList<JLong>>(T)) {
+    } else if (isTypeOrNullableType<JList<JLong>>(T)) {
       final JList<JLong> res = JList<JLong>.array(JLong.type);
-      for (final int entry in value) {
+      for (final int entry in value as List<int>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<String> &&
-        isTypeOrNullableType<JList<JString>>(T)) {
+    } else if (isTypeOrNullableType<JList<JString>>(T)) {
       final JList<JString> res = JList<JString>.array(JString.type);
-      for (final String entry in value) {
+      for (final String entry in value as List<String>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<NIAllNullableTypes> &&
-        isTypeOrNullableType<JList<jni_bridge.NIAllNullableTypes>>(T)) {
+    } else if (isTypeOrNullableType<JList<jni_bridge.NIAllNullableTypes>>(T)) {
       final JList<jni_bridge.NIAllNullableTypes> res =
           JList<jni_bridge.NIAllNullableTypes>.array(
             jni_bridge.NIAllNullableTypes.type,
           );
-      for (final NIAllNullableTypes entry in value) {
+      for (final NIAllNullableTypes entry
+          in value as List<NIAllNullableTypes>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<NIAnEnum> &&
-        isTypeOrNullableType<JList<jni_bridge.NIAnEnum>>(T)) {
+    } else if (isTypeOrNullableType<JList<jni_bridge.NIAnEnum>>(T)) {
       final JList<jni_bridge.NIAnEnum> res = JList<jni_bridge.NIAnEnum>.array(
         jni_bridge.NIAnEnum.type,
       );
-      for (final NIAnEnum entry in value) {
+      for (final NIAnEnum entry in value as List<NIAnEnum>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<NIAllNullableTypesWithoutRecursion?> &&
-        isTypeOrNullableType<
-          JList<jni_bridge.NIAllNullableTypesWithoutRecursion?>
-        >(T)) {
+    } else if (isTypeOrNullableType<
+      JList<jni_bridge.NIAllNullableTypesWithoutRecursion?>
+    >(T)) {
       final JList<jni_bridge.NIAllNullableTypesWithoutRecursion?> res =
           JList<jni_bridge.NIAllNullableTypesWithoutRecursion?>.array(
             jni_bridge.NIAllNullableTypesWithoutRecursion.nullableType,
           );
-      for (final NIAllNullableTypesWithoutRecursion? entry in value) {
+      for (final NIAllNullableTypesWithoutRecursion? entry
+          in value as List<NIAllNullableTypesWithoutRecursion?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<NIAllTypes?> &&
-        isTypeOrNullableType<JList<jni_bridge.NIAllTypes?>>(T)) {
+    } else if (isTypeOrNullableType<JList<jni_bridge.NIAllTypes?>>(T)) {
       final JList<jni_bridge.NIAllTypes?> res =
           JList<jni_bridge.NIAllTypes?>.array(
             jni_bridge.NIAllTypes.nullableType,
           );
-      for (final NIAllTypes? entry in value) {
+      for (final NIAllTypes? entry in value as List<NIAllTypes?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<NIAllNullableTypes?> &&
-        isTypeOrNullableType<JList<jni_bridge.NIAllNullableTypes?>>(T)) {
+    } else if (isTypeOrNullableType<JList<jni_bridge.NIAllNullableTypes?>>(T)) {
       final JList<jni_bridge.NIAllNullableTypes?> res =
           JList<jni_bridge.NIAllNullableTypes?>.array(
             jni_bridge.NIAllNullableTypes.nullableType,
           );
-      for (final NIAllNullableTypes? entry in value) {
+      for (final NIAllNullableTypes? entry
+          in value as List<NIAllNullableTypes?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<NIAnEnum?> &&
-        isTypeOrNullableType<JList<jni_bridge.NIAnEnum?>>(T)) {
+    } else if (isTypeOrNullableType<JList<jni_bridge.NIAnEnum?>>(T)) {
       final JList<jni_bridge.NIAnEnum?> res = JList<jni_bridge.NIAnEnum?>.array(
         jni_bridge.NIAnEnum.nullableType,
       );
-      for (final NIAnEnum? entry in value) {
+      for (final NIAnEnum? entry in value as List<NIAnEnum?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<bool?> &&
-        isTypeOrNullableType<JList<JBoolean?>>(T)) {
+    } else if (isTypeOrNullableType<JList<JBoolean?>>(T)) {
       final JList<JBoolean?> res = JList<JBoolean?>.array(
         JBoolean.nullableType,
       );
-      for (final bool? entry in value) {
+      for (final bool? entry in value as List<bool?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<double?> &&
-        isTypeOrNullableType<JList<JDouble?>>(T)) {
+    } else if (isTypeOrNullableType<JList<JDouble?>>(T)) {
       final JList<JDouble?> res = JList<JDouble?>.array(JDouble.nullableType);
-      for (final double? entry in value) {
+      for (final double? entry in value as List<double?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<int?> && isTypeOrNullableType<JList<JLong?>>(T)) {
+    } else if (isTypeOrNullableType<JList<JLong?>>(T)) {
       final JList<JLong?> res = JList<JLong?>.array(JLong.nullableType);
-      for (final int? entry in value) {
+      for (final int? entry in value as List<int?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<String?> &&
-        isTypeOrNullableType<JList<JString?>>(T)) {
+    } else if (isTypeOrNullableType<JList<JString?>>(T)) {
       final JList<JString?> res = JList<JString?>.array(JString.nullableType);
-      for (final String? entry in value) {
+      for (final String? entry in value as List<String?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<List<Object?>> &&
-        isTypeOrNullableType<JList<JList<JObject?>>>(T)) {
+    } else if (isTypeOrNullableType<JList<JList<JObject?>>>(T)) {
       final JList<JList<JObject?>> res = JList<JList<JObject?>>.array(
         JList.type(JObject.nullableType),
       );
-      for (final List<Object?> entry in value) {
+      for (final List<Object?> entry in value as List<List<Object?>>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<List<Object?>?> &&
-        isTypeOrNullableType<JList<JList<JObject?>?>>(T)) {
+    } else if (isTypeOrNullableType<JList<JList<JObject?>?>>(T)) {
       final JList<JList<JObject?>?> res = JList<JList<JObject?>?>.array(
         JList.nullableType(JObject.nullableType),
       );
-      for (final List<Object?>? entry in value) {
+      for (final List<Object?>? entry in value as List<List<Object?>?>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<Map<Object?, Object?>> &&
-        isTypeOrNullableType<JList<JMap<JObject?, JObject?>>>(T)) {
+    } else if (isTypeOrNullableType<JList<JMap<JObject?, JObject?>>>(T)) {
       final JList<JMap<JObject?, JObject?>> res =
           JList<JMap<JObject?, JObject?>>.array(
             JMap.type(JObject.nullableType, JObject.nullableType),
           );
-      for (final Map<Object?, Object?> entry in value) {
+      for (final Map<Object?, Object?> entry
+          in value as List<Map<Object?, Object?>>) {
         res.add(writeValue(entry));
       }
       return res as T;
-    } else if (value is List<Map<Object?, Object?>?> &&
-        isTypeOrNullableType<JList<JMap<JObject?, JObject?>?>>(T)) {
+    } else if (isTypeOrNullableType<JList<JMap<JObject?, JObject?>?>>(T)) {
       final JList<JMap<JObject?, JObject?>?> res =
           JList<JMap<JObject?, JObject?>?>.array(
             JMap.nullableType(JObject.nullableType, JObject.nullableType),
           );
-      for (final Map<Object?, Object?>? entry in value) {
+      for (final Map<Object?, Object?>? entry
+          in value as List<Map<Object?, Object?>?>) {
         res.add(writeValue(entry));
       }
       return res as T;
@@ -344,161 +333,165 @@ class _PigeonJniCodec {
         res.add(writeValue(value[i]));
       }
       return res as T;
-    } else if (value is Map<int, NIAllNullableTypes> &&
-        isTypeOrNullableType<JMap<JLong, jni_bridge.NIAllNullableTypes>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong, jni_bridge.NIAllNullableTypes>>(
+      T,
+    )) {
       final JMap<JLong, jni_bridge.NIAllNullableTypes> res =
           JMap<JLong, jni_bridge.NIAllNullableTypes>.hash(
             JLong.type,
             jni_bridge.NIAllNullableTypes.type,
           );
-      for (final MapEntry<int, NIAllNullableTypes> entry in value.entries) {
+      for (final MapEntry<int, NIAllNullableTypes> entry
+          in (value as Map<int, NIAllNullableTypes>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<NIAnEnum, NIAnEnum> &&
-        isTypeOrNullableType<JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum>>(
-          T,
-        )) {
+    } else if (isTypeOrNullableType<
+      JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum>
+    >(T)) {
       final JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum> res =
           JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum>.hash(
             jni_bridge.NIAnEnum.type,
             jni_bridge.NIAnEnum.type,
           );
-      for (final MapEntry<NIAnEnum, NIAnEnum> entry in value.entries) {
+      for (final MapEntry<NIAnEnum, NIAnEnum> entry
+          in (value as Map<NIAnEnum, NIAnEnum>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int, int> &&
-        isTypeOrNullableType<JMap<JLong, JLong>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong, JLong>>(T)) {
       final JMap<JLong, JLong> res = JMap<JLong, JLong>.hash(
         JLong.type,
         JLong.type,
       );
-      for (final MapEntry<int, int> entry in value.entries) {
+      for (final MapEntry<int, int> entry in (value as Map<int, int>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<String, String> &&
-        isTypeOrNullableType<JMap<JString, JString>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JString, JString>>(T)) {
       final JMap<JString, JString> res = JMap<JString, JString>.hash(
         JString.type,
         JString.type,
       );
-      for (final MapEntry<String, String> entry in value.entries) {
+      for (final MapEntry<String, String> entry
+          in (value as Map<String, String>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
-        isTypeOrNullableType<
-          JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>
-        >(T)) {
+    } else if (isTypeOrNullableType<
+      JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>
+    >(T)) {
       final JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?> res =
           JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>.hash(
             JLong.nullableType,
             jni_bridge.NIAllNullableTypesWithoutRecursion.nullableType,
           );
       for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry
-          in value.entries) {
+          in (value as Map<int?, NIAllNullableTypesWithoutRecursion?>)
+              .entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, NIAllTypes?> &&
-        isTypeOrNullableType<JMap<JLong?, jni_bridge.NIAllTypes?>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong?, jni_bridge.NIAllTypes?>>(T)) {
       final JMap<JLong?, jni_bridge.NIAllTypes?> res =
           JMap<JLong?, jni_bridge.NIAllTypes?>.hash(
             JLong.nullableType,
             jni_bridge.NIAllTypes.nullableType,
           );
-      for (final MapEntry<int?, NIAllTypes?> entry in value.entries) {
+      for (final MapEntry<int?, NIAllTypes?> entry
+          in (value as Map<int?, NIAllTypes?>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, NIAllNullableTypes?> &&
-        isTypeOrNullableType<JMap<JLong?, jni_bridge.NIAllNullableTypes?>>(T)) {
+    } else if (isTypeOrNullableType<
+      JMap<JLong?, jni_bridge.NIAllNullableTypes?>
+    >(T)) {
       final JMap<JLong?, jni_bridge.NIAllNullableTypes?> res =
           JMap<JLong?, jni_bridge.NIAllNullableTypes?>.hash(
             JLong.nullableType,
             jni_bridge.NIAllNullableTypes.nullableType,
           );
-      for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
+      for (final MapEntry<int?, NIAllNullableTypes?> entry
+          in (value as Map<int?, NIAllNullableTypes?>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<NIAnEnum?, NIAnEnum?> &&
-        isTypeOrNullableType<JMap<jni_bridge.NIAnEnum?, jni_bridge.NIAnEnum?>>(
-          T,
-        )) {
+    } else if (isTypeOrNullableType<
+      JMap<jni_bridge.NIAnEnum?, jni_bridge.NIAnEnum?>
+    >(T)) {
       final JMap<jni_bridge.NIAnEnum?, jni_bridge.NIAnEnum?> res =
           JMap<jni_bridge.NIAnEnum?, jni_bridge.NIAnEnum?>.hash(
             jni_bridge.NIAnEnum.nullableType,
             jni_bridge.NIAnEnum.nullableType,
           );
-      for (final MapEntry<NIAnEnum?, NIAnEnum?> entry in value.entries) {
+      for (final MapEntry<NIAnEnum?, NIAnEnum?> entry
+          in (value as Map<NIAnEnum?, NIAnEnum?>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, int?> &&
-        isTypeOrNullableType<JMap<JLong?, JLong?>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong?, JLong?>>(T)) {
       final JMap<JLong?, JLong?> res = JMap<JLong?, JLong?>.hash(
         JLong.nullableType,
         JLong.nullableType,
       );
-      for (final MapEntry<int?, int?> entry in value.entries) {
+      for (final MapEntry<int?, int?> entry
+          in (value as Map<int?, int?>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<String?, String?> &&
-        isTypeOrNullableType<JMap<JString?, JString?>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JString?, JString?>>(T)) {
       final JMap<JString?, JString?> res = JMap<JString?, JString?>.hash(
         JString.nullableType,
         JString.nullableType,
       );
-      for (final MapEntry<String?, String?> entry in value.entries) {
+      for (final MapEntry<String?, String?> entry
+          in (value as Map<String?, String?>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int, List<Object?>> &&
-        isTypeOrNullableType<JMap<JLong, JList<JObject?>>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong, JList<JObject?>>>(T)) {
       final JMap<JLong, JList<JObject?>> res =
           JMap<JLong, JList<JObject?>>.hash(
             JLong.type,
             JList.type(JObject.nullableType),
           );
-      for (final MapEntry<int, List<Object?>> entry in value.entries) {
+      for (final MapEntry<int, List<Object?>> entry
+          in (value as Map<int, List<Object?>>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, List<Object?>?> &&
-        isTypeOrNullableType<JMap<JLong?, JList<JObject?>?>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong?, JList<JObject?>?>>(T)) {
       final JMap<JLong?, JList<JObject?>?> res =
           JMap<JLong?, JList<JObject?>?>.hash(
             JLong.nullableType,
             JList.nullableType(JObject.nullableType),
           );
-      for (final MapEntry<int?, List<Object?>?> entry in value.entries) {
+      for (final MapEntry<int?, List<Object?>?> entry
+          in (value as Map<int?, List<Object?>?>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int, Map<Object?, Object?>> &&
-        isTypeOrNullableType<JMap<JLong, JMap<JObject?, JObject?>>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong, JMap<JObject?, JObject?>>>(T)) {
       final JMap<JLong, JMap<JObject?, JObject?>> res =
           JMap<JLong, JMap<JObject?, JObject?>>.hash(
             JLong.type,
             JMap.type(JObject.nullableType, JObject.nullableType),
           );
-      for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
+      for (final MapEntry<int, Map<Object?, Object?>> entry
+          in (value as Map<int, Map<Object?, Object?>>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;
-    } else if (value is Map<int?, Map<Object?, Object?>?> &&
-        isTypeOrNullableType<JMap<JLong?, JMap<JObject?, JObject?>?>>(T)) {
+    } else if (isTypeOrNullableType<JMap<JLong?, JMap<JObject?, JObject?>?>>(
+      T,
+    )) {
       final JMap<JLong?, JMap<JObject?, JObject?>?> res =
           JMap<JLong?, JMap<JObject?, JObject?>?>.hash(
             JLong.nullableType,
             JMap.nullableType(JObject.nullableType, JObject.nullableType),
           );
       for (final MapEntry<int?, Map<Object?, Object?>?> entry
-          in value.entries) {
+          in (value as Map<int?, Map<Object?, Object?>?>).entries) {
         res[writeValue(entry.key)] = writeValue(entry.value);
       }
       return res as T;

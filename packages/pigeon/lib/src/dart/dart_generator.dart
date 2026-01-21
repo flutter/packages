@@ -1414,49 +1414,51 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           );
           indent.newln();
           indent.writeln('@override');
-          String signature =
+          final String returnType =
               method.isAsynchronous
                   ? 'JObject'
                   : jniReturnType.getJniCallReturnType(false);
-          signature += ' ${method.name}(';
-          signature += _getMethodParameterSignature(
+          final String params = _getMethodParameterSignature(
             method.parameters,
             useJni: true,
           );
-          signature +=
+          final String asyncContinuation =
               method.isAsynchronous
                   ? '${method.parameters.isNotEmpty ? ', ' : ''}JObject continuation'
                   : '';
-          signature += ')';
-          indent.writeScoped('$signature {', '}', () {
-            indent.writeScoped('if (dartApi != null) {', '} ', () {
-              final String methodCall =
-                  'dartApi!.${method.name}(${_jniArgumentsToDartArguments(method.parameters, isAsynchronous: method.isAsynchronous)})';
-              if (method.returnType.isVoid) {
-                if (method.isAsynchronous) {
-                  indent.writeln('$methodCall;');
-                  indent.writeln('return continuation;');
+          indent.writeScoped(
+            '$returnType ${method.name}($params$asyncContinuation) {',
+            '}',
+            () {
+              indent.writeScoped('if (dartApi != null) {', '} ', () {
+                final String methodCall =
+                    'dartApi!.${method.name}(${_jniArgumentsToDartArguments(method.parameters, isAsynchronous: method.isAsynchronous)})';
+                if (method.returnType.isVoid) {
+                  if (method.isAsynchronous) {
+                    indent.writeln('$methodCall;');
+                    indent.writeln('return continuation;');
+                  } else {
+                    indent.writeln('return $methodCall;');
+                  }
                 } else {
-                  indent.writeln('return $methodCall;');
+                  final _JniType returnType = _JniType.fromTypeDeclaration(
+                    method.returnType,
+                  );
+                  indent.writeln(
+                    'final ${jniReturnType.type.getFullName()} response = $methodCall;',
+                  );
+                  indent.writeln(
+                    'return ${returnType.getToJniCall(method.returnType, 'response', returnType)};',
+                  );
                 }
-              } else {
-                final _JniType returnType = _JniType.fromTypeDeclaration(
-                  method.returnType,
-                );
+              });
+              indent.writeScoped('else {', '}', () {
                 indent.writeln(
-                  'final ${jniReturnType.type.getFullName()} response = $methodCall;',
+                  "throw ArgumentError('${api.name} was not registered.');",
                 );
-                indent.writeln(
-                  'return ${returnType.getToJniCall(method.returnType, 'response', returnType)};',
-                );
-              }
-            });
-            indent.writeScoped('else {', '}', () {
-              indent.writeln(
-                "throw ArgumentError('${api.name} was not registered.');",
-              );
-            });
-          });
+              });
+            },
+          );
           if (method.isAsynchronous && method.returnType.isVoid) {}
         }
       },
@@ -2630,10 +2632,10 @@ class _PigeonJniCodec {
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(list);
       return '''
-    } else if (value is ${jniType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${jniType.fullJniName}>(T)) {
+    } else if (isTypeOrNullableType<${jniType.fullJniName}>(T)) {
       final ${jniType.fullJniName} res =
           ${jniType.fullJniName}.array(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'});
-      for (final ${jniType.dartCollectionTypes} entry in value) {
+      for (final ${jniType.dartCollectionTypes} entry in value as ${jniType.type.getFullName(withNullable: false)}) {
         res.add(writeValue(entry));
       }
       return res as T;
@@ -2657,10 +2659,10 @@ class _PigeonJniCodec {
       }
       final _JniType jniType = _JniType.fromTypeDeclaration(mapType.value);
       return '''
-    } else if (value is ${jniType.type.getFullName(withNullable: false)} && isTypeOrNullableType<${jniType.fullJniName}>(T)) {
+    } else if (isTypeOrNullableType<${jniType.fullJniName}>(T)) {
       final ${jniType.fullJniName} res =
           ${jniType.fullJniName}.hash(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'}, ${jniType.subTypeTwo?.fullJniType ?? 'JObject.nullableType'});
-      for (final MapEntry${jniType.dartCollectionTypeAnnotations} entry in value.entries) {
+      for (final MapEntry${jniType.dartCollectionTypeAnnotations} entry in (value as ${jniType.type.getFullName(withNullable: false)}).entries) {
         res[writeValue(entry.key)] = 
             writeValue(entry.value);
       }

@@ -217,17 +217,16 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
           throwsA(isA<PlatformException>()),
         );
       } else {
-
-      expect(
-        () => api!.throwFlutterError(),
-        throwsA(
-          (dynamic e) =>
-              e is PlatformException &&
-              e.code == 'code' &&
-              e.message == 'message' &&
-              e.details == 'details',
-        ),
-      );
+        expect(
+          () => api!.throwFlutterError(),
+          throwsA(
+            (dynamic e) =>
+                e is PlatformException &&
+                e.code == 'code' &&
+                e.message == 'message' &&
+                e.details == 'details',
+          ),
+        );
       }
     });
 
@@ -1348,26 +1347,25 @@ void runPigeonIntegrationTests(TargetGenerator targetGenerator) {
             await api!.throwAsyncErrorFromVoid();
           }, throwsA(isA<PlatformException>()));
         } else {
-
-        expect(
-          () async {
-            await api!.throwAsyncFlutterError();
-          },
-          throwsA(
-            isA<PlatformException>()
+          expect(
+            () async {
+              await api!.throwAsyncFlutterError();
+            },
+            throwsA(
+              isA<PlatformException>()
                   .having((PlatformException e) => e.code, 'code', 'code')
-                .having(
-                  (PlatformException e) => e.message,
-                  'message',
+                  .having(
+                    (PlatformException e) => e.message,
                     'message',
-                )
+                    'message',
+                  )
                   .having(
                     (PlatformException e) => e.details,
                     'details',
                     'details',
                   ),
-          ),
-        );
+            ),
+          );
         }
       },
     );
