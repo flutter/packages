@@ -65,7 +65,7 @@ base class PlatformScopedStorageXDirectoryCreationParams
 ///   Future<void> platformMethod();
 /// }
 /// ```
-mixin ScopedStoragePlatformXDirectoryExtension
+mixin PlatformScopedStorageXDirectoryExtension
     implements PlatformXDirectoryExtension {}
 
 /// A reference to a directory (or folder) on the file system within a devices

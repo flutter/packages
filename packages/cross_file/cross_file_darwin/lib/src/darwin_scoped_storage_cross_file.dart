@@ -28,7 +28,7 @@ base class DarwinScopedStorageXFileCreationParams
 }
 
 /// Implementation of [PlatformScopedStorageXFile] for iOS and macOS.
-base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
+base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile with DarwinScopedStorageXFileExtension {
   /// Constructs a [DarwinScopedStorageXFile].
   DarwinScopedStorageXFile(super.params) : super.implementation();
 
@@ -45,10 +45,10 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
       ? super.params as DarwinScopedStorageXFileCreationParams
       : DarwinScopedStorageXFileCreationParams(uri: super.params.uri);
 
-  /// Attempt to create a bookmarked file that serves as a persistent reference
-  /// to the file.
-  ///
-  /// Returns null if the file could not be bookmarked.
+  @override
+  PlatformXFileEntityExtension? get extension => this;
+
+  @override
   Future<DarwinScopedStorageXFile?> toBookmarkedFile() async {
     final String? bookmarkedUrl = await params.api.tryCreateBookmarkedUrl(
       params.uri,
@@ -157,4 +157,13 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<String> readAsString({Encoding encoding = utf8}) async {
     return encoding.decodeStream(openRead());
   }
+}
+
+/// Provides platform specific features for [DarwinScopedStorageXFile].
+mixin DarwinScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {
+  /// Attempt to create a bookmarked file that serves as a persistent reference
+  /// to the file.
+  ///
+  /// Returns null if the file could not be bookmarked.
+  Future<DarwinScopedStorageXFile?> toBookmarkedFile();
 }

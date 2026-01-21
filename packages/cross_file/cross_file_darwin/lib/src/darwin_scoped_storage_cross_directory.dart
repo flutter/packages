@@ -25,8 +25,8 @@ base class DarwinScopedStorageXDirectoryCreationParams
 }
 
 /// Implementation of [PlatformScopedStorageXDirectory] for iOS and macOS.
-base class DarwinScopedStorageXDirectory
-    extends PlatformScopedStorageXDirectory {
+base class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory
+    with DarwinScopedStorageXDirectoryExtension {
   /// Constructs an [DarwinScopedStorageXDirectory].
   DarwinScopedStorageXDirectory(super.params) : super.implementation();
 
@@ -36,8 +36,10 @@ base class DarwinScopedStorageXDirectory
       ? super.params as DarwinScopedStorageXDirectoryCreationParams
       : DarwinScopedStorageXDirectoryCreationParams(uri: super.params.uri);
 
-  /// Attempt to create a bookmarked directory that serves as a persistent
-  /// reference to the directory.
+  @override
+  PlatformXFileEntityExtension? get extension => this;
+
+  @override
   Future<DarwinScopedStorageXDirectory?> toBookmarkedDirectory() async {
     final String? bookmarkedUrl = await params.api.tryCreateBookmarkedUrl(
       params.uri,
@@ -73,4 +75,14 @@ base class DarwinScopedStorageXDirectory
       }
     }
   }
+}
+
+/// Provides platform specific features for [DarwinScopedStorageXDirectory].
+mixin DarwinScopedStorageXDirectoryExtension
+    implements PlatformScopedStorageXDirectoryExtension {
+  /// Attempt to create a bookmarked directory that serves as a persistent
+  /// reference to the directory.
+  ///
+  /// Returns null if the directory could not be bookmarked.
+  Future<DarwinScopedStorageXDirectory?> toBookmarkedDirectory();
 }
