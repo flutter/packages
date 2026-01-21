@@ -88,7 +88,7 @@ class WebViewCookieManager {
   Future<void> setCookie(WebViewCookie cookie) => platform.setCookie(cookie);
 
   /// Gets a list of existing cookie for all or specified domain for all WebViews.
-  /// 
+  ///
   /// Android: Entire domain must be provided alongside scheme
   /// iOS & macOS: ignores scheme and supports partial match based on host
   Future<List<WebViewCookie>> getCookies({Uri? domain}) =>
