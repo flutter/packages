@@ -83,6 +83,7 @@ mixin DarwinScopedStorageXDirectoryExtension
   /// Attempt to create a bookmarked directory that serves as a persistent
   /// reference to the directory.
   ///
-  /// Returns null if the directory could not be bookmarked.
+  /// Throws exception if the directory could not be bookmarked or null if the
+  /// bookmark is stale.
   Future<DarwinScopedStorageXDirectory?> toBookmarkedDirectory();
 }

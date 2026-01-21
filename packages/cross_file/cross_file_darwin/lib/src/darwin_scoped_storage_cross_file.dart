@@ -164,6 +164,7 @@ mixin DarwinScopedStorageXFileExtension implements PlatformScopedStorageXFileExt
   /// Attempt to create a bookmarked file that serves as a persistent reference
   /// to the file.
   ///
-  /// Returns null if the file could not be bookmarked.
+  /// Throws exception if the file could not be bookmarked or null if the
+  /// bookmark is stale.
   Future<DarwinScopedStorageXFile?> toBookmarkedFile();
 }
