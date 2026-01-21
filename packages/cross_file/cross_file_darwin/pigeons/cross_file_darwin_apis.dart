@@ -22,6 +22,7 @@ class FileExistsResult {
   late bool isDirectory;
 }
 
+/// Api for getting access to file information.
 @HostApi()
 abstract class CrossFileDarwinApi {
   /// Attempt to create a bookmarked URL that serves as a persistent reference

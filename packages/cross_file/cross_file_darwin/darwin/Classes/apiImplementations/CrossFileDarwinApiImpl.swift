@@ -5,7 +5,14 @@
 import Flutter
 import Foundation
 
+/// Implementation of `CrossFileDarwinApi`.
 class CrossFileDarwinApiImpl: CrossFileDarwinApi {
+  let fileManager: FileManager
+
+  init(fileManager: FileManager = FileManager.default) {
+    self.fileManager = fileManager
+  }
+
   func tryCreateBookmarkedUrl(url: String) throws -> String? {
     let nativeUrl = URL(fileURLWithPath: url)
     if nativeUrl.startAccessingSecurityScopedResource() {
@@ -29,24 +36,24 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
   }
 
   func isReadableFile(url: String) throws -> Bool {
-    return FileManager.default.isReadableFile(atPath: url)
+    return fileManager.isReadableFile(atPath: url)
   }
 
   func fileExists(url: String) throws -> FileExistsResult {
     var isDirectory: ObjCBool = true
-    let exists = FileManager.default.fileExists(atPath: url, isDirectory: &isDirectory)
+    let exists = fileManager.fileExists(atPath: url, isDirectory: &isDirectory)
     return FileExistsResult(exists: exists, isDirectory: isDirectory.boolValue)
   }
 
   func fileIsDirectory(url: String) throws -> Bool {
     var isDirectory: ObjCBool = true
-    return FileManager.default.fileExists(atPath: url, isDirectory: &isDirectory)
+    return fileManager.fileExists(atPath: url, isDirectory: &isDirectory)
       && isDirectory.boolValue
   }
 
   func fileModificationDate(url: String) throws -> Int64? {
     let attributes: NSDictionary =
-      try FileManager.default.attributesOfItem(atPath: url) as NSDictionary
+      try fileManager.attributesOfItem(atPath: url) as NSDictionary
     if let date = attributes.fileModificationDate() {
       return Int64(date.timeIntervalSince1970 * 1000)
     }
@@ -56,11 +63,11 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
 
   func fileSize(url: String) throws -> Int64? {
     let attributes: NSDictionary =
-      try FileManager.default.attributesOfItem(atPath: url) as NSDictionary
+      try fileManager.attributesOfItem(atPath: url) as NSDictionary
     return Int64(attributes.fileSize())
   }
 
   func list(url: String) throws -> [String] {
-    return try FileManager.default.contentsOfDirectory(atPath: url)
+    return try fileManager.contentsOfDirectory(atPath: url)
   }
 }
