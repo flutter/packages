@@ -574,8 +574,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     return _cameraEvents(cameraId).whereType<VideoRecordedEvent>();
   }
 
-  // TODO(camsim99): confirm this behavior when I work on https://github.com/flutter/flutter/issues/164204.
-  /// Locks the capture orientation of all accessible cameras.
+  /// Locks the capture orientation of camera with ID [cameraId].
   @override
   Future<void> lockCaptureOrientation(
     int cameraId,
@@ -598,8 +597,7 @@ class AndroidCameraCameraX extends CameraPlatform {
     await videoCapture!.setTargetRotation(targetLockedRotation);
   }
 
-  // TODO(camsim99): confirm this behavior when I work on https://github.com/flutter/flutter/issues/164204.
-  /// Unlocks the capture orientation of all accessible cameras.
+  /// Unlocks the capture orientation of camera with ID [cameraId].
   @override
   Future<void> unlockCaptureOrientation(int cameraId) async {
     // Flag that default rotation should be set for UseCases as needed.
