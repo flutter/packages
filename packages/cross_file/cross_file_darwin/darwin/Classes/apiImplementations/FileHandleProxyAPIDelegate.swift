@@ -10,8 +10,8 @@ import Foundation
 /// This class may handle instantiating native object instances that are attached to a Dart instance
 /// or handle method calls on the associated native class or an instance of that class.
 class FileHandleProxyAPIDelegate: PigeonApiDelegateFileHandle {
-  func forReadingFromUrl(pigeonApi: PigeonApiFileHandle, url: String) throws -> FileHandle? {
-    return FileHandle(forReadingAtPath: url)
+  func forReadingAtPath(pigeonApi: PigeonApiFileHandle, path: String) throws -> FileHandle? {
+    return FileHandle(forReadingAtPath: path)
   }
 
   func readUpToCount(pigeonApi: PigeonApiFileHandle, pigeonInstance: FileHandle, count: Int64)

@@ -10,7 +10,7 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
     let nativeUrl = URL(fileURLWithPath: url)
     if nativeUrl.startAccessingSecurityScopedResource() {
       defer { nativeUrl.stopAccessingSecurityScopedResource() }
-      
+
       let data = try nativeUrl.bookmarkData(
         options: [],
         includingResourceValuesForKeys: nil,
@@ -20,7 +20,7 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
       var isStale: Bool = true
       let bookmarkedUrl: URL = try URL(resolvingBookmarkData: data, bookmarkDataIsStale: &isStale)
 
-      if (!isStale) {
+      if !isStale {
         return bookmarkedUrl.path
       }
     }

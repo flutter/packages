@@ -47,6 +47,8 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
 
   /// Attempt to create a bookmarked file that serves as a persistent reference
   /// to the file.
+  ///
+  /// Returns null if the file could not be bookmarked.
   Future<DarwinScopedStorageXFile?> toBookmarkedFile() async {
     final String? bookmarkedUrl = await params.api.tryCreateBookmarkedUrl(
       params.uri,
@@ -98,7 +100,7 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
     int bytesToRead = (end ?? fileLength) - (start ?? 0);
     assert(bytesToRead >= 0);
 
-    final FileHandle? handle = await FileHandle.forReadingFromUrl(params.uri);
+    final FileHandle? handle = await FileHandle.forReadingAtPath(params.uri);
     if (handle == null) {
       throw UnsupportedError(
         'Cannot create native `FileHandle` with uri: ${params.uri}.',
@@ -132,7 +134,7 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile {
 
   @override
   Future<Uint8List> readAsBytes() async {
-    final FileHandle? handle = await FileHandle.forReadingFromUrl(params.uri);
+    final FileHandle? handle = await FileHandle.forReadingAtPath(params.uri);
     if (handle == null) {
       throw UnsupportedError(
         'Cannot create native `FileHandle` with uri: ${params.uri}.',
