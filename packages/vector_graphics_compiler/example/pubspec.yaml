@@ -1,0 +1,25 @@
+name: example
+description: Example project using hooks.
+publish_to: none
+
+resolution: workspace
+
+environment:
+  sdk: ^3.10.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  hooks: ^1.0.0
+  vector_graphics: any
+  vector_graphics_compiler: any
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  config:
+    enable-dart-data-assets: true
+
+  uses-material-design: true
