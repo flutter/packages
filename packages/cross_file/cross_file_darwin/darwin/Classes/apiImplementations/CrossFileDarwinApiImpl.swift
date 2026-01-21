@@ -19,7 +19,7 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
         var isStale: Bool = true
         let url: URL = try URL(resolvingBookmarkData: data, bookmarkDataIsStale: &isStale)
 
-        if isStale {
+        if (!isStale) {
           return url.absoluteString
         }
       }
