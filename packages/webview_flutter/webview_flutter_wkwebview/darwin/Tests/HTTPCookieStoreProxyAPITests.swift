@@ -126,8 +126,8 @@ class TestCookieStore: WKHTTPCookieStore {
     }
   #endif
 
-  public override func getAllCookies(
-    _ completionHandler: @escaping ([HTTPCookie]) -> Void
+  override func getAllCookies(
+    _ completionHandler: @escaping @MainActor ([HTTPCookie]) -> Void
   ) {
     DispatchQueue.main.async {
       completionHandler(self.allCookies)
