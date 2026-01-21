@@ -82,7 +82,7 @@ class Automator {
   }
 
   Future<void> _handleAppNavigate() async {
-    for (int i = 0; i < 10; ++i) {
+    for (var i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byKey(aboutPageKey));
       await animationStops();
@@ -103,7 +103,7 @@ class Automator {
   }
 
   Future<void> _handleAppTap() async {
-    for (int i = 0; i < 10; ++i) {
+    for (var i = 0; i < 10; ++i) {
       print('Testing round $i...');
       await controller.tap(find.byIcon(Icons.add));
       await animationStops();
@@ -135,7 +135,7 @@ Future<void> animationStops() async {
     return;
   }
 
-  final Completer<void> stopped = Completer<void>();
+  final stopped = Completer<void>();
 
   Timer.periodic(_animationCheckingInterval, (Timer timer) {
     if (!WidgetsBinding.instance.hasScheduledFrame) {

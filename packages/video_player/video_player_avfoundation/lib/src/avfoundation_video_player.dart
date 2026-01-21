@@ -22,23 +22,16 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   AVFoundationVideoPlayer({
     @visibleForTesting AVFoundationVideoPlayerApi? pluginApi,
     @visibleForTesting
-    VideoPlayerInstanceApi Function(int playerId)? playerProvider,
+    VideoPlayerInstanceApi Function(int playerId)? playerApiProvider,
   }) : _api = pluginApi ?? AVFoundationVideoPlayerApi(),
-       _playerProvider = playerProvider ?? _productionApiProvider;
+       _playerApiProvider = playerApiProvider ?? _productionApiProvider;
 
   final AVFoundationVideoPlayerApi _api;
   // A method to create VideoPlayerInstanceApi instances, which can be
   // overridden for testing.
-  final VideoPlayerInstanceApi Function(int mapId) _playerProvider;
+  final VideoPlayerInstanceApi Function(int mapId) _playerApiProvider;
 
-  /// A map that associates player ID with a view state.
-  /// This is used to determine which view type to use when building a view.
-  @visibleForTesting
-  final Map<int, VideoPlayerViewState> playerViewStates =
-      <int, VideoPlayerViewState>{};
-
-  final Map<int, VideoPlayerInstanceApi> _players =
-      <int, VideoPlayerInstanceApi>{};
+  final Map<int, _PlayerInstance> _players = <int, _PlayerInstance>{};
 
   /// Registers this class as the default instance of [VideoPlayerPlatform].
   static void registerWith() {
@@ -52,9 +45,8 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> dispose(int playerId) async {
-    final VideoPlayerInstanceApi? player = _players.remove(playerId);
+    final _PlayerInstance? player = _players.remove(playerId);
     await player?.dispose();
-    playerViewStates.remove(playerId);
   }
 
   @override
@@ -100,7 +92,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
-    final CreationOptions pigeonCreationOptions = CreationOptions(
+    final pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: dataSource.httpHeaders,
     );
@@ -118,8 +110,7 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
         playerId = await _api.createForPlatformView(pigeonCreationOptions);
         state = const VideoPlayerPlatformViewState();
     }
-    playerViewStates[playerId] = state;
-    ensureApiInitialized(playerId);
+    ensurePlayerInitialized(playerId, state);
 
     return playerId;
   }
@@ -127,9 +118,16 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   /// Returns the API instance for [playerId], creating it if it doesn't already
   /// exist.
   @visibleForTesting
-  VideoPlayerInstanceApi ensureApiInitialized(int playerId) {
-    return _players.putIfAbsent(playerId, () {
-      return _playerProvider(playerId);
+  void ensurePlayerInitialized(int playerId, VideoPlayerViewState viewState) {
+    _players.putIfAbsent(playerId, () {
+      return _PlayerInstance(
+        _playerApiProvider(playerId),
+        viewState,
+        eventChannel: EventChannel(
+          // This must match the channel name used in FVPVideoPlayerPlugin.m.
+          'flutter.dev/videoPlayer/videoEvents$playerId',
+        ),
+      );
     });
   }
 
@@ -162,48 +160,17 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
 
   @override
   Future<void> seekTo(int playerId, Duration position) {
-    return _playerWith(id: playerId).seekTo(position.inMilliseconds);
+    return _playerWith(id: playerId).seekTo(position);
   }
 
   @override
   Future<Duration> getPosition(int playerId) async {
-    final int position = await _playerWith(id: playerId).getPosition();
-    return Duration(milliseconds: position);
+    return _playerWith(id: playerId).getPosition();
   }
 
   @override
   Stream<VideoEvent> videoEventsFor(int playerId) {
-    return _eventChannelFor(playerId).receiveBroadcastStream().map((
-      dynamic event,
-    ) {
-      final Map<dynamic, dynamic> map = event as Map<dynamic, dynamic>;
-      return switch (map['event']) {
-        'initialized' => VideoEvent(
-          eventType: VideoEventType.initialized,
-          duration: Duration(milliseconds: map['duration'] as int),
-          size: Size(
-            (map['width'] as num?)?.toDouble() ?? 0.0,
-            (map['height'] as num?)?.toDouble() ?? 0.0,
-          ),
-        ),
-        'completed' => VideoEvent(eventType: VideoEventType.completed),
-        'bufferingUpdate' => VideoEvent(
-          buffered: (map['values'] as List<dynamic>)
-              .map<DurationRange>(_toDurationRange)
-              .toList(),
-          eventType: VideoEventType.bufferingUpdate,
-        ),
-        'bufferingStart' => VideoEvent(
-          eventType: VideoEventType.bufferingStart,
-        ),
-        'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
-        'isPlayingStateUpdate' => VideoEvent(
-          eventType: VideoEventType.isPlayingStateUpdate,
-          isPlaying: map['isPlaying'] as bool,
-        ),
-        _ => VideoEvent(eventType: VideoEventType.unknown),
-      };
-    });
+    return _playerWith(id: playerId).videoEvents;
   }
 
   @override
@@ -219,22 +186,18 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   @override
   Widget buildViewWithOptions(VideoViewOptions options) {
     final int playerId = options.playerId;
-    final VideoPlayerViewState? viewState = playerViewStates[playerId];
+    final VideoPlayerViewState viewState = _playerWith(id: playerId).viewState;
 
     return switch (viewState) {
       VideoPlayerTextureViewState(:final int textureId) => Texture(
         textureId: textureId,
       ),
       VideoPlayerPlatformViewState() => _buildPlatformView(playerId),
-      null => throw Exception(
-        'Could not find corresponding view type for playerId: $playerId',
-      ),
     };
   }
 
   Widget _buildPlatformView(int playerId) {
-    final PlatformVideoViewCreationParams creationParams =
-        PlatformVideoViewCreationParams(playerId: playerId);
+    final creationParams = PlatformVideoViewCreationParams(playerId: playerId);
 
     return IgnorePointer(
       // IgnorePointer so that GestureDetector can be used above the platform view.
@@ -246,19 +209,96 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
-  EventChannel _eventChannelFor(int playerId) {
-    return EventChannel('flutter.io/videoPlayer/videoEvents$playerId');
+  _PlayerInstance _playerWith({required int id}) {
+    final _PlayerInstance? player = _players[id];
+    return player ?? (throw StateError('No active player with ID $id.'));
+  }
+}
+
+/// An instance of a video player, corresponding to a single player ID in
+/// [AVFoundationVideoPlayer].
+class _PlayerInstance {
+  _PlayerInstance(
+    this._api,
+    this.viewState, {
+    required EventChannel eventChannel,
+  }) : _eventChannel = eventChannel;
+
+  final VideoPlayerInstanceApi _api;
+  final VideoPlayerViewState viewState;
+  final EventChannel _eventChannel;
+  final StreamController<VideoEvent> _eventStreamController =
+      StreamController<VideoEvent>.broadcast();
+  StreamSubscription<dynamic>? _eventSubscription;
+
+  Future<void> play() => _api.play();
+
+  Future<void> pause() => _api.pause();
+
+  Future<void> setLooping(bool looping) => _api.setLooping(looping);
+
+  Future<void> setVolume(double volume) => _api.setVolume(volume);
+
+  Future<void> setPlaybackSpeed(double speed) => _api.setPlaybackSpeed(speed);
+
+  Future<void> seekTo(Duration position) {
+    return _api.seekTo(position.inMilliseconds);
   }
 
-  VideoPlayerInstanceApi _playerWith({required int id}) {
-    final VideoPlayerInstanceApi? player = _players[id];
-    return player ?? (throw StateError('No active player with ID $id.'));
+  Future<Duration> getPosition() async {
+    return Duration(milliseconds: await _api.getPosition());
+  }
+
+  Stream<VideoEvent> get videoEvents {
+    _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(
+      _onStreamEvent,
+      onError: (Object e) {
+        _eventStreamController.addError(e);
+      },
+    );
+
+    return _eventStreamController.stream;
+  }
+
+  Future<void> dispose() async {
+    await _eventSubscription?.cancel();
+    unawaited(_eventStreamController.close());
+    await _api.dispose();
+  }
+
+  void _onStreamEvent(dynamic event) {
+    final map = event as Map<dynamic, dynamic>;
+    // The strings here must all match the strings in FVPEventBridge.m.
+    _eventStreamController.add(switch (map['event']) {
+      'initialized' => VideoEvent(
+        eventType: VideoEventType.initialized,
+        duration: Duration(milliseconds: map['duration'] as int),
+        size: Size(
+          (map['width'] as num?)?.toDouble() ?? 0.0,
+          (map['height'] as num?)?.toDouble() ?? 0.0,
+        ),
+      ),
+      'completed' => VideoEvent(eventType: VideoEventType.completed),
+      'bufferingUpdate' => VideoEvent(
+        buffered: (map['values'] as List<dynamic>)
+            .map<DurationRange>(_toDurationRange)
+            .toList(),
+        eventType: VideoEventType.bufferingUpdate,
+      ),
+      'bufferingStart' => VideoEvent(eventType: VideoEventType.bufferingStart),
+      'bufferingEnd' => VideoEvent(eventType: VideoEventType.bufferingEnd),
+      'isPlayingStateUpdate' => VideoEvent(
+        eventType: VideoEventType.isPlayingStateUpdate,
+        isPlaying: map['isPlaying'] as bool,
+      ),
+      _ => VideoEvent(eventType: VideoEventType.unknown),
+    });
   }
 
   DurationRange _toDurationRange(dynamic value) {
-    final List<dynamic> pair = value as List<dynamic>;
-    final int startMilliseconds = pair[0] as int;
-    final int durationMilliseconds = pair[1] as int;
+    final pair = value as List<dynamic>;
+    final startMilliseconds = pair[0] as int;
+    final durationMilliseconds = pair[1] as int;
     return DurationRange(
       Duration(milliseconds: startMilliseconds),
       Duration(milliseconds: startMilliseconds + durationMilliseconds),

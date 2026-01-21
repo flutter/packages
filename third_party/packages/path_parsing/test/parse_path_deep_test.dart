@@ -47,7 +47,7 @@ class DeepTestPathProxy extends PathProxy {
 
 void main() {
   void assertValidPath(String input, List<String> commands) {
-    final DeepTestPathProxy proxy = DeepTestPathProxy(commands);
+    final proxy = DeepTestPathProxy(commands);
     writeSvgPathDataToPath(input, proxy);
     proxy.validate();
   }

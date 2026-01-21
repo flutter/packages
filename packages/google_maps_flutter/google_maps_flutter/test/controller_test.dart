@@ -17,15 +17,13 @@ void main() {
   testWidgets('Subscriptions are canceled on dispose', (
     WidgetTester tester,
   ) async {
-    final FakeGoogleMapsFlutterPlatform platform =
-        FakeGoogleMapsFlutterPlatform();
+    final platform = FakeGoogleMapsFlutterPlatform();
 
     GoogleMapsFlutterPlatform.instance = platform;
 
-    final Completer<GoogleMapController?> controllerCompleter =
-        Completer<GoogleMapController?>();
+    final controllerCompleter = Completer<GoogleMapController?>();
 
-    final GoogleMap googleMap = GoogleMap(
+    final googleMap = GoogleMap(
       onMapCreated: (GoogleMapController controller) {
         controllerCompleter.complete(controller);
       },

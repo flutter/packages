@@ -34,7 +34,7 @@ bool initializeTessellatorFromFlutterCache() {
     print('Tesselation not supported on ${Platform.localeName}');
     return false;
   }
-  final String tessellator =
+  final tessellator =
       '${cacheRoot.path}/artifacts/engine/$platform/$executable';
   if (!File(tessellator).existsSync()) {
     print('Could not locate libtessellator at $tessellator.');

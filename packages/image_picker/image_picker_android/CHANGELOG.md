@@ -1,6 +1,10 @@
-## 0.8.13+11
+## 0.8.13+12
 
 * Bump androidx.core:core from 1.13.1 to 1.17.0.
+
+## 0.8.13+11
+
+* Bumps androidx.exifinterface:exifinterface from 1.4.1 to 1.4.2.
 
 ## 0.8.13+10
 

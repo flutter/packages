@@ -54,14 +54,12 @@ String _snakeToPascalCase(String snake) {
 // TODO(stuartmorgan): Remove the need for this when addressing
 // https://github.com/flutter/flutter/issues/115168.
 String _javaFilenameForName(String inputName) {
-  const Map<String, String> specialCases = <String, String>{
-    'message': 'MessagePigeon',
-  };
+  const specialCases = <String, String>{'message': 'MessagePigeon'};
   return specialCases[inputName] ?? _snakeToPascalCase(inputName);
 }
 
 Future<int> generateExamplePigeons() async {
-  int success = 0;
+  var success = 0;
   success = await runPigeon(
     input: './example/app/pigeons/messages.dart',
     basePath: './example/app',
@@ -81,7 +79,7 @@ Future<int> generateTestPigeons({
 }) async {
   // TODO(stuartmorgan): Make this dynamic rather than hard-coded. Or eliminate
   // it entirely; see https://github.com/flutter/flutter/issues/115169.
-  const Set<String> inputs = <String>{
+  const inputs = <String>{
     'core_tests',
     'enum',
     'event_channel_tests',
@@ -96,8 +94,8 @@ Future<int> generateTestPigeons({
     'proxy_api_tests',
   };
 
-  const String testPluginName = 'test_plugin';
-  const String alternateTestPluginName = 'alternate_language_test_plugin';
+  const testPluginName = 'test_plugin';
+  const alternateTestPluginName = 'alternate_language_test_plugin';
   final String outputBase = p.join(baseDir, 'platform_tests', testPluginName);
   final String alternateOutputBase = p.join(
     baseDir,
@@ -110,7 +108,7 @@ Future<int> generateTestPigeons({
     'shared_test_plugin_code',
   );
 
-  for (final String input in inputs) {
+  for (final input in inputs) {
     final String pascalCaseName = _snakeToPascalCase(input);
     final Set<GeneratorLanguage> skipLanguages =
         _unsupportedFiles[input] ?? <GeneratorLanguage>{};
@@ -118,7 +116,7 @@ Future<int> generateTestPigeons({
     final bool kotlinErrorClassGenerationTestFiles =
         input == 'core_tests' || input == 'primitive';
 
-    final String kotlinErrorName = kotlinErrorClassGenerationTestFiles
+    final kotlinErrorName = kotlinErrorClassGenerationTestFiles
         ? 'FlutterError'
         : '${pascalCaseName}Error';
 
@@ -174,9 +172,9 @@ Future<int> generateTestPigeons({
     }
 
     // Generate the alternate language test plugin output.
-    final String objcBase =
+    final objcBase =
         '$alternateOutputBase/darwin/$alternateTestPluginName/Sources/$alternateTestPluginName/';
-    final String objcBaseRelativeHeaderPath =
+    final objcBaseRelativeHeaderPath =
         'include/$alternateTestPluginName/$pascalCaseName.gen.h';
     generateCode = await runPigeon(
       input: './pigeons/$input.dart',
@@ -259,15 +257,14 @@ Future<int> runPigeon({
   // parse results in advance when overflow is included to avoid exposing as public option
   final ParseResults parseResults = Pigeon().parseFile(input);
   if (injectOverflowTypes) {
-    final List<Enum> addedEnums = List<Enum>.generate(
-      totalCustomCodecKeysAllowed - 1,
-      (final int tag) {
-        return Enum(
-          name: 'FillerEnum$tag',
-          members: <EnumMember>[EnumMember(name: 'FillerMember$tag')],
-        );
-      },
-    );
+    final addedEnums = List<Enum>.generate(totalCustomCodecKeysAllowed - 1, (
+      final int tag,
+    ) {
+      return Enum(
+        name: 'FillerEnum$tag',
+        members: <EnumMember>[EnumMember(name: 'FillerMember$tag')],
+      );
+    });
     addedEnums.addAll(parseResults.root.enums);
     parseResults.root.enums = addedEnums;
   }
@@ -334,7 +331,7 @@ Future<int> formatAllFiles({
     GeneratorLanguage.swift,
   },
 }) {
-  final String dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
+  final dartCommand = Platform.isWindows ? 'dart.exe' : 'dart';
   return runProcess(
     dartCommand,
     <String>[

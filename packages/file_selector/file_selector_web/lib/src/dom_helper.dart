@@ -26,7 +26,7 @@ class DomHelper {
     bool multiple = false,
     @visibleForTesting HTMLInputElement? input,
   }) {
-    final Completer<List<XFile>> completer = Completer<List<XFile>>();
+    final completer = Completer<List<XFile>>();
     final HTMLInputElement inputElement =
         input ?? (document.createElement('input') as HTMLInputElement)
           ..type = 'file';
@@ -47,8 +47,8 @@ class DomHelper {
     });
 
     inputElement.onError.first.then((Event event) {
-      final ErrorEvent error = event as ErrorEvent;
-      final PlatformException platformException = PlatformException(
+      final error = event as ErrorEvent;
+      final platformException = PlatformException(
         code: error.type,
         message: error.message,
       );

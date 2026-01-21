@@ -83,11 +83,11 @@ class PlaceCircleBodyState extends State<PlaceCircleBody> {
       return;
     }
 
-    final String circleIdVal = 'circle_id_$_circleIdCounter';
+    final circleIdVal = 'circle_id_$_circleIdCounter';
     _circleIdCounter++;
-    final CircleId circleId = CircleId(circleIdVal);
+    final circleId = CircleId(circleIdVal);
 
-    final Circle circle = Circle(
+    final circle = Circle(
       circleId: circleId,
       consumeTapEvents: true,
       strokeColor: Colors.orange,

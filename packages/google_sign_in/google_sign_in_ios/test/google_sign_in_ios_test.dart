@@ -47,9 +47,9 @@ void main() {
 
   group('init', () {
     test('passes expected values', () async {
-      const String clientId = 'aClient';
-      const String serverClientId = 'aServerClient';
-      const String hostedDomain = 'example.com';
+      const clientId = 'aClient';
+      const serverClientId = 'aServerClient';
+      const hostedDomain = 'example.com';
 
       await googleSignIn.init(
         const InitParameters(
@@ -62,7 +62,7 @@ void main() {
       final VerificationResult verification = verify(
         mockApi.configure(captureAny),
       );
-      final PlatformConfigurationParams hostParams =
+      final hostParams =
           verification.captured[0] as PlatformConfigurationParams;
       expect(hostParams.clientId, clientId);
       expect(hostParams.serverClientId, serverClientId);
@@ -72,7 +72,7 @@ void main() {
 
   group('attemptLightweightAuthentication', () {
     test('passes success data to caller', () async {
-      const String idToken = 'idToken';
+      const idToken = 'idToken';
       when(mockApi.restorePreviousSignIn()).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
@@ -137,7 +137,7 @@ void main() {
 
   group('authenticate', () {
     test('passes nonce if provided', () async {
-      const String nonce = 'nonce';
+      const nonce = 'nonce';
       when(mockApi.signIn(any, nonce)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
@@ -161,7 +161,7 @@ void main() {
     });
 
     test('passes success data to caller', () async {
-      const String idToken = 'idToken';
+      const idToken = 'idToken';
       when(mockApi.signIn(any, null)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
@@ -310,18 +310,17 @@ void main() {
   group('clientAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const AuthorizationRequestDetails defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test(
       'passes expected values to addScopes if interaction is allowed',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
+        const scopes = <String>['a', 'b'];
         when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
@@ -352,15 +351,14 @@ void main() {
         final VerificationResult verification = verify(
           mockApi.addScopes(captureAny, _testUser.id),
         );
-        final List<String> passedScopes =
-            verification.captured[0] as List<String>;
+        final passedScopes = verification.captured[0] as List<String>;
         expect(passedScopes, scopes);
       },
     );
 
     test('passes expected values to getRefreshedAuthorizationTokens if '
         'interaction is not allowed', () async {
-      const List<String> scopes = <String>['a', 'b'];
+      const scopes = <String>['a', 'b'];
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
@@ -394,8 +392,8 @@ void main() {
     test(
       'attempts to restore previous sign in if no user is provided',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
-        final SignInResult signInResult = SignInResult(
+        const scopes = <String>['a', 'b'];
+        final signInResult = SignInResult(
           success: SignInSuccess(
             user: UserData(
               displayName: _testUser.displayName,
@@ -466,7 +464,7 @@ void main() {
 
     test('attempts to authenticate if no user is provided or already signed in '
         'and interaction is allowed', () async {
-      const List<String> scopes = <String>['a', 'b'];
+      const scopes = <String>['a', 'b'];
       when(mockApi.restorePreviousSignIn()).thenAnswer(
         (_) async => SignInResult(
           error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
@@ -509,8 +507,8 @@ void main() {
     test(
       'passes success data to caller when refreshing existing auth',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
-        const String accessToken = 'token';
+        const scopes = <String>['a', 'b'];
+        const accessToken = 'token';
         when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
@@ -544,8 +542,8 @@ void main() {
     );
 
     test('passes success data to caller when calling addScopes', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String accessToken = 'token';
+      const scopes = <String>['a', 'b'];
+      const accessToken = 'token';
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
@@ -579,8 +577,8 @@ void main() {
 
     test('successfully returns refreshed tokens if addScopes indicates the '
         'requested scopes are already granted', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String accessToken = 'token';
+      const scopes = <String>['a', 'b'];
+      const accessToken = 'token';
       when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
         (_) async => SignInResult(
           error: SignInFailure(
@@ -625,9 +623,9 @@ void main() {
     test(
       'returns null if re-using existing auth and scopes are missing',
       () async {
-        const List<String> requestedScopes = <String>['a', 'b'];
-        const List<String> grantedScopes = <String>['a'];
-        const String accessToken = 'token';
+        const requestedScopes = <String>['a', 'b'];
+        const grantedScopes = <String>['a'];
+        const accessToken = 'token';
         when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
@@ -765,18 +763,17 @@ void main() {
   group('serverAuthorizationTokensForScopes', () {
     // Request details used when the details of the request are not relevant to
     // the test.
-    const AuthorizationRequestDetails defaultAuthRequest =
-        AuthorizationRequestDetails(
-          scopes: <String>['a'],
-          userId: null,
-          email: null,
-          promptIfUnauthorized: false,
-        );
+    const defaultAuthRequest = AuthorizationRequestDetails(
+      scopes: <String>['a'],
+      userId: null,
+      email: null,
+      promptIfUnauthorized: false,
+    );
 
     test(
       'passes expected values to addScopes if interaction is allowed',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
+        const scopes = <String>['a', 'b'];
         when(mockApi.addScopes(any, _testUser.id)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
@@ -807,15 +804,14 @@ void main() {
         final VerificationResult verification = verify(
           mockApi.addScopes(captureAny, _testUser.id),
         );
-        final List<String> passedScopes =
-            verification.captured[0] as List<String>;
+        final passedScopes = verification.captured[0] as List<String>;
         expect(passedScopes, scopes);
       },
     );
 
     test('passes expected values to getRefreshedAuthorizationTokens if '
         'interaction is not allowed', () async {
-      const List<String> scopes = <String>['a', 'b'];
+      const scopes = <String>['a', 'b'];
       when(mockApi.getRefreshedAuthorizationTokens(_testUser.id)).thenAnswer(
         (_) async => SignInResult(
           success: SignInSuccess(
@@ -849,8 +845,8 @@ void main() {
     test(
       'attempts to restore previous sign in if no user is provided',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
-        final SignInResult signInResult = SignInResult(
+        const scopes = <String>['a', 'b'];
+        final signInResult = SignInResult(
           success: SignInSuccess(
             user: UserData(
               displayName: _testUser.displayName,
@@ -921,7 +917,7 @@ void main() {
 
     test('attempts to authenticate if no user is provided or already signed in '
         'and interaction is allowed', () async {
-      const List<String> scopes = <String>['a', 'b'];
+      const scopes = <String>['a', 'b'];
       when(mockApi.restorePreviousSignIn()).thenAnswer(
         (_) async => SignInResult(
           error: SignInFailure(type: GoogleSignInErrorCode.noAuthInKeychain),
@@ -964,16 +960,16 @@ void main() {
     test(
       'returns cached token from authn when refreshing existing authz',
       () async {
-        final UserData userData = UserData(
+        final userData = UserData(
           displayName: _testUser.displayName,
           email: _testUser.email,
           userId: _testUser.id,
           photoUrl: _testUser.photoUrl,
           idToken: '',
         );
-        const List<String> scopes = <String>['a', 'b'];
-        const String accessToken = 'accessToken';
-        const String serverAuthCode = 'authCode';
+        const scopes = <String>['a', 'b'];
+        const accessToken = 'accessToken';
+        const serverAuthCode = 'authCode';
         when(mockApi.signIn(scopes, null)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
@@ -1015,17 +1011,17 @@ void main() {
     );
 
     test('does not return cached token from authn if user changes', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String accessToken = 'accessToken';
-      const String serverAuthCode = 'authCode';
-      final UserData previousUser = UserData(
+      const scopes = <String>['a', 'b'];
+      const accessToken = 'accessToken';
+      const serverAuthCode = 'authCode';
+      final previousUser = UserData(
         displayName: 'Previous user',
         email: 'previous.user@gmail.com',
         userId: 'different_id',
         photoUrl: _testUser.photoUrl,
         idToken: '',
       );
-      final UserData newUser = UserData(
+      final newUser = UserData(
         displayName: _testUser.displayName,
         email: _testUser.email,
         userId: _testUser.id,
@@ -1072,10 +1068,10 @@ void main() {
     });
 
     test('does not return cached token from authn after signOut', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String accessToken = 'accessToken';
-      const String serverAuthCode = 'authCode';
-      final UserData userData = UserData(
+      const scopes = <String>['a', 'b'];
+      const accessToken = 'accessToken';
+      const serverAuthCode = 'authCode';
+      final userData = UserData(
         displayName: _testUser.displayName,
         email: _testUser.email,
         userId: _testUser.id,
@@ -1123,10 +1119,10 @@ void main() {
     });
 
     test('does not return cached token from authn after disconnect', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String accessToken = 'accessToken';
-      const String serverAuthCode = 'authCode';
-      final UserData userData = UserData(
+      const scopes = <String>['a', 'b'];
+      const accessToken = 'accessToken';
+      const serverAuthCode = 'authCode';
+      final userData = UserData(
         displayName: _testUser.displayName,
         email: _testUser.email,
         userId: _testUser.id,
@@ -1176,8 +1172,8 @@ void main() {
     test(
       'passes returned data to caller when calling addScopes without cache',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
-        const String serverAuthCode = 'authCode';
+        const scopes = <String>['a', 'b'];
+        const serverAuthCode = 'authCode';
         when(mockApi.addScopes(scopes, _testUser.id)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
@@ -1214,15 +1210,15 @@ void main() {
     test(
       'passes returned data to caller when calling addScopes, not cached data',
       () async {
-        const List<String> scopes = <String>['a', 'b'];
-        final UserData userData = UserData(
+        const scopes = <String>['a', 'b'];
+        final userData = UserData(
           displayName: _testUser.displayName,
           email: _testUser.email,
           userId: _testUser.id,
           photoUrl: _testUser.photoUrl,
           idToken: 'idToken',
         );
-        const String serverAuthCode = 'authCode';
+        const serverAuthCode = 'authCode';
         when(mockApi.signIn(<String>[], null)).thenAnswer(
           (_) async => SignInResult(
             success: SignInSuccess(
@@ -1263,9 +1259,9 @@ void main() {
 
     test('successfully returns cached token if addScopes indicates the '
         'requested scopes are already granted', () async {
-      const List<String> scopes = <String>['a', 'b'];
-      const String serverAuthCode = 'authCode';
-      final UserData userData = UserData(
+      const scopes = <String>['a', 'b'];
+      const serverAuthCode = 'authCode';
+      final userData = UserData(
         displayName: _testUser.displayName,
         email: _testUser.email,
         userId: _testUser.id,
@@ -1324,10 +1320,10 @@ void main() {
     test(
       'returns null if re-using existing authz and scopes are missing',
       () async {
-        const List<String> requestedScopes = <String>['a', 'b'];
-        const List<String> grantedScopes = <String>['a'];
-        const String accessToken = 'token';
-        final UserData userData = UserData(
+        const requestedScopes = <String>['a', 'b'];
+        const grantedScopes = <String>['a'];
+        const accessToken = 'token';
+        final userData = UserData(
           displayName: _testUser.displayName,
           email: _testUser.email,
           userId: _testUser.id,

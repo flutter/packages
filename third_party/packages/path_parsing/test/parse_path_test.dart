@@ -39,7 +39,7 @@ class TestPathProxy extends PathProxy {
 
 void main() {
   void assertValidPath(String input) {
-    final TestPathProxy proxy = TestPathProxy();
+    final proxy = TestPathProxy();
     // these shouldn't throw or assert
     writeSvgPathDataToPath(input, proxy);
     expect(proxy.called, true);

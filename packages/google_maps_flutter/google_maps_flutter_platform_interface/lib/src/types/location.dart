@@ -39,7 +39,7 @@ class LatLng {
       return null;
     }
     assert(json is List && json.length == 2);
-    final List<Object?> list = json as List<Object?>;
+    final list = json as List<Object?>;
     return LatLng(list[0]! as double, list[1]! as double);
   }
 
@@ -111,7 +111,7 @@ class LatLngBounds {
       return null;
     }
     assert(json is List && json.length == 2);
-    final List<Object?> list = json as List<Object?>;
+    final list = json as List<Object?>;
     return LatLngBounds(
       southwest: LatLng.fromJson(list[0])!,
       northeast: LatLng.fromJson(list[1])!,

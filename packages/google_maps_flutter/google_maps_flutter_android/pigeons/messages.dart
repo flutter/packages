@@ -104,9 +104,9 @@ class PlatformCircle {
   PlatformCircle({
     required this.circleId,
     required this.center,
+    required this.fillColor,
+    required this.strokeColor,
     this.consumeTapEvents = false,
-    this.fillColor = 0x00000000,
-    this.strokeColor = 0xFF000000,
     this.visible = true,
     this.strokeWidth = 10,
     this.zIndex = 0.0,
@@ -114,8 +114,8 @@ class PlatformCircle {
   });
 
   final bool consumeTapEvents;
-  final int fillColor;
-  final int strokeColor;
+  final PlatformColor fillColor;
+  final PlatformColor strokeColor;
   final bool visible;
   final int strokeWidth;
   final double zIndex;
@@ -126,14 +126,46 @@ class PlatformCircle {
 
 /// Pigeon equivalent of the Heatmap class.
 class PlatformHeatmap {
-  PlatformHeatmap(this.json);
+  PlatformHeatmap({
+    required this.heatmapId,
+    required this.data,
+    this.gradient,
+    required this.opacity,
+    required this.radius,
+    this.maxIntensity,
+  });
 
-  /// The heatmap data, as JSON. This should only be set from
-  /// Heatmap.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Map<String, Object?> json;
+  final String heatmapId;
+  final List<PlatformWeightedLatLng> data;
+  final PlatformHeatmapGradient? gradient;
+  final double opacity;
+  final int radius;
+  final double? maxIntensity;
+}
+
+/// Pigeon equivalent of the HeatmapGradient class.
+///
+/// The Java Gradient structure is slightly different from HeatmapGradient, so
+/// this matches the Android API so that conversion can be done on the Dart side
+/// where the structures are easier to work with.
+class PlatformHeatmapGradient {
+  PlatformHeatmapGradient({
+    required this.colors,
+    required this.startPoints,
+    required this.colorMapSize,
+  });
+
+  final List<PlatformColor> colors;
+  final List<double> startPoints;
+  final int colorMapSize;
+}
+
+/// Pigeon equivalent of the WeightedLatLng class.
+class PlatformWeightedLatLng {
+  PlatformWeightedLatLng({required this.point, required this.weight});
+
+  final PlatformLatLng point;
+  final double weight;
 }
 
 /// Pigeon equivalent of the ClusterManager class.
@@ -149,6 +181,15 @@ class PlatformDoublePair {
 
   final double x;
   final double y;
+}
+
+/// Pigeon equivalent of the Color class.
+///
+/// See https://developer.android.com/reference/android/graphics/Color.html.
+class PlatformColor {
+  const PlatformColor(this.argbValue);
+
+  final int argbValue;
 }
 
 /// Pigeon equivalent of the InfoWindow class.
@@ -211,12 +252,12 @@ class PlatformPolygon {
 
   final String polygonId;
   final bool consumesTapEvents;
-  final int fillColor;
+  final PlatformColor fillColor;
   final bool geodesic;
   final List<PlatformLatLng> points;
   final List<List<PlatformLatLng>> holes;
   final bool visible;
-  final int strokeColor;
+  final PlatformColor strokeColor;
   final int strokeWidth;
   final int zIndex;
 }
@@ -243,7 +284,7 @@ class PlatformPolyline {
 
   final String polylineId;
   final bool consumesTapEvents;
-  final int color;
+  final PlatformColor color;
   final bool geodesic;
 
   /// The joint type.
@@ -453,7 +494,7 @@ class PlatformMapConfiguration {
     required this.trafficEnabled,
     required this.buildingsEnabled,
     required this.liteModeEnabled,
-    required this.cloudMapId,
+    required this.mapId,
     required this.style,
   });
 
@@ -475,7 +516,7 @@ class PlatformMapConfiguration {
   final bool? trafficEnabled;
   final bool? buildingsEnabled;
   final bool? liteModeEnabled;
-  final String? cloudMapId;
+  final String? mapId;
   final String? style;
 }
 

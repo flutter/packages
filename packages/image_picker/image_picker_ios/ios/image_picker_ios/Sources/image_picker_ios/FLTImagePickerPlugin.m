@@ -35,8 +35,11 @@
 /// controller would normally be created. Each call to
 /// createImagePickerController will remove the current first element from
 /// the array.
-@property(strong, nonatomic)
+@property(nonatomic, nullable)
     NSMutableArray<UIImagePickerController *> *imagePickerControllerOverrides;
+
+/// The view provider to use for displaying native view controllers.
+@property(nonatomic, nonnull) NSObject<FIPViewProvider> *viewProvider;
 
 @end
 
@@ -45,8 +48,17 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 @implementation FLTImagePickerPlugin
 
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
-  FLTImagePickerPlugin *instance = [[FLTImagePickerPlugin alloc] init];
+  FLTImagePickerPlugin *instance = [[FLTImagePickerPlugin alloc]
+      initWithViewProvider:[[FIPDefaultViewProvider alloc] initWithRegistrar:registrar]];
   SetUpFLTImagePickerApi(registrar.messenger, instance);
+}
+
+- (instancetype)initWithViewProvider:(NSObject<FIPViewProvider> *)viewProvider {
+  self = [super init];
+  if (self) {
+    _viewProvider = viewProvider;
+  }
+  return self;
 }
 
 - (UIImagePickerController *)createImagePickerController {
@@ -62,24 +74,6 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 - (void)setImagePickerControllerOverrides:
     (NSArray<UIImagePickerController *> *)imagePickerControllers {
   _imagePickerControllerOverrides = [imagePickerControllers mutableCopy];
-}
-
-- (UIViewController *)viewControllerWithWindow:(UIWindow *)window {
-  UIWindow *windowToUse = window;
-  if (windowToUse == nil) {
-    for (UIWindow *window in [UIApplication sharedApplication].windows) {
-      if (window.isKeyWindow) {
-        windowToUse = window;
-        break;
-      }
-    }
-  }
-
-  UIViewController *topController = windowToUse.rootViewController;
-  while (topController.presentedViewController) {
-    topController = topController.presentedViewController;
-  }
-  return topController;
 }
 
 /// Returns the UIImagePickerControllerCameraDevice to use given [source].
@@ -99,6 +93,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   PHPickerConfiguration *config =
       [[PHPickerConfiguration alloc] initWithPhotoLibrary:PHPhotoLibrary.sharedPhotoLibrary];
   config.selectionLimit = context.maxItemCount;
+  config.preferredAssetRepresentationMode = PHPickerConfigurationAssetRepresentationModeCurrent;
   NSMutableArray<PHPickerFilter *> *filters = [[NSMutableArray alloc] init];
   if (context.includeImages) {
     [filters addObject:[PHPickerFilter imagesFilter]];
@@ -322,9 +317,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
       [UIImagePickerController isCameraDeviceAvailable:device]) {
     imagePickerController.sourceType = UIImagePickerControllerSourceTypeCamera;
     imagePickerController.cameraDevice = device;
-    [[self viewControllerWithWindow:nil] presentViewController:imagePickerController
-                                                      animated:YES
-                                                    completion:nil];
+    [self.viewProvider.viewController presentViewController:imagePickerController
+                                                   animated:YES
+                                                 completion:nil];
   } else {
     UIAlertController *cameraErrorAlert = [UIAlertController
         alertControllerWithTitle:NSLocalizedString(@"Error", @"Alert title when camera unavailable")
@@ -337,9 +332,9 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
                                            style:UIAlertActionStyleDefault
                                          handler:^(UIAlertAction *action){
                                          }]];
-    [[self viewControllerWithWindow:nil] presentViewController:cameraErrorAlert
-                                                      animated:YES
-                                                    completion:nil];
+    [self.viewProvider.viewController presentViewController:cameraErrorAlert
+                                                   animated:YES
+                                                 completion:nil];
     [self sendCallResultWithSavedPathList:nil];
   }
 }
@@ -437,16 +432,16 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)showPhotoLibraryWithPHPicker:(PHPickerViewController *)pickerViewController
     API_AVAILABLE(ios(14)) {
-  [[self viewControllerWithWindow:nil] presentViewController:pickerViewController
-                                                    animated:YES
-                                                  completion:nil];
+  [self.viewProvider.viewController presentViewController:pickerViewController
+                                                 animated:YES
+                                               completion:nil];
 }
 
 - (void)showPhotoLibraryWithImagePicker:(UIImagePickerController *)imagePickerController {
   imagePickerController.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
-  [[self viewControllerWithWindow:nil] presentViewController:imagePickerController
-                                                    animated:YES
-                                                  completion:nil];
+  [self.viewProvider.viewController presentViewController:imagePickerController
+                                                 animated:YES
+                                               completion:nil];
 }
 
 - (NSNumber *)getDesiredImageQuality:(NSNumber *)imageQuality {
