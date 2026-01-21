@@ -70,6 +70,7 @@ abstract class PlatformWebViewCookieManager extends PlatformInterface {
   /// iOS: ignores scheme and supports partial match based on host
   Future<List<WebViewCookie>> getCookies(Uri? domain) {
     throw UnimplementedError(
-        'getCookie is not implemented on the current platform');
+      'getCookie is not implemented on the current platform',
+    );
   }
 }

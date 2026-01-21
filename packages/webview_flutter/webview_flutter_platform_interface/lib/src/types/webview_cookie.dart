@@ -43,6 +43,4 @@ class WebViewCookie {
   String toString() {
     return 'WebViewCookie{name: $name, domain: $domain, path: $path}';
   }
-
-
 }

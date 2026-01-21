@@ -66,34 +66,34 @@ public class CookieManagerTest {
     verify(instance).setAcceptThirdPartyCookies(webView, accept);
   }
 
-    @Test
-    public void getCookies_returnsCookieString() {
-        final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
+  @Test
+  public void getCookies_returnsCookieString() {
+    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
 
-        final CookieManager instance = mock(CookieManager.class);
-        final String domain = "https://flutter.dev";
-        final String cookieValue = "session=12345";
+    final CookieManager instance = mock(CookieManager.class);
+    final String domain = "https://flutter.dev";
+    final String cookieValue = "session=12345";
 
-        // Mock the CookieManager to return the cookie string
-        when(instance.getCookie(domain)).thenReturn(cookieValue);
+    // Mock the CookieManager to return the cookie string
+    when(instance.getCookie(domain)).thenReturn(cookieValue);
 
-        final String result = api.getCookies(instance, domain);
+    final String result = api.getCookies(instance, domain);
 
-        assertEquals(cookieValue, result);
-    }
+    assertEquals(cookieValue, result);
+  }
 
-    @Test
-    public void getCookies_returnsEmptyStringIfNull() {
-        final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
+  @Test
+  public void getCookies_returnsEmptyStringIfNull() {
+    final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
 
-        final CookieManager instance = mock(CookieManager.class);
-        final String domain = "https://flutter.dev";
+    final CookieManager instance = mock(CookieManager.class);
+    final String domain = "https://flutter.dev";
 
-        // Mock the CookieManager to return null
-        when(instance.getCookie(domain)).thenReturn(null);
+    // Mock the CookieManager to return null
+    when(instance.getCookie(domain)).thenReturn(null);
 
-        final String result = api.getCookies(instance, domain);
+    final String result = api.getCookies(instance, domain);
 
-        assertEquals("", result);
-    }
+    assertEquals("", result);
+  }
 }
