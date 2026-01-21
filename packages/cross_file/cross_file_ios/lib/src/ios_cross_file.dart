@@ -6,10 +6,10 @@ import 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 
 // Note for me: Will probs need a `static Future<IOSXFile> method(Uint8List bookmarkData` method
 // instead to create persistent file.
-base class IOSXFile extends PlatformSharedStorageXFile {
+base class IOSXFile extends PlatformScopedStorageXFile {
   IOSXFile(super.params) : super.implementation();
 
-  late final Future<URL?> _originalUrl = URL.fileURLWithPath(params.path);
+  late final Future<URL?> _originalUrl = URL.fileURLWithPath(params.uri);
 
   late final Future<URL?> _bookmarkUrl = () async {
     final URL? url = await _originalUrl;
@@ -22,7 +22,6 @@ base class IOSXFile extends PlatformSharedStorageXFile {
             final URLResolvingBookmarkDataResponse response = await URL
                 .resolvingBookmarkData(bookmarkData, [], null);
             if (response.isStale) {
-              print('STALE');
               return null;
             }
             return response.url;
@@ -69,7 +68,7 @@ base class IOSXFile extends PlatformSharedStorageXFile {
       }
     }
 
-    throw UnsupportedError('cant read: ${params.path}');
+    throw UnsupportedError('cant read: ${params.uri}');
   }
 
   @override
@@ -84,7 +83,7 @@ base class IOSXFile extends PlatformSharedStorageXFile {
       }
     }
 
-    throw UnsupportedError('cant read: ${params.path}');
+    throw UnsupportedError('cant read: ${params.uri}');
   }
 
   @override
@@ -94,7 +93,7 @@ base class IOSXFile extends PlatformSharedStorageXFile {
   }
 
   @override
-  Stream<List<int>> openRead([int? start, int? end]) async* {
+  Stream<Uint8List> openRead([int? start, int? end]) async* {
     if (await _bookmarkUrl case URL url) {
       final FileHandle fileHandle = FileHandle.forReadingFromUrl(url: url);
       try {
@@ -108,7 +107,7 @@ base class IOSXFile extends PlatformSharedStorageXFile {
         await fileHandle.close();
       }
     } else {
-      throw UnsupportedError('Cant access bytes to file: ${params.path}');
+      throw UnsupportedError('Cant access bytes to file: ${params.uri}');
     }
   }
 
@@ -127,11 +126,17 @@ base class IOSXFile extends PlatformSharedStorageXFile {
       }
     }
 
-    throw UnsupportedError('Cant access bytes to file: ${params.path}');
+    throw UnsupportedError('Cant access bytes to file: ${params.uri}');
   }
 
   @override
   Future<String> readAsString({Encoding encoding = utf8}) async {
     return encoding.decode(await readAsBytes());
+  }
+
+  @override
+  Future<String?> name() {
+    // TODO: implement name
+    throw UnimplementedError();
   }
 }
