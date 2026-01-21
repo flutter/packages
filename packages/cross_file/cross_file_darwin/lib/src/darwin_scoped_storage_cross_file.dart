@@ -8,6 +8,7 @@ import 'dart:math';
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as path;
 
 import 'cross_file_darwin_apis.g.dart';
 
@@ -28,7 +29,8 @@ base class DarwinScopedStorageXFileCreationParams
 }
 
 /// Implementation of [PlatformScopedStorageXFile] for iOS and macOS.
-base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile with DarwinScopedStorageXFileExtension {
+base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile
+    with DarwinScopedStorageXFileExtension {
   /// Constructs a [DarwinScopedStorageXFile].
   DarwinScopedStorageXFile(super.params) : super.implementation();
 
@@ -84,9 +86,7 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile with Darw
   Future<int?> length() => params.api.fileSize(params.uri);
 
   @override
-  Future<String?> name() {
-    throw UnimplementedError();
-  }
+  Future<String?> name() async => path.basename(params.uri);
 
   @override
   Stream<Uint8List> openRead([int? start, int? end]) async* {
@@ -160,7 +160,8 @@ base class DarwinScopedStorageXFile extends PlatformScopedStorageXFile with Darw
 }
 
 /// Provides platform specific features for [DarwinScopedStorageXFile].
-mixin DarwinScopedStorageXFileExtension implements PlatformScopedStorageXFileExtension {
+mixin DarwinScopedStorageXFileExtension
+    implements PlatformScopedStorageXFileExtension {
   /// Attempt to create a bookmarked file that serves as a persistent reference
   /// to the file.
   ///
