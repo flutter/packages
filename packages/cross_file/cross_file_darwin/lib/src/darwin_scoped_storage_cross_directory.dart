@@ -62,7 +62,7 @@ base class DarwinScopedStorageXDirectory extends PlatformScopedStorageXDirectory
   Stream<PlatformXFileEntity> list(ListParams params) async* {
     for (final String url in await this.params.api.list(this.params.uri)) {
       final FileExistsResult existsResult = await this.params.api.fileExists(
-        this.params.uri,
+        url,
       );
       if (existsResult.isDirectory) {
         yield DarwinScopedStorageXDirectory(

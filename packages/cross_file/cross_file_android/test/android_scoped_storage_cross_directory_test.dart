@@ -70,6 +70,6 @@ void main() {
         .map((PlatformXFileEntity entity) => entity.params.uri)
         .toList();
 
-    expect(entityUris, <String>['fileUri']);
+    expect(entityUris, <String>[fileUri]);
   });
 }
