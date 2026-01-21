@@ -294,6 +294,103 @@
   XCTAssertEqual(resultImage.size.height, 1.0);
 }
 
+- (void)testExtractIconFromPinConfigWithGlyphColor {
+  NSObject<FlutterPluginRegistrar> *mockRegistrar =
+      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
+
+  FGMPlatformColor *backgroundColor = [FGMPlatformColor makeWithRed:0.0
+                                                              green:1.0
+                                                               blue:1.0
+                                                              alpha:1.0];
+  FGMPlatformColor *borderColor = [FGMPlatformColor makeWithRed:1.0
+                                                          green:0.0
+                                                           blue:1.0
+                                                          alpha:1.0];
+  FGMPlatformColor *glyphColor = [FGMPlatformColor makeWithRed:0.1
+                                                         green:0.2
+                                                          blue:0.3
+                                                         alpha:1.0];
+
+  FGMPlatformBitmapPinConfig *pinConfig =
+      [FGMPlatformBitmapPinConfig makeWithBackgroundColor:backgroundColor
+                                              borderColor:borderColor
+                                               glyphColor:glyphColor
+                                           glyphTextColor:nil
+                                                glyphText:nil
+                                              glyphBitmap:nil];
+
+  CGFloat screenScale = 3.0;
+
+  // GMSPinImage returns nil for iOS14, but let's still verify the code path
+  // doesn't crash and that colors are passed correctly.
+  FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:pinConfig], mockRegistrar, screenScale);
+}
+
+- (void)testExtractIconFromPinConfigWithGlyphText {
+  NSObject<FlutterPluginRegistrar> *mockRegistrar =
+      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
+
+  FGMPlatformColor *glyphTextColor = [FGMPlatformColor makeWithRed:1.0
+                                                             green:1.0
+                                                              blue:1.0
+                                                             alpha:1.0];
+
+  FGMPlatformBitmapPinConfig *pinConfig =
+      [FGMPlatformBitmapPinConfig makeWithBackgroundColor:nil
+                                              borderColor:nil
+                                               glyphColor:nil
+                                           glyphTextColor:glyphTextColor
+                                                glyphText:@"Hi"
+                                              glyphBitmap:nil];
+
+  CGFloat screenScale = 3.0;
+
+  // GMSPinImage returns nil for iOS14, but let's still verify the code path
+  // doesn't crash and that colors are passed correctly.
+  FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:pinConfig], mockRegistrar, screenScale);
+}
+
+- (void)testExtractIconFromPinConfigWithGlyphBitmap {
+  NSObject<FlutterPluginRegistrar> *mockRegistrar =
+      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
+  id mockImageClass = OCMClassMock([UIImage class]);
+  UIImage *testImage = [self createOnePixelImage];
+
+  OCMStub([mockRegistrar lookupKeyForAsset:@"fakeImageNameKey"]).andReturn(@"fakeAssetKey");
+  OCMStub(ClassMethod([mockImageClass imageNamed:@"fakeAssetKey"])).andReturn(testImage);
+
+  FGMPlatformBitmapAssetMap *assetBitmap =
+      [FGMPlatformBitmapAssetMap makeWithAssetName:@"fakeImageNameKey"
+                                     bitmapScaling:FGMPlatformMapBitmapScalingAuto
+                                   imagePixelRatio:1
+                                             width:nil
+                                            height:nil];
+  FGMPlatformBitmap *glyphBitmap = [FGMPlatformBitmap makeWithBitmap:assetBitmap];
+
+  FGMPlatformColor *backgroundColor = [FGMPlatformColor makeWithRed:1.0
+                                                              green:1.0
+                                                               blue:1.0
+                                                              alpha:1.0];
+  FGMPlatformColor *borderColor = [FGMPlatformColor makeWithRed:0.0
+                                                          green:0.0
+                                                           blue:0.0
+                                                          alpha:1.0];
+
+  FGMPlatformBitmapPinConfig *pinConfig =
+      [FGMPlatformBitmapPinConfig makeWithBackgroundColor:backgroundColor
+                                              borderColor:borderColor
+                                               glyphColor:nil
+                                           glyphTextColor:nil
+                                                glyphText:nil
+                                              glyphBitmap:glyphBitmap];
+
+  CGFloat screenScale = 3.0;
+
+  // GMSPinImage returns nil for iOS14, but let's still verify the code path
+  // doesn't crash and that colors are passed correctly.
+  FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:pinConfig], mockRegistrar, screenScale);
+}
+
 - (void)testIsScalableWithScaleFactorFromSize100x100to10x100 {
   CGSize originalSize = CGSizeMake(100.0, 100.0);
   CGSize targetSize = CGSizeMake(10.0, 100.0);
