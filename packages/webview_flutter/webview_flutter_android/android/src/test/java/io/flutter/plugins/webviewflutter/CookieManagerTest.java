@@ -7,6 +7,7 @@ package io.flutter.plugins.webviewflutter;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
@@ -64,4 +65,35 @@ public class CookieManagerTest {
 
     verify(instance).setAcceptThirdPartyCookies(webView, accept);
   }
+
+    @Test
+    public void getCookies_returnsCookieString() {
+        final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
+
+        final CookieManager instance = mock(CookieManager.class);
+        final String domain = "https://flutter.dev";
+        final String cookieValue = "session=12345";
+
+        // Mock the CookieManager to return the cookie string
+        when(instance.getCookie(domain)).thenReturn(cookieValue);
+
+        final String result = api.getCookies(instance, domain);
+
+        assertEquals(cookieValue, result);
+    }
+
+    @Test
+    public void getCookies_returnsEmptyStringIfNull() {
+        final PigeonApiCookieManager api = new TestProxyApiRegistrar().getPigeonApiCookieManager();
+
+        final CookieManager instance = mock(CookieManager.class);
+        final String domain = "https://flutter.dev";
+
+        // Mock the CookieManager to return null
+        when(instance.getCookie(domain)).thenReturn(null);
+
+        final String result = api.getCookies(instance, domain);
+
+        assertEquals("", result);
+    }
 }

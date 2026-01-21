@@ -98,7 +98,7 @@ class AndroidWebViewCookieManager extends PlatformWebViewCookieManager {
     if (cookies.isEmpty) {
       return [];
     }
-    
+
     final List<WebViewCookie> webViewCookies = List.of([]);
     for (final String cookie in cookies.split('; ')) {
       final List<String> cookieValue = cookie.split('=');
