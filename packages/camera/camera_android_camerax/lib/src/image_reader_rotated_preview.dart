@@ -146,6 +146,7 @@ final class _ImageReaderRotatedPreviewState
 
   @override
   Widget build(BuildContext context) {
+    print('CAMSIM99: REBUILDING IMAGE READER ROTATED PREVIEW');
     return FutureBuilder<int>(
       future: defaultDisplayRotationDegrees,
       builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
