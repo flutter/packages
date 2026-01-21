@@ -14,7 +14,7 @@ void main() {
     testPageNotFound(widget: widgetsAppBuilder(home: const ErrorScreen(null))),
   );
 
-  final Exception exception = Exception('Something went wrong!');
+  final exception = Exception('Something went wrong!');
   testWidgets(
     'shows the exception message when provided',
     testPageShowsExceptionMessage(

@@ -35,11 +35,13 @@ class SavePanelOptions {
     this.directoryPath,
     this.nameFieldStringValue,
     this.prompt,
+    this.canCreateDirectories,
   });
   final AllowedTypes? allowedFileTypes;
   final String? directoryPath;
   final String? nameFieldStringValue;
   final String? prompt;
+  final bool? canCreateDirectories;
 }
 
 /// Options for open panels.

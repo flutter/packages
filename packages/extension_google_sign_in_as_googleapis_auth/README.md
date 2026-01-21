@@ -25,7 +25,7 @@ import 'package:googleapis_auth/googleapis_auth.dart' as auth show AuthClient;
     final auth.AuthClient client = authorization.authClient(scopes: scopes);
 
     // Prepare a People Service authenticated client.
-    final PeopleServiceApi peopleApi = PeopleServiceApi(client);
+    final peopleApi = PeopleServiceApi(client);
     // Retrieve a list of connected contacts' names.
     final ListConnectionsResponse response = await peopleApi.people.connections
         .list('people/me', personFields: 'names');

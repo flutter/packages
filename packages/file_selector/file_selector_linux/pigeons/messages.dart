@@ -39,6 +39,7 @@ class PlatformFileChooserOptions {
     required this.currentName,
     required this.acceptButtonLabel,
     this.selectMultiple,
+    this.createFolders,
   });
 
   final List<PlatformTypeGroup>? allowedFileTypes;
@@ -50,6 +51,11 @@ class PlatformFileChooserOptions {
   ///
   /// Nullable because it does not apply to the "save" action.
   final bool? selectMultiple;
+
+  /// Whether to allow new folder creation.
+  ///
+  /// Nullable because it does not apply to the "open" action.
+  final bool? createFolders;
 }
 
 @HostApi()

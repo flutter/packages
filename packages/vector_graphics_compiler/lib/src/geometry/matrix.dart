@@ -198,7 +198,8 @@ class AffineMatrix {
   }
 
   @override
-  String toString() => '''
+  String toString() =>
+      '''
 [ $a, $c, $e ]
 [ $b, $d, $f ]
 [ 0.0, 0.0, 1.0 ] // _m4_10 = $_m4_10
@@ -214,7 +215,7 @@ class AffineMatrix {
 /// The transformed rect is then projected back into the plane with z equals
 /// 0.0 before computing its bounding rect.
 Rect _transformRect(Float64List transform, Rect rect) {
-  final Float64List storage = transform;
+  final storage = transform;
   final double x = rect.left;
   final double y = rect.top;
   final double w = rect.right - x;
@@ -379,8 +380,8 @@ Rect _transformRect(Float64List transform, Rect rect) {
   final double ry = storage[1] * x + storage[5] * y + storage[13];
 
   if (storage[3] == 0.0 && storage[7] == 0.0 && storage[15] == 1.0) {
-    double left = rx;
-    double right = rx;
+    var left = rx;
+    var right = rx;
     if (wx < 0) {
       left += wx;
     } else {
@@ -392,8 +393,8 @@ Rect _transformRect(Float64List transform, Rect rect) {
       right += hx;
     }
 
-    double top = ry;
-    double bottom = ry;
+    var top = ry;
+    var bottom = ry;
     if (wy < 0) {
       top += wy;
     } else {
@@ -430,13 +431,13 @@ Rect _transformRect(Float64List transform, Rect rect) {
 }
 
 double _min4(double a, double b, double c, double d) {
-  final double e = (a < b) ? a : b;
-  final double f = (c < d) ? c : d;
+  final e = (a < b) ? a : b;
+  final f = (c < d) ? c : d;
   return (e < f) ? e : f;
 }
 
 double _max4(double a, double b, double c, double d) {
-  final double e = (a > b) ? a : b;
-  final double f = (c > d) ? c : d;
+  final e = (a > b) ? a : b;
+  final f = (c > d) ? c : d;
   return (e > f) ? e : f;
 }

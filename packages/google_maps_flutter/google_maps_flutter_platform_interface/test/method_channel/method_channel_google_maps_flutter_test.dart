@@ -54,9 +54,8 @@ void main() {
     // TODO(stuartmorgan): Remove this once there is real test coverage of
     // each method, since that would cover this issue.
     test('non-void invokeMethods handle types correctly', () async {
-      const int mapId = 0;
-      final MethodChannelGoogleMapsFlutter maps =
-          MethodChannelGoogleMapsFlutter();
+      const mapId = 0;
+      final maps = MethodChannelGoogleMapsFlutter();
       configureMockMap(
         maps,
         mapId: mapId,
@@ -87,35 +86,35 @@ void main() {
       ]);
     });
     test('markers send drag event to correct streams', () async {
-      const int mapId = 1;
-      final Map<dynamic, dynamic> jsonMarkerDragStartEvent = <dynamic, dynamic>{
+      const mapId = 1;
+      final jsonMarkerDragStartEvent = <dynamic, dynamic>{
         'mapId': mapId,
         'markerId': 'drag-start-marker',
         'position': <double>[1.0, 1.0],
       };
-      final Map<dynamic, dynamic> jsonMarkerDragEvent = <dynamic, dynamic>{
+      final jsonMarkerDragEvent = <dynamic, dynamic>{
         'mapId': mapId,
         'markerId': 'drag-marker',
         'position': <double>[1.0, 1.0],
       };
-      final Map<dynamic, dynamic> jsonMarkerDragEndEvent = <dynamic, dynamic>{
+      final jsonMarkerDragEndEvent = <dynamic, dynamic>{
         'mapId': mapId,
         'markerId': 'drag-end-marker',
         'position': <double>[1.0, 1.0],
       };
 
-      final MethodChannelGoogleMapsFlutter maps =
-          MethodChannelGoogleMapsFlutter();
+      final maps = MethodChannelGoogleMapsFlutter();
       maps.ensureChannelInitialized(mapId);
 
-      final StreamQueue<MarkerDragStartEvent> markerDragStartStream =
-          StreamQueue<MarkerDragStartEvent>(
-            maps.onMarkerDragStart(mapId: mapId),
-          );
-      final StreamQueue<MarkerDragEvent> markerDragStream =
-          StreamQueue<MarkerDragEvent>(maps.onMarkerDrag(mapId: mapId));
-      final StreamQueue<MarkerDragEndEvent> markerDragEndStream =
-          StreamQueue<MarkerDragEndEvent>(maps.onMarkerDragEnd(mapId: mapId));
+      final markerDragStartStream = StreamQueue<MarkerDragStartEvent>(
+        maps.onMarkerDragStart(mapId: mapId),
+      );
+      final markerDragStream = StreamQueue<MarkerDragEvent>(
+        maps.onMarkerDrag(mapId: mapId),
+      );
+      final markerDragEndStream = StreamQueue<MarkerDragEndEvent>(
+        maps.onMarkerDragEnd(mapId: mapId),
+      );
 
       await sendPlatformMessage(
         mapId,

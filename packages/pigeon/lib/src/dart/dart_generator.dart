@@ -68,8 +68,7 @@ class DartOptions {
   /// Creates a [DartOptions] from a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   static DartOptions fromMap(Map<String, Object> map) {
-    final Iterable<dynamic>? copyrightHeader =
-        map['copyrightHeader'] as Iterable<dynamic>?;
+    final copyrightHeader = map['copyrightHeader'] as Iterable<dynamic>?;
     return DartOptions(
       copyrightHeader: copyrightHeader?.cast<String>(),
       sourceOutPath: map['sourceOutPath'] as String?,
@@ -81,7 +80,7 @@ class DartOptions {
   /// Converts a [DartOptions] to a Map representation where:
   /// `x = DartOptions.fromMap(x.toMap())`.
   Map<String, Object> toMap() {
-    final Map<String, Object> result = <String, Object>{
+    final result = <String, Object>{
       if (copyrightHeader != null) 'copyrightHeader': copyrightHeader!,
       if (sourceOutPath != null) 'sourceOutPath': sourceOutPath!,
       if (testOutPath != null) 'testOutPath': testOutPath!,
@@ -118,7 +117,7 @@ class _FfiType {
           type.typeArguments.firstOrNull != null
               ? _FfiType.fromTypeDeclaration(type.typeArguments.firstOrNull)
               : null;
-      final _FfiType ffiType = _FfiType(type: type, subTypeOne: subType);
+      final ffiType = _FfiType(type: type, subTypeOne: subType);
       return ffiType;
     } else if (type.baseName == 'Map') {
       final _FfiType? subTypeOne =
@@ -129,7 +128,7 @@ class _FfiType {
           type.typeArguments.lastOrNull != null
               ? _FfiType.fromTypeDeclaration(type.typeArguments.lastOrNull)
               : null;
-      final _FfiType ffiType = _FfiType(
+      final ffiType = _FfiType(
         type: type,
         subTypeOne: subTypeOne,
         subTypeTwo: subTypeTwo,
@@ -141,7 +140,7 @@ class _FfiType {
   }
 
   static _FfiType fromClass(Class classDefinition) {
-    final TypeDeclaration fakeType = TypeDeclaration(
+    final fakeType = TypeDeclaration(
       baseName: classDefinition.name,
       isNullable: true,
       associatedClass: classDefinition,
@@ -150,7 +149,7 @@ class _FfiType {
   }
 
   static _FfiType fromEnum(Enum enumDefinition) {
-    final TypeDeclaration fakeType = TypeDeclaration(
+    final fakeType = TypeDeclaration(
       baseName: enumDefinition.name,
       isNullable: true,
       associatedEnum: enumDefinition,
@@ -185,7 +184,7 @@ class _FfiType {
       default:
         {
           if (type.isClass) {
-            final String bridge = type.isClass ? 'Bridge' : '';
+            final bridge = type.isClass ? 'Bridge' : '';
             return 'ffi_bridge.${type.baseName}$bridge';
           }
           if (type.isEnum) {
@@ -276,9 +275,9 @@ class _FfiType {
       }
       return '${type.baseName}.values[$varName.index]';
     }
-    String asType = ' as ${getDartReturnType(forceUnwrap: true)}';
-    String castCall = '';
-    final String codecCall =
+    var asType = ' as ${getDartReturnType(forceUnwrap: true)}';
+    var castCall = '';
+    final codecCall =
         '_PigeonFfiCodec.readValue($varName${type.isEnum ? ', ${type.baseName}' : ''})${_getForceNonNullSymbol(!type.isNullable)}';
     String primitiveGetter(String converter, bool classField) {
       return classField &&
@@ -344,7 +343,7 @@ class _FfiType {
     bool withPrefix = true,
     bool asyncBlockMethod = false,
   }) {
-    final String prefix = withPrefix ? 'ffi_bridge.' : '';
+    final prefix = withPrefix ? 'ffi_bridge.' : '';
     if (type.isEnum) {
       return forceNullable || asyncBlockMethod
           ? 'NSNumber?'
@@ -434,7 +433,7 @@ class _JniType {
           type.typeArguments.firstOrNull != null
               ? _JniType.fromTypeDeclaration(type.typeArguments.firstOrNull)
               : null;
-      final _JniType jniType = _JniType(type: type, subTypeOne: subType);
+      final jniType = _JniType(type: type, subTypeOne: subType);
       return jniType;
     } else if (type.baseName == 'Map') {
       final _JniType? subTypeOne =
@@ -445,7 +444,7 @@ class _JniType {
           type.typeArguments.lastOrNull != null
               ? _JniType.fromTypeDeclaration(type.typeArguments.lastOrNull)
               : null;
-      final _JniType jniType = _JniType(
+      final jniType = _JniType(
         type: type,
         subTypeOne: subTypeOne,
         subTypeTwo: subTypeTwo,
@@ -457,7 +456,7 @@ class _JniType {
   }
 
   static _JniType fromClass(Class classDefinition) {
-    final TypeDeclaration fakeType = TypeDeclaration(
+    final fakeType = TypeDeclaration(
       baseName: classDefinition.name,
       isNullable: true,
       associatedClass: classDefinition,
@@ -466,7 +465,7 @@ class _JniType {
   }
 
   static _JniType fromEnum(Enum enumDefinition) {
-    final TypeDeclaration fakeType = TypeDeclaration(
+    final fakeType = TypeDeclaration(
       baseName: enumDefinition.name,
       isNullable: true,
       associatedEnum: enumDefinition,
@@ -582,9 +581,9 @@ class _JniType {
     if (type.isClass || type.isEnum) {
       return '${type.baseName}.fromJni($varName)${_getForceNonNullSymbol(!type.isNullable)}';
     }
-    String asType = ' as ${getDartReturnType(true)}';
-    String castCall = '';
-    final String codecCall =
+    var asType = ' as ${getDartReturnType(true)}';
+    var castCall = '';
+    final codecCall =
         '_PigeonJniCodec.readValue($varName)${_getForceNonNullSymbol(!type.isNullable)}';
     String primitiveGetter(String converter, bool unwrap) {
       return unwrap
@@ -693,8 +692,8 @@ String _jniArgumentsToDartArguments(
   List<Parameter> parameters, {
   bool isAsynchronous = false,
 }) {
-  final List<String> argumentSignature = <String>[];
-  for (final Parameter parameter in parameters) {
+  final argumentSignature = <String>[];
+  for (final parameter in parameters) {
     final _JniType jniType = _JniType.fromTypeDeclaration(parameter.type);
     argumentSignature.add(
       jniType.getToDartCall(
@@ -711,8 +710,8 @@ String _ffiArgumentsToDartArguments(
   List<Parameter> parameters, {
   bool isAsynchronous = false,
 }) {
-  final List<String> argumentSignature = <String>[];
-  for (final Parameter parameter in parameters) {
+  final argumentSignature = <String>[];
+  for (final parameter in parameters) {
     final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
     argumentSignature.add(
       ffiType.getToDartCall(
@@ -803,7 +802,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, prefer_null_aware_operators, omit_local_variable_types, omit_obvious_local_variable_types, unused_shown_name, unnecessary_import, no_leading_underscores_for_local_identifiers',
     );
     indent.newln();
   }
@@ -874,8 +873,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     );
     indent.addScoped('enum ${anEnum.name} {', '}', () {
       for (final EnumMember member in anEnum.members) {
-        final String separatorSymbol =
-            member == anEnum.members.last ? ';' : ',';
+        final separatorSymbol = member == anEnum.members.last ? ';' : ',';
         addDocumentationComments(
           indent,
           member.documentationComments,
@@ -953,8 +951,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       classDefinition.documentationComments,
       docCommentSpec,
     );
-    final String sealed = classDefinition.isSealed ? 'sealed ' : '';
-    final String implements =
+    final sealed = classDefinition.isSealed ? 'sealed ' : '';
+    final implements =
         classDefinition.superClassName != null
             ? 'extends ${classDefinition.superClassName} '
             : '';
@@ -1018,11 +1016,11 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       for (final NamedType field in getFieldsInSerializationOrder(
         classDefinition,
       )) {
-        final String required =
+        final required =
             !field.type.isNullable && field.defaultValue == null
                 ? 'required '
                 : '';
-        final String defaultValueString =
+        final defaultValueString =
             field.defaultValue == null ? '' : ' = ${field.defaultValue}';
         indent.writeln('${required}this.${field.name}$defaultValueString,');
       }
@@ -1088,8 +1086,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
         'return ${ffiClass.ffiName}.alloc().initWith${toUpperCamelCase(fields.first.name)}(',
         ');',
         () {
-          bool needsName = false;
-          for (final NamedType field in fields) {
+          var needsName = false;
+          for (final field in fields) {
             final _FfiType ffiType = _FfiType.fromTypeDeclaration(field.type);
             indent.writeln(
               '${needsName ? '${field.name}: ' : ''}${ffiType.getToFfiCall(field.type, '${field.name}${ffiType.type.isEnum ? '${_getNullableSymbol(ffiType.type.isNullable)}.index' : ''}', ffiType, forceNonNull: true, classField: true)},',
@@ -1166,15 +1164,15 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.newln();
     }
     void writeValueDecode(NamedType field, int index) {
-      final String resultAt = 'result[$index]';
-      final String castCallPrefix = field.type.isNullable ? '?' : '!';
+      final resultAt = 'result[$index]';
+      final castCallPrefix = field.type.isNullable ? '?' : '!';
       final String genericType = _makeGenericTypeArguments(field.type);
       final String castCall = _makeGenericCastCall(field.type);
       if (field.type.typeArguments.isNotEmpty) {
         indent.add('($resultAt as $genericType?)$castCallPrefix$castCall');
       } else {
-        final String castCallForcePrefix = field.type.isNullable ? '' : '!';
-        final String castString =
+        final castCallForcePrefix = field.type.isNullable ? '' : '!';
+        final castString =
             field.type.baseName == 'Object'
                 ? ''
                 : ' as $genericType${_getNullableSymbol(field.type.isNullable)}';
@@ -1268,7 +1266,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             indent.writeln('writeValue(buffer, value.index);');
           }
         } else {
-          final String encodeString =
+          final encodeString =
               customType.type == CustomTypes.customClass
                   ? '.encode()'
                   : '.index';
@@ -1300,7 +1298,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             );
           }
         } else if (customType.type == CustomTypes.customEnum) {
-          indent.writeln('final int? value = readValue(buffer) as int?;');
+          indent.writeln('final value = readValue(buffer) as int?;');
           indent.writeln(
             'return value == null ? null : ${customType.name}.values[value];',
           );
@@ -1308,7 +1306,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       });
     }
 
-    final EnumeratedType overflowClass = EnumeratedType(
+    final overflowClass = EnumeratedType(
       _overflowClassName,
       maximumCodecFieldKey,
       CustomTypes.customClass,
@@ -1331,7 +1329,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           indent.writeln('buffer.putUint8(4);');
           indent.writeln('buffer.putInt64(value);');
         }, addTrailingNewline: false);
-        int nonSerializedClassCount = 0;
+        var nonSerializedClassCount = 0;
         enumerate(enumeratedTypes, (
           int index,
           final EnumeratedType customType,
@@ -1352,8 +1350,8 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
       indent.addScoped('{', '}', () {
         indent.write('switch (type) ');
         indent.addScoped('{', '}', () {
-          int nonSerializedClassCount = 0;
-          for (final EnumeratedType customType in enumeratedTypes) {
+          var nonSerializedClassCount = 0;
+          for (final customType in enumeratedTypes) {
             if (customType.associatedClass?.isSealed ?? false) {
               nonSerializedClassCount++;
             } else if (customType.offset(nonSerializedClassCount) <
@@ -1422,7 +1420,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             method.parameters,
             useJni: true,
           );
-          final String asyncContinuation =
+          final asyncContinuation =
               method.isAsynchronous
                   ? '${method.parameters.isNotEmpty ? ', ' : ''}JObject continuation'
                   : '';
@@ -1431,7 +1429,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
             '}',
             () {
               indent.writeScoped('if (dartApi != null) {', '} ', () {
-                final String methodCall =
+                final methodCall =
                     'dartApi!.${method.name}(${_jniArgumentsToDartArguments(method.parameters, isAsynchronous: method.isAsynchronous)})';
                 if (method.returnType.isVoid) {
                   if (method.isAsynchronous) {
@@ -1516,7 +1514,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
           signature += ')';
           indent.writeScoped('$signature {', '}', () {
             indent.writeScoped('if (dartApi != null) {', '} ', () {
-              final String methodCall =
+              final methodCall =
                   'dartApi!.${method.name}(${_ffiArgumentsToDartArguments(method.parameters, isAsynchronous: method.isAsynchronous)})';
               if (method.returnType.isVoid) {
                 if (method.isAsynchronous) {
@@ -1693,9 +1691,9 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
     AstHostApi api, {
     required String dartPackageName,
   }) {
-    final String dartApiName = '${api.name}ForNativeInterop';
-    final String jniApiRegistrarName = 'jni_bridge.${api.name}Registrar';
-    final String ffiApiRegistrarName = 'ffi_bridge.${api.name}Setup';
+    final dartApiName = '${api.name}ForNativeInterop';
+    final jniApiRegistrarName = 'jni_bridge.${api.name}Registrar';
+    final ffiApiRegistrarName = 'ffi_bridge.${api.name}Setup';
     indent.newln();
     indent.writeScoped('class $dartApiName {', '}', () {
       indent.format('''
@@ -1735,7 +1733,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 final _JniType returnType = _JniType.fromTypeDeclaration(
                   method.returnType,
                 );
-                final String methodCallReturnString =
+                final methodCallReturnString =
                     returnType.type.baseName == 'void' && method.isAsynchronous
                         ? ''
                         : (!returnType.nonNullableNeedsUnwrapping &&
@@ -1760,14 +1758,14 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                 final _FfiType returnType = _FfiType.fromTypeDeclaration(
                   method.returnType,
                 );
-                final String methodCallReturnString =
+                final methodCallReturnString =
                     returnType.type.isVoid || method.isAsynchronous
                         ? ''
                         : 'final ${returnType.getFfiCallReturnType(forceNullable: true)} res = ';
                 indent.writeln(
                   'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();',
                 );
-                final String forceRes =
+                final forceRes =
                     !returnType.type.isNullable &&
                             (returnType.type.baseName == 'int' ||
                                 returnType.type.baseName == 'double' ||
@@ -1837,7 +1835,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
   }
 
   String _getFfiMethodCallArguments(Iterable<Parameter> parameters) {
-    bool needsName = false;
+    var needsName = false;
     return parameters
         .map((Parameter parameter) {
           final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
@@ -2018,7 +2016,7 @@ ${api.name}({
     Indent indent, {
     required String dartPackageName,
   }) {
-    final cb.Parameter binaryMessengerParameter = cb.Parameter(
+    final binaryMessengerParameter = cb.Parameter(
       (cb.ParameterBuilder builder) =>
           builder
             ..name = 'binaryMessenger'
@@ -2026,7 +2024,7 @@ ${api.name}({
             ..named = true,
     );
 
-    final cb.Field binaryMessengerField = cb.Field(
+    final binaryMessengerField = cb.Field(
       (cb.FieldBuilder builder) =>
           builder
             ..name = '${varNamePrefix}binaryMessenger'
@@ -2034,7 +2032,7 @@ ${api.name}({
             ..modifier = cb.FieldModifier.final$,
     );
 
-    final cb.Class instanceManagerApi = cb.Class(
+    final instanceManagerApi = cb.Class(
       (cb.ClassBuilder builder) =>
           builder
             ..name = dartInstanceManagerApiClassName
@@ -2092,7 +2090,7 @@ ${api.name}({
                   ])
                   ..body = cb.Block.of(
                     cb.Block((cb.BlockBuilder builder) {
-                      final StringBuffer messageHandlerSink = StringBuffer();
+                      final messageHandlerSink = StringBuffer();
                       writeFlutterMethodMessageHandler(
                         Indent(messageHandlerSink),
                         name: 'removeStrongReferenceName',
@@ -2143,7 +2141,7 @@ ${api.name}({
                     ),
                   )
                   ..body = cb.Block((cb.BlockBuilder builder) {
-                    final StringBuffer messageCallSink = StringBuffer();
+                    final messageCallSink = StringBuffer();
                     writeHostMethodMessageCall(
                       Indent(messageCallSink),
                       addSuffixVariable: false,
@@ -2177,7 +2175,7 @@ ${api.name}({
                     '/// This is typically called after a hot restart.',
                   ])
                   ..body = cb.Block((cb.BlockBuilder builder) {
-                    final StringBuffer messageCallSink = StringBuffer();
+                    final messageCallSink = StringBuffer();
                     writeHostMethodMessageCall(
                       Indent(messageCallSink),
                       addSuffixVariable: false,
@@ -2193,7 +2191,7 @@ ${api.name}({
             ]),
     );
 
-    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    final emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(
       DartFormatter(
         languageVersion: Version(3, 6, 0),
@@ -2218,14 +2216,14 @@ ${api.name}({
     AstProxyApi api, {
     required String dartPackageName,
   }) {
-    const String codecName = '_${classNamePrefix}ProxyApiBaseCodec';
+    const codecName = '_${classNamePrefix}ProxyApiBaseCodec';
 
     // Each API has a private codec instance used by every host method,
     // constructor, or non-static field.
-    final String codecInstanceName = '_${varNamePrefix}codec${api.name}';
+    final codecInstanceName = '_${varNamePrefix}codec${api.name}';
 
     // AST class used by code_builder to generate the code.
-    final cb.Class proxyApi = cb.Class(
+    final proxyApi = cb.Class(
       (cb.ClassBuilder builder) =>
           builder
             ..name = api.name
@@ -2341,7 +2339,7 @@ ${api.name}({
             ),
     );
 
-    final cb.DartEmitter emitter = cb.DartEmitter(useNullSafetySyntax: true);
+    final emitter = cb.DartEmitter(useNullSafetySyntax: true);
     indent.format(_formatter.format('${proxyApi.accept(emitter)}'));
   }
 
@@ -2356,7 +2354,7 @@ ${api.name}({
     required String dartPackageName,
     required String dartOutputPackageName,
   }) {
-    final Indent indent = Indent(sink);
+    final indent = Indent(sink);
     final String sourceOutPath = generatorOptions.dartOut ?? '';
     final String testOutPath = generatorOptions.testOut ?? '';
     _writeTestPrologue(generatorOptions, root, indent);
@@ -2371,7 +2369,6 @@ ${api.name}({
       // If we can't figure out the package name or the relative path doesn't
       // include a 'lib' directory, try relative path import which only works in
       // certain (older) versions of Dart.
-      // TODO(gaaclarke): We should add a command-line parameter to override this import.
       indent.writeln(
         "import '${_escapeForDartSingleQuotedString(relativeDartPath)}';",
       );
@@ -2390,7 +2387,7 @@ ${api.name}({
     );
     for (final AstHostApi api in root.apis.whereType<AstHostApi>()) {
       if (api.dartHostTestHandler != null) {
-        final AstFlutterApi mockApi = AstFlutterApi(
+        final mockApi = AstFlutterApi(
           name: api.dartHostTestHandler!,
           methods: api.methods,
           documentationComments: api.documentationComments,
@@ -2417,7 +2414,7 @@ ${api.name}({
     indent.writeln('// ${getGeneratedCodeWarning()}');
     indent.writeln('// $seeAlsoWarning');
     indent.writeln(
-      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, no_leading_underscores_for_local_identifiers',
+      '// ignore_for_file: public_member_api_docs, non_constant_identifier_names, avoid_as, unused_import, unnecessary_parenthesis, unnecessary_import, no_leading_underscores_for_local_identifiers, omit_obvious_local_variable_types',
     );
     indent.writeln('// ignore_for_file: avoid_relative_lib_imports');
   }
@@ -2717,7 +2714,7 @@ class _PigeonJniCodec {
 
   void _writeConvertNumberWrapper(Indent indent, Root root) {
     indent.newln();
-    int typeNum = 4;
+    var typeNum = 4;
     indent.format('''
       Object? convertNumberWrapperToDart(ffi_bridge.NumberWrapper value) {
         switch (value.type) {
@@ -3071,7 +3068,7 @@ if (wrapped == null) {
 }
 ''');
         indent.writeScoped('switch (type) {', '}', () {
-          int nonSerializedClassCount = 0;
+          var nonSerializedClassCount = 0;
           for (int i = totalCustomCodecKeysAllowed; i < types.length; i++) {
             if (types[i].associatedClass?.isSealed ?? false) {
               nonSerializedClassCount++;
@@ -3145,16 +3142,15 @@ if (wrapped == null) {
     bool insideAsyncMethod = true,
   }) {
     final String? arguments = _getArgumentsForMethodCall(parameters);
-    final String sendArgument =
-        arguments == null ? 'null' : '<Object?>[$arguments]';
+    final sendArgument = arguments == null ? 'null' : '<Object?>[$arguments]';
 
-    final String channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
-    final String constOrFinal = addSuffixVariable ? 'final' : 'const';
+    final channelSuffix = addSuffixVariable ? '\$$_suffixVarName' : '';
+    final constOrFinal = addSuffixVariable ? 'final' : 'const';
     indent.writeln(
-      "$constOrFinal String ${varNamePrefix}channelName = '$channelName$channelSuffix';",
+      "$constOrFinal ${varNamePrefix}channelName = '$channelName$channelSuffix';",
     );
     indent.writeScoped(
-      'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
+      'final ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       ');',
       () {
         indent.writeln('${varNamePrefix}channelName,');
@@ -3164,22 +3160,22 @@ if (wrapped == null) {
     );
     final String returnTypeName = _makeGenericTypeArguments(returnType);
     final String genericCastCall = _makeGenericCastCall(returnType);
-    const String accessor = '${varNamePrefix}replyList[0]';
+    const accessor = '${varNamePrefix}replyList[0]';
     // Avoid warnings from pointlessly casting to `Object?`.
-    final String nullablyTypedAccessor =
+    final nullablyTypedAccessor =
         returnTypeName == 'Object'
             ? accessor
             : '($accessor as $returnTypeName?)';
-    final String nullHandler =
+    final nullHandler =
         returnType.isNullable ? (genericCastCall.isEmpty ? '' : '?') : '!';
-    String returnStatement = 'return';
+    var returnStatement = 'return';
     if (!returnType.isVoid) {
       returnStatement =
           '$returnStatement $nullablyTypedAccessor$nullHandler$genericCastCall';
     }
     returnStatement = '$returnStatement;';
 
-    const String sendFutureVar = '${varNamePrefix}sendFuture';
+    const sendFutureVar = '${varNamePrefix}sendFuture';
     indent.writeln(
       'final Future<Object?> $sendFutureVar = ${varNamePrefix}channel.send($sendArgument);',
     );
@@ -3192,8 +3188,7 @@ if (wrapped == null) {
     }
 
     indent.format('''
-final List<Object?>? ${varNamePrefix}replyList =
-\t\tawait $sendFutureVar as List<Object?>?;
+final ${varNamePrefix}replyList = await $sendFutureVar as List<Object?>?;
 if (${varNamePrefix}replyList == null) {
 \tthrow _createConnectionError(${varNamePrefix}channelName);
 } else if (${varNamePrefix}replyList.length > 1) {
@@ -3246,15 +3241,14 @@ if (${varNamePrefix}replyList == null) {
     indent.write('');
     indent.addScoped('{', '}', () {
       indent.writeln(
-        'final BasicMessageChannel<Object?> ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
+        'final ${varNamePrefix}channel = BasicMessageChannel<Object?>(',
       );
       indent.nest(2, () {
-        final String channelSuffix =
-            addSuffixVariable ? r'$messageChannelSuffix' : '';
+        final channelSuffix = addSuffixVariable ? r'$messageChannelSuffix' : '';
         indent.writeln("'$channelName$channelSuffix', $pigeonChannelCodec,");
         indent.writeln('binaryMessenger: binaryMessenger);');
       });
-      final String messageHandlerSetterWithOpeningParentheses =
+      final messageHandlerSetterWithOpeningParentheses =
           isMockHandler
               ? '_testBinaryMessengerBinding!.defaultBinaryMessenger.setMockDecodedMessageHandler<Object?>(${varNamePrefix}channel, '
               : '${varNamePrefix}channel.setMessageHandler(';
@@ -3269,16 +3263,15 @@ if (${varNamePrefix}replyList == null) {
         );
         indent.addScoped('{', '});', () {
           final String returnTypeString = addGenericTypesNullable(returnType);
-          final bool isAsync = isAsynchronous;
-          const String emptyReturnStatement =
-              'return wrapResponse(empty: true);';
+          final isAsync = isAsynchronous;
+          const emptyReturnStatement = 'return wrapResponse(empty: true);';
           String call;
           if (parameters.isEmpty) {
             call = 'api.$name()';
           } else {
             indent.writeln('assert(message != null,');
             indent.writeln("'Argument for $channelName was null.');");
-            const String argsArray = 'args';
+            const argsArray = 'args';
             indent.writeln(
               'final List<Object?> $argsArray = (message as List<Object?>?)!;',
             );
@@ -3290,7 +3283,7 @@ if (${varNamePrefix}replyList == null) {
               final String genericArgType = _makeGenericTypeArguments(arg.type);
               final String castCall = _makeGenericCastCall(arg.type);
 
-              final String leftHandSide = 'final $argType? $argName';
+              final leftHandSide = 'final $argType? $argName';
 
               indent.writeln(
                 '$leftHandSide = ($argsArray[$count] as $genericArgType?)${castCall.isEmpty ? '' : '?$castCall'};',
@@ -3327,8 +3320,8 @@ if (${varNamePrefix}replyList == null) {
                 indent.writeln('final $returnTypeString output = $call;');
               }
 
-              const String returnExpression = 'output';
-              final String returnStatement =
+              const returnExpression = 'output';
+              final returnStatement =
                   isMockHandler
                       ? 'return <Object?>[$returnExpression];'
                       : 'return wrapResponse(result: $returnExpression);';
@@ -3399,11 +3392,11 @@ String _getJniMethodParameterSignature(
   bool addTrailingComma = false,
   bool isAsynchronous = false,
 }) {
-  String signature = '';
+  var signature = '';
   if (parameters.isEmpty) {
     return signature;
   }
-  for (final Parameter parameter in parameters) {
+  for (final parameter in parameters) {
     final _JniType jniType = _JniType.fromTypeDeclaration(parameter.type);
     signature +=
         '${jniType.getJniCallReturnType(isAsynchronous)} ${parameter.name}${addTrailingComma || parameters.length > 1 ? ',' : ''}';
@@ -3416,11 +3409,11 @@ String _getFfiMethodParameterSignature(
   bool addTrailingComma = false,
   bool isAsynchronous = false,
 }) {
-  String signature = '';
+  var signature = '';
   if (parameters.isEmpty) {
     return signature;
   }
-  for (final Parameter parameter in parameters) {
+  for (final parameter in parameters) {
     final _FfiType ffiType = _FfiType.fromTypeDeclaration(parameter.type);
     signature +=
         '${ffiType.getFfiCallReturnType()} ${parameter.name}${addTrailingComma || parameters.length > 1 ? ',' : ''}';
@@ -3437,7 +3430,7 @@ String _getMethodParameterSignature(
   bool useFfi = false,
   bool isAsynchronous = false,
 }) {
-  String signature = '';
+  var signature = '';
   if (parameters.isEmpty) {
     return signature;
   }
@@ -3468,12 +3461,11 @@ String _getMethodParameterSignature(
       parameters.where((Parameter p) => !p.isPositional).toList();
 
   String getParameterString(Parameter p) {
-    final String required = p.isRequired && !p.isPositional ? 'required ' : '';
+    final required = p.isRequired && !p.isPositional ? 'required ' : '';
 
     final String type = addGenericTypesNullable(p.type);
 
-    final String defaultValue =
-        p.defaultValue == null ? '' : ' = ${p.defaultValue}';
+    final defaultValue = p.defaultValue == null ? '' : ' = ${p.defaultValue}';
     return '$required$type ${p.name}$defaultValue';
   }
 
@@ -3491,19 +3483,18 @@ String _getMethodParameterSignature(
   if (requiredPositionalParams.isNotEmpty) {
     signature = baseParameterString;
   }
-  final String trailingComma =
+  final trailingComma =
       optionalPositionalParams.isNotEmpty || namedParams.isNotEmpty ? ',' : '';
-  final String baseParams =
-      signature.isNotEmpty ? '$signature$trailingComma ' : '';
+  final baseParams = signature.isNotEmpty ? '$signature$trailingComma ' : '';
   if (optionalPositionalParams.isNotEmpty) {
-    final String trailingComma =
+    final trailingComma =
         requiredPositionalParams.length + optionalPositionalParams.length > 2
             ? ','
             : '';
     return '$baseParams[$optionalParameterString$trailingComma]';
   }
   if (namedParams.isNotEmpty) {
-    final String trailingComma =
+    final trailingComma =
         addTrailingComma ||
                 requiredPositionalParams.length + namedParams.length > 2
             ? ', '
@@ -3564,7 +3555,7 @@ String addGenericTypesNullable(TypeDeclaration type, {bool useJni = false}) {
 
 /// Converts [inputPath] to a posix absolute path.
 String _posixify(String inputPath) {
-  final path.Context context = path.Context(style: path.Style.posix);
+  final context = path.Context(style: path.Style.posix);
   return context.fromUri(path.toUri(path.absolute(inputPath)));
 }
 

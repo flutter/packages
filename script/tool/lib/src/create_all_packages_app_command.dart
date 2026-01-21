@@ -34,18 +34,24 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     ProcessRunner processRunner = const ProcessRunner(),
     Platform platform = const LocalPlatform(),
   }) : super(packagesDir, processRunner: processRunner, platform: platform) {
-    argParser.addOption(_outputDirectoryFlag,
-        defaultsTo: packagesDir.parent.path,
-        help: 'The path the directory to create the "$allPackagesProjectName" '
-            'project in.\n'
-            'Defaults to the repository root.');
-    argParser.addOption(_legacySourceFlag,
-        help: 'A partial project directory to use as a source for replacing '
-            'portions of the created app. All top-level directories in the '
-            'source will replace the corresponding directories in the output '
-            'directory post-create.\n\n'
-            'The replacement will be done before any tool-driven '
-            'modifications.');
+    argParser.addOption(
+      _outputDirectoryFlag,
+      defaultsTo: packagesDir.parent.path,
+      help:
+          'The path the directory to create the "$allPackagesProjectName" '
+          'project in.\n'
+          'Defaults to the repository root.',
+    );
+    argParser.addOption(
+      _legacySourceFlag,
+      help:
+          'A partial project directory to use as a source for replacing '
+          'portions of the created app. All top-level directories in the '
+          'source will replace the corresponding directories in the output '
+          'directory post-create.\n\n'
+          'The replacement will be done before any tool-driven '
+          'modifications.',
+    );
   }
 
   static const String _legacySourceFlag = 'legacy-source';
@@ -76,15 +82,16 @@ class CreateAllPackagesAppCommand extends PackageCommand {
 
     final String? legacySource = getNullableStringArg(_legacySourceFlag);
     if (legacySource != null) {
-      final Directory legacyDir =
-          packagesDir.fileSystem.directory(legacySource);
+      final Directory legacyDir = packagesDir.fileSystem.directory(
+        legacySource,
+      );
       await _replaceWithLegacy(target: _appDirectory, source: legacyDir);
     }
 
     final Set<String> excluded = getExcludedPackageNames();
     if (excluded.isNotEmpty) {
       print('Exluding the following plugins from the combined build:');
-      for (final String plugin in excluded) {
+      for (final plugin in excluded) {
         print('  $plugin');
       }
       print('');
@@ -100,7 +107,8 @@ class CreateAllPackagesAppCommand extends PackageCommand {
     if (!platform.isWindows) {
       if (!await runPubGet(app, processRunner, platform)) {
         printError(
-            "Failed to generate native build files via 'flutter pub get'");
+          "Failed to generate native build files via 'flutter pub get'",
+        );
         throw ToolExit(_exitGenNativeBuildFilesFailed);
       }
     }
@@ -116,19 +124,18 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   }
 
   Future<int> _createApp() async {
-    return processRunner.runAndStream(
-      flutterCommand,
-      <String>[
-        'create',
-        '--template=app',
-        '--project-name=$allPackagesProjectName',
-        _appDirectory.path,
-      ],
-    );
+    return processRunner.runAndStream(flutterCommand, <String>[
+      'create',
+      '--template=app',
+      '--project-name=$allPackagesProjectName',
+      _appDirectory.path,
+    ]);
   }
 
-  Future<void> _replaceWithLegacy(
-      {required Directory target, required Directory source}) async {
+  Future<void> _replaceWithLegacy({
+    required Directory target,
+    required Directory source,
+  }) async {
     if (!source.existsSync()) {
       printError('No such legacy source directory: ${source.path}');
       throw ToolExit(_exitMissingLegacySource);
@@ -148,14 +155,19 @@ class CreateAllPackagesAppCommand extends PackageCommand {
   void _copyDirectory({required Directory target, required Directory source}) {
     target.createSync(recursive: true);
     for (final FileSystemEntity entity in source.listSync(recursive: true)) {
-      final List<String> subcomponents =
-          p.split(p.relative(entity.path, from: source.path));
+      final List<String> subcomponents = p.split(
+        p.relative(entity.path, from: source.path),
+      );
       if (entity is Directory) {
-        childDirectoryWithSubcomponents(target, subcomponents)
-            .createSync(recursive: true);
+        childDirectoryWithSubcomponents(
+          target,
+          subcomponents,
+        ).createSync(recursive: true);
       } else if (entity is File) {
-        final File targetFile =
-            childFileWithSubcomponents(target, subcomponents);
+        final File targetFile = childFileWithSubcomponents(
+          target,
+          subcomponents,
+        );
         targetFile.parent.createSync(recursive: true);
         entity.copySync(targetFile.path);
       } else {
@@ -182,7 +194,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
       throw ToolExit(_exitMissingFile);
     }
 
-    final StringBuffer output = StringBuffer();
+    final output = StringBuffer();
     for (final String line in file.readAsLinesSync()) {
       List<String>? replacementLines;
       for (final MapEntry<String, List<String>> replacement
@@ -219,9 +231,7 @@ class CreateAllPackagesAppCommand extends PackageCommand {
         .childDirectory('app')
         .listSync()
         .whereType<File>()
-        .firstWhere(
-          (File file) => file.basename.startsWith('build.gradle'),
-        );
+        .firstWhere((File file) => file.basename.startsWith('build.gradle'));
 
     final bool gradleFileIsKotlin = gradleFile.basename.endsWith('kts');
 
@@ -235,12 +245,12 @@ dependencies {}
 ''');
     }
 
-    final String lifecycleDependency = gradleFileIsKotlin
+    final lifecycleDependency = gradleFileIsKotlin
         ? '    implementation("androidx.lifecycle:lifecycle-runtime:2.2.0-rc01")'
         : "    implementation 'androidx.lifecycle:lifecycle-runtime:2.2.0-rc01'";
 
     // Desugaring is required for interactive_media_ads.
-    final String desugaringDependency = gradleFileIsKotlin
+    final desugaringDependency = gradleFileIsKotlin
         ? '    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")'
         : "    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'";
 
@@ -251,7 +261,7 @@ dependencies {}
           'compileSdk': <String>['compileSdk = 36']
         else ...<String, List<String>>{
           'compileSdkVersion': <String>['compileSdk 36'],
-        }
+        },
       },
       regexReplacements: <RegExp, List<String>>{
         // Desugaring is required for interactive_media_ads.
@@ -290,25 +300,20 @@ dependencies {}
     // specific language features via SDK version, so using a different one
     // can cause compilation failures.
     final Pubspec originalPubspec = app.parsePubspec();
-    const String dartSdkKey = 'sdk';
+    const dartSdkKey = 'sdk';
     final VersionConstraint dartSdkConstraint =
         originalPubspec.environment[dartSdkKey] ??
-            VersionConstraint.compatibleWith(
-              Version.parse('3.0.0'),
-            );
+        VersionConstraint.compatibleWith(Version.parse('3.0.0'));
 
     final Map<String, PathDependency> pluginDeps =
         await _getValidPathDependencies();
-    final Pubspec pubspec = Pubspec(
+    final pubspec = Pubspec(
       allPackagesProjectName,
       description: 'Flutter app containing all 1st party plugins.',
       version: Version.parse('1.0.0+1'),
-      environment: <String, VersionConstraint>{
-        dartSdkKey: dartSdkConstraint,
-      },
-      dependencies: <String, Dependency>{
-        'flutter': SdkDependency('flutter'),
-      }..addAll(pluginDeps),
+      environment: <String, VersionConstraint>{dartSdkKey: dartSdkConstraint},
+      dependencies: <String, Dependency>{'flutter': SdkDependency('flutter')}
+        ..addAll(pluginDeps),
       devDependencies: <String, Dependency>{
         'flutter_test': SdkDependency('flutter'),
       },
@@ -332,8 +337,7 @@ dependencies {}
   }
 
   Future<Map<String, PathDependency>> _getValidPathDependencies() async {
-    final Map<String, PathDependency> pathDependencies =
-        <String, PathDependency>{};
+    final pathDependencies = <String, PathDependency>{};
 
     await for (final PackageEnumerationEntry entry in getTargetPackages()) {
       final RepositoryPackage package = entry.package;
@@ -368,13 +372,13 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
   }
 
   String _pubspecMapString(Map<String, Object?> values) {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
 
     for (final MapEntry<String, Object?> entry in values.entries) {
       buffer.writeln();
       final Object? entryValue = entry.value;
       if (entryValue is VersionConstraint) {
-        String value = entryValue.toString();
+        var value = entryValue.toString();
         // Range constraints require quoting.
         if (value.startsWith('>') || value.startsWith('<')) {
           value = "'$value'";
@@ -392,8 +396,10 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
           // path.split leaves a \ on drive components that isn't necessary,
           // and confuses pub, so remove it.
           if (firstComponent.endsWith(r':\')) {
-            components[0] =
-                firstComponent.substring(0, firstComponent.length - 1);
+            components[0] = firstComponent.substring(
+              0,
+              firstComponent.length - 1,
+            );
           }
           depPath = p.posix.joinAll(components);
         }
@@ -415,8 +421,9 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
       return;
     }
 
-    final File podfile =
-        app.platformDirectory(FlutterPlatform.macos).childFile('Podfile');
+    final File podfile = app
+        .platformDirectory(FlutterPlatform.macos)
+        .childFile('Podfile');
     _adjustFile(
       podfile,
       replacements: <String, List<String>>{
@@ -436,7 +443,7 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
       replacements: <String, List<String>>{
         // macOS 10.15 is required by in_app_purchase.
         'MACOSX_DEPLOYMENT_TARGET': <String>[
-          '				MACOSX_DEPLOYMENT_TARGET = 10.15;'
+          '				MACOSX_DEPLOYMENT_TARGET = 10.15;',
         ],
       },
     );
@@ -452,7 +459,7 @@ dev_dependencies:${_pubspecMapString(pubspec.devDependencies)}
       replacements: <String, List<String>>{
         // iOS 14 is required by google_maps_flutter.
         'IPHONEOS_DEPLOYMENT_TARGET': <String>[
-          '				IPHONEOS_DEPLOYMENT_TARGET = 14.0;'
+          '				IPHONEOS_DEPLOYMENT_TARGET = 14.0;',
         ],
       },
     );

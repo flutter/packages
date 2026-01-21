@@ -60,9 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _playVideo(XFile? file) async {
     if (file != null && mounted) {
       await _disposeVideoController();
-      final VideoPlayerController controller = VideoPlayerController.file(
-        File(file.path),
-      );
+      final controller = VideoPlayerController.file(File(file.path));
       _controller = controller;
       await controller.setVolume(1.0);
       await controller.initialize();
@@ -105,24 +103,23 @@ class _MyHomePageState extends State<MyHomePage> {
           int? quality,
         ) async {
           try {
-            final ImageOptions imageOptions = ImageOptions(
+            final imageOptions = ImageOptions(
               maxWidth: maxWidth,
               maxHeight: maxHeight,
               imageQuality: quality,
             );
-            final List<XFile> pickedFileList =
-                isMedia
-                    ? await _picker.getMedia(
-                      options: MediaOptions(
-                        allowMultiple: allowMultiple,
-                        imageOptions: imageOptions,
-                      ),
-                    )
-                    : await _picker.getMultiImageWithOptions(
-                      options: MultiImagePickerOptions(
-                        imageOptions: imageOptions,
-                      ),
-                    );
+            final List<XFile> pickedFileList = isMedia
+                ? await _picker.getMedia(
+                    options: MediaOptions(
+                      allowMultiple: allowMultiple,
+                      imageOptions: imageOptions,
+                    ),
+                  )
+                : await _picker.getMultiImageWithOptions(
+                    options: MultiImagePickerOptions(
+                      imageOptions: imageOptions,
+                    ),
+                  );
             if (pickedFileList.isNotEmpty && context.mounted) {
               _showPickedSnackBar(context, pickedFileList);
             }
@@ -142,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
           int? quality,
         ) async {
           try {
-            final List<XFile> pickedFileList = <XFile>[];
+            final pickedFileList = <XFile>[];
             final XFile? media = _firstOrNull(
               await _picker.getMedia(
                 options: MediaOptions(
@@ -258,21 +255,23 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 Semantics(
                   label: 'image_picker_example_picked_image',
-                  child:
-                      mime == null || mime.startsWith('image/')
-                          ? Image.file(
-                            File(_mediaFileList![index].path),
-                            errorBuilder: (
-                              BuildContext context,
-                              Object error,
-                              StackTrace? stackTrace,
-                            ) {
-                              return const Center(
-                                child: Text('This image type is not supported'),
-                              );
-                            },
-                          )
-                          : _buildInlineVideoPlayer(index),
+                  child: mime == null || mime.startsWith('image/')
+                      ? Image.file(
+                          File(_mediaFileList![index].path),
+                          errorBuilder:
+                              (
+                                BuildContext context,
+                                Object error,
+                                StackTrace? stackTrace,
+                              ) {
+                                return const Center(
+                                  child: Text(
+                                    'This image type is not supported',
+                                  ),
+                                );
+                              },
+                        )
+                      : _buildInlineVideoPlayer(index),
                 ),
               ],
             );
@@ -294,7 +293,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildInlineVideoPlayer(int index) {
-    final VideoPlayerController controller = VideoPlayerController.file(
+    final controller = VideoPlayerController.file(
       File(_mediaFileList![index].path),
     );
     controller.setVolume(1.0);
@@ -454,7 +453,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Text? _getRetrieveErrorWidget() {
     if (_retrieveDataError != null) {
-      final Text result = Text(_retrieveDataError!);
+      final result = Text(_retrieveDataError!);
       _retrieveDataError = null;
       return result;
     }
@@ -509,18 +508,15 @@ class _MyHomePageState extends State<MyHomePage> {
             TextButton(
               child: const Text('PICK'),
               onPressed: () {
-                final double? width =
-                    maxWidthController.text.isNotEmpty
-                        ? double.parse(maxWidthController.text)
-                        : null;
-                final double? height =
-                    maxHeightController.text.isNotEmpty
-                        ? double.parse(maxHeightController.text)
-                        : null;
-                final int? quality =
-                    qualityController.text.isNotEmpty
-                        ? int.parse(qualityController.text)
-                        : null;
+                final double? width = maxWidthController.text.isNotEmpty
+                    ? double.parse(maxWidthController.text)
+                    : null;
+                final double? height = maxHeightController.text.isNotEmpty
+                    ? double.parse(maxHeightController.text)
+                    : null;
+                final int? quality = qualityController.text.isNotEmpty
+                    ? int.parse(qualityController.text)
+                    : null;
                 onPick(width, height, quality);
                 Navigator.of(context).pop();
               },

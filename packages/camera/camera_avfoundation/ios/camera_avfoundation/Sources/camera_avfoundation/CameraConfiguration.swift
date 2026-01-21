@@ -13,33 +13,29 @@ import UIKit
 
 /// Factory block returning an FLTCaptureDevice.
 /// Used in tests to inject a video capture device into DefaultCamera.
-typealias VideoCaptureDeviceFactory = (_ cameraName: String) -> FLTCaptureDevice
+typealias VideoCaptureDeviceFactory = (_ cameraName: String) -> CaptureDevice
 
-typealias AudioCaptureDeviceFactory = () -> FLTCaptureDevice
+typealias AudioCaptureDeviceFactory = () -> CaptureDevice
 
-typealias CaptureSessionFactory = () -> FLTCaptureSession
+typealias CaptureSessionFactory = () -> CaptureSession
 
-typealias AssetWriterFactory = (_ assetUrl: URL, _ fileType: AVFileType) throws -> FLTAssetWriter
+typealias AssetWriterFactory = (_ assetUrl: URL, _ fileType: AVFileType) throws -> AssetWriter
 
 typealias InputPixelBufferAdaptorFactory = (
-  _ input: FLTAssetWriterInput, _ settings: [String: Any]?
+  _ input: AssetWriterInput, _ settings: [String: Any]?
 ) ->
-  FLTAssetWriterInputPixelBufferAdaptor
-
-/// Determines the video dimensions (width and height) for a given capture device format.
-/// Used in tests to mock CMVideoFormatDescriptionGetDimensions.
-typealias VideoDimensionsConverter = (FLTCaptureDeviceFormat) -> CMVideoDimensions
+  AssetWriterInputPixelBufferAdaptor
 
 /// A configuration object that centralizes dependencies for `DefaultCamera`.
 class CameraConfiguration {
   var mediaSettings: FCPPlatformMediaSettings
   var mediaSettingsWrapper: FLTCamMediaSettingsAVWrapper
   var captureSessionQueue: DispatchQueue
-  var videoCaptureSession: FLTCaptureSession
-  var audioCaptureSession: FLTCaptureSession
+  var videoCaptureSession: CaptureSession
+  var audioCaptureSession: CaptureSession
   var videoCaptureDeviceFactory: VideoCaptureDeviceFactory
   let audioCaptureDeviceFactory: AudioCaptureDeviceFactory
-  let captureDeviceInputFactory: FLTCaptureDeviceInputFactory
+  let captureDeviceInputFactory: CaptureDeviceInputFactory
   var assetWriterFactory: AssetWriterFactory
   var inputPixelBufferAdaptorFactory: InputPixelBufferAdaptorFactory
   var videoDimensionsConverter: VideoDimensionsConverter
@@ -54,7 +50,7 @@ class CameraConfiguration {
     audioCaptureDeviceFactory: @escaping AudioCaptureDeviceFactory,
     captureSessionFactory: @escaping CaptureSessionFactory,
     captureSessionQueue: DispatchQueue,
-    captureDeviceInputFactory: FLTCaptureDeviceInputFactory,
+    captureDeviceInputFactory: CaptureDeviceInputFactory,
     initialCameraName: String
   ) {
     self.mediaSettings = mediaSettings
@@ -74,22 +70,14 @@ class CameraConfiguration {
     }
 
     self.assetWriterFactory = { url, fileType in
-      var error: NSError?
-      let writer = FLTDefaultAssetWriter(url: url, fileType: fileType, error: &error)
-
-      if let error = error {
-        throw error
-      }
-
-      return writer
+      return try AVAssetWriter(outputURL: url, fileType: fileType)
     }
 
     self.inputPixelBufferAdaptorFactory = { assetWriterInput, sourcePixelBufferAttributes in
-      let adaptor = AVAssetWriterInputPixelBufferAdaptor(
-        assetWriterInput: assetWriterInput.input,
+      return AVAssetWriterInputPixelBufferAdaptor(
+        assetWriterInput: assetWriterInput.avInput,
         sourcePixelBufferAttributes: sourcePixelBufferAttributes
       )
-      return FLTDefaultAssetWriterInputPixelBufferAdaptor(adaptor: adaptor)
     }
   }
 }

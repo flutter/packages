@@ -1,3 +1,16 @@
+## 0.5.2+4
+
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
+
+## 0.5.2+3
+
+* Updates to Pigeon 26.
+* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+
+## 0.5.2+2
+
+* Removed mockito-inline and updated to mockito-core 5.17.0.
+
 ## 0.5.2+1
 
 * Resolves Gradle 9 deprecations.

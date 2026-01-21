@@ -42,15 +42,14 @@ TableSpan getMouseTrackingSpan(
 void main() {
   group('TableView.builder', () {
     test('creates correct delegate', () {
-      final TableView tableView = TableView.builder(
+      final tableView = TableView.builder(
         columnCount: 3,
         rowCount: 2,
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cellBuilder: (_, __) => cell,
       );
-      final TableCellBuilderDelegate delegate =
-          tableView.delegate as TableCellBuilderDelegate;
+      final delegate = tableView.delegate as TableCellBuilderDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
@@ -180,7 +179,7 @@ void main() {
     group('Infinite spans - ', () {
       late ScrollController verticalController;
       late ScrollController horizontalController;
-      const TableSpan largeSpan = TableSpan(extent: FixedTableSpanExtent(200));
+      const largeSpan = TableSpan(extent: FixedTableSpanExtent(200));
 
       setUp(() {
         verticalController = ScrollController();
@@ -838,7 +837,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Nothing pinned ---
-        bool calledOutOfBounds = false;
+        var calledOutOfBounds = false;
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -1371,7 +1370,7 @@ void main() {
         WidgetTester tester,
       ) async {
         // Nothing pinned ---
-        bool calledOutOfBounds = false;
+        var calledOutOfBounds = false;
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -1640,8 +1639,8 @@ void main() {
         WidgetTester tester,
       ) async {
         // Nothing pinned ---
-        bool calledRowOutOfBounds = false;
-        bool calledColumnOutOfBounds = false;
+        var calledRowOutOfBounds = false;
+        var calledColumnOutOfBounds = false;
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -1978,15 +1977,9 @@ void main() {
         // cell if it extends into an area we have not computed the layout for
         // yet.
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final List<int> mergedRows = List<int>.generate(
-          10,
-          (int index) => index,
-        );
+        final mergedRows = List<int>.generate(10, (int index) => index);
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final List<int> mergedColumns = List<int>.generate(
-          10,
-          (int index) => index + 1,
-        );
+        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -2040,16 +2033,13 @@ void main() {
       testWidgets('merged column that exceeds metrics will assert', (
         WidgetTester tester,
       ) async {
-        final List<Object> exceptions = <Object>[];
+        final exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) columnConfig = (start: 1, span: 10);
-        final List<int> mergedColumns = List<int>.generate(
-          10,
-          (int index) => index + 1,
-        );
+        final mergedColumns = List<int>.generate(10, (int index) => index + 1);
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -2094,16 +2084,13 @@ void main() {
       testWidgets('merged row that exceeds metrics will assert', (
         WidgetTester tester,
       ) async {
-        final List<Object> exceptions = <Object>[];
+        final exceptions = <Object>[];
         final FlutterExceptionHandler? oldHandler = FlutterError.onError;
         FlutterError.onError = (FlutterErrorDetails details) {
           exceptions.add(details.exception);
         };
         const ({int start, int span}) rowConfig = (start: 0, span: 10);
-        final List<int> mergedRows = List<int>.generate(
-          10,
-          (int index) => index,
-        );
+        final mergedRows = List<int>.generate(10, (int index) => index);
         await tester.pumpWidget(
           MaterialApp(
             home: getTableView(
@@ -2148,7 +2135,7 @@ void main() {
 
   group('TableView.list', () {
     test('creates correct delegate', () {
-      final TableView tableView = TableView.list(
+      final tableView = TableView.list(
         rowBuilder: (_) => span,
         columnBuilder: (_) => span,
         cells: const <List<TableViewCell>>[
@@ -2156,8 +2143,7 @@ void main() {
           <TableViewCell>[cell, cell, cell],
         ],
       );
-      final TableCellListDelegate delegate =
-          tableView.delegate as TableCellListDelegate;
+      final delegate = tableView.delegate as TableCellListDelegate;
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.pinnedRowCount, 0);
       expect(delegate.rowCount, 2);
@@ -2215,10 +2201,9 @@ void main() {
     testWidgets('parent data and table vicinities', (
       WidgetTester tester,
     ) async {
-      final Map<TableVicinity, UniqueKey> childKeys =
-          <TableVicinity, UniqueKey>{};
-      const TableSpan span = TableSpan(extent: FixedTableSpanExtent(200));
-      final TableView tableView = TableView.builder(
+      final childKeys = <TableVicinity, UniqueKey>{};
+      const span = TableSpan(extent: FixedTableSpanExtent(200));
+      final tableView = TableView.builder(
         rowCount: 5,
         columnCount: 5,
         columnBuilder: (_) => span,
@@ -2274,17 +2259,16 @@ void main() {
     });
 
     testWidgets('TableSpanPadding', (WidgetTester tester) async {
-      final Map<TableVicinity, UniqueKey> childKeys =
-          <TableVicinity, UniqueKey>{};
-      const TableSpan columnSpan = TableSpan(
+      final childKeys = <TableVicinity, UniqueKey>{};
+      const columnSpan = TableSpan(
         extent: FixedTableSpanExtent(200),
         padding: TableSpanPadding(leading: 10.0, trailing: 20.0),
       );
-      const TableSpan rowSpan = TableSpan(
+      const rowSpan = TableSpan(
         extent: FixedTableSpanExtent(200),
         padding: TableSpanPadding(leading: 30.0, trailing: 40.0),
       );
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
         columnBuilder: (_) => columnSpan,
@@ -2382,17 +2366,14 @@ void main() {
     });
 
     testWidgets('TableSpan gesture hit testing', (WidgetTester tester) async {
-      int tapCounter = 0;
+      var tapCounter = 0;
       // Rows
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => tapCounter++)
-                    : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => tapCounter++) : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2433,11 +2414,8 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         rowBuilder: (_) => span,
-        columnBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => tapCounter++)
-                    : span,
+        columnBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => tapCounter++) : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2473,21 +2451,16 @@ void main() {
       expect(tapCounter, 8);
 
       // Intersecting - main axis sets precedence
-      int rowTapCounter = 0;
-      int columnTapCounter = 0;
+      var rowTapCounter = 0;
+      var columnTapCounter = 0;
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => rowTapCounter++)
-                    : span,
-        columnBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => columnTapCounter++)
-                    : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => rowTapCounter++) : span,
+        columnBuilder: (int index) => index.isEven
+            ? getTappableSpan(index, () => columnTapCounter++)
+            : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2535,16 +2508,11 @@ void main() {
         mainAxis: Axis.horizontal,
         rowCount: 50,
         columnCount: 50,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => rowTapCounter++)
-                    : span,
-        columnBuilder:
-            (int index) =>
-                index.isEven
-                    ? getTappableSpan(index, () => columnTapCounter++)
-                    : span,
+        rowBuilder: (int index) =>
+            index.isEven ? getTappableSpan(index, () => rowTapCounter++) : span,
+        columnBuilder: (int index) => index.isEven
+            ? getTappableSpan(index, () => columnTapCounter++)
+            : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -2572,11 +2540,11 @@ void main() {
     testWidgets('provides correct details in TableSpanExtentDelegate', (
       WidgetTester tester,
     ) async {
-      final TestTableSpanExtent columnExtent = TestTableSpanExtent();
-      final TestTableSpanExtent rowExtent = TestTableSpanExtent();
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final TableView tableView = TableView.builder(
+      final columnExtent = TestTableSpanExtent();
+      final rowExtent = TestTableSpanExtent();
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final tableView = TableView.builder(
         rowCount: 10,
         columnCount: 10,
         columnBuilder: (_) => TableSpan(extent: columnExtent),
@@ -2628,15 +2596,14 @@ void main() {
     ) async {
       // Huge padding, first span layout
       // Column-wise
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(100),
-              // This padding is so high, only the first column should be laid out.
-              padding: TableSpanPadding(leading: 2000),
-            ),
+        columnBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(100),
+          // This padding is so high, only the first column should be laid out.
+          padding: TableSpanPadding(leading: 2000),
+        ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2666,11 +2633,10 @@ void main() {
         rowCount: 50,
         columnCount: 50,
         // This padding is so high, no children should be laid out.
-        rowBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(100),
-              padding: TableSpanPadding(leading: 2000),
-            ),
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(100),
+          padding: TableSpanPadding(leading: 2000),
+        ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2701,11 +2667,11 @@ void main() {
     ) async {
       // Check with gradually accrued paddings
       // Column-wise
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder:
-            (_) => const TableSpan(extent: FixedTableSpanExtent(200)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(200)),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2732,11 +2698,10 @@ void main() {
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        columnBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(200),
-              padding: TableSpanPadding(trailing: 200),
-            ),
+        columnBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+          padding: TableSpanPadding(trailing: 200),
+        ),
         rowBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2790,11 +2755,10 @@ void main() {
       tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
-        rowBuilder:
-            (_) => const TableSpan(
-              extent: FixedTableSpanExtent(200),
-              padding: TableSpanPadding(trailing: 200),
-            ),
+        rowBuilder: (_) => const TableSpan(
+          extent: FixedTableSpanExtent(200),
+          padding: TableSpanPadding(trailing: 200),
+        ),
         columnBuilder: (_) => span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
@@ -2823,9 +2787,9 @@ void main() {
     });
 
     testWidgets('regular layout - no pinning', (WidgetTester tester) async {
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final TableView tableView = TableView.builder(
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -2902,9 +2866,9 @@ void main() {
 
     testWidgets('pinned rows and columns', (WidgetTester tester) async {
       // Just pinned rows
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      TableView tableView = TableView.builder(
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      var tableView = TableView.builder(
         rowCount: 50,
         pinnedRowCount: 1,
         columnCount: 50,
@@ -3144,9 +3108,9 @@ void main() {
     });
 
     testWidgets('only paints visible cells', (WidgetTester tester) async {
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final TableView tableView = TableView.builder(
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
@@ -3213,49 +3177,47 @@ void main() {
     testWidgets('paints decorations in correct order', (
       WidgetTester tester,
     ) async {
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         rowCount: 2,
         columnCount: 2,
-        columnBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              padding: index == 0 ? const TableSpanPadding(trailing: 10) : null,
-              foregroundDecoration: TableSpanDecoration(
-                consumeSpanPadding: false,
-                borderRadius: BorderRadius.circular(10.0),
-                border: const TableSpanBorder(
-                  trailing: BorderSide(color: Colors.orange, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                // consumePadding true by default
-                color: index.isEven ? Colors.red : null,
-                borderRadius: BorderRadius.circular(30.0),
-              ),
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          padding: index == 0 ? const TableSpanPadding(trailing: 10) : null,
+          foregroundDecoration: TableSpanDecoration(
+            consumeSpanPadding: false,
+            borderRadius: BorderRadius.circular(10.0),
+            border: const TableSpanBorder(
+              trailing: BorderSide(color: Colors.orange, width: 3),
             ),
-        rowBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              padding: index == 1 ? const TableSpanPadding(leading: 10) : null,
-              foregroundDecoration: TableSpanDecoration(
-                // consumePadding true by default
-                borderRadius: BorderRadius.circular(30.0),
-                border: const TableSpanBorder(
-                  leading: BorderSide(color: Colors.green, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                color: index.isOdd ? Colors.blue : null,
-                borderRadius: BorderRadius.circular(30.0),
-                consumeSpanPadding: false,
-              ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            // consumePadding true by default
+            color: index.isEven ? Colors.red : null,
+            borderRadius: BorderRadius.circular(30.0),
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          padding: index == 1 ? const TableSpanPadding(leading: 10) : null,
+          foregroundDecoration: TableSpanDecoration(
+            // consumePadding true by default
+            borderRadius: BorderRadius.circular(30.0),
+            border: const TableSpanBorder(
+              leading: BorderSide(color: Colors.green, width: 3),
             ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+            borderRadius: BorderRadius.circular(30.0),
+            consumeSpanPadding: false,
+          ),
+        ),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3381,36 +3343,34 @@ void main() {
         mainAxis: Axis.horizontal,
         rowCount: 2,
         columnCount: 2,
-        columnBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              foregroundDecoration: const TableSpanDecoration(
-                border: TableSpanBorder(
-                  trailing: BorderSide(color: Colors.orange, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                color: index.isEven ? Colors.red : null,
-              ),
+        columnBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              trailing: BorderSide(color: Colors.orange, width: 3),
             ),
-        rowBuilder:
-            (int index) => TableSpan(
-              extent: const FixedTableSpanExtent(200.0),
-              foregroundDecoration: const TableSpanDecoration(
-                border: TableSpanBorder(
-                  leading: BorderSide(color: Colors.green, width: 3),
-                ),
-              ),
-              backgroundDecoration: TableSpanDecoration(
-                color: index.isOdd ? Colors.blue : null,
-              ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isEven ? Colors.red : null,
+          ),
+        ),
+        rowBuilder: (int index) => TableSpan(
+          extent: const FixedTableSpanExtent(200.0),
+          foregroundDecoration: const TableSpanDecoration(
+            border: TableSpanBorder(
+              leading: BorderSide(color: Colors.green, width: 3),
             ),
+          ),
+          backgroundDecoration: TableSpanDecoration(
+            color: index.isOdd ? Colors.blue : null,
+          ),
+        ),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3494,23 +3454,23 @@ void main() {
       WidgetTester tester,
     ) async {
       // Both reversed - Regression test for https://github.com/flutter/flutter/issues/135386
-      TableView tableView = TableView.builder(
+      var tableView = TableView.builder(
         verticalDetails: const ScrollableDetails.vertical(reverse: true),
         horizontalDetails: const ScrollableDetails.horizontal(reverse: true),
         rowCount: 2,
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3547,16 +3507,16 @@ void main() {
         pinnedRowCount: 1,
         columnCount: 2,
         pinnedColumnCount: 1,
-        columnBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
-        rowBuilder:
-            (int index) => const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        columnBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
+        rowBuilder: (int index) =>
+            const TableSpan(extent: FixedTableSpanExtent(200.0)),
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: Container(
               height: 200,
               width: 200,
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
           );
         },
@@ -3587,21 +3547,19 @@ void main() {
     });
 
     testWidgets('mouse handling', (WidgetTester tester) async {
-      int enterCounter = 0;
-      int exitCounter = 0;
-      final TableView tableView = TableView.builder(
+      var enterCounter = 0;
+      var exitCounter = 0;
+      final tableView = TableView.builder(
         rowCount: 50,
         columnCount: 50,
         columnBuilder: (_) => span,
-        rowBuilder:
-            (int index) =>
-                index.isEven
-                    ? getMouseTrackingSpan(
-                      index,
-                      onEnter: (_) => enterCounter++,
-                      onExit: (_) => exitCounter++,
-                    )
-                    : span,
+        rowBuilder: (int index) => index.isEven
+            ? getMouseTrackingSpan(
+                index,
+                onEnter: (_) => enterCounter++,
+                onExit: (_) => exitCounter++,
+              )
+            : span,
         cellBuilder: (_, TableVicinity vicinity) {
           return TableViewCell(
             child: SizedBox.square(
@@ -3649,37 +3607,34 @@ void main() {
       // Regression tests for https://github.com/flutter/flutter/issues/143526
       // These tests all use the same collection of merged pinned cells in a
       // variety of combinations.
-      final Map<TableVicinity, ({int start, int span})> bothMerged =
-          <TableVicinity, ({int start, int span})>{
-            TableVicinity.zero: (start: 0, span: 2),
-            const TableVicinity(row: 1, column: 0): (start: 0, span: 2),
-            const TableVicinity(row: 0, column: 1): (start: 0, span: 2),
-            const TableVicinity(row: 1, column: 1): (start: 0, span: 2),
-          };
+      final bothMerged = <TableVicinity, ({int start, int span})>{
+        TableVicinity.zero: (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 0): (start: 0, span: 2),
+        const TableVicinity(row: 0, column: 1): (start: 0, span: 2),
+        const TableVicinity(row: 1, column: 1): (start: 0, span: 2),
+      };
 
-      final Map<TableVicinity, ({int start, int span})> rowMerged =
-          <TableVicinity, ({int start, int span})>{
-            const TableVicinity(row: 2, column: 0): (start: 2, span: 2),
-            const TableVicinity(row: 3, column: 0): (start: 2, span: 2),
-            const TableVicinity(row: 4, column: 1): (start: 4, span: 3),
-            const TableVicinity(row: 5, column: 1): (start: 4, span: 3),
-            const TableVicinity(row: 6, column: 1): (start: 4, span: 3),
-          };
+      final rowMerged = <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 2, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 3, column: 0): (start: 2, span: 2),
+        const TableVicinity(row: 4, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 5, column: 1): (start: 4, span: 3),
+        const TableVicinity(row: 6, column: 1): (start: 4, span: 3),
+      };
 
-      final Map<TableVicinity, ({int start, int span})> columnMerged =
-          <TableVicinity, ({int start, int span})>{
-            const TableVicinity(row: 0, column: 2): (start: 2, span: 2),
-            const TableVicinity(row: 0, column: 3): (start: 2, span: 2),
-            const TableVicinity(row: 1, column: 4): (start: 4, span: 3),
-            const TableVicinity(row: 1, column: 5): (start: 4, span: 3),
-            const TableVicinity(row: 1, column: 6): (start: 4, span: 3),
-          };
-      const TableSpan span = TableSpan(extent: FixedTableSpanExtent(75));
+      final columnMerged = <TableVicinity, ({int start, int span})>{
+        const TableVicinity(row: 0, column: 2): (start: 2, span: 2),
+        const TableVicinity(row: 0, column: 3): (start: 2, span: 2),
+        const TableVicinity(row: 1, column: 4): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 5): (start: 4, span: 3),
+        const TableVicinity(row: 1, column: 6): (start: 4, span: 3),
+      };
+      const span = TableSpan(extent: FixedTableSpanExtent(75));
 
       testWidgets('Normal axes', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,
           ),
@@ -3787,9 +3742,9 @@ void main() {
       });
 
       testWidgets('Vertical reversed', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -3898,9 +3853,9 @@ void main() {
       });
 
       testWidgets('Horizontal reversed', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             controller: verticalController,
           ),
@@ -4009,9 +3964,9 @@ void main() {
       });
 
       testWidgets('Both reversed', (WidgetTester tester) async {
-        final ScrollController verticalController = ScrollController();
-        final ScrollController horizontalController = ScrollController();
-        final TableView tableView = TableView.builder(
+        final verticalController = ScrollController();
+        final horizontalController = ScrollController();
+        final tableView = TableView.builder(
           verticalDetails: ScrollableDetails.vertical(
             reverse: true,
             controller: verticalController,
@@ -4125,19 +4080,19 @@ void main() {
   testWidgets(
     'Merged unpinned cells following pinned cells are laid out correctly',
     (WidgetTester tester) async {
-      final ScrollController verticalController = ScrollController();
-      final ScrollController horizontalController = ScrollController();
-      final Set<TableVicinity> mergedCell = <TableVicinity>{
+      final verticalController = ScrollController();
+      final horizontalController = ScrollController();
+      final mergedCell = <TableVicinity>{
         const TableVicinity(row: 2, column: 2),
         const TableVicinity(row: 3, column: 2),
         const TableVicinity(row: 2, column: 3),
         const TableVicinity(row: 3, column: 3),
       };
-      final TableView tableView = TableView.builder(
+      final tableView = TableView.builder(
         columnCount: 10,
         rowCount: 10,
-        columnBuilder:
-            (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
+        columnBuilder: (_) =>
+            const TableSpan(extent: FixedTableSpanExtent(100)),
         rowBuilder: (_) => const TableSpan(extent: FixedTableSpanExtent(100)),
         cellBuilder: (BuildContext context, TableVicinity vicinity) {
           if (mergedCell.contains(vicinity)) {

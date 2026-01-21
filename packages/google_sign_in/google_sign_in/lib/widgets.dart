@@ -74,18 +74,15 @@ class GoogleUserCircleAvatar extends StatelessWidget {
     // Placeholder to use when there is no photo URL, and while the photo is
     // loading. Uses the first character of the display name (if it has one),
     // or the first letter of the email address if it does not.
-    final List<String?> placeholderCharSources = <String?>[
+    final placeholderCharSources = <String?>[
       identity.displayName,
       identity.email,
       '-',
     ];
-    final String placeholderChar =
-        placeholderCharSources
-            .firstWhere(
-              (String? str) => str != null && str.trimLeft().isNotEmpty,
-            )!
-            .trimLeft()[0]
-            .toUpperCase();
+    final String placeholderChar = placeholderCharSources
+        .firstWhere((String? str) => str != null && str.trimLeft().isNotEmpty)!
+        .trimLeft()[0]
+        .toUpperCase();
     final Widget placeholder = Center(
       child: Text(placeholderChar, textAlign: TextAlign.center),
     );

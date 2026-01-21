@@ -20,7 +20,8 @@ class FixCommand extends PackageLoopingCommand {
   final String name = 'fix';
 
   @override
-  final String description = 'Fixes packages using dart fix.\n\n'
+  final String description =
+      'Fixes packages using dart fix.\n\n'
       'This command requires "dart" and "flutter" to be in your path, and '
       'assumes that dependencies have already been fetched (e.g., by running '
       'the analyze command first).';
@@ -34,9 +35,10 @@ class FixCommand extends PackageLoopingCommand {
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    final int exitCode = await processRunner.runAndStream(
-        'dart', <String>['fix', '--apply'],
-        workingDir: package.directory);
+    final int exitCode = await processRunner.runAndStream('dart', <String>[
+      'fix',
+      '--apply',
+    ], workingDir: package.directory);
     if (exitCode != 0) {
       printError('Unable to automatically fix package.');
       return PackageResult.fail();

@@ -33,6 +33,7 @@
 - devtools_extensions
 - fake_async
 - ffi
+- ffigen
 - file
 - file_testing
 - gcloud
@@ -51,6 +52,7 @@
 - meta
 - mime
 - mockito
+- objective_c
 - path
 - package_config
 - platform

@@ -16,7 +16,7 @@ protocol CameraDeviceDiscoverer {
     withDeviceTypes deviceTypes: [AVCaptureDevice.DeviceType],
     mediaType: AVMediaType,
     position: AVCaptureDevice.Position
-  ) -> [FLTCaptureDevice]
+  ) -> [CaptureDevice]
 }
 
 /// The default implementation of the `CameraDeviceDiscoverer` protocol.
@@ -26,18 +26,11 @@ class DefaultCameraDeviceDiscoverer: NSObject, CameraDeviceDiscoverer {
     withDeviceTypes deviceTypes: [AVCaptureDevice.DeviceType],
     mediaType: AVMediaType,
     position: AVCaptureDevice.Position
-  ) -> [FLTCaptureDevice] {
-    let discoverySession = AVCaptureDevice.DiscoverySession(
+  ) -> [CaptureDevice] {
+    return AVCaptureDevice.DiscoverySession(
       deviceTypes: deviceTypes,
       mediaType: mediaType,
       position: position
-    )
-
-    let devices = discoverySession.devices
-    let deviceControllers = devices.map { device in
-      FLTDefaultCaptureDevice(device: device) as FLTCaptureDevice
-    }
-
-    return deviceControllers
+    ).devices
   }
 }

@@ -64,8 +64,8 @@ class HomePage extends StatelessWidget {
               ElevatedButton(
                 style: style,
                 child: const Text('Open a get multi directories dialog'),
-                onPressed:
-                    () => Navigator.pushNamed(context, '/multi-directories'),
+                onPressed: () =>
+                    Navigator.pushNamed(context, '/multi-directories'),
               ),
             ],
           ],

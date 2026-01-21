@@ -54,11 +54,10 @@ class GoogleMapController {
     // Register the view factory that will hold the `_div` that holds the map in the DOM.
     // The `_div` needs to be created outside of the ViewFactory (and cached!) so we can
     // use it to create the [gmaps.Map] in the `init()` method of this class.
-    _div =
-        createDivElement()
-          ..id = _getViewType(mapId)
-          ..style.width = '100%'
-          ..style.height = '100%';
+    _div = createDivElement()
+      ..id = _getViewType(mapId)
+      ..style.width = '100%'
+      ..style.height = '100%';
 
     ui_web.platformViewRegistry.registerViewFactory(
       _getViewType(mapId),
@@ -606,12 +605,11 @@ class GoogleMapController {
 
   /// Updates the set of [TileOverlay]s.
   void updateTileOverlays(Set<TileOverlay> newOverlays) {
-    final MapsObjectUpdates<TileOverlay> updates =
-        MapsObjectUpdates<TileOverlay>.from(
-          _tileOverlays,
-          newOverlays,
-          objectName: 'tileOverlay',
-        );
+    final updates = MapsObjectUpdates<TileOverlay>.from(
+      _tileOverlays,
+      newOverlays,
+      objectName: 'tileOverlay',
+    );
     assert(
       _tileOverlaysController != null,
       'Cannot update tile overlays after dispose().',

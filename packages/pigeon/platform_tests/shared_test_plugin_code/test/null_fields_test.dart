@@ -7,12 +7,9 @@ import 'package:shared_test_plugin_code/src/generated/null_fields.gen.dart';
 
 void main() {
   test('test constructor with values', () {
-    final NullFieldsSearchRequest request = NullFieldsSearchRequest(
-      query: 'query',
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(query: 'query', identifier: 1);
 
-    final NullFieldsSearchReply reply = NullFieldsSearchReply(
+    final reply = NullFieldsSearchReply(
       result: 'result',
       error: 'error',
       indices: <int>[1, 2, 3],
@@ -28,15 +25,13 @@ void main() {
   });
 
   test('test request constructor with nulls', () {
-    final NullFieldsSearchRequest request = NullFieldsSearchRequest(
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(identifier: 1);
 
     expect(request.query, isNull);
   });
 
   test('test reply constructor with nulls', () {
-    final NullFieldsSearchReply reply = NullFieldsSearchReply();
+    final reply = NullFieldsSearchReply();
 
     expect(reply.result, isNull);
     expect(reply.error, isNull);
@@ -96,28 +91,20 @@ void main() {
   });
 
   test('test request encode with values', () {
-    final NullFieldsSearchRequest request = NullFieldsSearchRequest(
-      query: 'query',
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(query: 'query', identifier: 1);
 
     expect(request.encode(), <Object?>['query', 1]);
   });
 
   test('test request encode with null', () {
-    final NullFieldsSearchRequest request = NullFieldsSearchRequest(
-      identifier: 1,
-    );
+    final request = NullFieldsSearchRequest(identifier: 1);
 
     expect(request.encode(), <Object?>[null, 1]);
   });
 
   test('test reply encode with values', () {
-    final NullFieldsSearchRequest request = NullFieldsSearchRequest(
-      query: 'query',
-      identifier: 1,
-    );
-    final NullFieldsSearchReply reply = NullFieldsSearchReply(
+    final request = NullFieldsSearchRequest(query: 'query', identifier: 1);
+    final reply = NullFieldsSearchReply(
       result: 'result',
       error: 'error',
       indices: <int>[1, 2, 3],
@@ -135,7 +122,7 @@ void main() {
   });
 
   test('test reply encode with nulls', () {
-    final NullFieldsSearchReply reply = NullFieldsSearchReply();
+    final reply = NullFieldsSearchReply();
 
     expect(reply.encode(), <Object?>[null, null, null, null, null]);
   });

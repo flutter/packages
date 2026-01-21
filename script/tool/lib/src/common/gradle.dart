@@ -36,7 +36,8 @@ class GradleProject {
 
   /// The path to the Gradle wrapper file for the project.
   File get gradleWrapper => androidDirectory.childFile(
-      platform.isWindows ? _gradleWrapperWindows : _gradleWrapperNonWindows);
+    platform.isWindows ? _gradleWrapperWindows : _gradleWrapperNonWindows,
+  );
 
   /// Whether or not the project is ready to have Gradle commands run on it
   /// (i.e., whether the `flutter` tool has generated the necessary files).
@@ -48,10 +49,10 @@ class GradleProject {
     List<String> additionalTasks = const <String>[],
     List<String> arguments = const <String>[],
   }) {
-    return processRunner.runAndStream(
-      gradleWrapper.path,
-      <String>[task, ...additionalTasks, ...arguments],
-      workingDir: androidDirectory,
-    );
+    return processRunner.runAndStream(gradleWrapper.path, <String>[
+      task,
+      ...additionalTasks,
+      ...arguments,
+    ], workingDir: androidDirectory);
   }
 }

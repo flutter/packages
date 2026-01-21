@@ -14,10 +14,6 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_android.dart';
 import 'messages.g.dart';
-import 'serialization.dart';
-
-// TODO(stuartmorgan): Remove the dependency on platform interface toJson
-// methods. Channel serialization details should all be package-internal.
 
 /// The non-test implementation of `_apiProvider`.
 MapsApi _productionApiProvider(int mapId) {
@@ -332,10 +328,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     final Set<TileOverlay> previousSet = currentTileOverlays != null
         ? currentTileOverlays.values.toSet()
         : <TileOverlay>{};
-    final _TileOverlayUpdates updates = _TileOverlayUpdates.from(
-      previousSet,
-      newTileOverlays,
-    );
+    final updates = _TileOverlayUpdates.from(previousSet, newTileOverlays);
     _tileOverlays[mapId] = keyTileOverlayId(newTileOverlays);
     return _hostApi(mapId).updateTileOverlays(
       updates.tileOverlaysToAdd
@@ -565,39 +558,38 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
       'On Android width must be set when position is set for ground overlays.',
     );
 
-    final PlatformMapViewCreationParams creationParams =
-        PlatformMapViewCreationParams(
-          initialCameraPosition: _platformCameraPositionFromCameraPosition(
-            widgetConfiguration.initialCameraPosition,
-          ),
-          mapConfiguration: mapConfiguration,
-          initialMarkers: mapObjects.markers
-              .map(_platformMarkerFromMarker)
-              .toList(),
-          initialPolygons: mapObjects.polygons
-              .map(_platformPolygonFromPolygon)
-              .toList(),
-          initialPolylines: mapObjects.polylines
-              .map(_platformPolylineFromPolyline)
-              .toList(),
-          initialCircles: mapObjects.circles
-              .map(_platformCircleFromCircle)
-              .toList(),
-          initialHeatmaps: mapObjects.heatmaps
-              .map(_platformHeatmapFromHeatmap)
-              .toList(),
-          initialTileOverlays: mapObjects.tileOverlays
-              .map(_platformTileOverlayFromTileOverlay)
-              .toList(),
-          initialClusterManagers: mapObjects.clusterManagers
-              .map(_platformClusterManagerFromClusterManager)
-              .toList(),
-          initialGroundOverlays: mapObjects.groundOverlays
-              .map(_platformGroundOverlayFromGroundOverlay)
-              .toList(),
-        );
+    final creationParams = PlatformMapViewCreationParams(
+      initialCameraPosition: _platformCameraPositionFromCameraPosition(
+        widgetConfiguration.initialCameraPosition,
+      ),
+      mapConfiguration: mapConfiguration,
+      initialMarkers: mapObjects.markers
+          .map(_platformMarkerFromMarker)
+          .toList(),
+      initialPolygons: mapObjects.polygons
+          .map(_platformPolygonFromPolygon)
+          .toList(),
+      initialPolylines: mapObjects.polylines
+          .map(_platformPolylineFromPolyline)
+          .toList(),
+      initialCircles: mapObjects.circles
+          .map(_platformCircleFromCircle)
+          .toList(),
+      initialHeatmaps: mapObjects.heatmaps
+          .map(_platformHeatmapFromHeatmap)
+          .toList(),
+      initialTileOverlays: mapObjects.tileOverlays
+          .map(_platformTileOverlayFromTileOverlay)
+          .toList(),
+      initialClusterManagers: mapObjects.clusterManagers
+          .map(_platformClusterManagerFromClusterManager)
+          .toList(),
+      initialGroundOverlays: mapObjects.groundOverlays
+          .map(_platformGroundOverlayFromGroundOverlay)
+          .toList(),
+    );
 
-    const String viewType = 'plugins.flutter.dev/google_maps_android';
+    const viewType = 'plugins.flutter.dev/google_maps_android';
     if (useAndroidViewSurface) {
       return PlatformViewLink(
         viewType: viewType,
@@ -774,8 +766,8 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   static PlatformCircle _platformCircleFromCircle(Circle circle) {
     return PlatformCircle(
       consumeTapEvents: circle.consumeTapEvents,
-      fillColor: circle.fillColor.value,
-      strokeColor: circle.strokeColor.value,
+      fillColor: PlatformColor(argbValue: circle.fillColor.toARGB32()),
+      strokeColor: PlatformColor(argbValue: circle.strokeColor.toARGB32()),
       visible: circle.visible,
       strokeWidth: circle.strokeWidth,
       zIndex: circle.zIndex.toDouble(),
@@ -786,7 +778,37 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
-    return PlatformHeatmap(json: serializeHeatmap(heatmap));
+    final HeatmapGradient? gradient = heatmap.gradient;
+    return PlatformHeatmap(
+      heatmapId: heatmap.heatmapId.value,
+      data: heatmap.data
+          .map(_platformWeightedLatLngFromWeightedLatLng)
+          .toList(),
+      gradient: _platformHeatmapGradientFromHeatmapGradient(gradient),
+      opacity: heatmap.opacity,
+      radius: heatmap.radius.radius,
+      maxIntensity: heatmap.maxIntensity,
+    );
+  }
+
+  static PlatformHeatmapGradient? _platformHeatmapGradientFromHeatmapGradient(
+    HeatmapGradient? gradient,
+  ) {
+    if (gradient == null) {
+      return null;
+    }
+    return PlatformHeatmapGradient(
+      colors: gradient.colors
+          .map(
+            (HeatmapGradientColor c) =>
+                PlatformColor(argbValue: c.color.toARGB32()),
+          )
+          .toList(),
+      startPoints: gradient.colors
+          .map((HeatmapGradientColor c) => c.startPoint)
+          .toList(),
+      colorMapSize: gradient.colorMapSize,
+    );
   }
 
   static PlatformClusterManager _platformClusterManagerFromClusterManager(
@@ -862,12 +884,12 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     }).toList();
     return PlatformPolygon(
       polygonId: polygon.polygonId.value,
-      fillColor: polygon.fillColor.value,
+      fillColor: PlatformColor(argbValue: polygon.fillColor.toARGB32()),
       geodesic: polygon.geodesic,
       consumesTapEvents: polygon.consumeTapEvents,
       points: points,
       holes: holes,
-      strokeColor: polygon.strokeColor.value,
+      strokeColor: PlatformColor(argbValue: polygon.strokeColor.toARGB32()),
       strokeWidth: polygon.strokeWidth,
       zIndex: polygon.zIndex,
       visible: polygon.visible,
@@ -884,7 +906,7 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
     return PlatformPolyline(
       polylineId: polyline.polylineId.value,
       consumesTapEvents: polyline.consumeTapEvents,
-      color: polyline.color.value,
+      color: PlatformColor(argbValue: polyline.color.toARGB32()),
       startCap: platformCapFromCap(polyline.startCap),
       endCap: platformCapFromCap(polyline.endCap),
       geodesic: polyline.geodesic,
@@ -1293,6 +1315,15 @@ PlatformLatLngBounds? _platformLatLngBoundsFromLatLngBounds(
   );
 }
 
+PlatformWeightedLatLng _platformWeightedLatLngFromWeightedLatLng(
+  WeightedLatLng weightedLatLng,
+) {
+  return PlatformWeightedLatLng(
+    point: _platformLatLngFromLatLng(weightedLatLng.point),
+    weight: weightedLatLng.weight,
+  );
+}
+
 PlatformCameraTargetBounds? _platformCameraTargetBoundsFromCameraTargetBounds(
   CameraTargetBounds? bounds,
 ) {
@@ -1372,7 +1403,7 @@ PlatformMapConfiguration _platformMapConfigurationFromMapConfiguration(
     trafficEnabled: config.trafficEnabled,
     buildingsEnabled: config.buildingsEnabled,
     liteModeEnabled: config.liteModeEnabled,
-    cloudMapId: config.cloudMapId,
+    mapId: config.mapId,
     style: config.style,
   );
 }
@@ -1386,7 +1417,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
   // to support this legacy API that relied on cross-package magic strings.
   final List<double>? padding = (options['padding'] as List<Object?>?)
       ?.cast<double>();
-  final int? mapType = options['mapType'] as int?;
+  final mapType = options['mapType'] as int?;
   return PlatformMapConfiguration(
     compassEnabled: options['compassEnabled'] as bool?,
     cameraTargetBounds: _platformCameraTargetBoundsFromCameraTargetBoundsJson(
@@ -1417,7 +1448,7 @@ PlatformMapConfiguration _platformMapConfigurationFromOptionsJson(
     trafficEnabled: options['trafficEnabled'] as bool?,
     buildingsEnabled: options['buildingsEnabled'] as bool?,
     liteModeEnabled: options['liteModeEnabled'] as bool?,
-    cloudMapId: options['cloudMapId'] as String?,
+    mapId: options['cloudMapId'] as String?,
     style: options['style'] as String?,
   );
 }

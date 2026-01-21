@@ -19,7 +19,7 @@ class Path implements PathProxy {
 
   /// Creates a copy of this path.
   factory Path.from(Path other) {
-    final Path result = Path(other.fillType);
+    final result = Path(other.fillType);
     other.replay(result);
     return result;
   }

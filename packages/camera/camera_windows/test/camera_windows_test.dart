@@ -27,10 +27,10 @@ void main() {
     group('Creation, Initialization & Disposal Tests', () {
       test('Should send creation data and receive back a camera id', () async {
         // Arrange
-        final MockCameraApi mockApi = MockCameraApi();
+        final mockApi = MockCameraApi();
         when(mockApi.create(any, any)).thenAnswer((_) async => 1);
-        final CameraWindows plugin = CameraWindows(api: mockApi);
-        const String cameraName = 'Test';
+        final plugin = CameraWindows(api: mockApi);
+        const cameraName = 'Test';
 
         // Act
         final int cameraId = await plugin.createCameraWithSettings(
@@ -52,8 +52,7 @@ void main() {
           mockApi.create(captureAny, captureAny),
         );
         expect(verification.captured[0], cameraName);
-        final PlatformMediaSettings? settings =
-            verification.captured[1] as PlatformMediaSettings?;
+        final settings = verification.captured[1] as PlatformMediaSettings?;
         expect(settings, isNotNull);
         expect(settings?.resolutionPreset, PlatformResolutionPreset.low);
         expect(cameraId, 1);
@@ -63,17 +62,16 @@ void main() {
         'Should throw CameraException when create throws a PlatformException',
         () {
           // Arrange
-          const String exceptionCode = 'TESTING_ERROR_CODE';
-          const String exceptionMessage =
-              'Mock error message used during testing.';
-          final MockCameraApi mockApi = MockCameraApi();
+          const exceptionCode = 'TESTING_ERROR_CODE';
+          const exceptionMessage = 'Mock error message used during testing.';
+          final mockApi = MockCameraApi();
           when(mockApi.create(any, any)).thenAnswer((_) async {
             throw PlatformException(
               code: exceptionCode,
               message: exceptionMessage,
             );
           });
-          final CameraWindows camera = CameraWindows(api: mockApi);
+          final camera = CameraWindows(api: mockApi);
 
           // Act
           expect(
@@ -102,17 +100,16 @@ void main() {
         'Should throw CameraException when initialize throws a PlatformException',
         () {
           // Arrange
-          const String exceptionCode = 'TESTING_ERROR_CODE';
-          const String exceptionMessage =
-              'Mock error message used during testing.';
-          final MockCameraApi mockApi = MockCameraApi();
+          const exceptionCode = 'TESTING_ERROR_CODE';
+          const exceptionMessage = 'Mock error message used during testing.';
+          final mockApi = MockCameraApi();
           when(mockApi.initialize(any)).thenAnswer((_) async {
             throw PlatformException(
               code: exceptionCode,
               message: exceptionMessage,
             );
           });
-          final CameraWindows plugin = CameraWindows(api: mockApi);
+          final plugin = CameraWindows(api: mockApi);
 
           // Act
           expect(
@@ -136,11 +133,11 @@ void main() {
 
       test('Should send initialization data', () async {
         // Arrange
-        final MockCameraApi mockApi = MockCameraApi();
+        final mockApi = MockCameraApi();
         when(
           mockApi.initialize(any),
         ).thenAnswer((_) async => PlatformSize(width: 1920, height: 1080));
-        final CameraWindows plugin = CameraWindows(api: mockApi);
+        final plugin = CameraWindows(api: mockApi);
         final int cameraId = await plugin.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
@@ -168,11 +165,11 @@ void main() {
 
       test('Should send a disposal call on dispose', () async {
         // Arrange
-        final MockCameraApi mockApi = MockCameraApi();
+        final mockApi = MockCameraApi();
         when(
           mockApi.initialize(any),
         ).thenAnswer((_) async => PlatformSize(width: 1920, height: 1080));
-        final CameraWindows plugin = CameraWindows(api: mockApi);
+        final plugin = CameraWindows(api: mockApi);
         final int cameraId = await plugin.createCameraWithSettings(
           const CameraDescription(
             name: 'Test',
@@ -204,7 +201,7 @@ void main() {
       late CameraWindows plugin;
       late int cameraId;
       setUp(() async {
-        final MockCameraApi mockApi = MockCameraApi();
+        final mockApi = MockCameraApi();
         when(mockApi.create(any, any)).thenAnswer((_) async => 1);
         when(
           mockApi.initialize(any),
@@ -232,11 +229,10 @@ void main() {
         final Stream<CameraClosingEvent> eventStream = plugin.onCameraClosing(
           cameraId,
         );
-        final StreamQueue<CameraClosingEvent> streamQueue =
-            StreamQueue<CameraClosingEvent>(eventStream);
+        final streamQueue = StreamQueue<CameraClosingEvent>(eventStream);
 
         // Emit test events
-        final CameraClosingEvent event = CameraClosingEvent(cameraId);
+        final event = CameraClosingEvent(cameraId);
         plugin.hostCameraHandlers[cameraId]!.cameraClosing();
         plugin.hostCameraHandlers[cameraId]!.cameraClosing();
         plugin.hostCameraHandlers[cameraId]!.cameraClosing();
@@ -255,12 +251,11 @@ void main() {
         final Stream<CameraErrorEvent> errorStream = plugin.onCameraError(
           cameraId,
         );
-        final StreamQueue<CameraErrorEvent> streamQueue =
-            StreamQueue<CameraErrorEvent>(errorStream);
+        final streamQueue = StreamQueue<CameraErrorEvent>(errorStream);
 
         // Emit test events
-        const String errorMessage = 'Error Description';
-        final CameraErrorEvent event = CameraErrorEvent(cameraId, errorMessage);
+        const errorMessage = 'Error Description';
+        final event = CameraErrorEvent(cameraId, errorMessage);
         plugin.hostCameraHandlers[cameraId]!.error(errorMessage);
         plugin.hostCameraHandlers[cameraId]!.error(errorMessage);
         plugin.hostCameraHandlers[cameraId]!.error(errorMessage);
@@ -309,18 +304,18 @@ void main() {
         'Should fetch CameraDescription instances for available cameras',
         () async {
           // Arrange
-          final List<String> returnData = <String>['Test 1', 'Test 2'];
+          final returnData = <String>['Test 1', 'Test 2'];
           when(
             mockApi.getAvailableCameras(),
           ).thenAnswer((_) async => returnData);
 
           // Act
-          final List<CameraDescription> cameras =
-              await plugin.availableCameras();
+          final List<CameraDescription> cameras = await plugin
+              .availableCameras();
 
           // Assert
           expect(cameras.length, returnData.length);
-          for (int i = 0; i < returnData.length; i++) {
+          for (var i = 0; i < returnData.length; i++) {
             expect(cameras[i].name, returnData[i]);
             // This value isn't provided by the platform, so is hard-coded to front.
             expect(cameras[i].lensDirection, CameraLensDirection.front);
@@ -334,8 +329,8 @@ void main() {
         'Should throw CameraException when availableCameras throws a PlatformException',
         () {
           // Arrange
-          const String code = 'TESTING_ERROR_CODE';
-          const String message = 'Mock error message used during testing.';
+          const code = 'TESTING_ERROR_CODE';
+          const message = 'Mock error message used during testing.';
           when(mockApi.getAvailableCameras()).thenAnswer(
             (_) async => throw PlatformException(code: code, message: message),
           );
@@ -362,7 +357,7 @@ void main() {
 
       test('Should take a picture and return an XFile instance', () async {
         // Arrange
-        const String stubPath = '/test/path.jpg';
+        const stubPath = '/test/path.jpg';
         when(mockApi.takePicture(any)).thenAnswer((_) async => stubPath);
 
         // Act
@@ -403,7 +398,7 @@ void main() {
 
       test('Should stop a video recording and return the file', () async {
         // Arrange
-        const String stubPath = '/test/path.mp4';
+        const stubPath = '/test/path.mp4';
         when(mockApi.stopVideoRecording(any)).thenAnswer((_) async => stubPath);
 
         // Act

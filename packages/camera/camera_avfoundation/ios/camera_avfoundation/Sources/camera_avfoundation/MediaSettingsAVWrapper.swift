@@ -4,7 +4,6 @@
 
 import AVFoundation
 import CoreMedia
-import Foundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
@@ -22,27 +21,27 @@ class FLTCamMediaSettingsAVWrapper {
   /// - Parameter captureDevice: The capture device.
   /// - Throws: An error if the device could not be locked for configuration.
   /// - Returns: A Bool indicating whether the device was successfully locked for configuration.
-  func lockDevice(_ captureDevice: FLTCaptureDevice) throws {
+  func lockDevice(_ captureDevice: CaptureDevice) throws {
     return try captureDevice.lockForConfiguration()
   }
 
   /// Release exclusive control over device hardware properties.
   /// - Parameter captureDevice: The capture device.
-  func unlockDevice(_ captureDevice: FLTCaptureDevice) {
+  func unlockDevice(_ captureDevice: CaptureDevice) {
     captureDevice.unlockForConfiguration()
   }
 
   /// When paired with commitConfiguration, allows a client to batch multiple configuration
   /// operations on a running session into atomic updates.
   /// - Parameter videoCaptureSession: The video capture session.
-  func beginConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  func beginConfiguration(for videoCaptureSession: CaptureSession) {
     videoCaptureSession.beginConfiguration()
   }
 
   /// When preceded by beginConfiguration, allows a client to batch multiple configuration
   /// operations on a running session into atomic updates.
   /// - Parameter videoCaptureSession: The video capture session.
-  func commitConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  func commitConfiguration(for videoCaptureSession: CaptureSession) {
     videoCaptureSession.commitConfiguration()
   }
 
@@ -50,7 +49,7 @@ class FLTCamMediaSettingsAVWrapper {
   /// - Parameters:
   ///   - duration: The frame duration.
   ///   - captureDevice: The capture device
-  func setMinFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  func setMinFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     captureDevice.activeVideoMinFrameDuration = duration
   }
 
@@ -58,38 +57,36 @@ class FLTCamMediaSettingsAVWrapper {
   /// - Parameters:
   ///   - duration: The frame duration.
   ///   - captureDevice: The capture device
-  func setMaxFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  func setMaxFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     captureDevice.activeVideoMaxFrameDuration = duration
   }
 
   /// Creates a new input of the audio media type to receive sample buffers for writing to
   /// the output file.
   /// - Parameter outputSettings: The settings used for encoding the audio appended to the output.
-  /// - Returns: An instance of `FLTAssetWriterInput`.
+  /// - Returns: An instance of `AssetWriterInput`.
   func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
-    let input = AVAssetWriterInput(mediaType: .audio, outputSettings: outputSettings)
-    return FLTDefaultAssetWriterInput(input: input)
+    return AVAssetWriterInput(mediaType: .audio, outputSettings: outputSettings)
   }
 
   /// Creates a new input of the video media type to receive sample buffers for writing to
   /// the output file.
   /// - Parameter outputSettings: The settings used for encoding the video appended to the output.
-  /// - Returns: An instance of `FLTAssetWriterInput`.
+  /// - Returns: An instance of `AssetWriterInput`.
   func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
-    let input = AVAssetWriterInput(mediaType: .video, outputSettings: outputSettings)
-    return FLTDefaultAssetWriterInput(input: input)
+    return AVAssetWriterInput(mediaType: .video, outputSettings: outputSettings)
   }
 
   /// Adds an input to the asset writer.
   /// - Parameters:
-  ///   - writerInput: The `FLTAssetWriterInput` object to be added.
-  ///   - writer: The `FLTAssetWriter` object.
-  func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
-    writer.add(writerInput.input)
+  ///   - writerInput: The `AssetWriterInput` object to be added.
+  ///   - writer: The `AssetWriter` object.
+  func addInput(_ writerInput: AssetWriterInput, to writer: AssetWriter) {
+    writer.add(writerInput.avInput)
   }
 
   /// Specifies the recommended video settings for `FLTCaptureVideoDataOutput`.

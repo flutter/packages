@@ -19,43 +19,43 @@ private class FakeMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     self.inputMock = inputMock
   }
 
-  override func lockDevice(_ captureDevice: FLTCaptureDevice) throws {
+  override func lockDevice(_ captureDevice: CaptureDevice) throws {
     // No-op.
   }
 
-  override func unlockDevice(_ captureDevice: FLTCaptureDevice) {
+  override func unlockDevice(_ captureDevice: CaptureDevice) {
     // No-op.
   }
 
-  override func beginConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  override func beginConfiguration(for videoCaptureSession: CaptureSession) {
     // No-op.
   }
 
-  override func commitConfiguration(for videoCaptureSession: FLTCaptureSession) {
+  override func commitConfiguration(for videoCaptureSession: CaptureSession) {
     // No-op.
   }
 
-  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  override func setMinFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     // No-op.
   }
 
-  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: FLTCaptureDevice) {
+  override func setMaxFrameDuration(_ duration: CMTime, on captureDevice: CaptureDevice) {
     // No-op.
   }
 
   override func assetWriterAudioInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
     return inputMock
   }
 
   override func assetWriterVideoInput(withOutputSettings outputSettings: [String: Any]?)
-    -> FLTAssetWriterInput
+    -> AssetWriterInput
   {
     return inputMock
   }
 
-  override func addInput(_ writerInput: FLTAssetWriterInput, to writer: FLTAssetWriter) {
+  override func addInput(_ writerInput: AssetWriterInput, to writer: AssetWriter) {
     // No-op.
   }
 
@@ -175,7 +175,7 @@ final class CameraSampleBufferTests: XCTestCase {
       writtenSamples.append("video")
       return true
     }
-    inputMock.readyForMoreMediaData = true
+    inputMock.isReadyForMoreMediaData = true
     inputMock.appendStub = { buffer in
       writtenSamples.append("audio")
       return true
@@ -222,7 +222,7 @@ final class CameraSampleBufferTests: XCTestCase {
     }
 
     var audioAppended = false
-    inputMock.readyForMoreMediaData = true
+    inputMock.isReadyForMoreMediaData = true
     inputMock.appendStub = { buffer in
       let sampleTime = CMSampleBufferGetPresentationTimeStamp(buffer)
       XCTAssert(CMTIME_IS_NUMERIC(sampleTime))
@@ -262,7 +262,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
     camera.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
 
-    inputMock.readyForMoreMediaData = true
+    inputMock.isReadyForMoreMediaData = true
     sampleAppended = false
     camera.captureOutput(
       camera.captureVideoOutput.avOutput,
@@ -270,7 +270,7 @@ final class CameraSampleBufferTests: XCTestCase {
       from: testVideoConnection)
     XCTAssertTrue(sampleAppended, "Sample was not appended.")
 
-    inputMock.readyForMoreMediaData = false
+    inputMock.isReadyForMoreMediaData = false
     sampleAppended = false
     camera.captureOutput(
       camera.captureVideoOutput.avOutput,
@@ -327,7 +327,7 @@ final class CameraSampleBufferTests: XCTestCase {
       return true
     }
 
-    inputMock.readyForMoreMediaData = true
+    inputMock.isReadyForMoreMediaData = true
 
     camera.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
 

@@ -161,7 +161,7 @@ class Polyline implements MapsObject<Polyline> {
   /// Converts this object to something serializable in JSON.
   @override
   Object toJson() {
-    final Map<String, Object> json = <String, Object>{};
+    final json = <String, Object>{};
 
     void addIfPresent(String fieldName, Object? value) {
       if (value != null) {
@@ -171,7 +171,7 @@ class Polyline implements MapsObject<Polyline> {
 
     addIfPresent('polylineId', polylineId.value);
     addIfPresent('consumeTapEvents', consumeTapEvents);
-    addIfPresent('color', color.value);
+    addIfPresent('color', color.toARGB32());
     addIfPresent('endCap', endCap.toJson());
     addIfPresent('geodesic', geodesic);
     addIfPresent('jointType', jointType.value);
@@ -214,7 +214,7 @@ class Polyline implements MapsObject<Polyline> {
   int get hashCode => polylineId.hashCode;
 
   Object _pointsToJson() {
-    final List<Object> result = <Object>[];
+    final result = <Object>[];
     for (final LatLng point in points) {
       result.add(point.toJson());
     }
@@ -222,7 +222,7 @@ class Polyline implements MapsObject<Polyline> {
   }
 
   Object _patternToJson() {
-    final List<Object> result = <Object>[];
+    final result = <Object>[];
     for (final PatternItem patternItem in patterns) {
       result.add(patternItem.toJson());
     }

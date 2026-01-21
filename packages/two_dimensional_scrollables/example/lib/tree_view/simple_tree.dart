@@ -71,12 +71,11 @@ class TreeExampleState extends State<TreeExample> {
       TapGestureRecognizer:
           GestureRecognizerFactoryWithHandlers<TapGestureRecognizer>(
             () => TapGestureRecognizer(),
-            (TapGestureRecognizer t) =>
-                t.onTap = () {
-                  setState(() {
-                    _selectedNode = node;
-                  });
-                },
+            (TapGestureRecognizer t) => t.onTap = () {
+              setState(() {
+                _selectedNode = node;
+              });
+            },
           ),
     };
   }

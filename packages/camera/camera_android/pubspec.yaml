@@ -3,7 +3,7 @@ description: Android implementation of the camera plugin.
 repository: https://github.com/flutter/packages/tree/main/packages/camera/camera_android
 issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+label%3A%22p%3A+camera%22
 
-version: 0.10.10+11
+version: 0.10.10+14
 
 environment:
   sdk: ^3.9.0
@@ -32,7 +32,7 @@ dev_dependencies:
     sdk: flutter
   leak_tracker_flutter_testing: any
   mockito: ^5.4.4
-  pigeon: ^22.4.1
+  pigeon: ^26.1.0
 
 topics:
   - camera

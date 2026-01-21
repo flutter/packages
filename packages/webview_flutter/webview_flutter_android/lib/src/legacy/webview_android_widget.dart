@@ -269,7 +269,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
   @override
   Future<void> loadFile(String absoluteFilePath) {
-    final String url = absoluteFilePath.startsWith('file://')
+    final url = absoluteFilePath.startsWith('file://')
         ? absoluteFilePath
         : 'file://$absoluteFilePath';
 
@@ -393,11 +393,10 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
             return !_javaScriptChannels.containsKey(channelName);
           })
           .map<Future<void>>((String channelName) {
-            final WebViewAndroidJavaScriptChannel javaScriptChannel =
-                WebViewAndroidJavaScriptChannel(
-                  channelName: channelName,
-                  javascriptChannelRegistry: javascriptChannelRegistry,
-                );
+            final javaScriptChannel = WebViewAndroidJavaScriptChannel(
+              channelName: channelName,
+              javascriptChannelRegistry: javascriptChannelRegistry,
+            );
             _javaScriptChannels[channelName] = javaScriptChannel;
             return webView.addJavaScriptChannel(javaScriptChannel);
           }),
@@ -451,7 +450,7 @@ class WebViewAndroidPlatformController extends WebViewPlatformController {
 
     final Color? backgroundColor = creationParams.backgroundColor;
     if (backgroundColor != null) {
-      webView.setBackgroundColor(backgroundColor.value);
+      webView.setBackgroundColor(backgroundColor.toARGB32());
     }
 
     addJavascriptChannels(creationParams.javascriptChannelNames);
@@ -572,7 +571,7 @@ class WebViewAndroidJavaScriptChannel
   WebViewAndroidJavaScriptChannel({
     required super.channelName,
     required this.javascriptChannelRegistry,
-  }) : super(
+  }) : super.pigeon_new(
          postMessage: withWeakReferenceTo(javascriptChannelRegistry, (
            WeakReference<JavascriptChannelRegistry> weakReference,
          ) {

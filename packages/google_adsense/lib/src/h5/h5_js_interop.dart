@@ -117,19 +117,18 @@ extension type AdBreakPlacement._(JSObject _) implements JSObject {
       name: '$_namePrefix${name ?? ''}'.toJS,
       beforeAd: beforeAd?.toJS,
       afterAd: afterAd?.toJS,
-      beforeReward:
-          beforeReward != null
-              ? (JSFunction showAdFn) {
-                beforeReward(() {
-                  // Delay the call to `showAdFn` so tap users don't trigger a click on the
-                  // ad on pointerup. This should leaves enough time for Flutter to settle
-                  // its tap events, before triggering the H5 ad.
-                  Timer(const Duration(milliseconds: 100), () {
-                    showAdFn.callAsFunction();
-                  });
+      beforeReward: beforeReward != null
+          ? (JSFunction showAdFn) {
+              beforeReward(() {
+                // Delay the call to `showAdFn` so tap users don't trigger a click on the
+                // ad on pointerup. This should leaves enough time for Flutter to settle
+                // its tap events, before triggering the H5 ad.
+                Timer(const Duration(milliseconds: 100), () {
+                  showAdFn.callAsFunction();
                 });
-              }.toJS
-              : null,
+              });
+            }.toJS
+          : null,
       adDismissed: adDismissed?.toJS,
       adViewed: adViewed?.toJS,
       adBreakDone: adBreakDone?.toJS,

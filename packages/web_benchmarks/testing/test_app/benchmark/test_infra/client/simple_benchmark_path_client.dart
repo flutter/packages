@@ -9,8 +9,7 @@ import '../recorder.dart';
 
 Future<void> main() async {
   await runBenchmarks(<String, RecorderFactory>{
-    BenchmarkName.simpleBenchmarkPathCheck.name:
-        () =>
-            TestAppRecorder(benchmark: BenchmarkName.simpleBenchmarkPathCheck),
+    BenchmarkName.simpleBenchmarkPathCheck.name: () =>
+        TestAppRecorder(benchmark: BenchmarkName.simpleBenchmarkPathCheck),
   }, benchmarkPath: testBenchmarkPath);
 }
