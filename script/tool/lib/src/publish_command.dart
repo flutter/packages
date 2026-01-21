@@ -205,9 +205,8 @@ class PublishCommand extends PackageLoopingCommand {
 
       for (final pubspecPath in changedPubspecs) {
         // Read the ci_config.yaml file if it exists
-
         final String packageName = p.basename(p.dirname(pubspecPath));
-        bool isBatchReleasePackage;
+        final bool isBatchReleasePackage;
         try {
           final File ciConfigFile = RepositoryPackage(
             packagesDir.fileSystem.file(pubspecPath).parent,

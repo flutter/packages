@@ -1303,9 +1303,8 @@ void main() {
             'package1',
             packagesDir,
             version: '0.0.2',
-            includeCIConfig: true,
-            isBatchRelease: true,
           );
+          createFakeCiConfig(package: package1, batchRelease: true);
 
           final RepositoryPackage package2 = createFakePackage(
             'package2',
@@ -1378,16 +1377,14 @@ void main() {
             'package1',
             packagesDir,
             version: '0.0.2',
-            includeCIConfig: true,
-            isBatchRelease: true,
           );
-
+          createFakeCiConfig(package: package1, batchRelease: true);
           final RepositoryPackage package2 = createFakePackage(
             'package2',
             packagesDir,
             version: '0.0.2',
-            includeCIConfig: true,
           );
+          createFakeCiConfig(package: package2, batchRelease: false);
 
           // Mock git diff to show both packages have changed.
           processRunner
@@ -1457,9 +1454,8 @@ void main() {
             'package2',
             packagesDir,
             version: '0.0.2',
-            includeCIConfig: true,
-            isBatchRelease: true,
           );
+          createFakeCiConfig(package: package2, batchRelease: true);
 
           // Mock git diff to show both packages have changed.
           processRunner
@@ -1512,10 +1508,9 @@ void main() {
         final RepositoryPackage package1 = createFakePackage(
           'package1',
           packagesDir,
-          includeCIConfig: true,
           version: '0.0.2',
         );
-
+        createFakeCiConfig(package: package1, batchRelease: false);
         package1.ciConfigFile.writeAsStringSync(
           'wrong format of ci config file',
         );
