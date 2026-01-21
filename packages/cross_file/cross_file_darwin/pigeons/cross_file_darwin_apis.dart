@@ -35,7 +35,7 @@ abstract class CrossFileDarwinApi {
   /// Whether a file or directory exists at a specified path.
   FileExistsResult fileExists(String url);
 
-  /// The file’s last modified date.
+  /// The file’s last modified date in milliseconds since epoch.
   int? fileModificationDate(String url);
 
   /// The file’s size in bytes.
