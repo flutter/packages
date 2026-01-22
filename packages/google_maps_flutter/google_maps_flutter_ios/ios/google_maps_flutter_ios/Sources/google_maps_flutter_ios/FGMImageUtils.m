@@ -64,16 +64,16 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     FGMPlatformBitmapAsset *bitmapAsset = bitmap;
     if (bitmapAsset.pkg) {
-      image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAsset.name
-                                                       fromPackage:bitmapAsset.pkg]];
+      image = [assetProvider imageNamed:[assetProvider lookupKeyForAsset:bitmapAsset.name
+                                                             fromPackage:bitmapAsset.pkg]];
     } else {
-      image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAsset.name]];
+      image = [assetProvider imageNamed:[assetProvider lookupKeyForAsset:bitmapAsset.name]];
     }
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
     // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     FGMPlatformBitmapAssetImage *bitmapAssetImage = bitmap;
-    image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAssetImage.name]];
+    image = [assetProvider imageNamed:[assetProvider lookupKeyForAsset:bitmapAssetImage.name]];
     image = scaledImage(image, bitmapAssetImage.scale);
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapBytes class]]) {
     // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
@@ -90,7 +90,7 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
     FGMPlatformBitmapAssetMap *bitmapAssetMap = bitmap;
 
-    image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAssetMap.assetName]];
+    image = [assetProvider imageNamed:[assetProvider lookupKeyForAsset:bitmapAssetMap.assetName]];
 
     if (bitmapAssetMap.bitmapScaling == FGMPlatformMapBitmapScalingAuto) {
       NSNumber *width = bitmapAssetMap.width;

@@ -5,8 +5,6 @@
 @import google_maps_flutter_ios;
 @import XCTest;
 
-#import <OCMock/OCMock.h>
-
 #import "TestAssetProvider.h"
 
 @interface ExtractIconFromDataTests : XCTestCase
@@ -16,13 +14,11 @@
 @implementation ExtractIconFromDataTests
 
 - (void)testExtractIconFromDataAssetAuto {
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
   NSString *assetName = @"fakeImageName";
-  NSString *assetKey = @"fakeAssetKey";
-  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithKey:assetKey
-                                                               forAssetName:assetName];
-  OCMStub(ClassMethod([mockImageClass imageNamed:assetKey])).andReturn(testImage);
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   FGMPlatformBitmapAssetMap *bitmap =
       [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
@@ -43,14 +39,12 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoWithScale {
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
 
   NSString *assetName = @"fakeImageName";
-  NSString *assetKey = @"fakeAssetKey";
-  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithKey:assetKey
-                                                               forAssetName:assetName];
-  OCMStub(ClassMethod([mockImageClass imageNamed:assetKey])).andReturn(testImage);
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   FGMPlatformBitmapAssetMap *bitmap =
       [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
@@ -71,15 +65,13 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithSameAspectRatio {
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
   XCTAssertEqual(testImage.scale, 1.0);
 
   NSString *assetName = @"fakeImageName";
-  NSString *assetKey = @"fakeAssetKey";
-  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithKey:assetKey
-                                                               forAssetName:assetName];
-  OCMStub(ClassMethod([mockImageClass imageNamed:assetKey])).andReturn(testImage);
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   const CGFloat width = 15.0;
   FGMPlatformBitmapAssetMap *bitmap =
@@ -106,14 +98,12 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithDifferentAspectRatio {
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
 
   NSString *assetName = @"fakeImageName";
-  NSString *assetKey = @"fakeAssetKey";
-  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithKey:assetKey
-                                                               forAssetName:assetName];
-  OCMStub(ClassMethod([mockImageClass imageNamed:assetKey])).andReturn(testImage);
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   const CGFloat width = 15.0;
   const CGFloat height = 45.0;
@@ -135,14 +125,12 @@
 }
 
 - (void)testExtractIconFromDataAssetNoScaling {
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
 
   NSString *assetName = @"fakeImageName";
-  NSString *assetKey = @"fakeAssetKey";
-  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithKey:assetKey
-                                                               forAssetName:assetName];
-  OCMStub(ClassMethod([mockImageClass imageNamed:assetKey])).andReturn(testImage);
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   FGMPlatformBitmapAssetMap *bitmap =
       [FGMPlatformBitmapAssetMap makeWithAssetName:assetName

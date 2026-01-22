@@ -4,32 +4,45 @@
 
 #import "TestAssetProvider.h"
 
+static NSString *const kTestAssetKey = @"testAssetKey";
+
 @interface TestAssetProvider ()
-@property(readonly, nonatomic) NSString *key;
+@property(readonly, nonatomic) UIImage *image;
 @property(readonly, nonatomic) NSString *assetName;
+@property(readonly, nonatomic) NSString *package;
 @end
 
 @implementation TestAssetProvider
 
-- (instancetype)initWithKey:(NSString *)key forAssetName:(NSString *)assetName {
+- (instancetype)initWithImage:(UIImage *)image
+                 forAssetName:(NSString *)assetName
+                      package:(nullable NSString *)package {
   self = [super init];
   if (self) {
-    _key = key;
+    _image = image;
     _assetName = assetName;
+    _package = package;
   }
   return self;
 }
 
 - (NSString *)lookupKeyForAsset:(NSString *)asset {
   if ([asset isEqualToString:self.assetName]) {
-    return self.key;
+    return kTestAssetKey;
   }
   return nil;
 }
 
 - (NSString *)lookupKeyForAsset:(NSString *)asset fromPackage:(NSString *)package {
-  if ([asset isEqualToString:self.assetName]) {
-    return self.key;
+  if ([asset isEqualToString:self.assetName] && [package isEqualToString:self.package]) {
+    return kTestAssetKey;
+  }
+  return nil;
+}
+
+- (UIImage *)imageNamed:(NSString *)name {
+  if ([name isEqualToString:kTestAssetKey]) {
+    return self.image;
   }
   return nil;
 }

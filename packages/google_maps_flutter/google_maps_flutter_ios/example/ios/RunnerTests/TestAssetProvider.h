@@ -7,7 +7,14 @@
 
 /// Fake implementation of FGMAssetProvider.
 @interface TestAssetProvider : NSObject <FGMAssetProvider>
-/// Initializes an instance that returns the given key for the given asset name, and nil for any
-/// other name.
-- (instancetype)initWithKey:(NSString *)key forAssetName:(NSString *)assetName;
+/// Initializes an instance that returns an arbitrary key for the given asset
+/// name, and the given image when when using that key for imageNamed:.
+///
+/// Returns nil for any other names.
+///
+/// This is useful for setting up tests that need to stub out the standard
+/// flow of name -> key -> image.
+- (instancetype)initWithImage:(UIImage *)image
+                 forAssetName:(NSString *)assetName
+                      package:(nullable NSString *)package;
 @end

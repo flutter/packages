@@ -93,6 +93,10 @@
   return [self.registrar lookupKeyForAsset:asset fromPackage:package];
 }
 
+- (UIImage *)imageNamed:(NSString *)name {
+  return [UIImage imageNamed:name];
+}
+
 @end
 
 #pragma mark -
