@@ -102,15 +102,15 @@ final class DefaultCamera: NSObject, Camera {
   /// Time of the end of the last sample.
   private var lastSampleEndTime = CMTime.zero
   /// Whether the recording is disconnected.
-  private var isRecordingDisconnected = false;
+  private var isRecordingDisconnected = false
   /// Represents sum of all pauses/interruptions during recording.
   // TODO: CMTime.zero or invalid?
-  private var recordingTimeOffset = CMTime.zero;
+  private var recordingTimeOffset = CMTime.zero
   /// Output to use for adjusting of recording time offset.
-  private AVCaptureOutput *outputForOffsetAdjusting;
+  private var outputForOffsetAdjusting: AVCaptureOutput
   /// Time of the last appended video sample.
   // TODO: CMTime.zero or invalid?
-  private var lastAppendedVideoSampleTime = CMTime.zero;
+  private var lastAppendedVideoSampleTime = CMTime.zero
 
   /// True when images from the camera are being streamed.
   private(set) var isStreamingImages = false
@@ -237,6 +237,32 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     updateOrientation()
+
+    // Handle video and audio interruptions and errors. Interruption can happen for example by
+    // an incoming call during video recording. Error can happen for example when recording starts
+    // during an incoming call.
+    // https://github.com/flutter/flutter/issues/151253
+    for CaptureSession session in [ _videoCaptureSession, _audioCaptureSession ] {
+      NSNotificationCenter.default.addObserver(self,
+                                               selector: @selector(captureSessionWasInterrupted:),
+                                               name: AVCaptureSessionWasInterruptedNotification,
+                                               object: object:session.captureSession)
+
+      NSNotificationCenter.default.addObserver(self,
+                                               selector: @selector(captureSessionRuntimeError:),
+                                               name: AVCaptureSessionRuntimeErrorNotification,
+                                               object: object:session.captureSession)
+    }
+  }
+
+  private func captureSessionWasInterrupted(notification: NSNotification) {
+    _isRecordingDisconnected = YES;
+  }
+
+  private func captureSessionRuntimeError(notification: NSNotification) {
+    [self reportErrorMessage:[NSString
+                                 stringWithFormat:@"%@",
+                                                  notification.userInfo[AVCaptureSessionErrorKey]]];
   }
 
   // Possible values for presets are hard-coded in FLT interface having
@@ -520,10 +546,10 @@ final class DefaultCamera: NSObject, Camera {
     isFirstVideoSample = true
     isRecording = true
     isRecordingPaused = false
-    videoTimeOffset = CMTime.zero
-    audioTimeOffset = CMTime.zero
-    videoIsDisconnected = false
-    audioIsDisconnected = false
+    isRecordingDisconnected = false;
+    recordingTimeOffset = CMTime.zero
+    outputForOffsetAdjusting = captureVideoOutput.avOutput
+    lastAppendedVideoSampleTime = CMTime.negativeInfinity
     completion(nil)
   }
 
@@ -612,8 +638,7 @@ final class DefaultCamera: NSObject, Camera {
 
   func pauseVideoRecording() {
     isRecordingPaused = true
-    videoIsDisconnected = true
-    audioIsDisconnected = true
+    isRecordingDisconnected = true
   }
 
   func resumeVideoRecording() {
@@ -1238,34 +1263,9 @@ final class DefaultCamera: NSObject, Camera {
         lastSampleEndTime = currentSampleEndTime
       }
 
-      var currentSampleEndTime = sampleTime
-      let dur = CMSampleBufferGetDuration(sampleBuffer)
-      if CMTIME_IS_NUMERIC(dur) {
-        currentSampleEndTime = CMTimeAdd(currentSampleEndTime, dur)
-      }
-
-      // Use a single time offset for both video and audio.
-      // https://github.com/flutter/flutter/issues/149978
-      if isRecordingDisconnected {
-        if output == outputForOffsetAdjusting {
-          let offset = CMTimeSubtract(currentSampleEndTime, lastSampleEndTime)
-          recordingTimeOffset = CMTimeAdd(recordingTimeOffset, offset)
-          lastSampleEndTime = currentSampleEndTime
-          isRecordingDisconnected = false
-        }
-        return
-      }
-
-      if output == outputForOffsetAdjusting {
-        lastSampleEndTime = currentSampleEndTime
-      }
-
       if output == captureVideoOutput.avOutput {
         let nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         let nextSampleTime = CMTimeSubtract(sampleTime, recordingTimeOffset)
-        // TODO: ???
-        // if videoWriterInput?.isReadyForMoreMediaData ?? false {
-        //   let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
         if nextSampleTime > lastAppendedVideoSampleTime {
           videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
           lastAppendedVideoSampleTime = nextSampleTime
@@ -1371,5 +1371,6 @@ final class DefaultCamera: NSObject, Camera {
 
   deinit {
     motionManager.stopAccelerometerUpdates()
+    NSNotificationCenter.default.removeObserver(self)
   }
 }
