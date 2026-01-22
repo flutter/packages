@@ -7,7 +7,3 @@ package.
 
 Unless you are making changes to this implementation package, this example is
 very unlikely to be relevant.
-
-## Versions
-
-This example requires iOS 14, so will select a 8.x GoogleMaps SDK version.
