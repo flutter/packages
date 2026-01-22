@@ -6,11 +6,12 @@ environment:
   sdk: ^3.8.0
 
 dependencies:
+  cross_file:
+    path: ..
+
   flutter:
     sdk: flutter
 
-  cross_file:
-    path: ..
 
 dev_dependencies:
   flutter_test:
