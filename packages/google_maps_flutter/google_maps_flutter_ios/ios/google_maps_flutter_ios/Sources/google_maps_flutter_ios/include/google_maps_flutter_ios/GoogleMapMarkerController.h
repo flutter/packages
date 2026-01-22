@@ -5,6 +5,7 @@
 @import Flutter;
 @import GoogleMaps;
 
+#import "FGMAssetProvider.h"
 #import "FGMClusterManagersController.h"
 #import "GoogleMapController.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
@@ -27,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider;
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd;
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange;
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers;

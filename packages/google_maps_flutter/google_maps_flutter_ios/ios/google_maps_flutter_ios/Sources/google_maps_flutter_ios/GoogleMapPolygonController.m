@@ -71,7 +71,6 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
 
 @property(strong, nonatomic) NSMutableDictionary *polygonIdentifierToController;
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
-@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
@@ -79,14 +78,12 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
 @implementation FLTPolygonsController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
     _mapView = mapView;
     _polygonIdentifierToController = [NSMutableDictionary dictionaryWithCapacity:1];
-    _registrar = registrar;
   }
   return self;
 }

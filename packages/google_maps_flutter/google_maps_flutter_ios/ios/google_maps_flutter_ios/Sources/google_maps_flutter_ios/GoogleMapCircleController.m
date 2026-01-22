@@ -69,8 +69,7 @@
 @implementation FLTCirclesController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;

@@ -17,8 +17,7 @@
 
 @interface FLTPolylinesController : NSObject
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 - (void)addPolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToAdd;
 - (void)changePolylines:(NSArray<FGMPlatformPolyline *> *)polylinesToChange;
 - (void)removePolylineWithIdentifiers:(NSArray<NSString *> *)identifiers;

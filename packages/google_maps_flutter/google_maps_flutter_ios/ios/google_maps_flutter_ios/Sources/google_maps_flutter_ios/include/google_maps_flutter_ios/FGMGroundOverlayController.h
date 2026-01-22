@@ -3,11 +3,11 @@
 // found in the LICENSE file.
 
 @import CoreLocation;
-@import Flutter;
 @import Foundation;
 @import GoogleMaps;
 @import UIKit;
 
+#import "FGMAssetProvider.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -37,10 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// Controller of multiple ground overlays on the map.
 @interface FLTGroundOverlaysController : NSObject
 
-/// Initializes the controller with a GMSMapView, callback handler and registrar.
+/// Initializes the controller with a GMSMapView, callback handler and asset provider.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider;
 
 /// Adds ground overlays to the map.
 - (void)addGroundOverlays:(NSArray<FGMPlatformGroundOverlay *> *)groundOverlaysToAdd;

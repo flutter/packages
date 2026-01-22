@@ -6,9 +6,8 @@
 @import XCTest;
 @import GoogleMaps;
 
-#import <OCMock/OCMock.h>
-
 #import "PartiallyMockedMapView.h"
+#import "TestAssetProvider.h"
 
 /// A GMSMarker that ensures that property updates are made before the map is set.
 @interface PropertyOrderValidatingMarker : GMSMarker {
@@ -33,12 +32,10 @@
 ///
 /// The mapView should outlive the controller, as the controller keeps a weak reference to it.
 - (FLTMarkersController *)markersControllerWithMapView:(GMSMapView *)mapView {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   return [[FLTMarkersController alloc] initWithMapView:mapView
                                        callbackHandler:[[FGMMapsCallbackApi alloc] init]
                              clusterManagersController:nil
-                                             registrar:mockRegistrar];
+                                         assetProvider:[[TestAssetProvider alloc] init]];
 }
 
 - (FGMPlatformBitmap *)placeholderBitmap {
@@ -252,7 +249,7 @@
                                             markerId:@"marker"
                                     clusterManagerId:nil]
                     withMapView:[GoogleMapsMarkerControllerTests mapView]
-                      registrar:nil
+                  assetProvider:[[TestAssetProvider alloc] init]
                     screenScale:1
       usingOpacityForVisibility:NO];
   XCTAssertTrue(marker.hasSetMap);

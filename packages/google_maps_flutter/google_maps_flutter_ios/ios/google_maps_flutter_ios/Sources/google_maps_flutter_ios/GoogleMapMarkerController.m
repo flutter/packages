@@ -54,7 +54,7 @@
 }
 
 - (void)updateFromPlatformMarker:(FGMPlatformMarker *)platformMarker
-                       registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                   assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
                      screenScale:(CGFloat)screenScale {
   self.clusterManagerIdentifier = platformMarker.clusterManagerId;
   self.consumeTapEvents = platformMarker.consumeTapEvents;
@@ -69,7 +69,7 @@
   [FLTGoogleMapMarkerController updateMarker:self.marker
                           fromPlatformMarker:platformMarker
                                  withMapView:self.mapView
-                                   registrar:registrar
+                               assetProvider:assetProvider
                                  screenScale:screenScale
                    usingOpacityForVisibility:useOpacityForVisibility];
 }
@@ -77,12 +77,12 @@
 + (void)updateMarker:(GMSMarker *)marker
            fromPlatformMarker:(FGMPlatformMarker *)platformMarker
                   withMapView:(GMSMapView *)mapView
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
                   screenScale:(CGFloat)screenScale
     usingOpacityForVisibility:(BOOL)useOpacityForVisibility {
   marker.groundAnchor = FGMGetCGPointForPigeonPoint(platformMarker.anchor);
   marker.draggable = platformMarker.draggable;
-  UIImage *image = FGMIconFromBitmap(platformMarker.icon, registrar, screenScale);
+  UIImage *image = FGMIconFromBitmap(platformMarker.icon, assetProvider, screenScale);
   marker.icon = image;
   marker.flat = platformMarker.flat;
   marker.position = FGMGetCoordinateForPigeonLatLng(platformMarker.position);
@@ -112,7 +112,7 @@
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 /// Controller for adding/removing/fetching cluster managers
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
-@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
+@property(weak, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
@@ -122,14 +122,14 @@
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                 callbackHandler:(FGMMapsCallbackApi *)callbackHandler
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
     _mapView = mapView;
     _clusterManagersController = clusterManagersController;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
-    _registrar = registrar;
+    _assetProvider = assetProvider;
   }
   return self;
 }
@@ -150,7 +150,7 @@
                                           markerIdentifier:markerIdentifier
                                                    mapView:self.mapView];
   [controller updateFromPlatformMarker:markerToAdd
-                             registrar:self.registrar
+                         assetProvider:self.assetProvider
                            screenScale:[self getScreenScale]];
   if (clusterManagerIdentifier) {
     GMUClusterManager *clusterManager =
@@ -179,7 +179,7 @@
   NSString *clusterManagerIdentifier = markerToChange.clusterManagerId;
   NSString *previousClusterManagerIdentifier = [controller clusterManagerIdentifier];
   [controller updateFromPlatformMarker:markerToChange
-                             registrar:self.registrar
+                         assetProvider:self.assetProvider
                            screenScale:[self getScreenScale]];
 
   if ([controller.marker conformsToProtocol:@protocol(GMUClusterItem)]) {

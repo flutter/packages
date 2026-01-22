@@ -16,6 +16,7 @@
 		339355BD2EB3E56300EBF864 /* GoogleMapsTileOverlayControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 339355BC2EB3E55600EBF864 /* GoogleMapsTileOverlayControllerTests.m */; };
 		339355BF2EB535A600EBF864 /* FLTGoogleMapHeatmapControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 339355BE2EB5359B00EBF864 /* FLTGoogleMapHeatmapControllerTests.m */; };
 		339DF1F02F1FE49800748863 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 339DF1EF2F1FE49300748863 /* AppDelegate.swift */; };
+		33BF9C6E2F2182DF0005FA15 /* TestAssetProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 33BF9C6D2F2182DB0005FA15 /* TestAssetProvider.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		478116522BEF8F47002F593E /* GoogleMapsPolylineControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 478116512BEF8F47002F593E /* GoogleMapsPolylineControllerTests.m */; };
 		528F16832C62941000148160 /* FGMClusterManagersControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 528F16822C62941000148160 /* FGMClusterManagersControllerTests.m */; };
@@ -74,6 +75,8 @@
 		339355BE2EB5359B00EBF864 /* FLTGoogleMapHeatmapControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FLTGoogleMapHeatmapControllerTests.m; sourceTree = "<group>"; };
 		339DF1EF2F1FE49300748863 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		339DF1F12F1FE4AD00748863 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
+		33BF9C6C2F2182CB0005FA15 /* TestAssetProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAssetProvider.h; sourceTree = "<group>"; };
+		33BF9C6D2F2182DB0005FA15 /* TestAssetProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestAssetProvider.m; sourceTree = "<group>"; };
 		3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		478116512BEF8F47002F593E /* GoogleMapsPolylineControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GoogleMapsPolylineControllerTests.m; sourceTree = "<group>"; };
@@ -221,6 +224,8 @@
 				339355BC2EB3E55600EBF864 /* GoogleMapsTileOverlayControllerTests.m */,
 				982F2A6A27BADE17003C81F4 /* PartiallyMockedMapView.h */,
 				982F2A6B27BADE17003C81F4 /* PartiallyMockedMapView.m */,
+				33BF9C6C2F2182CB0005FA15 /* TestAssetProvider.h */,
+				33BF9C6D2F2182DB0005FA15 /* TestAssetProvider.m */,
 				F7151F14265D7ED70028CB91 /* Info.plist */,
 			);
 			path = RunnerTests;
@@ -509,6 +514,7 @@
 				339355BF2EB535A600EBF864 /* FLTGoogleMapHeatmapControllerTests.m in Sources */,
 				339355BD2EB3E56300EBF864 /* GoogleMapsTileOverlayControllerTests.m in Sources */,
 				F7151F13265D7ED70028CB91 /* GoogleMapsTests.m in Sources */,
+				33BF9C6E2F2182DF0005FA15 /* TestAssetProvider.m in Sources */,
 				6851F3562835BC180032B7C8 /* FGMConversionsUtilsTests.m in Sources */,
 				982F2A6C27BADE17003C81F4 /* PartiallyMockedMapView.m in Sources */,
 				330909FF2D99B7A60077A751 /* GoogleMapsMarkerControllerTests.m in Sources */,

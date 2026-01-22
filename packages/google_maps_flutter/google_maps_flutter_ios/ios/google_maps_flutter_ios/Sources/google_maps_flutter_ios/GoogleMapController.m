@@ -7,6 +7,7 @@
 #import "GoogleMapController.h"
 #import "GoogleMapController_Test.h"
 
+#import "FGMAssetProvider.h"
 #import "FGMConversionUtils.h"
 #import "FGMGroundOverlayController.h"
 #import "FGMMarkerUserData.h"
@@ -60,6 +61,36 @@
     _sharedMapServices = [GMSServices sharedServices];
   }
   return _sharedMapServices;
+}
+
+@end
+
+#pragma mark -
+
+/// Non-test implementation of FGMAssetProvider, wrapping a Flutter plugin
+/// registrar.
+@interface FGMDefaultAssetProvider : NSObject <FGMAssetProvider>
+@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
+
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+@end
+
+@implementation FGMDefaultAssetProvider
+
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  self = [super init];
+  if (self) {
+    _registrar = registrar;
+  }
+  return self;
+}
+
+- (NSString *)lookupKeyForAsset:(NSString *)asset {
+  return [self.registrar lookupKeyForAsset:asset];
+}
+
+- (NSString *)lookupKeyForAsset:(NSString *)asset fromPackage:(NSString *)package {
+  return [self.registrar lookupKeyForAsset:asset fromPackage:package];
 }
 
 @end
@@ -165,31 +196,29 @@
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
     _registrar = registrar;
+    FGMDefaultAssetProvider *assetProvider =
+        [[FGMDefaultAssetProvider alloc] initWithRegistrar:registrar];
     _clusterManagersController =
         [[FGMClusterManagersController alloc] initWithMapView:_mapView
                                               callbackHandler:_dartCallbackHandler];
     _markersController = [[FLTMarkersController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler
                                              clusterManagersController:_clusterManagersController
-                                                             registrar:registrar];
+                                                         assetProvider:assetProvider];
     _polygonsController = [[FLTPolygonsController alloc] initWithMapView:_mapView
-                                                         callbackHandler:_dartCallbackHandler
-                                                               registrar:registrar];
+                                                         callbackHandler:_dartCallbackHandler];
     _polylinesController = [[FLTPolylinesController alloc] initWithMapView:_mapView
-                                                           callbackHandler:_dartCallbackHandler
-                                                                 registrar:registrar];
+                                                           callbackHandler:_dartCallbackHandler];
     _circlesController = [[FLTCirclesController alloc] initWithMapView:_mapView
-                                                       callbackHandler:_dartCallbackHandler
-                                                             registrar:registrar];
+                                                       callbackHandler:_dartCallbackHandler];
     _heatmapsController = [[FLTHeatmapsController alloc] initWithMapView:_mapView];
     _tileOverlaysController =
         [[FLTTileOverlaysController alloc] initWithMapView:_mapView
-                                           callbackHandler:_dartCallbackHandler
-                                                 registrar:registrar];
+                                           callbackHandler:_dartCallbackHandler];
     _groundOverlaysController =
         [[FLTGroundOverlaysController alloc] initWithMapView:_mapView
                                              callbackHandler:_dartCallbackHandler
-                                                   registrar:registrar];
+                                               assetProvider:assetProvider];
     [_clusterManagersController addClusterManagers:creationParameters.initialClusterManagers];
     [_markersController addMarkers:creationParameters.initialMarkers];
     [_polygonsController addPolygons:creationParameters.initialPolygons];

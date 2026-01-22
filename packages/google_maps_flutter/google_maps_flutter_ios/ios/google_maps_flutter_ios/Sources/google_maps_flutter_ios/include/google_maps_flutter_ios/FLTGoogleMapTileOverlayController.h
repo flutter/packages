@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import GoogleMaps;
 
 #import "google_maps_flutter_pigeon_messages.g.h"
@@ -28,8 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTTileOverlaysController : NSObject
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 - (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd;
 - (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange;
 - (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers;

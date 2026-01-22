@@ -18,8 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTCirclesController : NSObject
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 - (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd;
 - (void)changeCircles:(NSArray<FGMPlatformCircle *> *)circlesToChange;
 - (void)removeCirclesWithIdentifiers:(NSArray<NSString *> *)identifiers;

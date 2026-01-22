@@ -64,7 +64,6 @@
 
 @property(strong, nonatomic) NSMutableDictionary *polylineIdentifierToController;
 @property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
-@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
@@ -73,14 +72,12 @@
 @implementation FLTPolylinesController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
   self = [super init];
   if (self) {
     _callbackHandler = callbackHandler;
     _mapView = mapView;
     _polylineIdentifierToController = [NSMutableDictionary dictionaryWithCapacity:1];
-    _registrar = registrar;
   }
   return self;
 }

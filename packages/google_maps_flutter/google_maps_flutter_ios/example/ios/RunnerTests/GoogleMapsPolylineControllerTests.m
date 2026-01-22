@@ -6,7 +6,6 @@
 @import XCTest;
 @import GoogleMaps;
 
-#import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
 
 /// A GMSPolyline that ensures that property updates are made before the map is set.

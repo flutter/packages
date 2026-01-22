@@ -3,12 +3,14 @@
 // found in the LICENSE file.
 
 @import google_maps_flutter_ios;
+@import Flutter;
 @import XCTest;
 @import GoogleMaps;
 
-#import <Flutter/Flutter.h>
 #import <OCMock/OCMock.h>
+
 #import "PartiallyMockedMapView.h"
+#import "TestAssetProvider.h"
 
 @interface FGMClusterManagersControllerTests : XCTestCase
 @end
@@ -16,7 +18,6 @@
 @implementation FGMClusterManagersControllerTests
 
 - (void)testClustering {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   CGRect frame = CGRectMake(0, 0, 100, 100);
 
   GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
@@ -34,7 +35,7 @@
       [[FLTMarkersController alloc] initWithMapView:mapView
                                     callbackHandler:handler
                           clusterManagersController:clusterManagersController
-                                          registrar:registrar];
+                                      assetProvider:[[TestAssetProvider alloc] init]];
 
   // Add cluster managers.
   NSString *clusterManagerId = @"cm";

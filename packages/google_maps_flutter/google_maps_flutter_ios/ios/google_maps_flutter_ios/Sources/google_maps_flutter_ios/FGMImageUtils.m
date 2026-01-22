@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import Flutter;
+
 #import "FGMImageUtils.h"
 
 @import Foundation;
@@ -44,7 +46,7 @@ static UIImage *scaledImageWithWidthHeight(UIImage *image, NSNumber *width, NSNu
                                            CGFloat screenScale);
 
 UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
-                           NSObject<FlutterPluginRegistrar> *registrar, CGFloat screenScale) {
+                           NSObject<FGMAssetProvider> *assetProvider, CGFloat screenScale) {
   assert(screenScale > 0 && "Screen scale must be greater than 0");
   // See comment in messages.dart for why this is so loosely typed. See also
   // https://github.com/flutter/flutter/issues/117819.
@@ -62,16 +64,16 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     FGMPlatformBitmapAsset *bitmapAsset = bitmap;
     if (bitmapAsset.pkg) {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAsset.name
-                                                   fromPackage:bitmapAsset.pkg]];
+      image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAsset.name
+                                                       fromPackage:bitmapAsset.pkg]];
     } else {
-      image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAsset.name]];
+      image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAsset.name]];
     }
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapAssetImage class]]) {
     // Deprecated: This message handling for 'fromAssetImage' has been replaced by 'asset'.
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     FGMPlatformBitmapAssetImage *bitmapAssetImage = bitmap;
-    image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAssetImage.name]];
+    image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAssetImage.name]];
     image = scaledImage(image, bitmapAssetImage.scale);
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapBytes class]]) {
     // Deprecated: This message handling for 'fromBytes' has been replaced by 'bytes'.
@@ -88,7 +90,7 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
   } else if ([bitmap isKindOfClass:[FGMPlatformBitmapAssetMap class]]) {
     FGMPlatformBitmapAssetMap *bitmapAssetMap = bitmap;
 
-    image = [UIImage imageNamed:[registrar lookupKeyForAsset:bitmapAssetMap.assetName]];
+    image = [UIImage imageNamed:[assetProvider lookupKeyForAsset:bitmapAssetMap.assetName]];
 
     if (bitmapAssetMap.bitmapScaling == FGMPlatformMapBitmapScalingAuto) {
       NSNumber *width = bitmapAssetMap.width;
