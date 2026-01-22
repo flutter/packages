@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import google_maps_flutter_ios;
-@import XCTest;
+@import google_maps_flutter_ios_sdk9;
 @import GoogleMaps;
+@import XCTest;
 
 /// A GMSPolygon that ensures that property updates are made before the map is set.
 @interface PropertyOrderValidatingPolygon : GMSPolygon {

@@ -53,3 +53,19 @@ void updatePackageNameInPathReferences(File file, String packageName) {
   );
   file.writeAsStringSync(newContents);
 }
+
+/// Updates the contents of [file] to replace any occurrences of variants of the
+/// package name in Obj-C or Swift import statements.
+///
+/// This is necessary for native unit tests, which need to import the Swift
+/// package by name.
+void updatePackageNameInImports(File file, String packageName) {
+  final String newContents = file.readAsStringSync().replaceAllMapped(
+    RegExp(
+      r'^(@?)import google_maps_flutter_ios[_\w\d]*(;?)$',
+      multiLine: true,
+    ),
+    (match) => '${match.group(1)}import $packageName${match.group(2)}',
+  );
+  file.writeAsStringSync(newContents);
+}

@@ -2,10 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import google_maps_flutter_ios;
-@import XCTest;
+@import google_maps_flutter_ios_sdk10;
 @import GoogleMaps;
 @import GoogleMapsUtils;
+@import XCTest;
 
 #import "PartiallyMockedMapView.h"
 

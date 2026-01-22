@@ -140,6 +140,10 @@ void _syncFile(
       destinationPackageName,
     );
   }
+  // Native unit tests need to import the Swift package.
+  if (source.absolute.path.contains('/RunnerTests/')) {
+    updatePackageNameInImports(File(destinationPath), destinationPackageName);
+  }
 }
 
 void _reportUnsharedFiles(

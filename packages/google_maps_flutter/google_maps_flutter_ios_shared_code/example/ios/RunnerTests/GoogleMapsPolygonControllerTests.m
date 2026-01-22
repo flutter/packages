@@ -3,8 +3,8 @@
 // found in the LICENSE file.
 
 @import google_maps_flutter_ios;
-@import XCTest;
 @import GoogleMaps;
+@import XCTest;
 
 /// A GMSPolygon that ensures that property updates are made before the map is set.
 @interface PropertyOrderValidatingPolygon : GMSPolygon {

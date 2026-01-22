@@ -3,10 +3,11 @@
 // found in the LICENSE file.
 
 @import google_maps_flutter_ios;
-@import XCTest;
 @import GoogleMaps;
+@import XCTest;
 
 #import <OCMock/OCMock.h>
+
 #import "PartiallyMockedMapView.h"
 
 /// A GMSGroundOverlay that ensures that property updates are made before the map is set.

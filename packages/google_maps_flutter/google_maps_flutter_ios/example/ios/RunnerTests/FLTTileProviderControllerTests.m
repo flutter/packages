@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import XCTest;
-@import GoogleMaps;
 @import google_maps_flutter_ios;
+@import GoogleMaps;
+@import XCTest;
 
 #import <OCMock/OCMock.h>
 
