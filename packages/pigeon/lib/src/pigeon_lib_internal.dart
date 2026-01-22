@@ -55,84 +55,77 @@ class InternalPigeonOptions {
       appDirectory = options.appDirectory,
       objcOptions =
           (options.objcHeaderOut == null || options.objcSourceOut == null)
-              ? null
-              : InternalObjcOptions.fromObjcOptions(
-                options.objcOptions ?? const ObjcOptions(),
-                objcHeaderOut: options.objcHeaderOut!,
-                objcSourceOut: options.objcSourceOut!,
-                fileSpecificClassNameComponent:
-                    options.objcSourceOut
-                        ?.split('/')
-                        .lastOrNull
-                        ?.split('.')
-                        .firstOrNull ??
-                    '',
-                copyrightHeader: copyrightHeader,
-              ),
-      javaOptions =
-          options.javaOut == null
-              ? null
-              : InternalJavaOptions.fromJavaOptions(
-                options.javaOptions ?? const JavaOptions(),
-                javaOut: options.javaOut!,
-                copyrightHeader: copyrightHeader,
-              ),
-      swiftOptions =
-          options.swiftOut == null
-              ? null
-              : InternalSwiftOptions.fromSwiftOptions(
-                options.swiftOptions ?? const SwiftOptions(),
-                swiftOut: options.swiftOut!,
-                copyrightHeader: copyrightHeader,
-              ),
-      kotlinOptions =
-          options.kotlinOut == null
-              ? null
-              : InternalKotlinOptions.fromKotlinOptions(
-                options.kotlinOptions ?? const KotlinOptions(),
-                kotlinOut: options.kotlinOut!,
-                copyrightHeader: copyrightHeader,
-              ),
+          ? null
+          : InternalObjcOptions.fromObjcOptions(
+              options.objcOptions ?? const ObjcOptions(),
+              objcHeaderOut: options.objcHeaderOut!,
+              objcSourceOut: options.objcSourceOut!,
+              fileSpecificClassNameComponent:
+                  options.objcSourceOut
+                      ?.split('/')
+                      .lastOrNull
+                      ?.split('.')
+                      .firstOrNull ??
+                  '',
+              copyrightHeader: copyrightHeader,
+            ),
+      javaOptions = options.javaOut == null
+          ? null
+          : InternalJavaOptions.fromJavaOptions(
+              options.javaOptions ?? const JavaOptions(),
+              javaOut: options.javaOut!,
+              copyrightHeader: copyrightHeader,
+            ),
+      swiftOptions = options.swiftOut == null
+          ? null
+          : InternalSwiftOptions.fromSwiftOptions(
+              options.swiftOptions ?? const SwiftOptions(),
+              swiftOut: options.swiftOut!,
+              copyrightHeader: copyrightHeader,
+            ),
+      kotlinOptions = options.kotlinOut == null
+          ? null
+          : InternalKotlinOptions.fromKotlinOptions(
+              options.kotlinOptions ?? const KotlinOptions(),
+              kotlinOut: options.kotlinOut!,
+              copyrightHeader: copyrightHeader,
+            ),
       cppOptions =
           (options.cppHeaderOut == null || options.cppSourceOut == null)
-              ? null
-              : InternalCppOptions.fromCppOptions(
-                options.cppOptions ?? const CppOptions(),
-                cppHeaderOut: options.cppHeaderOut!,
-                cppSourceOut: options.cppSourceOut!,
-                copyrightHeader: copyrightHeader,
-              ),
+          ? null
+          : InternalCppOptions.fromCppOptions(
+              options.cppOptions ?? const CppOptions(),
+              cppHeaderOut: options.cppHeaderOut!,
+              cppSourceOut: options.cppSourceOut!,
+              copyrightHeader: copyrightHeader,
+            ),
       gobjectOptions =
           options.gobjectHeaderOut == null || options.gobjectSourceOut == null
-              ? null
-              : InternalGObjectOptions.fromGObjectOptions(
-                options.gobjectOptions ?? const GObjectOptions(),
-                gobjectHeaderOut: options.gobjectHeaderOut!,
-                gobjectSourceOut: options.gobjectSourceOut!,
-                copyrightHeader: copyrightHeader,
-              ),
+          ? null
+          : InternalGObjectOptions.fromGObjectOptions(
+              options.gobjectOptions ?? const GObjectOptions(),
+              gobjectHeaderOut: options.gobjectHeaderOut!,
+              gobjectSourceOut: options.gobjectSourceOut!,
+              copyrightHeader: copyrightHeader,
+            ),
       dartOptions =
           (options.dartOut == null &&
-                  options.dartOptions?.sourceOutPath == null)
-              ? null
-              : InternalDartOptions.fromDartOptions(
-                options.dartOptions ?? const DartOptions(),
-                dartOut: options.dartOut,
-                testOut: options.dartTestOut,
-                copyrightHeader: copyrightHeader,
-                useJni: options.kotlinOptions?.useJni ?? false,
-                useFfi: options.swiftOptions?.useFfi ?? false,
-                ffiErrorClassName: options.swiftOptions?.errorClassName,
-              ),
-      copyrightHeader =
-          options.copyrightHeader != null
-              ? _lineReader(
-                path.posix.join(
-                  options.basePath ?? '',
-                  options.copyrightHeader,
-                ),
-              )
-              : null,
+              options.dartOptions?.sourceOutPath == null)
+          ? null
+          : InternalDartOptions.fromDartOptions(
+              options.dartOptions ?? const DartOptions(),
+              dartOut: options.dartOut,
+              testOut: options.dartTestOut,
+              copyrightHeader: copyrightHeader,
+              useJni: options.kotlinOptions?.useJni ?? false,
+              useFfi: options.swiftOptions?.useFfi ?? false,
+              ffiErrorClassName: options.swiftOptions?.errorClassName,
+            ),
+      copyrightHeader = options.copyrightHeader != null
+          ? _lineReader(
+              path.posix.join(options.basePath ?? '', options.copyrightHeader),
+            )
+          : null,
       astOut = options.astOut,
       debugGenerators = options.debugGenerators,
       basePath = options.basePath,
@@ -140,12 +133,11 @@ class InternalPigeonOptions {
 
   /// Creates a instance of InternalPigeonOptions from PigeonOptions.
   static InternalPigeonOptions fromPigeonOptions(PigeonOptions options) {
-    final Iterable<String>? copyrightHeader =
-        options.copyrightHeader != null
-            ? _lineReader(
-              path.posix.join(options.basePath ?? '', options.copyrightHeader),
-            )
-            : null;
+    final Iterable<String>? copyrightHeader = options.copyrightHeader != null
+        ? _lineReader(
+            path.posix.join(options.basePath ?? '', options.copyrightHeader),
+          )
+        : null;
 
     return InternalPigeonOptions._fromPigeonOptionsWithHeader(
       options,
@@ -570,12 +562,12 @@ class FfigenConfigGeneratorAdapter implements GeneratorAdapter {
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       options.swiftOptions?.appDirectory != null &&
-              (options.swiftOptions?.useFfi ?? false)
-          ? _openSink(
-            'ffigen_config.dart',
-            basePath: options.swiftOptions?.appDirectory ?? '',
-          )
-          : null;
+          (options.swiftOptions?.useFfi ?? false)
+      ? _openSink(
+          'ffigen_config.dart',
+          basePath: options.swiftOptions?.appDirectory ?? '',
+        )
+      : null;
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
@@ -791,9 +783,9 @@ class JnigenYamlGeneratorAdapter implements GeneratorAdapter {
   @override
   IOSink? shouldGenerate(InternalPigeonOptions options, FileType _) =>
       options.kotlinOptions?.kotlinOut != null &&
-              (options.kotlinOptions?.useJni ?? false)
-          ? _openSink('jnigen.yaml', basePath: options.appDirectory ?? '')
-          : null;
+          (options.kotlinOptions?.useJni ?? false)
+      ? _openSink('jnigen.yaml', basePath: options.appDirectory ?? '')
+      : null;
 
   @override
   List<Error> validate(InternalPigeonOptions options, Root root) => <Error>[];
@@ -823,8 +815,9 @@ extension _ObjectAs on Object {
 
 List<Error> _validateAst(Root root, String source) {
   final result = <Error>[];
-  final List<String> customClasses =
-      root.classes.map((Class x) => x.name).toList();
+  final List<String> customClasses = root.classes
+      .map((Class x) => x.name)
+      .toList();
   final Iterable<String> customEnums = root.enums.map((Enum x) => x.name);
   for (final Enum enumDefinition in root.enums) {
     final String? matchingPrefix = _findMatchingPrefixOrNull(
@@ -1417,8 +1410,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
       _apis,
       _classes,
     );
-    final Set<String> referencedTypeNames =
-        referencedTypes.keys.map((TypeDeclaration e) => e.baseName).toSet();
+    final Set<String> referencedTypeNames = referencedTypes.keys
+        .map((TypeDeclaration e) => e.baseName)
+        .toSet();
     final nonReferencedTypes = List<Class>.from(_classes);
     nonReferencedTypes.removeWhere(
       (Class x) => referencedTypeNames.contains(x.name),
@@ -1470,10 +1464,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
           element.key.baseName != 'dynamic' &&
           element.key.baseName != 'Object' &&
           element.key.baseName.isNotEmpty) {
-        final int? lineNumber =
-            element.value.isEmpty
-                ? null
-                : calculateLineNumber(source, element.value.first);
+        final int? lineNumber = element.value.isEmpty
+            ? null
+            : calculateLineNumber(source, element.value.first);
         totalErrors.add(
           Error(
             message: 'Unknown type: ${element.key.baseName}',
@@ -1542,16 +1535,15 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     totalErrors.addAll(validateErrors);
 
     return ParseResults(
-      root:
-          totalErrors.isEmpty
-              ? completeRoot
-              : Root(
-                apis: <Api>[],
-                classes: <Class>[],
-                enums: <Enum>[],
-                lists: <String, TypeDeclaration>{},
-                maps: <String, TypeDeclaration>{},
-              ),
+      root: totalErrors.isEmpty
+          ? completeRoot
+          : Root(
+              apis: <Api>[],
+              classes: <Class>[],
+              enums: <Enum>[],
+              lists: <String, TypeDeclaration>{},
+              maps: <String, TypeDeclaration>{},
+            ),
       errors: totalErrors,
       pigeonOptions: _pigeonOptions,
     );
@@ -1940,10 +1932,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     const docCommentPrefix = '///';
     return comments
             ?.map(
-              (Token line) =>
-                  line.length > docCommentPrefix.length
-                      ? line.toString().substring(docCommentPrefix.length)
-                      : '',
+              (Token line) => line.length > docCommentPrefix.length
+                  ? line.toString().substring(docCommentPrefix.length)
+                  : '',
             )
             .toList() ??
         <String>[];
@@ -2028,8 +2019,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   @override
   Object? visitMethodDeclaration(dart_ast.MethodDeclaration node) {
     final dart_ast.FormalParameterList parameters = node.parameters!;
-    final List<Parameter> arguments =
-        parameters.parameters.map(_formalParameterToPigeonParameter).toList();
+    final List<Parameter> arguments = parameters.parameters
+        .map(_formalParameterToPigeonParameter)
+        .toList();
     final bool isAsynchronous = _hasMetadata(node.metadata, 'async');
     final bool isStatic = _hasMetadata(node.metadata, 'static');
     final String objcSelector =
@@ -2045,14 +2037,15 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             .asNullable<dart_ast.SimpleStringLiteral>()
             ?.value ??
         '';
-    final dart_ast.ArgumentList? taskQueueArguments =
-        _findMetadata(node.metadata, 'TaskQueue')?.arguments;
-    final String? taskQueueTypeName =
-        taskQueueArguments == null
-            ? null
-            : _getFirstChildOfType<dart_ast.NamedExpression>(
-              taskQueueArguments,
-            )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
+    final dart_ast.ArgumentList? taskQueueArguments = _findMetadata(
+      node.metadata,
+      'TaskQueue',
+    )?.arguments;
+    final String? taskQueueTypeName = taskQueueArguments == null
+        ? null
+        : _getFirstChildOfType<dart_ast.NamedExpression>(
+            taskQueueArguments,
+          )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
     final TaskQueueType taskQueueType =
         _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
         TaskQueueType.serial;
@@ -2107,17 +2100,16 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
     _enums.add(
       Enum(
         name: node.name.lexeme,
-        members:
-            node.constants
-                .map(
-                  (dart_ast.EnumConstantDeclaration e) => EnumMember(
-                    name: e.name.lexeme,
-                    documentationComments: _documentationCommentsParser(
-                      e.documentationComment?.tokens,
-                    ),
-                  ),
-                )
-                .toList(),
+        members: node.constants
+            .map(
+              (dart_ast.EnumConstantDeclaration e) => EnumMember(
+                name: e.name.lexeme,
+                documentationComments: _documentationCommentsParser(
+                  e.documentationComment?.tokens,
+                ),
+              ),
+            )
+            .toList(),
         documentationComments: _documentationCommentsParser(
           node.documentationComment?.tokens,
         ),
@@ -2214,8 +2206,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   Object? visitConstructorDeclaration(dart_ast.ConstructorDeclaration node) {
     if (_currentApi is AstProxyApi) {
       final dart_ast.FormalParameterList parameters = node.parameters;
-      final List<Parameter> arguments =
-          parameters.parameters.map(_formalParameterToPigeonParameter).toList();
+      final List<Parameter> arguments = parameters.parameters
+          .map(_formalParameterToPigeonParameter)
+          .toList();
       final String swiftFunction =
           _findMetadata(node.metadata, 'SwiftFunction')
               ?.arguments
@@ -2265,8 +2258,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
             in node.parameters.parameters) {
           if (param is dart_ast.DefaultFormalParameter) {
             if (param.name != null && param.defaultValue != null) {
-              _currentClassDefaultValues[param.name!.toString()] =
-                  param.defaultValue!.toString();
+              _currentClassDefaultValues[param.name!.toString()] = param
+                  .defaultValue!
+                  .toString();
             }
           }
         }
@@ -2290,10 +2284,9 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
   ) {
     final bool isStatic = _hasMetadata(node.metadata, 'static');
     if (type is dart_ast.GenericFunctionType) {
-      final List<Parameter> parameters =
-          type.parameters.parameters
-              .map(_formalParameterToPigeonParameter)
-              .toList();
+      final List<Parameter> parameters = type.parameters.parameters
+          .map(_formalParameterToPigeonParameter)
+          .toList();
       final String swiftFunction =
           _findMetadata(node.metadata, 'SwiftFunction')
               ?.arguments
@@ -2302,14 +2295,15 @@ class RootBuilder extends dart_ast_visitor.RecursiveAstVisitor<Object?> {
               .asNullable<dart_ast.SimpleStringLiteral>()
               ?.value ??
           '';
-      final dart_ast.ArgumentList? taskQueueArguments =
-          _findMetadata(node.metadata, 'TaskQueue')?.arguments;
-      final String? taskQueueTypeName =
-          taskQueueArguments == null
-              ? null
-              : _getFirstChildOfType<dart_ast.NamedExpression>(
-                taskQueueArguments,
-              )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
+      final dart_ast.ArgumentList? taskQueueArguments = _findMetadata(
+        node.metadata,
+        'TaskQueue',
+      )?.arguments;
+      final String? taskQueueTypeName = taskQueueArguments == null
+          ? null
+          : _getFirstChildOfType<dart_ast.NamedExpression>(
+              taskQueueArguments,
+            )?.expression.asNullable<dart_ast.PrefixedIdentifier>()?.name;
       final TaskQueueType taskQueueType =
           _stringToEnum(TaskQueueType.values, taskQueueTypeName) ??
           TaskQueueType.serial;

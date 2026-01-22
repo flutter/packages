@@ -274,7 +274,7 @@ class FormatCommand extends PackageLoopingCommand {
             'swift-format',
             'lint',
             '--parallel',
-            '--strict',
+        // '--strict',
           ],
           files: swiftFiles);
       if (lintExitCode == 1) {

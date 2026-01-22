@@ -414,8 +414,10 @@ class _PigeonFfiCodec {
     final readerName = '${codecName}Reader';
     final writerName = '${codecName}Writer';
 
-    final List<EnumeratedType> enumeratedTypes =
-        getEnumeratedTypes(root, excludeSealedClasses: true).toList();
+    final List<EnumeratedType> enumeratedTypes = getEnumeratedTypes(
+      root,
+      excludeSealedClasses: true,
+    ).toList();
 
     void writeDecodeLogic(EnumeratedType customType) {
       indent.writeln('case ${customType.enumeration}:');
@@ -496,18 +498,16 @@ class _PigeonFfiCodec {
           for (final customType in enumeratedTypes) {
             indent.add('if let value = value as? ${customType.name} ');
             indent.addScoped('{', '} else ', () {
-              final encodeString =
-                  customType.type == CustomTypes.customClass
-                      ? 'toList()'
-                      : 'rawValue';
-              final valueString =
-                  customType.enumeration < maximumCodecFieldKey
-                      ? 'value.$encodeString'
-                      : 'wrap.toList()';
+              final encodeString = customType.type == CustomTypes.customClass
+                  ? 'toList()'
+                  : 'rawValue';
+              final valueString = customType.enumeration < maximumCodecFieldKey
+                  ? 'value.$encodeString'
+                  : 'wrap.toList()';
               final int enumeration =
                   customType.enumeration < maximumCodecFieldKey
-                      ? customType.enumeration
-                      : maximumCodecFieldKey;
+                  ? customType.enumeration
+                  : maximumCodecFieldKey;
               if (customType.enumeration >= maximumCodecFieldKey) {
                 indent.writeln(
                   'let wrap = $_overflowClassName(type: ${customType.enumeration - maximumCodecFieldKey}, wrapped: value.$encodeString)',
@@ -913,8 +913,9 @@ if (wrapped == nil) {
     bool forceNullable = false,
   }) {
     final nullable = type.isNullable ? '?' : '';
-    final checkNullish =
-        type.isNullable || forceNullable ? 'isNullish($varName) ? nil : ' : '';
+    final checkNullish = type.isNullable || forceNullable
+        ? 'isNullish($varName) ? nil : '
+        : '';
     switch (type.baseName) {
       case 'Object':
         return '_PigeonFfiCodec.readValue(value: $varName)${type.isNullable || forceNullable ? '' : '!'}';
@@ -1123,18 +1124,18 @@ if (wrapped == nil) {
         )) {
           final comma =
               getFieldsInSerializationOrder(classDefinition).last == field
-                  ? ''
-                  : ',';
+              ? ''
+              : ',';
           // Force-casting nullable enums in maps doesn't work the same as other types.
           // It needs soft-casting followed by force unwrapping.
           final forceUnwrapMapWithNullableEnums =
               (field.type.baseName == 'Map' &&
-                      !field.type.isNullable &&
-                      field.type.typeArguments.any(
-                        (TypeDeclaration type) => type.isEnum,
-                      ))
-                  ? '!'
-                  : '';
+                  !field.type.isNullable &&
+                  field.type.typeArguments.any(
+                    (TypeDeclaration type) => type.isEnum,
+                  ))
+              ? '!'
+              : '';
           indent.writeln(
             '${field.name}: ${field.name}$forceUnwrapMapWithNullableEnums$comma',
           );
@@ -1468,8 +1469,8 @@ if (wrapped == nil) {
             documentationComments: method.documentationComments,
             serialBackgroundQueue:
                 method.taskQueueType == TaskQueueType.serialBackgroundThread
-                    ? serialBackgroundQueue
-                    : null,
+                ? serialBackgroundQueue
+                : null,
           );
         }
       });
@@ -1550,12 +1551,10 @@ if (wrapped == nil) {
             swiftFunction: 'method(withIdentifier:)',
             setHandlerCondition: setHandlerCondition,
             isAsynchronous: false,
-            onCreateCall: (
-              List<String> safeArgNames, {
-              required String apiVarName,
-            }) {
-              return 'let _: AnyObject? = try instanceManager.removeInstance(${safeArgNames.single})';
-            },
+            onCreateCall:
+                (List<String> safeArgNames, {required String apiVarName}) {
+                  return 'let _: AnyObject? = try instanceManager.removeInstance(${safeArgNames.single})';
+                },
           );
           _writeHostMethodMessageHandler(
             indent,
@@ -1566,12 +1565,10 @@ if (wrapped == nil) {
             setHandlerCondition: setHandlerCondition,
             swiftFunction: null,
             isAsynchronous: false,
-            onCreateCall: (
-              List<String> safeArgNames, {
-              required String apiVarName,
-            }) {
-              return 'try instanceManager.removeAllObjects()';
-            },
+            onCreateCall:
+                (List<String> safeArgNames, {required String apiVarName}) {
+                  return 'try instanceManager.removeAllObjects()';
+                },
           );
         },
       );
@@ -1603,8 +1600,8 @@ if (wrapped == nil) {
     Root root,
     Indent indent,
   ) {
-    final Iterable<AstProxyApi> allProxyApis =
-        root.apis.whereType<AstProxyApi>();
+    final Iterable<AstProxyApi> allProxyApis = root.apis
+        .whereType<AstProxyApi>();
 
     _writeProxyApiRegistrar(
       indent,
@@ -1813,8 +1810,9 @@ if (wrapped == nil) {
     );
 
     final swiftApiDelegateName = '${hostProxyApiPrefix}Delegate${api.name}';
-    final type =
-        api.hasMethodsRequiringImplementation() ? 'protocol' : 'open class';
+    final type = api.hasMethodsRequiringImplementation()
+        ? 'protocol'
+        : 'open class';
     indent.writeScoped('$type $swiftApiDelegateName {', '}', () {
       _writeProxyApiConstructorDelegateMethods(
         indent,
@@ -2521,10 +2519,9 @@ enum MyDataType: Int {
       (MapEntry<int, NamedType> e) =>
           getEnumSafeArgumentExpression(e.key, e.value),
     );
-    final sendArgument =
-        parameters.isEmpty
-            ? 'nil'
-            : '[${enumSafeArgNames.join(', ')}] as [Any?]';
+    final sendArgument = parameters.isEmpty
+        ? 'nil'
+        : '[${enumSafeArgNames.join(', ')}] as [Any?]';
     const channel = 'channel';
     indent.writeln('let channelName: String = "$channelName"');
     indent.writeln(
@@ -2573,11 +2570,11 @@ enum MyDataType: Int {
           // There is a swift bug with unwrapping maps of nullable Enums;
           final enumMapForceUnwrap =
               returnType.baseName == 'Map' &&
-                      returnType.typeArguments.any(
-                        (TypeDeclaration type) => type.isEnum,
-                      )
-                  ? '!'
-                  : '';
+                  returnType.typeArguments.any(
+                    (TypeDeclaration type) => type.isEnum,
+                  )
+              ? '!'
+              : '';
           indent.writeln('completion(.success(result$enumMapForceUnwrap))');
         }
       });
@@ -2650,11 +2647,11 @@ enum MyDataType: Int {
             // There is a swift bug with unwrapping maps of nullable Enums;
             final enumMapForceUnwrap =
                 arg.type.baseName == 'Map' &&
-                        arg.type.typeArguments.any(
-                          (TypeDeclaration type) => type.isEnum,
-                        )
-                    ? '!'
-                    : '';
+                    arg.type.typeArguments.any(
+                      (TypeDeclaration type) => type.isEnum,
+                    )
+                ? '!'
+                : '';
 
             _writeGenericCasting(
               indent: indent,
@@ -2678,10 +2675,9 @@ enum MyDataType: Int {
         if (onCreateCall == null) {
           // Empty parens are not required when calling a method whose only
           // argument is a trailing closure.
-          final argumentString =
-              methodArgument.isEmpty && isAsynchronous
-                  ? ''
-                  : '(${methodArgument.join(', ')})';
+          final argumentString = methodArgument.isEmpty && isAsynchronous
+              ? ''
+              : '(${methodArgument.join(', ')})';
           call = '${tryStatement}api.${components.name}$argumentString';
         } else {
           call = onCreateCall(methodArgument, apiVarName: 'api');
@@ -2886,10 +2882,9 @@ enum MyDataType: Int {
       }
 
       final String methodSignature = _getMethodSignature(
-        name:
-            constructor.name.isNotEmpty
-                ? constructor.name
-                : 'pigeonDefaultConstructor',
+        name: constructor.name.isNotEmpty
+            ? constructor.name
+            : 'pigeonDefaultConstructor',
         parameters: <Parameter>[
           Parameter(
             name: 'pigeonApi',
@@ -3179,16 +3174,14 @@ enum MyDataType: Int {
         }
 
         for (final Constructor constructor in api.constructors) {
-          final String name =
-              constructor.name.isNotEmpty
-                  ? constructor.name
-                  : 'pigeonDefaultConstructor';
+          final String name = constructor.name.isNotEmpty
+              ? constructor.name
+              : 'pigeonDefaultConstructor';
           final String channelName = makeChannelNameWithStrings(
             apiName: api.name,
-            methodName:
-                constructor.name.isNotEmpty
-                    ? constructor.name
-                    : '${classMemberNamePrefix}defaultConstructor',
+            methodName: constructor.name.isNotEmpty
+                ? constructor.name
+                : '${classMemberNamePrefix}defaultConstructor',
             dartPackageName: dartPackageName,
           );
           writeWithApiCheckIfNecessary(
@@ -3207,19 +3200,20 @@ enum MyDataType: Int {
                 returnType: const TypeDeclaration.voidDeclaration(),
                 swiftFunction: null,
                 isAsynchronous: false,
-                onCreateCall: (
-                  List<String> methodParameters, {
-                  required String apiVarName,
-                }) {
-                  final parameters = <String>[
-                    'pigeonApi: $apiVarName',
-                    // Skip the identifier used by the InstanceManager.
-                    ...methodParameters.skip(1),
-                  ];
-                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance(\n'
-                      'try $apiVarName.pigeonDelegate.$name(${parameters.join(', ')}),\n'
-                      'withIdentifier: pigeonIdentifierArg)';
-                },
+                onCreateCall:
+                    (
+                      List<String> methodParameters, {
+                      required String apiVarName,
+                    }) {
+                      final parameters = <String>[
+                        'pigeonApi: $apiVarName',
+                        // Skip the identifier used by the InstanceManager.
+                        ...methodParameters.skip(1),
+                      ];
+                      return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance(\n'
+                          'try $apiVarName.pigeonDelegate.$name(${parameters.join(', ')}),\n'
+                          'withIdentifier: pigeonIdentifierArg)';
+                    },
                 parameters: <Parameter>[
                   Parameter(
                     name: 'pigeonIdentifier',
@@ -3256,18 +3250,18 @@ enum MyDataType: Int {
                 swiftFunction: null,
                 isAsynchronous: false,
                 returnType: const TypeDeclaration.voidDeclaration(),
-                onCreateCall: (
-                  List<String> methodParameters, {
-                  required String apiVarName,
-                }) {
-                  final instanceArg =
-                      field.isStatic
+                onCreateCall:
+                    (
+                      List<String> methodParameters, {
+                      required String apiVarName,
+                    }) {
+                      final instanceArg = field.isStatic
                           ? ''
                           : ', pigeonInstance: pigeonInstanceArg';
-                  return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
-                      'try $apiVarName.pigeonDelegate.${field.name}(pigeonApi: api$instanceArg), '
-                      'withIdentifier: pigeonIdentifierArg)';
-                },
+                      return '$apiVarName.pigeonRegistrar.instanceManager.addDartCreatedInstance('
+                          'try $apiVarName.pigeonDelegate.${field.name}(pigeonApi: api$instanceArg), '
+                          'withIdentifier: pigeonIdentifierArg)';
+                    },
                 parameters: <Parameter>[
                   if (!field.isStatic)
                     Parameter(
@@ -3309,19 +3303,20 @@ enum MyDataType: Int {
                 returnType: method.returnType,
                 isAsynchronous: method.isAsynchronous,
                 swiftFunction: null,
-                onCreateCall: (
-                  List<String> methodParameters, {
-                  required String apiVarName,
-                }) {
-                  final tryStatement = method.isAsynchronous ? '' : 'try ';
-                  final parameters = <String>[
-                    'pigeonApi: $apiVarName',
-                    // Skip the identifier used by the InstanceManager.
-                    ...methodParameters,
-                  ];
+                onCreateCall:
+                    (
+                      List<String> methodParameters, {
+                      required String apiVarName,
+                    }) {
+                      final tryStatement = method.isAsynchronous ? '' : 'try ';
+                      final parameters = <String>[
+                        'pigeonApi: $apiVarName',
+                        // Skip the identifier used by the InstanceManager.
+                        ...methodParameters,
+                      ];
 
-                  return '$tryStatement$apiVarName.pigeonDelegate.${method.name}(${parameters.join(', ')})';
-                },
+                      return '$tryStatement$apiVarName.pigeonDelegate.${method.name}(${parameters.join(', ')})';
+                    },
                 parameters: <Parameter>[
                   if (!method.isStatic)
                     Parameter(
@@ -3752,10 +3747,9 @@ String _getSafeArgumentName(int count, NamedType argument) {
 }
 
 String _camelCase(String text) {
-  final String pascal =
-      text.split('_').map((String part) {
-        return part.isEmpty ? '' : part[0].toUpperCase() + part.substring(1);
-      }).join();
+  final String pascal = text.split('_').map((String part) {
+    return part.isEmpty ? '' : part[0].toUpperCase() + part.substring(1);
+  }).join();
   return pascal[0].toLowerCase() + pascal.substring(1);
 }
 
@@ -3985,10 +3979,9 @@ String _getMethodSignature({
     swiftFunction: swiftFunction,
   );
   String methodName = components.name;
-  String returnTypeString =
-      returnType.isVoid
-          ? 'Void'
-          : _nullSafeSwiftTypeForDartType(returnType, ffiTypedData: ffiUserApi);
+  String returnTypeString = returnType.isVoid
+      ? 'Void'
+      : _nullSafeSwiftTypeForDartType(returnType, ffiTypedData: ffiUserApi);
 
   Iterable<String> types = parameters.map(
     (NamedType e) =>
@@ -4003,18 +3996,16 @@ String _getMethodSignature({
 
   final objc = ffiBridgeApi ? '@objc ' : '';
   var throwString = ' throws';
-  var errorParam =
-      isAsynchronous && !ffiUserApi
-          ? '${parameters.isEmpty ? '' : ', '}completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void'
-          : '';
+  var errorParam = isAsynchronous && !ffiUserApi
+      ? '${parameters.isEmpty ? '' : ', '}completion: @escaping (Result<$returnTypeString, $errorTypeName>) -> Void'
+      : '';
   var asyncString = '';
 
   if (ffiBridgeApi) {
     methodName = name;
-    returnTypeString =
-        returnType.isVoid
-            ? ''
-            : _nullSafeFfiTypeForDartType(returnType, forceNullable: true);
+    returnTypeString = returnType.isVoid
+        ? ''
+        : _nullSafeFfiTypeForDartType(returnType, forceNullable: true);
     types = parameters.map(
       (NamedType e) => _nullSafeFfiTypeForDartType(e.type),
     );
@@ -4022,10 +4013,9 @@ String _getMethodSignature({
     errorParam =
         '${parameters.isEmpty ? '' : ', '}wrappedError: $errorTypeName';
   }
-  asyncString =
-      ffiUserApi || ffiBridgeApi
-          ? ' async${ffiUserApi ? ' throws' : ''}${returnType.isVoid ? '' : ' -> $returnTypeString'}'
-          : '';
+  asyncString = ffiUserApi || ffiBridgeApi
+      ? ' async${ffiUserApi ? ' throws' : ''}${returnType.isVoid ? '' : ' -> $returnTypeString'}'
+      : '';
 
   final Iterable<String> names = indexMap(parameters, getParameterName);
   final String parameterSignature = map3(types, labels, names, (
@@ -4085,16 +4075,15 @@ class _SwiftFunctionComponents {
       return _SwiftFunctionComponents._(
         name: name,
         returnType: returnType,
-        arguments:
-            parameters
-                .map(
-                  (NamedType field) => _SwiftFunctionArgument(
-                    name: field.name,
-                    type: field.type,
-                    namedType: field,
-                  ),
-                )
-                .toList(),
+        arguments: parameters
+            .map(
+              (NamedType field) => _SwiftFunctionArgument(
+                name: field.name,
+                type: field.type,
+                namedType: field,
+              ),
+            )
+            .toList(),
       );
     }
 
@@ -4102,27 +4091,23 @@ class _SwiftFunctionComponents {
     final signatureRegex = RegExp(r'(\w+) *\(' + argsExtractor + r'\)');
     final RegExpMatch match = signatureRegex.firstMatch(swiftFunction)!;
 
-    final Iterable<String> labels =
-        match
-            .groups(
-              List<int>.generate(parameters.length, (int index) => index + 2),
-            )
-            .whereType();
+    final Iterable<String> labels = match
+        .groups(List<int>.generate(parameters.length, (int index) => index + 2))
+        .whereType();
 
     return _SwiftFunctionComponents._(
       name: match.group(1)!,
       returnType: returnType,
-      arguments:
-          map2(
-            parameters,
-            labels,
-            (NamedType field, String label) => _SwiftFunctionArgument(
-              name: field.name,
-              label: label == field.name ? null : label,
-              type: field.type,
-              namedType: field,
-            ),
-          ).toList(),
+      arguments: map2(
+        parameters,
+        labels,
+        (NamedType field, String label) => _SwiftFunctionArgument(
+          name: field.name,
+          label: label == field.name ? null : label,
+          type: field.type,
+          namedType: field,
+        ),
+      ).toList(),
     );
   }
 
