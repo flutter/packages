@@ -1,3 +1,15 @@
+## 7.1.0
+
+- Adds support for WOFF2 and WOFF font formats on web platforms when loading fonts bundled with the app, providing improved performance and smaller bundle sizes.
+
+## 7.0.2
+
+- Adds missing public API documentation
+
+## 7.0.1
+
+- Excludes variable font entries when a static entry of the same weight and style exists
+
 ## 7.0.0
 
 - Added fonts:

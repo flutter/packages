@@ -6,6 +6,7 @@
   versions of the endorsed platform implementations.
   * Applications built with older versions of Flutter will continue to
     use compatible versions of the platform implementations.
+* Updates example app minimum platform versions.
 
 ## 2.10.1
 
