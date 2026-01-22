@@ -7,5 +7,5 @@
 // due to the package names being different. This way, all the test files can
 // be shared exactly, and only this file needs to diverge between the packages.
 
-export 'package:google_maps_flutter_ios_sdk9/google_maps_flutter_ios_sdk9.dart';
-export 'package:google_maps_flutter_ios_sdk9/src/messages.g.dart';
+export 'package:google_maps_flutter_ios_sdk10/google_maps_flutter_ios_sdk10.dart';
+export 'package:google_maps_flutter_ios_sdk10/src/messages.g.dart';
