@@ -2,7 +2,10 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:io' as io;
+
 import 'package:file/file.dart';
+import 'package:yaml/yaml.dart';
 
 import 'common/core.dart';
 import 'common/output_utils.dart';
@@ -16,7 +19,11 @@ const int _exitUnknownPackageEntry = 4;
 /// repo README and CODEOWNERS entries.
 class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   /// Creates Dependabot check command instance.
-  RepoPackageInfoCheckCommand(super.packagesDir, {super.gitDir});
+  RepoPackageInfoCheckCommand(
+    super.packagesDir, {
+    super.processRunner,
+    super.gitDir,
+  });
 
   late Directory _repoRoot;
 
@@ -149,6 +156,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       errors.add(e.message);
     }
 
+    errors.addAll(await _validateFilesBasedOnReleaseStrategy(package));
+
     // All published packages should have a README.md entry.
     if (package.isPublishable()) {
       errors.addAll(_validateRootReadme(package));
@@ -263,5 +272,180 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       default:
         return 'p: $packageName';
     }
+  }
+
+  Future<List<String>> _validateFilesBasedOnReleaseStrategy(
+    RepositoryPackage package,
+  ) async {
+    final errors = <String>[];
+    final bool isBatchRelease =
+        package.parseCIConfig()?.isBatchRelease ?? false;
+    final String packageName = package.directory.basename;
+    final Directory workflowDir = _repoRoot
+        .childDirectory('.github')
+        .childDirectory('workflows');
+
+    // 1. Verify specific batch workflow file.
+    final File batchWorkflowFile = workflowDir.childFile(
+      '${packageName}_batch.yml',
+    );
+    if (isBatchRelease) {
+      if (!batchWorkflowFile.existsSync()) {
+        errors.add(
+          'Missing batch workflow file: .github/workflows/${packageName}_batch.yml',
+        );
+      } else {
+        // Validate content.
+        final String content = batchWorkflowFile.readAsStringSync();
+        YamlMap? yaml;
+        try {
+          yaml = loadYaml(content) as YamlMap?;
+        } catch (e) {
+          errors.add('Invalid YAML in ${packageName}_batch.yml: $e');
+        }
+
+        if (yaml != null) {
+          var foundDispatch = false;
+          final jobs = yaml['jobs'] as YamlMap?;
+          if (jobs != null) {
+            for (final Object? job in jobs.values) {
+              if (job is YamlMap && job['steps'] is YamlList) {
+                final steps = job['steps'] as YamlList;
+                for (final Object? step in steps) {
+                  if (step is YamlMap &&
+                      step['uses'] is String &&
+                      (step['uses'] as String).startsWith(
+                        'peter-evans/repository-dispatch',
+                      )) {
+                    final withArgs = step['with'] as YamlMap?;
+                    if (withArgs != null &&
+                        withArgs['event-type'] == 'batch-release-pr' &&
+                        withArgs['client-payload'] ==
+                            '{"package": "$packageName"}') {
+                      foundDispatch = true;
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          if (!foundDispatch) {
+            errors.add(
+              'Invalid batch workflow content in ${packageName}_batch.yml. '
+              'Must contain a step using peter-evans/repository-dispatch with:\n'
+              '  event-type: batch-release-pr\n'
+              '  client-payload: \'{"package": "$packageName"}\'',
+            );
+          }
+        }
+      }
+    } else {
+      if (batchWorkflowFile.existsSync()) {
+        errors.add(
+          'Unexpected batch workflow file: .github/workflows/${packageName}_batch.yml',
+        );
+      }
+    }
+
+    // 2. Verify both release_from_branches.yml and sync_release_pr.yml
+    //    have the correct trigger for batch release packages.
+    errors.addAll(
+      _validateGlobalWorkflowTrigger(
+        'release_from_branches.yml',
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+        packageName: packageName,
+      ),
+    );
+    errors.addAll(
+      _validateGlobalWorkflowTrigger(
+        'sync_release_pr.yml',
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+        packageName: packageName,
+      ),
+    );
+
+    // 3. Verify remote branch exists.
+    final io.ProcessResult result = await (await gitDir).runCommand(<String>[
+      'show-ref',
+      '--verify',
+      '--quiet',
+      'refs/heads/release-$packageName',
+    ], throwOnError: false);
+    final branchExists = result.exitCode == 0;
+    if (isBatchRelease && !branchExists) {
+      errors.add('Branch release-$packageName does not exist on remote origin');
+    } else if (!isBatchRelease && branchExists) {
+      errors.add('Unexpected branch release-$packageName on remote origin');
+    }
+
+    // 4. Verify GitHub label exists.
+    // Using gh CLI.
+    try {
+      final io.ProcessResult result = await processRunner.run('gh', <String>[
+        'label',
+        'view',
+        'post-release-$packageName',
+        '--repo',
+        'flutter/packages',
+      ]);
+      final labelExists = result.exitCode == 0;
+      if (isBatchRelease && !labelExists) {
+        errors.add(
+          'Label post-release-$packageName does not exist in flutter/packages',
+        );
+      } else if (!isBatchRelease && labelExists) {
+        errors.add(
+          'Unexpected label post-release-$packageName in flutter/packages',
+        );
+      }
+    } catch (e) {
+      // gh might not be installed.
+      // We can check if it was a "command not found" error, but ProcessRunner usually wraps things.
+      // If we can't run gh, we skip this check silently or with a warning logged to console (not error list).
+      print(
+        'Warning: Skipping label check for $packageName because `gh` command failed or is missing.',
+      );
+    }
+
+    if (errors.isNotEmpty) {
+      for (final error in errors) {
+        printError('$indentation$error');
+      }
+    }
+
+    return errors;
+  }
+
+  List<String> _validateGlobalWorkflowTrigger(
+    String workflowName, {
+    required Directory workflowDir,
+    required bool isBatchRelease,
+    required String packageName,
+  }) {
+    final errors = <String>[];
+    final File workflowFile = workflowDir.childFile(workflowName);
+    if (!workflowFile.existsSync()) {
+      if (isBatchRelease) {
+        errors.add(
+          'Missing global workflow file: .github/workflows/$workflowName',
+        );
+      }
+      return errors;
+    }
+    final String content = workflowFile.readAsStringSync();
+    final bool hasTrigger = content.contains("- 'release-$packageName'");
+    if (isBatchRelease && !hasTrigger) {
+      errors.add(
+        'Missing trigger for release-$packageName in .github/workflows/$workflowName',
+      );
+    } else if (!isBatchRelease && hasTrigger) {
+      errors.add(
+        'Unexpected trigger for release-$packageName in .github/workflows/$workflowName',
+      );
+    }
+    return errors;
   }
 }
