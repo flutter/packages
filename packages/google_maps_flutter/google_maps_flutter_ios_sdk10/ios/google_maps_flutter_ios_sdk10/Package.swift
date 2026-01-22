@@ -8,21 +8,23 @@
 import PackageDescription
 
 let package = Package(
-  name: "google_maps_flutter_ios_sdk9",
+  name: "google_maps_flutter_ios_sdk10",
   platforms: [
-    .iOS(.v15)
+    .iOS(.v16)
   ],
   products: [
-    .library(name: "google-maps-flutter-ios-sdk9", type: .static, targets: ["google_maps_flutter_ios_sdk9"])
+    .library(name: "google-maps-flutter-ios-sdk10", type: .static, targets: ["google_maps_flutter_ios_sdk10"])
   ],
   dependencies: [
-    .package(url: "https://github.com/googlemaps/ios-maps-sdk", "9.0.0"..<"10.0.0"),
-    // 6.1.3+ requires SDK 10.
-    .package(url: "https://github.com/googlemaps/google-maps-ios-utils", "6.0.0"..<"6.1.3"),
+    .package(url: "https://github.com/googlemaps/ios-maps-sdk", "10.0.0"..<"11.0.0"),
+    // 6.1.3 switched from GoogleMaps 9.x to 10.x without a major version
+    // change, so pin an exact version to avoid breakage if the same thing
+    // happens with SDK 11 in the future.
+    .package(url: "https://github.com/googlemaps/google-maps-ios-utils", exact: "6.1.3"),
   ],
   targets: [
     .target(
-      name: "google_maps_flutter_ios_sdk9",
+      name: "google_maps_flutter_ios_sdk10",
       dependencies: [
         .product(
           name: "GoogleMapsUtils",
@@ -37,7 +39,7 @@ let package = Package(
         .process("Resources")
       ],
       cSettings: [
-        .headerSearchPath("include/google_maps_flutter_ios_sdk9")
+        .headerSearchPath("include/google_maps_flutter_ios_sdk10")
       ]
     )
   ]

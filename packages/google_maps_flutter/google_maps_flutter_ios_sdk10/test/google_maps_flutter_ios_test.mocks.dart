@@ -6,7 +6,7 @@
 import 'dart:async' as _i4;
 import 'dart:typed_data' as _i5;
 
-import 'package:google_maps_flutter_ios_sdk9/src/messages.g.dart' as _i2;
+import 'package:google_maps_flutter_ios_sdk10/src/messages.g.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i3;
 
