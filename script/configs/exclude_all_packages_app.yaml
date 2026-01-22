@@ -20,6 +20,7 @@
 # time (if they did, it would be impossible to select the SDK-specific
 # version).
 - google_maps_flutter_ios
-# We can't test both SDK 9 and SDK 10, so arbitrarly use the latest as
-# the test of overriding the endorsement.
-- google_maps_flutter_ios_sdk9
+# We can't test both SDK 9 and SDK 10; use 9 (excluding everything but 9)
+# so that the min iOS version of the build-all app doesn't need to be
+# raised any higher than necessary.
+- google_maps_flutter_ios_sdk10
