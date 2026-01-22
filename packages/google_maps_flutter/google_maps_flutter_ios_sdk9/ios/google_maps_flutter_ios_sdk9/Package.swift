@@ -1,7 +1,6 @@
 // swift-tools-version: 5.9
-// The swift-tools-version declares the minimum version of Swift required to build this package.
 
-// Copyright 2013 The Flutter Authors. All rights reserved.
+// Copyright 2013 The Flutter Authors
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
@@ -13,7 +12,9 @@ let package = Package(
     .iOS(.v15)
   ],
   products: [
-    .library(name: "google-maps-flutter-ios-sdk9", type: .static, targets: ["google_maps_flutter_ios_sdk9"])
+    .library(
+      name: "google-maps-flutter-ios-sdk9", type: .static, targets: ["google_maps_flutter_ios_sdk9"]
+    )
   ],
   dependencies: [
     .package(url: "https://github.com/googlemaps/ios-maps-sdk", "9.0.0"..<"10.0.0"),
