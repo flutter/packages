@@ -1803,7 +1803,7 @@ void main() {
     );
 
     test('error from onCameraError is received', () async {
-      final CameraController cameraController = CameraController(
+      final cameraController = CameraController(
           const CameraDescription(
               name: 'cam',
               lensDirection: CameraLensDirection.back,

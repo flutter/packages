@@ -241,15 +241,17 @@ final class DefaultCamera: NSObject, Camera {
     // during an incoming call.
     // https://github.com/flutter/flutter/issues/151253
     for session in [ videoCaptureSession, audioCaptureSession ] {
-      NotificationCenter.default.addObserver(self,
-                                             selector: #selector(captureSessionWasInterrupted),
-                                             name: AVCaptureSession.wasInterruptedNotification,
-                                             object: session)
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(captureSessionWasInterrupted),
+        name: AVCaptureSession.wasInterruptedNotification,
+        object: session)
 
-      NotificationCenter.default.addObserver(self,
-                                             selector: #selector(captureSessionRuntimeError),
-                                             name: AVCaptureSession.runtimeErrorNotification,
-                                             object: session)
+      NotificationCenter.default.addObserver(
+        self,
+        selector: #selector(captureSessionRuntimeError),
+        name: AVCaptureSession.runtimeErrorNotification,
+        object: session)
     }
   }
 
@@ -258,7 +260,8 @@ final class DefaultCamera: NSObject, Camera {
   }
 
   @objc private func captureSessionRuntimeError(notification: NSNotification) {
-    reportErrorMessage("\(String(describing: notification.userInfo?[AVCaptureSessionErrorKey] as? Error))")
+    reportErrorMessage(
+      "\(String(describing: notification.userInfo?[AVCaptureSessionErrorKey] as? Error))")
   }
 
   // Possible values for presets are hard-coded in FLT interface having
@@ -542,7 +545,7 @@ final class DefaultCamera: NSObject, Camera {
     isFirstVideoSample = true
     isRecording = true
     isRecordingPaused = false
-    isRecordingDisconnected = false;
+    isRecordingDisconnected = false
     recordingTimeOffset = CMTime.zero
     outputForOffsetAdjusting = captureVideoOutput.avOutput
     lastAppendedVideoSampleTime = CMTime.negativeInfinity
