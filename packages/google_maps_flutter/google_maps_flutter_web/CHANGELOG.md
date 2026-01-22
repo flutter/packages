@@ -1,6 +1,7 @@
 ## 0.5.15
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 0.5.14+3
 
