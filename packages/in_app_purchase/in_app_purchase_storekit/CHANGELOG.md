@@ -1,3 +1,9 @@
+## 0.4.8
+
+* Fixes an issue causing StoreKit2 purchases to be reported as `restored` and left in an
+  unfinished state, due to `pendingCompletePurchase` being false.
+* Fixes Xcode 26.2 analyzer warnings in example app tests.
+
 ## 0.4.7
 
 * Adds `SK2Transaction.unfinishedTransactions()` method to query only unfinished transactions.

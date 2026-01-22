@@ -82,32 +82,54 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   AVAsset *asset = [item asset];
   void (^assetCompletionHandler)(void) = ^{
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
-      NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
-      if ([tracks count] > 0) {
-        AVAssetTrack *videoTrack = tracks[0];
-        void (^trackCompletionHandler)(void) = ^{
-          if (self->_disposed) return;
-          if ([videoTrack statusOfValueForKey:@"preferredTransform"
-                                        error:nil] == AVKeyValueStatusLoaded) {
-            // Rotate the video by using a videoComposition and the preferredTransform
-            self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
-            // Do not use video composition when it is not needed.
-            if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
-              return;
+      void (^processVideoTracks)(NSArray<AVAssetTrack *> *) = ^(NSArray<AVAssetTrack *> *tracks) {
+        if ([tracks count] > 0) {
+          AVAssetTrack *videoTrack = tracks[0];
+          void (^trackCompletionHandler)(void) = ^{
+            if (self->_disposed) return;
+            if ([videoTrack statusOfValueForKey:@"preferredTransform"
+                                          error:nil] == AVKeyValueStatusLoaded) {
+              // Rotate the video by using a videoComposition and the preferredTransform
+              self->_preferredTransform = FVPGetStandardizedTransformForTrack(videoTrack);
+              // Do not use video composition when it is not needed.
+              if (CGAffineTransformIsIdentity(self->_preferredTransform)) {
+                return;
+              }
+              // Note:
+              // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
+              // Video composition can only be used with file-based media and is not supported for
+              // use with media served using HTTP Live Streaming.
+              AVMutableVideoComposition *videoComposition =
+                  [self getVideoCompositionWithTransform:self->_preferredTransform
+                                               withAsset:asset
+                                          withVideoTrack:videoTrack];
+              item.videoComposition = videoComposition;
             }
-            // Note:
-            // https://developer.apple.com/documentation/avfoundation/avplayeritem/1388818-videocomposition
-            // Video composition can only be used with file-based media and is not supported for
-            // use with media served using HTTP Live Streaming.
-            AVMutableVideoComposition *videoComposition =
-                [self getVideoCompositionWithTransform:self->_preferredTransform
-                                             withAsset:asset
-                                        withVideoTrack:videoTrack];
-            item.videoComposition = videoComposition;
-          }
-        };
-        [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
-                                  completionHandler:trackCompletionHandler];
+          };
+          [videoTrack loadValuesAsynchronouslyForKeys:@[ @"preferredTransform" ]
+                                    completionHandler:trackCompletionHandler];
+        }
+      };
+
+      // Use the new async API on iOS 15.0+/macOS 12.0+, fall back to deprecated API on older
+      // versions
+      if (@available(iOS 15.0, macOS 12.0, *)) {
+        [asset loadTracksWithMediaType:AVMediaTypeVideo
+                     completionHandler:^(NSArray<AVAssetTrack *> *_Nullable tracks,
+                                         NSError *_Nullable error) {
+                       if (error == nil && tracks != nil) {
+                         processVideoTracks(tracks);
+                       } else if (error != nil) {
+                         NSLog(@"Error loading tracks: %@", error);
+                       }
+                     }];
+      } else {
+        // For older OS versions, use the deprecated API with warning suppression
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+        NSArray *tracks = [asset tracksWithMediaType:AVMediaTypeVideo];
+#pragma clang diagnostic pop
+        processVideoTracks(tracks);
       }
     }
   };
@@ -419,6 +441,70 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)setPlaybackSpeed:(double)speed error:(FlutterError *_Nullable *_Nonnull)error {
   _targetPlaybackSpeed = @(speed);
   [self updatePlayingState];
+}
+
+- (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:
+    (FlutterError *_Nullable *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  NSAssert(currentItem, @"currentItem should not be nil");
+  AVAsset *asset = currentItem.asset;
+
+  // Get tracks from media selection (for HLS streams)
+  AVMediaSelectionGroup *audioGroup =
+      [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
+      [[NSMutableArray alloc] init];
+
+  if (audioGroup.options.count > 0) {
+    AVMediaSelection *mediaSelection = currentItem.currentMediaSelection;
+    AVMediaSelectionOption *currentSelection =
+        [mediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
+
+    for (NSInteger i = 0; i < audioGroup.options.count; i++) {
+      AVMediaSelectionOption *option = audioGroup.options[i];
+      NSString *displayName = option.displayName;
+
+      NSString *languageCode = nil;
+      if (option.locale) {
+        languageCode = option.locale.languageCode;
+      }
+
+      NSArray<AVMetadataItem *> *titleItems =
+          [AVMetadataItem metadataItemsFromArray:option.commonMetadata
+                                         withKey:AVMetadataCommonKeyTitle
+                                        keySpace:AVMetadataKeySpaceCommon];
+      NSString *commonMetadataTitle = titleItems.firstObject.stringValue;
+
+      BOOL isSelected = [currentSelection isEqual:option];
+
+      FVPMediaSelectionAudioTrackData *trackData =
+          [FVPMediaSelectionAudioTrackData makeWithIndex:i
+                                             displayName:displayName
+                                            languageCode:languageCode
+                                              isSelected:isSelected
+                                     commonMetadataTitle:commonMetadataTitle];
+
+      [mediaSelectionTracks addObject:trackData];
+    }
+  }
+
+  return mediaSelectionTracks;
+}
+
+- (void)selectAudioTrackAtIndex:(NSInteger)trackIndex
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  NSAssert(currentItem, @"currentItem should not be nil");
+  AVAsset *asset = currentItem.asset;
+
+  AVMediaSelectionGroup *audioGroup =
+      [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  if (audioGroup && trackIndex >= 0 && trackIndex < (NSInteger)audioGroup.options.count) {
+    AVMediaSelectionOption *option = audioGroup.options[trackIndex];
+    [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
+  }
 }
 
 #pragma mark - Private

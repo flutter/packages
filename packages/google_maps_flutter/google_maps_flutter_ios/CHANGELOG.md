@@ -1,3 +1,15 @@
+## 2.17.0
+
+* Restructures code to prepare for SwiftPM support.
+
+## 2.16.1
+
+* Updates heatmaps passed between Dart and native to use typed data.
+
+## 2.16.0
+
+* Adds compatibility with SDK version 10.x for apps targeting iOS 16+.
+
 ## 2.15.8
 
 * Replaces internal use of deprecated methods.

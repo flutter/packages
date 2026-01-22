@@ -15,7 +15,7 @@ final class QueueUtilsTests: XCTestCase {
   func testShouldStayOnMainQueueIfCalledFromMainQueue() {
     let expectation = expectation(description: "Block must be run on the main queue")
 
-    FLTEnsureToRunOnMainQueue {
+    ensureToRunOnMainQueue {
       if Thread.isMainThread {
         expectation.fulfill()
       }
@@ -28,7 +28,7 @@ final class QueueUtilsTests: XCTestCase {
     let expectation = expectation(description: "Block must be run on the main queue")
 
     DispatchQueue.global(qos: .default).async {
-      FLTEnsureToRunOnMainQueue {
+      ensureToRunOnMainQueue {
         if Thread.isMainThread {
           expectation.fulfill()
         }

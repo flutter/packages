@@ -14,19 +14,21 @@ Downloaded by pub (not CocoaPods).
   s.author           = { 'Flutter Dev Team' => 'flutter-dev@googlegroups.com' }
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_maps_flutter/google_maps_flutter/ios' }
   s.documentation_url = 'https://pub.dev/packages/google_maps_flutter_ios'
-  s.source_files = 'Classes/**/*.{h,m}'
-  s.public_header_files = 'Classes/**/*.h'
-  s.module_map = 'Classes/google_maps_flutter_ios.modulemap'
+  s.source_files = 'google_maps_flutter_ios/Sources/google_maps_flutter_ios/**/*.{h,m}'
+  s.public_header_files = 'google_maps_flutter_ios/Sources/google_maps_flutter_ios/include/**/*.h'
   s.dependency 'Flutter'
   # Allow any version up to the next breaking change after the latest version that
   # has been confirmed to be compatible via an example in examples/. See discussion
   # in https://github.com/flutter/flutter/issues/86820 for why this should be as
   # broad as possible.
-  # Versions earlier than 8.4 can't be supported because that's the first version
-  # that supports privacy manifests.
-  s.dependency 'GoogleMaps', '>= 8.4', '< 10.0'
+  # - Versions earlier than 8.4 can't be supported because that's the first version
+  #   that supports privacy manifests.
+  # - Per https://developers.google.com/maps/documentation/ios-sdk/release-notes#September_07_2025,
+  #   10.x is the last version expected to be available via CocoaPods.
+  s.dependency 'GoogleMaps', '>= 8.4', '< 11.0'
   # Google-Maps-iOS-Utils 5.x supports GoogleMaps 8.x and iOS 14.0+
-  # Google-Maps-iOS-Utils 6.x supports GoogleMaps 9.x and iOS 15.0+
+  # Google-Maps-iOS-Utils 6.0 and 6.1.0 support GoogleMaps 9.x and iOS 15.0+
+  # Google-Maps-iOS-Utils 6.1.3 supports GoogleMaps 10.x and iOS 16.0+
   s.dependency 'Google-Maps-iOS-Utils', '>= 5.0', '< 7.0'
   s.static_framework = true
   s.platform = :ios, '14.0'
@@ -37,5 +39,6 @@ Downloaded by pub (not CocoaPods).
     'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
   }
-  s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
+  s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }
+  s.resource_bundles = {'google_maps_flutter_ios_privacy' => ['google_maps_flutter_ios/Sources/google_maps_flutter_ios/Resources/PrivacyInfo.xcprivacy']}
 end
