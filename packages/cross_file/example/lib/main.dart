@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:cross_file/cross_file.dart';
 
@@ -11,7 +13,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final file = XFile.fromData(
-      const [1, 2, 3],
+      Uint8List.fromList(const [1, 2, 3]),
       name: 'demo.txt',
       mimeType: 'text/plain',
     );
