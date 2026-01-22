@@ -1284,6 +1284,274 @@ void main() {
       );
     });
 
+    group('--batch-release-branch flag', () {
+      test(
+        'filters packages based on the existence of ci_config.yaml',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['package1'] = <String, dynamic>{
+            'name': 'package1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['package2'] = <String, dynamic>{
+            'name': 'package2',
+            'versions': <String>['0.0.1'],
+          };
+
+          // Mock packages.
+          final RepositoryPackage package1 = createFakePackage(
+            'package1',
+            packagesDir,
+            version: '0.0.2',
+          );
+          createFakeCiConfig(package: package1, batchRelease: true);
+
+          final RepositoryPackage package2 = createFakePackage(
+            'package2',
+            packagesDir,
+            version: '0.0.2',
+          );
+
+          expect(package1.ciConfigFile.existsSync(), true);
+          expect(package2.ciConfigFile.existsSync(), false);
+
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${package1.pubspecFile.path}\n${package2.pubspecFile.path}',
+              ),
+            ),
+          ];
+
+          mockStdin.readLineOutput = 'y';
+
+          final List<String> output =
+              await runCapturingPrint(commandRunner, <String>[
+                'publish',
+                '--all-changed',
+                '--base-sha=HEAD~',
+                '--batch-release-branch=release-package1',
+              ]);
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${package1.path}...'),
+              contains('Published package1 successfully!'),
+            ]),
+          );
+
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${package2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published package2 successfully!'))),
+          );
+        },
+      );
+
+      test(
+        'filters packages based on the batch release flag value in ci_config.yaml',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['package1'] = <String, dynamic>{
+            'name': 'package1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['package2'] = <String, dynamic>{
+            'name': 'package2',
+            'versions': <String>['0.0.1'],
+          };
+
+          // Mock packages.
+          final RepositoryPackage package1 = createFakePackage(
+            'package1',
+            packagesDir,
+            version: '0.0.2',
+          );
+          createFakeCiConfig(package: package1, batchRelease: true);
+          final RepositoryPackage package2 = createFakePackage(
+            'package2',
+            packagesDir,
+            version: '0.0.2',
+          );
+          createFakeCiConfig(package: package2, batchRelease: false);
+
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${package1.pubspecFile.path}\n${package2.pubspecFile.path}',
+              ),
+            ),
+          ];
+
+          mockStdin.readLineOutput = 'y';
+
+          final List<String> output =
+              await runCapturingPrint(commandRunner, <String>[
+                'publish',
+                '--all-changed',
+                '--base-sha=HEAD~',
+                '--batch-release-branch=release-package1',
+              ]);
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${package1.path}...'),
+              contains('Published package1 successfully!'),
+            ]),
+          );
+
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${package2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published package2 successfully!'))),
+          );
+        },
+      );
+
+      test(
+        'when --batch-release-branch flag value is empty, batch release packages are filtered out',
+        () async {
+          // Mock pub.dev responses.
+          mockHttpResponses['package1'] = <String, dynamic>{
+            'name': 'package1',
+            'versions': <String>['0.0.1'],
+          };
+          mockHttpResponses['package2'] = <String, dynamic>{
+            'name': 'package2',
+            'versions': <String>['0.0.1'],
+          };
+
+          // Mock packages.
+          final RepositoryPackage package1 = createFakePackage(
+            'package1',
+            packagesDir,
+            version: '0.0.2',
+          );
+
+          final RepositoryPackage package2 = createFakePackage(
+            'package2',
+            packagesDir,
+            version: '0.0.2',
+          );
+          createFakeCiConfig(package: package2, batchRelease: true);
+
+          // Mock git diff to show both packages have changed.
+          processRunner
+              .mockProcessesForExecutable['git-diff'] = <FakeProcessInfo>[
+            FakeProcessInfo(
+              MockProcess(
+                stdout:
+                    '${package1.pubspecFile.path}\n${package2.pubspecFile.path}',
+              ),
+            ),
+          ];
+
+          mockStdin.readLineOutput = 'y';
+
+          final List<String> output = await runCapturingPrint(
+            commandRunner,
+            <String>['publish', '--all-changed', '--base-sha=HEAD~'],
+          );
+          // Package1 is published in batch realease, pacakge2 is not.
+          expect(
+            output,
+            containsAllInOrder(<Matcher>[
+              contains('Running `pub publish ` in ${package1.path}...'),
+              contains('Published package1 successfully!'),
+            ]),
+          );
+
+          expect(
+            output,
+            isNot(
+              contains(
+                contains('Running `pub publish ` in ${package2.path}...!'),
+              ),
+            ),
+          );
+          expect(
+            output,
+            isNot(contains(contains('Published package2 successfully!'))),
+          );
+        },
+      );
+      test(' throw tool exit when could not parse ci config file', () async {
+        // Mock pub.dev responses.
+        mockHttpResponses['package1'] = <String, dynamic>{
+          'name': 'package1',
+          'versions': <String>['0.0.1'],
+        };
+
+        // Mock packages.
+        final RepositoryPackage package1 = createFakePackage(
+          'package1',
+          packagesDir,
+          version: '0.0.2',
+        );
+        createFakeCiConfig(package: package1, batchRelease: false);
+        package1.ciConfigFile.writeAsStringSync(
+          'wrong format of ci config file',
+        );
+
+        // Mock git diff to show both packages have changed.
+        processRunner.mockProcessesForExecutable['git-diff'] =
+            <FakeProcessInfo>[
+              FakeProcessInfo(
+                MockProcess(stdout: '${package1.pubspecFile.path}\n'),
+              ),
+            ];
+
+        mockStdin.readLineOutput = 'y';
+
+        Error? commandError;
+        // Package1 is published in batch realease, pacakge2 is not.
+        final List<String> output = await runCapturingPrint(
+          commandRunner,
+          <String>[
+            'publish',
+            '--all-changed',
+            '--base-sha=HEAD~',
+            '--batch-release-branch=release-package1',
+          ],
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
+
+        expect(commandError, isA<ToolExit>());
+        expect(
+          output,
+          containsAllInOrder(<Matcher>[
+            contains(
+              'Could not parse ci_config.yaml for package1: FormatException: Root of ci_config.yaml must be a map.',
+            ),
+          ]),
+        );
+      });
+    });
+
     test('Do not release flutter_plugin_tools', () async {
       mockHttpResponses['plugin1'] = <String, dynamic>{
         'name': 'flutter_plugin_tools',
