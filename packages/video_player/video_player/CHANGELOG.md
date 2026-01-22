@@ -1,4 +1,4 @@
-## NEXT
+## 2.11.0
 
 * Adds `getAudioTracks()` and `selectAudioTrack()` methods to retrieve and select available audio tracks.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
