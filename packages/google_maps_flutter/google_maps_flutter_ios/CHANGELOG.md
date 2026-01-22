@@ -1,3 +1,8 @@
+## 2.17.1
+
+* Adds a README section about Swift Package Manager and the new
+  `google_maps_flutter_ios_sdk*` packages.
+
 ## 2.17.0
 
 * Restructures code to prepare for SwiftPM support.
