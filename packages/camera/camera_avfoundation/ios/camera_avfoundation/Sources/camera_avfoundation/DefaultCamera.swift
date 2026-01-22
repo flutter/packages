@@ -100,17 +100,15 @@ final class DefaultCamera: NSObject, Camera {
   private var isFirstVideoSample = false
   private var isAudioSetup = false
   /// Time of the end of the last sample.
-  private var lastSampleEndTime = CMTime.zero
+  private var lastSampleEndTime = CMTime.invalid
   /// Whether the recording is disconnected.
   private var isRecordingDisconnected = false
   /// Represents sum of all pauses/interruptions during recording.
-  // TODO: CMTime.zero or invalid?
-  private var recordingTimeOffset = CMTime.zero
+  private var recordingTimeOffset = CMTime.invalid
   /// Output to use for adjusting of recording time offset.
-  private var outputForOffsetAdjusting: AVCaptureOutput
+  private var outputForOffsetAdjusting: AVCaptureOutput?
   /// Time of the last appended video sample.
-  // TODO: CMTime.zero or invalid?
-  private var lastAppendedVideoSampleTime = CMTime.zero
+  private var lastAppendedVideoSampleTime = CMTime.invalid
 
   /// True when images from the camera are being streamed.
   private(set) var isStreamingImages = false
@@ -242,27 +240,25 @@ final class DefaultCamera: NSObject, Camera {
     // an incoming call during video recording. Error can happen for example when recording starts
     // during an incoming call.
     // https://github.com/flutter/flutter/issues/151253
-    for CaptureSession session in [ _videoCaptureSession, _audioCaptureSession ] {
-      NSNotificationCenter.default.addObserver(self,
-                                               selector: @selector(captureSessionWasInterrupted:),
-                                               name: AVCaptureSessionWasInterruptedNotification,
-                                               object: object:session.captureSession)
+    for session in [ videoCaptureSession, audioCaptureSession ] {
+      NotificationCenter.default.addObserver(self,
+                                             selector: #selector(captureSessionWasInterrupted),
+                                             name: AVCaptureSession.wasInterruptedNotification,
+                                             object: session)
 
-      NSNotificationCenter.default.addObserver(self,
-                                               selector: @selector(captureSessionRuntimeError:),
-                                               name: AVCaptureSessionRuntimeErrorNotification,
-                                               object: object:session.captureSession)
+      NotificationCenter.default.addObserver(self,
+                                             selector: #selector(captureSessionRuntimeError),
+                                             name: AVCaptureSession.runtimeErrorNotification,
+                                             object: session)
     }
   }
 
-  private func captureSessionWasInterrupted(notification: NSNotification) {
-    _isRecordingDisconnected = YES;
+  @objc private func captureSessionWasInterrupted(notification: NSNotification) {
+    isRecordingDisconnected = true
   }
 
-  private func captureSessionRuntimeError(notification: NSNotification) {
-    [self reportErrorMessage:[NSString
-                                 stringWithFormat:@"%@",
-                                                  notification.userInfo[AVCaptureSessionErrorKey]]];
+  @objc private func captureSessionRuntimeError(notification: NSNotification) {
+    reportErrorMessage("\(String(describing: notification.userInfo?[AVCaptureSessionErrorKey] as? Error))")
   }
 
   // Possible values for presets are hard-coded in FLT interface having
@@ -1207,8 +1203,8 @@ final class DefaultCamera: NSObject, Camera {
 
     handleSampleBufferStreaming(sampleBuffer)
 
-    if isRecording && !isRecordingPaused && videoCaptureSession.running
-      && audioCaptureSession.running
+    if isRecording && !isRecordingPaused && videoCaptureSession.isRunning
+      && audioCaptureSession.isRunning
     {
       if videoWriter?.status == .failed, let error = videoWriter?.error {
         reportErrorMessage("\(error)")
@@ -1218,13 +1214,13 @@ final class DefaultCamera: NSObject, Camera {
       // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
       // https://github.com/flutter/flutter/issues/132073
       if output == captureVideoOutput.avOutput {
-        if !(videoWriterInput?.readyForMoreMediaData ?? false) {
+        if !(videoWriterInput?.isReadyForMoreMediaData ?? false) {
           return
         }
       } else {
         // ignore audio samples until the first video sample arrives to avoid black frames
         // https://github.com/flutter/flutter/issues/57831
-        if isFirstVideoSample || !(audioWriterInput?.readyForMoreMediaData ?? false) {
+        if isFirstVideoSample || !(audioWriterInput?.isReadyForMoreMediaData ?? false) {
           return
         }
         outputForOffsetAdjusting = output
@@ -1267,7 +1263,7 @@ final class DefaultCamera: NSObject, Camera {
         let nextBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)
         let nextSampleTime = CMTimeSubtract(sampleTime, recordingTimeOffset)
         if nextSampleTime > lastAppendedVideoSampleTime {
-          videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+          let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
           lastAppendedVideoSampleTime = nextSampleTime
         }
       } else {
@@ -1282,6 +1278,81 @@ final class DefaultCamera: NSObject, Camera {
           newAudioSample(sampleBuffer)
         }
       }
+    }
+  }
+
+  private func handleSampleBufferStreaming(_ sampleBuffer: CMSampleBuffer) {
+    guard isStreamingImages,
+      let eventSink = imageStreamHandler?.eventSink,
+      streamingPendingFramesCount < maxStreamingPendingFramesCount
+    else {
+      return
+    }
+
+    // Non-pixel buffer samples, such as audio samples, are ignored for streaming
+    guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+      return
+    }
+
+    streamingPendingFramesCount += 1
+
+    // Must lock base address before accessing the pixel data
+    CVPixelBufferLockBaseAddress(pixelBuffer, .readOnly)
+
+    let imageWidth = CVPixelBufferGetWidth(pixelBuffer)
+    let imageHeight = CVPixelBufferGetHeight(pixelBuffer)
+
+    var planes: [[String: Any]] = []
+
+    let isPlanar = CVPixelBufferIsPlanar(pixelBuffer)
+    let planeCount = isPlanar ? CVPixelBufferGetPlaneCount(pixelBuffer) : 1
+
+    for i in 0..<planeCount {
+      let planeAddress: UnsafeMutableRawPointer?
+      let bytesPerRow: Int
+      let height: Int
+      let width: Int
+
+      if isPlanar {
+        planeAddress = CVPixelBufferGetBaseAddressOfPlane(pixelBuffer, i)
+        bytesPerRow = CVPixelBufferGetBytesPerRowOfPlane(pixelBuffer, i)
+        height = CVPixelBufferGetHeightOfPlane(pixelBuffer, i)
+        width = CVPixelBufferGetWidthOfPlane(pixelBuffer, i)
+      } else {
+        planeAddress = CVPixelBufferGetBaseAddress(pixelBuffer)
+        bytesPerRow = CVPixelBufferGetBytesPerRow(pixelBuffer)
+        height = CVPixelBufferGetHeight(pixelBuffer)
+        width = CVPixelBufferGetWidth(pixelBuffer)
+      }
+
+      let length = bytesPerRow * height
+      let bytes = Data(bytes: planeAddress!, count: length)
+
+      let planeBuffer: [String: Any] = [
+        "bytesPerRow": bytesPerRow,
+        "width": width,
+        "height": height,
+        "bytes": FlutterStandardTypedData(bytes: bytes),
+      ]
+      planes.append(planeBuffer)
+    }
+
+    // Lock the base address before accessing pixel data, and unlock it afterwards.
+    // Done accessing the `pixelBuffer` at this point.
+    CVPixelBufferUnlockBaseAddress(pixelBuffer, .readOnly)
+
+    let imageBuffer: [String: Any] = [
+      "width": imageWidth,
+      "height": imageHeight,
+      "format": videoFormat,
+      "planes": planes,
+      "lensAperture": Double(captureDevice.lensAperture),
+      "sensorExposureTime": Int(captureDevice.exposureDuration.seconds * 1_000_000_000),
+      "sensorSensitivity": Double(captureDevice.iso),
+    ]
+
+    DispatchQueue.main.async {
+      eventSink(imageBuffer)
     }
   }
 
@@ -1371,6 +1442,6 @@ final class DefaultCamera: NSObject, Camera {
 
   deinit {
     motionManager.stopAccelerometerUpdates()
-    NSNotificationCenter.default.removeObserver(self)
+    NotificationCenter.default.removeObserver(self)
   }
 }
