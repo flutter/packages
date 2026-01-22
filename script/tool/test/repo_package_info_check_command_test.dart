@@ -807,12 +807,12 @@ on:
       gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
           <FakeProcessInfo>[
             FakeProcessInfo(
-              MockProcess(exitCode: 0),
+              MockProcess(),
             ), // git ls-remote succeeds (branch exists)
           ];
       processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
         FakeProcessInfo(
-          MockProcess(exitCode: 0),
+          MockProcess(),
         ), // gh label view succeeds (label exists)
       ];
 
