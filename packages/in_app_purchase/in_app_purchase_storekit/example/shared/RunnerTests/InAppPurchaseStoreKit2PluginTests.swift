@@ -93,7 +93,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
 
     XCTAssert(callback.lastUpdate.count == 1)
     XCTAssert(
-      callback.lastUpdate.first?.restoring == false,
+      callback.lastUpdate.first?.status != .restored,
       "Ordinary purchase updates should not be marked as restoring")
 
     plugin.transactions {
@@ -101,7 +101,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
       switch result {
       case .success(let transactions):
         XCTAssert(transactions.count == 1)
-        XCTAssert(transactions.first?.restoring == false)
+        XCTAssert(transactions.first?.status != .restored)
         transactionExpectation.fulfill()
       case .failure(let error):
         XCTFail("Getting transactions should NOT fail. Failed with \(error)")
@@ -388,7 +388,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [purchaseExpectation], timeout: 5)
 
     XCTAssert(callback.lastUpdate.count == 1)
-    XCTAssert(callback.lastUpdate.first?.restoring == false)
+    XCTAssert(callback.lastUpdate.first?.status != .restored)
 
     plugin.restorePurchases { result in
       switch result {
@@ -401,7 +401,7 @@ final class InAppPurchase2PluginTests: XCTestCase {
     await fulfillment(of: [restoreExpectation], timeout: 5)
 
     XCTAssert(callback.lastUpdate.count == 1)
-    XCTAssert(callback.lastUpdate.first?.restoring == true)
+    XCTAssert(callback.lastUpdate.first?.status == .restored)
   }
 
   func testFinishTransaction() async throws {
