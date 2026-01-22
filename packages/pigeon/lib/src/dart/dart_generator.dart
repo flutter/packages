@@ -1763,7 +1763,7 @@ class DartGenerator extends StructuredGenerator<InternalDartOptions> {
                         ? ''
                         : 'final ${returnType.getFfiCallReturnType(forceNullable: true)} res = ';
                 indent.writeln(
-                  'final ffi_bridge.${generatorOptions.ffiErrorClassName} error = ffi_bridge.${generatorOptions.ffiErrorClassName}();',
+                  'final error = ffi_bridge.${generatorOptions.ffiErrorClassName}();',
                 );
                 final forceRes =
                     !returnType.type.isNullable &&
@@ -2548,7 +2548,7 @@ class _PigeonJniCodec {
       return list;
     } else if (value.isA<JList<JObject>>(JList.type<JObject>(JObject.type))) {
       final JList<JObject?> list = (value.as(JList.type<JObject?>(JObject.nullableType)));
-      final List<Object?> res = <Object?>[];
+      final res = <Object?>[];
       for (int i = 0; i < list.length; i++) {
         res.add(readValue(list[i]));
       }
@@ -2557,7 +2557,7 @@ class _PigeonJniCodec {
         JMap.type<JObject, JObject>(JObject.type, JObject.type))) {
       final JMap<JObject?, JObject?> map =
           (value.as(JMap.type<JObject?, JObject?>(JObject.nullableType, JObject.nullableType)));
-      final Map<Object?, Object?> res = <Object?, Object?>{};
+      final res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
@@ -2630,7 +2630,7 @@ class _PigeonJniCodec {
       final _JniType jniType = _JniType.fromTypeDeclaration(list);
       return '''
     } else if (isTypeOrNullableType<${jniType.fullJniName}>(T)) {
-      final ${jniType.fullJniName} res =
+      final res =
           ${jniType.fullJniName}.array(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'});
       for (final ${jniType.dartCollectionTypes} entry in value as ${jniType.type.getFullName(withNullable: false)}) {
         res.add(writeValue(entry));
@@ -2639,13 +2639,13 @@ class _PigeonJniCodec {
         ''';
     }).join()}
     } else if (value is List<Object>) {
-      final JList<JObject> res = JList<JObject>.array(JObject.type);
+      final res = JList<JObject>.array(JObject.type);
       for (int i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
       return res as T;
     } else if (value is List) {
-      final JList<JObject?> res = JList<JObject?>.array(JObject.nullableType);
+      final res = JList<JObject?>.array(JObject.nullableType);
       for (int i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
@@ -2657,7 +2657,7 @@ class _PigeonJniCodec {
       final _JniType jniType = _JniType.fromTypeDeclaration(mapType.value);
       return '''
     } else if (isTypeOrNullableType<${jniType.fullJniName}>(T)) {
-      final ${jniType.fullJniName} res =
+      final res =
           ${jniType.fullJniName}.hash(${jniType.subTypeOne?.fullJniType ?? 'JObject.nullableType'}, ${jniType.subTypeTwo?.fullJniType ?? 'JObject.nullableType'});
       for (final MapEntry${jniType.dartCollectionTypeAnnotations} entry in (value as ${jniType.type.getFullName(withNullable: false)}).entries) {
         res[writeValue(entry.key)] = 
@@ -2667,7 +2667,7 @@ class _PigeonJniCodec {
         ''';
     }).join()}
     } else if (value is Map<Object, Object>) {
-      final JMap<JObject, JObject> res =
+      final res =
           JMap<JObject, JObject>.hash(JObject.type, JObject.type);
       for (final MapEntry<Object, Object> entry in value.entries) {
         res[writeValue(entry.key)] = 
@@ -2675,7 +2675,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (value is Map<Object, Object?>) {
-      final JMap<JObject, JObject?> res =
+      final res =
           JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object, Object?> entry in value.entries) {
         res[writeValue(entry.key)] = 
@@ -2683,7 +2683,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (value is Map) {
-      final JMap<JObject, JObject?> res =
+      final res =
           JMap<JObject, JObject?>.hash(JObject.type, JObject.nullableType);
       for (final MapEntry<Object?, Object?> entry in value.entries) {
         res[writeValue(entry.key)] = 

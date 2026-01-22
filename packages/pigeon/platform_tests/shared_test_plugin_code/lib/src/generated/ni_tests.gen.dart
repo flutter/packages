@@ -57,26 +57,26 @@ class _PigeonJniCodec {
     } else if (value.isA<JBoolean>(JBoolean.type)) {
       return (value.as(JBoolean.type)).booleanValue();
     } else if (value.isA<JByteArray>(JByteArray.type)) {
-      final Uint8List list = Uint8List(value.as(JByteArray.type).length);
-      for (int i = 0; i < value.as(JByteArray.type).length; i++) {
+      final list = Uint8List(value.as(JByteArray.type).length);
+      for (var i = 0; i < value.as(JByteArray.type).length; i++) {
         list[i] = value.as(JByteArray.type)[i];
       }
       return list;
     } else if (value.isA<JIntArray>(JIntArray.type)) {
-      final Int32List list = Int32List(value.as(JIntArray.type).length);
-      for (int i = 0; i < value.as(JIntArray.type).length; i++) {
+      final list = Int32List(value.as(JIntArray.type).length);
+      for (var i = 0; i < value.as(JIntArray.type).length; i++) {
         list[i] = value.as(JIntArray.type)[i];
       }
       return list;
     } else if (value.isA<JLongArray>(JLongArray.type)) {
-      final Int64List list = Int64List(value.as(JLongArray.type).length);
-      for (int i = 0; i < value.as(JLongArray.type).length; i++) {
+      final list = Int64List(value.as(JLongArray.type).length);
+      for (var i = 0; i < value.as(JLongArray.type).length; i++) {
         list[i] = value.as(JLongArray.type)[i];
       }
       return list;
     } else if (value.isA<JDoubleArray>(JDoubleArray.type)) {
-      final Float64List list = Float64List(value.as(JDoubleArray.type).length);
-      for (int i = 0; i < value.as(JDoubleArray.type).length; i++) {
+      final list = Float64List(value.as(JDoubleArray.type).length);
+      for (var i = 0; i < value.as(JDoubleArray.type).length; i++) {
         list[i] = value.as(JDoubleArray.type)[i];
       }
       return list;
@@ -84,8 +84,8 @@ class _PigeonJniCodec {
       final JList<JObject?> list = (value.as(
         JList.type<JObject?>(JObject.nullableType),
       ));
-      final List<Object?> res = <Object?>[];
-      for (int i = 0; i < list.length; i++) {
+      final res = <Object?>[];
+      for (var i = 0; i < list.length; i++) {
         res.add(readValue(list[i]));
       }
       return res;
@@ -98,7 +98,7 @@ class _PigeonJniCodec {
           JObject.nullableType,
         ),
       ));
-      final Map<Object?, Object?> res = <Object?, Object?>{};
+      final res = <Object?, Object?>{};
       for (final MapEntry<JObject?, JObject?> entry in map.entries) {
         res[readValue(entry.key)] = readValue(entry.value);
       }
@@ -152,191 +152,191 @@ class _PigeonJniCodec {
       return JString.fromString(value) as T;
     } else if (isTypeOrNullableType<JByteArray>(T)) {
       value as List<int>;
-      final JByteArray array = JByteArray(value.length);
-      for (int i = 0; i < value.length; i++) {
+      final array = JByteArray(value.length);
+      for (var i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
     } else if (isTypeOrNullableType<JIntArray>(T)) {
       value as List<int>;
-      final JIntArray array = JIntArray(value.length);
-      for (int i = 0; i < value.length; i++) {
+      final array = JIntArray(value.length);
+      for (var i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
     } else if (isTypeOrNullableType<JLongArray>(T)) {
       value as List<int>;
-      final JLongArray array = JLongArray(value.length);
-      for (int i = 0; i < value.length; i++) {
+      final array = JLongArray(value.length);
+      for (var i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
     } else if (isTypeOrNullableType<JDoubleArray>(T)) {
       value as List<double>;
-      final JDoubleArray array = JDoubleArray(value.length);
-      for (int i = 0; i < value.length; i++) {
+      final array = JDoubleArray(value.length);
+      for (var i = 0; i < value.length; i++) {
         array[i] = value[i];
       }
       return array as T;
     } else if (isTypeOrNullableType<JList<JBoolean>>(T)) {
-      final JList<JBoolean> res = JList<JBoolean>.array(JBoolean.type);
-      for (final bool entry in value as List<bool>) {
+      final res = JList<JBoolean>.array(JBoolean.type);
+      for (final entry in value as List<bool>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JDouble>>(T)) {
-      final JList<JDouble> res = JList<JDouble>.array(JDouble.type);
-      for (final double entry in value as List<double>) {
+      final res = JList<JDouble>.array(JDouble.type);
+      for (final entry in value as List<double>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JLong>>(T)) {
-      final JList<JLong> res = JList<JLong>.array(JLong.type);
-      for (final int entry in value as List<int>) {
+      final res = JList<JLong>.array(JLong.type);
+      for (final entry in value as List<int>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JString>>(T)) {
-      final JList<JString> res = JList<JString>.array(JString.type);
-      for (final String entry in value as List<String>) {
+      final res = JList<JString>.array(JString.type);
+      for (final entry in value as List<String>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<jni_bridge.NIAllNullableTypes>>(T)) {
-      final JList<jni_bridge.NIAllNullableTypes> res =
+      final res =
           JList<jni_bridge.NIAllNullableTypes>.array(
             jni_bridge.NIAllNullableTypes.type,
           );
-      for (final NIAllNullableTypes entry
+      for (final entry
           in value as List<NIAllNullableTypes>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<jni_bridge.NIAnEnum>>(T)) {
-      final JList<jni_bridge.NIAnEnum> res = JList<jni_bridge.NIAnEnum>.array(
+      final res = JList<jni_bridge.NIAnEnum>.array(
         jni_bridge.NIAnEnum.type,
       );
-      for (final NIAnEnum entry in value as List<NIAnEnum>) {
+      for (final entry in value as List<NIAnEnum>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<
       JList<jni_bridge.NIAllNullableTypesWithoutRecursion?>
     >(T)) {
-      final JList<jni_bridge.NIAllNullableTypesWithoutRecursion?> res =
+      final res =
           JList<jni_bridge.NIAllNullableTypesWithoutRecursion?>.array(
             jni_bridge.NIAllNullableTypesWithoutRecursion.nullableType,
           );
-      for (final NIAllNullableTypesWithoutRecursion? entry
+      for (final entry
           in value as List<NIAllNullableTypesWithoutRecursion?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<jni_bridge.NIAllTypes?>>(T)) {
-      final JList<jni_bridge.NIAllTypes?> res =
+      final res =
           JList<jni_bridge.NIAllTypes?>.array(
             jni_bridge.NIAllTypes.nullableType,
           );
-      for (final NIAllTypes? entry in value as List<NIAllTypes?>) {
+      for (final entry in value as List<NIAllTypes?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<jni_bridge.NIAllNullableTypes?>>(T)) {
-      final JList<jni_bridge.NIAllNullableTypes?> res =
+      final res =
           JList<jni_bridge.NIAllNullableTypes?>.array(
             jni_bridge.NIAllNullableTypes.nullableType,
           );
-      for (final NIAllNullableTypes? entry
+      for (final entry
           in value as List<NIAllNullableTypes?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<jni_bridge.NIAnEnum?>>(T)) {
-      final JList<jni_bridge.NIAnEnum?> res = JList<jni_bridge.NIAnEnum?>.array(
+      final res = JList<jni_bridge.NIAnEnum?>.array(
         jni_bridge.NIAnEnum.nullableType,
       );
-      for (final NIAnEnum? entry in value as List<NIAnEnum?>) {
+      for (final entry in value as List<NIAnEnum?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JBoolean?>>(T)) {
-      final JList<JBoolean?> res = JList<JBoolean?>.array(
+      final res = JList<JBoolean?>.array(
         JBoolean.nullableType,
       );
-      for (final bool? entry in value as List<bool?>) {
+      for (final entry in value as List<bool?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JDouble?>>(T)) {
-      final JList<JDouble?> res = JList<JDouble?>.array(JDouble.nullableType);
-      for (final double? entry in value as List<double?>) {
+      final res = JList<JDouble?>.array(JDouble.nullableType);
+      for (final entry in value as List<double?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JLong?>>(T)) {
-      final JList<JLong?> res = JList<JLong?>.array(JLong.nullableType);
-      for (final int? entry in value as List<int?>) {
+      final res = JList<JLong?>.array(JLong.nullableType);
+      for (final entry in value as List<int?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JString?>>(T)) {
-      final JList<JString?> res = JList<JString?>.array(JString.nullableType);
-      for (final String? entry in value as List<String?>) {
+      final res = JList<JString?>.array(JString.nullableType);
+      for (final entry in value as List<String?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JList<JObject?>>>(T)) {
-      final JList<JList<JObject?>> res = JList<JList<JObject?>>.array(
+      final res = JList<JList<JObject?>>.array(
         JList.type(JObject.nullableType),
       );
-      for (final List<Object?> entry in value as List<List<Object?>>) {
+      for (final entry in value as List<List<Object?>>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JList<JObject?>?>>(T)) {
-      final JList<JList<JObject?>?> res = JList<JList<JObject?>?>.array(
+      final res = JList<JList<JObject?>?>.array(
         JList.nullableType(JObject.nullableType),
       );
-      for (final List<Object?>? entry in value as List<List<Object?>?>) {
+      for (final entry in value as List<List<Object?>?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JMap<JObject?, JObject?>>>(T)) {
-      final JList<JMap<JObject?, JObject?>> res =
+      final res =
           JList<JMap<JObject?, JObject?>>.array(
             JMap.type(JObject.nullableType, JObject.nullableType),
           );
-      for (final Map<Object?, Object?> entry
+      for (final entry
           in value as List<Map<Object?, Object?>>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (isTypeOrNullableType<JList<JMap<JObject?, JObject?>?>>(T)) {
-      final JList<JMap<JObject?, JObject?>?> res =
+      final res =
           JList<JMap<JObject?, JObject?>?>.array(
             JMap.nullableType(JObject.nullableType, JObject.nullableType),
           );
-      for (final Map<Object?, Object?>? entry
+      for (final entry
           in value as List<Map<Object?, Object?>?>) {
         res.add(writeValue(entry));
       }
       return res as T;
     } else if (value is List<Object>) {
-      final JList<JObject> res = JList<JObject>.array(JObject.type);
-      for (int i = 0; i < value.length; i++) {
+      final res = JList<JObject>.array(JObject.type);
+      for (var i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
       return res as T;
     } else if (value is List) {
-      final JList<JObject?> res = JList<JObject?>.array(JObject.nullableType);
-      for (int i = 0; i < value.length; i++) {
+      final res = JList<JObject?>.array(JObject.nullableType);
+      for (var i = 0; i < value.length; i++) {
         res.add(writeValue(value[i]));
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JLong, jni_bridge.NIAllNullableTypes>>(
       T,
     )) {
-      final JMap<JLong, jni_bridge.NIAllNullableTypes> res =
+      final res =
           JMap<JLong, jni_bridge.NIAllNullableTypes>.hash(
             JLong.type,
             jni_bridge.NIAllNullableTypes.type,
@@ -349,7 +349,7 @@ class _PigeonJniCodec {
     } else if (isTypeOrNullableType<
       JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum>
     >(T)) {
-      final JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum> res =
+      final res =
           JMap<jni_bridge.NIAnEnum, jni_bridge.NIAnEnum>.hash(
             jni_bridge.NIAnEnum.type,
             jni_bridge.NIAnEnum.type,
@@ -360,7 +360,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JLong, JLong>>(T)) {
-      final JMap<JLong, JLong> res = JMap<JLong, JLong>.hash(
+      final res = JMap<JLong, JLong>.hash(
         JLong.type,
         JLong.type,
       );
@@ -369,7 +369,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JString, JString>>(T)) {
-      final JMap<JString, JString> res = JMap<JString, JString>.hash(
+      final res = JMap<JString, JString>.hash(
         JString.type,
         JString.type,
       );
@@ -381,7 +381,7 @@ class _PigeonJniCodec {
     } else if (isTypeOrNullableType<
       JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>
     >(T)) {
-      final JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?> res =
+      final res =
           JMap<JLong?, jni_bridge.NIAllNullableTypesWithoutRecursion?>.hash(
             JLong.nullableType,
             jni_bridge.NIAllNullableTypesWithoutRecursion.nullableType,
@@ -393,7 +393,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JLong?, jni_bridge.NIAllTypes?>>(T)) {
-      final JMap<JLong?, jni_bridge.NIAllTypes?> res =
+      final res =
           JMap<JLong?, jni_bridge.NIAllTypes?>.hash(
             JLong.nullableType,
             jni_bridge.NIAllTypes.nullableType,
@@ -406,7 +406,7 @@ class _PigeonJniCodec {
     } else if (isTypeOrNullableType<
       JMap<JLong?, jni_bridge.NIAllNullableTypes?>
     >(T)) {
-      final JMap<JLong?, jni_bridge.NIAllNullableTypes?> res =
+      final res =
           JMap<JLong?, jni_bridge.NIAllNullableTypes?>.hash(
             JLong.nullableType,
             jni_bridge.NIAllNullableTypes.nullableType,
@@ -419,7 +419,7 @@ class _PigeonJniCodec {
     } else if (isTypeOrNullableType<
       JMap<jni_bridge.NIAnEnum?, jni_bridge.NIAnEnum?>
     >(T)) {
-      final JMap<jni_bridge.NIAnEnum?, jni_bridge.NIAnEnum?> res =
+      final res =
           JMap<jni_bridge.NIAnEnum?, jni_bridge.NIAnEnum?>.hash(
             jni_bridge.NIAnEnum.nullableType,
             jni_bridge.NIAnEnum.nullableType,
@@ -430,7 +430,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JLong?, JLong?>>(T)) {
-      final JMap<JLong?, JLong?> res = JMap<JLong?, JLong?>.hash(
+      final res = JMap<JLong?, JLong?>.hash(
         JLong.nullableType,
         JLong.nullableType,
       );
@@ -440,7 +440,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JString?, JString?>>(T)) {
-      final JMap<JString?, JString?> res = JMap<JString?, JString?>.hash(
+      final res = JMap<JString?, JString?>.hash(
         JString.nullableType,
         JString.nullableType,
       );
@@ -450,7 +450,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JLong, JList<JObject?>>>(T)) {
-      final JMap<JLong, JList<JObject?>> res =
+      final res =
           JMap<JLong, JList<JObject?>>.hash(
             JLong.type,
             JList.type(JObject.nullableType),
@@ -461,7 +461,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JLong?, JList<JObject?>?>>(T)) {
-      final JMap<JLong?, JList<JObject?>?> res =
+      final res =
           JMap<JLong?, JList<JObject?>?>.hash(
             JLong.nullableType,
             JList.nullableType(JObject.nullableType),
@@ -472,7 +472,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (isTypeOrNullableType<JMap<JLong, JMap<JObject?, JObject?>>>(T)) {
-      final JMap<JLong, JMap<JObject?, JObject?>> res =
+      final res =
           JMap<JLong, JMap<JObject?, JObject?>>.hash(
             JLong.type,
             JMap.type(JObject.nullableType, JObject.nullableType),
@@ -485,7 +485,7 @@ class _PigeonJniCodec {
     } else if (isTypeOrNullableType<JMap<JLong?, JMap<JObject?, JObject?>?>>(
       T,
     )) {
-      final JMap<JLong?, JMap<JObject?, JObject?>?> res =
+      final res =
           JMap<JLong?, JMap<JObject?, JObject?>?>.hash(
             JLong.nullableType,
             JMap.nullableType(JObject.nullableType, JObject.nullableType),
@@ -496,7 +496,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (value is Map<Object, Object>) {
-      final JMap<JObject, JObject> res = JMap<JObject, JObject>.hash(
+      final res = JMap<JObject, JObject>.hash(
         JObject.type,
         JObject.type,
       );
@@ -505,7 +505,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (value is Map<Object, Object?>) {
-      final JMap<JObject, JObject?> res = JMap<JObject, JObject?>.hash(
+      final res = JMap<JObject, JObject?>.hash(
         JObject.type,
         JObject.nullableType,
       );
@@ -514,7 +514,7 @@ class _PigeonJniCodec {
       }
       return res as T;
     } else if (value is Map) {
-      final JMap<JObject, JObject?> res = JMap<JObject, JObject?>.hash(
+      final res = JMap<JObject, JObject?>.hash(
         JObject.type,
         JObject.nullableType,
       );
@@ -547,7 +547,7 @@ class _PigeonFfiCodec {
     if (value == null || ffi_bridge.PigeonInternalNull.isA(value)) {
       return null;
     } else if (NSNumber.isA(value)) {
-      final NSNumber numValue = NSNumber.as(value);
+      final numValue = NSNumber.as(value);
       switch (outType) {
         case const (double):
           return numValue.doubleValue;
@@ -565,15 +565,15 @@ class _PigeonFfiCodec {
     } else if (ffi_bridge.PigeonTypedData.isA(value)) {
       return getValueFromPigeonTypedData(value as ffi_bridge.PigeonTypedData);
     } else if (NSArray.isA(value)) {
-      final NSArray array = NSArray.as(value);
-      final List<Object?> res = <Object?>[];
-      for (int i = 0; i < array.count; i++) {
+      final array = NSArray.as(value);
+      final res = <Object?>[];
+      for (var i = 0; i < array.count; i++) {
         res.add(readValue(array.objectAtIndex(i)));
       }
       return res;
     } else if (NSDictionary.isA(value)) {
-      final NSDictionary dictionary = NSDictionary.as(value);
-      final Map<Object?, Object?> res = <Object?, Object?>{};
+      final dictionary = NSDictionary.as(value);
+      final res = <Object?, Object?>{};
       for (final MapEntry<NSCopying?, ObjCObject?> entry
           in dictionary.asDart().entries) {
         res[readValue(entry.key)] = readValue(entry.value);
@@ -637,34 +637,34 @@ class _PigeonFfiCodec {
     } else if (value is TypedData) {
       return toPigeonTypedData(value) as T;
     } else if (value is List<bool> && isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final bool entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<double> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final double entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<int> && isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final int entry in value) {
         res.addObject(writeValue<NSNumber>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<String> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final String entry in value) {
         res.addObject(writeValue<NSString>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<NIAllNullableTypes> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final NIAllNullableTypes entry in value) {
         res.addObject(
           writeValue<ffi_bridge.NIAllNullableTypesBridge>(entry, generic: true),
@@ -673,7 +673,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<NIAnEnum> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final NIAnEnum entry in value) {
         res.addObject(
           writeValue<ffi_bridge.NumberWrapper>(entry, generic: true),
@@ -682,7 +682,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<NIAllNullableTypesWithoutRecursion?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final NIAllNullableTypesWithoutRecursion? entry in value) {
         res.addObject(
           entry == null
@@ -696,7 +696,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<NIAllTypes?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final NIAllTypes? entry in value) {
         res.addObject(
           entry == null
@@ -707,7 +707,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<NIAllNullableTypes?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final NIAllNullableTypes? entry in value) {
         res.addObject(
           entry == null
@@ -721,7 +721,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<NIAnEnum?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final NIAnEnum? entry in value) {
         res.addObject(
           entry == null
@@ -732,7 +732,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<bool?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final bool? entry in value) {
         res.addObject(
           entry == null
@@ -743,7 +743,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<double?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final double? entry in value) {
         res.addObject(
           entry == null
@@ -753,7 +753,7 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is List<int?> && isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final int? entry in value) {
         res.addObject(
           entry == null
@@ -764,7 +764,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<String?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final String? entry in value) {
         res.addObject(
           entry == null
@@ -775,14 +775,14 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<List<Object?>> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final List<Object?> entry in value) {
         res.addObject(writeValue<NSArray>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<List<Object?>?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final List<Object?>? entry in value) {
         res.addObject(
           entry == null
@@ -793,14 +793,14 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is List<Map<Object?, Object?>> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final Map<Object?, Object?> entry in value) {
         res.addObject(writeValue<NSDictionary>(entry, generic: true));
       }
       return res as T;
     } else if (value is List<Map<Object?, Object?>?> &&
         isTypeOrNullableType<NSMutableArray>(T)) {
-      final NSMutableArray res = NSMutableArray();
+      final res = NSMutableArray();
       for (final Map<Object?, Object?>? entry in value) {
         res.addObject(
           entry == null
@@ -810,8 +810,8 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is List) {
-      final NSMutableArray res = NSMutableArray();
-      for (int i = 0; i < value.length; i++) {
+      final res = NSMutableArray();
+      for (var i = 0; i < value.length; i++) {
         res.addObject(
           value[i] == null
               ? ffi_bridge.PigeonInternalNull()
@@ -821,7 +821,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int, NIAllNullableTypes> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int, NIAllNullableTypes> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -831,7 +831,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<NIAnEnum, NIAnEnum> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<NIAnEnum, NIAnEnum> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -841,7 +841,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int, int> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int, int> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -851,7 +851,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<String, String> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<String, String> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -861,7 +861,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int?, NIAllNullableTypesWithoutRecursion?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllNullableTypesWithoutRecursion?> entry
           in value.entries) {
         res.setObject(
@@ -872,7 +872,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int?, NIAllTypes?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllTypes?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -882,7 +882,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int?, NIAllNullableTypes?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int?, NIAllNullableTypes?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -892,7 +892,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<NIAnEnum?, NIAnEnum?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<NIAnEnum?, NIAnEnum?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -902,7 +902,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int?, int?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int?, int?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -912,7 +912,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<String?, String?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<String?, String?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -922,7 +922,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int, List<Object?>> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int, List<Object?>> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -932,7 +932,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int?, List<Object?>?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int?, List<Object?>?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -942,7 +942,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int, Map<Object?, Object?>> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int, Map<Object?, Object?>> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -952,7 +952,7 @@ class _PigeonFfiCodec {
       return res as T;
     } else if (value is Map<int?, Map<Object?, Object?>?> &&
         isTypeOrNullableType<NSDictionary>(T)) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<int?, Map<Object?, Object?>?> entry
           in value.entries) {
         res.setObject(
@@ -962,7 +962,7 @@ class _PigeonFfiCodec {
       }
       return res as T;
     } else if (value is Map) {
-      final NSMutableDictionary res = NSMutableDictionary();
+      final res = NSMutableDictionary();
       for (final MapEntry<Object?, Object?> entry in value.entries) {
         res.setObject(
           writeValue(entry.value, generic: true),
@@ -989,7 +989,7 @@ class _PigeonFfiCodec {
 ffi_bridge.PigeonTypedData toPigeonTypedData(TypedData value) {
   if (value is Uint8List) {
     final Pointer<Uint8> ptr = calloc<Uint8>(value.length);
-    for (int i = 0; i < value.length; i++) {
+    for (var i = 0; i < value.length; i++) {
       ptr[i] = value[i];
     }
     final NSData nsData = NSData.dataWithBytes(
@@ -1000,7 +1000,7 @@ ffi_bridge.PigeonTypedData toPigeonTypedData(TypedData value) {
     return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type: 0);
   } else if (value is Int32List) {
     final Pointer<Int32> ptr = calloc<Int32>(value.length);
-    for (int i = 0; i < value.length; i++) {
+    for (var i = 0; i < value.length; i++) {
       ptr[i] = value[i];
     }
     final NSData nsData = NSData.dataWithBytes(
@@ -1011,7 +1011,7 @@ ffi_bridge.PigeonTypedData toPigeonTypedData(TypedData value) {
     return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type: 1);
   } else if (value is Int64List) {
     final Pointer<Int64> ptr = calloc<Int64>(value.length);
-    for (int i = 0; i < value.length; i++) {
+    for (var i = 0; i < value.length; i++) {
       ptr[i] = value[i];
     }
     final NSData nsData = NSData.dataWithBytes(
@@ -1022,7 +1022,7 @@ ffi_bridge.PigeonTypedData toPigeonTypedData(TypedData value) {
     return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type: 2);
   } else if (value is Float32List) {
     final Pointer<Float> ptr = calloc<Float>(value.length);
-    for (int i = 0; i < value.length; i++) {
+    for (var i = 0; i < value.length; i++) {
       ptr[i] = value[i];
     }
     final NSData nsData = NSData.dataWithBytes(
@@ -1033,7 +1033,7 @@ ffi_bridge.PigeonTypedData toPigeonTypedData(TypedData value) {
     return ffi_bridge.PigeonTypedData.alloc().initWithData(nsData, type: 3);
   } else if (value is Float64List) {
     final Pointer<Double> ptr = calloc<Double>(value.length);
-    for (int i = 0; i < value.length; i++) {
+    for (var i = 0; i < value.length; i++) {
       ptr[i] = value[i];
     }
     final NSData nsData = NSData.dataWithBytes(
@@ -1125,11 +1125,11 @@ ffi_bridge.NumberWrapper convertToFfiNumberWrapper(Object value) {
 bool isType<T>(Type t) => T == t;
 bool isTypeOrNullableType<T>(Type t) => isType<T>(t) || isType<T?>(t);
 void _throwNoInstanceError(String channelName) {
-  String nameString = 'named $channelName';
+  var nameString = 'named $channelName';
   if (channelName == defaultInstanceName) {
     nameString = 'with no name';
   }
-  final String error = 'No instance $nameString has been registered.';
+  final error = 'No instance $nameString has been registered.';
   throw ArgumentError(error);
 }
 
@@ -3035,10 +3035,10 @@ class _PigeonCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 129:
-        final int? value = readValue(buffer) as int?;
+        final value = readValue(buffer) as int?;
         return value == null ? null : NIAnEnum.values[value];
       case 130:
-        final int? value = readValue(buffer) as int?;
+        final value = readValue(buffer) as int?;
         return value == null ? null : NIAnotherEnum.values[value];
       case 131:
         return NIUnusedClass.decode(readValue(buffer)!);
@@ -3105,7 +3105,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         return _jniApi.noop();
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         _ffiApi.noopWithWrappedError(error);
         _throwIfFfiError(error);
         return;
@@ -3126,7 +3126,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAllTypes dartTypeRes = NIAllTypes.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllTypesBridge? res = _ffiApi
             .echoAllTypesWithEverything(
               everything.toFfi(),
@@ -3150,7 +3150,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ObjCObject? res = _ffiApi.throwErrorWithWrappedError(error);
         _throwIfFfiError(error);
         final Object? dartTypeRes = _PigeonFfiCodec.readValue(res);
@@ -3168,7 +3168,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         return _jniApi.throwErrorFromVoid();
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         _ffiApi.throwErrorFromVoidWithWrappedError(error);
         _throwIfFfiError(error);
         return;
@@ -3187,7 +3187,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ObjCObject? res = _ffiApi.throwFlutterErrorWithWrappedError(
           error,
         );
@@ -3207,7 +3207,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         return _jniApi.echoInt(anInt);
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoIntWithAnInt(
           anInt,
           wrappedError: error,
@@ -3228,7 +3228,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         return _jniApi.echoDouble(aDouble);
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoDoubleWithADouble(
           aDouble,
           wrappedError: error,
@@ -3249,7 +3249,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         return _jniApi.echoBool(aBool);
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoBoolWithABool(
           aBool,
           wrappedError: error,
@@ -3274,7 +3274,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final String dartTypeRes = res.toDartString(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSString? res = _ffiApi.echoStringWithAString(
           _PigeonFfiCodec.writeValue<NSString>(aString),
           wrappedError: error,
@@ -3296,11 +3296,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JByteArray res = _jniApi.echoUint8List(
           _PigeonJniCodec.writeValue<JByteArray>(aUint8List),
         );
-        final Uint8List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Uint8List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoUint8ListWithAUint8List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
@@ -3309,7 +3309,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Uint8List dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res)! as Uint8List);
         return dartTypeRes;
       } else {
@@ -3326,11 +3326,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JIntArray res = _jniApi.echoInt32List(
           _PigeonJniCodec.writeValue<JIntArray>(aInt32List),
         );
-        final Int32List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Int32List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoInt32ListWithAInt32List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
@@ -3339,7 +3339,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Int32List dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res)! as Int32List);
         return dartTypeRes;
       } else {
@@ -3356,11 +3356,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLongArray res = _jniApi.echoInt64List(
           _PigeonJniCodec.writeValue<JLongArray>(aInt64List),
         );
-        final Int64List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Int64List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoInt64ListWithAInt64List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
@@ -3369,7 +3369,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Int64List dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res)! as Int64List);
         return dartTypeRes;
       } else {
@@ -3386,11 +3386,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDoubleArray res = _jniApi.echoFloat64List(
           _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List),
         );
-        final Float64List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Float64List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoFloat64ListWithAFloat64List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(
@@ -3399,7 +3399,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Float64List dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res)! as Float64List);
         return dartTypeRes;
       } else {
@@ -3419,7 +3419,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ObjCObject? res = _ffiApi.echoObjectWithAnObject(
           _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
           wrappedError: error,
@@ -3445,7 +3445,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoListWithList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(list),
           wrappedError: error,
@@ -3472,7 +3472,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<String?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoStringListWithStringList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(stringList),
           wrappedError: error,
@@ -3499,7 +3499,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<int?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoIntListWithIntList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(intList),
           wrappedError: error,
@@ -3526,7 +3526,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<double?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoDoubleListWithDoubleList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(doubleList),
           wrappedError: error,
@@ -3553,7 +3553,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<bool?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoBoolListWithBoolList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(boolList),
           wrappedError: error,
@@ -3581,7 +3581,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoEnumListWithEnumList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
           wrappedError: error,
@@ -3612,7 +3612,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoClassListWithClassList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
           wrappedError: error,
@@ -3640,7 +3640,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<NIAnEnum>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoNonNullEnumListWithEnumList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
           wrappedError: error,
@@ -3673,7 +3673,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAllNullableTypes>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoNonNullClassListWithClassList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
           wrappedError: error,
@@ -3702,7 +3702,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<Object?, Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoMapWithMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(map),
           wrappedError: error,
@@ -3731,7 +3731,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<String?, String?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoStringMapWithStringMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
           wrappedError: error,
@@ -3760,7 +3760,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<int?, int?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoIntMapWithIntMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
           wrappedError: error,
@@ -3792,7 +3792,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAnEnum?, NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoEnumMapWithEnumMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
           wrappedError: error,
@@ -3826,7 +3826,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<int?, NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoClassMapWithClassMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
           wrappedError: error,
@@ -3855,7 +3855,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<String, String>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNonNullStringMapWithStringMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
           wrappedError: error,
@@ -3884,7 +3884,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<int, int>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNonNullIntMapWithIntMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
           wrappedError: error,
@@ -3916,7 +3916,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAnEnum, NIAnEnum>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNonNullEnumMapWithEnumMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
           wrappedError: error,
@@ -3950,7 +3950,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<int, NIAllNullableTypes>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNonNullClassMapWithClassMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
           wrappedError: error,
@@ -3979,7 +3979,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         )!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllClassesWrapperBridge? res = _ffiApi
             .echoClassWrapperWithWrapper(wrapper.toFfi(), wrappedError: error);
         _throwIfFfiError(error);
@@ -4002,13 +4002,13 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnEnum dartTypeRes = NIAnEnum.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoEnumWithAnEnum(
           ffi_bridge.NIAnEnum.values[anEnum.index],
           wrappedError: error,
         );
         _throwIfFfiError(error);
-        final NIAnEnum dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res, NIAnEnum)! as NIAnEnum);
         return dartTypeRes;
       } else {
@@ -4028,13 +4028,13 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnotherEnum dartTypeRes = NIAnotherEnum.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoAnotherEnumWithAnotherEnum(
           ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
           wrappedError: error,
         );
         _throwIfFfiError(error);
-        final NIAnotherEnum dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res, NIAnotherEnum)! as NIAnotherEnum);
         return dartTypeRes;
       } else {
@@ -4054,7 +4054,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesBridge? res = _ffiApi
             .echoAllNullableTypesWithEverything(
               everything == null ? null : everything.toFfi(),
@@ -4084,7 +4084,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             NIAllNullableTypesWithoutRecursion.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesWithoutRecursionBridge? res = _ffiApi
             .echoAllNullableTypesWithoutRecursionWithEverything(
               everything == null ? null : everything.toFfi(),
@@ -4111,7 +4111,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSString? res = _ffiApi.extractNestedNullableStringWithWrapper(
           wrapper.toFfi(),
           wrappedError: error,
@@ -4139,7 +4139,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         )!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllClassesWrapperBridge? res = _ffiApi
             .createNestedNullableStringWithNullableString(
               _PigeonFfiCodec.writeValue<NSString?>(nullableString),
@@ -4174,7 +4174,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAllNullableTypes dartTypeRes = NIAllNullableTypes.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesBridge? res = _ffiApi
             .sendMultipleNullableTypesWithANullableBool(
               _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
@@ -4212,7 +4212,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             NIAllNullableTypesWithoutRecursion.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.NIAllNullableTypesWithoutRecursionBridge? res = _ffiApi
             .sendMultipleNullableTypesWithoutRecursionWithANullableBool(
               _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
@@ -4243,7 +4243,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final int? dartTypeRes = res?.longValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoNullableIntWithANullableInt(
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableInt),
           wrappedError: error,
@@ -4268,7 +4268,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoNullableDoubleWithANullableDouble(
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableDouble),
           wrappedError: error,
@@ -4293,7 +4293,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoNullableBoolWithANullableBool(
           _PigeonFfiCodec.writeValue<NSNumber?>(aNullableBool),
           wrappedError: error,
@@ -4318,7 +4318,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSString? res = _ffiApi.echoNullableStringWithANullableString(
           _PigeonFfiCodec.writeValue<NSString?>(aNullableString),
           wrappedError: error,
@@ -4340,11 +4340,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JByteArray? res = _jniApi.echoNullableUint8List(
           _PigeonJniCodec.writeValue<JByteArray?>(aNullableUint8List),
         );
-        final Uint8List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Uint8List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoNullableUint8ListWithANullableUint8List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
@@ -4353,7 +4353,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Uint8List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res) as Uint8List?);
         return dartTypeRes;
       } else {
@@ -4370,11 +4370,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JIntArray? res = _jniApi.echoNullableInt32List(
           _PigeonJniCodec.writeValue<JIntArray?>(aNullableInt32List),
         );
-        final Int32List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Int32List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoNullableInt32ListWithANullableInt32List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
@@ -4383,7 +4383,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Int32List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res) as Int32List?);
         return dartTypeRes;
       } else {
@@ -4400,11 +4400,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLongArray? res = _jniApi.echoNullableInt64List(
           _PigeonJniCodec.writeValue<JLongArray?>(aNullableInt64List),
         );
-        final Int64List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Int64List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoNullableInt64ListWithANullableInt64List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
@@ -4413,7 +4413,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Int64List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res) as Int64List?);
         return dartTypeRes;
       } else {
@@ -4430,11 +4430,11 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDoubleArray? res = _jniApi.echoNullableFloat64List(
           _PigeonJniCodec.writeValue<JDoubleArray?>(aNullableFloat64List),
         );
-        final Float64List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Float64List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ffi_bridge.PigeonTypedData? res = _ffiApi
             .echoNullableFloat64ListWithANullableFloat64List(
               _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(
@@ -4443,7 +4443,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
               wrappedError: error,
             );
         _throwIfFfiError(error);
-        final Float64List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res) as Float64List?);
         return dartTypeRes;
       } else {
@@ -4463,7 +4463,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final ObjCObject? res = _ffiApi.echoNullableObjectWithANullableObject(
           _PigeonFfiCodec.writeValue<NSObject>(aNullableObject, generic: true),
           wrappedError: error,
@@ -4489,7 +4489,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoNullableListWithANullableList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(aNullableList),
           wrappedError: error,
@@ -4517,7 +4517,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoNullableEnumListWithEnumList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
           wrappedError: error,
@@ -4551,7 +4551,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoNullableClassListWithClassList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
           wrappedError: error,
@@ -4581,7 +4581,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAnEnum>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoNullableNonNullEnumListWithEnumList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
           wrappedError: error,
@@ -4615,7 +4615,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAllNullableTypes>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSArray? res = _ffiApi.echoNullableNonNullClassListWithClassList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
           wrappedError: error,
@@ -4644,7 +4644,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<Object?, Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNullableMapWithMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(map),
           wrappedError: error,
@@ -4675,7 +4675,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<String?, String?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNullableStringMapWithStringMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
           wrappedError: error,
@@ -4704,7 +4704,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<int?, int?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNullableIntMapWithIntMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
           wrappedError: error,
@@ -4738,7 +4738,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAnEnum?, NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNullableEnumMapWithEnumMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
           wrappedError: error,
@@ -4772,7 +4772,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<int?, NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNullableClassMapWithClassMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
           wrappedError: error,
@@ -4804,7 +4804,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<String, String>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi
             .echoNullableNonNullStringMapWithStringMap(
               _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
@@ -4834,7 +4834,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<int, int>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNullableNonNullIntMapWithIntMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
           wrappedError: error,
@@ -4868,7 +4868,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAnEnum, NIAnEnum>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi.echoNullableNonNullEnumMapWithEnumMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
           wrappedError: error,
@@ -4902,7 +4902,7 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<int, NIAllNullableTypes>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSDictionary? res = _ffiApi
             .echoNullableNonNullClassMapWithClassMap(
               _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
@@ -4930,13 +4930,13 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnEnum? dartTypeRes = NIAnEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoNullableEnumWithAnEnum(
           _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
           wrappedError: error,
         );
         _throwIfFfiError(error);
-        final NIAnEnum? dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res, NIAnEnum) as NIAnEnum?);
         return dartTypeRes;
       } else {
@@ -4956,13 +4956,13 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnotherEnum? dartTypeRes = NIAnotherEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
+        final error = ffi_bridge.NiTestsError();
         final NSNumber? res = _ffiApi.echoAnotherNullableEnumWithAnotherEnum(
           _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
           wrappedError: error,
         );
         _throwIfFfiError(error);
-        final NIAnotherEnum? dartTypeRes =
+        final dartTypeRes =
             (_PigeonFfiCodec.readValue(res, NIAnotherEnum) as NIAnotherEnum?);
         return dartTypeRes;
       } else {
@@ -4978,8 +4978,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         await _jniApi.noopAsync();
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<void> completer = Completer<void>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<void>();
         _ffiApi.noopAsyncWithWrappedError(
           error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid.listener(() {
@@ -5006,8 +5006,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final int dartTypeRes = res.longValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<int> completer = Completer<int>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<int>();
         _ffiApi.echoAsyncIntWithAnInt(
           anInt,
           wrappedError: error,
@@ -5037,8 +5037,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final double dartTypeRes = res.doubleValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<double> completer = Completer<double>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<double>();
         _ffiApi.echoAsyncDoubleWithADouble(
           aDouble,
           wrappedError: error,
@@ -5068,8 +5068,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final bool dartTypeRes = res.booleanValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<bool> completer = Completer<bool>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<bool>();
         _ffiApi.echoAsyncBoolWithABool(
           aBool,
           wrappedError: error,
@@ -5101,8 +5101,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final String dartTypeRes = res.toDartString(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<String> completer = Completer<String>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<String>();
         _ffiApi.echoAsyncStringWithAString(
           _PigeonFfiCodec.writeValue<NSString>(aString),
           wrappedError: error,
@@ -5131,12 +5131,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JByteArray res = await _jniApi.echoAsyncUint8List(
           _PigeonJniCodec.writeValue<JByteArray>(aUint8List),
         );
-        final Uint8List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Uint8List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Uint8List> completer = Completer<Uint8List>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Uint8List>();
         _ffiApi.echoAsyncUint8ListWithAUint8List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aUint8List),
           wrappedError: error,
@@ -5168,12 +5168,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JIntArray res = await _jniApi.echoAsyncInt32List(
           _PigeonJniCodec.writeValue<JIntArray>(aInt32List),
         );
-        final Int32List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Int32List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Int32List> completer = Completer<Int32List>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Int32List>();
         _ffiApi.echoAsyncInt32ListWithAInt32List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aInt32List),
           wrappedError: error,
@@ -5205,12 +5205,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLongArray res = await _jniApi.echoAsyncInt64List(
           _PigeonJniCodec.writeValue<JLongArray>(aInt64List),
         );
-        final Int64List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Int64List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Int64List> completer = Completer<Int64List>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Int64List>();
         _ffiApi.echoAsyncInt64ListWithAInt64List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aInt64List),
           wrappedError: error,
@@ -5242,12 +5242,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDoubleArray res = await _jniApi.echoAsyncFloat64List(
           _PigeonJniCodec.writeValue<JDoubleArray>(aFloat64List),
         );
-        final Float64List dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res)! as Float64List);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Float64List> completer = Completer<Float64List>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Float64List>();
         _ffiApi.echoAsyncFloat64ListWithAFloat64List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData>(aFloat64List),
           wrappedError: error,
@@ -5282,8 +5282,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object dartTypeRes = _PigeonJniCodec.readValue(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Object> completer = Completer<Object>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Object>();
         _ffiApi.echoAsyncObjectWithAnObject(
           _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
           wrappedError: error,
@@ -5317,8 +5317,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res)! as List<Object?>).cast<Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<List<Object?>> completer = Completer<List<Object?>>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<List<Object?>>();
         _ffiApi.echoAsyncListWithList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(list),
           wrappedError: error,
@@ -5355,8 +5355,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<List<NIAnEnum?>> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<List<NIAnEnum?>>();
         _ffiApi.echoAsyncEnumListWithEnumList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(enumList),
@@ -5399,8 +5399,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<List<NIAllNullableTypes?>> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<List<NIAllNullableTypes?>>();
         _ffiApi.echoAsyncClassListWithClassList(
           _PigeonFfiCodec.writeValue<NSMutableArray>(classList),
@@ -5438,8 +5438,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<Object?, Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<Object?, Object?>> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<Object?, Object?>>();
         _ffiApi.echoAsyncMapWithMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(map),
@@ -5479,8 +5479,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<String?, String?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<String?, String?>> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<String?, String?>>();
         _ffiApi.echoAsyncStringMapWithStringMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(stringMap),
@@ -5518,8 +5518,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<int?, int?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<int?, int?>> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<int?, int?>>();
         _ffiApi.echoAsyncIntMapWithIntMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(intMap),
@@ -5562,8 +5562,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<NIAnEnum?, NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<NIAnEnum?, NIAnEnum?>> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<NIAnEnum?, NIAnEnum?>>();
         _ffiApi.echoAsyncEnumMapWithEnumMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(enumMap),
@@ -5606,8 +5606,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 .cast<int?, NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<int?, NIAllNullableTypes?>> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<int?, NIAllNullableTypes?>>();
         _ffiApi.echoAsyncClassMapWithClassMap(
           _PigeonFfiCodec.writeValue<NSDictionary>(classMap),
@@ -5643,8 +5643,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnEnum dartTypeRes = NIAnEnum.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<NIAnEnum> completer = Completer<NIAnEnum>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<NIAnEnum>();
         _ffiApi.echoAsyncEnumWithAnEnum(
           ffi_bridge.NIAnEnum.values[anEnum.index],
           wrappedError: error,
@@ -5678,8 +5678,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnotherEnum dartTypeRes = NIAnotherEnum.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<NIAnotherEnum> completer = Completer<NIAnotherEnum>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<NIAnotherEnum>();
         _ffiApi.echoAnotherAsyncEnumWithAnotherEnum(
           ffi_bridge.NIAnotherEnum.values[anotherEnum.index],
           wrappedError: error,
@@ -5712,8 +5712,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Object?> completer = Completer<Object?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Object?>();
         _ffiApi.throwAsyncErrorWithWrappedError(
           error,
           completionHandler:
@@ -5741,8 +5741,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
       if (_jniApi != null) {
         await _jniApi.throwAsyncErrorFromVoid();
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<void> completer = Completer<void>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<void>();
         _ffiApi.throwAsyncErrorFromVoidWithWrappedError(
           error,
           completionHandler: ffi_bridge.ObjCBlock_ffiVoid.listener(() {
@@ -5769,8 +5769,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Object?> completer = Completer<Object?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Object?>();
         _ffiApi.throwAsyncFlutterErrorWithWrappedError(
           error,
           completionHandler:
@@ -5802,8 +5802,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAllTypes dartTypeRes = NIAllTypes.fromJni(res)!;
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<NIAllTypes> completer = Completer<NIAllTypes>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<NIAllTypes>();
         _ffiApi.echoAsyncNIAllTypesWithEverything(
           everything.toFfi(),
           wrappedError: error,
@@ -5839,8 +5839,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAllNullableTypes? dartTypeRes = NIAllNullableTypes.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<NIAllNullableTypes?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<NIAllNullableTypes?>();
         _ffiApi.echoAsyncNullableNIAllNullableTypesWithEverything(
           everything == null ? null : everything.toFfi(),
@@ -5879,8 +5879,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
             NIAllNullableTypesWithoutRecursion.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<NIAllNullableTypesWithoutRecursion?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<NIAllNullableTypesWithoutRecursion?>();
         _ffiApi.echoAsyncNullableNIAllNullableTypesWithoutRecursionWithEverything(
           everything == null ? null : everything.toFfi(),
@@ -5917,8 +5917,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final int? dartTypeRes = res?.longValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<int?> completer = Completer<int?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<int?>();
         _ffiApi.echoAsyncNullableIntWithAnInt(
           _PigeonFfiCodec.writeValue<NSNumber?>(anInt),
           wrappedError: error,
@@ -5950,8 +5950,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final double? dartTypeRes = res?.doubleValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<double?> completer = Completer<double?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<double?>();
         _ffiApi.echoAsyncNullableDoubleWithADouble(
           _PigeonFfiCodec.writeValue<NSNumber?>(aDouble),
           wrappedError: error,
@@ -5983,8 +5983,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final bool? dartTypeRes = res?.booleanValue(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<bool?> completer = Completer<bool?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<bool?>();
         _ffiApi.echoAsyncNullableBoolWithABool(
           _PigeonFfiCodec.writeValue<NSNumber?>(aBool),
           wrappedError: error,
@@ -6016,8 +6016,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final String? dartTypeRes = res?.toDartString(releaseOriginal: true);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<String?> completer = Completer<String?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<String?>();
         _ffiApi.echoAsyncNullableStringWithAString(
           _PigeonFfiCodec.writeValue<NSString?>(aString),
           wrappedError: error,
@@ -6046,12 +6046,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JByteArray? res = await _jniApi.echoAsyncNullableUint8List(
           _PigeonJniCodec.writeValue<JByteArray?>(aUint8List),
         );
-        final Uint8List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Uint8List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Uint8List?> completer = Completer<Uint8List?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Uint8List?>();
         _ffiApi.echoAsyncNullableUint8ListWithAUint8List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aUint8List),
           wrappedError: error,
@@ -6083,12 +6083,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JIntArray? res = await _jniApi.echoAsyncNullableInt32List(
           _PigeonJniCodec.writeValue<JIntArray?>(aInt32List),
         );
-        final Int32List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Int32List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Int32List?> completer = Completer<Int32List?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Int32List?>();
         _ffiApi.echoAsyncNullableInt32ListWithAInt32List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aInt32List),
           wrappedError: error,
@@ -6120,12 +6120,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JLongArray? res = await _jniApi.echoAsyncNullableInt64List(
           _PigeonJniCodec.writeValue<JLongArray?>(aInt64List),
         );
-        final Int64List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Int64List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Int64List?> completer = Completer<Int64List?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Int64List?>();
         _ffiApi.echoAsyncNullableInt64ListWithAInt64List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aInt64List),
           wrappedError: error,
@@ -6159,12 +6159,12 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final JDoubleArray? res = await _jniApi.echoAsyncNullableFloat64List(
           _PigeonJniCodec.writeValue<JDoubleArray?>(aFloat64List),
         );
-        final Float64List? dartTypeRes =
+        final dartTypeRes =
             (_PigeonJniCodec.readValue(res) as Float64List?);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Float64List?> completer = Completer<Float64List?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Float64List?>();
         _ffiApi.echoAsyncNullableFloat64ListWithAFloat64List(
           _PigeonFfiCodec.writeValue<ffi_bridge.PigeonTypedData?>(aFloat64List),
           wrappedError: error,
@@ -6199,8 +6199,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final Object? dartTypeRes = _PigeonJniCodec.readValue(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Object?> completer = Completer<Object?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<Object?>();
         _ffiApi.echoAsyncNullableObjectWithAnObject(
           _PigeonFfiCodec.writeValue<NSObject>(anObject, generic: true),
           wrappedError: error,
@@ -6234,8 +6234,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
             (_PigeonJniCodec.readValue(res) as List<Object?>?)?.cast<Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<List<Object?>?> completer = Completer<List<Object?>?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<List<Object?>?>();
         _ffiApi.echoAsyncNullableListWithList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(list),
           wrappedError: error,
@@ -6277,8 +6277,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<List<NIAnEnum?>?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<List<NIAnEnum?>?>();
         _ffiApi.echoAsyncNullableEnumListWithEnumList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(enumList),
@@ -6321,8 +6321,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<List<NIAllNullableTypes?>?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<List<NIAllNullableTypes?>?>();
         _ffiApi.echoAsyncNullableClassListWithClassList(
           _PigeonFfiCodec.writeValue<NSMutableArray?>(classList),
@@ -6363,8 +6363,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<Object?, Object?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<Object?, Object?>?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<Object?, Object?>?>();
         _ffiApi.echoAsyncNullableMapWithMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(map),
@@ -6405,8 +6405,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<String?, String?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<String?, String?>?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<String?, String?>?>();
         _ffiApi.echoAsyncNullableStringMapWithStringMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(stringMap),
@@ -6446,8 +6446,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<int?, int?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<int?, int?>?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<int?, int?>?>();
         _ffiApi.echoAsyncNullableIntMapWithIntMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(intMap),
@@ -6490,8 +6490,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<NIAnEnum?, NIAnEnum?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<NIAnEnum?, NIAnEnum?>?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<NIAnEnum?, NIAnEnum?>?>();
         _ffiApi.echoAsyncNullableEnumMapWithEnumMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(enumMap),
@@ -6534,8 +6534,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
                 ?.cast<int?, NIAllNullableTypes?>();
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<Map<int?, NIAllNullableTypes?>?> completer =
+        final error = ffi_bridge.NiTestsError();
+        final completer =
             Completer<Map<int?, NIAllNullableTypes?>?>();
         _ffiApi.echoAsyncNullableClassMapWithClassMap(
           _PigeonFfiCodec.writeValue<NSDictionary?>(classMap),
@@ -6571,8 +6571,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnEnum? dartTypeRes = NIAnEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<NIAnEnum?> completer = Completer<NIAnEnum?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<NIAnEnum?>();
         _ffiApi.echoAsyncNullableEnumWithAnEnum(
           _PigeonFfiCodec.writeValue<NSNumber?>(anEnum),
           wrappedError: error,
@@ -6609,8 +6609,8 @@ class NIHostIntegrationCoreApiForNativeInterop {
         final NIAnotherEnum? dartTypeRes = NIAnotherEnum.fromJni(res);
         return dartTypeRes;
       } else if (_ffiApi != null) {
-        final ffi_bridge.NiTestsError error = ffi_bridge.NiTestsError();
-        final Completer<NIAnotherEnum?> completer = Completer<NIAnotherEnum?>();
+        final error = ffi_bridge.NiTestsError();
+        final completer = Completer<NIAnotherEnum?>();
         _ffiApi.echoAnotherAsyncNullableEnumWithAnotherEnum(
           _PigeonFfiCodec.writeValue<NSNumber?>(anotherEnum),
           wrappedError: error,
@@ -6663,7 +6663,7 @@ class NIHostIntegrationCoreApi {
     String messageChannelSuffix = '',
   }) {
     NIHostIntegrationCoreApiForNativeInterop? nativeInteropApi;
-    String nativeInteropApiInstanceName = '';
+    var nativeInteropApiInstanceName = '';
     if (Platform.isAndroid) {
       if (messageChannelSuffix.isEmpty) {
         nativeInteropApi =
@@ -6701,16 +6701,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.noop();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.noop$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6731,9 +6731,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAllTypes(everything);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAllTypes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6742,7 +6742,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[everything],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6768,16 +6768,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.throwError();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwError$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6798,16 +6798,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.throwErrorFromVoid();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwErrorFromVoid$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6828,16 +6828,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.throwFlutterError();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwFlutterError$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6858,9 +6858,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoInt(anInt);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoInt$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6869,7 +6869,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6895,9 +6895,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoDouble(aDouble);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoDouble$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6906,7 +6906,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6932,9 +6932,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoBool(aBool);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoBool$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6943,7 +6943,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -6969,9 +6969,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoString(aString);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoString$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -6980,7 +6980,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7006,9 +7006,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoUint8List(aUint8List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoUint8List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7017,7 +7017,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7043,9 +7043,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoInt32List(aInt32List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoInt32List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7054,7 +7054,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aInt32List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7080,9 +7080,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoInt64List(aInt64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoInt64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7091,7 +7091,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aInt64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7117,9 +7117,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoFloat64List(aFloat64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoFloat64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7128,7 +7128,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aFloat64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7154,9 +7154,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoObject(anObject);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoObject$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7165,7 +7165,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7191,9 +7191,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoList(list);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7202,7 +7202,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[list],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7228,9 +7228,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoStringList(stringList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoStringList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7239,7 +7239,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[stringList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7265,9 +7265,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoIntList(intList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoIntList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7276,7 +7276,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[intList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7302,9 +7302,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoDoubleList(doubleList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoDoubleList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7313,7 +7313,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[doubleList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7339,9 +7339,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoBoolList(boolList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoBoolList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7350,7 +7350,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[boolList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7376,9 +7376,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoEnumList(enumList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoEnumList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7387,7 +7387,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7415,9 +7415,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoClassList(classList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoClassList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7426,7 +7426,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7453,9 +7453,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullEnumList(enumList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNonNullEnumList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7464,7 +7464,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7492,9 +7492,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullClassList(classList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNonNullClassList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7503,7 +7503,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7530,9 +7530,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoMap(map);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7541,7 +7541,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[map],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7570,9 +7570,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoStringMap(stringMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoStringMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7581,7 +7581,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[stringMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7608,9 +7608,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoIntMap(intMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoIntMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7619,7 +7619,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[intMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7648,9 +7648,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoEnumMap(enumMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoEnumMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7659,7 +7659,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7688,9 +7688,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoClassMap(classMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoClassMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7699,7 +7699,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7728,9 +7728,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullStringMap(stringMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNonNullStringMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7739,7 +7739,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[stringMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7766,9 +7766,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullIntMap(intMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNonNullIntMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7777,7 +7777,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[intMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7806,9 +7806,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullEnumMap(enumMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNonNullEnumMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7817,7 +7817,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7846,9 +7846,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNonNullClassMap(classMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNonNullClassMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7857,7 +7857,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7886,9 +7886,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoClassWrapper(wrapper);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoClassWrapper$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7897,7 +7897,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[wrapper],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7923,9 +7923,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoEnum(anEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7934,7 +7934,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7960,9 +7960,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherEnum(anotherEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -7971,7 +7971,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anotherEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -7999,9 +7999,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAllNullableTypes(everything);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAllNullableTypes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8010,7 +8010,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[everything],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8034,9 +8034,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAllNullableTypesWithoutRecursion(everything);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAllNullableTypesWithoutRecursion$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8045,7 +8045,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[everything],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8069,9 +8069,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.extractNestedNullableString(wrapper);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.extractNestedNullableString$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8080,7 +8080,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[wrapper],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8104,9 +8104,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.createNestedNullableString(nullableString);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.createNestedNullableString$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8115,7 +8115,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[nullableString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8148,9 +8148,9 @@ class NIHostIntegrationCoreApi {
         aNullableString,
       );
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.sendMultipleNullableTypes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8159,7 +8159,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableBool, aNullableInt, aNullableString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8193,9 +8193,9 @@ class NIHostIntegrationCoreApi {
         aNullableString,
       );
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.sendMultipleNullableTypesWithoutRecursion$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8204,7 +8204,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableBool, aNullableInt, aNullableString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8230,9 +8230,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableInt(aNullableInt);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableInt$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8241,7 +8241,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8262,9 +8262,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableDouble(aNullableDouble);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableDouble$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8273,7 +8273,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8294,9 +8294,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableBool(aNullableBool);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableBool$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8305,7 +8305,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8326,9 +8326,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableString(aNullableString);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableString$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8337,7 +8337,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8360,9 +8360,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableUint8List(aNullableUint8List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableUint8List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8371,7 +8371,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8394,9 +8394,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableInt32List(aNullableInt32List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableInt32List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8405,7 +8405,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableInt32List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8428,9 +8428,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableInt64List(aNullableInt64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableInt64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8439,7 +8439,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableInt64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8462,9 +8462,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableFloat64List(aNullableFloat64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableFloat64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8473,7 +8473,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableFloat64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8494,9 +8494,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableObject(aNullableObject);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableObject$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8505,7 +8505,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8526,9 +8526,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableList(aNullableList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8537,7 +8537,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aNullableList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8560,9 +8560,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableEnumList(enumList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableEnumList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8571,7 +8571,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8594,9 +8594,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableClassList(classList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableClassList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8605,7 +8605,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8629,9 +8629,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullEnumList(enumList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullEnumList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8640,7 +8640,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8663,9 +8663,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullClassList(classList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullClassList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8674,7 +8674,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8698,9 +8698,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableMap(map);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8709,7 +8709,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[map],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8733,9 +8733,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableStringMap(stringMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableStringMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8744,7 +8744,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[stringMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8766,9 +8766,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableIntMap(intMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableIntMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8777,7 +8777,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[intMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8801,9 +8801,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableEnumMap(enumMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableEnumMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8812,7 +8812,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8836,9 +8836,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableClassMap(classMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableClassMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8847,7 +8847,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8871,9 +8871,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullStringMap(stringMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullStringMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8882,7 +8882,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[stringMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8906,9 +8906,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullIntMap(intMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullIntMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8917,7 +8917,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[intMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8941,9 +8941,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullEnumMap(enumMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullEnumMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8952,7 +8952,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -8976,9 +8976,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableNonNullClassMap(classMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableNonNullClassMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -8987,7 +8987,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9008,9 +9008,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoNullableEnum(anEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoNullableEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9019,7 +9019,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9041,9 +9041,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherNullableEnum(anotherEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherNullableEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9052,7 +9052,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anotherEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9074,16 +9074,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.noopAsync();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.noopAsync$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9104,9 +9104,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncInt(anInt);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncInt$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9115,7 +9115,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9141,9 +9141,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncDouble(aDouble);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncDouble$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9152,7 +9152,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9178,9 +9178,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncBool(aBool);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncBool$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9189,7 +9189,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9215,9 +9215,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncString(aString);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncString$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9226,7 +9226,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9252,9 +9252,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncUint8List(aUint8List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncUint8List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9263,7 +9263,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9289,9 +9289,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncInt32List(aInt32List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncInt32List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9300,7 +9300,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aInt32List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9326,9 +9326,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncInt64List(aInt64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncInt64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9337,7 +9337,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aInt64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9363,9 +9363,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncFloat64List(aFloat64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncFloat64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9374,7 +9374,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aFloat64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9400,9 +9400,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncObject(anObject);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncObject$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9411,7 +9411,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9437,9 +9437,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncList(list);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9448,7 +9448,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[list],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9474,9 +9474,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncEnumList(enumList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncEnumList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9485,7 +9485,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9513,9 +9513,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncClassList(classList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncClassList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9524,7 +9524,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9551,9 +9551,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncMap(map);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9562,7 +9562,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[map],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9591,9 +9591,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncStringMap(stringMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncStringMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9602,7 +9602,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[stringMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9629,9 +9629,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncIntMap(intMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncIntMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9640,7 +9640,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[intMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9669,9 +9669,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncEnumMap(enumMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncEnumMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9680,7 +9680,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9709,9 +9709,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncClassMap(classMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncClassMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9720,7 +9720,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9747,9 +9747,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncEnum(anEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9758,7 +9758,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9784,9 +9784,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherAsyncEnum(anotherEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherAsyncEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9795,7 +9795,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anotherEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9821,16 +9821,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.throwAsyncError();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwAsyncError$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9851,16 +9851,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.throwAsyncErrorFromVoid();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwAsyncErrorFromVoid$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9881,16 +9881,16 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.throwAsyncFlutterError();
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.throwAsyncFlutterError$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
           binaryMessenger: pigeonVar_binaryMessenger,
         );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9911,9 +9911,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNIAllTypes(everything);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNIAllTypes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9922,7 +9922,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[everything],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9950,9 +9950,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableNIAllNullableTypes(everything);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableNIAllNullableTypes$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9961,7 +9961,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[everything],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -9986,9 +9986,9 @@ class NIHostIntegrationCoreApi {
       return _nativeInteropApi
           .echoAsyncNullableNIAllNullableTypesWithoutRecursion(everything);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableNIAllNullableTypesWithoutRecursion$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -9997,7 +9997,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[everything],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10018,9 +10018,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableInt(anInt);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableInt$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10029,7 +10029,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anInt],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10050,9 +10050,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableDouble(aDouble);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableDouble$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10061,7 +10061,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aDouble],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10082,9 +10082,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableBool(aBool);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableBool$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10093,7 +10093,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aBool],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10114,9 +10114,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableString(aString);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableString$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10125,7 +10125,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aString],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10146,9 +10146,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableUint8List(aUint8List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableUint8List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10157,7 +10157,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aUint8List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10178,9 +10178,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableInt32List(aInt32List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableInt32List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10189,7 +10189,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aInt32List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10210,9 +10210,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableInt64List(aInt64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableInt64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10221,7 +10221,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aInt64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10244,9 +10244,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableFloat64List(aFloat64List);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableFloat64List$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10255,7 +10255,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[aFloat64List],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10276,9 +10276,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableObject(anObject);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableObject$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10287,7 +10287,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anObject],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10308,9 +10308,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableList(list);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10319,7 +10319,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[list],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10342,9 +10342,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableEnumList(enumList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableEnumList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10353,7 +10353,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10376,9 +10376,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableClassList(classList);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableClassList$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10387,7 +10387,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classList],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10411,9 +10411,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableMap(map);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10422,7 +10422,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[map],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10446,9 +10446,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableStringMap(stringMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableStringMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10457,7 +10457,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[stringMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10481,9 +10481,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableIntMap(intMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableIntMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10492,7 +10492,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[intMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10516,9 +10516,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableEnumMap(enumMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableEnumMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10527,7 +10527,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[enumMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10551,9 +10551,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableClassMap(classMap);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableClassMap$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10562,7 +10562,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[classMap],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10584,9 +10584,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAsyncNullableEnum(anEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAsyncNullableEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10595,7 +10595,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -10618,9 +10618,9 @@ class NIHostIntegrationCoreApi {
         _nativeInteropApi != null) {
       return _nativeInteropApi.echoAnotherAsyncNullableEnum(anotherEnum);
     }
-    final String pigeonVar_channelName =
+    final pigeonVar_channelName =
         'dev.flutter.pigeon.pigeon_integration_tests.NIHostIntegrationCoreApi.echoAnotherAsyncNullableEnum$pigeonVar_messageChannelSuffix';
-    final BasicMessageChannel<Object?> pigeonVar_channel =
+    final pigeonVar_channel =
         BasicMessageChannel<Object?>(
           pigeonVar_channelName,
           pigeonChannelCodec,
@@ -10629,7 +10629,7 @@ class NIHostIntegrationCoreApi {
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
       <Object?>[anotherEnum],
     );
-    final List<Object?>? pigeonVar_replyList =
+    final pigeonVar_replyList =
         await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
