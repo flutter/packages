@@ -10,7 +10,7 @@ import '../messages.g.dart';
 import 'enum_converters.dart';
 
 // WARNING: Changes to `@JsonSerializable` classes need to be reflected in the
-// below generated file. Run `flutter packages pub run build_runner watch` to
+// below generated file. Run `dart run build_runner watch` to
 // rebuild and watch for further changes.
 part 'sk_product_wrapper.g.dart';
 

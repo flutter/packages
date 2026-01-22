@@ -5,4 +5,4 @@
 set -e
 
 cd script/tool
-dart pub run test
+dart run test
