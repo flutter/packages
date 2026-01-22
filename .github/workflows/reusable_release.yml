@@ -1,0 +1,84 @@
+name: Reusable Release
+on:
+  workflow_call:
+    inputs:
+      is-batch-release:
+        required: true
+        type: boolean
+      branch-name:
+        required: true
+        type: string
+# Declare default permissions as read only.
+permissions: read-all
+jobs:
+  release:
+    if: github.repository_owner == 'flutter'
+    name: release
+    permissions:
+      # Release needs to push a tag back to the repo.
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+    # Checks out a copy of the repo.
+    - name: Check out code
+      uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+      with:
+        fetch-depth: 0 # Fetch all history so the tool can get all the tags to determine version.
+        ref: ${{ inputs.branch-name }}
+    - name: "Install Flutter"
+      uses: ./.github/workflows/internals/install_flutter
+    - name: Set up tools
+      run: dart pub get
+      working-directory: ${{ github.workspace }}/script/tool
+
+    # Give some time for LUCI checks to start becoming populated.
+    # Because of latency in Github Webhooks, we need to wait for a while
+    # before being able to look at checks scheduled by LUCI.
+    - name: Give webhooks a minute
+      run: sleep 60s
+      shell: bash
+
+    # The next step waits for all tests, but when there are issues with the
+    # hooks it can take a long time for the tests to even be registered. If
+    # "Wait on all tests" runs before that happens, it will pass immediately
+    # because there doesn't appear to be anything to wait for. To avoid that,
+    # explicitly wait for one LUCI test by name first.
+    - name: Wait for test check-in
+      uses: lewagon/wait-on-check-action@0dceb95e7c4cad8cc7422aee3885998f5cab9c79
+      with:
+        ref: ${{ github.sha }}
+        check-name: 'Linux ci_yaml packages roller'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 30 # seconds
+        allowed-conclusions: success,neutral
+        # verbose:true will produce too many logs that hang github actions web UI.
+        verbose: false
+
+    # This workflow should be the last to run. So wait for all the other tests to succeed.
+    - name: Wait on all tests
+      uses: lewagon/wait-on-check-action@0dceb95e7c4cad8cc7422aee3885998f5cab9c79
+      with:
+        ref: ${{ github.sha }}
+        running-workflow-name: 'release'
+        repo-token: ${{ secrets.GITHUB_TOKEN }}
+        wait-interval: 180 # seconds
+        allowed-conclusions: success,neutral
+        # verbose:true will produce too many logs that hang github actions web UI.
+        verbose: false
+
+    - name: run release
+      run: |
+        git config --global user.name "${{ secrets.USER_NAME }}"
+        git config --global user.email "${{ secrets.USER_EMAIL }}"
+        
+        # Build the flag string based on the input
+        BATCH_FLAG=""
+        if [ "${{ inputs.is-batch-release }}" = "true" ]; then
+          BATCH_FLAG="--batch-release-branch=${{ inputs.branch-name }}"
+        fi
+        dart ./script/tool/lib/src/main.dart publish \
+          --all-changed \
+          $BATCH_FLAG \
+          --base-sha=HEAD~ \
+          --skip-confirmation
+      env: {PUB_CREDENTIALS: "${{ secrets.PUB_CREDENTIALS }}"}
