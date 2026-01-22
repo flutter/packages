@@ -2,19 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import camera_avfoundation
+import Flutter
 
-// Import Objective-C part of the implementation when SwiftPM is used.
-#if canImport(camera_avfoundation_objc)
-  import camera_avfoundation_objc
-#endif
+@testable import camera_avfoundation
 
-/// A mock implementation of `FLTEventChannel` that allows injecting a custom implementation
+/// A mock implementation of `EventChannel` that allows injecting a custom implementation
 /// for setting a stream handler.
-final class MockEventChannel: NSObject, FLTEventChannel {
-  var setStreamHandlerStub: ((FlutterStreamHandler?) -> Void)?
+final class MockEventChannel: EventChannel {
+  var setStreamHandlerStub: (((any FlutterStreamHandler & NSObjectProtocol)?) -> Void)?
 
-  func setStreamHandler(_ handler: (FlutterStreamHandler & NSObjectProtocol)?) {
+  func setStreamHandler(_ handler: (any FlutterStreamHandler & NSObjectProtocol)?) {
     setStreamHandlerStub?(handler)
   }
 }
