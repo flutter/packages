@@ -1,3 +1,8 @@
+## 0.9.22+9
+
+* Handles video and audio interruptions and errors.
+* Uses a single time offset for both video and audio.
+
 ## 0.9.22+8
 
 * Migrates `FLTPermissionServicing` and `FLTCameraPermissionManager` classes to Swift.
