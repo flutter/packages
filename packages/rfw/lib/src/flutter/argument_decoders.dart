@@ -803,9 +803,14 @@ class ArgumentDecoders {
     if (icon == null) {
       return null;
     }
+    // This constructs `IconData` at runtime, meaning it does not support
+    // the Flutter icon treeshaker.
     return IconData(
+      // ignore: non_const_argument_for_const_parameter
       icon,
+      // ignore: non_const_argument_for_const_parameter
       fontFamily: source.v<String>([...key, 'fontFamily']),
+      // ignore: non_const_argument_for_const_parameter
       matchTextDirection: source.v<bool>([...key, 'matchTextDirection']) ?? false,
     );
   }
