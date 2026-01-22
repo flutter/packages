@@ -867,8 +867,7 @@ void main() {
 
     group('audio tracks', () {
       test('getAudioTracks returns list of tracks', () async {
-        final VideoPlayerController controller =
-            VideoPlayerController.networkUrl(_localhostUri);
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -904,8 +903,7 @@ void main() {
       });
 
       test('getAudioTracks before initialization returns empty list', () async {
-        final VideoPlayerController controller =
-            VideoPlayerController.networkUrl(_localhostUri);
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         final List<VideoAudioTrack> tracks = await controller.getAudioTracks();
@@ -913,8 +911,7 @@ void main() {
       });
 
       test('selectAudioTrack works with valid track ID', () async {
-        final VideoPlayerController controller =
-            VideoPlayerController.networkUrl(_localhostUri);
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -928,8 +925,7 @@ void main() {
       });
 
       test('selectAudioTrack before initialization throws', () async {
-        final VideoPlayerController controller =
-            VideoPlayerController.networkUrl(_localhostUri);
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         expect(
@@ -939,8 +935,7 @@ void main() {
       });
 
       test('selectAudioTrack with empty track ID', () async {
-        final VideoPlayerController controller =
-            VideoPlayerController.networkUrl(_localhostUri);
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -953,8 +948,7 @@ void main() {
       });
 
       test('multiple track selections update correctly', () async {
-        final VideoPlayerController controller =
-            VideoPlayerController.networkUrl(_localhostUri);
+        final controller = VideoPlayerController.networkUrl(_localhostUri);
         addTearDown(controller.dispose);
 
         await controller.initialize();
@@ -975,21 +969,21 @@ void main() {
 
     group('VideoAudioTrack', () {
       test('equality works correctly', () {
-        const VideoAudioTrack track1 = VideoAudioTrack(
+        const track1 = VideoAudioTrack(
           id: 'track_1',
           label: 'English',
           language: 'en',
           isSelected: true,
         );
 
-        const VideoAudioTrack track2 = VideoAudioTrack(
+        const track2 = VideoAudioTrack(
           id: 'track_1',
           label: 'English',
           language: 'en',
           isSelected: true,
         );
 
-        const VideoAudioTrack track3 = VideoAudioTrack(
+        const track3 = VideoAudioTrack(
           id: 'track_2',
           label: 'Spanish',
           language: 'es',
@@ -1001,14 +995,14 @@ void main() {
       });
 
       test('hashCode works correctly', () {
-        const VideoAudioTrack track1 = VideoAudioTrack(
+        const track1 = VideoAudioTrack(
           id: 'track_1',
           label: 'English',
           language: 'en',
           isSelected: true,
         );
 
-        const VideoAudioTrack track2 = VideoAudioTrack(
+        const track2 = VideoAudioTrack(
           id: 'track_1',
           label: 'English',
           language: 'en',
@@ -1019,7 +1013,7 @@ void main() {
       });
 
       test('toString works correctly', () {
-        const VideoAudioTrack track = VideoAudioTrack(
+        const track = VideoAudioTrack(
           id: 'track_1',
           label: 'English',
           language: 'en',
@@ -1030,7 +1024,7 @@ void main() {
           codec: 'aac',
         );
 
-        final String trackString = track.toString();
+        final trackString = track.toString();
         expect(trackString, contains('track_1'));
         expect(trackString, contains('English'));
         expect(trackString, contains('en'));
@@ -1042,7 +1036,7 @@ void main() {
       });
 
       test('optional fields can be null', () {
-        const VideoAudioTrack track = VideoAudioTrack(
+        const track = VideoAudioTrack(
           id: 'track_1',
           label: 'English',
           language: 'en',

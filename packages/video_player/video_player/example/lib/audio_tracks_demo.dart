@@ -49,7 +49,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     try {
       await _controller?.dispose();
 
-      final VideoPlayerController controller = VideoPlayerController.networkUrl(
+      final controller = VideoPlayerController.networkUrl(
         Uri.parse(_sampleVideos[_selectedVideoIndex]),
       );
       _controller = controller;
@@ -140,7 +140,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     }
 
     final VideoPlayerValue currentValue = _controller!.value;
-    bool shouldUpdate = false;
+    var shouldUpdate = false;
 
     // Check for relevant state changes that affect UI
     if (currentValue.isPlaying != _wasPlaying) {
