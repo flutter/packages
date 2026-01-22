@@ -6,7 +6,6 @@
 @import XCTest;
 @import GoogleMaps;
 
-#import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
 
 @interface FGMConversionUtilsTests : XCTestCase
@@ -193,7 +192,6 @@
 }
 
 - (void)testCameraUpdateFromNewCameraPosition {
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMPlatformCameraUpdateNewCameraPosition *newPositionUpdate =
       [FGMPlatformCameraUpdateNewCameraPosition
           makeWithCameraPosition:[FGMPlatformCameraPosition
@@ -204,26 +202,13 @@
                                                 zoom:3]];
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:newPositionUpdate]);
-  [[classMockCameraUpdate expect]
-      setCamera:FGMGetCameraPositionForPigeonCameraPosition(newPositionUpdate.cameraPosition)];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
-// TODO(cyanglaz): Fix the test for cameraUpdateFromArray with the "NewLatlng" key.
-// 2 approaches have been tried and neither worked for the tests.
-//
-// 1. Use OCMock to vefiry that [GMSCameraUpdate setTarget:] is triggered with the correct value.
-// This class method conflicts with certain category method in OCMock, causing OCMock not able to
-// disambigious them.
-//
-// 2. Directly verify the GMSCameraUpdate object returned by the method.
-// The GMSCameraUpdate object returned from the method doesn't have any accessors to the "target"
-// property. It can be used to update the "camera" property in GMSMapView. However, [GMSMapView
-// moveCamera:] doesn't update the camera immediately. Thus the GMSCameraUpdate object cannot be
-// verified.
-//
-// The code in below test uses the 2nd approach.
-- (void)skip_testCameraUpdateFromNewLatLong {
+- (void)testCameraUpdateFromNewLatLong {
   const CGFloat lat = 1;
   const CGFloat lng = 2;
   FGMPlatformCameraUpdateNewLatLng *platformUpdate = [FGMPlatformCameraUpdateNewLatLng
@@ -231,17 +216,10 @@
 
   GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
-  options.frame = CGRectZero;
-  options.camera = [GMSCameraPosition cameraWithTarget:CLLocationCoordinate2DMake(5, 6) zoom:1];
-  GMSMapView *mapView = [[GMSMapView alloc] initWithOptions:options];
-  [mapView moveCamera:update];
-  const CGFloat accuracy = 0.001;
-  XCTAssertEqualWithAccuracy(mapView.camera.target.latitude, lat,
-                             accuracy);  // mapView.camera.target.latitude is still 5.
-  XCTAssertEqualWithAccuracy(mapView.camera.target.longitude, lng,
-                             accuracy);  // mapView.camera.target.longitude is still 6.
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testCameraUpdateFromNewLatLngBounds {
@@ -254,12 +232,12 @@
   FGMPlatformCameraUpdateNewLatLngBounds *platformUpdate = [FGMPlatformCameraUpdateNewLatLngBounds
       makeWithBounds:FGMGetPigeonLatLngBoundsForCoordinateBounds(bounds)
              padding:padding];
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] fitBounds:bounds withPadding:padding];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testCameraUpdateFromNewLatLngZoom {
@@ -270,12 +248,12 @@
       makeWithLatLng:[FGMPlatformLatLng makeWithLatitude:lat longitude:lng]
                 zoom:zoom];
 
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] setTarget:CLLocationCoordinate2DMake(lat, lng) zoom:zoom];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testCameraUpdateFromScrollBy {
@@ -284,12 +262,12 @@
   FGMPlatformCameraUpdateScrollBy *platformUpdate = [FGMPlatformCameraUpdateScrollBy makeWithDx:x
                                                                                              dy:y];
 
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] scrollByX:x Y:y];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testCameraUpdateFromZoomBy {
@@ -297,12 +275,16 @@
   FGMPlatformCameraUpdateZoomBy *platformUpdateNoPoint =
       [FGMPlatformCameraUpdateZoomBy makeWithAmount:zoom focus:nil];
 
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdateNoPoint]);
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
+}
 
-  [[classMockCameraUpdate expect] zoomBy:zoom];
-
+- (void)testCameraUpdateFromZoomByWithFocus {
+  const CGFloat zoom = 1;
   const CGFloat x = 2;
   const CGFloat y = 3;
   FGMPlatformCameraUpdateZoomBy *platformUpdate =
@@ -310,43 +292,44 @@
 
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] zoomBy:zoom atPoint:CGPointMake(x, y)];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testCameraUpdateFromZoomIn {
   FGMPlatformCameraUpdateZoom *platformUpdate = [FGMPlatformCameraUpdateZoom makeWithOut:NO];
 
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] zoomIn];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testCameraUpdateFromZoomOut {
   FGMPlatformCameraUpdateZoom *platformUpdate = [FGMPlatformCameraUpdateZoom makeWithOut:YES];
 
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] zoomOut];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testCameraUpdateFromZoomTo {
   const CGFloat zoom = 1;
   FGMPlatformCameraUpdateZoomTo *platformUpdate = [FGMPlatformCameraUpdateZoomTo makeWithZoom:zoom];
 
-  id classMockCameraUpdate = OCMClassMock([GMSCameraUpdate class]);
   FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
-
-  [[classMockCameraUpdate expect] zoomTo:zoom];
-  [classMockCameraUpdate stopMocking];
+  // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
+  // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that
+  // injecting a wrapper would not meaningfully improve test coverage, since the non-test
+  // implementation would be about as complex as the conversion function itself.
 }
 
 - (void)testStrokeStylesFromPatterns {
