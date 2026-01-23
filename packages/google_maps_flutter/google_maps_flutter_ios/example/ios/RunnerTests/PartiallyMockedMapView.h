@@ -4,14 +4,13 @@
 
 @import GoogleMaps;
 
-/**
- * Defines a map view used for testing key-value observing.
- */
+/// Defines a map view used for testing key-value observing.
 @interface PartiallyMockedMapView : GMSMapView
 
-/**
- * The number of times that the `frame` KVO has been added.
- */
+/// The number of times that the `frame` KVO has been added.
 @property(nonatomic, assign, readonly) NSInteger frameObserverCount;
+
+/// True if animateWithCameraUpdate: was called.
+@property(nonatomic, assign) BOOL didAnimateCamera;
 
 @end
