@@ -1,3 +1,7 @@
+## 0.6.28
+
+* Adds more descriptive error to camera error stream when image capture fails.
+
 ## 0.6.27
 
 * Changes `availableCameras` to get the camera name from `Camera2CameraInfo.getCameraId`.
