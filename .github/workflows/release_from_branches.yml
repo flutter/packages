@@ -1,0 +1,12 @@
+name: Batch Release
+on:
+  push:
+    branches:
+      - 'release-go_router'
+jobs:
+  release:
+    uses: ./.github/workflows/resuable_release.yml
+    with:
+      is-batch-release: true
+      branch-name: '${{ github.ref_name }}'
+    secrets: inherit
