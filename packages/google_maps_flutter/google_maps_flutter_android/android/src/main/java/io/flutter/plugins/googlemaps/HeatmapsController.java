@@ -4,8 +4,6 @@
 
 package io.flutter.plugins.googlemaps;
 
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
 import com.google.android.gms.maps.GoogleMap;
@@ -36,14 +34,22 @@ public class HeatmapsController {
   /** Adds heatmaps to the map. */
   void addHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToAdd) {
     for (Messages.PlatformHeatmap heatmapToAdd : heatmapsToAdd) {
-      addJsonHeatmap(heatmapToAdd.getJson());
+      HeatmapBuilder heatmapBuilder = new HeatmapBuilder();
+      String heatmapId = Convert.interpretHeatmapOptions(heatmapToAdd, heatmapBuilder);
+      HeatmapTileProvider options = buildHeatmap(heatmapBuilder);
+      addHeatmap(heatmapId, options);
     }
   }
 
   /** Updates the given heatmaps on the map. */
   void changeHeatmaps(@NonNull List<Messages.PlatformHeatmap> heatmapsToChange) {
     for (Messages.PlatformHeatmap heatmapToChange : heatmapsToChange) {
-      changeJsonHeatmap(heatmapToChange.getJson());
+      String heatmapId = heatmapToChange.getHeatmapId();
+      HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
+      if (heatmapController != null) {
+        Convert.interpretHeatmapOptions(heatmapToChange, heatmapController);
+        heatmapController.clearTileCache();
+      }
     }
   }
 
@@ -64,40 +70,11 @@ public class HeatmapsController {
     return builder.build();
   }
 
-  /** Adds a heatmap to the map from json data. */
-  private void addJsonHeatmap(Map<String, ?> heatmap) {
-    if (heatmap == null) {
-      return;
-    }
-    HeatmapBuilder heatmapBuilder = new HeatmapBuilder();
-    String heatmapId = Convert.interpretHeatmapOptions(heatmap, heatmapBuilder);
-    HeatmapTileProvider options = buildHeatmap(heatmapBuilder);
-    addHeatmap(heatmapId, options);
-  }
-
   /** Adds a heatmap to the map. */
   private void addHeatmap(String heatmapId, HeatmapTileProvider options) {
     TileOverlay heatmapTileOverlay =
         googleMap.addTileOverlay(new TileOverlayOptions().tileProvider(options));
     HeatmapController heatmapController = new HeatmapController(options, heatmapTileOverlay);
     heatmapIdToController.put(heatmapId, heatmapController);
-  }
-
-  /** Updates the given heatmap on the map. */
-  private void changeJsonHeatmap(Map<String, ?> heatmap) {
-    if (heatmap == null) {
-      return;
-    }
-    String heatmapId = getHeatmapId(heatmap);
-    HeatmapController heatmapController = heatmapIdToController.get(heatmapId);
-    if (heatmapController != null) {
-      Convert.interpretHeatmapOptions(heatmap, heatmapController);
-      heatmapController.clearTileCache();
-    }
-  }
-
-  /** Returns the heatmap id from the given heatmap data. */
-  private static String getHeatmapId(Map<String, ?> heatmap) {
-    return (String) heatmap.get(HEATMAP_ID_KEY);
   }
 }

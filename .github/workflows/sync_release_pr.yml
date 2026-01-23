@@ -1,0 +1,24 @@
+name: "Sync Release to Main"
+
+on:
+  push:
+    branches:
+    # As packages opt into batched releases, they need to be added here
+      - 'release-go_router'
+
+jobs:
+  create_sync_pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@4320041ed380b20e97d388d56a7fb4f9b8c20e79
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Sync ${{ github.ref_name }} to main"
+          title: "Sync ${{ github.ref_name }} to main"
+          body: "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch."
+          branch: ${{ github.ref_name }}
+          base: main

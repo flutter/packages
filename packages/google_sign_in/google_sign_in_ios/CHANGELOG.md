@@ -1,3 +1,7 @@
+## 6.2.5
+
+* Updates native header visibility for Swift testing.
+
 ## 6.2.4
 
 * Updates to Pigeon 26.
