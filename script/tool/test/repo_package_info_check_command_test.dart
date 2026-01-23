@@ -33,7 +33,7 @@ void main() {
 
     // Default to failing these checks so that tests of non-batch-release packages
     // (the default) don't fail due to "unexpected" branches/labels being found.
-    gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
+    gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
         <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
   });
 
@@ -134,7 +134,7 @@ ${readmeTableEntry(pluginName)}
 
       // 4 packages * 2 checks (git, gh) = 8 calls.
       // Default mocks in setUp cover 1 call each. We need 3 more each.
-      gitProcessRunner.mockProcessesForExecutable['git-show-ref']!
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote']!
           .addAll(<FakeProcessInfo>[
             FakeProcessInfo(MockProcess(exitCode: 1)),
             FakeProcessInfo(MockProcess(exitCode: 1)),
@@ -763,7 +763,7 @@ on:
         setupReleaseStrategyTest();
         // No config, so batch is false by default.
 
-        gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
+        gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
             <FakeProcessInfo>[
               FakeProcessInfo(
                 MockProcess(exitCode: 1),
@@ -786,7 +786,7 @@ on:
       // batch defaults to false
       writeWorkflowFiles(); // Writes batch artifacts
 
-      gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
           <FakeProcessInfo>[
             FakeProcessInfo(
               MockProcess(),
@@ -889,7 +889,7 @@ jobs:
           .writeAsStringSync("- 'release-a_package'");
 
       // Mock successful git and gh calls
-      gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
           <FakeProcessInfo>[FakeProcessInfo(MockProcess())];
 
       Error? commandError;
@@ -970,7 +970,7 @@ jobs:
       writeBatchConfig(package);
       writeWorkflowFiles();
 
-      gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
           <FakeProcessInfo>[
             FakeProcessInfo(MockProcess(exitCode: 1)), // git ls-remote fails
           ];
@@ -998,7 +998,7 @@ jobs:
       writeBatchConfig(package);
       writeWorkflowFiles();
 
-      gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
           <FakeProcessInfo>[FakeProcessInfo(MockProcess())];
 
       Error? commandError;
