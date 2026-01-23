@@ -22,3 +22,4 @@ jobs:
           body: "This automated PR syncs the changes from the release branch ${{ github.ref_name }} back to the main branch."
           branch: ${{ github.ref_name }}
           base: main
+          labels: "post-${{ github.ref_name }}"
