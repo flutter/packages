@@ -371,7 +371,6 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     final io.ProcessResult result = await (await gitDir).runCommand(<String>[
       'show-ref',
       '--verify',
-      '--quiet',
       'refs/heads/release-$packageName',
     ], throwOnError: false);
     final branchExists = result.exitCode == 0;
