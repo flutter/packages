@@ -811,9 +811,7 @@ on:
             ), // git ls-remote succeeds (branch exists)
           ];
       processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-        FakeProcessInfo(
-          MockProcess(),
-        ), // gh label view succeeds (label exists)
+        FakeProcessInfo(MockProcess()), // gh label view succeeds (label exists)
       ];
 
       Error? commandError;

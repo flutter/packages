@@ -375,6 +375,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       'refs/heads/release-$packageName',
     ], throwOnError: false);
     final branchExists = result.exitCode == 0;
+    print('result: ${result.stdout}, error: ${result.stderr}');
     if (isBatchRelease && !branchExists) {
       errors.add('Branch release-$packageName does not exist on remote origin');
     } else if (!isBatchRelease && branchExists) {
