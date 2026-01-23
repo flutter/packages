@@ -10,9 +10,9 @@ class MarkersController extends GeometryController {
   MarkersController({
     required StreamController<MapEvent<Object?>> stream,
     required ClusterManagersController clusterManagersController,
-  }) : _streamController = stream,
-       _clusterManagersController = clusterManagersController,
-       _markerIdToController = <MarkerId, MarkerController>{};
+  })  : _streamController = stream,
+        _clusterManagersController = clusterManagersController,
+        _markerIdToController = <MarkerId, MarkerController>{};
 
   // A cache of [MarkerController]s indexed by their [MarkerId].
   final Map<MarkerId, MarkerController> _markerIdToController;
@@ -30,8 +30,8 @@ class MarkersController extends GeometryController {
   ///
   /// Wraps each [Marker] into its corresponding [MarkerController].
   Future<void> addMarkers(Set<Marker> markersToAdd) async {
-    final Map<ClusterManagerId?, List<Marker>> markersByClusters = markersToAdd
-        .groupListsBy((Marker marker) => marker.clusterManagerId);
+    final Map<ClusterManagerId?, List<Marker>> markersByClusters =
+        markersToAdd.groupListsBy((Marker marker) => marker.clusterManagerId);
 
     for (final MapEntry<ClusterManagerId?, List<Marker>> entry
         in markersByClusters.entries) {
@@ -145,12 +145,14 @@ class MarkersController extends GeometryController {
   /// Removes a set of [MarkerId]s from the cache.
   void removeMarkers(Set<MarkerId> markerIdsToRemove) {
     final List<MapEntry<MarkerId, MarkerController?>> markersControllers =
-        markerIdsToRemove.map(
-          (MarkerId markerId) => MapEntry<MarkerId, MarkerController?>(
-            markerId,
-            _markerIdToController[markerId],
-          ),
-        ).toList();
+        markerIdsToRemove
+            .map(
+              (MarkerId markerId) => MapEntry<MarkerId, MarkerController?>(
+                markerId,
+                _markerIdToController[markerId],
+              ),
+            )
+            .toList();
 
     final Map<ClusterManagerId?, List<gmaps.Marker>> controllersByCluster =
         markersControllers
@@ -162,7 +164,8 @@ class MarkersController extends GeometryController {
               (
                 ClusterManagerId? key,
                 List<MapEntry<MarkerId, MarkerController?>> value,
-              ) => MapEntry<ClusterManagerId?, List<gmaps.Marker>>(
+              ) =>
+                  MapEntry<ClusterManagerId?, List<gmaps.Marker>>(
                 key,
                 value
                     .map(
@@ -260,11 +263,10 @@ class MarkersController extends GeometryController {
   void _hideAllMarkerInfoWindow() {
     _markerIdToController.values
         .where(
-          (MarkerController? controller) =>
-              controller?.infoWindowShown ?? false,
-        )
+      (MarkerController? controller) => controller?.infoWindowShown ?? false,
+    )
         .forEach((MarkerController controller) {
-          controller.hideInfoWindow();
-        });
+      controller.hideInfoWindow();
+    });
   }
 }
