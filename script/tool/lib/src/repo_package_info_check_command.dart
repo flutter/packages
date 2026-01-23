@@ -365,9 +365,10 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
 
     // 3. Verify remote branch exists.
     final io.ProcessResult result = await (await gitDir).runCommand(<String>[
-      'show-ref',
-      '--verify',
-      'refs/heads/release-$packageName',
+      'ls-remote',
+      '--heads',
+      'origin',
+      'release-$packageName',
     ], throwOnError: false);
     final branchExists = result.exitCode == 0;
     print('result: ${result.stdout}, error: ${result.stderr}');
