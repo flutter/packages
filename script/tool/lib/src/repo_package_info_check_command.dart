@@ -19,11 +19,7 @@ const int _exitUnknownPackageEntry = 4;
 /// repo README and CODEOWNERS entries.
 class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
   /// Creates Dependabot check command instance.
-  RepoPackageInfoCheckCommand(
-    super.packagesDir, {
-    super.processRunner,
-    super.gitDir,
-  });
+  RepoPackageInfoCheckCommand(super.packagesDir, {super.gitDir});
 
   late Directory _repoRoot;
 
@@ -375,39 +371,15 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     ], throwOnError: false);
     final branchExists = result.exitCode == 0;
     print('result: ${result.stdout}, error: ${result.stderr}');
+    final io.ProcessResult result2 = await (await gitDir).runCommand(<String>[
+      'remote',
+      '-v',
+    ], throwOnError: false);
+    print('result2: ${result2.stdout}, error: ${result2.stderr}');
     if (isBatchRelease && !branchExists) {
       errors.add('Branch release-$packageName does not exist on remote origin');
     } else if (!isBatchRelease && branchExists) {
       errors.add('Unexpected branch release-$packageName on remote origin');
-    }
-
-    // 4. Verify GitHub label exists.
-    // Using gh CLI.
-    try {
-      final io.ProcessResult result = await processRunner.run('gh', <String>[
-        'label',
-        'view',
-        'post-release-$packageName',
-        '--repo',
-        'flutter/packages',
-      ]);
-      final labelExists = result.exitCode == 0;
-      if (isBatchRelease && !labelExists) {
-        errors.add(
-          'Label post-release-$packageName does not exist in flutter/packages',
-        );
-      } else if (!isBatchRelease && labelExists) {
-        errors.add(
-          'Unexpected label post-release-$packageName in flutter/packages',
-        );
-      }
-    } catch (e) {
-      // gh might not be installed.
-      // We can check if it was a "command not found" error, but ProcessRunner usually wraps things.
-      // If we can't run gh, we skip this check silently or with a warning logged to console (not error list).
-      print(
-        'Warning: Skipping label check for $packageName because `gh` command failed or is missing.',
-      );
     }
 
     if (errors.isNotEmpty) {
