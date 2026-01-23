@@ -43,14 +43,20 @@ class RecordHandler {
   //
   // Sets record state to: starting.
   //
-  // file_path:       A string that hold file path for video capture.
-  // capture_engine:  A pointer to capture engine instance. Used to start
-  //                  the actual recording.
-  // base_media_type: A pointer to base media type used as a base
-  //                  for the actual video capture media type.
+  // file_path:                 A string that hold file path for video capture.
+  // capture_engine:            A pointer to capture engine instance. Used to
+  //                            start the actual recording.
+  // base_media_type:           A pointer to base media type used as a base
+  //                            for the actual video capture media type.
+  // video_source_stream_index: Integer index of the video source stream in
+  //                            MediaFoundation.
+  // audio_source_stream_index: Integer index of the audio source stream in
+  //                            MediaFoundation.
   HRESULT StartRecord(const std::string& file_path,
                       IMFCaptureEngine* capture_engine,
-                      IMFMediaType* base_media_type);
+                      IMFMediaType* base_media_type,
+                      DWORD video_source_stream_index,
+                      DWORD audio_source_stream_index);
 
   // Stops existing recording.
   //
@@ -83,7 +89,9 @@ class RecordHandler {
  private:
   // Initializes record sink for video file capture.
   HRESULT InitRecordSink(IMFCaptureEngine* capture_engine,
-                         IMFMediaType* base_media_type);
+                         IMFMediaType* base_media_type,
+                         DWORD video_source_stream_index,
+                         DWORD audio_source_stream_index);
 
   const PlatformMediaSettings media_settings_;
   int64_t recording_start_timestamp_us_ = -1;
