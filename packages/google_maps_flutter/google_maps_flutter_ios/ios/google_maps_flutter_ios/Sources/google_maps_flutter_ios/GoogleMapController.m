@@ -130,7 +130,7 @@
 
 #pragma mark -
 
-@interface FLTGoogleMapController ()
+@interface FLTGoogleMapController () <FGMTileProviderDelegate>
 
 @property(nonatomic, strong) GMSMapView *mapView;
 @property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
@@ -216,9 +216,8 @@
     _circlesController = [[FLTCirclesController alloc] initWithMapView:_mapView
                                                        callbackHandler:_dartCallbackHandler];
     _heatmapsController = [[FLTHeatmapsController alloc] initWithMapView:_mapView];
-    _tileOverlaysController =
-        [[FLTTileOverlaysController alloc] initWithMapView:_mapView
-                                           callbackHandler:_dartCallbackHandler];
+    _tileOverlaysController = [[FLTTileOverlaysController alloc] initWithMapView:_mapView
+                                                                    tileProvider:self];
     _groundOverlaysController =
         [[FLTGroundOverlaysController alloc] initWithMapView:_mapView
                                              callbackHandler:_dartCallbackHandler
@@ -531,6 +530,19 @@
   if (style) {
     [self setMapStyle:style];
   }
+}
+
+#pragma mark - FGMTileProviderDelegate
+
+- (void)tileWithOverlayIdentifier:(NSString *)tileOverlayId
+                         location:(FGMPlatformPoint *)location
+                             zoom:(NSInteger)zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion {
+  [self.dartCallbackHandler tileWithOverlayIdentifier:tileOverlayId
+                                             location:location
+                                                 zoom:zoom
+                                           completion:completion];
 }
 
 @end

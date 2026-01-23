@@ -8,6 +8,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Protocol for requesting tiles from the Dart side.
+@protocol FGMTileProviderDelegate <NSObject>
+- (void)tileWithOverlayIdentifier:(NSString *)tileOverlayId
+                         location:(FGMPlatformPoint *)location
+                             zoom:(NSInteger)zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion;
+@end
+
+#pragma mark -
+
 @interface FLTGoogleMapTileOverlayController : NSObject
 /// The layer managed by this controller instance.
 @property(readonly, nonatomic) GMSTileLayer *layer;
@@ -22,12 +33,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FLTTileProviderController : GMSTileLayer
 @property(copy, nonatomic, readonly) NSString *tileOverlayIdentifier;
 - (instancetype)initWithTileOverlayIdentifier:(NSString *)identifier
-                              callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
+                                 tileProvider:(NSObject<FGMTileProviderDelegate> *)tileProvider;
 @end
 
 @interface FLTTileOverlaysController : NSObject
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
+                   tileProvider:(NSObject<FGMTileProviderDelegate> *)tileProvider;
 - (void)addTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToAdd;
 - (void)changeTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)tileOverlaysToChange;
 - (void)removeTileOverlayWithIdentifiers:(NSArray<NSString *> *)identifiers;

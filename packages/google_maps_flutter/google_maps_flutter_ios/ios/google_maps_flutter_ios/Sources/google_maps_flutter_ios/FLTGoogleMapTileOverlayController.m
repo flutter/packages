@@ -60,17 +60,17 @@
 
 @interface FLTTileProviderController ()
 
-@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
+@property(weak, nonatomic) NSObject<FGMTileProviderDelegate> *tileProviderDelegate;
 
 @end
 
 @implementation FLTTileProviderController
 
 - (instancetype)initWithTileOverlayIdentifier:(NSString *)identifier
-                              callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
+                                 tileProvider:(NSObject<FGMTileProviderDelegate> *)tileProvider {
   self = [super init];
   if (self) {
-    _callbackHandler = callbackHandler;
+    _tileProviderDelegate = tileProvider;
     _tileOverlayIdentifier = identifier;
   }
   return self;
@@ -107,7 +107,7 @@
                    zoom:(NSUInteger)zoom
                receiver:(id<GMSTileReceiver>)receiver {
   dispatch_async(dispatch_get_main_queue(), ^{
-    [self.callbackHandler
+    [self.tileProviderDelegate
         tileWithOverlayIdentifier:self.tileOverlayIdentifier
                          location:[FGMPlatformPoint makeWithX:x y:y]
                              zoom:zoom
@@ -133,7 +133,7 @@
 
 @property(strong, nonatomic) NSMutableDictionary<NSString *, FLTGoogleMapTileOverlayController *>
     *tileOverlayIdentifierToController;
-@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
+@property(weak, nonatomic) NSObject<FGMTileProviderDelegate> *tileProviderDelegate;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
@@ -141,11 +141,11 @@
 @implementation FLTTileOverlaysController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
+                   tileProvider:(NSObject<FGMTileProviderDelegate> *)tileProvider {
   self = [super init];
   if (self) {
-    _callbackHandler = callbackHandler;
     _mapView = mapView;
+    _tileProviderDelegate = tileProvider;
     _tileOverlayIdentifierToController = [[NSMutableDictionary alloc] init];
   }
   return self;
@@ -156,7 +156,7 @@
     NSString *identifier = tileOverlay.tileOverlayId;
     FLTTileProviderController *tileProvider =
         [[FLTTileProviderController alloc] initWithTileOverlayIdentifier:identifier
-                                                         callbackHandler:self.callbackHandler];
+                                                            tileProvider:self.tileProviderDelegate];
     FLTGoogleMapTileOverlayController *controller =
         [[FLTGoogleMapTileOverlayController alloc] initWithTileOverlay:tileOverlay
                                                              tileLayer:tileProvider

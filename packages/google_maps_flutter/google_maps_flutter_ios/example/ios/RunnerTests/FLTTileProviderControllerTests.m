@@ -6,7 +6,44 @@
 @import GoogleMaps;
 @import google_maps_flutter_ios;
 
-#import <OCMock/OCMock.h>
+@interface StubTileReceiver : NSObject <GMSTileReceiver>
+@end
+
+@implementation StubTileReceiver
+- (void)receiveTileWithX:(NSUInteger)x
+                       y:(NSUInteger)y
+                    zoom:(NSUInteger)zoom
+                   image:(nullable UIImage *)image {
+  // No-op.
+}
+@end
+
+@interface TestTileProvider : NSObject <FGMTileProviderDelegate>
+@property(nonatomic) XCTestExpectation *expectation;
+@end
+
+// A tile provider that expects a single call to
+// tileWithOverlayIdentifier:location:zoom:completion: on the main thread,
+// and then fulfills the expectation.
+@implementation TestTileProvider
+- (instancetype)initWithExpectation:(XCTestExpectation *)expectation {
+  if (self = [super init]) {
+    _expectation = expectation;
+  }
+  return self;
+}
+
+- (void)tileWithOverlayIdentifier:(NSString *)tileOverlayId
+                         location:(FGMPlatformPoint *)location
+                             zoom:(NSInteger)zoom
+                       completion:(void (^)(FGMPlatformTile *_Nullable,
+                                            FlutterError *_Nullable))completion {
+  XCTAssertTrue([[NSThread currentThread] isMainThread]);
+  [self.expectation fulfill];
+}
+@end
+
+#pragma mark -
 
 @interface FLTTileProviderControllerTests : XCTestCase
 @end
@@ -14,22 +51,13 @@
 @implementation FLTTileProviderControllerTests
 
 - (void)testCallChannelOnPlatformThread {
-  id handler = OCMClassMock([FGMMapsCallbackApi class]);
+  XCTestExpectation *expectation = [self expectationWithDescription:@"invokeMethod"];
+  TestTileProvider *tileProvider = [[TestTileProvider alloc] initWithExpectation:expectation];
   FLTTileProviderController *controller =
       [[FLTTileProviderController alloc] initWithTileOverlayIdentifier:@"foo"
-                                                       callbackHandler:handler];
+                                                          tileProvider:tileProvider];
   XCTAssertNotNil(controller);
-  XCTestExpectation *expectation = [self expectationWithDescription:@"invokeMethod"];
-  OCMStub([handler tileWithOverlayIdentifier:[OCMArg any]
-                                    location:[OCMArg any]
-                                        zoom:0
-                                  completion:[OCMArg any]])
-      .andDo(^(NSInvocation *invocation) {
-        XCTAssertTrue([[NSThread currentThread] isMainThread]);
-        [expectation fulfill];
-      });
-  id receiver = OCMProtocolMock(@protocol(GMSTileReceiver));
-  [controller requestTileForX:0 y:0 zoom:0 receiver:receiver];
+  [controller requestTileForX:0 y:0 zoom:0 receiver:[[StubTileReceiver alloc] init]];
   [self waitForExpectations:@[ expectation ] timeout:10.0];
 }
 
