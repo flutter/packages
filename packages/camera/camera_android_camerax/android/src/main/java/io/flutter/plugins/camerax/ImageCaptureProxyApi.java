@@ -150,7 +150,7 @@ class ImageCaptureProxyApi extends PigeonApiImageCapture {
   String getImageCaptureExceptionDescription(int imageCaptureErrorCode) {
     switch (imageCaptureErrorCode) {
       case ImageCapture.ERROR_FILE_IO:
-        return "An error occurred while attempting to save the captured image to a File.";
+        return "An error occurred while attempting to save the captured image to a file.";
       case ImageCapture.ERROR_CAPTURE_FAILED:
         return "The camera framework failed to fulfill the image capture request.";
       case ImageCapture.ERROR_CAMERA_CLOSED:
