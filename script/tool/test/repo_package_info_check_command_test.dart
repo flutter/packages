@@ -16,20 +16,15 @@ void main() {
   late CommandRunner<void> runner;
   late Directory root;
   late Directory packagesDir;
-  late RecordingProcessRunner processRunner;
   late RecordingProcessRunner gitProcessRunner;
 
   setUp(() {
     final GitDir gitDir;
-    (:packagesDir, :processRunner, :gitProcessRunner, :gitDir) =
+    (:packagesDir, processRunner: _, :gitProcessRunner, :gitDir) =
         configureBaseCommandMocks();
     root = packagesDir.fileSystem.currentDirectory;
 
-    final command = RepoPackageInfoCheckCommand(
-      packagesDir,
-      processRunner: processRunner,
-      gitDir: gitDir,
-    );
+    final command = RepoPackageInfoCheckCommand(packagesDir, gitDir: gitDir);
     runner = CommandRunner<void>(
       'dependabot_test',
       'Test for $RepoPackageInfoCheckCommand',
@@ -40,9 +35,6 @@ void main() {
     // (the default) don't fail due to "unexpected" branches/labels being found.
     gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
         <FakeProcessInfo>[FakeProcessInfo(MockProcess(exitCode: 1))];
-    processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-      FakeProcessInfo(MockProcess(exitCode: 1)),
-    ];
   });
 
   String readmeTableHeader() {
@@ -148,11 +140,6 @@ ${readmeTableEntry(pluginName)}
             FakeProcessInfo(MockProcess(exitCode: 1)),
             FakeProcessInfo(MockProcess(exitCode: 1)),
           ]);
-      processRunner.mockProcessesForExecutable['gh']!.addAll(<FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-        FakeProcessInfo(MockProcess(exitCode: 1)),
-      ]);
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'repo-package-info-check',
@@ -782,11 +769,6 @@ on:
                 MockProcess(exitCode: 1),
               ), // git ls-remote fails (branch doesn't exist)
             ];
-        processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-          FakeProcessInfo(
-            MockProcess(exitCode: 1),
-          ), // gh label view fails (label doesn't exist)
-        ];
 
         final List<String> output = await runCapturingPrint(runner, <String>[
           'repo-package-info-check',
@@ -810,9 +792,6 @@ on:
               MockProcess(),
             ), // git ls-remote succeeds (branch exists)
           ];
-      processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess()), // gh label view succeeds (label exists)
-      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -852,14 +831,6 @@ on:
         output,
         contains(
           contains('Unexpected branch release-a_package on remote origin'),
-        ),
-      );
-      expect(
-        output,
-        contains(
-          contains(
-            'Unexpected label post-release-a_package in flutter/packages',
-          ),
         ),
       );
     });
@@ -920,9 +891,6 @@ jobs:
       // Mock successful git and gh calls
       gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
           <FakeProcessInfo>[FakeProcessInfo(MockProcess())];
-      processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess()),
-      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -965,10 +933,7 @@ jobs:
           .childFile('sync_release_pr.yml')
           .writeAsStringSync('something');
 
-      processRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess()),
-      ];
-      processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
+      gitProcessRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess()),
       ];
 
@@ -1009,9 +974,6 @@ jobs:
           <FakeProcessInfo>[
             FakeProcessInfo(MockProcess(exitCode: 1)), // git ls-remote fails
           ];
-      processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess()),
-      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
@@ -1031,37 +993,6 @@ jobs:
       );
     });
 
-    test('fails if label check fails', () async {
-      final RepositoryPackage package = setupReleaseStrategyTest();
-      writeBatchConfig(package);
-      writeWorkflowFiles();
-
-      gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
-          <FakeProcessInfo>[FakeProcessInfo(MockProcess())];
-      processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(exitCode: 1)), // gh label view fails
-      ];
-
-      Error? commandError;
-      final List<String> output = await runCapturingPrint(
-        runner,
-        <String>['repo-package-info-check'],
-        errorHandler: (Error e) {
-          commandError = e;
-        },
-      );
-
-      expect(commandError, isA<ToolExit>());
-      expect(
-        output,
-        contains(
-          contains(
-            'Label post-release-a_package does not exist in flutter/packages',
-          ),
-        ),
-      );
-    });
-
     test('passes if all checks pass', () async {
       final RepositoryPackage package = setupReleaseStrategyTest();
       writeBatchConfig(package);
@@ -1069,9 +1000,6 @@ jobs:
 
       gitProcessRunner.mockProcessesForExecutable['git-show-ref'] =
           <FakeProcessInfo>[FakeProcessInfo(MockProcess())];
-      processRunner.mockProcessesForExecutable['gh'] = <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess()),
-      ];
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
