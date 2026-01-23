@@ -86,7 +86,7 @@
     *groundOverlayControllerByIdentifier;
 
 /// A callback api for the map interactions.
-@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
+@property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
 
 /// Asset provider used to load images.
 @property(weak, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
@@ -99,11 +99,11 @@
 @implementation FLTGroundOverlaysController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate
                   assetProvider:(NSObject<FGMAssetProvider> *)assetProvider {
   self = [super init];
   if (self) {
-    _callbackHandler = callbackHandler;
+    _eventDelegate = eventDelegate;
     _mapView = mapView;
     _groundOverlayControllerByIdentifier = [[NSMutableDictionary alloc] init];
     _assetProvider = assetProvider;
@@ -180,9 +180,7 @@
   if (!controller) {
     return;
   }
-  [self.callbackHandler didTapGroundOverlayWithIdentifier:identifier
-                                               completion:^(FlutterError *_Nullable _){
-                                               }];
+  [self.eventDelegate didTapGroundOverlayWithIdentifier:identifier];
 }
 
 - (bool)hasGroundOverlaysWithIdentifier:(NSString *)identifier {

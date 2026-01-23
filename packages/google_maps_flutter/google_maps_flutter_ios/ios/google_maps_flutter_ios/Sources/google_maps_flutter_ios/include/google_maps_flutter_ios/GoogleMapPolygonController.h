@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import GoogleMaps;
 
+#import "FGMMapEventDelegate.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
 // Defines polygon controllable by Flutter.
@@ -17,7 +17,7 @@
 
 @interface FLTPolygonsController : NSObject
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
+                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate;
 - (void)addPolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToAdd;
 - (void)changePolygons:(NSArray<FGMPlatformPolygon *> *)polygonsToChange;
 - (void)removePolygonWithIdentifiers:(NSArray<NSString *> *)identifiers;

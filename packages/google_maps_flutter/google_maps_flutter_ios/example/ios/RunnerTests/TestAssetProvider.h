@@ -5,7 +5,9 @@
 @import Foundation;
 @import google_maps_flutter_ios;
 
-/// Fake implementation of FGMAssetProvider.
+NS_ASSUME_NONNULL_BEGIN
+
+/// Fake implementation of FGMAssetProvider for unit tests.
 @interface TestAssetProvider : NSObject <FGMAssetProvider>
 /// Initializes an instance that returns an arbitrary key for the given asset
 /// name, and the given image when when using that key for imageNamed:.
@@ -18,3 +20,5 @@
                  forAssetName:(NSString *)assetName
                       package:(nullable NSString *)package;
 @end
+
+NS_ASSUME_NONNULL_END

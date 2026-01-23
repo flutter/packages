@@ -108,8 +108,9 @@
 
 @interface FLTMarkersController ()
 
-@property(strong, nonatomic, readwrite) NSMutableDictionary *markerIdentifierToController;
-@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
+@property(strong, nonatomic, readwrite)
+    NSMutableDictionary<NSString *, FLTGoogleMapMarkerController *> *markerIdentifierToController;
+@property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
 /// Controller for adding/removing/fetching cluster managers
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
 @property(weak, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
@@ -120,12 +121,12 @@
 @implementation FLTMarkersController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
                   assetProvider:(NSObject<FGMAssetProvider> *)assetProvider {
   self = [super init];
   if (self) {
-    _callbackHandler = callbackHandler;
+    _eventDelegate = eventDelegate;
     _mapView = mapView;
     _clusterManagersController = clusterManagersController;
     _markerIdentifierToController = [[NSMutableDictionary alloc] init];
@@ -232,9 +233,7 @@
   if (!controller) {
     return NO;
   }
-  [self.callbackHandler didTapMarkerWithIdentifier:identifier
-                                        completion:^(FlutterError *_Nullable _){
-                                        }];
+  [self.eventDelegate didTapMarkerWithIdentifier:identifier];
   return controller.consumeTapEvents;
 }
 
@@ -247,11 +246,9 @@
   if (!controller) {
     return;
   }
-  [self.callbackHandler
+  [self.eventDelegate
       didStartDragForMarkerWithIdentifier:identifier
-                               atPosition:FGMGetPigeonLatLngForCoordinate(location)
-                               completion:^(FlutterError *_Nullable _){
-                               }];
+                               atPosition:FGMGetPigeonLatLngForCoordinate(location)];
 }
 
 - (void)didDragMarkerWithIdentifier:(NSString *)identifier
@@ -263,10 +260,8 @@
   if (!controller) {
     return;
   }
-  [self.callbackHandler didDragMarkerWithIdentifier:identifier
-                                         atPosition:FGMGetPigeonLatLngForCoordinate(location)
-                                         completion:^(FlutterError *_Nullable _){
-                                         }];
+  [self.eventDelegate didDragMarkerWithIdentifier:identifier
+                                       atPosition:FGMGetPigeonLatLngForCoordinate(location)];
 }
 
 - (void)didEndDraggingMarkerWithIdentifier:(NSString *)identifier
@@ -275,17 +270,13 @@
   if (!controller) {
     return;
   }
-  [self.callbackHandler didEndDragForMarkerWithIdentifier:identifier
-                                               atPosition:FGMGetPigeonLatLngForCoordinate(location)
-                                               completion:^(FlutterError *_Nullable _){
-                                               }];
+  [self.eventDelegate didEndDragForMarkerWithIdentifier:identifier
+                                             atPosition:FGMGetPigeonLatLngForCoordinate(location)];
 }
 
 - (void)didTapInfoWindowOfMarkerWithIdentifier:(NSString *)identifier {
   if (identifier && self.markerIdentifierToController[identifier]) {
-    [self.callbackHandler didTapInfoWindowOfMarkerWithIdentifier:identifier
-                                                      completion:^(FlutterError *_Nullable _){
-                                                      }];
+    [self.eventDelegate didTapInfoWindowOfMarkerWithIdentifier:identifier];
   }
 }
 

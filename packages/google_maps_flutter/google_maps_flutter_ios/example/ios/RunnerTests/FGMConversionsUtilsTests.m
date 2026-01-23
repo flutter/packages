@@ -214,7 +214,7 @@
   FGMPlatformCameraUpdateNewLatLng *platformUpdate = [FGMPlatformCameraUpdateNewLatLng
       makeWithLatLng:[FGMPlatformLatLng makeWithLatitude:lat longitude:lng]];
 
-  GMSCameraUpdate *update = FGMGetCameraUpdateForPigeonCameraUpdate(
+  FGMGetCameraUpdateForPigeonCameraUpdate(
       [FGMPlatformCameraUpdate makeWithCameraUpdate:platformUpdate]);
   // GMSCameraUpdate is not inspectable, so this test just ensures that the codepath
   // doesn't throw. FGMGetCameraUpdateForPigeonCameraUpdate is simple enough that

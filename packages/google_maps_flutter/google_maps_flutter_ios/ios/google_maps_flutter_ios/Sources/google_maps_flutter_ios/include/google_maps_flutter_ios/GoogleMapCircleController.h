@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Flutter;
 @import GoogleMaps;
 
+#import "FGMMapEventDelegate.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTCirclesController : NSObject
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
+                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate;
 - (void)addCircles:(NSArray<FGMPlatformCircle *> *)circlesToAdd;
 - (void)changeCircles:(NSArray<FGMPlatformCircle *> *)circlesToChange;
 - (void)removeCirclesWithIdentifiers:(NSArray<NSString *> *)identifiers;

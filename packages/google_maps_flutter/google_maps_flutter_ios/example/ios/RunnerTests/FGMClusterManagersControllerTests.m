@@ -7,10 +7,9 @@
 @import XCTest;
 @import GoogleMaps;
 
-#import <OCMock/OCMock.h>
-
 #import "PartiallyMockedMapView.h"
 #import "TestAssetProvider.h"
+#import "TestMapEventHandler.h"
 
 @interface FGMClusterManagersControllerTests : XCTestCase
 @end
@@ -25,15 +24,14 @@
   mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
 
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
-
-  id handler = OCMClassMock([FGMMapsCallbackApi class]);
+  TestMapEventHandler *eventHandler = [[TestMapEventHandler alloc] init];
 
   FGMClusterManagersController *clusterManagersController =
-      [[FGMClusterManagersController alloc] initWithMapView:mapView callbackHandler:handler];
+      [[FGMClusterManagersController alloc] initWithMapView:mapView eventDelegate:eventHandler];
 
   FLTMarkersController *markersController =
       [[FLTMarkersController alloc] initWithMapView:mapView
-                                    callbackHandler:handler
+                                      eventDelegate:eventHandler
                           clusterManagersController:clusterManagersController
                                       assetProvider:[[TestAssetProvider alloc] init]];
 
