@@ -144,13 +144,13 @@ class MarkersController extends GeometryController {
 
   /// Removes a set of [MarkerId]s from the cache.
   void removeMarkers(Set<MarkerId> markerIdsToRemove) {
-    final Iterable<MapEntry<MarkerId, MarkerController?>> markersControllers =
+    final List<MapEntry<MarkerId, MarkerController?>> markersControllers =
         markerIdsToRemove.map(
           (MarkerId markerId) => MapEntry<MarkerId, MarkerController?>(
             markerId,
             _markerIdToController[markerId],
           ),
-        );
+        ).toList();
 
     final Map<ClusterManagerId?, List<gmaps.Marker>> controllersByCluster =
         markersControllers
