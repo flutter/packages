@@ -4,6 +4,7 @@
 
 #import "FLTImagePickerImageUtil.h"
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 @interface GIFInfo ()
 
@@ -117,7 +118,8 @@ static UIImage *FLTImagePickerDrawScaledImage(UIImage *imageToScale, double widt
                   maxHeight:(NSNumber *)maxHeight {
   NSMutableDictionary<NSString *, id> *options = [NSMutableDictionary dictionary];
   options[(NSString *)kCGImageSourceShouldCache] = @YES;
-  options[(NSString *)kCGImageSourceTypeIdentifierHint] = (NSString *)UTTypeGIF;
+  options[(NSString *)kCGImageSourceTypeIdentifierHint] =
+      @available(iOS 14.0, *) ? UTTypeGIF.identifier : (NSString *)kUTTypeGIF;
 
   CGImageSourceRef imageSource =
       CGImageSourceCreateWithData((__bridge CFDataRef)data, (__bridge CFDictionaryRef)options);

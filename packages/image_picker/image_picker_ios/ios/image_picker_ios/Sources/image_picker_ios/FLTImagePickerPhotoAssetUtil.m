@@ -7,6 +7,7 @@
 #import "FLTImagePickerMetaDataUtil.h"
 
 #import <MobileCoreServices/MobileCoreServices.h>
+#import <UniformTypeIdentifiers/UniformTypeIdentifiers.h>
 
 @implementation FLTImagePickerPhotoAssetUtil
 
@@ -98,8 +99,12 @@
 + (NSString *)saveImageWithMetaData:(NSDictionary *)metaData
                             gifInfo:(GIFInfo *)gifInfo
                                path:(NSString *)path {
+  CFStringRef type = kUTTypeGIF;
+  if (@available(iOS 14.0, *)) {
+    type = (__bridge CFStringRef)UTTypeGIF.identifier;
+  }
   CGImageDestinationRef destination = CGImageDestinationCreateWithURL(
-      (__bridge CFURLRef)[NSURL fileURLWithPath:path], UTTypeGIF, gifInfo.images.count, NULL);
+      (__bridge CFURLRef)[NSURL fileURLWithPath:path], type, gifInfo.images.count, NULL);
 
   NSDictionary *frameProperties = @{
     (__bridge NSString *)kCGImagePropertyGIFDictionary : @{
