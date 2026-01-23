@@ -363,7 +363,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       ),
     );
 
-    // 3. Verify remote branch exists.
+    // 3. Verify release branch exists on remote flutter/packages if it is a batch release package.
     final io.ProcessResult result = await (await gitDir).runCommand(<String>[
       'ls-remote',
       '--exit-code',
@@ -373,9 +373,13 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     ], throwOnError: false);
     final branchExists = result.exitCode == 0;
     if (isBatchRelease && !branchExists) {
-      errors.add('Branch release-$packageName does not exist on remote origin');
+      errors.add(
+        'Branch release-$packageName does not exist on remote flutter/packages',
+      );
     } else if (!isBatchRelease && branchExists) {
-      errors.add('Unexpected branch release-$packageName on remote origin');
+      errors.add(
+        'Unexpected branch release-$packageName on remote flutter/packages',
+      );
     }
 
     if (errors.isNotEmpty) {
