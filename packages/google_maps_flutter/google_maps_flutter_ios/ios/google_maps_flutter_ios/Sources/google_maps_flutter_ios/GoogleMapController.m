@@ -15,8 +15,6 @@
 #import "FLTGoogleMapTileOverlayController.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
-#pragma mark - Conversion of JSON-like values sent via platform channels. Forward declarations.
-
 @interface FLTGoogleMapFactory ()
 
 @property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
@@ -251,7 +249,6 @@
 @property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
 @property(nonatomic, strong) FGMDefaultMapEventHandler *mapEventHandler;
 @property(nonatomic, assign) BOOL trackCameraPosition;
-@property(nonatomic, weak) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) FGMClusterManagersController *clusterManagersController;
 @property(nonatomic, strong) FLTMarkersController *markersController;
 @property(nonatomic, strong) FLTPolygonsController *polygonsController;
@@ -296,13 +293,15 @@
   return [self initWithMapView:mapView
                 viewIdentifier:viewId
             creationParameters:creationParameters
-                     registrar:registrar];
+                 assetProvider:[[FGMDefaultAssetProvider alloc] initWithRegistrar:registrar]
+               binaryMessenger:registrar.messenger];
 }
 
 - (instancetype)initWithMapView:(GMSMapView *_Nonnull)mapView
                  viewIdentifier:(int64_t)viewId
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
-                      registrar:(NSObject<FlutterPluginRegistrar> *_Nonnull)registrar {
+                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger {
   if (self = [super init]) {
     _mapView = mapView;
 
@@ -311,15 +310,12 @@
     // https://github.com/flutter/flutter/issues/104121
     [self interpretMapConfiguration:creationParameters.mapConfiguration];
     NSString *pigeonSuffix = [NSString stringWithFormat:@"%lld", viewId];
-    _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:registrar.messenger
+    _dartCallbackHandler = [[FGMMapsCallbackApi alloc] initWithBinaryMessenger:binaryMessenger
                                                           messageChannelSuffix:pigeonSuffix];
     _mapEventHandler =
         [[FGMDefaultMapEventHandler alloc] initWithCallbackHandler:_dartCallbackHandler];
     _mapView.delegate = self;
     _mapView.paddingAdjustmentBehavior = kGMSMapViewPaddingAdjustmentBehaviorNever;
-    _registrar = registrar;
-    FGMDefaultAssetProvider *assetProvider =
-        [[FGMDefaultAssetProvider alloc] initWithRegistrar:registrar];
     _clusterManagersController =
         [[FGMClusterManagersController alloc] initWithMapView:_mapView
                                                 eventDelegate:_mapEventHandler];
@@ -355,13 +351,13 @@
     [_mapView addObserver:self forKeyPath:@"frame" options:0 context:nil];
 
     _callHandler = [[FGMMapCallHandler alloc] initWithMapController:self
-                                                          messenger:registrar.messenger
+                                                          messenger:binaryMessenger
                                                        pigeonSuffix:pigeonSuffix];
-    SetUpFGMMapsApiWithSuffix(registrar.messenger, _callHandler, pigeonSuffix);
+    SetUpFGMMapsApiWithSuffix(binaryMessenger, _callHandler, pigeonSuffix);
     _inspector = [[FGMMapInspector alloc] initWithMapController:self
-                                                      messenger:registrar.messenger
+                                                      messenger:binaryMessenger
                                                    pigeonSuffix:pigeonSuffix];
-    SetUpFGMMapsInspectorApiWithSuffix(registrar.messenger, _inspector, pigeonSuffix);
+    SetUpFGMMapsInspectorApiWithSuffix(binaryMessenger, _inspector, pigeonSuffix);
   }
   return self;
 }

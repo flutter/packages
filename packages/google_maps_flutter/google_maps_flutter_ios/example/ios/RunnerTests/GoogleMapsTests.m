@@ -6,8 +6,8 @@
 @import XCTest;
 @import GoogleMaps;
 
-#import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
+#import "TestAssetProvider.h"
 
 @interface MockCATransaction : NSObject <FGMCATransactionProtocol>
 @property(nonatomic, assign) BOOL beginCalled;
@@ -23,6 +23,27 @@
 
 - (void)commit {
   self.commitCalled = YES;
+}
+
+@end
+
+// No-op implementation of FlutterBinaryMessenger.
+@interface StubBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@end
+
+@implementation StubBinaryMessenger
+- (void)sendOnChannel:(NSString *)channel message:(NSData *)message {
+}
+- (void)sendOnChannel:(NSString *)channel
+              message:(NSData *)message
+          binaryReply:(FlutterBinaryReply)reply {
+}
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+}
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(nonnull NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
+  return 0;
 }
 
 @end
@@ -48,7 +69,6 @@
 }
 
 - (void)testFrameObserver {
-  id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   CGRect frame = CGRectMake(0, 0, 100, 100);
   GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
   options.frame = frame;
@@ -58,7 +78,8 @@
       [[FLTGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
-                                            registrar:registrar];
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
 
   for (NSInteger i = 0; i < 10; ++i) {
     [controller view];
@@ -70,7 +91,9 @@
 }
 
 - (void)testMapsServiceSync {
-  id registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  // The API requires a registrar, but this test doesn't actually use it, so just pass in a
+  // dummy object rather than set up a full mock.
+  id registrar = [[NSObject alloc] init];
   FLTGoogleMapFactory *factory1 = [[FLTGoogleMapFactory alloc] initWithRegistrar:registrar];
   XCTAssertNotNil(factory1.sharedMapServices);
   FLTGoogleMapFactory *factory2 = [[FLTGoogleMapFactory alloc] initWithRegistrar:registrar];
@@ -102,8 +125,6 @@
 }
 
 - (void)testAnimateCameraWithUpdate {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-
   CGRect frame = CGRectMake(0, 0, 100, 100);
   GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
   mapViewOptions.frame = frame;
@@ -117,7 +138,8 @@
       [[FLTGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
-                                            registrar:registrar];
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
 
   MockCATransaction *mockTransactionWrapper = [[MockCATransaction alloc] init];
   controller.callHandler.transactionWrapper = mockTransactionWrapper;
@@ -133,8 +155,6 @@
 }
 
 - (void)testAnimateCameraWithUpdateAndDuration {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-
   CGRect frame = CGRectMake(0, 0, 100, 100);
   GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
   mapViewOptions.frame = frame;
@@ -148,7 +168,8 @@
       [[FLTGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
-                                            registrar:registrar];
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
 
   MockCATransaction *mockTransactionWrapper = [[MockCATransaction alloc] init];
   controller.callHandler.transactionWrapper = mockTransactionWrapper;
@@ -169,8 +190,6 @@
 }
 
 - (void)testInspectorAPICameraPosition {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-
   CGRect frame = CGRectMake(0, 0, 100, 100);
   GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
   mapViewOptions.frame = frame;
@@ -183,14 +202,16 @@
 
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
 
+  NSObject<FlutterBinaryMessenger> *binaryMessenger = [[StubBinaryMessenger alloc] init];
   FLTGoogleMapController *controller =
       [[FLTGoogleMapController alloc] initWithMapView:mapView
                                        viewIdentifier:0
                                    creationParameters:[self emptyCreationParameters]
-                                            registrar:registrar];
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:binaryMessenger];
 
   FGMMapInspector *inspector = [[FGMMapInspector alloc] initWithMapController:controller
-                                                                    messenger:registrar.messenger
+                                                                    messenger:binaryMessenger
                                                                  pigeonSuffix:@"0"];
 
   FlutterError *error = nil;
