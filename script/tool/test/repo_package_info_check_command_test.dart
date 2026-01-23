@@ -830,7 +830,9 @@ on:
       expect(
         output,
         contains(
-          contains('Unexpected branch release-a_package on remote origin'),
+          contains(
+            'Unexpected branch release-a_package on remote flutter/packages',
+          ),
         ),
       );
     });
@@ -988,7 +990,9 @@ jobs:
       expect(
         output,
         contains(
-          contains('Branch release-a_package does not exist on remote origin'),
+          contains(
+            'Branch release-a_package does not exist on remote flutter/packages',
+          ),
         ),
       );
     });
