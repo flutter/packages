@@ -14,8 +14,8 @@ public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
   var proxyApiRegistrar: CrossFileDarwinApisPigeonProxyApiRegistrar?
 
   init(binaryMessenger: FlutterBinaryMessenger) {
-    proxyApiRegistrar = CrossFileDarwinApisPigeonProxyApiRegistrar(
-      binaryMessenger: binaryMessenger, apiDelegate: ProxyApiDelegate())
+    proxyApiRegistrar = ProxyAPIRegistrar(
+      binaryMessenger: binaryMessenger)
     proxyApiRegistrar?.setUp()
   }
 
