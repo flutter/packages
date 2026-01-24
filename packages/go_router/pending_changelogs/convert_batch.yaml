@@ -1,0 +1,3 @@
+changelog: |
+  - Converts go_router to use batch release.
+version: patch
