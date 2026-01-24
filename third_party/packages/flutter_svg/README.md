@@ -127,6 +127,43 @@ import 'dart:ui' as ui;
   pictureInfo.picture.dispose();
 ```
 
+or if you want to scale it, you can do something like:
+
+<?code-excerpt "example/lib/readme_excerpts.dart (OutputScaling)"?>
+```dart
+import 'dart:ui' as ui;
+
+// ···
+  const rawSvg = '''<svg ...>...</svg>''';
+  final PictureInfo pictureInfo = await vg.loadPicture(
+    const SvgStringLoader(rawSvg),
+    null,
+  );
+
+  // You can convert the picture to a scaled image:
+  const double targetWidth = 512;
+  const double targetHeight = 512;
+  final pictureRecorder = ui.PictureRecorder();
+  final canvas = Canvas(
+    pictureRecorder,
+    Rect.fromPoints(
+      Offset.zero,
+      const Offset(targetWidth, targetHeight),
+    ),
+  );
+  canvas.scale(
+    targetWidth / pictureInfo.size.width,
+    targetHeight / pictureInfo.size.height,
+  );
+  canvas.drawPicture(pictureInfo.picture);
+  final ui.Image scaledImage = await pictureRecorder.endRecording().toImage(
+    targetWidth.ceil(),
+    targetHeight.ceil(),
+  );
+
+  pictureInfo.picture.dispose();
+```
+
 The `SvgPicture` helps to automate this logic, and it provides some convenience
 wrappers for getting assets from multiple sources.
 
