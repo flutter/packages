@@ -41,6 +41,6 @@ class WebViewCookie {
 
   @override
   String toString() {
-    return 'WebViewCookie{name: $name, domain: $domain, path: $path}';
+    return 'WebViewCookie{name: $name, value: $value, domain: $domain, path: $path}';
   }
 }
