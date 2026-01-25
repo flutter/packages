@@ -27,12 +27,13 @@ class HTTPCookieStoreProxyAPIDelegate: PigeonApiDelegateWKHTTPCookieStore {
     domain: String?,
     completion: @escaping (Result<[HTTPCookie], any Error>) -> Void
   ) {
-    if domain == nil {
-      return pigeonInstance.getAllCookies { completion(.success($0)) }
-    }
-
     pigeonInstance.getAllCookies { cookies in
-      completion(.success(cookies.filter { $0.domain.contains(domain!) }))
+      if let domain {
+        completion(.success(cookies.filter { $0.domain.contains(domain) }))
+      } else {
+        completion(.success(cookies))
+      }
     }
   }
+
 }
