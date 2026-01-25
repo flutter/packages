@@ -1,6 +1,6 @@
 ## 4.2.0
 
-- Adds supports for `TypedGoRouteParameter` annotation.
+- Adds supports for `TypedQueryParameter` annotation.
 
 ## 4.1.3
 

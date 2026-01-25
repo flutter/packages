@@ -2,7 +2,7 @@
 
 // ignore_for_file: always_specify_types, public_member_api_docs
 
-part of 'typed_go_route_parameter_example.dart';
+part of 'typed_query_parameter_example.dart';
 
 // **************************************************************************
 // GoRouterGenerator

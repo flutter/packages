@@ -10,7 +10,7 @@ mixin $OverriddenParameterNameRoute {}
 class OverriddenParameterNameRoute extends GoRouteData
     with $OverriddenParameterNameRoute {
   OverriddenParameterNameRoute({
-    @TypedGoRouteParameter(name: 'parameterNameOverride') this.withAnnotation,
+    @TypedQueryParameter(name: 'parameterNameOverride') this.withAnnotation,
   });
   final int? withAnnotation;
 }

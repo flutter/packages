@@ -854,13 +854,13 @@ extension FormalParameterElementExtension on FormalParameterElement {
   bool get isExtraField => displayName == extraFieldName;
 
   /// Returns the URI name for this parameter, taking into account any
-  /// `TypedGoRouteParameter` annotation that may override the name.
+  /// `TypedQueryParameter` annotation that may override the name.
   String get uriName {
-    final typedGoRouteParameterReader = ConstantReader(
-      _typedGoRouteParameterChecker.firstAnnotationOf(this),
+    final typedQueryParameterReader = ConstantReader(
+      _typedQueryParameterChecker.firstAnnotationOf(this),
     );
     final String name =
-        typedGoRouteParameterReader.peek('name')?.stringValue ??
+        typedQueryParameterReader.peek('name')?.stringValue ??
         displayName.kebab;
     return escapeDartString(name);
   }
@@ -877,6 +877,6 @@ class NullableDefaultValueError extends InvalidGenerationSourceError {
       );
 }
 
-const _typedGoRouteParameterChecker = TypeChecker.fromUrl(
-  'package:go_router/src/route_data.dart#TypedGoRouteParameter',
+const _typedQueryParameterChecker = TypeChecker.fromUrl(
+  'package:go_router/src/route_data.dart#TypedQueryParameter',
 );

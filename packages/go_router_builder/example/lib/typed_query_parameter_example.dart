@@ -7,7 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-part 'typed_go_route_parameter_example.g.dart';
+part 'typed_query_parameter_example.g.dart';
 
 void main() => runApp(App());
 
@@ -27,8 +27,8 @@ class App extends StatelessWidget {
 @TypedGoRoute<IntRoute>(path: '/int-route')
 class IntRoute extends GoRouteData with $IntRoute {
   IntRoute({
-    @TypedGoRouteParameter(name: 'intField') this.intField,
-    @TypedGoRouteParameter(name: 'int_field_with_default_value')
+    @TypedQueryParameter(name: 'intField') this.intField,
+    @TypedQueryParameter(name: 'int_field_with_default_value')
     this.intFieldWithDefaultValue = 1,
   });
 
