@@ -622,9 +622,9 @@ class NoOpPage extends Page<void> {
 
 /// Annotation to override the URI name for a route parameter.
 @Target({TargetKind.parameter})
-class TypedGoRouteParameter {
+class TypedQueryParameter {
   /// Annotation to override the URI name for a route parameter.
-  const TypedGoRouteParameter({this.name});
+  const TypedQueryParameter({this.name});
 
   /// The name of the parameter in the URI.
   ///
@@ -634,7 +634,7 @@ class TypedGoRouteParameter {
   /// ```dart
   /// class MyRoute extends GoRouteData with $MyRoute {
   ///   const MyRoute({
-  ///     @TypedGoRouteParameter(name: 'custom_name') this.myParameter,
+  ///     @TypedQueryParameter(name: 'custom_name') this.myParameter,
   ///   });
   ///  final String myParameter;
   /// }
