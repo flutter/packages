@@ -1,6 +1,6 @@
 # 17.1.0
 
-- Adds `TypedGoRouteParameter` annotation to override parameter names in `TypedGoRoute` constructors.
+- Adds `TypedQueryParameter` annotation to override parameter names in `TypedGoRoute` constructors.
 
 ## 17.0.1
 

@@ -795,8 +795,8 @@ void main() {
     );
   });
 
-  test('TypedGoRouteParameter stores the name', () {
-    const parameter = TypedGoRouteParameter(name: 'customName');
+  test('TypedQueryParameter stores the name', () {
+    const parameter = TypedQueryParameter(name: 'customName');
 
     expect(parameter.name, 'customName');
   });
