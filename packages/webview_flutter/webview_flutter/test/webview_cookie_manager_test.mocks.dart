@@ -71,9 +71,9 @@ class MockPlatformWebViewCookieManager extends _i1.Mock
           as _i4.Future<void>);
 
   @override
-  _i4.Future<List<_i2.WebViewCookie>> getCookies(Uri? domain) =>
+  _i4.Future<List<_i2.WebViewCookie>> getCookies(Uri? url) =>
       (super.noSuchMethod(
-            Invocation.method(#getCookies, [domain]),
+            Invocation.method(#getCookies, [url]),
             returnValue: _i4.Future<List<_i2.WebViewCookie>>.value(
               <_i2.WebViewCookie>[],
             ),
