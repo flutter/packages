@@ -16,7 +16,7 @@ typedef ConfigurationProvider = MapConfiguration Function(int mapId);
 
 /// Function that gets the [ClusterManagersController] for a given `mapId`.
 typedef ClusterManagersControllerProvider =
-    ClusterManagersController? Function(int mapId);
+    ClusterManagersController<Object?>? Function(int mapId);
 
 /// Function that gets the [GroundOverlaysController] for a given `mapId`.
 typedef GroundOverlaysControllerProvider =
@@ -108,7 +108,7 @@ class GoogleMapsInspectorWeb extends GoogleMapsInspectorPlatform {
         Uint8List.fromList(<int>[0]),
         bitmapScaling: MapBitmapScaling.none,
       ),
-      bounds: gmLatLngBoundsTolatLngBounds(groundOverlay.bounds),
+      bounds: gmLatLngBoundsToLatLngBounds(groundOverlay.bounds),
       transparency: 1.0 - groundOverlay.opacity,
       visible: groundOverlay.map != null,
       clickable: clickable != null && (clickable as JSBoolean).toDart,
