@@ -11,8 +11,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.collections.MarkerManager;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 class MarkersController {
@@ -47,8 +49,38 @@ class MarkersController {
   }
 
   void addMarkers(@NonNull List<Messages.PlatformMarker> markersToAdd) {
+    // Group markers by cluster manager ID for batch operations
+    Map<String, List<MarkerBuilder>> markersByCluster = new HashMap<>();
+    List<MarkerBuilder> nonClusteredMarkers = new ArrayList<>();
+
     for (Messages.PlatformMarker markerToAdd : markersToAdd) {
-      addMarker(markerToAdd);
+      String markerId = markerToAdd.getMarkerId();
+      String clusterManagerId = markerToAdd.getClusterManagerId();
+      MarkerBuilder markerBuilder = new MarkerBuilder(markerId, clusterManagerId);
+      Convert.interpretMarkerOptions(
+          markerToAdd, markerBuilder, assetManager, density, bitmapDescriptorFactoryWrapper);
+
+      // Store marker builder for future marker rebuilds when used under clusters.
+      markerIdToMarkerBuilder.put(markerId, markerBuilder);
+
+      if (clusterManagerId == null) {
+        nonClusteredMarkers.add(markerBuilder);
+      } else {
+        if (!markersByCluster.containsKey(clusterManagerId)) {
+          markersByCluster.put(clusterManagerId, new ArrayList<>());
+        }
+        markersByCluster.get(clusterManagerId).add(markerBuilder);
+      }
+    }
+
+    // Add non-clustered markers to the collection
+    for (MarkerBuilder markerBuilder : nonClusteredMarkers) {
+      addMarkerToCollection(markerBuilder.markerId(), markerBuilder);
+    }
+
+    // Batch add clustered markers
+    for (Map.Entry<String, List<MarkerBuilder>> entry : markersByCluster.entrySet()) {
+      clusterManagersController.addItems(entry.getKey(), entry.getValue());
     }
   }
 
@@ -59,8 +91,49 @@ class MarkersController {
   }
 
   void removeMarkers(@NonNull List<String> markerIdsToRemove) {
+    // Group markers by cluster manager ID for batch operations
+    Map<String, List<MarkerBuilder>> markersByCluster = new HashMap<>();
+    List<MarkerController> nonClusteredControllers = new ArrayList<>();
+
     for (String markerId : markerIdsToRemove) {
-      removeMarker(markerId);
+      final MarkerBuilder markerBuilder = markerIdToMarkerBuilder.get(markerId);
+      if (markerBuilder == null) {
+        continue;
+      }
+
+      final String clusterManagerId = markerBuilder.clusterManagerId();
+      if (clusterManagerId != null) {
+        if (!markersByCluster.containsKey(clusterManagerId)) {
+          markersByCluster.put(clusterManagerId, new ArrayList<>());
+        }
+        markersByCluster.get(clusterManagerId).add(markerBuilder);
+      } else {
+        final MarkerController markerController = markerIdToController.get(markerId);
+        if (markerController != null) {
+          nonClusteredControllers.add(markerController);
+        }
+      }
+    }
+
+    // Batch remove clustered markers
+    for (Map.Entry<String, List<MarkerBuilder>> entry : markersByCluster.entrySet()) {
+      clusterManagersController.removeItems(entry.getKey(), entry.getValue());
+    }
+
+    // Remove non-clustered markers from the collection
+    for (MarkerController markerController : nonClusteredControllers) {
+      if (this.markerCollection != null) {
+        markerController.removeFromCollection(markerCollection);
+      }
+    }
+
+    // Clean up all marker references
+    for (String markerId : markerIdsToRemove) {
+      markerIdToMarkerBuilder.remove(markerId);
+      final MarkerController markerController = markerIdToController.remove(markerId);
+      if (markerController != null) {
+        googleMapsMarkerIdToDartMarkerId.remove(markerController.getGoogleMapsMarkerId());
+      }
     }
   }
 
