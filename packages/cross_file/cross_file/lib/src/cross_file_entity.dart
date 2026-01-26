@@ -7,8 +7,9 @@ import 'package:meta/meta.dart';
 
 /// The common superclass for [XFile] and [XDirectory].
 @immutable
-abstract class XFileEntity {
+class XFileEntity {
   /// Constructs a [XFileEntity].
+  @protected
   const XFileEntity(this.platform);
 
   /// Implementation of [XFileEntity] for the current platform.

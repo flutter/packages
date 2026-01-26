@@ -14,35 +14,35 @@ import 'cross_file.dart';
 /// platform. Once a platform implementation is imported, the examples below
 /// can be followed to use features provided by a platform's implementation.
 ///
-/// {@macro cross_file.XFile.fromPlatformCreationParams}
+/// {@macro cross_file.ScopedStorageXFile.fromCreationParams}
 ///
 /// Below is an example of accessing the platform-specific extension for
 /// the Android implementation of `cross_file`:
 ///
 /// ```dart
-/// final SharedStorageXFile file = XFile('my/file.txt');
+/// final ScopedStorageXFile file = XFile('my/file.txt');
 ///
-/// final AndroidSharedStorageXFileExtension? androidExtension =
-///     file.maybeGetPlatformExtension<AndroidSharedStorageXFileExtension>();
+/// final AndroidScopedStorageXFileExtension? androidExtension =
+///     file.maybeGetExtension<AndroidScopedStorageXFileExtension>();
 /// if (androidExtension != null) {
-///   print(androidExtension.file.path);
+///   print(androidExtension.name());
 /// }
 /// ```
 @immutable
-class SharedStorageXFile extends XFile {
-  /// Constructs a [SharedStorageXFile].
+class ScopedStorageXFile extends XFile {
+  /// Constructs a [ScopedStorageXFile].
   ///
-  /// See [SharedStorageXFile.fromPlatformCreationParams] for setting parameters
+  /// See [ScopedStorageXFile.fromCreationParams] for setting parameters
   /// for a specific platform.
-  SharedStorageXFile(String uri)
-    : this.fromPlatformCreationParams(
-        PlatformSharedStorageXFileCreationParams(uri: uri),
+  ScopedStorageXFile(String uri)
+    : this.fromCreationParams(
+        PlatformScopedStorageXFileCreationParams(uri: uri),
       );
 
-  /// Constructs a [SharedStorageXFile] from creation params for a specific
+  /// Constructs a [ScopedStorageXFile] from creation params for a specific
   /// platform.
   ///
-  /// {@template cross_file.SharedStorageXFile.fromPlatformCreationParams}
+  /// {@template cross_file.ScopedStorageXFile.fromCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// the Android implementation of `cross_file`:
   ///
@@ -50,23 +50,23 @@ class SharedStorageXFile extends XFile {
   /// var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
   ///
   /// if (CrossFilePlatform.instance is CrossFileAndroid) {
-  ///   params = AndroidSharedStorageXFileCreationParams.fromCreationParams(
+  ///   params = AndroidScopedStorageXFileCreationParams.fromCreationParams(
   ///     params,
   ///   );
   /// }
   ///
-  /// final file = SharedStorageXFile.fromCreationParams(params);
+  /// final file = ScopedStorageXFile.fromCreationParams(params);
   /// ```
   /// {@endtemplate}
-  SharedStorageXFile.fromPlatformCreationParams(
-    PlatformSharedStorageXFileCreationParams params,
-  ) : this.fromPlatform(PlatformSharedStorageXFile(params));
+  ScopedStorageXFile.fromCreationParams(
+    PlatformScopedStorageXFileCreationParams params,
+  ) : this.fromPlatform(PlatformScopedStorageXFile(params));
 
-  /// Constructs a [SharedStorageXFile] from a specific platform implementation.
-  const SharedStorageXFile.fromPlatform(PlatformSharedStorageXFile super.platform)
+  /// Constructs a [ScopedStorageXFile] from a specific platform implementation.
+  const ScopedStorageXFile.fromPlatform(PlatformScopedStorageXFile super.platform)
     : super.fromPlatform();
 
   @override
-  PlatformSharedStorageXFile get platform =>
-      super.platform as PlatformSharedStorageXFile;
+  PlatformScopedStorageXFile get platform =>
+      super.platform as PlatformScopedStorageXFile;
 }

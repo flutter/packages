@@ -17,7 +17,7 @@ import 'cross_file_entity.dart';
 /// platform. Once a platform implementation is imported, the examples below
 /// can be followed to use features provided by a platform's implementation.
 ///
-/// {@macro cross_file.XFile.fromPlatformCreationParams}
+/// {@macro cross_file.XFile.fromCreationParams}
 ///
 /// Below is an example of accessing the platform-specific extension for
 /// the dart:io implementation of `cross_file`:
@@ -25,7 +25,7 @@ import 'cross_file_entity.dart';
 /// ```dart
 /// final XFile file = XFile('my/file.txt');
 ///
-/// final IOXFileExtension? ioExtension = file.maybeGetPlatformExtension<IOXFileExtension>();
+/// final IOXFileExtension? ioExtension = file.maybeGetExtension<IOXFileExtension>();
 /// if (ioExtension != null) {
 ///   print(ioExtension.file.path);
 /// }
@@ -34,14 +34,14 @@ import 'cross_file_entity.dart';
 class XFile extends XFileEntity {
   /// Constructs a [XFile].
   ///
-  /// See [XFile.fromPlatformCreationParams] for setting parameters for a
+  /// See [XFile.fromCreationParams] for setting parameters for a
   /// specific platform.
   XFile(String uri)
-    : this.fromPlatformCreationParams(PlatformXFileCreationParams(uri: uri));
+    : this.fromCreationParams(PlatformXFileCreationParams(uri: uri));
 
-  /// Constructs an [XFile] from creation params for a specific platform.
+  /// Constructs a [XFile] from creation params for a specific platform.
   ///
-  /// {@template cross_file.XFile.fromPlatformCreationParams}
+  /// {@template cross_file.XFile.fromCreationParams}
   /// Below is an example of setting platform-specific creation parameters for
   /// the dart:io implementation of `cross_file`:
   ///
@@ -57,7 +57,7 @@ class XFile extends XFileEntity {
   /// final file = XFile.fromCreationParams(params);
   /// ```
   /// {@endtemplate}
-  XFile.fromPlatformCreationParams(PlatformXFileCreationParams params)
+  XFile.fromCreationParams(PlatformXFileCreationParams params)
     : this.fromPlatform(PlatformXFile(params));
 
   /// Constructs a [XFile] from a specific platform implementation.
@@ -71,27 +71,25 @@ class XFile extends XFileEntity {
   ///
   /// Will throw an exception if the specified platform extension can not be
   /// returned.
-  S getPlatformExtension<S extends PlatformXFileExtension>() {
+  S getExtension<S extends PlatformXFileExtension>() {
     return platform.extension! as S;
   }
 
   /// Attempt to provide the platform class extension.
   ///
   /// Returns null if the specified platform extension cannot be retrieved.
-  S? maybeGetPlatformExtension<S extends PlatformXFileExtension>() {
+  S? maybeGetExtension<S extends PlatformXFileExtension>() {
     return platform.extension is S ? platform.extension! as S : null;
   }
 
   /// Date and time when the resource was last modified, if the information is
   /// available.
-  ///
-  /// Platforms may throw an exception if the information is not available.
-  Future<DateTime> lastModified() => platform.lastModified();
+  Future<DateTime?> lastModified() => platform.lastModified();
 
   /// The length of the data represented by this uri, in bytes.
   ///
-  /// Platforms may throw an exception if the information is not available.
-  Future<int> length() => platform.length();
+  /// Returns null if the information is not available.
+  Future<int?> length() => platform.length();
 
   /// Whether the resource represented by this reference can be read.
   Future<bool> canRead() => platform.canRead();
@@ -106,7 +104,7 @@ class XFile extends XFileEntity {
   ///
   /// Platforms may throw an exception if there is an error opening or reading
   /// the resource.
-  Stream<List<int>> openRead([int? start, int? end]) =>
+  Stream<Uint8List> openRead([int? start, int? end]) =>
       platform.openRead(start, end);
 
   /// Reads the entire resource contents as a list of bytes.
