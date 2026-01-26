@@ -35,9 +35,9 @@ android {
         disable 'AndroidGradlePluginVersion', 'InvalidPackage', 'GradleDependency', 'NewerVersionAvailable'
     }
     dependencies {
-        implementation("androidx.core:core:1.13.1")
+        implementation("androidx.core:core:1.17.0")
         implementation("androidx.annotation:annotation:1.9.1")
-        implementation("androidx.exifinterface:exifinterface:1.4.1")
+        implementation("androidx.exifinterface:exifinterface:1.4.2")
         implementation("androidx.activity:activity:1.11.0")
 
         testImplementation("junit:junit:4.13.2")

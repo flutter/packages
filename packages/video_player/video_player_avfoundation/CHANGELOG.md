@@ -1,3 +1,8 @@
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
 ## 2.8.10
 
 * Improves compatibility with `UIScene`.
