@@ -1,3 +1,8 @@
+## NEXT
+
+- Adds route-level `onEnter` support to `GoRoute` for implementing navigation guards at individual route level.
+- Adds `onEnter` method to `GoRouteData` base class for use with type-safe routing.
+
 ## 17.0.1
 
 - Fixes an issue where `onEnter` blocking causes navigation stack loss (stale state restoration).

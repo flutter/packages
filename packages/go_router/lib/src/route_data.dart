@@ -9,7 +9,9 @@ import 'package:meta/meta.dart';
 import 'package:meta/meta_meta.dart';
 
 import 'configuration.dart';
+import 'on_enter.dart';
 import 'route.dart';
+import 'router.dart';
 import 'state.dart';
 
 /// Baseclass for supporting
@@ -62,6 +64,19 @@ abstract class _GoRouteDataBase extends RouteData {
   /// Corresponds to [GoRoute.onExit].
   FutureOr<bool> onExit(BuildContext context, GoRouterState state) => true;
 
+  /// Called before this route is entered.
+  ///
+  /// This method can be overridden to implement route-level navigation guards.
+  /// Return [Allow] to proceed with navigation, or [Block] to prevent it.
+  ///
+  /// Corresponds to [GoRoute.onEnter].
+  FutureOr<OnEnterResult> onEnter(
+    BuildContext context,
+    GoRouterState current,
+    GoRouterState next,
+    GoRouter router,
+  ) => const Allow();
+
   /// The error thrown when a user-facing method is not implemented by the
   /// generated code.
   static UnimplementedError get shouldBeGeneratedError => UnimplementedError(
@@ -91,12 +106,14 @@ class _GoRouteParameters {
     required this.pageBuilder,
     required this.redirect,
     required this.onExit,
+    required this.onEnter,
   });
 
   final GoRouterWidgetBuilder builder;
   final GoRouterPageBuilder pageBuilder;
   final GoRouterRedirect redirect;
   final ExitCallback onExit;
+  final EnterCallback onEnter;
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.
@@ -125,6 +142,13 @@ _GoRouteParameters _createGoRouteParameters<T extends _GoRouteDataBase>({
         factoryImpl(state).redirect(context, state),
     onExit: (BuildContext context, GoRouterState state) =>
         factoryImpl(state).onExit(context, state),
+    onEnter:
+        (
+          BuildContext context,
+          GoRouterState current,
+          GoRouterState next,
+          GoRouter router,
+        ) => factoryImpl(next).onEnter(context, current, next, router),
   );
 }
 
@@ -172,6 +196,7 @@ abstract class GoRouteData extends _GoRouteDataBase {
       routes: routes,
       parentNavigatorKey: parentNavigatorKey,
       onExit: params.onExit,
+      onEnter: params.onEnter,
     );
   }
 
@@ -242,6 +267,7 @@ abstract class RelativeGoRouteData extends _GoRouteDataBase {
       routes: routes,
       parentNavigatorKey: parentNavigatorKey,
       onExit: params.onExit,
+      onEnter: params.onEnter,
     );
   }
 

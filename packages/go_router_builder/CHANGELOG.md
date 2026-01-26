@@ -1,3 +1,7 @@
+## NEXT
+
+* Adds support for `onEnter` method in `GoRouteData` classes to implement navigation guards.
+
 ## 4.1.3
 
 * Requires `analyzer` 8.2 or higher, to avoid experimental APIs.
