@@ -46,8 +46,8 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
     // Register for both application and scene delegates for backward compatibility.
     // Apps using UIScene lifecycle will receive sceneDidBecomeActive,
     // while apps not yet migrated will receive applicationDidBecomeActive.
+    registrar.addApplicationDelegate(instance)
     #if os(iOS)
-      registrar.addApplicationDelegate(instance)
       registrar.addSceneDelegate(instance)
     #endif
     // Workaround for https://github.com/flutter/flutter/issues/118103.
