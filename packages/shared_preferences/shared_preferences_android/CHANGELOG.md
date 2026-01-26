@@ -1,3 +1,7 @@
+## 2.4.18
+
+* Bumps androidx.datastore:datastore from 1.1.7 to 1.2.0.
+
 ## 2.4.17
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
