@@ -1,9 +1,6 @@
-## NEXT
-
-* Updates README to reflect currently supported OS version.
-  
 ## 0.4.0+21
 
+* Updates README to reflect currently supported OS version.
 * Bumps `com.squareup.okhttp3:okhttp` from 5.3.1 to 5.3.2.
 
 ## 0.4.0+20
