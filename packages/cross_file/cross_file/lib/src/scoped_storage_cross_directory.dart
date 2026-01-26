@@ -48,7 +48,7 @@ class ScopedStorageXDirectory extends XDirectory {
   /// the Android implementation of `cross_file`:
   ///
   /// ```dart
-  /// var params = const PlatformXDirectoryCreationParams(uri: 'my/file.txt');
+  /// var params = const PlatformXDirectoryCreationParams(uri: 'context://my/docs');
   ///
   /// if (CrossFilePlatform.instance is CrossFileAndroid) {
   ///   params = AndroidScopedStorageXDirectoryCreationParams.fromCreationParams(

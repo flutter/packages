@@ -20,7 +20,7 @@ import 'cross_file.dart';
 /// the Android implementation of `cross_file`:
 ///
 /// ```dart
-/// final ScopedStorageXFile file = XFile('my/file.txt');
+/// final ScopedStorageXFile file = XFile('context://my/file.txt');
 ///
 /// final AndroidScopedStorageXFileExtension? androidExtension =
 ///     file.maybeGetExtension<AndroidScopedStorageXFileExtension>();
