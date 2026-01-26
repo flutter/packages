@@ -784,7 +784,7 @@ on:
     test('fails if non-batch package has batch artifacts', () async {
       setupReleaseStrategyTest();
       // batch defaults to false
-      writeWorkflowFiles(); // Writes batch artifacts
+      writeWorkflowFiles();
 
       gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
           <FakeProcessInfo>[
@@ -841,9 +841,6 @@ on:
       final RepositoryPackage package = setupReleaseStrategyTest();
       writeBatchConfig(package);
       // Don't write workflow files.
-      // Need to write global workflow files to avoid those errors masking the one we test?
-      // Actually, if batch workflow is missing, that's an error on its own.
-      // But we probably want to isolate it.
 
       Error? commandError;
       final List<String> output = await runCapturingPrint(
