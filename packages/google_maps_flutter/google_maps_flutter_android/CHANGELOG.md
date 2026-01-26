@@ -1,3 +1,7 @@
+## 2.18.11
+
+* Bumps the gradle-plugin to 9.0.0.
+
 ## 2.18.10
 
 * Bump com.google.maps.android:android-maps-utils from 3.19.1 to 3.20.1.
