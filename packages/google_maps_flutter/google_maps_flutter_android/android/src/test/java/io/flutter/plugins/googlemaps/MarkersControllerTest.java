@@ -359,4 +359,71 @@ public class MarkersControllerTest {
     // Verify removeItem is never called (we're using batch operation)
     Mockito.verify(clusterManagersController, times(0)).removeItem(any());
   }
+
+  @Test
+  public void controller_BatchChangeMarkersWithClusterManagerChange() {
+    final String clusterManagerId1 = "cm123";
+    final String clusterManagerId2 = "cm456";
+
+    // First add markers to cluster manager 1
+    final List<Messages.PlatformMarker> initialMarkers = new java.util.ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      builder
+          .setMarkerId("marker" + i)
+          .setClusterManagerId(clusterManagerId1)
+          .setPosition(
+              new Messages.PlatformLatLng.Builder()
+                  .setLatitude(1.0 + i)
+                  .setLongitude(2.0 + i)
+                  .build());
+      initialMarkers.add(builder.build());
+    }
+    controller.addMarkers(initialMarkers);
+
+    // Reset mock to clear invocation counts
+    Mockito.reset(clusterManagersController);
+
+    // Now change all markers to cluster manager 2
+    final List<Messages.PlatformMarker> changedMarkers = new java.util.ArrayList<>();
+    for (int i = 0; i < 5; i++) {
+      final Messages.PlatformMarker.Builder builder = defaultMarkerBuilder();
+      builder
+          .setMarkerId("marker" + i)
+          .setClusterManagerId(clusterManagerId2) // Different cluster manager
+          .setPosition(
+              new Messages.PlatformLatLng.Builder()
+                  .setLatitude(3.0 + i)
+                  .setLongitude(4.0 + i)
+                  .build());
+      changedMarkers.add(builder.build());
+    }
+    controller.changeMarkers(changedMarkers);
+
+    // Verify removeItems is called exactly once for cluster manager 1 with all 5 markers
+    Mockito.verify(clusterManagersController, times(1))
+        .removeItems(
+            eq(clusterManagerId1),
+            Mockito.argThat(
+                markerBuilders ->
+                    markerBuilders.size() == 5
+                        && markerBuilders
+                            .stream()
+                            .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId1))));
+
+    // Verify addItems is called exactly once for cluster manager 2 with all 5 markers
+    Mockito.verify(clusterManagersController, times(1))
+        .addItems(
+            eq(clusterManagerId2),
+            Mockito.argThat(
+                markerBuilders ->
+                    markerBuilders.size() == 5
+                        && markerBuilders
+                            .stream()
+                            .allMatch(mb -> mb.clusterManagerId().equals(clusterManagerId2))));
+
+    // Verify individual operations are never called (we're using batch operations)
+    Mockito.verify(clusterManagersController, times(0)).addItem(any());
+    Mockito.verify(clusterManagersController, times(0)).removeItem(any());
+  }
 }

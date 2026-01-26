@@ -27,6 +27,7 @@
 * Replaces internal use of deprecated methods.
 
 ## 2.18.6
+
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
 
 ## 2.18.5
@@ -52,7 +53,7 @@
 
 ## 2.18.0
 
-* Adds support for warming up the Google Maps SDK 
+* Adds support for warming up the Google Maps SDK
   via `GoogleMapsFlutterAndroid.warmup()`.
 
 ## 2.17.0
