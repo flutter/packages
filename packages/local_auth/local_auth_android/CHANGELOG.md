@@ -1,3 +1,7 @@
+## 2.0.5
+
+* Bumps the gradle-plugin to 9.0.0.
+
 ## 2.0.4
 
 * Bumps androidx.core:core from 1.13.1 to 1.17.0.

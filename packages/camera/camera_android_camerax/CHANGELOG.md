@@ -1,3 +1,7 @@
+## 0.6.27+1
+
+* Bumps the gradle-plugin to 9.0.0.
+
 ## 0.6.27
 
 * Changes `availableCameras` to get the camera name from `Camera2CameraInfo.getCameraId`.

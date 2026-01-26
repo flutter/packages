@@ -1,3 +1,7 @@
+## 2.4.20
+
+* Bumps the gradle-plugin to 9.0.0.
+
 ## 2.4.19
 
 * Bumps kotlin_version to 2.3.0.

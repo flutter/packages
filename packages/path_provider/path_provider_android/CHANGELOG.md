@@ -1,3 +1,7 @@
+## 2.2.23
+
+* Bumps the gradle-plugin to 9.0.0.
+
 ## 2.2.22
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.

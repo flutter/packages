@@ -1,5 +1,6 @@
-## NEXT
+## 0.4.0+21
 
+* Bumps the gradle-plugin to 9.0.0.
 * Updates README to reflect currently supported OS version.
 
 ## 0.4.0+20
