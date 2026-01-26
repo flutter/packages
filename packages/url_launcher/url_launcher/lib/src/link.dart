@@ -114,7 +114,7 @@ class DefaultLinkDelegate extends StatelessWidget {
       // A uri that doesn't have a scheme is an internal route name. In this
       // case, we push it via Flutter's navigation system instead of letting the
       // browser handle it.
-      final String routeName = link.uri.toString();
+      final routeName = link.uri.toString();
       await pushRouteToFrameworkFunction(context, routeName);
       return;
     }

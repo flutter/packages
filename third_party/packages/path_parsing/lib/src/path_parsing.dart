@@ -29,8 +29,8 @@ void writeSvgPathDataToPath(String? svg, PathProxy path) {
     return;
   }
 
-  final SvgPathStringSource parser = SvgPathStringSource(svg);
-  final SvgPathNormalizer normalizer = SvgPathNormalizer();
+  final parser = SvgPathStringSource(svg);
+  final normalizer = SvgPathNormalizer();
   for (final PathSegmentData seg in parser.parseSegments()) {
     normalizer.emitSegment(seg, path);
   }
@@ -209,7 +209,7 @@ class SvgPathStringSource {
     _skipOptionalSvgSpaces();
 
     // Read the sign.
-    int sign = 1;
+    var sign = 1;
     int c = _readCodeUnit();
     if (c == AsciiConstants.plus) {
       c = _readCodeUnit();
@@ -224,7 +224,7 @@ class SvgPathStringSource {
     }
 
     // Read the integer part, build left-to-right.
-    double integer = 0.0;
+    var integer = 0.0;
     while (AsciiConstants.number0 <= c && c <= AsciiConstants.number9) {
       integer = integer * 10 + (c - AsciiConstants.number0);
       c = _readCodeUnit();
@@ -235,7 +235,7 @@ class SvgPathStringSource {
       throw StateError('Numeric overflow');
     }
 
-    double decimal = 0.0;
+    var decimal = 0.0;
     if (c == AsciiConstants.period) {
       // read the decimals
       c = _readCodeUnit();
@@ -245,7 +245,7 @@ class SvgPathStringSource {
         throw StateError('There must be at least one digit following the .');
       }
 
-      double frac = 1.0;
+      var frac = 1.0;
       while (AsciiConstants.number0 <= c && c <= AsciiConstants.number9) {
         frac *= 0.1;
         decimal += (c - AsciiConstants.number0) * frac;
@@ -264,7 +264,7 @@ class SvgPathStringSource {
       c = _readCodeUnit();
 
       // read the sign of the exponent
-      bool exponentIsNegative = false;
+      var exponentIsNegative = false;
       if (c == AsciiConstants.plus) {
         c = _readCodeUnit();
       } else if (c == AsciiConstants.minus) {
@@ -277,7 +277,7 @@ class SvgPathStringSource {
         throw StateError('Missing exponent');
       }
 
-      double exponent = 0.0;
+      var exponent = 0.0;
       while (c >= AsciiConstants.number0 && c <= AsciiConstants.number9) {
         exponent *= 10.0;
         exponent += c - AsciiConstants.number0;
@@ -340,7 +340,7 @@ class SvgPathStringSource {
 
   PathSegmentData parseSegment() {
     assert(hasMoreData);
-    final PathSegmentData segment = PathSegmentData();
+    final segment = PathSegmentData();
     final int lookahead = _string.codeUnitAt(_idx);
     SvgPathSegType command = AsciiConstants.mapLetterToSegmentType(lookahead);
     if (_previousCommand == SvgPathSegType.unknown) {
@@ -516,7 +516,7 @@ class SvgPathNormalizer {
   SvgPathSegType _lastCommand = SvgPathSegType.unknown;
 
   void emitSegment(PathSegmentData segment, PathProxy path) {
-    final PathSegmentData normSeg = segment;
+    final normSeg = segment;
     assert(_currentPoint != null); // ignore: unnecessary_null_comparison
     // Convert relative points to absolute points.
     switch (segment.command) {
@@ -678,7 +678,7 @@ class SvgPathNormalizer {
     final _PathOffset midPointDistance =
         (currentPoint - arcSegment.targetPoint) * 0.5;
 
-    final Matrix4 pointTransform = Matrix4.identity();
+    final pointTransform = Matrix4.identity();
     pointTransform.rotateZ(-angle);
 
     final _PathOffset transformedMidPoint = _mapPoint(
@@ -743,7 +743,7 @@ class SvgPathNormalizer {
     // enough. So that we get more cubic curves than expected here. Adding 0.001f
     // reduces the count of segments to the correct count.
     final int segments = (thetaArc / (_piOverTwoFloat + 0.001)).abs().ceil();
-    for (int i = 0; i < segments; ++i) {
+    for (var i = 0; i < segments; ++i) {
       final double startTheta = theta1 + i * thetaArc / segments;
       final double endTheta = theta1 + (i + 1) * thetaArc / segments;
 
@@ -766,7 +766,7 @@ class SvgPathNormalizer {
       ).translate(centerPoint.dx, centerPoint.dy);
       point2 = targetPoint.translate(t * sinEndTheta, -t * cosEndTheta);
 
-      final PathSegmentData cubicSegment = PathSegmentData();
+      final cubicSegment = PathSegmentData();
       cubicSegment.command = SvgPathSegType.cubicToAbs;
       cubicSegment.point1 = _mapPoint(pointTransform, point1);
       cubicSegment.point2 = _mapPoint(pointTransform, point2);

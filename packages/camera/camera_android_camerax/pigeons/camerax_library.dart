@@ -416,7 +416,7 @@ abstract class DeviceOrientationManager {
   ),
 )
 abstract class Preview extends UseCase {
-  Preview(int? targetRotation);
+  Preview(int? targetRotation, CameraIntegerRange? targetFpsRange);
 
   late final ResolutionSelector? resolutionSelector;
 
@@ -455,7 +455,10 @@ abstract class Preview extends UseCase {
 )
 abstract class VideoCapture extends UseCase {
   /// Create a `VideoCapture` associated with the given `VideoOutput`.
-  VideoCapture.withOutput(VideoOutput videoOutput);
+  VideoCapture.withOutput(
+    VideoOutput videoOutput,
+    CameraIntegerRange? targetFpsRange,
+  );
 
   /// Gets the VideoOutput associated with this VideoCapture.
   VideoOutput getOutput();
@@ -803,7 +806,11 @@ abstract class ZoomState {
   ),
 )
 abstract class ImageAnalysis extends UseCase {
-  ImageAnalysis(int? targetRotation, int? outputImageFormat);
+  ImageAnalysis(
+    int? targetRotation,
+    CameraIntegerRange? targetFpsRange,
+    int? outputImageFormat,
+  );
 
   late final ResolutionSelector? resolutionSelector;
 

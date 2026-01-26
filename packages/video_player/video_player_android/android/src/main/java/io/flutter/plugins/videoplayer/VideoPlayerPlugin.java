@@ -8,6 +8,8 @@ import android.content.Context;
 import android.util.LongSparseArray;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.OptIn;
+import androidx.media3.common.util.UnstableApi;
 import io.flutter.FlutterInjector;
 import io.flutter.Log;
 import io.flutter.embedding.engine.plugins.FlutterPlugin;
@@ -78,6 +80,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     disposeAllPlayers();
   }
 
+  @OptIn(markerClass = UnstableApi.class)
   @Override
   public long createForPlatformView(@NonNull CreationOptions options) {
     final VideoAsset videoAsset = videoAssetWithOptions(options);
@@ -95,6 +98,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     return id;
   }
 
+  @OptIn(markerClass = UnstableApi.class)
   @Override
   public @NonNull TexturePlayerIds createForTextureView(@NonNull CreationOptions options) {
     final VideoAsset videoAsset = videoAssetWithOptions(options);

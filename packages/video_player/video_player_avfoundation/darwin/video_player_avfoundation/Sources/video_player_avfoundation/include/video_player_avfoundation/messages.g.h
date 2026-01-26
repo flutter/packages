@@ -16,6 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class FVPPlatformVideoViewCreationParams;
 @class FVPCreationOptions;
 @class FVPTexturePlayerIds;
+@class FVPMediaSelectionAudioTrackData;
 
 /// Information passed to the platform view creation.
 @interface FVPPlatformVideoViewCreationParams : NSObject
@@ -40,6 +41,22 @@ NS_ASSUME_NONNULL_BEGIN
 + (instancetype)makeWithPlayerId:(NSInteger)playerId textureId:(NSInteger)textureId;
 @property(nonatomic, assign) NSInteger playerId;
 @property(nonatomic, assign) NSInteger textureId;
+@end
+
+/// Raw audio track data from AVMediaSelectionOption (for HLS streams).
+@interface FVPMediaSelectionAudioTrackData : NSObject
+/// `init` unavailable to enforce nonnull fields, see the `make` class method.
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)makeWithIndex:(NSInteger)index
+                  displayName:(nullable NSString *)displayName
+                 languageCode:(nullable NSString *)languageCode
+                   isSelected:(BOOL)isSelected
+          commonMetadataTitle:(nullable NSString *)commonMetadataTitle;
+@property(nonatomic, assign) NSInteger index;
+@property(nonatomic, copy, nullable) NSString *displayName;
+@property(nonatomic, copy, nullable) NSString *languageCode;
+@property(nonatomic, assign) BOOL isSelected;
+@property(nonatomic, copy, nullable) NSString *commonMetadataTitle;
 @end
 
 /// The codec used by all APIs.
@@ -78,6 +95,11 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(
 - (void)seekTo:(NSInteger)position completion:(void (^)(FlutterError *_Nullable))completion;
 - (void)pauseWithError:(FlutterError *_Nullable *_Nonnull)error;
 - (void)disposeWithError:(FlutterError *_Nullable *_Nonnull)error;
+/// @return `nil` only when `error != nil`.
+- (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:
+    (FlutterError *_Nullable *_Nonnull)error;
+- (void)selectAudioTrackAtIndex:(NSInteger)trackIndex
+                          error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger,

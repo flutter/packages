@@ -152,9 +152,9 @@ Future<void> main(List<String> args) async {
   }
   validateOptions(results);
 
-  final List<Pair> pairs = <Pair>[];
+  final pairs = <Pair>[];
   if (results.wasParsed('input-dir')) {
-    final Directory directory = Directory(results['input-dir'] as String);
+    final directory = Directory(results['input-dir'] as String);
     if (!directory.existsSync()) {
       print('input-dir ${directory.path} does not exist.');
       exit(1);
@@ -165,11 +165,11 @@ Future<void> main(List<String> args) async {
         continue;
       }
 
-      String outputPath = '${file.path}.vec';
+      var outputPath = '${file.path}.vec';
 
       // to specfic the output directory when parse multi svg
       if (results.wasParsed('out-dir')) {
-        final Directory outDir = Directory(results['out-dir'] as String);
+        final outDir = Directory(results['out-dir'] as String);
         //to add the output dirctory if it exist
         if (!outDir.existsSync()) {
           outDir.createSync();
@@ -180,18 +180,18 @@ Future<void> main(List<String> args) async {
       pairs.add(Pair(file.path, outputPath));
     }
   } else {
-    final String inputFilePath = results['input'] as String;
+    final inputFilePath = results['input'] as String;
     final String outputFilePath =
         results['output'] as String? ?? '$inputFilePath.vec';
     pairs.add(Pair(inputFilePath, outputFilePath));
   }
 
-  final bool maskingOptimizerEnabled = results['optimize-masks'] == true;
-  final bool clippingOptimizerEnabled = results['optimize-clips'] == true;
-  final bool overdrawOptimizerEnabled = results['optimize-overdraw'] == true;
-  final bool tessellate = results['tessellate'] == true;
-  final bool dumpDebug = results['dump-debug'] == true;
-  final bool useHalfPrecisionControlPoints =
+  final maskingOptimizerEnabled = results['optimize-masks'] == true;
+  final clippingOptimizerEnabled = results['optimize-clips'] == true;
+  final overdrawOptimizerEnabled = results['optimize-overdraw'] == true;
+  final tessellate = results['tessellate'] == true;
+  final dumpDebug = results['dump-debug'] == true;
+  final useHalfPrecisionControlPoints =
       results['use-half-precision-control-points'] == true;
   final int concurrency;
   if (results.wasParsed('concurrency')) {
@@ -200,7 +200,7 @@ Future<void> main(List<String> args) async {
     concurrency = Platform.numberOfProcessors;
   }
 
-  final IsolateProcessor processor = IsolateProcessor(
+  final processor = IsolateProcessor(
     results['libpathops'] as String?,
     results['libtessellator'] as String?,
     concurrency,

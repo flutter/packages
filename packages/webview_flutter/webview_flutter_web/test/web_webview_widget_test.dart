@@ -12,11 +12,11 @@ void main() {
 
   group('WebWebViewWidget', () {
     testWidgets('build returns a HtmlElementView', (WidgetTester tester) async {
-      final WebWebViewController controller = WebWebViewController(
+      final controller = WebWebViewController(
         WebWebViewControllerCreationParams(),
       );
 
-      final WebWebViewWidget widget = WebWebViewWidget(
+      final widget = WebWebViewWidget(
         PlatformWebViewWidgetCreationParams(
           key: const Key('keyValue'),
           controller: controller,

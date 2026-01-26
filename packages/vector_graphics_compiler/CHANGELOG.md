@@ -1,6 +1,7 @@
-## NEXT
+## 1.1.20
 
-* Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
+* Fixes color parsing for modern rgb and rgba CSS syntax.
+* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 1.1.19
 

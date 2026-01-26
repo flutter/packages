@@ -42,7 +42,7 @@ class App extends StatelessWidget {
 
       // check just the matchedLocation in case there are query parameters
       final String loginLoc = const LoginRoute().location;
-      final bool goingToLogin = state.matchedLocation == loginLoc;
+      final goingToLogin = state.matchedLocation == loginLoc;
 
       // the user is not logged in and not headed to /login, they need to login
       if (!loggedIn && !goingToLogin) {

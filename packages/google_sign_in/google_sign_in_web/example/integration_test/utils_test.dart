@@ -18,7 +18,7 @@ void main() {
 
   group('gisResponsesToAuthenticationEvent', () {
     testWidgets('happy case', (_) async {
-      final AuthenticationEventSignIn signIn =
+      final signIn =
           gisResponsesToAuthenticationEvent(goodCredential)!
               as AuthenticationEventSignIn;
       final GoogleSignInUserData data = signIn.user;
@@ -31,7 +31,7 @@ void main() {
     });
 
     testWidgets('happy case (minimal)', (_) async {
-      final AuthenticationEventSignIn signIn =
+      final signIn =
           gisResponsesToAuthenticationEvent(minimalCredential)!
               as AuthenticationEventSignIn;
       final GoogleSignInUserData data = signIn.user;
@@ -188,7 +188,7 @@ void main() {
     });
 
     testWidgets('Non base-64 payload -> null', (_) async {
-      const String payload = 'not-base-64-at-all';
+      const payload = 'not-base-64-at-all';
 
       final Map<String, Object?>? data = decodeJwtPayload(payload);
 

@@ -451,8 +451,8 @@ class Paint {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Paint(blendMode: $blendMode');
-    const String leading = ', ';
+    final buffer = StringBuffer('Paint(blendMode: $blendMode');
+    const leading = ', ';
     if (stroke != null) {
       buffer.write('${leading}stroke: $stroke');
     }
@@ -530,8 +530,8 @@ class Stroke {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Stroke(color: $color');
-    const String leading = ', ';
+    final buffer = StringBuffer('Stroke(color: $color');
+    const leading = ', ';
     if (shader != null) {
       buffer.write('${leading}shader: $shader');
     }
@@ -580,8 +580,8 @@ class Fill {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer('Fill(color: $color');
-    const String leading = ', ';
+    final buffer = StringBuffer('Fill(color: $color');
+    const leading = ', ';
 
     if (shader != null) {
       buffer.write('${leading}shader: $shader');
@@ -1290,7 +1290,7 @@ class TextPosition {
 
   @override
   String toString() {
-    final StringBuffer buffer = StringBuffer();
+    final buffer = StringBuffer();
     buffer.write('TextPosition(reset: $reset');
     if (x != null) {
       buffer.write(', x: $x');
@@ -1454,8 +1454,8 @@ class TextDecoration {
 
   /// Creates a decoration that paints the union of all the given decorations.
   factory TextDecoration.combine(List<TextDecoration> decorations) {
-    int mask = 0;
-    for (final TextDecoration decoration in decorations) {
+    var mask = 0;
+    for (final decoration in decorations) {
       mask |= decoration.mask;
     }
     return TextDecoration._(mask);
@@ -1494,7 +1494,7 @@ class TextDecoration {
     if (mask == 0) {
       return 'TextDecoration.none';
     }
-    final List<String> values = <String>[];
+    final values = <String>[];
     if (mask & underline.mask != 0) {
       values.add('underline');
     }

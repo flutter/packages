@@ -60,9 +60,9 @@ class _MyAppState extends State<MyApp> {
   /// Fetches list of available cameras from camera_windows plugin.
   Future<void> _fetchCameras() async {
     String cameraInfo;
-    List<CameraDescription> cameras = <CameraDescription>[];
+    var cameras = <CameraDescription>[];
 
-    int cameraIndex = 0;
+    var cameraIndex = 0;
     try {
       cameras = await CameraPlatform.instance.availableCameras();
       if (cameras.isEmpty) {
@@ -92,7 +92,7 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    int cameraId = -1;
+    var cameraId = -1;
     try {
       final int cameraIndex = _cameraIndex % _cameras.length;
       final CameraDescription camera = _cameras[cameraIndex];
