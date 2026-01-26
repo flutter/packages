@@ -204,7 +204,7 @@ final class PhotoCaptureTests: XCTestCase {
 
   func testCaptureToFile_mustSavePhotoToCameraPicturesDirectory() {
     let expectation = self.expectation(
-      description: "Photo must be saved to camera pictures directory.")
+      description: "Photo must be saved in /tmp/camera/pictures/ directory.")
 
     let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
     captureSessionQueue.setSpecific(
@@ -221,21 +221,19 @@ final class PhotoCaptureTests: XCTestCase {
     }
     cam.capturePhotoOutput = mockOutput
 
-    captureSessionQueue.async {
-      cam.captureToFile { filePath, error in
-        XCTAssertNil(error)
-        XCTAssertNotNil(filePath)
-
-        if let filePath = filePath {
-          XCTAssertTrue(
-            filePath.contains("/tmp/camera/pictures/"),
-            "Photo must be saved in /tmp/camera/pictures/ directory"
-          )
-        }
-
-        expectation.fulfill()
+      captureSessionQueue.async {
+          cam.captureToFile { filePath, error in
+              XCTAssertNil(error)
+              XCTAssertNotNil(filePath)
+              
+              if let filePath = filePath {
+                  XCTAssertTrue(
+                    filePath.contains("/tmp/camera/pictures/")
+                  )
+                  expectation.fulfill()
+              }
+          }
       }
-    }
 
     waitForExpectations(timeout: 30, handler: nil)
   }
