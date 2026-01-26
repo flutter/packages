@@ -20,7 +20,6 @@ This PR adds support for route-level `onEnter` navigation guards in `GoRouteData
 - Code generation automatically handles `onEnter` method through existing `$route()` helper infrastructure
 
 ### Why
-
 Resolves issue #181471
 
 Currently, `go_router` 16.3.0 introduced a global `onEnter` callback at the `GoRouter` level. However, there's no way to define route-specific navigation guards in `GoRouteData` classes, unlike `redirect` and `onExit` which work at the route level.
