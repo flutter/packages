@@ -190,8 +190,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
     );
   }
 
-  // (Moved) Route-level onEnter handling is implemented as an instance method
-  // below within the [_OnEnterHandler] class so it can access instance state.
+  // Route-level onEnter handling is implemented as an instance method
+  // below within the [_OnEnterHandler] class. It was moved there from
+  // this class to better encapsulate the stateful redirection logic.
 
   /// Finds matching routes, processes redirects, and updates the route match
   /// list based on the navigation type.
@@ -496,6 +497,8 @@ class _OnEnterHandler {
         extra: infoState.extra,
       );
 
+      // Reset redirection history before handling the error to ensure the
+      // next navigation starts with a clean slate.
       _resetRedirectionHistory();
 
       final bool canHandleException =
@@ -526,12 +529,15 @@ class _OnEnterHandler {
               );
 
           if (routeLevelBlocked != null) {
-            // A route-level onEnter blocked navigation; treat as blocked.
+            // Navigation was blocked at the route level; reset history before
+            // returning the "blocked" match list.
             matchList = routeLevelBlocked;
             _resetRedirectionHistory();
           } else {
             matchList = await onCanEnter();
-            _resetRedirectionHistory(); // reset after committed navigation
+            // Reset history after a successful navigation to clear state for
+            // the next navigation request.
+            _resetRedirectionHistory();
           }
         } else {
           // Block: check if this is a hard stop or chaining block
@@ -544,6 +550,8 @@ class _OnEnterHandler {
           // We intentionally don't try to detect "no-op" callbacks; any
           // Block with `then` keeps history so chained guards can detect loops.
           if (result.isStop) {
+            // Reset history on a hard stop (Block.stop) to ensure the next
+            // navigation attempt starts fresh.
             _resetRedirectionHistory();
           }
           // For chaining blocks (with then), keep history to detect loops.
@@ -569,7 +577,8 @@ class _OnEnterHandler {
         return matchList;
       },
       onError: (Object error, StackTrace stackTrace) {
-        // Reset history on error to prevent stale state
+        // Reset history on error to prevent stale state from affecting
+        // subsequent navigation cycles.
         _resetRedirectionHistory();
 
         final RouteMatchList errorMatchList = _errorRouteMatchList(
@@ -627,8 +636,14 @@ class _OnEnterHandler {
     // Iterate in the same visitation order and invoke onEnter sequentially.
     for (final RouteMatchBase match in routeMatches) {
       if (!context.mounted) {
-        // If context is unmounted, avoid blocking navigation.
-        continue;
+        // If context is unmounted, abort the entire navigation.
+        return _errorRouteMatchList(
+          routeInformation.uri,
+          GoException(
+            'Navigation aborted because the router context was disposed.',
+          ),
+          extra: infoState.extra,
+        );
       }
       final RouteBase routeBase = match.route;
       if (routeBase is! GoRoute || routeBase.onEnter == null) {
@@ -648,12 +663,12 @@ class _OnEnterHandler {
 
         if (onEnterResult is Block) {
           // When a route-level onEnter blocks, run onCanNotEnter to get final match list.
-          final OnEnterThenCallback? thenCb = onEnterResult.then;
+          final OnEnterThenCallback? thenCallback = onEnterResult.then;
           final RouteMatchList matchList = await onCanNotEnter();
 
-          if (thenCb != null) {
+          if (thenCallback != null) {
             try {
-              await Future<void>.sync(thenCb);
+              await Future<void>.sync(thenCallback);
             } catch (error, stack) {
               log('Error in then callback: $error');
               FlutterError.reportError(

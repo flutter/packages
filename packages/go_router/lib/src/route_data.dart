@@ -113,7 +113,7 @@ class _GoRouteParameters {
   final GoRouterPageBuilder pageBuilder;
   final GoRouterRedirect redirect;
   final ExitCallback onExit;
-  final EnterCallback onEnter;
+  final OnEnter onEnter;
 }
 
 /// Helper to create [GoRoute] parameters from a factory function and an Expando.

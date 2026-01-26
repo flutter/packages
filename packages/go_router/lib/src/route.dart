@@ -72,25 +72,6 @@ typedef NavigatorBuilder =
 typedef ExitCallback =
     FutureOr<bool> Function(BuildContext context, GoRouterState state);
 
-/// Signature for function used in [GoRoute.onEnter].
-///
-/// This callback is invoked before entering a route and can be used to
-/// implement navigation guards. It returns a [FutureOr<OnEnterResult>] which
-/// should resolve to [Allow] if navigation should proceed, or [Block] if
-/// navigation should be prevented.
-///
-/// The callback receives:
-/// - [context]: The build context
-/// - [current]: The current route state
-/// - [next]: The route state being navigated to
-/// - [router]: The GoRouter instance
-typedef EnterCallback =
-    FutureOr<OnEnterResult> Function(
-      BuildContext context,
-      GoRouterState current,
-      GoRouterState next,
-      GoRouter router,
-    );
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -492,7 +473,7 @@ class GoRoute extends RouteBase {
   ///   },
   /// ),
   /// ```
-  final EnterCallback? onEnter;
+  final OnEnter? onEnter;
 
   /// Determines whether the route matching is case sensitive.
   ///
