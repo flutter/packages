@@ -12,6 +12,7 @@ import 'configuration.dart';
 import 'information_provider.dart';
 import 'logging.dart';
 import 'match.dart';
+import 'route.dart';
 import 'misc/errors.dart';
 import 'on_enter.dart';
 import 'router.dart';
@@ -188,6 +189,9 @@ class GoRouteInformationParser extends RouteInformationParser<RouteMatchList> {
       },
     );
   }
+
+  // (Moved) Route-level onEnter handling is implemented as an instance method
+  // below within the [_OnEnterHandler] class so it can access instance state.
 
   /// Finds matching routes, processes redirects, and updates the route match
   /// list based on the navigation type.
@@ -510,8 +514,25 @@ class _OnEnterHandler {
         final OnEnterThenCallback? callback = result.then;
 
         if (result is Allow) {
-          matchList = await onCanEnter();
-          _resetRedirectionHistory(); // reset after committed navigation
+          // Top-level allowed: run route-level onEnter callbacks (if any).
+          // If any route-level onEnter blocks, handle as blocked navigation.
+          final RouteMatchList? routeLevelBlocked =
+              await _runRouteLevelOnEnterIfNeeded(
+                context: context,
+                routeInformation: routeInformation,
+                infoState: infoState,
+                onCanEnter: onCanEnter,
+                onCanNotEnter: onCanNotEnter,
+              );
+
+          if (routeLevelBlocked != null) {
+            // A route-level onEnter blocked navigation; treat as blocked.
+            matchList = routeLevelBlocked;
+            _resetRedirectionHistory();
+          } else {
+            matchList = await onCanEnter();
+            _resetRedirectionHistory(); // reset after committed navigation
+          }
         } else {
           // Block: check if this is a hard stop or chaining block
           log(
@@ -563,6 +584,105 @@ class _OnEnterHandler {
         return errorMatchList;
       },
     );
+  }
+
+  /// Runs route-level `onEnter` callbacks for the incoming matches, if any.
+  ///
+  /// Returns a [RouteMatchList] when a route-level callback blocks navigation
+  /// (the result of calling [onCanNotEnter]). Returns `null` if all
+  /// route-level callbacks allowed navigation.
+  Future<RouteMatchList?> _runRouteLevelOnEnterIfNeeded({
+    required BuildContext context,
+    required RouteInformation routeInformation,
+    required RouteInfoState infoState,
+    required NavigationCallback onCanEnter,
+    required NavigationCallback onCanNotEnter,
+  }) async {
+    // Find route matches for the normalized URI.
+    final RouteMatchList incomingMatches = _configuration.findMatch(
+      routeInformation.uri,
+      extra: infoState.extra,
+    );
+
+    // Build the next and current states used for callbacks.
+    final GoRouterState nextState = _buildTopLevelGoRouterState(
+      incomingMatches,
+    );
+    final RouteMatchList currentMatchList =
+        _router.routerDelegate.currentConfiguration;
+    final GoRouterState currentState = currentMatchList.isNotEmpty
+        ? _buildTopLevelGoRouterState(currentMatchList)
+        : nextState;
+
+    // Collect matches that have route-level onEnter defined.
+    final List<RouteMatchBase> routeMatches = <RouteMatchBase>[];
+    incomingMatches.visitRouteMatches((RouteMatchBase match) {
+      final RouteBase r = match.route;
+      if (r is GoRoute && r.onEnter != null) {
+        routeMatches.add(match);
+      }
+      return true;
+    });
+
+    // Iterate in the same visitation order and invoke onEnter sequentially.
+    for (final RouteMatchBase match in routeMatches) {
+      if (!context.mounted) {
+        // If context is unmounted, avoid blocking navigation.
+        continue;
+      }
+      final RouteBase routeBase = match.route;
+      if (routeBase is! GoRoute || routeBase.onEnter == null) {
+        continue;
+      }
+
+      try {
+        final FutureOr<OnEnterResult> result = routeBase.onEnter!(
+          context,
+          currentState,
+          nextState,
+          _router,
+        );
+        final OnEnterResult onEnterResult = result is OnEnterResult
+            ? result
+            : await result;
+
+        if (onEnterResult is Block) {
+          // When a route-level onEnter blocks, run onCanNotEnter to get final match list.
+          final OnEnterThenCallback? thenCb = onEnterResult.then;
+          final RouteMatchList matchList = await onCanNotEnter();
+
+          if (thenCb != null) {
+            try {
+              await Future<void>.sync(thenCb);
+            } catch (error, stack) {
+              log('Error in then callback: $error');
+              FlutterError.reportError(
+                FlutterErrorDetails(
+                  exception: error,
+                  stack: stack,
+                  library: 'go_router',
+                  context: ErrorDescription('while executing then callback'),
+                ),
+              );
+            }
+          }
+
+          return matchList;
+        }
+      } catch (error) {
+        final RouteMatchList errorMatchList = _errorRouteMatchList(
+          routeInformation.uri,
+          error is GoException ? error : GoException(error.toString()),
+          extra: infoState.extra,
+        );
+        if (_onParserException != null && context.mounted) {
+          return _onParserException(context, errorMatchList);
+        }
+        return errorMatchList;
+      }
+    }
+
+    return null;
   }
 
   /// Builds a [GoRouterState] based on the given [matchList].
