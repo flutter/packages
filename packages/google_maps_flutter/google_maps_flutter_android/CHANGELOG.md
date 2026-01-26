@@ -1,6 +1,10 @@
-## 2.18.11
+## 2.18.12
 
 * Bumps com.google.maps.android:android-maps-utils from 3.20.1 to 4.0.0.
+
+## 2.18.11
+
+* Bumps com.google.android.gms:play-services-maps from 19.2.0 to 20.0.0.
 
 ## 2.18.10
 
