@@ -1,6 +1,18 @@
+## 0.8.13+13
+
+* Bumps androidx.activity:activity from 1.11.0 to 1.12.2.
+
+## 0.8.13+12
+
+* Bump androidx.core:core from 1.13.1 to 1.17.0.
+
+## 0.8.13+11
+
+* Bumps androidx.exifinterface:exifinterface from 1.4.1 to 1.4.2.
+
 ## 0.8.13+10
 
-* Bumps com.android.tools.build:gradle from 8.12.1 to 8.1
+* Bumps com.android.tools.build:gradle from 8.12.1 to 8.1.
 
 ## 0.8.13+9
 

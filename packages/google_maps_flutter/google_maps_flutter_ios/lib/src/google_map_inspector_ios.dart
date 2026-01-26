@@ -8,7 +8,6 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'google_maps_flutter_ios.dart';
 import 'messages.g.dart';
-import 'serialization.dart';
 
 /// An Android of implementation of [GoogleMapsInspectorPlatform].
 @visibleForTesting
@@ -95,19 +94,14 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       return null;
     }
 
-    final Map<String, Object?> json =
-        (heatmapInfo.json as Map<Object?, Object?>).cast<String, Object?>();
     return Heatmap(
       heatmapId: heatmapId,
-      data: (json['data']! as List<Object?>)
-          .map(deserializeWeightedLatLng)
-          .whereType<WeightedLatLng>()
-          .toList(),
-      gradient: deserializeHeatmapGradient(json['gradient']),
-      opacity: json['opacity']! as double,
-      radius: HeatmapRadius.fromPixels(json['radius']! as int),
-      minimumZoomIntensity: json['minimumZoomIntensity']! as int,
-      maximumZoomIntensity: json['maximumZoomIntensity']! as int,
+      data: heatmapInfo.data.map(_deserializeWeightedLatLng).toList(),
+      gradient: _deserializeHeatmapGradient(heatmapInfo.gradient),
+      opacity: heatmapInfo.opacity,
+      radius: HeatmapRadius.fromPixels(heatmapInfo.radius),
+      minimumZoomIntensity: heatmapInfo.minimumZoomIntensity,
+      maximumZoomIntensity: heatmapInfo.maximumZoomIntensity,
     );
   }
 
@@ -235,5 +229,49 @@ class GoogleMapsInspectorIOS extends GoogleMapsInspectorPlatform {
       tilt: cameraPosition.tilt,
       zoom: cameraPosition.zoom,
     );
+  }
+
+  static HeatmapGradient? _deserializeHeatmapGradient(
+    PlatformHeatmapGradient? gradient,
+  ) {
+    if (gradient == null) {
+      return null;
+    }
+    return HeatmapGradient(
+      // Zip the colors and start points together, since they are parallel
+      // arrays on the platform side.
+      _mapEnumerated(
+        gradient.colors,
+        (PlatformColor color, int i) => HeatmapGradientColor(
+          Color.from(
+            red: color.red,
+            green: color.green,
+            blue: color.blue,
+            alpha: color.alpha,
+          ),
+          gradient.startPoints[i],
+        ),
+      ).toList(),
+      colorMapSize: gradient.colorMapSize,
+    );
+  }
+
+  static WeightedLatLng _deserializeWeightedLatLng(
+    PlatformWeightedLatLng weightedLatLng,
+  ) {
+    return WeightedLatLng(
+      LatLng(weightedLatLng.point.latitude, weightedLatLng.point.longitude),
+      weight: weightedLatLng.weight,
+    );
+  }
+}
+
+Iterable<E> _mapEnumerated<T, E>(
+  Iterable<T> iterable,
+  E Function(T, int) fn,
+) sync* {
+  var index = 0;
+  for (final item in iterable) {
+    yield fn(item, index++);
   }
 }

@@ -503,12 +503,12 @@ void main() {
       final camera = AndroidCameraCameraX();
       final returnData = <dynamic>[
         <String, dynamic>{
-          'name': 'Camera 0',
+          'name': '0',
           'lensFacing': 'back',
           'sensorOrientation': 0,
         },
         <String, dynamic>{
-          'name': 'Camera 1',
+          'name': '1',
           'lensFacing': 'front',
           'sensorOrientation': 90,
         },
@@ -537,6 +537,17 @@ void main() {
 
             return mockBackCameraSelector;
           };
+      PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
+        final camera2cameraInfo = MockCamera2CameraInfo();
+        var cameraId = '';
+        if (cameraInfo == mockBackCameraInfo) {
+          cameraId = '0';
+        } else if (cameraInfo == mockFrontCameraInfo) {
+          cameraId = '1';
+        }
+        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
+        return camera2cameraInfo;
+      };
       PigeonOverrides.systemServicesManager_new =
           ({
             required void Function(SystemServicesManager, String) onCameraError,
@@ -1696,17 +1707,17 @@ void main() {
       final camera = AndroidCameraCameraX();
       final returnData = <dynamic>[
         <String, dynamic>{
-          'name': 'Camera 0',
+          'name': '0',
           'lensFacing': 'back',
           'sensorOrientation': 0,
         },
         <String, dynamic>{
-          'name': 'Camera 1',
+          'name': '1',
           'lensFacing': 'back',
           'sensorOrientation': 0,
         },
         <String, dynamic>{
-          'name': 'Camera 2',
+          'name': '2',
           'lensFacing': 'front',
           'sensorOrientation': 0,
         },
@@ -1872,6 +1883,17 @@ void main() {
             return MockResolutionFilter();
           };
       PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
+        var cameraId = '';
+        if (cameraInfo == mockBackCameraInfoOne) {
+          cameraId = '0';
+        } else if (cameraInfo == mockBackCameraInfoTwo) {
+          cameraId = '1';
+        } else if (cameraInfo == mockFrontCameraInfo) {
+          cameraId = '2';
+        }
+        when(
+          mockCamera2CameraInfo.getCameraId(),
+        ).thenAnswer((_) async => cameraId);
         when(
           mockCamera2CameraInfo.getCameraCharacteristic(
             mockCameraCharacteristicsKey,
@@ -3323,12 +3345,12 @@ void main() {
 
       const testSensorOrientation = 90;
       const testBackCameraDescription = CameraDescription(
-        name: 'Camera 0',
+        name: '0',
         lensDirection: CameraLensDirection.back,
         sensorOrientation: testSensorOrientation,
       );
       const testFrontCameraDescription = CameraDescription(
-        name: 'Camera 1',
+        name: '1',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: testSensorOrientation,
       );
@@ -3430,6 +3452,13 @@ void main() {
           };
       PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
         final camera2cameraInfo = MockCamera2CameraInfo();
+        var cameraId = '';
+        if (cameraInfo == mockBackCameraInfo) {
+          cameraId = '0';
+        } else if (cameraInfo == mockFrontCameraInfo) {
+          cameraId = '1';
+        }
+        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
         when(
           camera2cameraInfo.getCameraCharacteristic(any),
         ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);
@@ -3594,12 +3623,12 @@ void main() {
 
       const testSensorOrientation = 90;
       const testBackCameraDescription = CameraDescription(
-        name: 'Camera 0',
+        name: '0',
         lensDirection: CameraLensDirection.back,
         sensorOrientation: testSensorOrientation,
       );
       const testFrontCameraDescription = CameraDescription(
-        name: 'Camera 1',
+        name: '1',
         lensDirection: CameraLensDirection.front,
         sensorOrientation: testSensorOrientation,
       );
@@ -3698,6 +3727,13 @@ void main() {
           };
       PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
         final camera2cameraInfo = MockCamera2CameraInfo();
+        var cameraId = '';
+        if (cameraInfo == mockBackCameraInfo) {
+          cameraId = '0';
+        } else if (cameraInfo == mockFrontCameraInfo) {
+          cameraId = '1';
+        }
+        when(camera2cameraInfo.getCameraId()).thenAnswer((_) async => cameraId);
         when(
           camera2cameraInfo.getCameraCharacteristic(any),
         ).thenAnswer((_) async => InfoSupportedHardwareLevel.limited);

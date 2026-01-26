@@ -14,7 +14,6 @@ import 'package:stream_transform/stream_transform.dart';
 
 import 'google_map_inspector_android.dart';
 import 'messages.g.dart';
-import 'serialization.dart';
 
 /// The non-test implementation of `_apiProvider`.
 MapsApi _productionApiProvider(int mapId) {
@@ -779,7 +778,37 @@ class GoogleMapsFlutterAndroid extends GoogleMapsFlutterPlatform {
   }
 
   static PlatformHeatmap _platformHeatmapFromHeatmap(Heatmap heatmap) {
-    return PlatformHeatmap(json: serializeHeatmap(heatmap));
+    final HeatmapGradient? gradient = heatmap.gradient;
+    return PlatformHeatmap(
+      heatmapId: heatmap.heatmapId.value,
+      data: heatmap.data
+          .map(_platformWeightedLatLngFromWeightedLatLng)
+          .toList(),
+      gradient: _platformHeatmapGradientFromHeatmapGradient(gradient),
+      opacity: heatmap.opacity,
+      radius: heatmap.radius.radius,
+      maxIntensity: heatmap.maxIntensity,
+    );
+  }
+
+  static PlatformHeatmapGradient? _platformHeatmapGradientFromHeatmapGradient(
+    HeatmapGradient? gradient,
+  ) {
+    if (gradient == null) {
+      return null;
+    }
+    return PlatformHeatmapGradient(
+      colors: gradient.colors
+          .map(
+            (HeatmapGradientColor c) =>
+                PlatformColor(argbValue: c.color.toARGB32()),
+          )
+          .toList(),
+      startPoints: gradient.colors
+          .map((HeatmapGradientColor c) => c.startPoint)
+          .toList(),
+      colorMapSize: gradient.colorMapSize,
+    );
   }
 
   static PlatformClusterManager _platformClusterManagerFromClusterManager(
@@ -1283,6 +1312,15 @@ PlatformLatLngBounds? _platformLatLngBoundsFromLatLngBounds(
   return PlatformLatLngBounds(
     northeast: _platformLatLngFromLatLng(bounds.northeast),
     southwest: _platformLatLngFromLatLng(bounds.southwest),
+  );
+}
+
+PlatformWeightedLatLng _platformWeightedLatLngFromWeightedLatLng(
+  WeightedLatLng weightedLatLng,
+) {
+  return PlatformWeightedLatLng(
+    point: _platformLatLngFromLatLng(weightedLatLng.point),
+    weight: weightedLatLng.weight,
   );
 }
 
