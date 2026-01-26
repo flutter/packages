@@ -1,3 +1,7 @@
+## 0.8.13+12
+
+* Bumps androidx.activity:activity from 1.11.0 to 1.12.2.
+
 ## 0.8.13+11
 
 * Bumps androidx.exifinterface:exifinterface from 1.4.1 to 1.4.2.
