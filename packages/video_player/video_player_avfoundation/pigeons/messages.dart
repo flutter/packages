@@ -39,6 +39,23 @@ class TexturePlayerIds {
   final int textureId;
 }
 
+/// Raw audio track data from AVMediaSelectionOption (for HLS streams).
+class MediaSelectionAudioTrackData {
+  MediaSelectionAudioTrackData({
+    required this.index,
+    this.displayName,
+    this.languageCode,
+    required this.isSelected,
+    this.commonMetadataTitle,
+  });
+
+  int index;
+  String? displayName;
+  String? languageCode;
+  bool isSelected;
+  String? commonMetadataTitle;
+}
+
 @HostApi()
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
@@ -127,6 +144,11 @@ abstract class VideoPlayerInstanceApi {
   void seekTo(int position);
   void pause();
   void dispose();
+
+  @ObjCSelector('getAudioTracks')
+  List<MediaSelectionAudioTrackData> getAudioTracks();
+  @ObjCSelector('selectAudioTrackAtIndex:')
+  void selectAudioTrack(int trackIndex);
 
   /// Gets the available video tracks for the video.
   @async

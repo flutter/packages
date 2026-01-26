@@ -1062,6 +1062,149 @@
   return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
 }
 
+#pragma mark - Audio Track Tests
+
+// Tests getAudioTracks with a regular MP4 video file using real AVFoundation.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksWithRealMP4Video {
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular MP4 files do not have media selection groups for audio.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
+// Tests getAudioTracks with an HLS stream using real AVFoundation.
+// HLS streams use media selection groups for audio track selection.
+- (void)testGetAudioTracksWithRealHLSStream {
+  NSURL *hlsURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
+  XCTAssertNotNil(hlsURL);
+
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:hlsURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // For HLS streams with multiple audio options, we get media selection tracks.
+  // The bee.m3u8 stream may or may not have multiple audio tracks.
+  // We verify the method returns valid data without crashing.
+  for (FVPMediaSelectionAudioTrackData *track in result) {
+    XCTAssertNotNil(track.displayName);
+    XCTAssertGreaterThanOrEqual(track.index, 0);
+  }
+
+  [player disposeWithError:&error];
+}
+
+// Tests that getAudioTracks returns valid data for audio-only files.
+// Regular audio files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksWithRealAudioFile {
+  NSURL *audioURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
+  XCTAssertNotNil(audioURL);
+
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:audioURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular audio files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
+// Tests that getAudioTracks works correctly through the plugin API with a real video.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksViaPluginWithRealVideo {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}];
+  FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
+                                                                                 error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(identifiers);
+
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
+  XCTAssertNotNil(player);
+
+  // Wait for player item to become ready
+  AVPlayerItem *item = player.player.currentItem;
+  [self keyValueObservingExpectationForObject:(id)item
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusReadyToPlay)];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular MP4 files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
 #pragma mark - Video Track Tests
 
 // Integration test for getVideoTracks with a non-HLS MP4 video over a live network request.
@@ -1071,7 +1214,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:[[FVPDefaultAVFactory alloc] init]
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -1108,7 +1251,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:hlsURL]
                                        avFactory:[[FVPDefaultAVFactory alloc] init]
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -1154,7 +1297,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:[[FVPDefaultAVFactory alloc] init]
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -1177,7 +1320,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:[[FVPDefaultAVFactory alloc] init]
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];

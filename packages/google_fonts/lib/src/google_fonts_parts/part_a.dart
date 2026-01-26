@@ -6605,6 +6605,184 @@ class PartA {
     );
   }
 
+  /// Applies the Amarna font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Amarna
+  static TextStyle amarna({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '57e18498acd41757572de84b981e74083eea92739e9bf2c80746a1fd5b07e24a',
+        33984,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b8ac0b28b7f52be145503e78e642bd7ed0aa42be64f759b6c3020fa6bd5e75b2',
+        34020,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'bc25ae2a79651fb40d0f05b874a06d44938243aa6c2452c54118331a64562208',
+        34052,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5a06368fe643cc38de064841b729e1770b9ed031528bb3822bd3ad9c684bec5e',
+        33916,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '234f210dae9b5651555b326f3f50d6fd019b8edfbbcefb77acaf7255854c05fb',
+        33976,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0a8eb62c0957cdd3bb6ef99c5cae53fba405c72246a27d7df869c6153d534edb',
+        33984,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'eac582ec929559fd6ccfcd90f5f2b2c07a101fdaab3174d107e6873a3596af05',
+        33868,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '85d4e341be053eadbefc635a16a662259c39771ce1bfad0503ff2c7a863ef972',
+        34396,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '1370208a15d95bb0f0ff6560906cec92f0b56949174c72eb6e53e68427af0cc8',
+        34480,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '2aef20fe78bb1245f604662cc6c6195a6f5fd3385e0fce3fee9dd93190df6d30',
+        34416,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'dd1791014969aa5febb3d2887e8ff48e4533799d81ef89fdb0713d9d6724d7c8',
+        34156,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '146aeb3a32824bf088ace247f898d0039def602d85f1ca67f50977f3817b766a',
+        34324,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '11945ba63c8a037cb8016291f0adb7929c93053df394cb1e0dbc62dc5f43a512',
+        34332,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '88aef986d7fc5044bf3f88c3fcbbf72f9dcc491eac123a5af0fde613e93d9ccb',
+        34216,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Amarna',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Amarna font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Amarna
+  static TextTheme amarnaTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: amarna(textStyle: textTheme.displayLarge),
+      displayMedium: amarna(textStyle: textTheme.displayMedium),
+      displaySmall: amarna(textStyle: textTheme.displaySmall),
+      headlineLarge: amarna(textStyle: textTheme.headlineLarge),
+      headlineMedium: amarna(textStyle: textTheme.headlineMedium),
+      headlineSmall: amarna(textStyle: textTheme.headlineSmall),
+      titleLarge: amarna(textStyle: textTheme.titleLarge),
+      titleMedium: amarna(textStyle: textTheme.titleMedium),
+      titleSmall: amarna(textStyle: textTheme.titleSmall),
+      bodyLarge: amarna(textStyle: textTheme.bodyLarge),
+      bodyMedium: amarna(textStyle: textTheme.bodyMedium),
+      bodySmall: amarna(textStyle: textTheme.bodySmall),
+      labelLarge: amarna(textStyle: textTheme.labelLarge),
+      labelMedium: amarna(textStyle: textTheme.labelMedium),
+      labelSmall: amarna(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Amatic SC font family from Google Fonts to the
   /// given [textStyle].
   ///

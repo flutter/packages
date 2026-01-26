@@ -586,6 +586,70 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   currentItem.preferredPeakBitRate = (double)bitrate;
 }
 
+- (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:
+    (FlutterError *_Nullable *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  NSAssert(currentItem, @"currentItem should not be nil");
+  AVAsset *asset = currentItem.asset;
+
+  // Get tracks from media selection (for HLS streams)
+  AVMediaSelectionGroup *audioGroup =
+      [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
+      [[NSMutableArray alloc] init];
+
+  if (audioGroup.options.count > 0) {
+    AVMediaSelection *mediaSelection = currentItem.currentMediaSelection;
+    AVMediaSelectionOption *currentSelection =
+        [mediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
+
+    for (NSInteger i = 0; i < audioGroup.options.count; i++) {
+      AVMediaSelectionOption *option = audioGroup.options[i];
+      NSString *displayName = option.displayName;
+
+      NSString *languageCode = nil;
+      if (option.locale) {
+        languageCode = option.locale.languageCode;
+      }
+
+      NSArray<AVMetadataItem *> *titleItems =
+          [AVMetadataItem metadataItemsFromArray:option.commonMetadata
+                                         withKey:AVMetadataCommonKeyTitle
+                                        keySpace:AVMetadataKeySpaceCommon];
+      NSString *commonMetadataTitle = titleItems.firstObject.stringValue;
+
+      BOOL isSelected = [currentSelection isEqual:option];
+
+      FVPMediaSelectionAudioTrackData *trackData =
+          [FVPMediaSelectionAudioTrackData makeWithIndex:i
+                                             displayName:displayName
+                                            languageCode:languageCode
+                                              isSelected:isSelected
+                                     commonMetadataTitle:commonMetadataTitle];
+
+      [mediaSelectionTracks addObject:trackData];
+    }
+  }
+
+  return mediaSelectionTracks;
+}
+
+- (void)selectAudioTrackAtIndex:(NSInteger)trackIndex
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  NSAssert(currentItem, @"currentItem should not be nil");
+  AVAsset *asset = currentItem.asset;
+
+  AVMediaSelectionGroup *audioGroup =
+      [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  if (audioGroup && trackIndex >= 0 && trackIndex < (NSInteger)audioGroup.options.count) {
+    AVMediaSelectionOption *option = audioGroup.options[trackIndex];
+    [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
+  }
+}
+
 #pragma mark - Private
 
 - (int64_t)duration {
