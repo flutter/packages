@@ -7,8 +7,13 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut: 'ios/Classes/messages.g.h',
-    objcSourceOut: 'ios/Classes/messages.g.m',
+    // This uses a different output name to avoid conflicts with the pigeon
+    // files in other packages, without having to use full relative paths
+    // in #includes (which would make source sharing harder to manage).
+    objcHeaderOut:
+        'ios/google_maps_flutter_ios/Sources/google_maps_flutter_ios/include/google_maps_flutter_ios/google_maps_flutter_pigeon_messages.g.h',
+    objcSourceOut:
+        'ios/google_maps_flutter_ios/Sources/google_maps_flutter_ios/google_maps_flutter_pigeon_messages.g.m',
     objcOptions: ObjcOptions(prefix: 'FGM'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
