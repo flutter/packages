@@ -52,8 +52,11 @@ const String _throwFile = 'throw';
 
 /// Writes a file to [package] to control the behavior of
 /// [TestPackageLoopingCommand] for that package.
-void _addResultFile(RepositoryPackage package, _ResultFileType type,
-    {String? contents}) {
+void _addResultFile(
+  RepositoryPackage package,
+  _ResultFileType type, {
+  String? contents,
+}) {
   final File file = package.directory.childFile(_filenameForType(type));
   file.createSync();
   if (contents != null) {
@@ -128,72 +131,86 @@ void main() {
     void Function(Error error)? errorHandler,
   }) async {
     late CommandRunner<void> runner;
-    runner = CommandRunner<void>('test_package_looping_command',
-        'Test for base package looping functionality');
-    runner.addCommand(command);
-    return runCapturingPrint(
-      runner,
-      <String>[command.name, ...arguments],
-      errorHandler: errorHandler,
+    runner = CommandRunner<void>(
+      'test_package_looping_command',
+      'Test for base package looping functionality',
     );
+    runner.addCommand(command);
+    return runCapturingPrint(runner, <String>[
+      command.name,
+      ...arguments,
+    ], errorHandler: errorHandler);
   }
 
   group('tool exit', () {
     test('is handled during initializeRun', () async {
-      final TestPackageLoopingCommand command =
-          createTestCommand(failsDuringInit: true);
+      final TestPackageLoopingCommand command = createTestCommand(
+        failsDuringInit: true,
+      );
 
       expect(() => runCommand(command), throwsA(isA<ToolExit>()));
     });
 
     test('does not stop looping on error', () async {
       createFakePackage('package_a', packagesDir);
-      final RepositoryPackage failingPackage =
-          createFakePlugin('package_b', packagesDir);
+      final RepositoryPackage failingPackage = createFakePlugin(
+        'package_b',
+        packagesDir,
+      );
       createFakePackage('package_c', packagesDir);
       _addResultFile(failingPackage, _ResultFileType.errors);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       Error? commandError;
-      final List<String> output =
-          await runCommand(command, errorHandler: (Error e) {
-        commandError = e;
-      });
+      final List<String> output = await runCommand(
+        command,
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-            '${_startHeadingColor}Running for package_b...$_endColor',
-            '${_startHeadingColor}Running for package_c...$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+          '${_startHeadingColor}Running for package_b...$_endColor',
+          '${_startHeadingColor}Running for package_c...$_endColor',
+        ]),
+      );
     });
 
     test('does not stop looping on exceptions', () async {
       createFakePackage('package_a', packagesDir);
-      final RepositoryPackage failingPackage =
-          createFakePlugin('package_b', packagesDir);
+      final RepositoryPackage failingPackage = createFakePlugin(
+        'package_b',
+        packagesDir,
+      );
       createFakePackage('package_c', packagesDir);
       _addResultFile(failingPackage, _ResultFileType.throws);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       Error? commandError;
-      final List<String> output =
-          await runCommand(command, errorHandler: (Error e) {
-        commandError = e;
-      });
+      final List<String> output = await runCommand(
+        command,
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-            '${_startHeadingColor}Running for package_b...$_endColor',
-            '${_startHeadingColor}Running for package_c...$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+          '${_startHeadingColor}Running for package_b...$_endColor',
+          '${_startHeadingColor}Running for package_c...$_endColor',
+        ]),
+      );
     });
   });
 
@@ -202,19 +219,19 @@ void main() {
       createFakePackage('package_a', packagesDir);
 
       gitProcessRunner.mockProcessesForExecutable['git-diff'] =
-          <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '')),
-      ];
+          <FakeProcessInfo>[FakeProcessInfo(MockProcess(stdout: ''))];
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+        ]),
+      );
     });
 
     test('runs command if any files are not ignored', () async {
@@ -222,22 +239,28 @@ void main() {
 
       gitProcessRunner.mockProcessesForExecutable['git-diff'] =
           <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '''
+            FakeProcessInfo(
+              MockProcess(
+                stdout: '''
 skip/a
 other
 skip/b
-''')),
-      ];
+''',
+              ),
+            ),
+          ];
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+        ]),
+      );
     });
 
     test('skips commands if all files should be ignored', () async {
@@ -245,129 +268,169 @@ skip/b
 
       gitProcessRunner.mockProcessesForExecutable['git-diff'] =
           <FakeProcessInfo>[
-        FakeProcessInfo(MockProcess(stdout: '''
+            FakeProcessInfo(
+              MockProcess(
+                stdout: '''
 skip/a
 skip/b
-''')),
-      ];
+''',
+              ),
+            ),
+          ];
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          isNot(containsAllInOrder(<Matcher>[
-            contains('Running for package_a'),
-          ])));
+        output,
+        isNot(containsAllInOrder(<Matcher>[contains('Running for package_a')])),
+      );
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startSkipColor}SKIPPING ALL PACKAGES: No changed files affect this command$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startSkipColor}SKIPPING ALL PACKAGES: No changed files affect this command$_endColor',
+        ]),
+      );
     });
   });
 
   group('package iteration', () {
     test('includes plugins and packages', () async {
-      final RepositoryPackage plugin =
-          createFakePlugin('a_plugin', packagesDir);
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+      );
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       final TestPackageLoopingCommand command = createTestCommand();
       await runCommand(command);
 
-      expect(command.checkedPackages,
-          unorderedEquals(<String>[plugin.path, package.path]));
+      expect(
+        command.checkedPackages,
+        unorderedEquals(<String>[plugin.path, package.path]),
+      );
     });
 
     test('includes third_party/packages', () async {
-      final RepositoryPackage package1 =
-          createFakePackage('a_package', packagesDir);
-      final RepositoryPackage package2 =
-          createFakePackage('another_package', thirdPartyPackagesDir);
+      final RepositoryPackage package1 = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      final RepositoryPackage package2 = createFakePackage(
+        'another_package',
+        thirdPartyPackagesDir,
+      );
 
       final TestPackageLoopingCommand command = createTestCommand();
       await runCommand(command);
 
-      expect(command.checkedPackages,
-          unorderedEquals(<String>[package1.path, package2.path]));
+      expect(
+        command.checkedPackages,
+        unorderedEquals(<String>[package1.path, package2.path]),
+      );
     });
 
     test('includes all subpackages when requested', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
-          examples: <String>['example1', 'example2']);
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>['example1', 'example2'],
+      );
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
       final RepositoryPackage subPackage = createFakePackage(
-          'sub_package', package.directory,
-          examples: <String>[]);
+        'sub_package',
+        package.directory,
+        examples: <String>[],
+      );
 
       final TestPackageLoopingCommand command = createTestCommand(
-          packageLoopingType: PackageLoopingType.includeAllSubpackages);
+        packageLoopingType: PackageLoopingType.includeAllSubpackages,
+      );
       await runCommand(command);
 
       expect(
-          command.checkedPackages,
-          unorderedEquals(<String>[
-            plugin.path,
-            getExampleDir(plugin).childDirectory('example1').path,
-            getExampleDir(plugin).childDirectory('example2').path,
-            package.path,
-            getExampleDir(package).path,
-            subPackage.path,
-          ]));
+        command.checkedPackages,
+        unorderedEquals(<String>[
+          plugin.path,
+          getExampleDir(plugin).childDirectory('example1').path,
+          getExampleDir(plugin).childDirectory('example2').path,
+          package.path,
+          getExampleDir(package).path,
+          subPackage.path,
+        ]),
+      );
     });
 
     test('includes examples when requested', () async {
-      final RepositoryPackage plugin = createFakePlugin('a_plugin', packagesDir,
-          examples: <String>['example1', 'example2']);
-      final RepositoryPackage package =
-          createFakePackage('a_package', packagesDir);
-      final RepositoryPackage subPackage =
-          createFakePackage('sub_package', package.directory);
+      final RepositoryPackage plugin = createFakePlugin(
+        'a_plugin',
+        packagesDir,
+        examples: <String>['example1', 'example2'],
+      );
+      final RepositoryPackage package = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      final RepositoryPackage subPackage = createFakePackage(
+        'sub_package',
+        package.directory,
+      );
 
       final TestPackageLoopingCommand command = createTestCommand(
-          packageLoopingType: PackageLoopingType.includeExamples);
+        packageLoopingType: PackageLoopingType.includeExamples,
+      );
       await runCommand(command);
 
       expect(
-          command.checkedPackages,
-          unorderedEquals(<String>[
-            plugin.path,
-            getExampleDir(plugin).childDirectory('example1').path,
-            getExampleDir(plugin).childDirectory('example2').path,
-            package.path,
-            getExampleDir(package).path,
-          ]));
+        command.checkedPackages,
+        unorderedEquals(<String>[
+          plugin.path,
+          getExampleDir(plugin).childDirectory('example1').path,
+          getExampleDir(plugin).childDirectory('example2').path,
+          package.path,
+          getExampleDir(package).path,
+        ]),
+      );
       expect(command.checkedPackages, isNot(contains(subPackage.path)));
     });
 
     test('excludes subpackages when main package is excluded', () async {
       final RepositoryPackage excluded = createFakePlugin(
-          'a_plugin', packagesDir,
-          examples: <String>['example1', 'example2']);
-      final RepositoryPackage included =
-          createFakePackage('a_package', packagesDir);
-      final RepositoryPackage subpackage =
-          createFakePackage('sub_package', excluded.directory);
+        'a_plugin',
+        packagesDir,
+        examples: <String>['example1', 'example2'],
+      );
+      final RepositoryPackage included = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
+      final RepositoryPackage subpackage = createFakePackage(
+        'sub_package',
+        excluded.directory,
+      );
 
       final TestPackageLoopingCommand command = createTestCommand(
-          packageLoopingType: PackageLoopingType.includeAllSubpackages);
+        packageLoopingType: PackageLoopingType.includeAllSubpackages,
+      );
       await runCommand(command, arguments: <String>['--exclude=a_plugin']);
 
       final Iterable<RepositoryPackage> examples = excluded.getExamples();
 
       expect(
-          command.checkedPackages,
-          unorderedEquals(<String>[
-            included.path,
-            getExampleDir(included).path,
-          ]));
+        command.checkedPackages,
+        unorderedEquals(<String>[included.path, getExampleDir(included).path]),
+      );
       expect(command.checkedPackages, isNot(contains(excluded.path)));
       expect(examples.length, 2);
-      for (final RepositoryPackage example in examples) {
+      for (final example in examples) {
         expect(command.checkedPackages, isNot(contains(example.path)));
       }
       expect(command.checkedPackages, isNot(contains(subpackage.path)));
@@ -375,90 +438,105 @@ skip/b
 
     test('excludes examples when main package is excluded', () async {
       final RepositoryPackage excluded = createFakePlugin(
-          'a_plugin', packagesDir,
-          examples: <String>['example1', 'example2']);
-      final RepositoryPackage included =
-          createFakePackage('a_package', packagesDir);
+        'a_plugin',
+        packagesDir,
+        examples: <String>['example1', 'example2'],
+      );
+      final RepositoryPackage included = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       final TestPackageLoopingCommand command = createTestCommand(
-          packageLoopingType: PackageLoopingType.includeExamples);
+        packageLoopingType: PackageLoopingType.includeExamples,
+      );
       await runCommand(command, arguments: <String>['--exclude=a_plugin']);
 
       final Iterable<RepositoryPackage> examples = excluded.getExamples();
 
       expect(
-          command.checkedPackages,
-          unorderedEquals(<String>[
-            included.path,
-            getExampleDir(included).path,
-          ]));
+        command.checkedPackages,
+        unorderedEquals(<String>[included.path, getExampleDir(included).path]),
+      );
       expect(command.checkedPackages, isNot(contains(excluded.path)));
       expect(examples.length, 2);
-      for (final RepositoryPackage example in examples) {
+      for (final example in examples) {
         expect(command.checkedPackages, isNot(contains(example.path)));
       }
     });
 
     test('skips unsupported Flutter versions when requested', () async {
       final RepositoryPackage excluded = createFakePlugin(
-          'a_plugin', packagesDir,
-          flutterConstraint: '>=2.10.0');
-      final RepositoryPackage included =
-          createFakePackage('a_package', packagesDir);
+        'a_plugin',
+        packagesDir,
+        flutterConstraint: '>=2.10.0',
+      );
+      final RepositoryPackage included = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       final TestPackageLoopingCommand command = createTestCommand(
-          packageLoopingType: PackageLoopingType.includeAllSubpackages,
-          hasLongOutput: false);
-      final List<String> output = await runCommand(command, arguments: <String>[
-        '--skip-if-not-supporting-flutter-version=2.5.0'
-      ]);
+        packageLoopingType: PackageLoopingType.includeAllSubpackages,
+        hasLongOutput: false,
+      );
+      final List<String> output = await runCommand(
+        command,
+        arguments: <String>['--skip-if-not-supporting-flutter-version=2.5.0'],
+      );
 
       expect(
-          command.checkedPackages,
-          unorderedEquals(<String>[
-            included.path,
-            getExampleDir(included).path,
-          ]));
+        command.checkedPackages,
+        unorderedEquals(<String>[included.path, getExampleDir(included).path]),
+      );
       expect(command.checkedPackages, isNot(contains(excluded.path)));
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for a_package...$_endColor',
-            '${_startHeadingColor}Running for a_plugin...$_endColor',
-            '$_startSkipColor  SKIPPING: Does not support Flutter 2.5.0$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for a_package...$_endColor',
+          '${_startHeadingColor}Running for a_plugin...$_endColor',
+          '$_startSkipColor  SKIPPING: Does not support Flutter 2.5.0$_endColor',
+        ]),
+      );
     });
 
     test('skips unsupported Dart versions when requested', () async {
       final RepositoryPackage excluded = createFakePackage(
-          'excluded_package', packagesDir,
-          dartConstraint: '>=2.18.0 <4.0.0');
-      final RepositoryPackage included =
-          createFakePackage('a_package', packagesDir);
+        'excluded_package',
+        packagesDir,
+        dartConstraint: '>=2.18.0 <4.0.0',
+      );
+      final RepositoryPackage included = createFakePackage(
+        'a_package',
+        packagesDir,
+      );
 
       final TestPackageLoopingCommand command = createTestCommand(
-          packageLoopingType: PackageLoopingType.includeAllSubpackages,
-          hasLongOutput: false);
-      final List<String> output = await runCommand(command, arguments: <String>[
-        '--skip-if-not-supporting-flutter-version=3.0.0' // Flutter 3.0.0 -> Dart 2.17.0
-      ]);
+        packageLoopingType: PackageLoopingType.includeAllSubpackages,
+        hasLongOutput: false,
+      );
+      final List<String> output = await runCommand(
+        command,
+        arguments: <String>[
+          '--skip-if-not-supporting-flutter-version=3.0.0', // Flutter 3.0.0 -> Dart 2.17.0
+        ],
+      );
 
       expect(
-          command.checkedPackages,
-          unorderedEquals(<String>[
-            included.path,
-            getExampleDir(included).path,
-          ]));
+        command.checkedPackages,
+        unorderedEquals(<String>[included.path, getExampleDir(included).path]),
+      );
       expect(command.checkedPackages, isNot(contains(excluded.path)));
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for a_package...$_endColor',
-            '${_startHeadingColor}Running for excluded_package...$_endColor',
-            '$_startSkipColor  SKIPPING: Does not support Dart 2.17.0$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for a_package...$_endColor',
+          '${_startHeadingColor}Running for excluded_package...$_endColor',
+          '$_startSkipColor  SKIPPING: Does not support Dart 2.17.0$_endColor',
+        ]),
+      );
     });
   });
 
@@ -470,30 +548,33 @@ skip/b
       final TestPackageLoopingCommand command = createTestCommand();
       final List<String> output = await runCommand(command);
 
-      const String separator =
+      const separator =
           '============================================================';
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '$_startHeadingColor\n$separator\n|| Running for package_a\n$separator\n$_endColor',
-            '$_startHeadingColor\n$separator\n|| Running for package_b\n$separator\n$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '$_startHeadingColor\n$separator\n|| Running for package_a\n$separator\n$_endColor',
+          '$_startHeadingColor\n$separator\n|| Running for package_b\n$separator\n$_endColor',
+        ]),
+      );
     });
 
     test('has the expected package headers for short-form output', () async {
       createFakePlugin('package_a', packagesDir);
       createFakePackage('package_b', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-            '${_startHeadingColor}Running for package_b...$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+          '${_startHeadingColor}Running for package_b...$_endColor',
+        ]),
+      );
     });
 
     test('prints timing info in long-form output when requested', () async {
@@ -501,36 +582,43 @@ skip/b
       createFakePackage('package_b', packagesDir);
 
       final TestPackageLoopingCommand command = createTestCommand();
-      final List<String> output =
-          await runCommand(command, arguments: <String>['--log-timing']);
+      final List<String> output = await runCommand(
+        command,
+        arguments: <String>['--log-timing'],
+      );
 
-      const String separator =
+      const separator =
           '============================================================';
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '$_startHeadingColor\n$separator\n|| Running for package_a [@0:00]\n$separator\n$_endColor',
-            '$_startElapsedTimeColor\n[package_a completed in 0m 0s]$_endColor',
-            '$_startHeadingColor\n$separator\n|| Running for package_b [@0:00]\n$separator\n$_endColor',
-            '$_startElapsedTimeColor\n[package_b completed in 0m 0s]$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '$_startHeadingColor\n$separator\n|| Running for package_a [@0:00]\n$separator\n$_endColor',
+          '$_startElapsedTimeColor\n[package_a completed in 0m 0s]$_endColor',
+          '$_startHeadingColor\n$separator\n|| Running for package_b [@0:00]\n$separator\n$_endColor',
+          '$_startElapsedTimeColor\n[package_b completed in 0m 0s]$_endColor',
+        ]),
+      );
     });
 
     test('prints timing info in short-form output when requested', () async {
       createFakePlugin('package_a', packagesDir);
       createFakePackage('package_b', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
-      final List<String> output =
-          await runCommand(command, arguments: <String>['--log-timing']);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
+      final List<String> output = await runCommand(
+        command,
+        arguments: <String>['--log-timing'],
+      );
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '$_startHeadingColor[0:00] Running for package_a...$_endColor',
-            '$_startHeadingColor[0:00] Running for package_b...$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '$_startHeadingColor[0:00] Running for package_a...$_endColor',
+          '$_startHeadingColor[0:00] Running for package_b...$_endColor',
+        ]),
+      );
       // Short-form output should not include elapsed time.
       expect(output, isNot(contains('[package_a completed in 0m 0s]')));
     });
@@ -539,39 +627,49 @@ skip/b
       createFakePackage('package_a', packagesDir);
       createFakePackage('package_b', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '\n',
-            '${_startSuccessColor}No issues found!$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '\n',
+          '${_startSuccessColor}No issues found!$_endColor',
+        ]),
+      );
     });
 
-    test('shows failure summaries when something fails without extra details',
-        () async {
-      createFakePackage('package_a', packagesDir);
-      final RepositoryPackage failingPackage1 =
-          createFakePlugin('package_b', packagesDir);
-      createFakePackage('package_c', packagesDir);
-      final RepositoryPackage failingPackage2 =
-          createFakePlugin('package_d', packagesDir);
-      _addResultFile(failingPackage1, _ResultFileType.errors);
-      _addResultFile(failingPackage2, _ResultFileType.errors);
+    test(
+      'shows failure summaries when something fails without extra details',
+      () async {
+        createFakePackage('package_a', packagesDir);
+        final RepositoryPackage failingPackage1 = createFakePlugin(
+          'package_b',
+          packagesDir,
+        );
+        createFakePackage('package_c', packagesDir);
+        final RepositoryPackage failingPackage2 = createFakePlugin(
+          'package_d',
+          packagesDir,
+        );
+        _addResultFile(failingPackage1, _ResultFileType.errors);
+        _addResultFile(failingPackage2, _ResultFileType.errors);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
-      Error? commandError;
-      final List<String> output =
-          await runCommand(command, errorHandler: (Error e) {
-        commandError = e;
-      });
+        final TestPackageLoopingCommand command = createTestCommand(
+          hasLongOutput: false,
+        );
+        Error? commandError;
+        final List<String> output = await runCommand(
+          command,
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
-      expect(commandError, isA<ToolExit>());
-      expect(
+        expect(commandError, isA<ToolExit>());
+        expect(
           output,
           containsAllInOrder(<String>[
             '\n',
@@ -579,64 +677,88 @@ skip/b
             '$_startErrorColor  package_b$_endColor',
             '$_startErrorColor  package_d$_endColor',
             '${_startErrorColor}See above for full details.$_endColor',
-          ]));
-    });
+          ]),
+        );
+      },
+    );
 
     test('uses custom summary header and footer if provided', () async {
       createFakePackage('package_a', packagesDir);
-      final RepositoryPackage failingPackage1 =
-          createFakePlugin('package_b', packagesDir);
+      final RepositoryPackage failingPackage1 = createFakePlugin(
+        'package_b',
+        packagesDir,
+      );
       createFakePackage('package_c', packagesDir);
-      final RepositoryPackage failingPackage2 =
-          createFakePlugin('package_d', packagesDir);
+      final RepositoryPackage failingPackage2 = createFakePlugin(
+        'package_d',
+        packagesDir,
+      );
       _addResultFile(failingPackage1, _ResultFileType.errors);
       _addResultFile(failingPackage2, _ResultFileType.errors);
 
       final TestPackageLoopingCommand command = createTestCommand(
-          hasLongOutput: false,
-          customFailureListHeader: 'This is a custom header',
-          customFailureListFooter: 'And a custom footer!');
+        hasLongOutput: false,
+        customFailureListHeader: 'This is a custom header',
+        customFailureListFooter: 'And a custom footer!',
+      );
       Error? commandError;
-      final List<String> output =
-          await runCommand(command, errorHandler: (Error e) {
-        commandError = e;
-      });
+      final List<String> output = await runCommand(
+        command,
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '\n',
-            '${_startErrorColor}This is a custom header$_endColor',
-            '$_startErrorColor  package_b$_endColor',
-            '$_startErrorColor  package_d$_endColor',
-            '${_startErrorColor}And a custom footer!$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '\n',
+          '${_startErrorColor}This is a custom header$_endColor',
+          '$_startErrorColor  package_b$_endColor',
+          '$_startErrorColor  package_d$_endColor',
+          '${_startErrorColor}And a custom footer!$_endColor',
+        ]),
+      );
     });
 
-    test('shows failure summaries when something fails with extra details',
-        () async {
-      createFakePackage('package_a', packagesDir);
-      final RepositoryPackage failingPackage1 =
-          createFakePlugin('package_b', packagesDir);
-      createFakePackage('package_c', packagesDir);
-      final RepositoryPackage failingPackage2 =
-          createFakePlugin('package_d', packagesDir);
-      _addResultFile(failingPackage1, _ResultFileType.errors,
-          contents: 'just one detail');
-      _addResultFile(failingPackage2, _ResultFileType.errors,
-          contents: 'first detail\nsecond detail');
+    test(
+      'shows failure summaries when something fails with extra details',
+      () async {
+        createFakePackage('package_a', packagesDir);
+        final RepositoryPackage failingPackage1 = createFakePlugin(
+          'package_b',
+          packagesDir,
+        );
+        createFakePackage('package_c', packagesDir);
+        final RepositoryPackage failingPackage2 = createFakePlugin(
+          'package_d',
+          packagesDir,
+        );
+        _addResultFile(
+          failingPackage1,
+          _ResultFileType.errors,
+          contents: 'just one detail',
+        );
+        _addResultFile(
+          failingPackage2,
+          _ResultFileType.errors,
+          contents: 'first detail\nsecond detail',
+        );
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
-      Error? commandError;
-      final List<String> output =
-          await runCommand(command, errorHandler: (Error e) {
-        commandError = e;
-      });
+        final TestPackageLoopingCommand command = createTestCommand(
+          hasLongOutput: false,
+        );
+        Error? commandError;
+        final List<String> output = await runCommand(
+          command,
+          errorHandler: (Error e) {
+            commandError = e;
+          },
+        );
 
-      expect(commandError, isA<ToolExit>());
-      expect(
+        expect(commandError, isA<ToolExit>());
+        expect(
           output,
           containsAllInOrder(<String>[
             '\n',
@@ -644,154 +766,207 @@ skip/b
             '$_startErrorColor  package_b:\n    just one detail$_endColor',
             '$_startErrorColor  package_d:\n    first detail\n    second detail$_endColor',
             '${_startErrorColor}See above for full details.$_endColor',
-          ]));
-    });
+          ]),
+        );
+      },
+    );
 
     test('is captured, not printed, when requested', () async {
       createFakePlugin('package_a', packagesDir);
       createFakePackage('package_b', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(captureOutput: true);
+      final TestPackageLoopingCommand command = createTestCommand(
+        captureOutput: true,
+      );
       final List<String> output = await runCommand(command);
 
       expect(output, isEmpty);
 
       // None of the output should be colorized when captured.
-      const String separator =
+      const separator =
           '============================================================';
       expect(
-          command.capturedOutput,
-          containsAllInOrder(<String>[
-            '\n$separator\n|| Running for package_a\n$separator\n',
-            '\n$separator\n|| Running for package_b\n$separator\n',
-            'No issues found!',
-          ]));
+        command.capturedOutput,
+        containsAllInOrder(<String>[
+          '\n$separator\n|| Running for package_a\n$separator\n',
+          '\n$separator\n|| Running for package_b\n$separator\n',
+          'No issues found!',
+        ]),
+      );
     });
 
     test('logs skips', () async {
       createFakePackage('package_a', packagesDir);
-      final RepositoryPackage skipPackage =
-          createFakePackage('package_b', packagesDir);
-      _addResultFile(skipPackage, _ResultFileType.skips,
-          contents: 'For a reason');
+      final RepositoryPackage skipPackage = createFakePackage(
+        'package_b',
+        packagesDir,
+      );
+      _addResultFile(
+        skipPackage,
+        _ResultFileType.skips,
+        contents: 'For a reason',
+      );
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-            '${_startHeadingColor}Running for package_b...$_endColor',
-            '$_startSkipColor  SKIPPING: For a reason$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+          '${_startHeadingColor}Running for package_b...$_endColor',
+          '$_startSkipColor  SKIPPING: For a reason$_endColor',
+        ]),
+      );
     });
 
     test('logs exclusions', () async {
       createFakePackage('package_a', packagesDir);
       createFakePackage('package_b', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
-      final List<String> output =
-          await runCommand(command, arguments: <String>['--exclude=package_b']);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
+      final List<String> output = await runCommand(
+        command,
+        arguments: <String>['--exclude=package_b'],
+      );
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-            '${_startSkipColor}Not running for package_b; excluded$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+          '${_startSkipColor}Not running for package_b; excluded$_endColor',
+        ]),
+      );
     });
 
     test('logs warnings', () async {
-      final RepositoryPackage warnPackage =
-          createFakePackage('package_a', packagesDir);
-      _addResultFile(warnPackage, _ResultFileType.warns,
-          contents: 'Warning 1\nWarning 2');
+      final RepositoryPackage warnPackage = createFakePackage(
+        'package_a',
+        packagesDir,
+      );
+      _addResultFile(
+        warnPackage,
+        _ResultFileType.warns,
+        contents: 'Warning 1\nWarning 2',
+      );
       createFakePackage('package_b', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startHeadingColor}Running for package_a...$_endColor',
-            '${_startWarningColor}Warning 1$_endColor',
-            '${_startWarningColor}Warning 2$_endColor',
-            '${_startHeadingColor}Running for package_b...$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startHeadingColor}Running for package_a...$_endColor',
+          '${_startWarningColor}Warning 1$_endColor',
+          '${_startWarningColor}Warning 2$_endColor',
+          '${_startHeadingColor}Running for package_b...$_endColor',
+        ]),
+      );
     });
 
     test('logs unhandled exceptions as errors', () async {
       createFakePackage('package_a', packagesDir);
-      final RepositoryPackage failingPackage =
-          createFakePlugin('package_b', packagesDir);
+      final RepositoryPackage failingPackage = createFakePlugin(
+        'package_b',
+        packagesDir,
+      );
       createFakePackage('package_c', packagesDir);
       _addResultFile(failingPackage, _ResultFileType.throws);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       Error? commandError;
-      final List<String> output =
-          await runCommand(command, errorHandler: (Error e) {
-        commandError = e;
-      });
+      final List<String> output = await runCommand(
+        command,
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
 
       expect(commandError, isA<ToolExit>());
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startErrorColor}Exception: Uh-oh$_endColor',
-            '${_startErrorColor}The following packages had errors:$_endColor',
-            '$_startErrorColor  package_b:\n    Unhandled exception$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startErrorColor}Exception: Uh-oh$_endColor',
+          '${_startErrorColor}The following packages had errors:$_endColor',
+          '$_startErrorColor  package_b:\n    Unhandled exception$_endColor',
+        ]),
+      );
     });
 
     test('prints run summary on success', () async {
-      final RepositoryPackage warnPackage1 =
-          createFakePackage('package_a', packagesDir);
-      _addResultFile(warnPackage1, _ResultFileType.warns,
-          contents: 'Warning 1\nWarning 2');
+      final RepositoryPackage warnPackage1 = createFakePackage(
+        'package_a',
+        packagesDir,
+      );
+      _addResultFile(
+        warnPackage1,
+        _ResultFileType.warns,
+        contents: 'Warning 1\nWarning 2',
+      );
 
       createFakePackage('package_b', packagesDir);
 
-      final RepositoryPackage skipPackage =
-          createFakePackage('package_c', packagesDir);
-      _addResultFile(skipPackage, _ResultFileType.skips,
-          contents: 'For a reason');
+      final RepositoryPackage skipPackage = createFakePackage(
+        'package_c',
+        packagesDir,
+      );
+      _addResultFile(
+        skipPackage,
+        _ResultFileType.skips,
+        contents: 'For a reason',
+      );
 
-      final RepositoryPackage skipAndWarnPackage =
-          createFakePackage('package_d', packagesDir);
-      _addResultFile(skipAndWarnPackage, _ResultFileType.warns,
-          contents: 'Warning');
-      _addResultFile(skipAndWarnPackage, _ResultFileType.skips,
-          contents: 'See warning');
+      final RepositoryPackage skipAndWarnPackage = createFakePackage(
+        'package_d',
+        packagesDir,
+      );
+      _addResultFile(
+        skipAndWarnPackage,
+        _ResultFileType.warns,
+        contents: 'Warning',
+      );
+      _addResultFile(
+        skipAndWarnPackage,
+        _ResultFileType.skips,
+        contents: 'See warning',
+      );
 
-      final RepositoryPackage warnPackage2 =
-          createFakePackage('package_e', packagesDir);
-      _addResultFile(warnPackage2, _ResultFileType.warns,
-          contents: 'Warning 1\nWarning 2');
+      final RepositoryPackage warnPackage2 = createFakePackage(
+        'package_e',
+        packagesDir,
+      );
+      _addResultFile(
+        warnPackage2,
+        _ResultFileType.warns,
+        contents: 'Warning 1\nWarning 2',
+      );
 
       createFakePackage('package_f', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '------------------------------------------------------------',
-            'Ran for 4 package(s) (2 with warnings)',
-            'Skipped 2 package(s) (1 with warnings)',
-            '\n',
-            '${_startSuccessColor}No issues found!$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '------------------------------------------------------------',
+          'Ran for 4 package(s) (2 with warnings)',
+          'Skipped 2 package(s) (1 with warnings)',
+          '\n',
+          '${_startSuccessColor}No issues found!$_endColor',
+        ]),
+      );
       // The long-form summary should not be printed for short-form commands.
       expect(output, isNot(contains('Run summary:')));
       expect(output, isNot(contains(contains('package a - ran'))));
@@ -800,45 +975,72 @@ skip/b
     test('counts exclusions as skips in run summary', () async {
       createFakePackage('package_a', packagesDir);
 
-      final TestPackageLoopingCommand command =
-          createTestCommand(hasLongOutput: false);
-      final List<String> output =
-          await runCommand(command, arguments: <String>['--exclude=package_a']);
+      final TestPackageLoopingCommand command = createTestCommand(
+        hasLongOutput: false,
+      );
+      final List<String> output = await runCommand(
+        command,
+        arguments: <String>['--exclude=package_a'],
+      );
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '------------------------------------------------------------',
-            'Skipped 1 package(s)',
-            '\n',
-            '${_startSuccessColor}No issues found!$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '------------------------------------------------------------',
+          'Skipped 1 package(s)',
+          '\n',
+          '${_startSuccessColor}No issues found!$_endColor',
+        ]),
+      );
     });
 
     test('prints long-form run summary for long-output commands', () async {
-      final RepositoryPackage warnPackage1 =
-          createFakePackage('package_a', packagesDir);
-      _addResultFile(warnPackage1, _ResultFileType.warns,
-          contents: 'Warning 1\nWarning 2');
+      final RepositoryPackage warnPackage1 = createFakePackage(
+        'package_a',
+        packagesDir,
+      );
+      _addResultFile(
+        warnPackage1,
+        _ResultFileType.warns,
+        contents: 'Warning 1\nWarning 2',
+      );
 
       createFakePackage('package_b', packagesDir);
 
-      final RepositoryPackage skipPackage =
-          createFakePackage('package_c', packagesDir);
-      _addResultFile(skipPackage, _ResultFileType.skips,
-          contents: 'For a reason');
+      final RepositoryPackage skipPackage = createFakePackage(
+        'package_c',
+        packagesDir,
+      );
+      _addResultFile(
+        skipPackage,
+        _ResultFileType.skips,
+        contents: 'For a reason',
+      );
 
-      final RepositoryPackage skipAndWarnPackage =
-          createFakePackage('package_d', packagesDir);
-      _addResultFile(skipAndWarnPackage, _ResultFileType.warns,
-          contents: 'Warning');
-      _addResultFile(skipAndWarnPackage, _ResultFileType.skips,
-          contents: 'See warning');
+      final RepositoryPackage skipAndWarnPackage = createFakePackage(
+        'package_d',
+        packagesDir,
+      );
+      _addResultFile(
+        skipAndWarnPackage,
+        _ResultFileType.warns,
+        contents: 'Warning',
+      );
+      _addResultFile(
+        skipAndWarnPackage,
+        _ResultFileType.skips,
+        contents: 'See warning',
+      );
 
-      final RepositoryPackage warnPackage2 =
-          createFakePackage('package_e', packagesDir);
-      _addResultFile(warnPackage2, _ResultFileType.warns,
-          contents: 'Warning 1\nWarning 2');
+      final RepositoryPackage warnPackage2 = createFakePackage(
+        'package_e',
+        packagesDir,
+      );
+      _addResultFile(
+        warnPackage2,
+        _ResultFileType.warns,
+        contents: 'Warning 1\nWarning 2',
+      );
 
       createFakePackage('package_f', packagesDir);
 
@@ -846,40 +1048,44 @@ skip/b
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '------------------------------------------------------------',
-            'Run overview:',
-            '  package_a - ${_startWarningColor}ran (with warning)$_endColor',
-            '  package_b - ${_startSuccessColor}ran$_endColor',
-            '  package_c - ${_startSkipColor}skipped$_endColor',
-            '  package_d - ${_startSkipWithWarningColor}skipped (with warning)$_endColor',
-            '  package_e - ${_startWarningColor}ran (with warning)$_endColor',
-            '  package_f - ${_startSuccessColor}ran$_endColor',
-            '',
-            'Ran for 4 package(s) (2 with warnings)',
-            'Skipped 2 package(s) (1 with warnings)',
-            '\n',
-            '${_startSuccessColor}No issues found!$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '------------------------------------------------------------',
+          'Run overview:',
+          '  package_a - ${_startWarningColor}ran (with warning)$_endColor',
+          '  package_b - ${_startSuccessColor}ran$_endColor',
+          '  package_c - ${_startSkipColor}skipped$_endColor',
+          '  package_d - ${_startSkipWithWarningColor}skipped (with warning)$_endColor',
+          '  package_e - ${_startWarningColor}ran (with warning)$_endColor',
+          '  package_f - ${_startSuccessColor}ran$_endColor',
+          '',
+          'Ran for 4 package(s) (2 with warnings)',
+          'Skipped 2 package(s) (1 with warnings)',
+          '\n',
+          '${_startSuccessColor}No issues found!$_endColor',
+        ]),
+      );
     });
 
     test('prints exclusions as skips in long-form run summary', () async {
       createFakePackage('package_a', packagesDir);
 
       final TestPackageLoopingCommand command = createTestCommand();
-      final List<String> output =
-          await runCommand(command, arguments: <String>['--exclude=package_a']);
+      final List<String> output = await runCommand(
+        command,
+        arguments: <String>['--exclude=package_a'],
+      );
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '  package_a - ${_startSkipColor}excluded$_endColor',
-            '',
-            'Skipped 1 package(s)',
-            '\n',
-            '${_startSuccessColor}No issues found!$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '  package_a - ${_startSkipColor}excluded$_endColor',
+          '',
+          'Skipped 1 package(s)',
+          '\n',
+          '${_startSuccessColor}No issues found!$_endColor',
+        ]),
+      );
     });
 
     test('handles warnings outside of runForPackage', () async {
@@ -892,17 +1098,18 @@ skip/b
       final List<String> output = await runCommand(command);
 
       expect(
-          output,
-          containsAllInOrder(<String>[
-            '${_startWarningColor}Warning during initializeRun$_endColor',
-            '${_startHeadingColor}Running for package_a...$_endColor',
-            '${_startWarningColor}Warning during completeRun$_endColor',
-            '------------------------------------------------------------',
-            'Ran for 1 package(s)',
-            '2 warnings not associated with a package',
-            '\n',
-            '${_startSuccessColor}No issues found!$_endColor',
-          ]));
+        output,
+        containsAllInOrder(<String>[
+          '${_startWarningColor}Warning during initializeRun$_endColor',
+          '${_startHeadingColor}Running for package_a...$_endColor',
+          '${_startWarningColor}Warning during completeRun$_endColor',
+          '------------------------------------------------------------',
+          'Ran for 1 package(s)',
+          '2 warnings not associated with a package',
+          '\n',
+          '${_startSuccessColor}No issues found!$_endColor',
+        ]),
+      );
     });
   });
 }

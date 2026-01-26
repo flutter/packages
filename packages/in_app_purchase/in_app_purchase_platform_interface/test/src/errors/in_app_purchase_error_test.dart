@@ -7,7 +7,7 @@ import 'package:in_app_purchase_platform_interface/src/errors/in_app_purchase_er
 
 void main() {
   test('toString: Should return a description of the error', () {
-    final IAPError exceptionNoDetails = IAPError(
+    final exceptionNoDetails = IAPError(
       code: 'error_code',
       message: 'dummy_message',
       source: 'dummy_source',
@@ -18,7 +18,7 @@ void main() {
       'IAPError(code: error_code, source: dummy_source, message: dummy_message, details: null)',
     );
 
-    final IAPError exceptionWithDetails = IAPError(
+    final exceptionWithDetails = IAPError(
       code: 'error_code',
       message: 'dummy_message',
       source: 'dummy_source',

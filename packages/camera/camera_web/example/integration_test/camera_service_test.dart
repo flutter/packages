@@ -23,7 +23,7 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('CameraService', () {
-    const int cameraId = 1;
+    const cameraId = 1;
 
     late MockWindow mockWindow;
     late MockNavigator mockNavigator;
@@ -70,13 +70,13 @@ void main() {
         mockMediaDevices
             .getUserMedia = ([web.MediaStreamConstraints? constraints]) {
           capturedConstraints = constraints;
-          final web.MediaStream stream =
+          final stream =
               createJSInteropWrapper(FakeMediaStream(<web.MediaStreamTrack>[]))
                   as web.MediaStream;
           return Future<web.MediaStream>.value(stream).toJS;
         }.toJS;
 
-        final CameraOptions options = CameraOptions(
+        final options = CameraOptions(
           video: VideoConstraints(
             facingMode: FacingModeConstraint.exact(CameraType.user),
             width: const VideoSizeConstraint(ideal: 200),
@@ -701,6 +701,29 @@ void main() {
           when(
             jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
           ).thenReturn(false);
+
+          final String? facingMode = cameraService.getFacingModeForVideoTrack(
+            videoTrack,
+          );
+
+          expect(facingMode, isNull);
+        });
+
+        testWidgets('returns null '
+            'when the facing mode setting is empty and '
+            'the facingMode capability is null', (WidgetTester tester) async {
+          mockVideoTrack.getSettings = () {
+            return createJSInteropWrapper(FakeMediaTrackSettings())
+                as web.MediaTrackSettings;
+          }.toJS;
+          mockVideoTrack.getCapabilities = () {
+            return createJSInteropWrapper(FakeMediaTrackCapabilities())
+                as web.MediaTrackCapabilities;
+          }.toJS;
+
+          when(
+            jsUtil.hasProperty(videoTrack, 'getCapabilities'.toJS),
+          ).thenReturn(true);
 
           final String? facingMode = cameraService.getFacingModeForVideoTrack(
             videoTrack,

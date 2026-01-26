@@ -158,8 +158,8 @@ void main() {
 }
 
 Future<Size> _getImageSize(XFile file) async {
-  final Completer<Size> completer = Completer<Size>();
-  final web.HTMLImageElement image = web.HTMLImageElement();
+  final completer = Completer<Size>();
+  final image = web.HTMLImageElement();
   image
     ..onLoad.listen((web.Event event) {
       completer.complete(Size(image.width.toDouble(), image.height.toDouble()));
@@ -175,7 +175,7 @@ web.Blob _base64ToBlob(String data) {
   final List<String> arr = data.split(',');
   final String bstr = web.window.atob(arr[1]);
   int n = bstr.length;
-  final Uint8List u8arr = Uint8List(n);
+  final u8arr = Uint8List(n);
 
   while (n >= 1) {
     u8arr[n - 1] = bstr.codeUnitAt(n - 1);

@@ -1,3 +1,15 @@
+## 2.4.20
+
+* Bumps androidx.datastore:datastore from 1.1.7 to 1.2.0.
+
+## 2.4.19
+
+* Bumps kotlin_version to 2.3.0.
+
+## 2.4.18
+
+* Bumps kotlin_version to 2.2.21.
+
 ## 2.4.17
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.

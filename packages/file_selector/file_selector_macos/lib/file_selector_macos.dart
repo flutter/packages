@@ -165,7 +165,7 @@ class FileSelectorMacOS extends FileSelectorPlatform {
     if (typeGroups == null || typeGroups.isEmpty) {
       return null;
     }
-    final AllowedTypes allowedTypes = AllowedTypes(
+    final allowedTypes = AllowedTypes(
       extensions: <String>[],
       mimeTypes: <String>[],
       utis: <String>[],

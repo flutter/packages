@@ -607,7 +607,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
 
   /// The current GoRouter in the widget tree, if any.
   static GoRouter? maybeOf(BuildContext context) {
-    final InheritedGoRouter? inherited =
+    final inherited =
         context
                 .getElementForInheritedWidgetOfExactType<InheritedGoRouter>()
                 ?.widget
@@ -639,7 +639,7 @@ class GoRouter implements RouterConfig<RouteMatchList> {
     if (platformDefaultUri.hasEmptyPath) {
       platformDefaultUri = platformDefaultUri.replace(path: '/');
     }
-    final String platformDefault = platformDefaultUri.toString();
+    final platformDefault = platformDefaultUri.toString();
     if (initialLocation == null) {
       return platformDefault;
     } else if (platformDefault == '/') {

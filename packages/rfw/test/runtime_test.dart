@@ -16,10 +16,10 @@ import 'package:rfw/rfw.dart';
 
 void main() {
   testWidgets('list lookup', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(<String, Object?>{
+    final data = DynamicContent(<String, Object?>{
       'list': <Object?>[ 0, 1, 2, 3, 4 ],
     });
     await tester.pumpWidget(
@@ -46,9 +46,9 @@ void main() {
   });
 
   testWidgets('data updates', (WidgetTester tester) async {
-    int buildCount = 0;
+    var buildCount = 0;
     int? lastValue;
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), LocalWidgetLibrary(<String, LocalWidgetBuilder>{
         'Test': (BuildContext context, DataSource source) {
           buildCount += 1;
@@ -57,7 +57,7 @@ void main() {
         },
       }));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(<String, Object?>{
+    final data = DynamicContent(<String, Object?>{
       'list': <Object?>[
         <String, Object?>{ 'a': 0 },
         <String, Object?>{ 'a': 1 },
@@ -121,7 +121,7 @@ void main() {
   });
 
   testWidgets('deepClone', (WidgetTester tester) async {
-    final Map<String, Object> map = <String, Object>{
+    final map = <String, Object>{
       'outer': <String, Object>{
         'inner': true,
       }
@@ -131,10 +131,10 @@ void main() {
   });
 
   testWidgets('updateText, updateBinary, clearLibraries', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -168,10 +168,10 @@ void main() {
   });
 
   testWidgets('Runtime cached build', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -200,7 +200,7 @@ void main() {
   });
 
   testWidgets('Import loops', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['a']), parseLibraryFile('''
         import b;
       '''))
@@ -208,7 +208,7 @@ void main() {
         import a;
       '''));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -220,12 +220,12 @@ void main() {
   });
 
   testWidgets('Import loops', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['a']), parseLibraryFile('''
         import a;
       '''));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -237,12 +237,12 @@ void main() {
   });
 
   testWidgets('Missing libraries in import', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['a']), parseLibraryFile('''
         import b;
       '''));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -255,9 +255,9 @@ void main() {
   });
 
   testWidgets('Missing libraries in specified widget', (WidgetTester tester) async {
-    final Runtime runtime = Runtime();
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -270,13 +270,13 @@ void main() {
   });
 
   testWidgets('Missing libraries in import via dependency', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['a']), parseLibraryFile('''
         import b;
         widget widget = test();
       '''));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -289,10 +289,10 @@ void main() {
   });
 
   testWidgets('Missing widget', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['a']), parseLibraryFile(''));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -305,10 +305,10 @@ void main() {
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -336,10 +336,10 @@ void main() {
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -360,7 +360,7 @@ void main() {
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
           ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
     expect(runtime.libraries.length, 1);
@@ -373,10 +373,10 @@ void main() {
   });
 
   testWidgets('Runtime', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -401,10 +401,10 @@ void main() {
   });
 
   testWidgets('DynamicContent', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -443,15 +443,15 @@ void main() {
   });
 
   testWidgets('DynamicContent', (WidgetTester tester) async {
-    final DynamicContent data = DynamicContent(<String, Object?>{'hello': 'world'});
+    final data = DynamicContent(<String, Object?>{'hello': 'world'});
     expect(data.toString(), 'DynamicContent({hello: world})');
   });
 
   testWidgets('binding loop variables', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(<String, Object?>{
+    final data = DynamicContent(<String, Object?>{
       'list': <Object?>[
         <String, Object?>{
           'a': <String, Object?>{ 'b': 0xEE },
@@ -459,7 +459,7 @@ void main() {
         },
       ],
     });
-    final List<String> eventLog = <String>[];
+    final eventLog = <String>[];
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -614,10 +614,10 @@ void main() {
   });
 
   testWidgets('list lookup of esoteric values', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -735,10 +735,10 @@ void main() {
   });
 
   testWidgets('data lookup', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(<String, Object?>{
+    final data = DynamicContent(<String, Object?>{
       'map': <String, Object?>{ 'list': <Object?>[ 0xAB ] },
     });
     await tester.pumpWidget(
@@ -760,10 +760,10 @@ void main() {
   });
 
   testWidgets('args lookup', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -784,10 +784,10 @@ void main() {
   });
 
   testWidgets('state lookup', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -807,10 +807,10 @@ void main() {
   });
 
   testWidgets('switch', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -843,11 +843,11 @@ void main() {
   });
 
   testWidgets('events with arguments', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -892,10 +892,10 @@ void main() {
   });
 
   testWidgets('_CurriedWidget toStrings', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     runtime.update(const LibraryName(<String>['test']), parseLibraryFile('''
       import core;
       widget stateless = ColoredBox(color: 0xAA);
@@ -932,10 +932,10 @@ void main() {
   });
 
   testWidgets('state setting', (WidgetTester tester) async {
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['core']), createCoreWidgets());
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -1052,10 +1052,10 @@ void main() {
   });
 
   testWidgets('DataSource', (WidgetTester tester) async {
-    final Runtime runtime = Runtime();
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<String> eventLog = <String>[];
+    final data = DynamicContent();
+    final eventLog = <String>[];
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -1091,7 +1091,7 @@ void main() {
     '''));
     await tester.pump();
     expect(tester.widget<ColoredBox>(find.byType(ColoredBox)).color, const Color(0xAABBCCDD));
-    bool tested = false;
+    var tested = false;
     tester.element(find.byType(ColoredBox)).visitAncestorElements((Element node) {
       expect(node.toString(), equalsIgnoringHashCodes('_Widget(state: _WidgetState#00000(name: "local:Test"))'));
       tested = true;
@@ -1101,8 +1101,8 @@ void main() {
   });
 
   testWidgets('DynamicContent subscriptions', (WidgetTester tester) async {
-    final List<String> log = <String>[];
-    final DynamicContent data = DynamicContent(<String, Object?>{
+    final log = <String>[];
+    final data = DynamicContent(<String, Object?>{
       'a': <Object>[0, 1],
       'b': <Object>['q', 'r'],
     });
@@ -1115,12 +1115,12 @@ void main() {
   });
 
   testWidgets('Data source - optional builder works', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
       'Builder': (BuildContext context, DataSource source) {
@@ -1149,13 +1149,13 @@ void main() {
   });
 
   testWidgets('Data source - builder returns an error widget', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    const String expectedErrorMessage = 'Not a builder at [builder] (got core:Text {} {text: Not a builder :/}) for local:Builder.';
+    final data = DynamicContent();
+    const expectedErrorMessage = 'Not a builder at [builder] (got core:Text {} {text: Not a builder :/}) for local:Builder.';
 
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
@@ -1188,10 +1188,10 @@ void main() {
     ErrorWidget.builder = (FlutterErrorDetails details) {
       return const Text('oopsie!', textDirection: TextDirection.ltr);
     };
-    final Runtime runtime = Runtime()
+    final runtime = Runtime()
       ..update(const LibraryName(<String>['a']), parseLibraryFile(''));
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     await tester.pumpWidget(
       RemoteWidget(
         runtime: runtime,
@@ -1206,12 +1206,12 @@ void main() {
   });
 
   testWidgets('Widget builders - work when scope is not used', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
@@ -1239,18 +1239,18 @@ void main() {
   });
 
   testWidgets('Widget builders - work when scope is used', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
       'HelloWorld': (BuildContext context, DataSource source) {
-        const String result = 'Hello World!';
+        const result = 'Hello World!';
         return source.builder(<String>['builder'], <String, Object?>{'result': result});
       },
     }));
@@ -1273,19 +1273,19 @@ void main() {
   });
 
   testWidgets('Widget builders - work with state', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
       'IntToString': (BuildContext context, DataSource source) {
         final int value = source.v<int>(<String>['value'])!;
-        final String result = value.toString();
+        final result = value.toString();
         return source.builder(<String>['builder'], <String, Object?>{'result': result});
       },
     }));
@@ -1310,19 +1310,19 @@ void main() {
 
 
   testWidgets('Widget builders - work with data', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(<String, Object>{'value': 0});
+    final data = DynamicContent(<String, Object>{'value': 0});
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
       'IntToString': (BuildContext context, DataSource source) {
         final int value = source.v<int>(<String>['value'])!;
-        final String result = value.toString();
+        final result = value.toString();
         return source.builder(<String>['builder'], <String, Object?>{'result': result});
       },
     }));
@@ -1350,13 +1350,13 @@ void main() {
   });
 
   testWidgets('Widget builders - work with events', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
-    final List<RfwEvent> dispatchedEvents = <RfwEvent>[];
+    final data = DynamicContent();
+    final dispatchedEvents = <RfwEvent>[];
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
@@ -1392,12 +1392,12 @@ void main() {
   });
 
   testWidgets('Widget builders - works nested', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
@@ -1409,7 +1409,7 @@ void main() {
       },
       'IntToString': (BuildContext context, DataSource source) {
         final int value = source.v<int>(<String>['value'])!;
-        final String result = value.toString();
+        final result = value.toString();
         return source.builder(<String>['builder'], <String, Object?>{'result': result});
       },
     }));
@@ -1437,13 +1437,13 @@ void main() {
   });
 
   testWidgets('Widget builders - works nested dynamically', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Map<String, VoidCallback> handlers = <String, VoidCallback>{};
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final handlers = <String, VoidCallback>{};
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent(<String, Object?>{
+    final data = DynamicContent(<String, Object?>{
       'a1': 'apricot',
       'b1': 'blueberry',
     });
@@ -1505,12 +1505,12 @@ void main() {
   });
 
   testWidgets('Widget builders - switch works with builder', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());
@@ -1554,12 +1554,12 @@ void main() {
   });
 
   testWidgets('Widget builders - builder works with switch', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
     runtime.update(coreLibraryName, createCoreWidgets());
     runtime.update(localLibraryName, LocalWidgetLibrary(<String, LocalWidgetBuilder> {
@@ -1608,12 +1608,12 @@ void main() {
   });
 
   testWidgets('Widget builders - builder works with loops', (WidgetTester tester) async {
-    const LibraryName coreLibraryName = LibraryName(<String>['core']);
-    const LibraryName localLibraryName = LibraryName(<String>['local']);
-    const LibraryName remoteLibraryName = LibraryName(<String>['remote']);
-    final Runtime runtime = Runtime();
+    const coreLibraryName = LibraryName(<String>['core']);
+    const localLibraryName = LibraryName(<String>['local']);
+    const remoteLibraryName = LibraryName(<String>['remote']);
+    final runtime = Runtime();
     addTearDown(runtime.dispose);
-    final DynamicContent data = DynamicContent();
+    final data = DynamicContent();
     final Finder textFinder = find.byType(Text);
 
     runtime.update(coreLibraryName, createCoreWidgets());

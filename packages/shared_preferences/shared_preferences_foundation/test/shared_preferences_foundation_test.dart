@@ -73,7 +73,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late _MockSharedPreferencesApi api;
 
-  const Map<String, Object> flutterTestValues = <String, Object>{
+  const flutterTestValues = <String, Object>{
     'flutter.String': 'hello world',
     'flutter.Bool': true,
     'flutter.Int': 42,
@@ -81,7 +81,7 @@ void main() {
     'flutter.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> prefixTestValues = <String, Object>{
+  const prefixTestValues = <String, Object>{
     'prefix.String': 'hello world',
     'prefix.Bool': true,
     'prefix.Int': 42,
@@ -89,7 +89,7 @@ void main() {
     'prefix.StringList': <String>['foo', 'bar'],
   };
 
-  const Map<String, Object> nonPrefixTestValues = <String, Object>{
+  const nonPrefixTestValues = <String, Object>{
     'String': 'hello world',
     'Bool': true,
     'Int': 42,
@@ -97,7 +97,7 @@ void main() {
     'StringList': <String>['foo', 'bar'],
   };
 
-  final Map<String, Object> allTestValues = <String, Object>{};
+  final allTestValues = <String, Object>{};
 
   allTestValues.addAll(flutterTestValues);
   allTestValues.addAll(prefixTestValues);
@@ -116,27 +116,21 @@ void main() {
   });
 
   test('remove', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     api.items['flutter.hi'] = 'world';
     expect(await plugin.remove('flutter.hi'), isTrue);
     expect(api.items.containsKey('flutter.hi'), isFalse);
   });
 
   test('clear', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     api.items['flutter.hi'] = 'world';
     expect(await plugin.clear(), isTrue);
     expect(api.items.containsKey('flutter.hi'), isFalse);
   });
 
   test('clearWithPrefix', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -151,9 +145,7 @@ void main() {
   });
 
   test('clearWithParameters', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -174,9 +166,7 @@ void main() {
   });
 
   test('clearWithParameters with allow list', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -202,9 +192,7 @@ void main() {
   });
 
   test('getAll', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in flutterTestValues.keys) {
       api.items[key] = flutterTestValues[key]!;
     }
@@ -214,9 +202,7 @@ void main() {
   });
 
   test('getAllWithPrefix', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -226,9 +212,7 @@ void main() {
   });
 
   test('getAllWithParameters', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -240,9 +224,7 @@ void main() {
   });
 
   test('getAllWithParameters with allow list', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -259,9 +241,7 @@ void main() {
   });
 
   test('setValue', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     expect(await plugin.setValue('Bool', 'flutter.Bool', true), isTrue);
     expect(api.items['flutter.Bool'], true);
     expect(await plugin.setValue('Double', 'flutter.Double', 1.5), isTrue);
@@ -278,18 +258,14 @@ void main() {
   });
 
   test('setValue with unsupported type', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     expect(() async {
       await plugin.setValue('Map', 'flutter.key', <String, String>{});
     }, throwsA(isA<PlatformException>()));
   });
 
   test('getAllWithNoPrefix', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -299,9 +275,7 @@ void main() {
   });
 
   test('clearWithNoPrefix', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -314,9 +288,7 @@ void main() {
   });
 
   test('getAllWithNoPrefix with param', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }
@@ -328,9 +300,7 @@ void main() {
   });
 
   test('clearWithNoPrefix with param', () async {
-    final SharedPreferencesFoundation plugin = SharedPreferencesFoundation(
-      api: api,
-    );
+    final plugin = SharedPreferencesFoundation(api: api);
     for (final String key in allTestValues.keys) {
       api.items[key] = allTestValues[key]!;
     }

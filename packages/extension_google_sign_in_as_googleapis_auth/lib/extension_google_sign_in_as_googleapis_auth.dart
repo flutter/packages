@@ -16,7 +16,7 @@ extension GoogleApisGoogleSignInAuth on GoogleSignInClientAuthorization {
   /// the authorization. Passing scopes here that have not been authorized will
   /// likely result in API errors when using the client.
   gapis.AuthClient authClient({required List<String> scopes}) {
-    final gapis.AccessCredentials credentials = gapis.AccessCredentials(
+    final credentials = gapis.AccessCredentials(
       gapis.AccessToken(
         'Bearer',
         accessToken,

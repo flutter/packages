@@ -76,7 +76,7 @@ void main() {
 
     testWidgets('getContainerDirectory', (WidgetTester tester) async {
       if (Platform.isIOS) {
-        final PathProviderFoundation provider = PathProviderFoundation();
+        final provider = PathProviderFoundation();
         final String? result = await provider.getContainerPath(
           appGroupIdentifier: 'group.flutter.appGroupTest',
         );
@@ -90,11 +90,12 @@ void main() {
   // NSString, etc.) that aren't available in an actual unit test. For these
   // tests, the platform is stubbed out.
   group('unit', () {
-    final ValueVariant<FakePlatformProvider> platformVariants =
-        ValueVariant<FakePlatformProvider>(<FakePlatformProvider>{
-          FakePlatformProvider(isIOS: true),
-          FakePlatformProvider(isMacOS: true),
-        });
+    final platformVariants = ValueVariant<FakePlatformProvider>(
+      <FakePlatformProvider>{
+        FakePlatformProvider(isIOS: true),
+        FakePlatformProvider(isMacOS: true),
+      },
+    );
 
     // These tests use the actual filesystem, since an injectable filesystem
     // would add a runtime dependency to the package, so everything is contained
@@ -110,8 +111,8 @@ void main() {
     });
 
     testWidgets('getTemporaryPath iOS', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: FakePlatformProvider(isIOS: true),
       );
@@ -131,8 +132,8 @@ void main() {
     });
 
     testWidgets('getTemporaryPath macOS', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: FakePlatformProvider(isMacOS: true),
       );
@@ -153,8 +154,8 @@ void main() {
     });
 
     testWidgets('getApplicationSupportPath iOS', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: FakePlatformProvider(isIOS: true),
       );
@@ -179,8 +180,8 @@ void main() {
     });
 
     testWidgets('getApplicationSupportPath macOS', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: FakePlatformProvider(isMacOS: true),
       );
@@ -211,8 +212,8 @@ void main() {
     testWidgets(
       'getApplicationSupportPath creates the directory if necessary',
       (_) async {
-        final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-        final PathProviderFoundation pathProvider = PathProviderFoundation(
+        final mockFfiLib = MockFoundationFFI();
+        final pathProvider = PathProviderFoundation(
           ffiLib: mockFfiLib,
           platform: platformVariants.currentValue,
         );
@@ -239,8 +240,8 @@ void main() {
     );
 
     testWidgets('getLibraryPath', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: platformVariants.currentValue,
       );
@@ -260,8 +261,8 @@ void main() {
     }, variant: platformVariants);
 
     testWidgets('getApplicationDocumentsPath', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: platformVariants.currentValue,
       );
@@ -286,8 +287,8 @@ void main() {
     }, variant: platformVariants);
 
     testWidgets('getApplicationCachePath iOS', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: FakePlatformProvider(isIOS: true),
       );
@@ -312,8 +313,8 @@ void main() {
     });
 
     testWidgets('getApplicationCachePath macOS', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: FakePlatformProvider(isMacOS: true),
       );
@@ -344,8 +345,8 @@ void main() {
     testWidgets(
       'getApplicationCachePath creates the directory if necessary',
       (_) async {
-        final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-        final PathProviderFoundation pathProvider = PathProviderFoundation(
+        final mockFfiLib = MockFoundationFFI();
+        final pathProvider = PathProviderFoundation(
           ffiLib: mockFfiLib,
           platform: platformVariants.currentValue,
         );
@@ -372,8 +373,8 @@ void main() {
     );
 
     testWidgets('getDownloadsPath', (_) async {
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         platform: platformVariants.currentValue,
       );
@@ -396,14 +397,14 @@ void main() {
       final String containerPath = p.join(testRoot.path, 'container', 'path');
       final NSURL containerUrl = NSURL.fileURLWithPath(NSString(containerPath));
 
-      final MockFoundationFFI mockFfiLib = MockFoundationFFI();
-      final PathProviderFoundation pathProvider = PathProviderFoundation(
+      final mockFfiLib = MockFoundationFFI();
+      final pathProvider = PathProviderFoundation(
         ffiLib: mockFfiLib,
         containerURLForSecurityApplicationGroupIdentifier: (_) => containerUrl,
         platform: FakePlatformProvider(isIOS: true),
       );
 
-      const String appGroupIdentifier = 'group.example.test';
+      const appGroupIdentifier = 'group.example.test';
       final String? result = await pathProvider.getContainerPath(
         appGroupIdentifier: appGroupIdentifier,
       );
@@ -426,8 +427,8 @@ void _verifySampleFile(String? directoryPath, String name) {
   if (directoryPath == null) {
     return;
   }
-  final Directory directory = Directory(directoryPath);
-  final File file = File('${directory.path}${Platform.pathSeparator}$name');
+  final directory = Directory(directoryPath);
+  final file = File('${directory.path}${Platform.pathSeparator}$name');
 
   if (file.existsSync()) {
     file.deleteSync();

@@ -153,7 +153,7 @@ class VideoPlayer {
       // playback for any reason, such as permission issues.
       // The rejection handler is called with a DOMException.
       // See: https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/play
-      final web.DOMException exception = e as web.DOMException;
+      final exception = e as web.DOMException;
       _eventController.addError(
         PlatformException(code: exception.name, message: exception.message),
       );
@@ -359,8 +359,8 @@ class VideoPlayer {
 
   // Converts from [html.TimeRanges] to our own List<DurationRange>.
   List<DurationRange> _toDurationRange(web.TimeRanges buffered) {
-    final List<DurationRange> durationRange = <DurationRange>[];
-    for (int i = 0; i < buffered.length; i++) {
+    final durationRange = <DurationRange>[];
+    for (var i = 0; i < buffered.length; i++) {
       durationRange.add(
         DurationRange(
           Duration(milliseconds: (buffered.start(i) * 1000).round()),

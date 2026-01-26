@@ -241,6 +241,9 @@ abstract class InAppPurchase2API {
   List<SK2TransactionMessage> transactions();
 
   @async
+  List<SK2TransactionMessage> unfinishedTransactions();
+
+  @async
   void finish(int id);
 
   void startListeningToTransactions();

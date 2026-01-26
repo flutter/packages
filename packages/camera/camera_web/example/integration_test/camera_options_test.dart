@@ -14,7 +14,7 @@ void main() {
 
   group('CameraOptions', () {
     testWidgets('serializes correctly', (WidgetTester tester) async {
-      final CameraOptions cameraOptions = CameraOptions(
+      final cameraOptions = CameraOptions(
         audio: const AudioConstraints(enabled: true),
         video: VideoConstraints(
           facingMode: FacingModeConstraint.exact(CameraType.user),
@@ -90,7 +90,7 @@ void main() {
 
   group('VideoConstraints', () {
     testWidgets('serializes correctly', (WidgetTester tester) async {
-      final VideoConstraints videoConstraints = VideoConstraints(
+      final videoConstraints = VideoConstraints(
         facingMode: FacingModeConstraint.exact(CameraType.user),
         width: const VideoSizeConstraint(ideal: 100, maximum: 100),
         height: const VideoSizeConstraint(ideal: 50, maximum: 50),
@@ -106,6 +106,13 @@ void main() {
           'deviceId': <String, Object>{'exact': 'deviceId'},
         }),
       );
+    });
+
+    testWidgets('serializes to true when no constraints are provided', (
+      WidgetTester tester,
+    ) async {
+      const videoConstraints = VideoConstraints();
+      expect(videoConstraints.toMediaStreamConstraints().dartify(), isTrue);
     });
 
     testWidgets('supports value equality', (WidgetTester tester) async {

@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
+
 @testable import camera_avfoundation
 
 // Import Objective-C part of the implementation when SwiftPM is used.
@@ -16,9 +18,9 @@ class MockCaptureVideoDataOutput: NSObject, CaptureVideoDataOutput {
   var alwaysDiscardsLateVideoFrames = false
   var videoSettings: [String: Any]! = [:]
 
-  var connectionWithMediaTypeStub: ((AVMediaType) -> FLTCaptureConnection?)?
+  var connectionWithMediaTypeStub: ((AVMediaType) -> CaptureConnection?)?
 
-  func connection(with mediaType: AVMediaType) -> FLTCaptureConnection? {
+  func connection(with mediaType: AVMediaType) -> CaptureConnection? {
     return connectionWithMediaTypeStub?(mediaType)
   }
 

@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
 import CoreMotion
+import Flutter
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
@@ -67,20 +69,20 @@ final class DefaultCamera: NSObject, Camera {
   var capturePhotoOutput: CapturePhotoOutput
   private var captureVideoInput: CaptureInput
 
-  private var videoWriter: FLTAssetWriter?
-  private var videoWriterInput: FLTAssetWriterInput?
-  private var audioWriterInput: FLTAssetWriterInput?
-  private var assetWriterPixelBufferAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
-  private var videoAdaptor: FLTAssetWriterInputPixelBufferAdaptor?
+  private var videoWriter: AssetWriter?
+  private var videoWriterInput: AssetWriterInput?
+  private var audioWriterInput: AssetWriterInput?
+  private var assetWriterPixelBufferAdaptor: AssetWriterInputPixelBufferAdaptor?
+  private var videoAdaptor: AssetWriterInputPixelBufferAdaptor?
 
-  /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
+  /// A dictionary to retain all in-progress SavePhotoDelegates. The key of the dictionary is the
   /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
-  /// FLTSavePhotoDelegate that handles the result of each photo capture operation. Note that photo
+  /// SavePhotoDelegate that handles the result of each photo capture operation. Note that photo
   /// capture operations may overlap, so FLTCam has to keep track of multiple delegates in progress,
   /// instead of just a single delegate reference.
-  private(set) var inProgressSavePhotoDelegates = [Int64: FLTSavePhotoDelegate]()
+  private(set) var inProgressSavePhotoDelegates = [Int64: SavePhotoDelegate]()
 
-  private var imageStreamHandler: FLTImageStreamHandler?
+  private var imageStreamHandler: ImageStreamHandler?
 
   private var previewSize: CGSize?
   var deviceOrientation: UIDeviceOrientation {
@@ -309,11 +311,11 @@ final class DefaultCamera: NSObject, Camera {
   /// Finds the highest available resolution in terms of pixel count for the given device.
   /// Preferred are formats with the same subtype as current activeFormat.
   private func highestResolutionFormat(forCaptureDevice captureDevice: CaptureDevice)
-    -> FLTCaptureDeviceFormat?
+    -> CaptureDeviceFormat?
   {
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
       captureDevice.flutterActiveFormat.formatDescription)
-    var bestFormat: FLTCaptureDeviceFormat? = nil
+    var bestFormat: CaptureDeviceFormat? = nil
     var maxPixelCount: UInt = 0
     var isBestSubTypePreferred = false
 
@@ -437,7 +439,7 @@ final class DefaultCamera: NSObject, Camera {
       focusPointSupported: captureDevice.isFocusPointOfInterestSupported
     )
 
-    FLTEnsureToRunOnMainQueue { [weak self] in
+    ensureToRunOnMainQueue { [weak self] in
       self?.dartAPI?.initialized(with: state) { _ in
         // Ignore any errors, as this is just an event broadcast.
       }
@@ -510,7 +512,7 @@ final class DefaultCamera: NSObject, Camera {
     // didOutputSampleBuffer had chance to call startWriting and lag at start of video
     // https://github.com/flutter/flutter/issues/132016
     // https://github.com/flutter/flutter/issues/151319
-    videoWriter?.startWriting()
+    let _ = videoWriter?.startWriting()
     isFirstVideoSample = true
     isRecording = true
     isRecordingPaused = false
@@ -524,7 +526,7 @@ final class DefaultCamera: NSObject, Camera {
   private func setupWriter(forPath path: String) -> Bool {
     setUpCaptureSessionForAudioIfNeeded()
 
-    let videoWriter: FLTAssetWriter
+    let videoWriter: AssetWriter
 
     do {
       videoWriter = try assetWriterFactory(URL(fileURLWithPath: path), .mp4)
@@ -668,7 +670,7 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     if flashMode != .torch {
-      settings.flashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(flashMode)
+      settings.flashMode = getAVCaptureFlashMode(for: flashMode)
     }
 
     let path: String
@@ -682,7 +684,7 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let savePhotoDelegate = FLTSavePhotoDelegate(
+    let savePhotoDelegate = SavePhotoDelegate(
       path: path,
       ioQueue: photoIOQueue,
       completionHandler: { [weak self] path, error in
@@ -774,7 +776,7 @@ final class DefaultCamera: NSObject, Camera {
   }
 
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
-    let orientation = FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation)
+    let orientation = getUIDeviceOrientation(for: pigeonOrientation)
     if lockedCaptureOrientation != orientation {
       lockedCaptureOrientation = orientation
       updateOrientation()
@@ -987,7 +989,7 @@ final class DefaultCamera: NSObject, Camera {
             details: nil))
         return
       }
-      let avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode)
+      let avFlashMode = getAVCaptureFlashMode(for: mode)
       guard capturePhotoOutput.supportedFlashModes.contains(avFlashMode)
       else {
         completion(
@@ -1102,14 +1104,14 @@ final class DefaultCamera: NSObject, Camera {
   ) {
     startImageStream(
       with: messenger,
-      imageStreamHandler: FLTImageStreamHandler(captureSessionQueue: captureSessionQueue),
+      imageStreamHandler: DefaultImageStreamHandler(captureSessionQueue: captureSessionQueue),
       completion: completion
     )
   }
 
   func startImageStream(
     with messenger: FlutterBinaryMessenger,
-    imageStreamHandler: FLTImageStreamHandler,
+    imageStreamHandler: ImageStreamHandler & NSObjectProtocol,
     completion: @escaping (FlutterError?) -> Void
   ) {
     if isStreamingImages {
@@ -1122,7 +1124,7 @@ final class DefaultCamera: NSObject, Camera {
       name: "plugins.flutter.io/camera_avfoundation/imageStream",
       binaryMessenger: messenger
     )
-    let threadSafeEventChannel = FLTThreadSafeEventChannel(eventChannel: eventChannel)
+    let threadSafeEventChannel = ThreadSafeEventChannel(eventChannel: eventChannel)
 
     self.imageStreamHandler = imageStreamHandler
     threadSafeEventChannel.setStreamHandler(imageStreamHandler) { [weak self] in
@@ -1218,8 +1220,8 @@ final class DefaultCamera: NSObject, Camera {
         let nextSampleTime = CMTimeSubtract(lastVideoSampleTime, videoTimeOffset)
         // do not append sample buffer when readyForMoreMediaData is NO to avoid crash
         // https://github.com/flutter/flutter/issues/132073
-        if videoWriterInput?.readyForMoreMediaData ?? false {
-          videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
+        if videoWriterInput?.isReadyForMoreMediaData ?? false {
+          let _ = videoAdaptor?.append(nextBuffer!, withPresentationTime: nextSampleTime)
         }
       } else {
         let dur = CMSampleBufferGetDuration(sampleBuffer)
@@ -1368,7 +1370,7 @@ final class DefaultCamera: NSObject, Camera {
       }
       return
     }
-    if audioWriterInput?.readyForMoreMediaData ?? false {
+    if audioWriterInput?.isReadyForMoreMediaData ?? false {
       if !(audioWriterInput?.append(sampleBuffer) ?? false) {
         reportErrorMessage("Unable to write to audio input")
       }
@@ -1409,7 +1411,7 @@ final class DefaultCamera: NSObject, Camera {
   ///
   /// Can be called from any thread.
   private func reportErrorMessage(_ errorMessage: String) {
-    FLTEnsureToRunOnMainQueue { [weak self] in
+    ensureToRunOnMainQueue { [weak self] in
       self?.dartAPI?.reportError(errorMessage) { _ in
         // Ignore any errors, as this is just an event broadcast.
       }

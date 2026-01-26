@@ -15,12 +15,12 @@ void main() {
     });
 
     test('constructor() should return valid QuickActions instance', () {
-      const QuickActions quickActions = QuickActions();
+      const quickActions = QuickActions();
       expect(quickActions, isNotNull);
     });
 
     test('initialize() PlatformInterface', () async {
-      const QuickActions quickActions = QuickActions();
+      const quickActions = QuickActions();
       void handler(String type) {}
 
       await quickActions.initialize(handler);
@@ -28,7 +28,7 @@ void main() {
     });
 
     test('setShortcutItems() PlatformInterface', () {
-      const QuickActions quickActions = QuickActions();
+      const quickActions = QuickActions();
       void handler(String type) {}
       quickActions.initialize(handler);
       quickActions.setShortcutItems(<ShortcutItem>[]);
@@ -40,7 +40,7 @@ void main() {
     });
 
     test('clearShortcutItems() PlatformInterface', () {
-      const QuickActions quickActions = QuickActions();
+      const quickActions = QuickActions();
       void handler(String type) {}
 
       quickActions.initialize(handler);

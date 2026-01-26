@@ -12,7 +12,7 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
   const GetMultipleDirectoriesPage({super.key});
 
   Future<void> _getDirectoryPaths(BuildContext context) async {
-    const String confirmButtonText = 'Choose';
+    const confirmButtonText = 'Choose';
     final List<String?> directoryPaths = await getDirectoryPaths(
       confirmButtonText: confirmButtonText,
     );
@@ -20,8 +20,8 @@ class GetMultipleDirectoriesPage extends StatelessWidget {
       // Operation was canceled by the user.
       return;
     }
-    String paths = '';
-    for (final String? path in directoryPaths) {
+    var paths = '';
+    for (final path in directoryPaths) {
       paths += '${path!} \n';
     }
     if (context.mounted) {

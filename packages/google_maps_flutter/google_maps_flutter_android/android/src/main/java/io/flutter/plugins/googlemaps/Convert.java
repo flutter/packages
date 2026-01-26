@@ -47,21 +47,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 /** Conversions between JSON-like values and GoogleMaps data types. */
 class Convert {
-  // These constants must match the corresponding constants in serialization.dart
-  public static final String HEATMAP_ID_KEY = "heatmapId";
-  public static final String HEATMAP_DATA_KEY = "data";
-  public static final String HEATMAP_GRADIENT_KEY = "gradient";
-  public static final String HEATMAP_MAX_INTENSITY_KEY = "maxIntensity";
-  public static final String HEATMAP_OPACITY_KEY = "opacity";
-  public static final String HEATMAP_RADIUS_KEY = "radius";
-  public static final String HEATMAP_GRADIENT_COLORS_KEY = "colors";
-  public static final String HEATMAP_GRADIENT_START_POINTS_KEY = "startPoints";
-  public static final String HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY = "colorMapSize";
-
   private static BitmapDescriptor toBitmapDescriptor(
       Messages.PlatformBitmap platformBitmap, AssetManager assetManager, float density) {
     return toBitmapDescriptor(
@@ -328,14 +316,6 @@ class Convert {
         "PlatformCameraUpdate's cameraUpdate field must be one of the PlatformCameraUpdate... case classes.");
   }
 
-  private static double toDouble(Object o) {
-    return ((Number) o).doubleValue();
-  }
-
-  private static float toFloat(Object o) {
-    return ((Number) o).floatValue();
-  }
-
   private static @Nullable Float nullableDoubleToFloat(@Nullable Double d) {
     return (d == null) ? null : d.floatValue();
   }
@@ -437,20 +417,15 @@ class Convert {
         .build();
   }
 
-  static LatLng toLatLng(Object o) {
-    final List<?> data = toList(o);
-    return new LatLng(toDouble(data.get(0)), toDouble(data.get(1)));
-  }
-
   /**
-   * Converts a list of serialized weighted lat/lng to a list of WeightedLatLng.
+   * Converts a Pigeon weighted lat/lng to a WeightedLatLng.
    *
-   * @param o The serialized list of weighted lat/lng.
+   * @param weightedLatLng The Pigeon weighted lat/lng.
    * @return The list of WeightedLatLng.
    */
-  static WeightedLatLng toWeightedLatLng(Object o) {
-    final List<?> data = toList(o);
-    return new WeightedLatLng(toLatLng(data.get(0)), toDouble(data.get(1)));
+  static WeightedLatLng weightedLatLngFromPigeon(Messages.PlatformWeightedLatLng weightedLatLng) {
+    return new WeightedLatLng(
+        latLngFromPigeon(weightedLatLng.getPoint()), weightedLatLng.getWeight());
   }
 
   static Point pointFromPigeon(Messages.PlatformPoint point) {
@@ -467,14 +442,6 @@ class Convert {
 
   static Messages.PlatformPoint pointToPigeon(Point point) {
     return new Messages.PlatformPoint.Builder().setX((long) point.x).setY((long) point.y).build();
-  }
-
-  private static List<?> toList(Object o) {
-    return (List<?>) o;
-  }
-
-  private static Map<?, ?> toMap(Object o) {
-    return (Map<?, ?>) o;
   }
 
   private static Bitmap toBitmap(byte[] bmpData) {
@@ -606,7 +573,7 @@ class Convert {
     sink.setFlat(marker.getFlat());
     sink.setIcon(toBitmapDescriptor(marker.getIcon(), assetManager, density, wrapper));
     interpretInfoWindowOptions(sink, marker.getInfoWindow());
-    sink.setPosition(toLatLng(marker.getPosition().toList()));
+    sink.setPosition(latLngFromPigeon(marker.getPosition()));
     sink.setRotation(marker.getRotation().floatValue());
     sink.setVisible(marker.getVisible());
     sink.setZIndex(marker.getZIndex().floatValue());
@@ -627,8 +594,8 @@ class Convert {
     sink.setConsumeTapEvents(polygon.getConsumesTapEvents());
     sink.setGeodesic(polygon.getGeodesic());
     sink.setVisible(polygon.getVisible());
-    sink.setFillColor(polygon.getFillColor().intValue());
-    sink.setStrokeColor(polygon.getStrokeColor().intValue());
+    sink.setFillColor(polygon.getFillColor().getArgbValue().intValue());
+    sink.setStrokeColor(polygon.getStrokeColor().getArgbValue().intValue());
     sink.setStrokeWidth(polygon.getStrokeWidth());
     sink.setZIndex(polygon.getZIndex());
     sink.setPoints(pointsFromPigeon(polygon.getPoints()));
@@ -654,7 +621,7 @@ class Convert {
       AssetManager assetManager,
       float density) {
     sink.setConsumeTapEvents(polyline.getConsumesTapEvents());
-    sink.setColor(polyline.getColor().intValue());
+    sink.setColor(polyline.getColor().getArgbValue().intValue());
     sink.setEndCap(capFromPigeon(polyline.getEndCap(), assetManager, density));
     sink.setStartCap(capFromPigeon(polyline.getStartCap(), assetManager, density));
     sink.setGeodesic(polyline.getGeodesic());
@@ -669,11 +636,11 @@ class Convert {
 
   static String interpretCircleOptions(Messages.PlatformCircle circle, CircleOptionsSink sink) {
     sink.setConsumeTapEvents(circle.getConsumeTapEvents());
-    sink.setFillColor(circle.getFillColor().intValue());
-    sink.setStrokeColor(circle.getStrokeColor().intValue());
+    sink.setFillColor(circle.getFillColor().getArgbValue().intValue());
+    sink.setStrokeColor(circle.getStrokeColor().getArgbValue().intValue());
     sink.setStrokeWidth(circle.getStrokeWidth());
     sink.setZIndex(circle.getZIndex().floatValue());
-    sink.setCenter(toLatLng(circle.getCenter().toList()));
+    sink.setCenter(latLngFromPigeon(circle.getCenter()));
     sink.setRadius(circle.getRadius());
     sink.setVisible(circle.getVisible());
     return circle.getCircleId();
@@ -699,33 +666,19 @@ class Convert {
    * @return the heatmapId.
    * @throws IllegalArgumentException if heatmapId is null.
    */
-  static String interpretHeatmapOptions(Map<String, ?> data, HeatmapOptionsSink sink) {
-    final Object rawWeightedData = data.get(HEATMAP_DATA_KEY);
-    if (rawWeightedData != null) {
-      sink.setWeightedData(toWeightedData(rawWeightedData));
-    }
-    final Object gradient = data.get(HEATMAP_GRADIENT_KEY);
+  static String interpretHeatmapOptions(Messages.PlatformHeatmap heatmap, HeatmapOptionsSink sink) {
+    sink.setWeightedData(weightedDataFromPigeon(heatmap.getData()));
+    final Messages.PlatformHeatmapGradient gradient = heatmap.getGradient();
     if (gradient != null) {
-      sink.setGradient(toGradient(gradient));
+      sink.setGradient(gradientFromPigeon(gradient));
     }
-    final Object maxIntensity = data.get(HEATMAP_MAX_INTENSITY_KEY);
+    final Double maxIntensity = heatmap.getMaxIntensity();
     if (maxIntensity != null) {
-      sink.setMaxIntensity(toDouble(maxIntensity));
+      sink.setMaxIntensity(maxIntensity);
     }
-    final Object opacity = data.get(HEATMAP_OPACITY_KEY);
-    if (opacity != null) {
-      sink.setOpacity(toDouble(opacity));
-    }
-    final Object radius = data.get(HEATMAP_RADIUS_KEY);
-    if (radius != null) {
-      sink.setRadius(toInt(radius));
-    }
-    final String heatmapId = (String) data.get(HEATMAP_ID_KEY);
-    if (heatmapId == null) {
-      throw new IllegalArgumentException("heatmapId was null");
-    } else {
-      return heatmapId;
-    }
+    sink.setOpacity(heatmap.getOpacity());
+    sink.setRadius(heatmap.getRadius().intValue());
+    return heatmap.getHeatmapId();
   }
 
   static List<LatLng> pointsFromPigeon(List<Messages.PlatformLatLng> data) {
@@ -740,57 +693,40 @@ class Convert {
   /**
    * Converts the given object to a list of WeightedLatLng objects.
    *
-   * @param o the object to convert. The object is expected to be a List of serialized weighted
-   *     lat/lng.
+   * @param data the list of Pigeon weighted lat/lng objects to convert.
    * @return a list of WeightedLatLng objects.
    */
   @VisibleForTesting
-  static List<WeightedLatLng> toWeightedData(Object o) {
-    final List<?> data = toList(o);
+  static List<WeightedLatLng> weightedDataFromPigeon(List<Messages.PlatformWeightedLatLng> data) {
     final List<WeightedLatLng> weightedData = new ArrayList<>(data.size());
 
-    for (Object rawWeightedPoint : data) {
-      weightedData.add(toWeightedLatLng(rawWeightedPoint));
+    for (Messages.PlatformWeightedLatLng rawWeightedPoint : data) {
+      weightedData.add(weightedLatLngFromPigeon(rawWeightedPoint));
     }
     return weightedData;
   }
 
   /**
-   * Converts the given object to a Gradient object.
+   * Converts the given Pigeon gradient to a Gradient object.
    *
-   * @param o the object to convert. The object is expected to be a Map containing the gradient
-   *     options. The gradient map is expected to have the following structure:
-   *     <pre>{@code
-   * {
-   *   "colors": List<Integer>,
-   *   "startPoints": List<Float>,
-   *   "colorMapSize": Integer
-   * }
-   * }</pre>
-   *
+   * @param gradient the Pigeon gradient to convert.
    * @return a Gradient object.
    */
   @VisibleForTesting
-  static Gradient toGradient(Object o) {
-    final Map<?, ?> data = toMap(o);
-
-    final List<?> colorData = toList(data.get(HEATMAP_GRADIENT_COLORS_KEY));
-    assert colorData != null;
+  static Gradient gradientFromPigeon(Messages.PlatformHeatmapGradient gradient) {
+    final List<Messages.PlatformColor> colorData = gradient.getColors();
     final int[] colors = new int[colorData.size()];
     for (int i = 0; i < colorData.size(); i++) {
-      colors[i] = toInt(colorData.get(i));
+      colors[i] = colorData.get(i).getArgbValue().intValue();
     }
 
-    final List<?> startPointData = toList(data.get(HEATMAP_GRADIENT_START_POINTS_KEY));
-    assert startPointData != null;
+    final List<Double> startPointData = gradient.getStartPoints();
     final float[] startPoints = new float[startPointData.size()];
     for (int i = 0; i < startPointData.size(); i++) {
-      startPoints[i] = toFloat(startPointData.get(i));
+      startPoints[i] = startPointData.get(i).floatValue();
     }
 
-    final int colorMapSize = toInt(data.get(HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY));
-
-    return new Gradient(colors, startPoints, colorMapSize);
+    return new Gradient(colors, startPoints, gradient.getColorMapSize().intValue());
   }
 
   private static List<List<LatLng>> toHoles(List<List<Messages.PlatformLatLng>> data) {
