@@ -202,40 +202,40 @@ final class PhotoCaptureTests: XCTestCase {
     waitForExpectations(timeout: 30, handler: nil)
   }
 
-    func testCaptureToFile_mustSavePhotoToCameraPicturesDirectory() {
-        let expectedPath = "/tmp/camera/pictures/"
-        let expectation = self.expectation(
-            description: "Photo must be saved to \(expectedPath) directory.")
-        
-        let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
-        captureSessionQueue.setSpecific(
-            key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
-        let cam = createCam(with: captureSessionQueue)
-        
-        let mockOutput = MockCapturePhotoOutput()
-        mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
-            let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
-            let ioQueue = DispatchQueue(label: "io_queue")
-            ioQueue.async {
-                delegate?.completionHandler(delegate?.filePath, nil)
-            }
-        }
-        cam.capturePhotoOutput = mockOutput
-        
-        captureSessionQueue.async {
-            cam.captureToFile { filePath, error in
-                XCTAssertNil(error)
-                XCTAssertNotNil(filePath)
-                
-                if let filePath = filePath {
-                    XCTAssertTrue(
-                        filePath.contains(expectedPath)
-                    )
-                    expectation.fulfill()
-                }
-            }
-        }
-        
-        waitForExpectations(timeout: 30, handler: nil)
+  func testCaptureToFile_mustSavePhotoToCameraPicturesDirectory() {
+    let expectedPath = "/tmp/camera/pictures/"
+    let expectation = self.expectation(
+      description: "Photo must be saved to \(expectedPath) directory.")
+
+    let captureSessionQueue = DispatchQueue(label: "capture_session_queue")
+    captureSessionQueue.setSpecific(
+      key: captureSessionQueueSpecificKey, value: captureSessionQueueSpecificValue)
+    let cam = createCam(with: captureSessionQueue)
+
+    let mockOutput = MockCapturePhotoOutput()
+    mockOutput.capturePhotoWithSettingsStub = { settings, photoDelegate in
+      let delegate = cam.inProgressSavePhotoDelegates[settings.uniqueID]
+      let ioQueue = DispatchQueue(label: "io_queue")
+      ioQueue.async {
+        delegate?.completionHandler(delegate?.filePath, nil)
+      }
     }
+    cam.capturePhotoOutput = mockOutput
+
+    captureSessionQueue.async {
+      cam.captureToFile { filePath, error in
+        XCTAssertNil(error)
+        XCTAssertNotNil(filePath)
+
+        if let filePath = filePath {
+          XCTAssertTrue(
+            filePath.contains(expectedPath)
+          )
+          expectation.fulfill()
+        }
+      }
+    }
+
+    waitForExpectations(timeout: 30, handler: nil)
+  }
 }
