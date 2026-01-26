@@ -3061,6 +3061,128 @@ class PartK {
     );
   }
 
+  /// Applies the Kedebideri font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Kedebideri
+  static TextStyle kedebideri({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '73b82b300a9ee508aab2af5e13357dcbe96a47718ebe52f819569d8467d585bb',
+        38992,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5c82df34b417156bb3dbd865ec0e3c3cfde3719debdba61cf3f60cb8a253bd62',
+        38896,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5da8416672b031ba1f194ff1b8bb03e5144b9d2732d3cc93ce22cb8adfca4baf',
+        38808,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0a95efc18c72150feff6a41fc146aedc22f1f45d94aece3f95455d050a787e58',
+        38752,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b9af140901b6029f15e2739537107768309e2eead17976728501527bd734cdca',
+        38736,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '7deba4e43c23d9bcdd5f60173b84b5e4d28b23c0777e158ee4d483e891bb89c2',
+        38724,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Kedebideri',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Kedebideri font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Kedebideri
+  static TextTheme kedebideriTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: kedebideri(textStyle: textTheme.displayLarge),
+      displayMedium: kedebideri(textStyle: textTheme.displayMedium),
+      displaySmall: kedebideri(textStyle: textTheme.displaySmall),
+      headlineLarge: kedebideri(textStyle: textTheme.headlineLarge),
+      headlineMedium: kedebideri(textStyle: textTheme.headlineMedium),
+      headlineSmall: kedebideri(textStyle: textTheme.headlineSmall),
+      titleLarge: kedebideri(textStyle: textTheme.titleLarge),
+      titleMedium: kedebideri(textStyle: textTheme.titleMedium),
+      titleSmall: kedebideri(textStyle: textTheme.titleSmall),
+      bodyLarge: kedebideri(textStyle: textTheme.bodyLarge),
+      bodyMedium: kedebideri(textStyle: textTheme.bodyMedium),
+      bodySmall: kedebideri(textStyle: textTheme.bodySmall),
+      labelLarge: kedebideri(textStyle: textTheme.labelLarge),
+      labelMedium: kedebideri(textStyle: textTheme.labelMedium),
+      labelSmall: kedebideri(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Kelly Slab font family from Google Fonts to the
   /// given [textStyle].
   ///
