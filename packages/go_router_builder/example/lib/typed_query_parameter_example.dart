@@ -30,15 +30,17 @@ class IntRoute extends GoRouteData with $IntRoute {
     @TypedQueryParameter(name: 'intField') this.intField,
     @TypedQueryParameter(name: 'int_field_with_default_value')
     this.intFieldWithDefaultValue = 1,
+    @TypedQueryParameter(name: 'int field') this.intFieldWithSpace,
   });
 
   final int? intField;
   final int intFieldWithDefaultValue;
-
+  final int? intFieldWithSpace;
   @override
   Widget build(BuildContext context, GoRouterState state) => Screen(
     intField: intField,
     intFieldWithDefaultValue: intFieldWithDefaultValue,
+    intFieldWithSpace: intFieldWithSpace,
   );
 }
 
@@ -46,11 +48,13 @@ class Screen extends StatelessWidget {
   const Screen({
     required this.intField,
     required this.intFieldWithDefaultValue,
+    this.intFieldWithSpace,
     super.key,
   });
 
   final int? intField;
   final int intFieldWithDefaultValue;
+  final int? intFieldWithSpace;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -70,6 +74,7 @@ class Screen extends StatelessWidget {
               IntRoute(
                 intField: newValue,
                 intFieldWithDefaultValue: intFieldWithDefaultValue,
+                intFieldWithSpace: intFieldWithSpace,
               ).go(context);
             },
           ),
@@ -82,6 +87,20 @@ class Screen extends StatelessWidget {
               IntRoute(
                 intField: intField,
                 intFieldWithDefaultValue: newValue,
+                intFieldWithSpace: intFieldWithSpace,
+              ).go(context);
+            },
+          ),
+          ListTile(
+            title: const Text('intFieldWithSpace:'),
+            subtitle: Text('$intFieldWithSpace'),
+            trailing: const Icon(Icons.add),
+            onTap: () {
+              final int newValue = (intFieldWithSpace ?? 0) + 1;
+              IntRoute(
+                intField: intField,
+                intFieldWithDefaultValue: intFieldWithDefaultValue,
+                intFieldWithSpace: newValue,
               ).go(context);
             },
           ),
