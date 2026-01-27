@@ -26,8 +26,9 @@ class TestAdsLoadedData: IMAAdsLoadedData {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdsLoadedData {
     let instance =
-      TestAdsLoadedData.perform(NSSelectorFromString("new")).takeRetainedValue()
-      as! TestAdsLoadedData
+      try! #require(
+        TestAdsLoadedData.perform(NSSelectorFromString("new")).takeRetainedValue()
+          as? TestAdsLoadedData)
     return instance
   }
 

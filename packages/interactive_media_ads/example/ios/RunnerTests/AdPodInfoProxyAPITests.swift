@@ -80,7 +80,8 @@ class TestAdPodInfo: IMAAdPodInfo {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdPodInfo {
     let instance =
-      TestAdPodInfo.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdPodInfo
+      try! #require(
+        TestAdPodInfo.perform(NSSelectorFromString("new")).takeRetainedValue() as? TestAdPodInfo)
     return instance
   }
 

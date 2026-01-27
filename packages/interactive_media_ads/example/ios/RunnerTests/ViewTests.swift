@@ -13,8 +13,7 @@ struct ViewTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIView(registrar)
 
-    let instance = try #require(
-      try api.pigeonDelegate.pigeonDefaultConstructor(
-        pigeonApi: api))
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api)
   }
 }

@@ -47,7 +47,8 @@ class TestAdError: IMAAdError {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> IMAAdError {
     let instance =
-      TestAdError.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdError
+      try! #require(
+        TestAdError.perform(NSSelectorFromString("new")).takeRetainedValue() as? TestAdError)
     return instance
   }
 

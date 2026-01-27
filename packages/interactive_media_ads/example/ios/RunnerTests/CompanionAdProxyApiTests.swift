@@ -59,7 +59,9 @@ class TestCompanionAd: IMACompanionAd {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestCompanionAd {
     let instance =
-      TestCompanionAd.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestCompanionAd
+      try! #require(
+        TestCompanionAd.perform(NSSelectorFromString("new")).takeRetainedValue() as? TestCompanionAd
+      )
     return instance
   }
 

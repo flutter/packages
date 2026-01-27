@@ -27,7 +27,7 @@ struct AdsManagerDelegateTests {
     let event = TestAdEvent.customInit()
     instance.adsManager(manager, didReceive: event)
 
-    #expect(api.didReceiveAdEventArgs as! [AnyHashable] == [manager, event])
+    #expect(api.didReceiveAdEventArgs == [manager, event])
   }
 
   @Test func didReceiveAdError() {
@@ -38,7 +38,7 @@ struct AdsManagerDelegateTests {
     let error = TestAdError.customInit()
     instance.adsManager(manager, didReceive: error)
 
-    #expect(api.didReceiveAdErrorArgs as! [AnyHashable] == [manager, error])
+    #expect(api.didReceiveAdErrorArgs == [manager, error])
   }
 
   @Test func didRequestContentPause() {
@@ -48,7 +48,7 @@ struct AdsManagerDelegateTests {
     let manager = TestAdsManager.customInit()
     instance.adsManagerDidRequestContentPause(manager)
 
-    #expect(api.didRequestContentPauseArgs as! [AnyHashable] == [manager])
+    #expect(api.didRequestContentPauseArgs == [manager])
   }
 
   @Test func didRequestContentResume() {
@@ -58,7 +58,7 @@ struct AdsManagerDelegateTests {
     let manager = TestAdsManager.customInit()
     instance.adsManagerDidRequestContentResume(manager)
 
-    #expect(api.didRequestContentResumeArgs as! [AnyHashable] == [manager])
+    #expect(api.didRequestContentResumeArgs == [manager])
   }
 }
 

@@ -39,7 +39,8 @@ struct AdEventTests {
 
     let value = try api.pigeonDelegate.adData(pigeonApi: api, pigeonInstance: instance)
 
-    #expect((value as! [String: String]) == ["my": "string"])
+    let adData = try #require(value as? [String: String])
+    #expect(adData == ["my": "string"])
   }
 
   @Test func ad() throws {
@@ -58,7 +59,8 @@ class TestAdEvent: IMAAdEvent {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdEvent {
     let instance =
-      TestAdEvent.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdEvent
+      try! #require(
+        TestAdEvent.perform(NSSelectorFromString("new")).takeRetainedValue() as? TestAdEvent)
     instance._ad = TestAd.customInit()
     return instance
   }
@@ -78,6 +80,6 @@ class TestAdEvent: IMAAdEvent {
   }
 
   override var ad: IMAAd? {
-    return _ad!
+    return _ad
   }
 }

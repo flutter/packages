@@ -27,7 +27,7 @@ struct AdsLoaderDelegateTests {
     let data = TestAdsLoadedData()
     instance.adsLoader(adsLoader, adsLoadedWith: data)
 
-    #expect(api.adLoaderLoadedWithArgs as! [AnyHashable] == [adsLoader, data])
+    #expect(api.adLoaderLoadedWithArgs == [adsLoader, data])
   }
 
   @Test func adsLoaderFailedWithErrorData() {
@@ -38,13 +38,13 @@ struct AdsLoaderDelegateTests {
     let error = TestAdLoadingErrorData.customInit()
     instance.adsLoader(adsLoader, failedWith: error)
 
-    #expect(api.adsLoaderFailedWithErrorDataArgs as! [AnyHashable] == [adsLoader, error])
+    #expect(api.adsLoaderFailedWithErrorDataArgs == [adsLoader, error])
   }
 }
 
 class TestAdsLoaderDelegateApi: PigeonApiProtocolIMAAdsLoaderDelegate {
-  var adLoaderLoadedWithArgs: [AnyHashable?]? = nil
-  var adsLoaderFailedWithErrorDataArgs: [AnyHashable?]? = nil
+  var adLoaderLoadedWithArgs: [AnyHashable]? = nil
+  var adsLoaderFailedWithErrorDataArgs: [AnyHashable]? = nil
 
   func adLoaderLoadedWith(
     pigeonInstance pigeonInstanceArg: IMAAdsLoaderDelegate, loader loaderArg: IMAAdsLoader,

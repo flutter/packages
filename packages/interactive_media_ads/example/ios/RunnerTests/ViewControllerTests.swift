@@ -13,9 +13,7 @@ struct ViewControllerTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
-    let instance = try #require(
-      try api.pigeonDelegate.pigeonDefaultConstructor(
-        pigeonApi: api))
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
   }
 
   @Test func view() throws {
@@ -23,21 +21,22 @@ struct ViewControllerTests {
     let api = registrar.apiDelegate.pigeonApiUIViewController(registrar)
 
     let instance = UIViewController()
-    let view = try #require(try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance))
+    let view = try api.pigeonDelegate.view(pigeonApi: api, pigeonInstance: instance)
   }
 
-  @Test func viewDidAppear() {
+  @Test func viewDidAppear() throws {
     let api = TestUIViewControllerApi()
     let instance = ViewControllerImpl(api: api)
 
     instance.viewDidAppear(true)
 
-    #expect(api.viewDidAppearArgs as! [AnyHashable] == [instance, true])
+    let args = try #require(api.viewDidAppearArgs)
+    #expect(args == [instance, true])
   }
 }
 
 class TestUIViewControllerApi: PigeonApiProtocolUIViewController {
-  var viewDidAppearArgs: [AnyHashable?]? = nil
+  var viewDidAppearArgs: [AnyHashable]? = nil
 
   func viewDidAppear(
     pigeonInstance pigeonInstanceArg: UIViewController, animated animatedArg: Bool,

@@ -36,8 +36,9 @@ class TestUniversalAdID: IMAUniversalAdID {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestUniversalAdID {
     let instance =
-      TestUniversalAdID.perform(NSSelectorFromString("new")).takeRetainedValue()
-      as! TestUniversalAdID
+      try! #require(
+        TestUniversalAdID.perform(NSSelectorFromString("new")).takeRetainedValue()
+          as? TestUniversalAdID)
     return instance
   }
 

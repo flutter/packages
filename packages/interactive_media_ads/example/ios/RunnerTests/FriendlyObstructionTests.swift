@@ -15,9 +15,8 @@ struct FriendlyObstructionProxyApiTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAFriendlyObstruction(registrar)
 
-    let instance = try #require(
-      try api.pigeonDelegate.pigeonDefaultConstructor(
-        pigeonApi: api, view: UIView(), purpose: .mediaControls, detailedReason: "myString"))
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
+      pigeonApi: api, view: UIView(), purpose: .mediaControls, detailedReason: "myString")
   }
 
   @Test func pigeonDefaultConstructorWithUnknownPurpose() throws {

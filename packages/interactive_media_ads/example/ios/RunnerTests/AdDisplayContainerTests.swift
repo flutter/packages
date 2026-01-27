@@ -81,7 +81,7 @@ struct AdDisplayContainerTests {
     try api.pigeonDelegate.registerFriendlyObstruction(
       pigeonApi: api, pigeonInstance: instance, friendlyObstruction: friendlyObstruction)
 
-    #expect(instance.registerFriendlyObstructionArgs as! [AnyHashable] == [friendlyObstruction])
+    #expect(instance.registerFriendlyObstructionArgs == [friendlyObstruction])
   }
 
   @Test func unregisterAllFriendlyObstructions() throws {
@@ -98,7 +98,7 @@ struct AdDisplayContainerTests {
 }
 
 class TestAdDisplayContainer: IMAAdDisplayContainer, @unchecked Sendable {
-  var registerFriendlyObstructionArgs: [AnyHashable?]? = nil
+  var registerFriendlyObstructionArgs: [IMAFriendlyObstruction]? = nil
   var unregisterAllFriendlyObstructionsCalled = false
 
   override func register(_ friendlyObstruction: IMAFriendlyObstruction) {

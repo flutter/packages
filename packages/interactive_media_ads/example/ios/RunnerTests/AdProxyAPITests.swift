@@ -332,7 +332,8 @@ class TestAd: IMAAd {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAd {
     let instance =
-      TestAd.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAd
+      try! #require(
+        TestAd.perform(NSSelectorFromString("new")).takeRetainedValue() as? TestAd)
     instance._companionAd = TestCompanionAd.customInit()
     instance._universalAdID = TestUniversalAdID.customInit()
     instance._adPodInfo = TestAdPodInfo.customInit()

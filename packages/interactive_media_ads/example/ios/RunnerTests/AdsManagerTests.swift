@@ -127,7 +127,8 @@ class TestAdsManager: IMAAdsManager {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdsManager {
     let instance =
-      TestAdsManager.perform(NSSelectorFromString("new")).takeRetainedValue() as! TestAdsManager
+      try! #require(
+        TestAdsManager.perform(NSSelectorFromString("new")).takeRetainedValue() as? TestAdsManager)
     return instance
   }
 

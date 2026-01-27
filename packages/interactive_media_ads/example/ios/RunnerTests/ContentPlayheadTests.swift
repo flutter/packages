@@ -13,9 +13,7 @@ struct ContentPlayheadTests {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAContentPlayhead(registrar)
 
-    let instance = try #require(
-      try api.pigeonDelegate.pigeonDefaultConstructor(
-        pigeonApi: api))
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
   }
 
   @Test func setCurrentTime() throws {
