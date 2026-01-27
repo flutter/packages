@@ -227,7 +227,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (_error != null) {
+    if (_error case final String error?) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
