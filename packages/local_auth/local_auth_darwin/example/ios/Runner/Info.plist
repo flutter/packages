@@ -49,12 +49,8 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
-	<!-- UIApplicationSceneManifest tells iOS to use the UIScene lifecycle.
-	     This enables proper support for multi-window on iPad and ensures
-	     UI lifecycle events go through SceneDelegate instead of AppDelegate. -->
 	<key>UIApplicationSceneManifest</key>
 	<dict>
-		<!-- Set to false for single-window apps, true if you want multi-window support -->
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 		<key>UISceneConfigurations</key>
@@ -62,17 +58,12 @@
 			<key>UIWindowSceneSessionRoleApplication</key>
 			<array>
 				<dict>
-					<!-- The scene class that manages the window -->
 					<key>UISceneClassName</key>
 					<string>UIWindowScene</string>
-					<!-- FlutterSceneDelegate is Flutter's built-in scene delegate.
-					     It handles scene lifecycle and forwards events to plugins. -->
 					<key>UISceneDelegateClassName</key>
 					<string>FlutterSceneDelegate</string>
-					<!-- A unique name for this configuration -->
 					<key>UISceneConfigurationName</key>
 					<string>flutter</string>
-					<!-- The storyboard that defines the initial UI -->
 					<key>UISceneStoryboardFile</key>
 					<string>Main</string>
 				</dict>
