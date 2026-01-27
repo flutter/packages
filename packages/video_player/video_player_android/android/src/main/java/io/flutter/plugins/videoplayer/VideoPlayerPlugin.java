@@ -146,6 +146,9 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
   }
 
   private void registerPlayerInstance(VideoPlayer player, long id) {
+    // Set up background playback context
+    player.setBackgroundPlaybackContext(flutterState.applicationContext, (int) id);
+
     // Set up the instance-specific API handler, and make sure it is removed when the player is
     // disposed.
     BinaryMessenger messenger = flutterState.binaryMessenger;

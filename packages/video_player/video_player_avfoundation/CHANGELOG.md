@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds background playback with system media notification support.
+
 ## 2.9.3
 
 * Fixes a regression where HTTP headers were ignored.

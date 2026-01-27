@@ -266,6 +266,55 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return true;
   }
 
+  @override
+  bool isBackgroundPlaybackSupportAvailable() {
+    // Android supports background playback with media notifications
+    return true;
+  }
+
+  @override
+  Future<void> setBackgroundPlayback(
+    int playerId, {
+    required bool enableBackground,
+    NotificationMetadata? notificationMetadata,
+  }) {
+    NotificationMetadataMessage? metadataMessage;
+    if (notificationMetadata != null) {
+      metadataMessage = NotificationMetadataMessage(
+        id: notificationMetadata.id,
+        title: notificationMetadata.title,
+        artist: notificationMetadata.artist,
+        album: notificationMetadata.album,
+        durationMs: notificationMetadata.duration?.inMilliseconds,
+        artUri: notificationMetadata.artUri?.toString(),
+      );
+    }
+
+    return _playerWith(id: playerId).setBackgroundPlayback(
+      BackgroundPlaybackMessage(
+        enableBackground: enableBackground,
+        notificationMetadata: metadataMessage,
+      ),
+    );
+  }
+
+  @override
+  Future<void> updateNotificationMetadata(
+    int playerId,
+    NotificationMetadata notificationMetadata,
+  ) {
+    return _playerWith(id: playerId).updateNotificationMetadata(
+      NotificationMetadataMessage(
+        id: notificationMetadata.id,
+        title: notificationMetadata.title,
+        artist: notificationMetadata.artist,
+        album: notificationMetadata.album,
+        durationMs: notificationMetadata.duration?.inMilliseconds,
+        artUri: notificationMetadata.artUri?.toString(),
+      ),
+    );
+  }
+
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -382,6 +431,14 @@ class _PlayerInstance {
     } finally {
       _audioTrackSelectionCompleter = null;
     }
+  }
+
+  Future<void> setBackgroundPlayback(BackgroundPlaybackMessage msg) {
+    return _api.setBackgroundPlayback(msg);
+  }
+
+  Future<void> updateNotificationMetadata(NotificationMetadataMessage msg) {
+    return _api.updateNotificationMetadata(msg);
   }
 
   Future<void> dispose() async {

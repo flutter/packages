@@ -6,6 +6,9 @@
 #import "./include/video_player_avfoundation/FVPVideoPlayer_Internal.h"
 
 #import <GLKit/GLKit.h>
+#if TARGET_OS_IOS
+#import <MediaPlayer/MediaPlayer.h>
+#endif
 
 #import "./include/video_player_avfoundation/AVAssetTrackUtils.h"
 
@@ -69,6 +72,13 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 @implementation FVPVideoPlayer {
   // Whether or not player and player item listeners have ever been registered.
   BOOL _listenersRegistered;
+
+  // Background playback support
+  BOOL _enableBackgroundPlayback;
+  FVPNotificationMetadataMessage *_notificationMetadata;
+#if TARGET_OS_IOS
+  id _timeObserver;
+#endif
 }
 
 - (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
@@ -164,6 +174,15 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
     return;
   }
   _disposed = YES;
+
+  // Clean up background playback resources
+#if TARGET_OS_IOS
+  if (_enableBackgroundPlayback) {
+    [self teardownRemoteCommandCenter];
+    [self clearNowPlayingInfo];
+    [self removeTimeObserver];
+  }
+#endif
 
   if (_listenersRegistered) {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -507,6 +526,349 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
   }
 }
+
+- (void)setBackgroundPlayback:(FVPBackgroundPlaybackMessage *)msg
+                        error:(FlutterError *_Nullable *_Nonnull)error {
+  _enableBackgroundPlayback = msg.enableBackground;
+  _notificationMetadata = msg.notificationMetadata;
+
+#if TARGET_OS_IOS
+  if (_enableBackgroundPlayback) {
+    // Configure audio session for background playback
+    NSError *audioError = nil;
+    AVAudioSession *audioSession = [AVAudioSession sharedInstance];
+    [audioSession setCategory:AVAudioSessionCategoryPlayback
+                         mode:AVAudioSessionModeMoviePlayback
+                      options:0
+                        error:&audioError];
+    if (audioError) {
+      NSLog(@"Error setting audio session category: %@", audioError);
+    }
+
+    [audioSession setActive:YES error:&audioError];
+    if (audioError) {
+      NSLog(@"Error activating audio session: %@", audioError);
+    }
+
+    // iOS 15+: Enable seamless background playback without layer disconnection
+    if (@available(iOS 15.0, macOS 12.0, *)) {
+      _player.audiovisualBackgroundPlaybackPolicy =
+          AVPlayerAudiovisualBackgroundPlaybackPolicyContinuesIfPossible;
+    }
+
+    // Set up remote command center for media controls
+    [self setupRemoteCommandCenter];
+
+    // Update Now Playing info if metadata is provided
+    if (_notificationMetadata) {
+      [self updateNowPlayingInfo];
+      [self setupTimeObserver];
+    }
+  } else {
+    // Disable background playback
+    [self teardownRemoteCommandCenter];
+    [self clearNowPlayingInfo];
+    [self removeTimeObserver];
+
+    // iOS 15+: Reset background playback policy to automatic (default)
+    if (@available(iOS 15.0, macOS 12.0, *)) {
+      _player.audiovisualBackgroundPlaybackPolicy =
+          AVPlayerAudiovisualBackgroundPlaybackPolicyAutomatic;
+    }
+
+    // Deactivate audio session to release audio hardware
+    NSError *audioError = nil;
+    [[AVAudioSession sharedInstance] setActive:NO
+                                   withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
+                                         error:&audioError];
+    if (audioError) {
+      NSLog(@"Error deactivating audio session: %@", audioError);
+    }
+  }
+#else
+  // macOS doesn't support MPNowPlayingInfoCenter in the same way
+  // Background audio works differently on macOS
+  if (_enableBackgroundPlayback) {
+    NSLog(@"Background playback enabled (macOS - limited support)");
+  }
+#endif
+}
+
+- (void)updateNotificationMetadata:(FVPNotificationMetadataMessage *)msg
+                             error:(FlutterError *_Nullable *_Nonnull)error {
+  _notificationMetadata = msg;
+
+#if TARGET_OS_IOS
+  if (_enableBackgroundPlayback && _notificationMetadata) {
+    [self updateNowPlayingInfo];
+  }
+#endif
+}
+
+#if TARGET_OS_IOS
+- (void)setupRemoteCommandCenter {
+  MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+
+  // Play command
+  [commandCenter.playCommand setEnabled:YES];
+  [commandCenter.playCommand addTarget:self action:@selector(handlePlayCommand:)];
+
+  // Pause command
+  [commandCenter.pauseCommand setEnabled:YES];
+  [commandCenter.pauseCommand addTarget:self action:@selector(handlePauseCommand:)];
+
+  // Toggle play/pause command
+  [commandCenter.togglePlayPauseCommand setEnabled:YES];
+  [commandCenter.togglePlayPauseCommand addTarget:self action:@selector(handleTogglePlayPauseCommand:)];
+
+  // Change playback position command (seeking)
+  [commandCenter.changePlaybackPositionCommand setEnabled:YES];
+  [commandCenter.changePlaybackPositionCommand addTarget:self
+                                                  action:@selector(handleChangePlaybackPositionCommand:)];
+
+  // Skip forward command
+  [commandCenter.skipForwardCommand setEnabled:YES];
+  commandCenter.skipForwardCommand.preferredIntervals = @[ @15 ];
+  [commandCenter.skipForwardCommand addTarget:self action:@selector(handleSkipForwardCommand:)];
+
+  // Skip backward command
+  [commandCenter.skipBackwardCommand setEnabled:YES];
+  commandCenter.skipBackwardCommand.preferredIntervals = @[ @15 ];
+  [commandCenter.skipBackwardCommand addTarget:self action:@selector(handleSkipBackwardCommand:)];
+}
+
+- (MPRemoteCommandHandlerStatus)handlePlayCommand:(MPRemoteCommandEvent *)event {
+  _isPlaying = YES;
+  [self updatePlayingState];
+  [self updateNowPlayingPlaybackState];
+  return MPRemoteCommandHandlerStatusSuccess;
+}
+
+- (MPRemoteCommandHandlerStatus)handlePauseCommand:(MPRemoteCommandEvent *)event {
+  _isPlaying = NO;
+  [self updatePlayingState];
+  [self updateNowPlayingPlaybackState];
+  return MPRemoteCommandHandlerStatusSuccess;
+}
+
+- (MPRemoteCommandHandlerStatus)handleTogglePlayPauseCommand:(MPRemoteCommandEvent *)event {
+  _isPlaying = !_isPlaying;
+  [self updatePlayingState];
+  [self updateNowPlayingPlaybackState];
+  return MPRemoteCommandHandlerStatusSuccess;
+}
+
+- (MPRemoteCommandHandlerStatus)handleChangePlaybackPositionCommand:(MPRemoteCommandEvent *)event {
+  MPChangePlaybackPositionCommandEvent *positionEvent = (MPChangePlaybackPositionCommandEvent *)event;
+  CMTime targetTime = CMTimeMakeWithSeconds(positionEvent.positionTime, NSEC_PER_SEC);
+  [_player seekToTime:targetTime
+      completionHandler:^(BOOL finished) {
+        if (finished) {
+          [self updateNowPlayingPlaybackState];
+        }
+      }];
+  return MPRemoteCommandHandlerStatusSuccess;
+}
+
+- (MPRemoteCommandHandlerStatus)handleSkipForwardCommand:(MPRemoteCommandEvent *)event {
+  MPSkipIntervalCommandEvent *skipEvent = (MPSkipIntervalCommandEvent *)event;
+  CMTime currentTime = _player.currentTime;
+  CMTime skipTime = CMTimeMakeWithSeconds(skipEvent.interval, NSEC_PER_SEC);
+  CMTime newTime = CMTimeAdd(currentTime, skipTime);
+  [_player seekToTime:newTime
+      completionHandler:^(BOOL finished) {
+        if (finished) {
+          [self updateNowPlayingPlaybackState];
+        }
+      }];
+  return MPRemoteCommandHandlerStatusSuccess;
+}
+
+- (MPRemoteCommandHandlerStatus)handleSkipBackwardCommand:(MPRemoteCommandEvent *)event {
+  MPSkipIntervalCommandEvent *skipEvent = (MPSkipIntervalCommandEvent *)event;
+  CMTime currentTime = _player.currentTime;
+  CMTime skipTime = CMTimeMakeWithSeconds(skipEvent.interval, NSEC_PER_SEC);
+  CMTime newTime = CMTimeSubtract(currentTime, skipTime);
+  [_player seekToTime:newTime
+      completionHandler:^(BOOL finished) {
+        if (finished) {
+          [self updateNowPlayingPlaybackState];
+        }
+      }];
+  return MPRemoteCommandHandlerStatusSuccess;
+}
+
+- (void)teardownRemoteCommandCenter {
+  MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];
+
+  [commandCenter.playCommand removeTarget:self action:@selector(handlePlayCommand:)];
+  [commandCenter.pauseCommand removeTarget:self action:@selector(handlePauseCommand:)];
+  [commandCenter.togglePlayPauseCommand removeTarget:self action:@selector(handleTogglePlayPauseCommand:)];
+  [commandCenter.changePlaybackPositionCommand removeTarget:self
+                                                     action:@selector(handleChangePlaybackPositionCommand:)];
+  [commandCenter.skipForwardCommand removeTarget:self action:@selector(handleSkipForwardCommand:)];
+  [commandCenter.skipBackwardCommand removeTarget:self action:@selector(handleSkipBackwardCommand:)];
+
+  [commandCenter.playCommand setEnabled:NO];
+  [commandCenter.pauseCommand setEnabled:NO];
+  [commandCenter.togglePlayPauseCommand setEnabled:NO];
+  [commandCenter.changePlaybackPositionCommand setEnabled:NO];
+  [commandCenter.skipForwardCommand setEnabled:NO];
+  [commandCenter.skipBackwardCommand setEnabled:NO];
+}
+
+- (void)updateNowPlayingInfo {
+  if (!_notificationMetadata) {
+    return;
+  }
+
+  NSMutableDictionary *nowPlayingInfo = [[NSMutableDictionary alloc] init];
+
+  // Set title
+  if (_notificationMetadata.title) {
+    nowPlayingInfo[MPMediaItemPropertyTitle] = _notificationMetadata.title;
+  }
+
+  // Set artist
+  if (_notificationMetadata.artist) {
+    nowPlayingInfo[MPMediaItemPropertyArtist] = _notificationMetadata.artist;
+  }
+
+  // Set album
+  if (_notificationMetadata.album) {
+    nowPlayingInfo[MPMediaItemPropertyAlbumTitle] = _notificationMetadata.album;
+  }
+
+  // Set duration
+  NSNumber *durationMs = _notificationMetadata.durationMs;
+  if (durationMs) {
+    nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = @(durationMs.doubleValue / 1000.0);
+  } else {
+    // Use the actual video duration
+    CMTime duration = _player.currentItem.asset.duration;
+    if (CMTIME_IS_VALID(duration) && !CMTIME_IS_INDEFINITE(duration)) {
+      nowPlayingInfo[MPMediaItemPropertyPlaybackDuration] = @(CMTimeGetSeconds(duration));
+    }
+  }
+
+  // Set current playback position
+  CMTime currentTime = _player.currentTime;
+  if (CMTIME_IS_VALID(currentTime)) {
+    nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(CMTimeGetSeconds(currentTime));
+  }
+
+  // Set playback rate
+  nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = @(_isPlaying ? _player.rate : 0.0);
+
+  // Load artwork asynchronously if provided
+  if (_notificationMetadata.artUri) {
+    [self loadArtworkFromUri:_notificationMetadata.artUri
+                  completion:^(MPMediaItemArtwork *artwork) {
+                    if (artwork) {
+                      NSMutableDictionary *info =
+                          [[MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo mutableCopy];
+                      if (info) {
+                        info[MPMediaItemPropertyArtwork] = artwork;
+                        [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = info;
+                      }
+                    }
+                  }];
+  }
+
+  [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfo;
+}
+
+- (void)updateNowPlayingPlaybackState {
+  NSMutableDictionary *nowPlayingInfo =
+      [[MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo mutableCopy];
+  if (!nowPlayingInfo) {
+    return;
+  }
+
+  // Update elapsed time
+  CMTime currentTime = _player.currentTime;
+  if (CMTIME_IS_VALID(currentTime)) {
+    nowPlayingInfo[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @(CMTimeGetSeconds(currentTime));
+  }
+
+  // Update playback rate
+  nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = @(_isPlaying ? _player.rate : 0.0);
+
+  [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfo;
+}
+
+- (void)clearNowPlayingInfo {
+  [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+}
+
+- (void)setupTimeObserver {
+  // Remove existing observer if any
+  [self removeTimeObserver];
+
+  // Add periodic time observer to update Now Playing info
+  __weak typeof(self) weakSelf = self;
+  _timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0, NSEC_PER_SEC)
+                                                        queue:dispatch_get_main_queue()
+                                                   usingBlock:^(CMTime time) {
+                                                     [weakSelf updateNowPlayingPlaybackState];
+                                                   }];
+}
+
+- (void)removeTimeObserver {
+  if (_timeObserver) {
+    [_player removeTimeObserver:_timeObserver];
+    _timeObserver = nil;
+  }
+}
+
+- (void)loadArtworkFromUri:(NSString *)uriString
+                completion:(void (^)(MPMediaItemArtwork *_Nullable artwork))completion {
+  if (!uriString || uriString.length == 0) {
+    completion(nil);
+    return;
+  }
+
+  NSURL *url = [NSURL URLWithString:uriString];
+  if (!url) {
+    completion(nil);
+    return;
+  }
+
+  // Check if it's a local file or network URL
+  if ([url.scheme isEqualToString:@"file"]) {
+    UIImage *image = [UIImage imageWithContentsOfFile:url.path];
+    if (image) {
+      MPMediaItemArtwork *artwork =
+          [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size
+                                         requestHandler:^UIImage *_Nonnull(CGSize size) {
+                                           return image;
+                                         }];
+      completion(artwork);
+    } else {
+      completion(nil);
+    }
+  } else {
+    // Network URL - load asynchronously
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+      NSData *imageData = [NSData dataWithContentsOfURL:url];
+      UIImage *image = imageData ? [UIImage imageWithData:imageData] : nil;
+
+      dispatch_async(dispatch_get_main_queue(), ^{
+        if (image) {
+          MPMediaItemArtwork *artwork =
+              [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size
+                                             requestHandler:^UIImage *_Nonnull(CGSize size) {
+                                               return image;
+                                             }];
+          completion(artwork);
+        } else {
+          completion(nil);
+        }
+      });
+    });
+  }
+}
+#endif
 
 #pragma mark - Private
 

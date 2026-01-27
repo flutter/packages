@@ -129,6 +129,39 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
 
+  /// Configures background playback and media notification.
+  ///
+  /// When [enableBackground] is true, video audio will continue playing when
+  /// the app is backgrounded.
+  ///
+  /// When [notificationMetadata] is provided, a system media notification will
+  /// be shown with playback controls and the provided metadata (title, artist, etc).
+  /// If [notificationMetadata] is null, no notification will be shown.
+  Future<void> setBackgroundPlayback(
+    int playerId, {
+    required bool enableBackground,
+    NotificationMetadata? notificationMetadata,
+  }) {
+    throw UnimplementedError(
+      'setBackgroundPlayback() has not been implemented.',
+    );
+  }
+
+  /// Updates the notification metadata.
+  ///
+  /// This updates the metadata shown in the system notification, lock screen,
+  /// and control center without interrupting playback.
+  ///
+  /// Only works when background playback is enabled with notification metadata.
+  Future<void> updateNotificationMetadata(
+    int playerId,
+    NotificationMetadata notificationMetadata,
+  ) {
+    throw UnimplementedError(
+      'updateNotificationMetadata() has not been implemented.',
+    );
+  }
+
   /// Gets the available audio tracks for the video.
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) {
     throw UnimplementedError('getAudioTracks() has not been implemented.');
@@ -151,6 +184,23 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// The default implementation returns `false`. Platform implementations
   /// should override this to return `true` if they support audio track selection.
   bool isAudioTrackSupportAvailable() {
+    return false;
+  }
+
+  /// Returns whether background playback with media notifications is supported
+  /// on this platform.
+  ///
+  /// This method allows developers to query at runtime whether the current
+  /// platform supports background playback with system media notifications.
+  /// This is useful for platforms like web where background playback may not
+  /// be available.
+  ///
+  /// Returns `true` if [setBackgroundPlayback] and [updateNotificationMetadata]
+  /// are supported, `false` otherwise.
+  ///
+  /// The default implementation returns `false`. Platform implementations
+  /// should override this to return `true` if they support background playback.
+  bool isBackgroundPlaybackSupportAvailable() {
     return false;
   }
 }
@@ -424,6 +474,68 @@ class DurationRange {
   int get hashCode => Object.hash(start, end);
 }
 
+/// Metadata for the system media notification when playing in background.
+///
+/// Used to display information in the system's media notification,
+/// lock screen, and control center. Providing this metadata to
+/// [VideoPlayerOptions.notificationMetadata] enables the notification.
+@immutable
+class NotificationMetadata {
+  /// Creates a [NotificationMetadata] with the given metadata.
+  const NotificationMetadata({
+    required this.id,
+    this.title,
+    this.album,
+    this.artist,
+    this.duration,
+    this.artUri,
+  });
+
+  /// A unique identifier for this media item.
+  final String id;
+
+  /// The title of this media item.
+  final String? title;
+
+  /// The album this media item belongs to.
+  final String? album;
+
+  /// The artist of this media item.
+  final String? artist;
+
+  /// The duration of this media item.
+  ///
+  /// If not specified, the duration will be automatically detected from the
+  /// video source after initialization. Manual specification is useful for
+  /// live streams or when you want to display an estimated duration before
+  /// the video loads.
+  final Duration? duration;
+
+  /// The URI of the artwork for this media item.
+  ///
+  /// Can be a network URL, asset path, or file path.
+  final Uri? artUri;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is NotificationMetadata &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          title == other.title &&
+          album == other.album &&
+          artist == other.artist &&
+          duration == other.duration &&
+          artUri == other.artUri;
+
+  @override
+  int get hashCode => Object.hash(id, title, album, artist, duration, artUri);
+
+  @override
+  String toString() =>
+      '${objectRuntimeType(this, 'NotificationMetadata')}(id: $id, title: $title, album: $album, artist: $artist, duration: $duration, artUri: $artUri)';
+}
+
 /// [VideoPlayerOptions] can be optionally used to set additional player settings
 @immutable
 class VideoPlayerOptions {
@@ -435,6 +547,7 @@ class VideoPlayerOptions {
   VideoPlayerOptions({
     this.mixWithOthers = false,
     this.allowBackgroundPlayback = false,
+    this.notificationMetadata,
     this.webOptions,
   });
 
@@ -448,6 +561,17 @@ class VideoPlayerOptions {
   /// Note: This option will be silently ignored in the web platform (there is
   /// currently no way to implement this feature in this platform).
   final bool mixWithOthers;
+
+  /// Metadata for the system media notification.
+  ///
+  /// When provided, a system notification will be shown with media controls
+  /// (play/pause, seek) and the provided metadata (title, artist, album art, etc.).
+  ///
+  /// Requires [allowBackgroundPlayback] to be true for background playback.
+  ///
+  /// Note: On Android, this requires setting up foreground service permissions.
+  /// On iOS, this requires enabling background audio capability.
+  final NotificationMetadata? notificationMetadata;
 
   /// Additional web controls
   final VideoPlayerWebOptions? webOptions;

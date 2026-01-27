@@ -131,6 +131,11 @@ class FakeController extends ValueNotifier<VideoPlayerValue>
   }
 
   String? selectedAudioTrackId;
+
+  @override
+  Future<void> updateNotificationMetadata(
+    NotificationMetadata notificationMetadata,
+  ) async {}
 }
 
 Future<ClosedCaptionFile> _loadClosedCaption() async =>
@@ -1904,4 +1909,26 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
   }
 
   final Map<int, String> selectedAudioTrackIds = <int, String>{};
+
+  @override
+  bool isBackgroundPlaybackSupportAvailable() {
+    return true;
+  }
+
+  @override
+  Future<void> setBackgroundPlayback(
+    int playerId, {
+    required bool enableBackground,
+    NotificationMetadata? notificationMetadata,
+  }) async {
+    calls.add('setBackgroundPlayback');
+  }
+
+  @override
+  Future<void> updateNotificationMetadata(
+    int playerId,
+    NotificationMetadata notificationMetadata,
+  ) async {
+    calls.add('updateNotificationMetadata');
+  }
 }

@@ -22,6 +22,7 @@ import 'package:video_player_android/src/messages.g.dart' as _i2;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeTexturePlayerIds_0 extends _i1.SmartFake
     implements _i2.TexturePlayerIds {
@@ -248,6 +249,26 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
   _i4.Future<void> selectAudioTrack(int? groupIndex, int? trackIndex) =>
       (super.noSuchMethod(
             Invocation.method(#selectAudioTrack, [groupIndex, trackIndex]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> setBackgroundPlayback(_i2.BackgroundPlaybackMessage? msg) =>
+      (super.noSuchMethod(
+            Invocation.method(#setBackgroundPlayback, [msg]),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
+          )
+          as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> updateNotificationMetadata(
+    _i2.NotificationMetadataMessage? msg,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#updateNotificationMetadata, [msg]),
             returnValue: _i4.Future<void>.value(),
             returnValueForMissingStub: _i4.Future<void>.value(),
           )

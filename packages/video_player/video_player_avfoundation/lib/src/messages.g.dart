@@ -217,6 +217,112 @@ class MediaSelectionAudioTrackData {
   int get hashCode => Object.hashAll(_toList());
 }
 
+/// Metadata for the system media notification when playing in background.
+class NotificationMetadataMessage {
+  NotificationMetadataMessage({
+    required this.id,
+    this.title,
+    this.album,
+    this.artist,
+    this.durationMs,
+    this.artUri,
+  });
+
+  String id;
+
+  String? title;
+
+  String? album;
+
+  String? artist;
+
+  int? durationMs;
+
+  String? artUri;
+
+  List<Object?> _toList() {
+    return <Object?>[id, title, album, artist, durationMs, artUri];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static NotificationMetadataMessage decode(Object result) {
+    result as List<Object?>;
+    return NotificationMetadataMessage(
+      id: result[0]! as String,
+      title: result[1] as String?,
+      album: result[2] as String?,
+      artist: result[3] as String?,
+      durationMs: result[4] as int?,
+      artUri: result[5] as String?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! NotificationMetadataMessage ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
+/// Message for configuring background playback with media notification.
+class BackgroundPlaybackMessage {
+  BackgroundPlaybackMessage({
+    required this.enableBackground,
+    this.notificationMetadata,
+  });
+
+  bool enableBackground;
+
+  NotificationMetadataMessage? notificationMetadata;
+
+  List<Object?> _toList() {
+    return <Object?>[enableBackground, notificationMetadata];
+  }
+
+  Object encode() {
+    return _toList();
+  }
+
+  static BackgroundPlaybackMessage decode(Object result) {
+    result as List<Object?>;
+    return BackgroundPlaybackMessage(
+      enableBackground: result[0]! as bool,
+      notificationMetadata: result[1] as NotificationMetadataMessage?,
+    );
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  bool operator ==(Object other) {
+    if (other is! BackgroundPlaybackMessage ||
+        other.runtimeType != runtimeType) {
+      return false;
+    }
+    if (identical(this, other)) {
+      return true;
+    }
+    return _deepEquals(encode(), other.encode());
+  }
+
+  @override
+  // ignore: avoid_equals_and_hash_code_on_mutable_classes
+  int get hashCode => Object.hashAll(_toList());
+}
+
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -236,6 +342,12 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is MediaSelectionAudioTrackData) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
+    } else if (value is NotificationMetadataMessage) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is BackgroundPlaybackMessage) {
+      buffer.putUint8(134);
+      writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
     }
@@ -252,6 +364,10 @@ class _PigeonCodec extends StandardMessageCodec {
         return TexturePlayerIds.decode(readValue(buffer)!);
       case 132:
         return MediaSelectionAudioTrackData.decode(readValue(buffer)!);
+      case 133:
+        return NotificationMetadataMessage.decode(readValue(buffer)!);
+      case 134:
+        return BackgroundPlaybackMessage.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -611,6 +727,58 @@ class VideoPlayerInstanceApi {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(null);
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> setBackgroundPlayback(BackgroundPlaybackMessage msg) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.setBackgroundPlayback$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[msg],
+    );
+    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> updateNotificationMetadata(
+    NotificationMetadataMessage msg,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.updateNotificationMetadata$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channel = BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[msg],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);

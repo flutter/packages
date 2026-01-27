@@ -18,6 +18,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
     show
         DataSourceType,
         DurationRange,
+        NotificationMetadata,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
@@ -585,6 +586,19 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
+
+    // Set up background playback if enabled
+    final platform_interface.VideoPlayerOptions? options = videoPlayerOptions;
+    final platform_interface.NotificationMetadata? metadata =
+        options?.notificationMetadata;
+    if (options != null && options.allowBackgroundPlayback) {
+      await _videoPlayerPlatform.setBackgroundPlayback(
+        _playerId,
+        enableBackground: true,
+        notificationMetadata: metadata,
+      );
+    }
+
     final initializingCompleter = Completer<void>();
 
     // Apply the web-specific options
@@ -845,6 +859,35 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
     value = value.copyWith(playbackSpeed: speed);
     await _applyPlaybackSpeed();
+  }
+
+  /// Updates the notification metadata.
+  ///
+  /// This updates the metadata shown in the system notification, lock screen,
+  /// and control center. Only works when background playback is enabled with
+  /// notification metadata.
+  ///
+  /// The [notificationMetadata] should contain the updated title, artist, album,
+  /// artwork URI, etc.
+  Future<void> updateNotificationMetadata(
+    platform_interface.NotificationMetadata notificationMetadata,
+  ) async {
+    if (_isDisposedOrNotInitialized) {
+      return;
+    }
+
+    if (videoPlayerOptions?.notificationMetadata == null) {
+      throw StateError(
+        'Cannot update notification metadata when notificationMetadata was not '
+        'provided in VideoPlayerOptions. Provide notificationMetadata to enable '
+        'notifications.',
+      );
+    }
+
+    await _videoPlayerPlatform.updateNotificationMetadata(
+      _playerId,
+      notificationMetadata,
+    );
   }
 
   /// Sets the caption offset.
