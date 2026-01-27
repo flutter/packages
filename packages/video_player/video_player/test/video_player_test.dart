@@ -930,7 +930,7 @@ void main() {
 
         expect(
           () => controller.selectAudioTrack('track_1'),
-          throwsA(isA<Exception>()),
+          throwsA(isA<StateError>()),
         );
       });
 

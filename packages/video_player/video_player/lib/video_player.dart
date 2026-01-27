@@ -33,9 +33,9 @@ class VideoAudioTrack {
   /// Constructs an instance of [VideoAudioTrack].
   const VideoAudioTrack({
     required this.id,
-    required this.label,
-    required this.language,
     required this.isSelected,
+    this.label,
+    this.language,
     this.bitrate,
     this.sampleRate,
     this.channelCount,
@@ -46,10 +46,12 @@ class VideoAudioTrack {
   final String id;
 
   /// Human-readable label for the track.
-  final String label;
+  /// May be null if not available from the platform.
+  final String? label;
 
   /// Language code of the audio track (e.g., 'en', 'es', 'und').
-  final String language;
+  /// May be null if not available from the platform.
+  final String? language;
 
   /// Whether this track is currently selected.
   final bool isSelected;
@@ -114,17 +116,13 @@ class VideoAudioTrack {
 ///
 /// This internal method is used to decouple the public API from the
 /// platform interface implementation.
-///
-/// Normalizes null values from the platform to provide a consistent API:
-/// - null label becomes 'Unknown'
-/// - null language becomes 'und' (undefined)
 VideoAudioTrack _convertPlatformAudioTrack(
   platform_interface.VideoAudioTrack platformTrack,
 ) {
   return VideoAudioTrack(
     id: platformTrack.id,
-    label: platformTrack.label ?? 'Unknown',
-    language: platformTrack.language ?? 'und',
+    label: platformTrack.label,
+    language: platformTrack.language,
     isSelected: platformTrack.isSelected,
     bitrate: platformTrack.bitrate,
     sampleRate: platformTrack.sampleRate,
@@ -936,7 +934,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Throws an exception if the video player is disposed.
   Future<List<VideoAudioTrack>> getAudioTracks() async {
     if (_isDisposed) {
-      throw Exception('VideoPlayerController is disposed');
+      throw StateError('VideoPlayerController is disposed');
     }
     if (!value.isInitialized) {
       return <VideoAudioTrack>[];
@@ -955,7 +953,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// Throws an exception if the video player is disposed or not initialized.
   Future<void> selectAudioTrack(String trackId) async {
     if (_isDisposedOrNotInitialized) {
-      throw Exception('VideoPlayerController is disposed or not initialized');
+      throw StateError('VideoPlayerController is disposed or not initialized');
     }
     // The platform implementation (e.g., Android) will wait for the track
     // selection to complete by listening to platform-specific events

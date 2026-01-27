@@ -57,11 +57,11 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
       await controller.initialize();
 
       // Add listener for video player state changes
-      _controller!.addListener(_onVideoPlayerValueChanged);
+      controller.addListener(_onVideoPlayerValueChanged);
 
       // Initialize tracking variables
-      _wasPlaying = _controller!.value.isPlaying;
-      _wasInitialized = _controller!.value.isInitialized;
+      _wasPlaying = controller.value.isPlaying;
+      _wasInitialized = controller.value.isInitialized;
 
       // Get audio tracks after initialization
       await _loadAudioTracks();
@@ -89,7 +89,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     }
 
     try {
-      final List<VideoAudioTrack> tracks = await _controller!.getAudioTracks();
+      final List<VideoAudioTrack> tracks = await controller.getAudioTracks();
       if (!mounted) {
         return;
       }
@@ -135,11 +135,12 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
   }
 
   void _onVideoPlayerValueChanged() {
-    if (!mounted || _controller == null) {
+    final VideoPlayerController? controller = _controller;
+    if (controller == null) {
       return;
     }
 
-    final VideoPlayerValue currentValue = _controller!.value;
+    final VideoPlayerValue currentValue = controller.value;
     var shouldUpdate = false;
 
     // Check for relevant state changes that affect UI
@@ -154,7 +155,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
     }
 
     // Only call setState if there are relevant changes
-    if (shouldUpdate) {
+    if (shouldUpdate && mounted) {
       setState(() {});
     }
   }
@@ -194,6 +195,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
                 );
               }).toList(),
               onSelected: (int? value) {
+                // value is null when the menu is dismissed without selection
                 if (value != null && value != _selectedVideoIndex) {
                   setState(() {
                     _selectedVideoIndex = value;
@@ -235,7 +237,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
             Icon(Icons.error, size: 48, color: Colors.red[300]),
             const SizedBox(height: 16),
             Text(
-              _error!,
+              error,
               style: const TextStyle(color: Colors.white),
               textAlign: TextAlign.center,
             ),
@@ -349,7 +351,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
           ),
         ),
         title: Text(
-          track.label.isNotEmpty ? track.label : 'Track ${track.id}',
+          track.label?.isNotEmpty ?? false ? track.label! : 'Track ${track.id}',
           style: TextStyle(
             fontWeight: track.isSelected ? FontWeight.bold : FontWeight.normal,
           ),
@@ -358,7 +360,7 @@ class _AudioTracksDemoState extends State<AudioTracksDemo> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('ID: ${track.id}'),
-            Text('Language: ${track.language}'),
+            if (track.language != null) Text('Language: ${track.language}'),
             if (track.codec != null) Text('Codec: ${track.codec}'),
             if (track.bitrate != null) Text('Bitrate: ${track.bitrate} bps'),
             if (track.sampleRate != null)
