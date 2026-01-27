@@ -245,23 +245,6 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
-  Future<void> updateNotificationMetadata(
-    int playerId,
-    NotificationMetadata notificationMetadata,
-  ) {
-    return _playerWith(id: playerId).updateNotificationMetadata(
-      NotificationMetadataMessage(
-        id: notificationMetadata.id,
-        title: notificationMetadata.title,
-        artist: notificationMetadata.artist,
-        album: notificationMetadata.album,
-        durationMs: notificationMetadata.duration?.inMilliseconds,
-        artUri: notificationMetadata.artUri?.toString(),
-      ),
-    );
-  }
-
-  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
@@ -340,9 +323,6 @@ class _PlayerInstance {
 
   Future<void> setBackgroundPlayback(BackgroundPlaybackMessage msg) =>
       _api.setBackgroundPlayback(msg);
-
-  Future<void> updateNotificationMetadata(NotificationMetadataMessage msg) =>
-      _api.updateNotificationMetadata(msg);
 
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(

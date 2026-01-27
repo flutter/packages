@@ -786,38 +786,6 @@ void main() {
         expect(msg.notificationMetadata!.durationMs, 300000);
         expect(msg.notificationMetadata!.artUri, 'https://example.com/art.jpg');
       });
-
-      test('updateNotificationMetadata passes metadata correctly', () async {
-        final (
-          AVFoundationVideoPlayer player,
-          _,
-          MockVideoPlayerInstanceApi playerApi,
-        ) = setUpMockPlayer(
-          playerId: 1,
-        );
-        when(
-          playerApi.updateNotificationMetadata(any),
-        ).thenAnswer((_) async {});
-
-        await player.updateNotificationMetadata(
-          1,
-          NotificationMetadata(
-            id: 'video_1',
-            title: 'Updated Title',
-            artist: 'Updated Artist',
-            artUri: Uri.parse('https://example.com/new_art.jpg'),
-          ),
-        );
-
-        final VerificationResult verification = verify(
-          playerApi.updateNotificationMetadata(captureAny),
-        );
-        final msg = verification.captured[0] as NotificationMetadataMessage;
-        expect(msg.id, 'video_1');
-        expect(msg.title, 'Updated Title');
-        expect(msg.artist, 'Updated Artist');
-        expect(msg.artUri, 'https://example.com/new_art.jpg');
-      });
     });
   });
 }

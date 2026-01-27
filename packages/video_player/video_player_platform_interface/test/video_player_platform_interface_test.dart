@@ -52,19 +52,6 @@ void main() {
   );
 
   test(
-    'default implementation updateNotificationMetadata throws unimplemented',
-    () async {
-      await expectLater(
-        () => initialInstance.updateNotificationMetadata(
-          1,
-          const NotificationMetadata(id: 'test'),
-        ),
-        throwsUnimplementedError,
-      );
-    },
-  );
-
-  test(
     'default implementation isBackgroundPlaybackSupportAvailable returns false',
     () {
       expect(initialInstance.isBackgroundPlaybackSupportAvailable(), false);
