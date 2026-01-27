@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import Flutter
-import XCTest
+import Testing
 
 @testable import test_plugin
 
@@ -19,247 +19,257 @@ class MockPrimitiveHostApi: PrimitiveHostApi {
   func aStringIntMap(value: [String?: Int64?]) -> [String?: Int64?] { value }
 }
 
-class PrimitiveTests: XCTestCase {
+@MainActor
+struct PrimitiveTests {
   var codec = FlutterStandardMessageCodec.sharedInstance()
 
-  func testIntPrimitiveHost() throws {
+  @Test
+  func intPrimitiveHost() async throws {
     let binaryMessenger = MockBinaryMessenger<Int32>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.anInt"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let input = 1
     let inputEncoded = binaryMessenger.codec.encode([input])
 
-    let expectation = XCTestExpectation(description: "anInt")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertNotNil(outputList)
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(outputList != nil)
 
-      let output = outputList!.first as? Int64
-      XCTAssertEqual(1, output)
-      XCTAssertTrue(outputList!.count == 1)
-      expectation.fulfill()
+        let output = outputList!.first as? Int64
+        #expect(output == 1)
+        #expect(outputList!.count == 1)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testIntPrimitiveFlutter() throws {
+  @Test
+  func intPrimitiveFlutter() async throws {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-    api.anInt(value: 1) { result in
-      switch result {
-      case .success(let res):
-        XCTAssertEqual(1, res)
-        expectation.fulfill()
-      case .failure(_):
-        return
-
+    await confirmation { confirmed in
+      api.anInt(value: 1) { result in
+        switch result {
+        case .success(let res):
+          #expect(res == 1)
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testBoolPrimitiveHost() throws {
+  @Test
+  func boolPrimitiveHost() async throws {
     let binaryMessenger = MockBinaryMessenger<Bool>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aBool"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let input = true
     let inputEncoded = binaryMessenger.codec.encode([input])
 
-    let expectation = XCTestExpectation(description: "aBool")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertNotNil(outputList)
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(outputList != nil)
 
-      let output = outputList!.first as? Bool
-      XCTAssertEqual(true, output)
-      XCTAssertTrue(outputList!.count == 1)
-      expectation.fulfill()
+        let output = outputList!.first as? Bool
+        #expect(output == true)
+        #expect(outputList!.count == 1)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testBoolPrimitiveFlutter() throws {
+  @Test
+  func boolPrimitiveFlutter() async throws {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-    api.aBool(value: true) { result in
-      switch result {
-      case .success(let res):
-        XCTAssertEqual(true, res)
-        expectation.fulfill()
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      api.aBool(value: true) { result in
+        switch result {
+        case .success(let res):
+          #expect(res == true)
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testDoublePrimitiveHost() throws {
+  @Test
+  func doublePrimitiveHost() async throws {
     let binaryMessenger = MockBinaryMessenger<Double>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aDouble"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let input: Double = 1.0
     let inputEncoded = binaryMessenger.codec.encode([input])
 
-    let expectation = XCTestExpectation(description: "aDouble")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertNotNil(outputList)
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(outputList != nil)
 
-      let output = outputList!.first as? Double
-      XCTAssertEqual(1.0, output)
-      XCTAssertTrue(outputList!.count == 1)
-      expectation.fulfill()
+        let output = outputList!.first as? Double
+        #expect(output == 1.0)
+        #expect(outputList!.count == 1)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testDoublePrimitiveFlutter() throws {
+  @Test
+  func doublePrimitiveFlutter() async throws {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-    let arg: Double = 1.5
-    api.aDouble(value: arg) { result in
-      switch result {
-      case .success(let res):
-        XCTAssertEqual(arg, res)
-        expectation.fulfill()
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      let arg: Double = 1.5
+      api.aDouble(value: arg) { result in
+        switch result {
+        case .success(let res):
+          #expect(res == arg)
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testStringPrimitiveHost() throws {
+  @Test
+  func stringPrimitiveHost() async throws {
     let binaryMessenger = MockBinaryMessenger<String>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aString"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let input: String = "hello"
     let inputEncoded = binaryMessenger.codec.encode([input])
 
-    let expectation = XCTestExpectation(description: "aString")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertNotNil(outputList)
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(outputList != nil)
 
-      let output = outputList!.first as? String
-      XCTAssertEqual("hello", output)
-      XCTAssertTrue(outputList!.count == 1)
-      expectation.fulfill()
+        let output = outputList!.first as? String
+        #expect(output == "hello")
+        #expect(outputList!.count == 1)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testStringPrimitiveFlutter() throws {
+  @Test
+  func stringPrimitiveFlutter() async throws {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-    let arg: String = "hello"
-    api.aString(value: arg) { result in
-      switch result {
-      case .success(let res):
-        XCTAssertEqual(arg, res)
-        expectation.fulfill()
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      let arg: String = "hello"
+      api.aString(value: arg) { result in
+        switch result {
+        case .success(let res):
+          #expect(res == arg)
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testListPrimitiveHost() throws {
+  @Test
+  func listPrimitiveHost() async throws {
     let binaryMessenger = MockBinaryMessenger<[Int]>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aList"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let input: [Int] = [1, 2, 3]
     let inputEncoded = binaryMessenger.codec.encode([input])
 
-    let expectation = XCTestExpectation(description: "aList")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertNotNil(outputList)
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(outputList != nil)
 
-      let output = outputList!.first as? [Int]
-      XCTAssertEqual([1, 2, 3], output)
-      XCTAssertTrue(outputList!.count == 1)
-      expectation.fulfill()
+        let output = outputList!.first as? [Int]
+        #expect(output == [1, 2, 3])
+        #expect(outputList!.count == 1)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testListPrimitiveFlutter() throws {
+  @Test
+  func listPrimitiveFlutter() async throws {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-    let arg = ["hello"]
-    api.aList(value: arg) { result in
-      switch result {
-      case .success(let res):
-        XCTAssert(equalsList(arg, res))
-        expectation.fulfill()
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      let arg = ["hello"]
+      api.aList(value: arg) { result in
+        switch result {
+        case .success(let res):
+          #expect(equalsList(arg, res))
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testMapPrimitiveHost() throws {
+  @Test
+  func mapPrimitiveHost() async throws {
     let binaryMessenger = MockBinaryMessenger<[String: Int]>(codec: codec)
     PrimitiveHostApiSetup.setUp(binaryMessenger: binaryMessenger, api: MockPrimitiveHostApi())
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.PrimitiveHostApi.aMap"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let input: [String: Int] = ["hello": 1, "world": 2]
     let inputEncoded = binaryMessenger.codec.encode([input])
 
-    let expectation = XCTestExpectation(description: "aMap")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let output = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertTrue(output?.count == 1)
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let output = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(output?.count == 1)
 
-      let outputMap = output?.first as? [String: Int]
-      XCTAssertNotNil(outputMap)
-      XCTAssertEqual(["hello": 1, "world": 2], outputMap)
-      expectation.fulfill()
+        let outputMap = output?.first as? [String: Int]
+        #expect(outputMap != nil)
+        #expect(outputMap == ["hello": 1, "world": 2])
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testMapPrimitiveFlutter() throws {
+  @Test
+  func mapPrimitiveFlutter() async throws {
     let binaryMessenger = EchoBinaryMessenger(codec: codec)
     let api = PrimitiveFlutterApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-    let arg = ["hello": 1]
-    api.aMap(value: arg) { result in
-      switch result {
-      case .success(let res):
-        XCTAssert(equalsDictionary(arg, res))
-        expectation.fulfill()
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      let arg = ["hello": 1]
+      api.aMap(value: arg) { result in
+        switch result {
+        case .success(let res):
+          #expect(equalsDictionary(arg, res))
+          confirmed()
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
+        }
       }
-
     }
-    wait(for: [expectation], timeout: 1.0)
   }
-
 }

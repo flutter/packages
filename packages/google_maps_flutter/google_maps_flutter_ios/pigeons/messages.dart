@@ -7,8 +7,13 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/messages.g.dart',
-    objcHeaderOut: 'ios/Classes/messages.g.h',
-    objcSourceOut: 'ios/Classes/messages.g.m',
+    // This uses a different output name to avoid conflicts with the pigeon
+    // files in other packages, without having to use full relative paths
+    // in #includes (which would make source sharing harder to manage).
+    objcHeaderOut:
+        'ios/google_maps_flutter_ios/Sources/google_maps_flutter_ios/include/google_maps_flutter_ios/google_maps_flutter_pigeon_messages.g.h',
+    objcSourceOut:
+        'ios/google_maps_flutter_ios/Sources/google_maps_flutter_ios/google_maps_flutter_pigeon_messages.g.m',
     objcOptions: ObjcOptions(prefix: 'FGM'),
     copyrightHeader: 'pigeons/copyright.txt',
   ),
@@ -123,14 +128,48 @@ class PlatformCircle {
 
 /// Pigeon equivalent of the Heatmap class.
 class PlatformHeatmap {
-  PlatformHeatmap(this.json);
+  PlatformHeatmap({
+    required this.heatmapId,
+    required this.data,
+    this.gradient,
+    required this.opacity,
+    required this.radius,
+    required this.minimumZoomIntensity,
+    required this.maximumZoomIntensity,
+  });
 
-  /// The heatmap data, as JSON. This should only be set from
-  /// Heatmap.toJson, and the native code must interpret it according to the
-  /// internal implementation details of that method.
-  // TODO(stuartmorgan): Replace this with structured data. This exists only to
-  //  allow incremental migration to Pigeon.
-  final Object json;
+  final String heatmapId;
+  final List<PlatformWeightedLatLng> data;
+  final PlatformHeatmapGradient? gradient;
+  final double opacity;
+  final int radius;
+  final int minimumZoomIntensity;
+  final int maximumZoomIntensity;
+}
+
+/// Pigeon equivalent of the HeatmapGradient class.
+///
+/// The GMUGradient structure is slightly different from HeatmapGradient, so
+/// this matches the iOS API so that conversion can be done on the Dart side
+/// where the structures are easier to work with.
+class PlatformHeatmapGradient {
+  PlatformHeatmapGradient({
+    required this.colors,
+    required this.startPoints,
+    required this.colorMapSize,
+  });
+
+  final List<PlatformColor> colors;
+  final List<double> startPoints;
+  final int colorMapSize;
+}
+
+/// Pigeon equivalent of the WeightedLatLng class.
+class PlatformWeightedLatLng {
+  PlatformWeightedLatLng({required this.point, required this.weight});
+
+  final PlatformLatLng point;
+  final double weight;
 }
 
 /// Pigeon equivalent of the InfoWindow class.
