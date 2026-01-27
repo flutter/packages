@@ -1,3 +1,7 @@
+## NEXT
+
+* Automatic Bitrate Streaming support to Android.
+
 ## 2.9.2
 
 * Bumps kotlin_version to 2.3.0.
