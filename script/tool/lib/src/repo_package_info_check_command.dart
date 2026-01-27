@@ -376,11 +376,13 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       errors.add(
         'Branch release-$packageName does not exist on remote flutter/packages',
       );
-    } else if (!isBatchRelease && branchExists) {
-      errors.add(
-        'Unexpected branch release-$packageName on remote flutter/packages',
-      );
     }
+    // Allow branch to exist on remote flutter/packages for non-batch release packages.
+    // Otherwise, it will be hard to opt package out of batch release.
+    //
+    // Enforcing this will run into a deadlock where the ci in the PR to opts out of batch release
+    // will require removal of the release branch. but removing the release branch will immediately break
+    // the latest main.
 
     if (errors.isNotEmpty) {
       for (final error in errors) {
