@@ -650,7 +650,6 @@ class NotificationMetadataMessage {
     this.artist,
     this.durationMs,
     this.artUri,
-    this.smallIconResourceName,
   });
 
   String id;
@@ -665,10 +664,6 @@ class NotificationMetadataMessage {
 
   String? artUri;
 
-  /// The name of a drawable resource to use as the notification's small icon.
-  /// Android only. If null, defaults to Media3's default icon.
-  String? smallIconResourceName;
-
   List<Object?> _toList() {
     return <Object?>[
       id,
@@ -677,7 +672,6 @@ class NotificationMetadataMessage {
       artist,
       durationMs,
       artUri,
-      smallIconResourceName,
     ];
   }
 
@@ -693,7 +687,6 @@ class NotificationMetadataMessage {
       artist: result[3] as String?,
       durationMs: result[4] as int?,
       artUri: result[5] as String?,
-      smallIconResourceName: result[6] as String?,
     );
   }
 
@@ -1285,29 +1278,6 @@ class VideoPlayerInstanceApi {
   /// Configures background playback and media notification.
   Future<void> setBackgroundPlayback(BackgroundPlaybackMessage msg) async {
     final pigeonVar_channelName = 'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setBackgroundPlayback$pigeonVar_messageChannelSuffix';
-    final pigeonVar_channel = BasicMessageChannel<Object?>(
-      pigeonVar_channelName,
-      pigeonChannelCodec,
-      binaryMessenger: pigeonVar_binaryMessenger,
-    );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[msg]);
-    final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
-    if (pigeonVar_replyList == null) {
-      throw _createConnectionError(pigeonVar_channelName);
-    } else if (pigeonVar_replyList.length > 1) {
-      throw PlatformException(
-        code: pigeonVar_replyList[0]! as String,
-        message: pigeonVar_replyList[1] as String?,
-        details: pigeonVar_replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Updates the notification metadata.
-  Future<void> updateNotificationMetadata(NotificationMetadataMessage msg) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.updateNotificationMetadata$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,

@@ -242,27 +242,6 @@ public class VideoMedia3SessionService extends MediaSessionService {
   }
 
   /**
-   * Updates the metadata on an existing MediaSession.
-   *
-   * @param textureId The texture ID of the player
-   * @param notificationMetadata The new metadata
-   */
-  public void updateMediaSessionMetadata(
-      int textureId, @NonNull NotificationMetadataMessage notificationMetadata) {
-
-    MediaSession session = mediaSessions.get(textureId);
-    if (session == null) {
-      Log.w(TAG, "No MediaSession found for texture: " + textureId);
-      return;
-    }
-
-    Player player = session.getPlayer();
-    if (player instanceof ExoPlayer) {
-      updatePlayerMetadata((ExoPlayer) player, notificationMetadata);
-    }
-  }
-
-  /**
    * Updates the ExoPlayer's current MediaItem with new metadata. This will automatically update the
    * notification.
    */

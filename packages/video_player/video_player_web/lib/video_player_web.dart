@@ -181,11 +181,4 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
     required bool enableBackground,
     NotificationMetadata? notificationMetadata,
   }) => Future<void>.value();
-
-  /// Notification metadata updates are not supported on web (silently ignored).
-  @override
-  Future<void> updateNotificationMetadata(
-    int playerId,
-    NotificationMetadata notificationMetadata,
-  ) => Future<void>.value();
 }

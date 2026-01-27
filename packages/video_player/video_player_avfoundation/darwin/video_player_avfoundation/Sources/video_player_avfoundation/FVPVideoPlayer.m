@@ -594,17 +594,6 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 #endif
 }
 
-- (void)updateNotificationMetadata:(FVPNotificationMetadataMessage *)msg
-                             error:(FlutterError *_Nullable *_Nonnull)error {
-  _notificationMetadata = msg;
-
-#if TARGET_OS_IOS
-  if (_enableBackgroundPlayback && _notificationMetadata) {
-    [self updateNowPlayingInfo];
-  }
-#endif
-}
-
 #if TARGET_OS_IOS
 - (void)setupRemoteCommandCenter {
   MPRemoteCommandCenter *commandCenter = [MPRemoteCommandCenter sharedCommandCenter];

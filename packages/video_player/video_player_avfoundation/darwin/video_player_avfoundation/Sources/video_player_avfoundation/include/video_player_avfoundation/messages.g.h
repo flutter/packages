@@ -122,7 +122,6 @@ extern void SetUpFVPAVFoundationVideoPlayerApiWithSuffix(id<FlutterBinaryMesseng
 - (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:(FlutterError *_Nullable *_Nonnull)error;
 - (void)selectAudioTrackAtIndex:(NSInteger)trackIndex error:(FlutterError *_Nullable *_Nonnull)error;
 - (void)setBackgroundPlayback:(FVPBackgroundPlaybackMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
-- (void)updateNotificationMetadata:(FVPNotificationMetadataMessage *)msg error:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
 extern void SetUpFVPVideoPlayerInstanceApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FVPVideoPlayerInstanceApi> *_Nullable api);

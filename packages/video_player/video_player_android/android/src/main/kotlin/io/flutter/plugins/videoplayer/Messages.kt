@@ -568,12 +568,7 @@ data class NotificationMetadataMessage(
     val album: String? = null,
     val artist: String? = null,
     val durationMs: Long? = null,
-    val artUri: String? = null,
-    /**
-     * The name of a drawable resource to use as the notification's small icon. Android only. If
-     * null, defaults to Media3's default icon.
-     */
-    val smallIconResourceName: String? = null
+    val artUri: String? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): NotificationMetadataMessage {
@@ -583,9 +578,7 @@ data class NotificationMetadataMessage(
       val artist = pigeonVar_list[3] as String?
       val durationMs = pigeonVar_list[4] as Long?
       val artUri = pigeonVar_list[5] as String?
-      val smallIconResourceName = pigeonVar_list[6] as String?
-      return NotificationMetadataMessage(
-          id, title, album, artist, durationMs, artUri, smallIconResourceName)
+      return NotificationMetadataMessage(id, title, album, artist, durationMs, artUri)
     }
   }
 
@@ -597,7 +590,6 @@ data class NotificationMetadataMessage(
         artist,
         durationMs,
         artUri,
-        smallIconResourceName,
     )
   }
 
@@ -964,8 +956,6 @@ interface VideoPlayerInstanceApi {
   fun selectAudioTrack(groupIndex: Long, trackIndex: Long)
   /** Configures background playback and media notification. */
   fun setBackgroundPlayback(msg: BackgroundPlaybackMessage)
-  /** Updates the notification metadata. */
-  fun updateNotificationMetadata(msg: NotificationMetadataMessage)
 
   companion object {
     /** The codec used by VideoPlayerInstanceApi. */
@@ -1213,29 +1203,6 @@ interface VideoPlayerInstanceApi {
             val wrapped: List<Any?> =
                 try {
                   api.setBackgroundPlayback(msgArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  MessagesPigeonUtils.wrapError(exception)
-                }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.updateNotificationMetadata$separatedMessageChannelSuffix",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val msgArg = args[0] as NotificationMetadataMessage
-            val wrapped: List<Any?> =
-                try {
-                  api.updateNotificationMetadata(msgArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   MessagesPigeonUtils.wrapError(exception)

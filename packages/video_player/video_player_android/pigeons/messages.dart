@@ -225,9 +225,6 @@ abstract class VideoPlayerInstanceApi {
 
   /// Configures background playback and media notification.
   void setBackgroundPlayback(BackgroundPlaybackMessage msg);
-
-  /// Updates the notification metadata.
-  void updateNotificationMetadata(NotificationMetadataMessage msg);
 }
 
 @EventChannelApi()

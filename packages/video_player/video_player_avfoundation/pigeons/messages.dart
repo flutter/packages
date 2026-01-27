@@ -125,6 +125,4 @@ abstract class VideoPlayerInstanceApi {
   void selectAudioTrack(int trackIndex);
   @ObjCSelector('setBackgroundPlayback:')
   void setBackgroundPlayback(BackgroundPlaybackMessage msg);
-  @ObjCSelector('updateNotificationMetadata:')
-  void updateNotificationMetadata(NotificationMetadataMessage msg);
 }

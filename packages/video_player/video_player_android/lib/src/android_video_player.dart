@@ -298,23 +298,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     );
   }
 
-  @override
-  Future<void> updateNotificationMetadata(
-    int playerId,
-    NotificationMetadata notificationMetadata,
-  ) {
-    return _playerWith(id: playerId).updateNotificationMetadata(
-      NotificationMetadataMessage(
-        id: notificationMetadata.id,
-        title: notificationMetadata.title,
-        artist: notificationMetadata.artist,
-        album: notificationMetadata.album,
-        durationMs: notificationMetadata.duration?.inMilliseconds,
-        artUri: notificationMetadata.artUri?.toString(),
-      ),
-    );
-  }
-
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -435,10 +418,6 @@ class _PlayerInstance {
 
   Future<void> setBackgroundPlayback(BackgroundPlaybackMessage msg) {
     return _api.setBackgroundPlayback(msg);
-  }
-
-  Future<void> updateNotificationMetadata(NotificationMetadataMessage msg) {
-    return _api.updateNotificationMetadata(msg);
   }
 
   Future<void> dispose() async {

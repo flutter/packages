@@ -313,15 +313,6 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     }
   }
 
-  @Override
-  public void updateNotificationMetadata(@NonNull NotificationMetadataMessage msg) {
-    if (mediaSessionService != null && textureId >= 0) {
-      mediaSessionService.updateMediaSessionMetadata(textureId, msg);
-    } else {
-      Log.w(TAG, "Cannot update notification metadata: service not available");
-    }
-  }
-
   private void bindMediaSessionService() {
     if (applicationContext == null) {
       Log.e(TAG, "Cannot bind to MediaSessionService: no application context");

@@ -147,21 +147,6 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     );
   }
 
-  /// Updates the notification metadata.
-  ///
-  /// This updates the metadata shown in the system notification, lock screen,
-  /// and control center without interrupting playback.
-  ///
-  /// Only works when background playback is enabled with notification metadata.
-  Future<void> updateNotificationMetadata(
-    int playerId,
-    NotificationMetadata notificationMetadata,
-  ) {
-    throw UnimplementedError(
-      'updateNotificationMetadata() has not been implemented.',
-    );
-  }
-
   /// Gets the available audio tracks for the video.
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) {
     throw UnimplementedError('getAudioTracks() has not been implemented.');
@@ -195,8 +180,7 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// This is useful for platforms like web where background playback may not
   /// be available.
   ///
-  /// Returns `true` if [setBackgroundPlayback] and [updateNotificationMetadata]
-  /// are supported, `false` otherwise.
+  /// Returns `true` if [setBackgroundPlayback] is supported, `false` otherwise.
   ///
   /// The default implementation returns `false`. Platform implementations
   /// should override this to return `true` if they support background playback.

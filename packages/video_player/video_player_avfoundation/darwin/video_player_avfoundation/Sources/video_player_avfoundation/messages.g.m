@@ -613,23 +613,4 @@ void SetUpFVPVideoPlayerInstanceApiWithSuffix(id<FlutterBinaryMessenger> binaryM
       [channel setMessageHandler:nil];
     }
   }
-  {
-    FlutterBasicMessageChannel *channel =
-      [[FlutterBasicMessageChannel alloc]
-        initWithName:[NSString stringWithFormat:@"%@%@", @"dev.flutter.pigeon.video_player_avfoundation.VideoPlayerInstanceApi.updateNotificationMetadata", messageChannelSuffix]
-        binaryMessenger:binaryMessenger
-        codec:FVPGetMessagesCodec()];
-    if (api) {
-      NSCAssert([api respondsToSelector:@selector(updateNotificationMetadata:error:)], @"FVPVideoPlayerInstanceApi api (%@) doesn't respond to @selector(updateNotificationMetadata:error:)", api);
-      [channel setMessageHandler:^(id _Nullable message, FlutterReply callback) {
-        NSArray<id> *args = message;
-        FVPNotificationMetadataMessage *arg_msg = GetNullableObjectAtIndex(args, 0);
-        FlutterError *error;
-        [api updateNotificationMetadata:arg_msg error:&error];
-        callback(wrapResult(nil, error));
-      }];
-    } else {
-      [channel setMessageHandler:nil];
-    }
-  }
 }
