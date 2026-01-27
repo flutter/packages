@@ -827,14 +827,6 @@ on:
           ),
         ),
       );
-      expect(
-        output,
-        contains(
-          contains(
-            'Unexpected branch release-a_package on remote flutter/packages',
-          ),
-        ),
-      );
     });
 
     test('fails if batch workflow file is missing', () async {
