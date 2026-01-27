@@ -233,6 +233,49 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
         trackSelector.buildUponParameters().setOverrideForType(override).build());
   }
 
+  // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
+  @UnstableApi
+  @Override
+  public void setBandwidthLimit(long maxBandwidthBps) {
+    if (trackSelector == null) {
+      android.util.Log.w("VideoPlayer", "Cannot set bandwidth limit: track selector is null");
+      return;
+    }
+
+    // Build the new track selector parameters with bandwidth limit
+    DefaultTrackSelector.Parameters.Builder parametersBuilder =
+        trackSelector.buildUponParameters();
+
+    if (maxBandwidthBps <= 0) {
+      // Remove bandwidth limit - allow full adaptive streaming
+      parametersBuilder
+          .setMaxVideoBitrate(Integer.MAX_VALUE);
+      
+      android.util.Log.d("VideoPlayer", "Bandwidth limit removed - full adaptive streaming enabled");
+    } else {
+      // Set the maximum video bitrate to limit bandwidth usage
+      // This still allows adaptive streaming BELOW this limit
+      int maxBitrate = maxBandwidthBps > Integer.MAX_VALUE ? Integer.MAX_VALUE : (int) maxBandwidthBps;
+      parametersBuilder.setMaxVideoBitrate(maxBitrate);
+      
+      android.util.Log.d("VideoPlayer", "Bandwidth limit set to: " + maxBitrate + " bps - adaptive streaming below this limit");
+    }
+
+    // Apply the new parameters
+    trackSelector.setParameters(parametersBuilder.build());
+  }
+
+  /**
+   * @deprecated This method DISABLES adaptive bitrate streaming. Do not use.
+   * ExoPlayer's adaptive streaming is now enabled by default in the player creation.
+   */
+  @Deprecated
+  @UnstableApi
+  public void enableSmoothAdaptiveStreaming() {
+    android.util.Log.w("VideoPlayer", "enableSmoothAdaptiveStreaming() is deprecated and should not be called. It disables ABR.");
+    // This method is now a no-op to prevent disabling ABR
+  }
+
   public void dispose() {
     if (disposeHandler != null) {
       disposeHandler.onDispose();

@@ -153,6 +153,35 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   bool isAudioTrackSupportAvailable() {
     return false;
   }
+
+  /// Sets the maximum bandwidth limit in bits per second for HLS adaptive bitrate streaming.
+  ///
+  /// This method helps control which HLS variant streams are selected by the player
+  /// by limiting the available bandwidth. This is useful for:
+  /// - Forcing lower quality playback on slow networks
+  /// - Preventing excessive buffering when network is unstable
+  /// - Testing quality switching behavior
+  ///
+  /// Pass 0 to remove any bandwidth limit and allow the player to select quality freely.
+  ///
+  /// Common bandwidth values for HLS:
+  ///   - 360p: 500000 bps (500 kbps)
+  ///   - 480p: 800000 bps (800 kbps)
+  ///   - 720p: 1200000 bps (1.2 Mbps)
+  ///   - 1080p: 2500000 bps (2.5 Mbps)
+  ///
+  /// Platform-specific behavior:
+  /// - **Android**: Uses ExoPlayer's DefaultBandwidthMeter. The bandwidth meter estimates
+  ///   network speed from segment downloads. Setting a limit influences track selection.
+  /// - **iOS/macOS**: Sets AVPlayerItem.preferredPeakBitRate, which AVPlayer uses
+  ///   to select HLS variant streams.
+  /// - **Web**: Not implemented (returns unimplemented error).
+  ///
+  /// Returns: A Future that completes when the bandwidth limit has been applied.
+  /// Throws: [UnimplementedError] on platforms that don't support this feature.
+  Future<void> setBandwidthLimit(int playerId, int maxBandwidthBps) {
+    throw UnimplementedError('setBandwidthLimit() has not been implemented.');
+  }
 }
 
 class _PlaceholderImplementation extends VideoPlayerPlatform {}

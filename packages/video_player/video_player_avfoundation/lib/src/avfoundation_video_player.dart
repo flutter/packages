@@ -213,6 +213,11 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<void> setBandwidthLimit(int playerId, int maxBandwidthBps) {
+    return _playerWith(id: playerId).setBandwidthLimit(maxBandwidthBps);
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
@@ -288,6 +293,9 @@ class _PlayerInstance {
 
   Future<void> selectAudioTrack(int trackIndex) =>
       _api.selectAudioTrack(trackIndex);
+
+  Future<void> setBandwidthLimit(int maxBandwidthBps) =>
+      _api.setBandwidthLimit(maxBandwidthBps);
 
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(

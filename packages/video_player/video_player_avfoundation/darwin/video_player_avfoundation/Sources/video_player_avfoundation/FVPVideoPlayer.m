@@ -507,6 +507,23 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
+- (void)setBandwidthLimit:(NSInteger)maxBandwidthBps
+                    error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  NSAssert(currentItem, @"currentItem should not be nil");
+
+  if (maxBandwidthBps <= 0) {
+    // Remove the bandwidth limit by setting to the maximum value
+    // This allows AVPlayer to select any available quality
+    currentItem.preferredPeakBitRate = INFINITY;
+  } else {
+    // Set the preferred peak bitrate in bits per second
+    // AVPlayer will attempt to play video at or below this bitrate
+    // Note: The actual bitrate selected depends on the available HLS variants
+    currentItem.preferredPeakBitRate = (double)maxBandwidthBps;
+  }
+}
+
 #pragma mark - Private
 
 - (int64_t)duration {
