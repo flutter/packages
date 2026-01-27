@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds background playback with system media notification support.
+
 ## 2.9.0
 
 * Implements `getAudioTracks()` and `selectAudioTrack()` methods.

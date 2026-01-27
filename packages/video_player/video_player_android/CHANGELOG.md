@@ -1,3 +1,7 @@
+## 2.10.0
+
+* Adds background playback with system media notification support.
+
 ## 2.9.2
 
 * Bumps kotlin_version to 2.3.0.

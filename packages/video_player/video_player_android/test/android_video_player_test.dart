@@ -33,6 +33,14 @@ void main() {
   );
   provideDummy<Future<void>>(Future<void>.value());
 
+  // Provide dummy values for background playback types
+  provideDummy<BackgroundPlaybackMessage>(
+    BackgroundPlaybackMessage(enableBackground: false),
+  );
+  provideDummy<NotificationMetadataMessage>(
+    NotificationMetadataMessage(id: 'dummy'),
+  );
+
   (AndroidVideoPlayer, MockAndroidVideoPlayerApi, MockVideoPlayerInstanceApi)
   setUpMockPlayer({required int playerId, int? textureId}) {
     final pluginApi = MockAndroidVideoPlayerApi();
@@ -948,6 +956,125 @@ void main() {
         await selectionFuture;
 
         verify(api.selectAudioTrack(0, 1));
+      });
+    });
+
+    group('background playback', () {
+      test('isBackgroundPlaybackSupportAvailable returns true', () {
+        final (AndroidVideoPlayer player, _, _) = setUpMockPlayer(playerId: 1);
+
+        expect(player.isBackgroundPlaybackSupportAvailable(), true);
+      });
+
+      test(
+        'setBackgroundPlayback enables background without metadata',
+        () async {
+          final (
+            AndroidVideoPlayer player,
+            _,
+            MockVideoPlayerInstanceApi playerApi,
+          ) = setUpMockPlayer(
+            playerId: 1,
+          );
+          when(playerApi.setBackgroundPlayback(any)).thenAnswer((_) async {});
+
+          await player.setBackgroundPlayback(1, enableBackground: true);
+
+          final VerificationResult verification = verify(
+            playerApi.setBackgroundPlayback(captureAny),
+          );
+          final msg = verification.captured[0] as BackgroundPlaybackMessage;
+          expect(msg.enableBackground, true);
+          expect(msg.notificationMetadata, isNull);
+        },
+      );
+
+      test('setBackgroundPlayback disables background', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(playerApi.setBackgroundPlayback(any)).thenAnswer((_) async {});
+
+        await player.setBackgroundPlayback(1, enableBackground: false);
+
+        final VerificationResult verification = verify(
+          playerApi.setBackgroundPlayback(captureAny),
+        );
+        final msg = verification.captured[0] as BackgroundPlaybackMessage;
+        expect(msg.enableBackground, false);
+      });
+
+      test('setBackgroundPlayback passes notification metadata', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(playerApi.setBackgroundPlayback(any)).thenAnswer((_) async {});
+
+        await player.setBackgroundPlayback(
+          1,
+          enableBackground: true,
+          notificationMetadata: NotificationMetadata(
+            id: 'video_1',
+            title: 'Test Video',
+            artist: 'Test Artist',
+            album: 'Test Album',
+            duration: const Duration(minutes: 5),
+            artUri: Uri.parse('https://example.com/art.jpg'),
+          ),
+        );
+
+        final VerificationResult verification = verify(
+          playerApi.setBackgroundPlayback(captureAny),
+        );
+        final msg = verification.captured[0] as BackgroundPlaybackMessage;
+        expect(msg.enableBackground, true);
+        expect(msg.notificationMetadata, isNotNull);
+        expect(msg.notificationMetadata!.id, 'video_1');
+        expect(msg.notificationMetadata!.title, 'Test Video');
+        expect(msg.notificationMetadata!.artist, 'Test Artist');
+        expect(msg.notificationMetadata!.album, 'Test Album');
+        expect(msg.notificationMetadata!.durationMs, 300000);
+        expect(msg.notificationMetadata!.artUri, 'https://example.com/art.jpg');
+      });
+
+      test('updateNotificationMetadata passes metadata correctly', () async {
+        final (
+          AndroidVideoPlayer player,
+          _,
+          MockVideoPlayerInstanceApi playerApi,
+        ) = setUpMockPlayer(
+          playerId: 1,
+        );
+        when(
+          playerApi.updateNotificationMetadata(any),
+        ).thenAnswer((_) async {});
+
+        await player.updateNotificationMetadata(
+          1,
+          NotificationMetadata(
+            id: 'video_1',
+            title: 'Updated Title',
+            artist: 'Updated Artist',
+            artUri: Uri.parse('https://example.com/new_art.jpg'),
+          ),
+        );
+
+        final VerificationResult verification = verify(
+          playerApi.updateNotificationMetadata(captureAny),
+        );
+        final msg = verification.captured[0] as NotificationMetadataMessage;
+        expect(msg.id, 'video_1');
+        expect(msg.title, 'Updated Title');
+        expect(msg.artist, 'Updated Artist');
+        expect(msg.artUri, 'https://example.com/new_art.jpg');
       });
     });
   });

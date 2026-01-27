@@ -213,6 +213,55 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  bool isBackgroundPlaybackSupportAvailable() {
+    // iOS/macOS supports background playback with media notifications
+    return true;
+  }
+
+  @override
+  Future<void> setBackgroundPlayback(
+    int playerId, {
+    required bool enableBackground,
+    NotificationMetadata? notificationMetadata,
+  }) {
+    NotificationMetadataMessage? metadataMessage;
+    if (notificationMetadata != null) {
+      metadataMessage = NotificationMetadataMessage(
+        id: notificationMetadata.id,
+        title: notificationMetadata.title,
+        artist: notificationMetadata.artist,
+        album: notificationMetadata.album,
+        durationMs: notificationMetadata.duration?.inMilliseconds,
+        artUri: notificationMetadata.artUri?.toString(),
+      );
+    }
+
+    return _playerWith(id: playerId).setBackgroundPlayback(
+      BackgroundPlaybackMessage(
+        enableBackground: enableBackground,
+        notificationMetadata: metadataMessage,
+      ),
+    );
+  }
+
+  @override
+  Future<void> updateNotificationMetadata(
+    int playerId,
+    NotificationMetadata notificationMetadata,
+  ) {
+    return _playerWith(id: playerId).updateNotificationMetadata(
+      NotificationMetadataMessage(
+        id: notificationMetadata.id,
+        title: notificationMetadata.title,
+        artist: notificationMetadata.artist,
+        album: notificationMetadata.album,
+        durationMs: notificationMetadata.duration?.inMilliseconds,
+        artUri: notificationMetadata.artUri?.toString(),
+      ),
+    );
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
@@ -288,6 +337,12 @@ class _PlayerInstance {
 
   Future<void> selectAudioTrack(int trackIndex) =>
       _api.selectAudioTrack(trackIndex);
+
+  Future<void> setBackgroundPlayback(BackgroundPlaybackMessage msg) =>
+      _api.setBackgroundPlayback(msg);
+
+  Future<void> updateNotificationMetadata(NotificationMetadataMessage msg) =>
+      _api.updateNotificationMetadata(msg);
 
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(

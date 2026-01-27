@@ -1,5 +1,6 @@
-## NEXT
+## 2.11.0
 
+* Adds background playback with system media notification support.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.

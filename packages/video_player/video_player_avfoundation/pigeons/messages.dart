@@ -56,6 +56,36 @@ class MediaSelectionAudioTrackData {
   String? commonMetadataTitle;
 }
 
+/// Metadata for the system media notification when playing in background.
+class NotificationMetadataMessage {
+  NotificationMetadataMessage({
+    required this.id,
+    this.title,
+    this.album,
+    this.artist,
+    this.durationMs,
+    this.artUri,
+  });
+
+  String id;
+  String? title;
+  String? album;
+  String? artist;
+  int? durationMs;
+  String? artUri;
+}
+
+/// Message for configuring background playback with media notification.
+class BackgroundPlaybackMessage {
+  BackgroundPlaybackMessage({
+    required this.enableBackground,
+    this.notificationMetadata,
+  });
+
+  bool enableBackground;
+  NotificationMetadataMessage? notificationMetadata;
+}
+
 @HostApi()
 abstract class AVFoundationVideoPlayerApi {
   @ObjCSelector('initialize')
@@ -93,4 +123,8 @@ abstract class VideoPlayerInstanceApi {
   List<MediaSelectionAudioTrackData> getAudioTracks();
   @ObjCSelector('selectAudioTrackAtIndex:')
   void selectAudioTrack(int trackIndex);
+  @ObjCSelector('setBackgroundPlayback:')
+  void setBackgroundPlayback(BackgroundPlaybackMessage msg);
+  @ObjCSelector('updateNotificationMetadata:')
+  void updateNotificationMetadata(NotificationMetadataMessage msg);
 }
