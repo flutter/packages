@@ -57,10 +57,8 @@ struct PrimitiveTests {
         case .success(let res):
           #expect(res == 1)
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
-
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }
@@ -100,9 +98,8 @@ struct PrimitiveTests {
         case .success(let res):
           #expect(res == true)
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }
@@ -143,9 +140,8 @@ struct PrimitiveTests {
         case .success(let res):
           #expect(res == arg)
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }
@@ -186,9 +182,8 @@ struct PrimitiveTests {
         case .success(let res):
           #expect(res == arg)
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }
@@ -229,9 +224,8 @@ struct PrimitiveTests {
         case .success(let res):
           #expect(equalsList(arg, res))
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }
@@ -272,11 +266,9 @@ struct PrimitiveTests {
         case .success(let res):
           #expect(equalsDictionary(arg, res))
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
-
       }
     }
   }

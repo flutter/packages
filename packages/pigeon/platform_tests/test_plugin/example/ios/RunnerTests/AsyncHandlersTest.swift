@@ -34,10 +34,8 @@ struct AsyncHandlersTest {
         case .success(let res):
           #expect(res == value)
           confirmed()
-        case .failure(_):
-          // Fail
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }

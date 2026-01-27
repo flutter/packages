@@ -31,6 +31,7 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		E04641FA2A46270400661C9E /* NSNullFieldTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04641F92A46270400661C9E /* NSNullFieldTests.swift */; };
+		F750BDEE2F28844900E3DB39 /* ProxyApiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F750BDED2F28844900E3DB39 /* ProxyApiTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,7 @@
 		BF5B776B52F984FB430C15A3 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		E04641F92A46270400661C9E /* NSNullFieldTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSNullFieldTests.swift; sourceTree = "<group>"; };
 		EB04430DB6D43CCC08FA526B /* Pods-RunnerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F750BDED2F28844900E3DB39 /* ProxyApiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProxyApiTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -131,6 +133,7 @@
 				33A341C3291ECDFD00D34E0F /* NonNullFieldsTest.swift */,
 				33A341C6291ECDFD00D34E0F /* NullableReturnsTests.swift */,
 				33A341C7291ECDFD00D34E0F /* PrimitiveTests.swift */,
+				F750BDED2F28844900E3DB39 /* ProxyApiTests.swift */,
 				33A341B7291ECCA100D34E0F /* RunnerTests.swift */,
 				E04641F92A46270400661C9E /* NSNullFieldTests.swift */,
 				33A341CA291ECDFD00D34E0F /* Utils.swift */,
@@ -413,6 +416,7 @@
 				E04641FA2A46270400661C9E /* NSNullFieldTests.swift in Sources */,
 				33A341D1291ECDFD00D34E0F /* MockBinaryMessenger.swift in Sources */,
 				33A341CF291ECDFD00D34E0F /* NonNullFieldsTest.swift in Sources */,
+				F750BDEE2F28844900E3DB39 /* ProxyApiTests.swift in Sources */,
 				33A341CB291ECDFD00D34E0F /* MultipleArityTests.swift in Sources */,
 				33A341CC291ECDFD00D34E0F /* AllDatatypesTests.swift in Sources */,
 			);

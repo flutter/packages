@@ -24,9 +24,8 @@ struct ListTests {
           #expect(res.testList?[0] is TestMessage)
           #expect(equalsList(inside.testList, (res.testList?[0] as! TestMessage).testList))
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }

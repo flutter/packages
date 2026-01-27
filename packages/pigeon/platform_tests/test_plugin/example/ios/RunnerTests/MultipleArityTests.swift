@@ -55,9 +55,8 @@ struct MultipleArityTests {
         case .success(let res):
           #expect(res == 20)
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }

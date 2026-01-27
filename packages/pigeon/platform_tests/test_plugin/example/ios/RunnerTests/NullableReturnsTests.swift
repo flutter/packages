@@ -34,9 +34,8 @@ struct NullableReturnsTests {
         case .success(let res):
           #expect(res == 99)
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Failed with error: \(error)")
         }
       }
     }

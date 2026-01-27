@@ -26,9 +26,9 @@ struct ProxyApiTests {
 
     await confirmation { confirmed in
       api.flutterNoop(pigeonInstance: testObject) { response in
-        if case .failure(let response) = response {
+        if case .failure(let error) = response {
           #expect(
-            response.message
+            error.message
               == "Callback to `ProxyApiTestClass.flutterNoop` failed because native instance was not in the instance manager."
           )
           confirmed()

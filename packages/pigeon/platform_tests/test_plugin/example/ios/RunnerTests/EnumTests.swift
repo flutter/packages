@@ -48,11 +48,10 @@ struct EnumTests {
       api.echo(data: data) { result in
         switch result {
         case .success(let res):
-          #expect(res.state == res.state)
+          #expect(res.state == data.state)
           confirmed()
-        case .failure(_):
-          Issue.record("Failed")
-          return
+        case .failure(let error):
+          Issue.record("Error: \(error) from data \(data)")
         }
       }
     }
