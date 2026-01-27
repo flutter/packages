@@ -33,5 +33,7 @@ public class PlatformVideoViewTest {
 
     assertNotNull(surfaceView);
     verify(exoPlayer).setVideoSurfaceView(surfaceView);
+
+    exoPlayer.release();
   }
 }

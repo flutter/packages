@@ -39,5 +39,7 @@ public class PlatformVideoViewFactoryTest {
     assertTrue(view instanceof PlatformVideoView);
     verify(videoPlayerProvider).getVideoPlayer(playerId);
     verify(videoPlayer).getExoPlayer();
+
+    exoPlayer.release();
   }
 }
