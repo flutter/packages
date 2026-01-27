@@ -27,6 +27,11 @@ mixin $IntRoute on GoRouteData {
           int.parse,
         ) ??
         1,
+    intFieldWithSpace: _$convertMapValue(
+      'int field',
+      state.uri.queryParameters,
+      int.tryParse,
+    ),
   );
 
   IntRoute get _self => this as IntRoute;
@@ -39,6 +44,8 @@ mixin $IntRoute on GoRouteData {
       if (_self.intFieldWithDefaultValue != 1)
         'int_field_with_default_value': _self.intFieldWithDefaultValue
             .toString(),
+      if (_self.intFieldWithSpace != null)
+        'int field': _self.intFieldWithSpace!.toString(),
     },
   );
 
