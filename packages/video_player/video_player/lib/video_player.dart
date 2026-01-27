@@ -476,13 +476,12 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _creatingCompleter!.complete(null);
 
     // Set up background playback if enabled
-    final VideoPlayerOptions? options = videoPlayerOptions;
-    final NotificationMetadata? metadata = options?.notificationMetadata;
-    if (options != null && options.allowBackgroundPlayback) {
+    if (videoPlayerOptions != null &&
+        (videoPlayerOptions?.allowBackgroundPlayback ?? false)) {
       await _videoPlayerPlatform.setBackgroundPlayback(
         _playerId,
         enableBackground: true,
-        notificationMetadata: metadata,
+        notificationMetadata: videoPlayerOptions?.notificationMetadata,
       );
     }
 
