@@ -1,0 +1,22 @@
+RouteBase get $onEnterRoute =>
+    GoRouteData.$route(path: '/on-enter', factory: $OnEnterRoute._fromState);
+
+mixin $OnEnterRoute on GoRouteData {
+  static OnEnterRoute _fromState(GoRouterState state) => const OnEnterRoute();
+
+  @override
+  String get location => GoRouteData.$location('/on-enter');
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
