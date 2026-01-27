@@ -12,6 +12,9 @@ import Testing
   import FlutterMacOS
 #endif
 
+// The shared preferences API is thread-safe.
+// Serially mutate shared preferences
+// so tests don't stomp on each other.
 @Suite(.serialized)
 struct RunnerTests {
   let testKey = "foo"
