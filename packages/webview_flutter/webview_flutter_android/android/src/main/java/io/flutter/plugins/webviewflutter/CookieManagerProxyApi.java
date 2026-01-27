@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import kotlin.Result;
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Host API implementation for `CookieManager`.
@@ -51,5 +52,13 @@ public class CookieManagerProxyApi extends PigeonApiCookieManager {
   public void setAcceptThirdPartyCookies(
       @NonNull CookieManager pigeon_instance, @NonNull WebView webView, boolean accept) {
     pigeon_instance.setAcceptThirdPartyCookies(webView, accept);
+  }
+
+  @Override
+  public @NotNull String getCookies(
+      @NotNull CookieManager pigeon_instance, @NotNull String domain) {
+    final String cookie = pigeon_instance.getCookie(domain);
+    if (cookie == null) return "";
+    return cookie;
   }
 }

@@ -108,4 +108,112 @@ void main() {
 
     verify(mockCookieManager.setAcceptThirdPartyCookies(webView, false));
   });
+
+  test('getCookies should return list of WebViewCookie for a domain', () async {
+    final mockCookieManager = MockCookieManager();
+
+    // Mock the return value of getCookies
+    when(
+      mockCookieManager.getCookies('https://flutter.dev'),
+    ).thenAnswer((_) => Future<String>.value('foo=bar; hello=world'));
+
+    final params =
+        AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
+          const PlatformWebViewCookieManagerCreationParams(),
+        );
+
+    final cookieManager = AndroidWebViewCookieManager(
+      params,
+      cookieManager: mockCookieManager,
+    );
+
+    final List<WebViewCookie> cookies = await cookieManager.getCookies(
+      Uri.parse('https://flutter.dev'),
+    );
+
+    expect(cookies.length, 2);
+
+    expect(cookies[0].name, 'foo');
+    expect(cookies[0].value, 'bar');
+    expect(cookies[0].domain, 'https://flutter.dev');
+
+    expect(cookies[1].name, 'hello');
+    expect(cookies[1].value, 'world');
+    expect(cookies[1].domain, 'https://flutter.dev');
+
+    verify(mockCookieManager.getCookies('https://flutter.dev')).called(1);
+  });
+
+  test('getCookies should return empty list if no cookies exist', () async {
+    final mockCookieManager = MockCookieManager();
+
+    when(
+      mockCookieManager.getCookies('https://flutter.dev'),
+    ).thenAnswer((_) => Future<String>.value(''));
+
+    final params =
+        AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
+          const PlatformWebViewCookieManagerCreationParams(),
+        );
+
+    final cookieManager = AndroidWebViewCookieManager(
+      params,
+      cookieManager: mockCookieManager,
+    );
+
+    final List<WebViewCookie> cookies = await cookieManager.getCookies(
+      Uri.parse('https://flutter.dev'),
+    );
+
+    expect(cookies, isEmpty);
+    verify(mockCookieManager.getCookies('https://flutter.dev')).called(1);
+  });
+
+  test('getCookies should throw UnsupportedError if domain is null', () async {
+    final mockCookieManager = MockCookieManager();
+
+    final params =
+        AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
+          const PlatformWebViewCookieManagerCreationParams(),
+        );
+
+    final cookieManager = AndroidWebViewCookieManager(
+      params,
+      cookieManager: mockCookieManager,
+    );
+
+    expect(
+      () => cookieManager.getCookies(null),
+      throwsA(isA<UnsupportedError>()),
+    );
+  });
+
+  test('getCookies should handle single cookie correctly', () async {
+    final mockCookieManager = MockCookieManager();
+
+    when(
+      mockCookieManager.getCookies('https://flutter.dev'),
+    ).thenAnswer((_) => Future<String>.value('sessionId=abc123'));
+
+    final params =
+        AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
+          const PlatformWebViewCookieManagerCreationParams(),
+        );
+
+    final cookieManager = AndroidWebViewCookieManager(
+      params,
+      cookieManager: mockCookieManager,
+    );
+
+    final List<WebViewCookie> cookies = await cookieManager.getCookies(
+      Uri.parse('https://flutter.dev'),
+    );
+
+    expect(cookies.length, 1);
+    expect(cookies[0].name, 'sessionId');
+    expect(cookies[0].value, 'abc123');
+    expect(cookies[0].domain, 'https://flutter.dev');
+
+    verify(mockCookieManager.getCookies('https://flutter.dev')).called(1);
+  });
 }
