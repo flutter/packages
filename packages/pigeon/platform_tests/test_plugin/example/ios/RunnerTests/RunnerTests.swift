@@ -4,44 +4,52 @@
 
 import Flutter
 import Foundation
-import XCTest
+import Testing
 
 @testable import test_plugin
 
-class RunnerTests: XCTestCase {
+@MainActor
+struct RunnerTests {
 
-  func testToListAndBack() throws {
+  @Test
+  func toListAndBack() throws {
     let reply = MessageSearchReply(result: "foobar")
     let dict = reply.toList()
     let copy = MessageSearchReply.fromList(dict)
-    XCTAssertEqual(reply.result, copy?.result)
+    #expect(reply.result == copy?.result)
   }
 
-  func testHandlesNull() throws {
+  @Test
+  func handlesNull() throws {
     let reply = MessageSearchReply()
     let dict = reply.toList()
     let copy = MessageSearchReply.fromList(dict)
-    XCTAssertNil(copy?.result)
+    #expect(copy?.result == nil)
   }
 
-  func testHandlesNullFirst() throws {
+  @Test
+  func handlesNullFirst() throws {
     let reply = MessageSearchReply(error: "foobar")
     let dict = reply.toList()
     let copy = MessageSearchReply.fromList(dict)
-    XCTAssertEqual(reply.error, copy?.error)
+    #expect(reply.error == copy?.error)
   }
 
   /// This validates that pigeon clients can easily write tests that mock out Flutter API
   /// calls using a pigeon-generated protocol.
-  func testEchoStringFromProtocol() throws {
+  @Test
+  func echoStringFromProtocol() async throws {
     let api: FlutterApiFromProtocol = FlutterApiFromProtocol()
     let aString = "aString"
-    api.echo(string: aString) { response in
-      switch response {
-      case .success(let res):
-        XCTAssertEqual(aString, res)
-      case .failure(let error):
-        XCTFail(error.code)
+    await confirmation { confirmed in
+      api.echo(string: aString) { response in
+        switch response {
+        case .success(let res):
+          #expect(aString == res)
+        case .failure(let error):
+          Issue.record(error.code.description)
+        }
+        confirmed()
       }
     }
   }

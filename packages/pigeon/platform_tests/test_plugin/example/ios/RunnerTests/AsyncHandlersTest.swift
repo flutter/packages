@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 import Flutter
-import XCTest
+import Testing
 
 @testable import test_plugin
 
@@ -18,46 +18,51 @@ class MockHostSmallApi: HostSmallApi {
   }
 }
 
-class AsyncHandlersTest: XCTestCase {
+@MainActor
+struct AsyncHandlersTest {
 
-  func testAsyncHost2Flutter() throws {
+  @Test
+  func asyncHost2Flutter() async throws {
     let value = "Test"
     let binaryMessenger = MockBinaryMessenger<String>(codec: CoreTestsPigeonCodec.shared)
     binaryMessenger.result = value
     let flutterApi = FlutterIntegrationCoreApi(binaryMessenger: binaryMessenger)
 
-    let expectation = XCTestExpectation(description: "callback")
-    flutterApi.echo(value) { result in
-      switch result {
-      case .success(let res):
-        XCTAssertEqual(res, value)
-        expectation.fulfill()
-      case .failure(_):
-        return
+    await confirmation { confirmed in
+      flutterApi.echo(value) { result in
+        switch result {
+        case .success(let res):
+          #expect(res == value)
+          confirmed()
+        case .failure(_):
+          // Fail
+          Issue.record("Failed")
+          return
+        }
       }
-
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testAsyncFlutter2HostVoidVoid() throws {
+  @Test
+  func asyncFlutter2HostVoidVoid() async throws {
     let binaryMessenger = MockBinaryMessenger<String>(
       codec: FlutterStandardMessageCodec.sharedInstance())
     let mockHostSmallApi = MockHostSmallApi()
     HostSmallApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostSmallApi)
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.voidVoid"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
-    let expectation = XCTestExpectation(description: "voidvoid callback")
-    binaryMessenger.handlers[channelName]?(nil) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      XCTAssertEqual(outputList?.first as! NSNull, NSNull())
-      expectation.fulfill()
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(nil) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        #expect(outputList?.first is NSNull)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 
-  func testAsyncFlutter2Host() throws {
+  @Test
+  func asyncFlutter2Host() async throws {
     let binaryMessenger = MockBinaryMessenger<String>(
       codec: FlutterStandardMessageCodec.sharedInstance())
     let mockHostSmallApi = MockHostSmallApi()
@@ -65,17 +70,17 @@ class AsyncHandlersTest: XCTestCase {
     mockHostSmallApi.output = value
     HostSmallApiSetup.setUp(binaryMessenger: binaryMessenger, api: mockHostSmallApi)
     let channelName = "dev.flutter.pigeon.pigeon_integration_tests.HostSmallApi.echo"
-    XCTAssertNotNil(binaryMessenger.handlers[channelName])
+    #expect(binaryMessenger.handlers[channelName] != nil)
 
     let inputEncoded = binaryMessenger.codec.encode([value])
 
-    let expectation = XCTestExpectation(description: "echo callback")
-    binaryMessenger.handlers[channelName]?(inputEncoded) { data in
-      let outputList = binaryMessenger.codec.decode(data) as? [Any]
-      let output = outputList?.first as? String
-      XCTAssertEqual(output, value)
-      expectation.fulfill()
+    await confirmation { confirmed in
+      binaryMessenger.handlers[channelName]?(inputEncoded) { data in
+        let outputList = binaryMessenger.codec.decode(data) as? [Any]
+        let output = outputList?.first as? String
+        #expect(output == value)
+        confirmed()
+      }
     }
-    wait(for: [expectation], timeout: 1.0)
   }
 }

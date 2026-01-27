@@ -2,14 +2,15 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import XCTest
+import Testing
 
 @testable import test_plugin
 
 /// Tests NSNull is correctly handled by `nilOrValue` helper, by manually setting nullable fields to NSNull.
-final class NSNullFieldTests: XCTestCase {
+struct NSNullFieldTests {
 
-  func testNSNull_nullListToCustomStructField() throws {
+  @Test
+  func nullListToCustomStructField() throws {
     let reply = NullFieldsSearchReply(
       result: nil,
       error: nil,
@@ -20,11 +21,12 @@ final class NSNullFieldTests: XCTestCase {
     // request field
     list[3] = NSNull()
     let copy = NullFieldsSearchReply.fromList(list)
-    XCTAssertNotNil(copy)
-    XCTAssertNil(copy!.request)
+    #expect(copy != nil)
+    #expect(copy!.request == nil)
   }
 
-  func testNSNull_nullListField() {
+  @Test
+  func nullListField() {
     let reply = NullFieldsSearchReply(
       result: nil,
       error: nil,
@@ -35,11 +37,12 @@ final class NSNullFieldTests: XCTestCase {
     // indices field
     list[2] = NSNull()
     let copy = NullFieldsSearchReply.fromList(list)
-    XCTAssertNotNil(copy)
-    XCTAssertNil(copy!.indices)
+    #expect(copy != nil)
+    #expect(copy!.indices == nil)
   }
 
-  func testNSNull_nullBasicFields() throws {
+  @Test
+  func nullBasicFields() throws {
     let reply = NullFieldsSearchReply(
       result: nil,
       error: nil,
@@ -54,9 +57,9 @@ final class NSNullFieldTests: XCTestCase {
     // type field
     list[4] = NSNull()
     let copy = NullFieldsSearchReply.fromList(list)
-    XCTAssertNotNil(copy)
-    XCTAssertNil(copy!.result)
-    XCTAssertNil(copy!.error)
-    XCTAssertNil(copy!.type)
+    #expect(copy != nil)
+    #expect(copy!.result == nil)
+    #expect(copy!.error == nil)
+    #expect(copy!.type == nil)
   }
 }
