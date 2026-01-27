@@ -11,6 +11,7 @@ mixin $OverriddenParameterNameRoute on GoRouteData {
           state.uri.queryParameters,
           int.tryParse,
         ),
+        withSpace: state.uri.queryParameters['name with space'],
       );
 
   OverriddenParameterNameRoute get _self =>
@@ -22,6 +23,7 @@ mixin $OverriddenParameterNameRoute on GoRouteData {
     queryParams: {
       if (_self.withAnnotation != null)
         'parameterNameOverride': _self.withAnnotation!.toString(),
+      if (_self.withSpace != null) 'name with space': _self.withSpace,
     },
   );
 
