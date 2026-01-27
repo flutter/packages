@@ -1,3 +1,7 @@
+## 8.0.1
+
+- Fixes WOFF2/WOFF font selection when loading fonts bundled with the app to prefer compressed formats regardless of asset manifest order.
+
 ## 8.0.0
 
 - Added fonts:

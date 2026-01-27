@@ -119,15 +119,16 @@ void main() {
         expect(result, equals('google_fonts/Roboto-Regular.otf'));
       });
 
-      test('returns first matching asset in manifest order', () {
-        // Returns the first asset that matches, regardless of file type
+      test('prefers woff2 over other formats regardless of manifest order', () {
+        // Returns the highest priority file type regardless of the order in
+        // which assets appear in the manifest.
         final String? result =
             findFamilyWithVariantAssetPath(familyWithVariant, <String>[
               'google_fonts/Roboto-Regular.ttf',
               'google_fonts/Roboto-Regular.woff2',
               'google_fonts/Roboto-Regular.woff',
             ], isWeb: true);
-        expect(result, equals('google_fonts/Roboto-Regular.ttf'));
+        expect(result, equals('google_fonts/Roboto-Regular.woff2'));
       });
 
       test('ignores unsupported file extensions', () {

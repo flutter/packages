@@ -318,14 +318,17 @@ String? findFamilyWithVariantAssetPath(
       ? ['.woff2', '.woff', '.ttf', '.otf']
       : ['.ttf', '.otf'];
 
-  for (final String asset in manifestValues) {
-    for (final String matchingSuffix in fileTypes.where(asset.endsWith)) {
-      final String assetWithoutExtension = asset.substring(
-        0,
-        asset.length - matchingSuffix.length,
-      );
-      if (assetWithoutExtension.endsWith(apiFilenamePrefix)) {
-        return asset;
+  // Iterate by file type priority, ensuring preferred formats are selected.
+  for (final String fileType in fileTypes) {
+    for (final String asset in manifestValues) {
+      if (asset.endsWith(fileType)) {
+        final String assetWithoutExtension = asset.substring(
+          0,
+          asset.length - fileType.length,
+        );
+        if (assetWithoutExtension.endsWith(apiFilenamePrefix)) {
+          return asset;
+        }
       }
     }
   }
