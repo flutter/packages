@@ -11,6 +11,8 @@ class OverriddenParameterNameRoute extends GoRouteData
     with $OverriddenParameterNameRoute {
   OverriddenParameterNameRoute({
     @TypedQueryParameter(name: 'parameterNameOverride') this.withAnnotation,
+    @TypedQueryParameter(name: 'name with space') this.withSpace,
   });
   final int? withAnnotation;
+  final String? withSpace;
 }
