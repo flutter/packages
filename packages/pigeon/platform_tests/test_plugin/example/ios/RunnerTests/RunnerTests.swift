@@ -47,7 +47,7 @@ struct RunnerTests {
         case .success(let res):
           #expect(aString == res)
         case .failure(let error):
-          Issue.record(error.code.description)
+          Issue.record(error)
         }
         confirmed()
       }

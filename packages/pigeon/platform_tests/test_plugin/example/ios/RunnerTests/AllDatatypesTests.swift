@@ -81,14 +81,14 @@ struct AllDatatypesTests {
   private let differentKeyMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "d": "three"]
   private let differentValueMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": "five"]
 
-  private lazy var correctListInMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": correctList]
-  private lazy var matchingListInMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": matchingList]
-  private lazy var differentListInMap: [AnyHashable: Any?] = ["a": 1, "b": 2, "c": differentList]
+  private var correctListInMap: [AnyHashable: Any?] { ["a": 1, "b": 2, "c": correctList] }
+  private var matchingListInMap: [AnyHashable: Any?] { ["a": 1, "b": 2, "c": matchingList] }
+  private var differentListInMap: [AnyHashable: Any?] { ["a": 1, "b": 2, "c": differentList] }
 
-  private lazy var correctMapInList: [Any?] = ["a", 2, correctMap]
-  private lazy var matchingMapInList: [Any?] = ["a", 2, matchingMap]
-  private lazy var differentKeyMapInList: [Any?] = ["a", 2, differentKeyMap]
-  private lazy var differentValueMapInList: [Any?] = ["a", 2, differentValueMap]
+  private var correctMapInList: [Any?] { ["a", 2, correctMap] }
+  private var matchingMapInList: [Any?] { ["a", 2, matchingMap] }
+  private var differentKeyMapInList: [Any?] { ["a", 2, differentKeyMap] }
+  private var differentValueMapInList: [Any?] { ["a", 2, differentValueMap] }
 
   @Test
   func equalityMethodCorrectlyChecksDeepEquality() {
