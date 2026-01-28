@@ -6,7 +6,6 @@ package io.flutter.plugins.camerax;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -181,6 +180,7 @@ public class ImageCaptureTest {
     when(mockApiRegistrar.getContext()).thenReturn(mockContext);
 
     final ImageCaptureException captureException = mock(ImageCaptureException.class);
+    when(captureException.getImageCaptureError()).thenReturn(ImageCapture.ERROR_CAPTURE_FAILED);
     final ImageCaptureProxyApi api =
         new ImageCaptureProxyApi(mockApiRegistrar) {
           @Override
@@ -229,7 +229,8 @@ public class ImageCaptureTest {
               any(ImageCapture.OutputFileOptions.class),
               any(Executor.class),
               any(ImageCapture.OnImageSavedCallback.class));
-      verify(mockSystemServicesManager).onCameraError(anyString());
+      verify(mockSystemServicesManager)
+          .onCameraError("The camera framework failed to fulfill the image capture request.");
       assertEquals(result[0], captureException);
     }
   }
