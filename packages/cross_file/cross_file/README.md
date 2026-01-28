@@ -15,49 +15,78 @@ Example:
 final file = XFile('assets/hello.txt');
 
 print('File information:');
-print('- Path: ${file.path}');
-print('- Name: ${file.name}');
-print('- MIME type: ${file.mimeType}');
+print('- URI: ${file.uri}');
+print('- Name: ${await file.name()}');
 
-final String fileContent = await file.readAsString();
-print('Content of the file: $fileContent');
+if (await file.canRead()) {
+  final String fileContent = await file.readAsString();
+  debugPrint('Content of the file: $fileContent');
+}
 ```
 
 You will find links to the API docs on the [pub page](https://pub.dev/packages/cross_file).
 
-## Web Limitations
+### Implementation-Specific Features
 
-`XFile` on the web platform is backed by [Blob](https://api.dart.dev/be/180361/dart-html/Blob-class.html)
-objects and their URLs.
+Classes in this package contain an underlying platform implementation that provides features that
+are specific to an implementation.
 
-It seems that Safari hangs when reading Blobs larger than 4GB (your app will stop
-without returning any data, or throwing an exception).
+To access implementation-specific features, start by adding the platform implementation packages to
+your app or package:
 
-This package will attempt to throw an `Exception` before a large file is accessed
-from Safari (if its size is known beforehand), so that case can be handled
-programmatically.
+* **dart:io** [cross_file_io](https://pub.dev/packages/cross_file_io/install)
+* **Android Scoped Storage**: [cross_file_android](https://pub.dev/packages/cross_file_android/install)
+* **iOS/macOS App Sandbox**: [cross_file_darwin](https://pub.dev/packages/cross_file_darwin/install)
+* **Web**: [cross_file_web](https://pub.dev/packages/cross_file_web/install)
 
-### Browser compatibility
+Next, add the imports of the implementation packages to your app or package:
 
-[![Data on Global support for Blob constructing](https://caniuse.bitsofco.de/image/blobbuilder.png)](https://caniuse.com/blobbuilder)
+<?code-excerpt "main.dart (platform_imports)"?>
+```dart
+// Import for Android Scoped Storage features.
+import 'package:cross_file_android/cross_file_android.dart';
+// Import for iOS/macOS App Sandbox features.
+import 'package:cross_file_darwin/cross_file_darwin.dart';
+```
 
-[![Data on Global support for Blob URLs](https://caniuse.bitsofco.de/image/bloburls.png)](https://caniuse.com/bloburls)
+Now, additional features can be accessed through the platform implementations. Classes
+[XFile], [XDirectory], [ScopedStorageXFile], and [ScopedStorageXDirectory] pass their
+functionality to a class provided by the current platform. Below are a couple of ways to access
+additional functionality provided by the platform and is followed by an example.
 
-## Testing
+1. Pass a creation params class provided by a platform implementation to a `fromCreationParams`
+   constructor (e.g. `XFile.fromCreationParams`, `XDirectory.fromCreationParams`, etc.).
+2. Call methods on an implementation of a class by using `getExtension`/`maybeGetExtension` methods (e.g.
+   `XFile.getExtension`, `XDirectory.maybeGetExtension`, etc.).
 
-This package supports both web and native platforms. Unit tests need to be split
-in two separate suites (because native code cannot use `package:web`, and web code
-cannot use `dart:io`).
+Below is an example of setting additional iOS/macOS and Android parameters on a `XFile`.
 
-When adding new features, it is likely that tests need to be added for both the
-native and web platforms.
+<?code-excerpt "main.dart (platform_features)"?>
+```dart
+var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
 
-### Native tests
+if (CrossFilePlatform.instance is CrossFileIO) {
+  params = IOXFileCreationParams.fromCreationParams(
+    params,
+  );
+}
 
-Tests for native platforms are located in the `x_file_io_test.dart`. Tests can
-be run  with `dart test`.
+final file = XFile.fromCreationParams(params);
 
-### Web tests
+final IOXFileExtension? ioExtension = file.maybeGetExtension<IOXFileExtension>();
+if (ioExtension != null) {
+  print(ioExtension.file.path);
+}
+```
 
-Tests for the web platform live in the `x_file_html_test.dart`. They can be run
-with `dart test -p chrome`.
+See https://pub.dev/documentation/cross_file_darwin/latest/cross_file_darwin/cross_file_darwin-library.html
+for more details on iOS/macOS App Sandbox features.
+
+See https://pub.dev/documentation/cross_file_android/latest/cross_file_android/cross_file_android-library.html
+for more details on Android Scoped Storage features.
+
+See https://pub.dev/documentation/cross_file_io/latest/cross_file_io/cross_file_io-library.html
+for more details on `dart:io` features.
+
+See https://pub.dev/documentation/cross_file_web/latest/cross_file_web/cross_file_web-library.html
+for more details on Web features.

@@ -2,9 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// ignore_for_file: avoid_print
-
 import 'package:cross_file/cross_file.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 
 /// Demonstrate instantiating an XFile for the README.
 Future<XFile> instantiateXFile() async {
@@ -12,12 +11,13 @@ Future<XFile> instantiateXFile() async {
   final file = XFile('assets/hello.txt');
 
   print('File information:');
-  print('- Path: ${file.path}');
-  print('- Name: ${file.name}');
-  print('- MIME type: ${file.mimeType}');
+  print('- URI: ${file.uri}');
+  print('- Name: ${await file.name()}');
 
-  final String fileContent = await file.readAsString();
-  print('Content of the file: $fileContent');
+  if (await file.canRead()) {
+    final String fileContent = await file.readAsString();
+    debugPrint('Content of the file: $fileContent');
+  }
   // #enddocregion Instantiate
 
   return file;
