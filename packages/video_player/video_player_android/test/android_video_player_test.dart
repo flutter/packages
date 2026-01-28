@@ -33,6 +33,14 @@ void main() {
   );
   provideDummy<Future<void>>(Future<void>.value());
 
+  // Provide dummy values for background playback types
+  provideDummy<BackgroundPlaybackMessage>(
+    BackgroundPlaybackMessage(enableBackground: false),
+  );
+  provideDummy<NotificationMetadataMessage>(
+    NotificationMetadataMessage(id: 'dummy'),
+  );
+
   (AndroidVideoPlayer, MockAndroidVideoPlayerApi, MockVideoPlayerInstanceApi)
   setUpMockPlayer({required int playerId, int? textureId}) {
     final pluginApi = MockAndroidVideoPlayerApi();
