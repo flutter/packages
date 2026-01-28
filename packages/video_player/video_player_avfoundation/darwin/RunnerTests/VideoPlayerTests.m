@@ -704,7 +704,7 @@
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
                                     viewProvider:[[StubViewProvider alloc] init]];
-  NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
+  NSObject<FVPVideoEventListener> *listener = [[StubEventListener alloc] init];
   player.eventListener = listener;
 
   XCTestExpectation *seekExpectation =
@@ -727,7 +727,7 @@
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
                                     viewProvider:[[StubViewProvider alloc] init]];
-  NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
+  NSObject<FVPVideoEventListener> *listener = [[StubEventListener alloc] init];
   player.eventListener = listener;
 
   XCTestExpectation *seekExpectation =
