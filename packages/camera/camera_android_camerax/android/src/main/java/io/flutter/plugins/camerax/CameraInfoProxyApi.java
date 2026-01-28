@@ -34,7 +34,6 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
         return LensFacing.BACK;
       case CameraSelector.LENS_FACING_EXTERNAL:
         return LensFacing.EXTERNAL;
-      case CameraSelector.LENS_FACING_UNKNOWN:
       default:
         return LensFacing.UNKNOWN;
     }

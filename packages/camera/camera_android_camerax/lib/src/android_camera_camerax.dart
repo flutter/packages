@@ -316,7 +316,7 @@ class AndroidCameraCameraX extends CameraPlatform {
         case LensFacing.external:
           cameraLensDirection = CameraLensDirection.external;
         case LensFacing.unknown:
-          //Skip this CameraInfo as its lens direction is unknown
+          // Skip this CameraInfo as its lens direction is unknown
           continue;
       }
 
