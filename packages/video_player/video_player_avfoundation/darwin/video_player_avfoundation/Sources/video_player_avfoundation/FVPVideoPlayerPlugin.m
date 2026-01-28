@@ -8,6 +8,7 @@
 @import AVFoundation;
 
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
+#import "./include/video_player_avfoundation/FVPAssetProvider.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
 #import "./include/video_player_avfoundation/FVPEventBridge.h"
 #import "./include/video_player_avfoundation/FVPFrameUpdater.h"
@@ -39,11 +40,42 @@
 
 #pragma mark -
 
+/// Non-test implementation of FVPAssetProvider, wrapping a Flutter plugin
+/// registrar.
+@interface FVPDefaultAssetProvider : NSObject <FVPAssetProvider>
+@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
+
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+@end
+
+@implementation FVPDefaultAssetProvider
+
+- (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+  self = [super init];
+  if (self) {
+    _registrar = registrar;
+  }
+  return self;
+}
+
+- (NSString *)lookupKeyForAsset:(NSString *)asset {
+  return [self.registrar lookupKeyForAsset:asset];
+}
+
+- (NSString *)lookupKeyForAsset:(NSString *)asset fromPackage:(NSString *)package {
+  return [self.registrar lookupKeyForAsset:asset fromPackage:package];
+}
+
+@end
+
+#pragma mark -
+
 @interface FVPVideoPlayerPlugin ()
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
 @property(nonatomic, strong) id<FVPAVFactory> avFactory;
 @property(nonatomic, strong) NSObject<FVPViewProvider> *viewProvider;
+@property(nonatomic, strong) NSObject<FVPAssetProvider> *assetProvider;
 @property(nonatomic, assign) int64_t nextPlayerIdentifier;
 @end
 
@@ -64,20 +96,22 @@
   return [self initWithAVFactory:[[FVPDefaultAVFactory alloc] init]
               displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
                     viewProvider:[[FVPDefaultViewProvider alloc] initWithRegistrar:registrar]
+                   assetProvider:[[FVPDefaultAssetProvider alloc] initWithRegistrar:registrar]
                        registrar:registrar];
 }
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider
+                    assetProvider:(NSObject<FVPAssetProvider> *)assetProvider
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registrar = registrar;
+  _assetProvider = assetProvider;
   _viewProvider = viewProvider;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
   _avFactory = avFactory ?: [[FVPDefaultAVFactory alloc] init];
-  _viewProvider = viewProvider ?: [[FVPDefaultViewProvider alloc] initWithRegistrar:registrar];
   _playersByIdentifier = [NSMutableDictionary dictionaryWithCapacity:1];
   _nextPlayerIdentifier = 1;
   return self;
@@ -244,8 +278,8 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                        package:(nullable NSString *)package
                                          error:(FlutterError *_Nullable *_Nonnull)error {
   NSString *resource = package == nil
-                           ? [self.registrar lookupKeyForAsset:asset]
-                           : [self.registrar lookupKeyForAsset:asset fromPackage:package];
+                           ? [self.assetProvider lookupKeyForAsset:asset]
+                           : [self.assetProvider lookupKeyForAsset:asset fromPackage:package];
 
   NSString *path = [[NSBundle mainBundle] pathForResource:resource ofType:nil];
 #if TARGET_OS_OSX

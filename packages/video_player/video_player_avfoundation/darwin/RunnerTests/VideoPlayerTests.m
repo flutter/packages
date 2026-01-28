@@ -100,6 +100,19 @@
 #endif
 @end
 
+@interface StubAssetProvider : NSObject <FVPAssetProvider>
+@end
+
+@implementation StubAssetProvider
+- (NSString *)lookupKeyForAsset:(NSString *)asset {
+  return asset;
+}
+
+- (NSString *)lookupKeyForAsset:(NSString *)asset fromPackage:(NSString *)package {
+  return asset;
+}
+@end
+
 @interface StubFVPAVFactory : NSObject <FVPAVFactory>
 
 @property(nonatomic, strong) StubAVPlayer *stubAVPlayer;
@@ -241,6 +254,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
       displayLinkFactory:nil
             viewProvider:viewProvider
+           assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
 
   FlutterError *error;
@@ -274,6 +288,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
             viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -301,6 +316,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
             viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -358,6 +374,7 @@
                                                            output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
             viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -404,6 +421,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
             viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -459,6 +477,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
             viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -882,6 +901,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
             viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
 
   FlutterError *error;

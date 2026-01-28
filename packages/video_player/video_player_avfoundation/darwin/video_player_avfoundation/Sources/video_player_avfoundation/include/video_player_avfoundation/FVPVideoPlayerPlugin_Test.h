@@ -5,6 +5,7 @@
 #import "FVPVideoPlayerPlugin.h"
 
 #import "FVPAVFactory.h"
+#import "FVPAssetProvider.h"
 #import "FVPDisplayLink.h"
 #import "FVPVideoPlayer.h"
 #import "FVPViewProvider.h"
@@ -26,6 +27,7 @@
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider
+                    assetProvider:(NSObject<FVPAssetProvider> *)assetProvider
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 
 @end
