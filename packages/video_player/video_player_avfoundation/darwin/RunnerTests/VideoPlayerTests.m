@@ -325,8 +325,7 @@
 }
 
 - (void)testPlayerForPlatformViewDoesNotRegisterTexture {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
+  TestTextureRegistry *mockTextureRegistry = [[TestTextureRegistry alloc] init];
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
@@ -346,7 +345,7 @@
   FlutterError *createError;
   [videoPlayerPlugin createPlatformViewPlayerWithOptions:create error:&createError];
 
-  OCMVerify(never(), [mockTextureRegistry registerTexture:[OCMArg any]]);
+  XCTAssertFalse(mockTextureRegistry.registeredTexture);
 }
 
 - (void)testSeekToWhilePausedStartsDisplayLinkTemporarily {
@@ -918,8 +917,7 @@
 }
 
 - (void)testPlayerShouldNotDropEverySecondFrame {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
+  TestTextureRegistry *mockTextureRegistry = [[TestTextureRegistry alloc] init];
 
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
@@ -940,7 +938,6 @@
   FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
                                                                                  error:&error];
   NSInteger playerIdentifier = identifiers.playerId;
-  NSInteger textureIdentifier = identifiers.textureId;
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[@(playerIdentifier)];
 
@@ -978,15 +975,13 @@
   };
 
   advanceFrame();
-  OCMExpect([mockTextureRegistry textureFrameAvailable:textureIdentifier]);
   stubDisplayLinkFactory.fireDisplayLink();
-  OCMVerifyAllWithDelay(mockTextureRegistry, 10);
+  XCTAssertEqual(mockTextureRegistry.textureFrameAvailableCount, 1);
 
   advanceFrame();
-  OCMExpect([mockTextureRegistry textureFrameAvailable:textureIdentifier]);
   CFRelease([player copyPixelBuffer]);
   stubDisplayLinkFactory.fireDisplayLink();
-  OCMVerifyAllWithDelay(mockTextureRegistry, 10);
+  XCTAssertEqual(mockTextureRegistry.textureFrameAvailableCount, 2);
 }
 
 - (void)testVideoOutputIsAddedWhenAVPlayerItemBecomesReady {
