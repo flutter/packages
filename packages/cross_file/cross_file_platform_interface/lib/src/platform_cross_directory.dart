@@ -97,6 +97,9 @@ abstract base class PlatformXDirectory extends PlatformXFileEntity {
       super.params as PlatformXDirectoryCreationParams;
 
   /// Lists the sub-directories and files of this Directory.
+  ///
+  /// Platforms may throw an exception if there is an error listing entities in
+  /// the directory
   Stream<PlatformXFileEntity> list(ListParams params);
 }
 

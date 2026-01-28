@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart';
+import 'dart:convert';
+
+import 'dart:typed_data';
 
 import 'platform_cross_directory.dart';
 import 'platform_cross_file.dart';
+import 'platform_cross_file_entity.dart';
 import 'scoped_storage/platform_scoped_storage_cross_directory.dart';
 import 'scoped_storage/platform_scoped_storage_cross_file.dart';
 
@@ -21,30 +24,88 @@ abstract base class CrossFilePlatform {
   PlatformXFile createPlatformXFile(PlatformXFileCreationParams params);
 
   /// Creates a new [PlatformXDirectory].
-  @optionalTypeArgs
   PlatformXDirectory createPlatformXDirectory(
     PlatformXDirectoryCreationParams params,
   ) {
-    throw UnimplementedError(
-      'createPlatformXDirectory is not implemented on the current platform.',
-    );
+    return _DefaultXDirectory(params);
   }
 
   /// Creates a new [PlatformScopedStorageXDirectory].
   PlatformScopedStorageXFile createPlatformScopedStorageXFile(
     PlatformScopedStorageXFileCreationParams params,
   ) {
-    throw UnimplementedError(
-      'createPlatformScopedStorageXFile is not implemented on the current platform.',
-    );
+    return _DefaultScopedStorageXFile(params);
   }
 
   /// Creates a new [PlatformScopedStorageXDirectory].
   PlatformScopedStorageXDirectory createPlatformScopedStorageXDirectory(
     PlatformScopedStorageXDirectoryCreationParams params,
   ) {
-    throw UnimplementedError(
-      'createPlatformScopedStorageXDirectory is not implemented on the current platform.',
-    );
+    return _DefaultScopedStorageXDirectory(params);
+  }
+}
+
+/// Implementation of [PlatformXDirectory} that represents a resource that does
+/// not exist.
+final class _DefaultXDirectory extends PlatformXDirectory {
+  _DefaultXDirectory(super.params) : super.implementation();
+
+  @override
+  Future<bool> exists() async => false;
+
+  @override
+  Stream<PlatformXFileEntity> list(ListParams params) {
+    throw UnsupportedError('This instance does not represent any directory.');
+  }
+}
+
+/// Implementation of [PlatformXDirectory} that represents a resource that does
+/// not exist.
+final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
+  _DefaultScopedStorageXFile(super.params) : super.implementation();
+
+  @override
+  Future<bool> canRead() async => false;
+
+  @override
+  Future<bool> exists() async => false;
+
+  @override
+  Future<DateTime?> lastModified() async => null;
+
+  @override
+  Future<int?> length() async => null;
+
+  @override
+  Future<String?> name() async => null;
+
+  @override
+  Stream<Uint8List> openRead([int? start, int? end]) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<Uint8List> readAsBytes() {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+
+  @override
+  Future<String> readAsString({Encoding encoding = utf8}) {
+    throw UnsupportedError('This instance does not represent any resource.');
+  }
+}
+
+/// Implementation of [PlatformXDirectory} that represents a resource that does
+/// not exist.
+final class _DefaultScopedStorageXDirectory
+    extends PlatformScopedStorageXDirectory {
+  _DefaultScopedStorageXDirectory(super.params) : super.implementation();
+
+  @override
+  Future<bool> exists() async => false;
+
+  @override
+  Stream<PlatformXFileEntity> list(ListParams params) {
+    throw UnsupportedError('This instance does not represent any directory.');
   }
 }
