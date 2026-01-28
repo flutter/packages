@@ -1807,16 +1807,16 @@ void main() {
         const CameraDescription(
           name: 'cam',
           lensDirection: CameraLensDirection.back,
-          sensorOrientation: 90
+          sensorOrientation: 90,
         ),
-        ResolutionPreset.max
+        ResolutionPreset.max,
       );
       await cameraController.initialize();
 
       expect(cameraController.value.hasError, isTrue);
       expect(
         cameraController.value.errorDescription,
-        mockOnCameraErrorEvent.description
+        mockOnCameraErrorEvent.description,
       );
     });
   });

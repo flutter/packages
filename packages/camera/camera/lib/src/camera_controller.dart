@@ -357,7 +357,7 @@ class CameraController extends ValueNotifier<CameraValue> {
           CameraErrorEvent event,
         ) {
           value = value.copyWith(errorDescription: event.description);
-        })
+        }),
       );
 
       await CameraPlatform.instance.initializeCamera(
