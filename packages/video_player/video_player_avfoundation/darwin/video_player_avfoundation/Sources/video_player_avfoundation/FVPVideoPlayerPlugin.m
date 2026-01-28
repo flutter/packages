@@ -5,7 +5,7 @@
 #import "./include/video_player_avfoundation/FVPVideoPlayerPlugin.h"
 #import "./include/video_player_avfoundation/FVPVideoPlayerPlugin_Test.h"
 
-#import <AVFoundation/AVFoundation.h>
+@import AVFoundation;
 
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
 #import "./include/video_player_avfoundation/FVPDisplayLink.h"
@@ -23,15 +23,15 @@
 @end
 
 @implementation FVPDefaultDisplayLinkFactory
-- (NSObject<FVPDisplayLink> *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                              callback:(void (^)(void))callback {
+- (NSObject<FVPDisplayLink> *)displayLinkWithViewProvider:(NSObject<FVPViewProvider> *)viewProvider
+                                                 callback:(void (^)(void))callback {
 #if TARGET_OS_IOS
-  return [[FVPCADisplayLink alloc] initWithRegistrar:registrar callback:callback];
+  return [[FVPCADisplayLink alloc] initWithViewProvider:viewProvider callback:callback];
 #else
   if (@available(macOS 14.0, *)) {
-    return [[FVPCADisplayLink alloc] initWithRegistrar:registrar callback:callback];
+    return [[FVPCADisplayLink alloc] initWithViewProvider:viewProvider callback:callback];
   }
-  return [[FVPCoreVideoDisplayLink alloc] initWithRegistrar:registrar callback:callback];
+  return [[FVPCoreVideoDisplayLink alloc] initWithViewProvider:viewProvider callback:callback];
 #endif
 }
 
@@ -199,10 +199,10 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
     FVPFrameUpdater *frameUpdater =
         [[FVPFrameUpdater alloc] initWithRegistry:self.registrar.textures];
     NSObject<FVPDisplayLink> *displayLink =
-        [self.displayLinkFactory displayLinkWithRegistrar:_registrar
-                                                 callback:^() {
-                                                   [frameUpdater displayLinkFired];
-                                                 }];
+        [self.displayLinkFactory displayLinkWithViewProvider:self.viewProvider
+                                                    callback:^() {
+                                                      [frameUpdater displayLinkFired];
+                                                    }];
 
     FVPTextureBasedVideoPlayer *player =
         [[FVPTextureBasedVideoPlayer alloc] initWithPlayerItem:item

@@ -4,8 +4,8 @@
 
 #import "../video_player_avfoundation/include/video_player_avfoundation/FVPDisplayLink.h"
 
-#import <Foundation/Foundation.h>
-#import <QuartzCore/QuartzCore.h>
+@import Foundation;
+@import QuartzCore;
 
 /// A proxy object to act as a CADisplayLink target, to avoid retain loops, since FVPCADisplayLink
 /// owns its CADisplayLink, but CADisplayLink retains its target.
@@ -44,8 +44,8 @@ API_AVAILABLE(ios(4.0), macos(14.0))
 
 @implementation FVPCADisplayLink
 
-- (instancetype)initWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                         callback:(void (^)(void))callback {
+- (instancetype)initWithViewProvider:(NSObject<FVPViewProvider> *)viewProvider
+                            callback:(void (^)(void))callback {
   self = [super init];
   if (self) {
     _target = [[FVPDisplayLinkTarget alloc] initWithCallback:callback];
@@ -54,7 +54,7 @@ API_AVAILABLE(ios(4.0), macos(14.0))
 #else
     // Use the view if one is wired up, otherwise fall back to the main screen.
     // TODO(stuartmorgan): Consider an API to inform plugins about attached view changes.
-    NSView *view = registrar.view;
+    NSView *view = viewProvider.view;
     _displayLink = view ? [view displayLinkWithTarget:_target selector:@selector(onDisplayLink:)]
                         : [NSScreen.mainScreen displayLinkWithTarget:_target
                                                             selector:@selector(onDisplayLink:)];

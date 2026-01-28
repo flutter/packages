@@ -2,16 +2,18 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#import "FVPVideoPlayerPlugin.h"
+
 #import "FVPAVFactory.h"
 #import "FVPDisplayLink.h"
 #import "FVPVideoPlayer.h"
-#import "FVPVideoPlayerPlugin.h"
+#import "FVPViewProvider.h"
 #import "messages.g.h"
 
 // Protocol for an AVPlayer instance factory. Used for injecting display links in tests.
 @protocol FVPDisplayLinkFactory
-- (NSObject<FVPDisplayLink> *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                              callback:(void (^)(void))callback;
+- (NSObject<FVPDisplayLink> *)displayLinkWithViewProvider:(NSObject<FVPViewProvider> *)viewProvider
+                                                 callback:(void (^)(void))callback;
 @end
 
 #pragma mark -
