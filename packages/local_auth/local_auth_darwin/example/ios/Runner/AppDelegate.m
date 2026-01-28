@@ -7,11 +7,20 @@
 
 @implementation AppDelegate
 
+// With UIScene lifecycle, application:didFinishLaunchingWithOptions: is still called,
+// but the Flutter engine may not be ready yet (scenes are created later).
+// Plugin registration is now handled in didInitializeImplicitFlutterEngine: below.
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-  [GeneratedPluginRegistrant registerWithRegistry:self];
   // Override point for customization after application launch.
+  // Note: Do NOT access FlutterViewController here - it may cause a crash.
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+}
+
+// This callback fires after the Flutter engine is initialized.
+// This is the correct place to register plugins when using UIScene lifecycle.
+- (void)didInitializeImplicitFlutterEngine:(NSObject<FlutterImplicitEngineBridge> *)engineBridge {
+  [GeneratedPluginRegistrant registerWithRegistry:engineBridge.pluginRegistry];
 }
 
 @end

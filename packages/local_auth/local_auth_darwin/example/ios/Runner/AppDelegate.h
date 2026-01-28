@@ -5,6 +5,9 @@
 #import <Flutter/Flutter.h>
 #import <UIKit/UIKit.h>
 
-@interface AppDelegate : FlutterAppDelegate
+// FlutterImplicitEngineDelegate is required for UIScene lifecycle.
+// It provides a callback (didInitializeImplicitFlutterEngine:) that fires
+// after the Flutter engine is ready, which is when plugins should be registered.
+@interface AppDelegate : FlutterAppDelegate <FlutterImplicitEngineDelegate>
 
 @end
