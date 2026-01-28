@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
 import CoreMotion
+import Flutter
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
@@ -73,14 +75,14 @@ final class DefaultCamera: NSObject, Camera {
   private var assetWriterPixelBufferAdaptor: AssetWriterInputPixelBufferAdaptor?
   private var videoAdaptor: AssetWriterInputPixelBufferAdaptor?
 
-  /// A dictionary to retain all in-progress FLTSavePhotoDelegates. The key of the dictionary is the
+  /// A dictionary to retain all in-progress SavePhotoDelegates. The key of the dictionary is the
   /// AVCapturePhotoSettings's uniqueID for each photo capture operation, and the value is the
-  /// FLTSavePhotoDelegate that handles the result of each photo capture operation. Note that photo
+  /// SavePhotoDelegate that handles the result of each photo capture operation. Note that photo
   /// capture operations may overlap, so FLTCam has to keep track of multiple delegates in progress,
   /// instead of just a single delegate reference.
-  private(set) var inProgressSavePhotoDelegates = [Int64: FLTSavePhotoDelegate]()
+  private(set) var inProgressSavePhotoDelegates = [Int64: SavePhotoDelegate]()
 
-  private var imageStreamHandler: FLTImageStreamHandler?
+  private var imageStreamHandler: ImageStreamHandler?
 
   private var previewSize: CGSize?
   var deviceOrientation: UIDeviceOrientation {
@@ -437,7 +439,7 @@ final class DefaultCamera: NSObject, Camera {
       focusPointSupported: captureDevice.isFocusPointOfInterestSupported
     )
 
-    FLTEnsureToRunOnMainQueue { [weak self] in
+    ensureToRunOnMainQueue { [weak self] in
       self?.dartAPI?.initialized(with: state) { _ in
         // Ignore any errors, as this is just an event broadcast.
       }
@@ -668,7 +670,7 @@ final class DefaultCamera: NSObject, Camera {
     }
 
     if flashMode != .torch {
-      settings.flashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(flashMode)
+      settings.flashMode = getAVCaptureFlashMode(for: flashMode)
     }
 
     let path: String
@@ -682,7 +684,7 @@ final class DefaultCamera: NSObject, Camera {
       return
     }
 
-    let savePhotoDelegate = FLTSavePhotoDelegate(
+    let savePhotoDelegate = SavePhotoDelegate(
       path: path,
       ioQueue: photoIOQueue,
       completionHandler: { [weak self] path, error in
@@ -774,7 +776,7 @@ final class DefaultCamera: NSObject, Camera {
   }
 
   func lockCaptureOrientation(_ pigeonOrientation: FCPPlatformDeviceOrientation) {
-    let orientation = FCPGetUIDeviceOrientationForPigeonDeviceOrientation(pigeonOrientation)
+    let orientation = getUIDeviceOrientation(for: pigeonOrientation)
     if lockedCaptureOrientation != orientation {
       lockedCaptureOrientation = orientation
       updateOrientation()
@@ -987,7 +989,7 @@ final class DefaultCamera: NSObject, Camera {
             details: nil))
         return
       }
-      let avFlashMode = FCPGetAVCaptureFlashModeForPigeonFlashMode(mode)
+      let avFlashMode = getAVCaptureFlashMode(for: mode)
       guard capturePhotoOutput.supportedFlashModes.contains(avFlashMode)
       else {
         completion(
@@ -1102,14 +1104,14 @@ final class DefaultCamera: NSObject, Camera {
   ) {
     startImageStream(
       with: messenger,
-      imageStreamHandler: FLTImageStreamHandler(captureSessionQueue: captureSessionQueue),
+      imageStreamHandler: DefaultImageStreamHandler(captureSessionQueue: captureSessionQueue),
       completion: completion
     )
   }
 
   func startImageStream(
     with messenger: FlutterBinaryMessenger,
-    imageStreamHandler: FLTImageStreamHandler,
+    imageStreamHandler: ImageStreamHandler & NSObjectProtocol,
     completion: @escaping (FlutterError?) -> Void
   ) {
     if isStreamingImages {
@@ -1122,7 +1124,7 @@ final class DefaultCamera: NSObject, Camera {
       name: "plugins.flutter.io/camera_avfoundation/imageStream",
       binaryMessenger: messenger
     )
-    let threadSafeEventChannel = FLTThreadSafeEventChannel(eventChannel: eventChannel)
+    let threadSafeEventChannel = ThreadSafeEventChannel(eventChannel: eventChannel)
 
     self.imageStreamHandler = imageStreamHandler
     threadSafeEventChannel.setStreamHandler(imageStreamHandler) { [weak self] in
@@ -1409,7 +1411,7 @@ final class DefaultCamera: NSObject, Camera {
   ///
   /// Can be called from any thread.
   private func reportErrorMessage(_ errorMessage: String) {
-    FLTEnsureToRunOnMainQueue { [weak self] in
+    ensureToRunOnMainQueue { [weak self] in
       self?.dartAPI?.reportError(errorMessage) { _ in
         // Ignore any errors, as this is just an event broadcast.
       }

@@ -3851,7 +3851,7 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
   abstract fun setFlashMode(pigeon_instance: androidx.camera.core.ImageCapture, flashMode: CameraXFlashMode)
 
   /** Captures a new still image for in memory access. */
-  abstract fun takePicture(pigeon_instance: androidx.camera.core.ImageCapture, callback: (Result<String>) -> Unit)
+  abstract fun takePicture(pigeon_instance: androidx.camera.core.ImageCapture, systemServicesManager: SystemServicesManager, callback: (Result<String>) -> Unit)
 
   /** Sets the desired rotation of the output image. */
   abstract fun setTargetRotation(pigeon_instance: androidx.camera.core.ImageCapture, rotation: Long)
@@ -3906,7 +3906,8 @@ abstract class PigeonApiImageCapture(open val pigeonRegistrar: CameraXLibraryPig
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as androidx.camera.core.ImageCapture
-            api.takePicture(pigeon_instanceArg) { result: Result<String> ->
+            val systemServicesManagerArg = args[1] as SystemServicesManager
+            api.takePicture(pigeon_instanceArg, systemServicesManagerArg) { result: Result<String> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(CameraXLibraryPigeonUtils.wrapError(error))

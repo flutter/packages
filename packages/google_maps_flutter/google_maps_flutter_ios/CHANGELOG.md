@@ -1,3 +1,7 @@
+## 2.17.0
+
+* Restructures code to prepare for SwiftPM support.
+
 ## 2.16.1
 
 * Updates heatmaps passed between Dart and native to use typed data.

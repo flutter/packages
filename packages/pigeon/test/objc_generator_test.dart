@@ -2378,6 +2378,31 @@ void main() {
     expect(code, startsWith('// hello world'));
   });
 
+  test('only uses new-style module imports', () {
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    const generator = ObjcGenerator();
+    final generatorOptions = OutputFileOptions<InternalObjcOptions>(
+      fileType: FileType.source,
+      languageOptions: InternalObjcOptions(
+        headerIncludePath: 'foo.h',
+        prefix: 'ABC',
+        copyrightHeader: makeIterable('hello world'),
+        objcHeaderOut: '',
+        objcSourceOut: '',
+      ),
+    );
+    generator.generate(
+      generatorOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('@import'));
+    expect(code, isNot(contains('#import <')));
+  });
+
   test('field generics', () {
     final classDefinition = Class(
       name: 'Foobar',
