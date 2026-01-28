@@ -1,3 +1,7 @@
+## 0.6.29
+
+* Retrieve lens direction from CameraX directly versus manual detection.
+
 ## 0.6.28
 
 * Adds more descriptive error to camera error stream when image capture fails.
