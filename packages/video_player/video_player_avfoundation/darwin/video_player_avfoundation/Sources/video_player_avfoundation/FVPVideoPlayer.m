@@ -142,7 +142,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
     (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
     (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
   };
-  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+  _pixelBufferSource = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
 
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
@@ -308,7 +308,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       break;
     case AVPlayerItemStatusReadyToPlay:
       if (!_isInitialized) {
-        [item addOutput:_videoOutput];
+        [item addOutput:self.pixelBufferSource.videoOutput];
         [self reportInitialized];
         [self updatePlayingState];
       }

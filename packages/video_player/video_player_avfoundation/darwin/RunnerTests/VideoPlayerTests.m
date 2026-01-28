@@ -160,13 +160,57 @@
 }
 @end
 
+@interface TestPixelBufferSource : NSObject <FVPPixelBufferSource>
+@property(nonatomic) CVPixelBufferRef pixelBuffer;
+@property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
+@end
+
+@implementation TestPixelBufferSource
+- (instancetype)init {
+  self = [super init];
+  // Create an arbitrary video output to for attaching to actual AVFoundation
+  // objects. The attributes don't matter since this isn't used to implement
+  // the methods called by the plugin.
+  _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:@{
+    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+  }];
+  return self;
+}
+
+- (void)dealloc {
+  CVPixelBufferRelease(_pixelBuffer);
+}
+
+- (void)setPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+  _pixelBuffer = pixelBuffer;
+  CVPixelBufferRetain(pixelBuffer);
+}
+
+- (CMTime)itemTimeForHostTime:(CFTimeInterval)hostTimeInSeconds {
+  return CMTimeMakeWithSeconds(hostTimeInSeconds, 1000);
+}
+
+- (BOOL)hasNewPixelBufferForItemTime:(CMTime)itemTime {
+  return _pixelBuffer != NULL;
+}
+
+- (nullable CVPixelBufferRef)copyPixelBufferForItemTime:(CMTime)itemTime
+                                     itemTimeForDisplay:(nullable CMTime *)outItemTimeForDisplay {
+  CVPixelBufferRef pixelBuffer = _pixelBuffer;
+  // Ownership is transferred to the caller.
+  _pixelBuffer = NULL;
+  return pixelBuffer;
+}
+@end
+
 @interface StubFVPAVFactory : NSObject <FVPAVFactory>
 
 @property(nonatomic, strong) StubAVPlayer *stubAVPlayer;
-@property(nonatomic, strong) AVPlayerItemVideoOutput *output;
+@property(nonatomic, strong) NSObject<FVPPixelBufferSource> *pixelBufferSource;
 
 - (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer
-                        output:(AVPlayerItemVideoOutput *)output;
+             pixelBufferSource:(NSObject<FVPPixelBufferSource> *)pixelBufferSource;
 
 @end
 
@@ -174,11 +218,11 @@
 
 // Creates a factory that returns the given items. Any items that are nil will instead return
 // a real object just as the non-test implementation would.
-- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer
-                        output:(AVPlayerItemVideoOutput *)output {
+- (instancetype)initWithPlayer:(nullable StubAVPlayer *)stubAVPlayer
+             pixelBufferSource:(nullable NSObject<FVPPixelBufferSource> *)pixelBufferSource {
   self = [super init];
   _stubAVPlayer = stubAVPlayer;
-  _output = output;
+  _pixelBufferSource = pixelBufferSource;
   return self;
 }
 
@@ -186,9 +230,9 @@
   return _stubAVPlayer ?: [AVPlayer playerWithPlayerItem:playerItem];
 }
 
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
+- (NSObject<FVPPixelBufferSource> *)videoOutputWithPixelBufferAttributes:
     (NSDictionary<NSString *, id> *)attributes {
-  return _output ?: [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+  return _pixelBufferSource ?: [[TestPixelBufferSource alloc] init];
 }
 
 @end
@@ -297,7 +341,7 @@
       [[StubViewProvider alloc] initWithViewController:viewController];
 #endif
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:nil
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -327,9 +371,8 @@
 - (void)testPlayerForPlatformViewDoesNotRegisterTexture {
   TestTextureRegistry *mockTextureRegistry = [[TestTextureRegistry alloc] init];
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:stubDisplayLinkFactory
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:mockTextureRegistry
@@ -350,11 +393,12 @@
 
 - (void)testSeekToWhilePausedStartsDisplayLinkTemporarily {
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -388,14 +432,10 @@
   XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andReturn(YES);
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
-      .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+  // This transfers ownership of the buffer.
+  mockVideoOutput.pixelBuffer = bufferRef;
   // Simulate a callback from the engine to request a new frame.
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
@@ -405,11 +445,11 @@
 
 - (void)testInitStartsDisplayLinkTemporarily {
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
-                                                           output:mockVideoOutput]
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -430,14 +470,10 @@
   XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andReturn(YES);
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
-      .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+  // This transfers ownership of the buffer.
+  mockVideoOutput.pixelBuffer = bufferRef;
   // Simulate a callback from the engine to request a new frame.
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
@@ -449,11 +485,12 @@
 
 - (void)testSeekToWhilePlayingDoesNotStopDisplayLink {
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -485,14 +522,10 @@
   XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andReturn(YES);
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
-      .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+  // This transfers ownership of the buffer.
+  mockVideoOutput.pixelBuffer = bufferRef;
   // Simulate a callback from the engine to request a new frame.
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
@@ -502,11 +535,10 @@
 
 - (void)testPauseWhileWaitingForFrameDoesNotStopDisplayLink {
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:stubDisplayLinkFactory
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -536,7 +568,7 @@
 
 - (void)testDeregistersFromPlayer {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:nil
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -569,7 +601,7 @@
 
 - (void)testBufferingStateFromPlayer {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:nil
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -667,7 +699,7 @@
 - (void)testSeekToleranceWhenNotSeekingToEnd {
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
-                                                                      output:nil];
+                                                           pixelBufferSource:nil];
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
@@ -690,7 +722,7 @@
 - (void)testSeekToleranceWhenSeekingToEnd {
   StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
   StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
-                                                                      output:nil];
+                                                           pixelBufferSource:nil];
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
@@ -763,7 +795,7 @@
   // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
   @autoreleasepool {
     FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-         initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+         initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
         displayLinkFactory:nil
            binaryMessenger:[[StubBinaryMessenger alloc] init]
            textureRegistry:[[TestTextureRegistry alloc] init]
@@ -817,7 +849,7 @@
   // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
   @autoreleasepool {
     FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-         initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+         initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
         displayLinkFactory:nil
            binaryMessenger:[[StubBinaryMessenger alloc] init]
            textureRegistry:[[TestTextureRegistry alloc] init]
@@ -864,7 +896,7 @@
 
 - (void)testFailedToLoadVideoEventShouldBeAlwaysSent {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:nil
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -901,7 +933,7 @@
 - (void)testUpdatePlayingStateShouldNotResetRate {
   FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
       initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
-               avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+               avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
             viewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -920,9 +952,10 @@
   TestTextureRegistry *mockTextureRegistry = [[TestTextureRegistry alloc] init];
 
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:mockTextureRegistry
@@ -941,52 +974,27 @@
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[@(playerIdentifier)];
 
-  __block CMTime currentTime = kCMTimeZero;
-  OCMStub([mockVideoOutput itemTimeForHostTime:0])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        [invocation setReturnValue:&currentTime];
-      });
-  __block NSMutableSet *pixelBuffers = NSMutableSet.new;
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        CMTime itemTime;
-        [invocation getArgument:&itemTime atIndex:2];
-        BOOL has = [pixelBuffers containsObject:[NSValue valueWithCMTime:itemTime]];
-        [invocation setReturnValue:&has];
-      });
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero
-                                   itemTimeForDisplay:[OCMArg anyPointer]])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        CMTime itemTime;
-        [invocation getArgument:&itemTime atIndex:2];
-        CVPixelBufferRef bufferRef = NULL;
-        if ([pixelBuffers containsObject:[NSValue valueWithCMTime:itemTime]]) {
-          CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-        }
-        [pixelBuffers removeObject:[NSValue valueWithCMTime:itemTime]];
-        [invocation setReturnValue:&bufferRef];
-      });
-  void (^advanceFrame)(void) = ^{
-    currentTime.value++;
-    [pixelBuffers addObject:[NSValue valueWithCMTime:currentTime]];
+  void (^addFrame)(void) = ^{
+    CVPixelBufferRef bufferRef;
+    CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
+    // This transfers ownership of the buffer.
+    mockVideoOutput.pixelBuffer = bufferRef;
   };
 
-  advanceFrame();
+  addFrame();
   stubDisplayLinkFactory.fireDisplayLink();
+  CFRelease([player copyPixelBuffer]);
   XCTAssertEqual(mockTextureRegistry.textureFrameAvailableCount, 1);
 
-  advanceFrame();
-  CFRelease([player copyPixelBuffer]);
+  addFrame();
   stubDisplayLinkFactory.fireDisplayLink();
+  CFRelease([player copyPixelBuffer]);
   XCTAssertEqual(mockTextureRegistry.textureFrameAvailableCount, 2);
 }
 
 - (void)testVideoOutputIsAddedWhenAVPlayerItemBecomesReady {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:nil
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -1018,7 +1026,7 @@
 #if TARGET_OS_IOS
 - (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:nil
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -1212,7 +1220,7 @@
 // Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
 - (void)testGetAudioTracksViaPluginWithRealVideo {
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
       displayLinkFactory:nil
          binaryMessenger:[[StubBinaryMessenger alloc] init]
          textureRegistry:[[TestTextureRegistry alloc] init]
@@ -1280,7 +1288,8 @@
           completion(@[], nil);
         });
 
-    StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil output:nil];
+    StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                             pixelBufferSource:nil];
     StubViewProvider *stubViewProvider =
 #if TARGET_OS_OSX
         [[StubViewProvider alloc] initWithView:nil];
