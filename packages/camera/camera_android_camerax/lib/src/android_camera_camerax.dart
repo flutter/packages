@@ -1040,7 +1040,9 @@ class AndroidCameraCameraX extends CameraPlatform {
       );
     }
 
-    final String picturePath = await imageCapture!.takePicture();
+    final String picturePath = await imageCapture!.takePicture(
+      systemServicesManager,
+    );
     return XFile(picturePath);
   }
 

@@ -1444,14 +1444,22 @@ class MockImageCapture extends _i1.Mock implements _i2.ImageCapture {
           as _i5.Future<void>);
 
   @override
-  _i5.Future<String> takePicture() =>
+  _i5.Future<String> takePicture(
+    _i2.SystemServicesManager? systemServicesManager,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#takePicture, []),
+            Invocation.method(#takePicture, [systemServicesManager]),
             returnValue: _i5.Future<String>.value(
-              _i6.dummyValue<String>(this, Invocation.method(#takePicture, [])),
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#takePicture, [systemServicesManager]),
+              ),
             ),
             returnValueForMissingStub: _i5.Future<String>.value(
-              _i6.dummyValue<String>(this, Invocation.method(#takePicture, [])),
+              _i6.dummyValue<String>(
+                this,
+                Invocation.method(#takePicture, [systemServicesManager]),
+              ),
             ),
           )
           as _i5.Future<String>);
