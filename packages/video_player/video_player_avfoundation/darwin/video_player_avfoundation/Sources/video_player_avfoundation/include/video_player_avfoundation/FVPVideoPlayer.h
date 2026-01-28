@@ -42,6 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
                          avFactory:(id<FVPAVFactory>)avFactory
                       viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 
+/// Configures background playback and media notification.
+/// Called during player creation if background playback is requested.
+- (void)configureBackgroundPlayback:(FVPBackgroundPlaybackMessage *)msg;
+
 @end
 
 NS_ASSUME_NONNULL_END

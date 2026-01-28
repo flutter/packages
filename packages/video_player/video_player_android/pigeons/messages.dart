@@ -73,6 +73,9 @@ class CreationOptions {
   PlatformVideoFormat? formatHint;
   Map<String, String> httpHeaders;
   String? userAgent;
+
+  /// Background playback configuration (optional).
+  BackgroundPlaybackMessage? backgroundPlayback;
 }
 
 class TexturePlayerIds {
@@ -222,9 +225,6 @@ abstract class VideoPlayerInstanceApi {
 
   /// Selects which audio track is chosen for playback from its [groupIndex] and [trackIndex]
   void selectAudioTrack(int groupIndex, int trackIndex);
-
-  /// Configures background playback and media notification.
-  void setBackgroundPlayback(BackgroundPlaybackMessage msg);
 }
 
 @EventChannelApi()

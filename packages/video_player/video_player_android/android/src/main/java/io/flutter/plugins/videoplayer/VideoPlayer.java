@@ -286,8 +286,11 @@ public abstract class VideoPlayer implements VideoPlayerInstanceApi {
     this.textureId = textureId;
   }
 
-  @Override
-  public void setBackgroundPlayback(@NonNull BackgroundPlaybackMessage msg) {
+  /**
+   * Configures background playback and media notification. Called during player creation if
+   * background playback is requested.
+   */
+  public void configureBackgroundPlayback(@NonNull BackgroundPlaybackMessage msg) {
     backgroundPlaybackEnabled = msg.getEnableBackground();
 
     if (!backgroundPlaybackEnabled) {

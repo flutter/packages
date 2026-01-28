@@ -300,7 +300,9 @@ data class CreationOptions(
     val uri: String,
     val formatHint: PlatformVideoFormat? = null,
     val httpHeaders: Map<String, String>,
-    val userAgent: String? = null
+    val userAgent: String? = null,
+    /** Background playback configuration (optional). */
+    val backgroundPlayback: BackgroundPlaybackMessage? = null
 ) {
   companion object {
     fun fromList(pigeonVar_list: List<Any?>): CreationOptions {
@@ -308,7 +310,8 @@ data class CreationOptions(
       val formatHint = pigeonVar_list[1] as PlatformVideoFormat?
       val httpHeaders = pigeonVar_list[2] as Map<String, String>
       val userAgent = pigeonVar_list[3] as String?
-      return CreationOptions(uri, formatHint, httpHeaders, userAgent)
+      val backgroundPlayback = pigeonVar_list[4] as BackgroundPlaybackMessage?
+      return CreationOptions(uri, formatHint, httpHeaders, userAgent, backgroundPlayback)
     }
   }
 
@@ -318,6 +321,7 @@ data class CreationOptions(
         formatHint,
         httpHeaders,
         userAgent,
+        backgroundPlayback,
     )
   }
 
@@ -954,8 +958,6 @@ interface VideoPlayerInstanceApi {
   fun getAudioTracks(): NativeAudioTrackData
   /** Selects which audio track is chosen for playback from its [groupIndex] and [trackIndex] */
   fun selectAudioTrack(groupIndex: Long, trackIndex: Long)
-  /** Configures background playback and media notification. */
-  fun setBackgroundPlayback(msg: BackgroundPlaybackMessage)
 
   companion object {
     /** The codec used by VideoPlayerInstanceApi. */
@@ -1180,29 +1182,6 @@ interface VideoPlayerInstanceApi {
             val wrapped: List<Any?> =
                 try {
                   api.selectAudioTrack(groupIndexArg, trackIndexArg)
-                  listOf(null)
-                } catch (exception: Throwable) {
-                  MessagesPigeonUtils.wrapError(exception)
-                }
-            reply.reply(wrapped)
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel =
-            BasicMessageChannel<Any?>(
-                binaryMessenger,
-                "dev.flutter.pigeon.video_player_android.VideoPlayerInstanceApi.setBackgroundPlayback$separatedMessageChannelSuffix",
-                codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val msgArg = args[0] as BackgroundPlaybackMessage
-            val wrapped: List<Any?> =
-                try {
-                  api.setBackgroundPlayback(msgArg)
                   listOf(null)
                 } catch (exception: Throwable) {
                   MessagesPigeonUtils.wrapError(exception)

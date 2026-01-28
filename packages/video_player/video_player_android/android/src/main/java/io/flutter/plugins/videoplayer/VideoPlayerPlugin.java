@@ -94,7 +94,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             videoAsset,
             sharedOptions);
 
-    registerPlayerInstance(videoPlayer, id);
+    registerPlayerInstance(videoPlayer, id, options.getBackgroundPlayback());
     return id;
   }
 
@@ -114,7 +114,7 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
             videoAsset,
             sharedOptions);
 
-    registerPlayerInstance(videoPlayer, id);
+    registerPlayerInstance(videoPlayer, id, options.getBackgroundPlayback());
     return new TexturePlayerIds(id, handle.id());
   }
 
@@ -145,9 +145,15 @@ public class VideoPlayerPlugin implements FlutterPlugin, AndroidVideoPlayerApi {
     }
   }
 
-  private void registerPlayerInstance(VideoPlayer player, long id) {
+  private void registerPlayerInstance(
+      VideoPlayer player, long id, @Nullable BackgroundPlaybackMessage backgroundPlayback) {
     // Set up background playback context
     player.setBackgroundPlaybackContext(flutterState.applicationContext, (int) id);
+
+    // Configure background playback if requested
+    if (backgroundPlayback != null) {
+      player.configureBackgroundPlayback(backgroundPlayback);
+    }
 
     // Set up the instance-specific API handler, and make sure it is removed when the player is
     // disposed.

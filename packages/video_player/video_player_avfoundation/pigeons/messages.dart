@@ -30,6 +30,9 @@ class CreationOptions {
 
   String uri;
   Map<String, String> httpHeaders;
+
+  /// Background playback configuration (optional).
+  BackgroundPlaybackMessage? backgroundPlayback;
 }
 
 class TexturePlayerIds {
@@ -123,6 +126,4 @@ abstract class VideoPlayerInstanceApi {
   List<MediaSelectionAudioTrackData> getAudioTracks();
   @ObjCSelector('selectAudioTrackAtIndex:')
   void selectAudioTrack(int trackIndex);
-  @ObjCSelector('setBackgroundPlayback:')
-  void setBackgroundPlayback(BackgroundPlaybackMessage msg);
 }

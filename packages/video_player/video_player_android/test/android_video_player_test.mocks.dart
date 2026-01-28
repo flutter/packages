@@ -253,13 +253,4 @@ class MockVideoPlayerInstanceApi extends _i1.Mock
             returnValueForMissingStub: _i4.Future<void>.value(),
           )
           as _i4.Future<void>);
-
-  @override
-  _i4.Future<void> setBackgroundPlayback(_i2.BackgroundPlaybackMessage? msg) =>
-      (super.noSuchMethod(
-            Invocation.method(#setBackgroundPlayback, [msg]),
-            returnValue: _i4.Future<void>.value(),
-            returnValueForMissingStub: _i4.Future<void>.value(),
-          )
-          as _i4.Future<void>);
 }

@@ -462,6 +462,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     final creationOptions = VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
+      allowBackgroundPlayback:
+          videoPlayerOptions?.allowBackgroundPlayback ?? false,
+      notificationMetadata: videoPlayerOptions?.notificationMetadata,
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
@@ -474,16 +477,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
-
-    // Set up background playback if enabled
-    if (videoPlayerOptions != null &&
-        (videoPlayerOptions?.allowBackgroundPlayback ?? false)) {
-      await _videoPlayerPlatform.setBackgroundPlayback(
-        _playerId,
-        enableBackground: true,
-        notificationMetadata: videoPlayerOptions?.notificationMetadata,
-      );
-    }
 
     final initializingCompleter = Completer<void>();
 

@@ -1626,18 +1626,4 @@ class FakeVideoPlayerPlatform extends VideoPlayerPlatform {
     calls.add('setWebOptions');
     webOptions[playerId] = options;
   }
-
-  @override
-  bool isBackgroundPlaybackSupportAvailable() {
-    return true;
-  }
-
-  @override
-  Future<void> setBackgroundPlayback(
-    int playerId, {
-    required bool enableBackground,
-    NotificationMetadata? notificationMetadata,
-  }) async {
-    calls.add('setBackgroundPlayback');
-  }
 }
