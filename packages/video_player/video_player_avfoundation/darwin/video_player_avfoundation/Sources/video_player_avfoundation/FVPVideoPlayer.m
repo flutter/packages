@@ -557,13 +557,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
           AVPlayerAudiovisualBackgroundPlaybackPolicyContinuesIfPossible;
     }
 
-    // Set up remote command center for media controls
-    [self setupRemoteCommandCenter];
-
-    // Update Now Playing info if metadata is provided
+    // Only set up remote commands and Now Playing if metadata is provided
     if (_notificationMetadata) {
+      [self setupRemoteCommandCenter];
       [self updateNowPlayingInfo];
       [self setupTimeObserver];
+    } else {
+      // Ensure no stale notification from previous player
+      [self clearNowPlayingInfo];
     }
   } else {
     // Disable background playback
