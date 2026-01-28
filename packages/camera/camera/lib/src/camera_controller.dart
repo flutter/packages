@@ -352,14 +352,13 @@ class CameraController extends ValueNotifier<CameraValue> {
         }),
       );
 
-      _unawaited(CameraPlatform.instance
-          .onCameraError(_cameraId)
-          .first
-          .then((CameraErrorEvent event) {
-        value = value.copyWith(
-          errorDescription: event.description,
-        );
-      }));
+      _unawaited(
+        CameraPlatform.instance.onCameraError(_cameraId).first.then((
+          CameraErrorEvent event,
+        ) {
+          value = value.copyWith(errorDescription: event.description);
+        })
+      );
 
       await CameraPlatform.instance.initializeCamera(
         _cameraId,

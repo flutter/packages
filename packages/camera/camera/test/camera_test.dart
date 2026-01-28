@@ -1804,16 +1804,20 @@ void main() {
 
     test('error from onCameraError is received', () async {
       final cameraController = CameraController(
-          const CameraDescription(
-              name: 'cam',
-              lensDirection: CameraLensDirection.back,
-              sensorOrientation: 90),
-          ResolutionPreset.max);
+        const CameraDescription(
+          name: 'cam',
+          lensDirection: CameraLensDirection.back,
+          sensorOrientation: 90
+        ),
+        ResolutionPreset.max
+      );
       await cameraController.initialize();
 
       expect(cameraController.value.hasError, isTrue);
-      expect(cameraController.value.errorDescription,
-          mockOnCameraErrorEvent.description);
+      expect(
+        cameraController.value.errorDescription,
+        mockOnCameraErrorEvent.description
+      );
     });
   });
 }

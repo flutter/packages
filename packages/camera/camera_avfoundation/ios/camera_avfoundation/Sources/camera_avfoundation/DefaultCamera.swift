@@ -240,7 +240,7 @@ final class DefaultCamera: NSObject, Camera {
     // an incoming call during video recording. Error can happen for example when recording starts
     // during an incoming call.
     // https://github.com/flutter/flutter/issues/151253
-    for session in [ videoCaptureSession, audioCaptureSession ] {
+    for session in [videoCaptureSession, audioCaptureSession] {
       NotificationCenter.default.addObserver(
         self,
         selector: #selector(captureSessionWasInterrupted),
