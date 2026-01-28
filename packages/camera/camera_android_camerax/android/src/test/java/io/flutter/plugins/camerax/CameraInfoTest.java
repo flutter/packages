@@ -9,15 +9,18 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import androidx.camera.core.CameraInfo;
+import androidx.camera.core.CameraSelector;
 import androidx.camera.core.CameraState;
 import androidx.camera.core.ExposureState;
 import androidx.camera.core.ZoomState;
 import androidx.lifecycle.LiveData;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 
 public class CameraInfoTest {
   @Test
-  public void getSensorRotationDegrees_makesCallToRetrieveSensorRotationDegrees() {
+  public void sensorRotationDegrees_makesCallToRetrieveSensorRotationDegrees() {
     final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
 
     final CameraInfo instance = mock(CameraInfo.class);
@@ -25,6 +28,41 @@ public class CameraInfoTest {
     when(instance.getSensorRotationDegrees()).thenReturn((int) value);
 
     assertEquals(value, api.sensorRotationDegrees(instance));
+  }
+
+  @Test
+  public void lensFacing_makesCallToRetrieveLensFacing() {
+    final PigeonApiCameraInfo api = new TestProxyApiRegistrar().getPigeonApiCameraInfo();
+
+    final CameraInfo instance = mock(CameraInfo.class);
+    List<Integer> testedLensFacingValues =
+        Arrays.asList(
+            CameraSelector.LENS_FACING_BACK,
+            CameraSelector.LENS_FACING_FRONT,
+            CameraSelector.LENS_FACING_EXTERNAL,
+            CameraSelector.LENS_FACING_UNKNOWN);
+
+    for (int testedLensFacingValue : testedLensFacingValues) {
+      when(instance.getLensFacing()).thenReturn(testedLensFacingValue);
+
+      LensFacing expected;
+      switch (testedLensFacingValue) {
+        case CameraSelector.LENS_FACING_BACK:
+          expected = LensFacing.BACK;
+          break;
+        case CameraSelector.LENS_FACING_FRONT:
+          expected = LensFacing.FRONT;
+          break;
+        case CameraSelector.LENS_FACING_EXTERNAL:
+          expected = LensFacing.EXTERNAL;
+          break;
+        default:
+          expected = LensFacing.UNKNOWN;
+          break;
+      }
+
+      assertEquals(expected, api.lensFacing(instance));
+    }
   }
 
   @SuppressWarnings("unchecked")

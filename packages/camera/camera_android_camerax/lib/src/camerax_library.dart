@@ -56,9 +56,14 @@ void setUpGenerics({BinaryMessenger? pigeonBinaryMessenger}) {
 
   camerax.CameraInfo.pigeon_setUpMessageHandlers(
     pigeon_newInstance:
-        (int sensorRotationDegrees, camerax.ExposureState exposureState) {
+        (
+          int sensorRotationDegrees,
+          camerax.LensFacing lensFacing,
+          camerax.ExposureState exposureState,
+        ) {
           return CameraInfo.detached(
             sensorRotationDegrees: sensorRotationDegrees,
+            lensFacing: lensFacing,
             exposureState: exposureState,
             pigeon_binaryMessenger: pigeonBinaryMessenger,
           );
@@ -101,6 +106,7 @@ class CameraInfo extends camerax.CameraInfo {
   /// create copies for an [PigeonInstanceManager].
   CameraInfo.detached({
     required super.sensorRotationDegrees,
+    required super.lensFacing,
     required super.exposureState,
     // ignore: non_constant_identifier_names
     super.pigeon_binaryMessenger,
@@ -121,6 +127,7 @@ class CameraInfo extends camerax.CameraInfo {
   CameraInfo pigeon_copy() {
     return CameraInfo.detached(
       sensorRotationDegrees: sensorRotationDegrees,
+      lensFacing: lensFacing,
       exposureState: exposureState,
       pigeon_binaryMessenger: pigeon_binaryMessenger,
     );
