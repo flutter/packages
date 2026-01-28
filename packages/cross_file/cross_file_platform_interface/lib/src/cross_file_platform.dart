@@ -45,7 +45,7 @@ abstract base class CrossFilePlatform {
   }
 }
 
-/// Implementation of [PlatformXDirectory} that represents a resource that does
+/// Implementation of [PlatformXDirectory} that represents a directory that does
 /// not exist.
 final class _DefaultXDirectory extends PlatformXDirectory {
   _DefaultXDirectory(super.params) : super.implementation();
@@ -59,8 +59,8 @@ final class _DefaultXDirectory extends PlatformXDirectory {
   }
 }
 
-/// Implementation of [PlatformXDirectory} that represents a resource that does
-/// not exist.
+/// Implementation of [PlatformScopedStorageXFile} that represents a resource
+/// that does not exist.
 final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
   _DefaultScopedStorageXFile(super.params) : super.implementation();
 
@@ -95,8 +95,8 @@ final class _DefaultScopedStorageXFile extends PlatformScopedStorageXFile {
   }
 }
 
-/// Implementation of [PlatformXDirectory} that represents a resource that does
-/// not exist.
+/// Implementation of [PlatformScopedStorageXDirectory} that represents a
+/// directory that does not exist.
 final class _DefaultScopedStorageXDirectory
     extends PlatformScopedStorageXDirectory {
   _DefaultScopedStorageXDirectory(super.params) : super.implementation();
