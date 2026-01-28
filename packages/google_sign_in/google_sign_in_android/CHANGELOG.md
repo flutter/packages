@@ -1,3 +1,7 @@
+## 7.2.9
+
+* Bumps com.google.android.gms:play-services-auth from 21.4.0 to 21.5.0.
+
 ## 7.2.8
 
 * Bumps kotlin_version to 2.3.0.
