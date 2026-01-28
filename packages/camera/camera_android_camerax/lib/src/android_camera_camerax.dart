@@ -995,7 +995,7 @@ class AndroidCameraCameraX extends CameraPlatform {
       // built.
       throw CameraException(
         'cameraNotFound',
-        "Camera not found. Please call the 'create' method before calling 'buildPreview'",
+        "Camera not found. Please call the 'createCamera' method before calling 'buildPreview'",
       );
     }
 
@@ -1200,6 +1200,34 @@ class AndroidCameraCameraX extends CameraPlatform {
     VideoRecordEvent event = await videoRecordingEventStreamQueue.next;
     while (event is! VideoRecordEventStart) {
       event = await videoRecordingEventStreamQueue.next;
+    }
+
+    //////// TEST UPDATING ROTATED PREVIEW IF IMAGEANALYSIS IS STARTED ////////
+    if (streamCallback != null) {
+      print('CAMSIM99: TRIGGERING ROTATED PREVIEW SET STATE');
+      // Update initial values after video recording starts and image analysis is active.
+      _handlesCropAndRotation = await preview!
+          .surfaceProducerHandlesCropAndRotation();
+      _initialDeviceOrientation = _deserializeDeviceOrientation(
+        await deviceOrientationManager.getUiOrientation(),
+      );
+      _initialDefaultDisplayRotation = await deviceOrientationManager
+          .getDefaultDisplayRotation();
+
+      // Retrieve most up to date camera description, as setDescriptionWhileRecording is not called.
+      final List<CameraDescription> cameraDescriptions =
+          await availableCameras();
+      CameraDescription? foundDescription;
+      if (cameraDescriptions.isNotEmpty) {
+        foundDescription = cameraDescriptions.firstWhere(
+          (element) => element.name == _savedCameras.keys.first,
+        );
+        sensorOrientationDegrees = foundDescription.sensorOrientation
+            .toDouble();
+        final LensFacing cameraSelectorLensDirection =
+            _getCameraSelectorLensDirection(foundDescription.lensDirection);
+        cameraIsFrontFacing = cameraSelectorLensDirection == LensFacing.front;
+      }
     }
   }
 
