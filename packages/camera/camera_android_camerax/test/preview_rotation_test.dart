@@ -273,7 +273,6 @@ void main() {
   })
   createCameraSelectorForBackCamera(MockCameraSelector mockCameraSelector) {
     return ({LensFacing? requireLensFacing, dynamic cameraInfoForFilter}) {
-      when(cameraInfoForFilter.lensFacing).thenReturn(LensFacing.back);
       switch (requireLensFacing) {
         case LensFacing.back:
           return mockCameraSelector;
