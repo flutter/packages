@@ -3,7 +3,8 @@ description: Demonstrates how to use cross files.
 publish_to: none
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
 
 dependencies:
   cross_file:
@@ -13,6 +14,21 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
+  file_selector: ^1.1.0
+  flutter:
+    sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  mime: ^2.0.0
+  video_player: ^2.8.6
 
 dev_dependencies:
-  test: ^1.24.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/hello.txt

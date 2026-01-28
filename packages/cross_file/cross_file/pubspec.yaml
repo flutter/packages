@@ -5,17 +5,41 @@ issue_tracker: https://github.com/flutter/flutter/issues?q=is%3Aissue+is%3Aopen+
 version: 0.3.5+1
 
 environment:
-  sdk: ^3.8.0
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        default_package: cross_file_android
+      ios:
+        default_package: cross_file_darwin
+      linux:
+        default_package: cross_file_io
+      macos:
+        default_package: cross_file_darwin
+      web:
+        default_package: cross_file_web
+      windows:
+        default_package: cross_file_io
 
 dependencies:
+  cross_file_android:
+    path: ../cross_file_android
+  cross_file_darwin:
+    path: ../cross_file_darwin
+  cross_file_io:
+    path: ../cross_file_io
   cross_file_platform_interface:
     path: ../cross_file_platform_interface
-  meta: ^1.17.0
-  web: ">=0.5.1 <2.0.0"
+  flutter:
+    sdk: flutter
 
 dev_dependencies:
+  flutter_test:
+    sdk: flutter
   path: ^1.8.1
-  test: ^1.21.1
 
 topics:
   - files

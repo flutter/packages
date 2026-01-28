@@ -2,11 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 import 'cross_file.dart';
 import 'cross_file_entity.dart';

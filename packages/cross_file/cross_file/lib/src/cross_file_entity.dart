@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter/foundation.dart';
 
 /// The common superclass for [XFile] and [XDirectory].
 @immutable
