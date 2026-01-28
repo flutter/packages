@@ -12,15 +12,51 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('CrossFilePlatform', () {
     test(
-      'Default implementation of createPlatformXDirectory should throw unimplemented error',
-      () {
+      'Default implementation of createPlatformXDirectory should return an implementation that returns false for exists()',
+      () async {
         final platform = TestCrossFilePlatform();
 
         expect(
-          () => platform.createPlatformXDirectory(
-            const PlatformXDirectoryCreationParams(uri: 'test'),
-          ),
-          throwsUnimplementedError,
+          await platform
+              .createPlatformXDirectory(
+                const PlatformXDirectoryCreationParams(uri: 'test'),
+              )
+              .exists(),
+          false,
+        );
+      },
+    );
+
+    test(
+      'Default implementation of createPlatformScopedStorageXFile should return an implementation that returns false for exists()',
+      () async {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          await platform
+              .createPlatformScopedStorageXFile(
+                const PlatformScopedStorageXFileCreationParams(uri: 'test'),
+              )
+              .exists(),
+          false,
+        );
+      },
+    );
+
+    test(
+      'Default implementation of createPlatformScopedStorageXDirectory should return an implementation that returns false for exists()',
+      () async {
+        final platform = TestCrossFilePlatform();
+
+        expect(
+          await platform
+              .createPlatformScopedStorageXDirectory(
+                const PlatformScopedStorageXDirectoryCreationParams(
+                  uri: 'test',
+                ),
+              )
+              .exists(),
+          false,
         );
       },
     );
