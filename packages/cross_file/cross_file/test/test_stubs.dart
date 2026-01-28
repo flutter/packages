@@ -9,7 +9,12 @@ import 'dart:typed_data';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
 final class TestCrossFilePlatform extends CrossFilePlatform {
-  TestCrossFilePlatform({this.onCreatePlatformXFile});
+  TestCrossFilePlatform({
+    this.onCreatePlatformXFile,
+    this.onCreatePlatformXDirectory,
+    this.onCreatePlatformScopedStorageXFile,
+    this.onCreatePlatformScopedStorageXDirectory,
+  });
 
   PlatformXFile Function(PlatformXFileCreationParams params)?
   onCreatePlatformXFile;

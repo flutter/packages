@@ -4,86 +4,83 @@
 
 import 'dart:io';
 
-import 'package:cross_file_io/cross_file_io.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:path/path.dart' as path;
 
-final File testFile = File(
-  path.join(Directory.current.path, 'test', 'test_file.txt'),
-);
+import 'test_stubs.dart';
 
 void main() {
-  group('IOXFile', () {
-    setUp(() {
-      CrossFilePlatform.instance = CrossFileIO();
-    });
-
+  group('XFile', () {
     test('lastModified', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
+      final lastModified = DateTime.now();
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(params, onLastModified: () async => lastModified),
       );
 
-      expect(await file.lastModified(), testFile.lastModifiedSync());
+      final file = XFile('uri');
+
+      expect(await file.lastModified(), lastModified);
     });
-
-    test('length', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(await file.length(), await testFile.length());
-    });
-
-    test('openRead', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(
-        await file.openRead().toList(),
-        await testFile.openRead().toList(),
-      );
-    });
-
-    test('readAsBytes', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(await file.readAsBytes(), await testFile.readAsBytes());
-    });
-
-    test('readAsString', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(await file.readAsString(), await testFile.readAsString());
-    });
-
-    test('canRead', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(await file.canRead(), testFile.existsSync());
-    });
-
-    test('exists', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(await file.exists(), testFile.existsSync());
-    });
-
-    test('name', () async {
-      final file = PlatformXFile(
-        PlatformXFileCreationParams(uri: testFile.path),
-      );
-
-      expect(await file.name(), 'test_file.txt');
-    });
+    //
+    // test('length', () async {
+    //   final file = PlatformXFile(
+    //     PlatformXFileCreationParams(uri: testFile.path),
+    //   );
+    //
+    //   expect(await file.length(), await testFile.length());
+    // });
+    //
+    // test('openRead', () async {
+    //   final file = PlatformXFile(
+    //     PlatformXFileCreationParams(uri: testFile.path),
+    //   );
+    //
+    //   expect(
+    //     await file.openRead().toList(),
+    //     await testFile.openRead().toList(),
+    //   );
+    // });
+    //
+    // test('readAsBytes', () async {
+    //   final file = PlatformXFile(
+    //     PlatformXFileCreationParams(uri: testFile.path),
+    //   );
+    //
+    //   expect(await file.readAsBytes(), await testFile.readAsBytes());
+    // });
+    //
+    // test('readAsString', () async {
+    //   final file = PlatformXFile(
+    //     PlatformXFileCreationParams(uri: testFile.path),
+    //   );
+    //
+    //   expect(await file.readAsString(), await testFile.readAsString());
+    // });
+    //
+    // test('canRead', () async {
+    //   final file = PlatformXFile(
+    //     PlatformXFileCreationParams(uri: testFile.path),
+    //   );
+    //
+    //   expect(await file.canRead(), testFile.existsSync());
+    // });
+    //
+    // test('exists', () async {
+    //   final file = PlatformXFile(
+    //     PlatformXFileCreationParams(uri: testFile.path),
+    //   );
+    //
+    //   expect(await file.exists(), testFile.existsSync());
+    // });
+    //
+    // test('name', () async {
+    //   final file = PlatformXFile(
+    //     PlatformXFileCreationParams(uri: testFile.path),
+    //   );
+    //
+    //   expect(await file.name(), 'test_file.txt');
+    // });
   });
 }

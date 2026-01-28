@@ -8,6 +8,15 @@ environment:
   sdk: ^3.9.0
   flutter: ">=3.35.0"
 
+flutter:
+  plugin:
+    implements: cross_file
+    platforms:
+      linux:
+        dartPluginClass: CrossFileIO
+      windows:
+        dartPluginClass: CrossFileIO
+
 dependencies:
   cross_file_platform_interface:
     path: ../cross_file_platform_interface

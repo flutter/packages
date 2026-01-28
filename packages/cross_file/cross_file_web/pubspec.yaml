@@ -14,7 +14,6 @@ flutter:
     platforms:
       web:
         pluginClass: CrossFileWeb
-        fileName: cross_file_web.dart
 
 dependencies:
   cross_file_platform_interface:
