@@ -1,3 +1,7 @@
+## 0.8.13+5
+
+* Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
+
 ## 0.8.13+4
 
 * Improves compatibility with `UIScene`.
