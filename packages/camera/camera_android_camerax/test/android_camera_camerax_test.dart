@@ -1676,7 +1676,6 @@ void main() {
     },
   );
 
-  // TODO(camsim99): stopped here fixing tests
   test(
     'createCamera properly selects specific back camera by specifying a CameraInfo',
     () async {
@@ -1714,6 +1713,10 @@ void main() {
       final mockFrontCameraInfo = MockCameraInfo();
       final mockBackCameraInfoOne = MockCameraInfo();
       final mockBackCameraInfoTwo = MockCameraInfo();
+
+      when(mockFrontCameraInfo.lensFacing).thenReturn(LensFacing.front);
+      when(mockBackCameraInfoOne.lensFacing).thenReturn(LensFacing.back);
+      when(mockBackCameraInfoTwo.lensFacing).thenReturn(LensFacing.back);
 
       // Mock/Detached objects for (typically attached) objects created by
       // createCamera.

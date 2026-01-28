@@ -54,6 +54,7 @@ void main() {
   setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera({
     required MockCameraSelector mockCameraSelector,
     required int sensorRotationDegrees,
+    required bool isCameraFrontFacing,
   }) {
     final mockProcessCameraProvider = MockProcessCameraProvider();
     final mockCameraInfo = MockCameraInfo();
@@ -68,8 +69,8 @@ void main() {
       mockProcessCameraProvider.getAvailableCameraInfos(),
     ).thenAnswer((_) async => <MockCameraInfo>[mockCameraInfo]);
     when(
-      mockCameraSelector.filter(<MockCameraInfo>[mockCameraInfo]),
-    ).thenAnswer((_) async => <MockCameraInfo>[mockCameraInfo]);
+      mockCameraInfo.lensFacing,
+    ).thenReturn(isCameraFrontFacing ? LensFacing.front : LensFacing.back);
     when(
       mockCameraInfo.sensorRotationDegrees,
     ).thenReturn(sensorRotationDegrees);
@@ -272,6 +273,7 @@ void main() {
   })
   createCameraSelectorForBackCamera(MockCameraSelector mockCameraSelector) {
     return ({LensFacing? requireLensFacing, dynamic cameraInfoForFilter}) {
+      when(cameraInfoForFilter.lensFacing).thenReturn(LensFacing.back);
       switch (requireLensFacing) {
         case LensFacing.back:
           return mockCameraSelector;
@@ -382,6 +384,7 @@ void main() {
             setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
               mockCameraSelector: mockCameraSelector,
               sensorRotationDegrees: /* irrelevant for test */ 90,
+              isCameraFrontFacing: false,
             );
         fakeCreateCameraSelector = createCameraSelectorForBackCamera(
           mockCameraSelector,
@@ -633,6 +636,7 @@ void main() {
             setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
               mockCameraSelector: mockCameraSelector,
               sensorRotationDegrees: /* irrelevant for test */ 90,
+              isCameraFrontFacing: false,
             );
         fakeCreateCameraSelector = createCameraSelectorForBackCamera(
           mockCameraSelector,
@@ -879,6 +883,7 @@ void main() {
             setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 270,
+              isCameraFrontFacing: false,
             );
         const testMediaSettings = MediaSettings();
 
@@ -984,6 +989,7 @@ void main() {
             setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 270,
+              isCameraFrontFacing: true,
             );
         const testMediaSettings = MediaSettings();
 
@@ -1089,6 +1095,7 @@ void main() {
               setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                 mockCameraSelector: mockFrontCameraSelector,
                 sensorRotationDegrees: 270,
+                isCameraFrontFacing: true,
               );
           proxyGetDefaultDisplayRotation = () =>
               Future<int>.value(Surface.rotation0);
@@ -1373,6 +1380,7 @@ void main() {
               setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                 mockCameraSelector: mockFrontCameraSelector,
                 sensorRotationDegrees: 270,
+                isCameraFrontFacing: true,
               );
           proxyGetUiOrientation = () async =>
               _serializeDeviceOrientation(DeviceOrientation.landscapeLeft);
@@ -1660,6 +1668,7 @@ void main() {
             setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 270,
+              isCameraFrontFacing: true,
             );
         const testMediaSettings = MediaSettings();
 
@@ -1775,6 +1784,7 @@ void main() {
             setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
               mockCameraSelector: mockFrontCameraSelector,
               sensorRotationDegrees: 90,
+              isCameraFrontFacing: true,
             );
 
         // Media settings to create camera; irrelevant for test.
@@ -1913,6 +1923,7 @@ void main() {
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockBackCameraSelector,
                   sensorRotationDegrees: 90,
+                  isCameraFrontFacing: false,
                 );
 
             // Set up test to use back camera, tell camera that handlesCropAndRotation is false,
@@ -1973,6 +1984,7 @@ void main() {
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockBackCameraSelector,
                   sensorRotationDegrees: 270,
+                  isCameraFrontFacing: false,
                 );
 
             // Set up test to use back camera, tell camera that handlesCropAndRotation is false,
@@ -2061,6 +2073,7 @@ void main() {
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockFrontCameraSelector,
                   sensorRotationDegrees: testSensorOrientation,
+                  isCameraFrontFacing: true,
                 );
             // Set up front camera selection and initial device orientation as landscape right.
             final MockCameraSelector Function({
@@ -2135,6 +2148,7 @@ void main() {
                 setUpMockCameraSelectorAndMockProcessCameraProviderForSelectingTestCamera(
                   mockCameraSelector: mockBackCameraSelector,
                   sensorRotationDegrees: testSensorOrientation,
+                  isCameraFrontFacing: false,
                 );
 
             // Set up front camera selection and initial device orientation as landscape right.
