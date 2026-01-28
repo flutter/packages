@@ -33,8 +33,8 @@
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
                   binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                  textureRegistry:(NSObject<FlutterTextureRegistry> *)textureRegistry
                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider
-                    assetProvider:(NSObject<FVPAssetProvider> *)assetProvider
-                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                    assetProvider:(NSObject<FVPAssetProvider> *)assetProvider;
 
 @end

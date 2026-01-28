@@ -71,8 +71,8 @@
 #pragma mark -
 
 @interface FVPVideoPlayerPlugin ()
-@property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
+@property(nonatomic, strong) NSObject<FlutterTextureRegistry> *textureRegistry;
 @property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
 @property(nonatomic, strong) id<FVPAVFactory> avFactory;
 @property(nonatomic, strong) NSObject<FVPViewProvider> *viewProvider;
@@ -83,6 +83,7 @@
 @implementation FVPVideoPlayerPlugin
 + (void)registerWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   FVPVideoPlayerPlugin *instance = [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+  // Publish the instance so that it receives detachFromEngineForRegistrar:.
   [registrar publish:instance];
   FVPNativeVideoViewFactory *factory = [[FVPNativeVideoViewFactory alloc]
                initWithMessenger:registrar.messenger
@@ -97,21 +98,21 @@
   return [self initWithAVFactory:[[FVPDefaultAVFactory alloc] init]
               displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
                  binaryMessenger:registrar.messenger
+                 textureRegistry:registrar.textures
                     viewProvider:[[FVPDefaultViewProvider alloc] initWithRegistrar:registrar]
-                   assetProvider:[[FVPDefaultAssetProvider alloc] initWithRegistrar:registrar]
-                       registrar:registrar];
+                   assetProvider:[[FVPDefaultAssetProvider alloc] initWithRegistrar:registrar]];
 }
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
                   binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
+                  textureRegistry:(NSObject<FlutterTextureRegistry> *)textureRegistry
                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider
-                    assetProvider:(NSObject<FVPAssetProvider> *)assetProvider
-                        registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
+                    assetProvider:(NSObject<FVPAssetProvider> *)assetProvider {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
-  _registrar = registrar;
   _binaryMessenger = binaryMessenger;
+  _textureRegistry = textureRegistry;
   _assetProvider = assetProvider;
   _viewProvider = viewProvider;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
@@ -234,8 +235,7 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                            error:(FlutterError **)error {
   @try {
     AVPlayerItem *item = [self playerItemWithCreationOptions:options];
-    FVPFrameUpdater *frameUpdater =
-        [[FVPFrameUpdater alloc] initWithRegistry:self.registrar.textures];
+    FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:self.textureRegistry];
     NSObject<FVPDisplayLink> *displayLink =
         [self.displayLinkFactory displayLinkWithViewProvider:self.viewProvider
                                                     callback:^() {
@@ -249,12 +249,12 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
                                                      avFactory:self.avFactory
                                                   viewProvider:self.viewProvider];
 
-    int64_t textureIdentifier = [self.registrar.textures registerTexture:player];
+    int64_t textureIdentifier = [self.textureRegistry registerTexture:player];
     [player setTextureIdentifier:textureIdentifier];
     __weak typeof(self) weakSelf = self;
     int64_t playerIdentifier = [self configurePlayer:player
                              withExtraDisposeHandler:^() {
-                               [weakSelf.registrar.textures unregisterTexture:textureIdentifier];
+                               [weakSelf.textureRegistry unregisterTexture:textureIdentifier];
                              }];
     return [FVPTexturePlayerIds makeWithPlayerId:playerIdentifier textureId:textureIdentifier];
   } @catch (NSException *exception) {
