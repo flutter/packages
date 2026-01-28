@@ -4,6 +4,12 @@
 
 #import "FVPVideoPlayerPlugin.h"
 
+#if TARGET_OS_OSX
+@import FlutterMacOS;
+#else
+@import Flutter;
+#endif
+
 #import "FVPAVFactory.h"
 #import "FVPAssetProvider.h"
 #import "FVPDisplayLink.h"
@@ -26,6 +32,7 @@
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
+                  binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                     assetProvider:(NSObject<FVPAssetProvider> *)assetProvider
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar;

@@ -74,6 +74,27 @@
 
 @end
 
+@interface StubBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@end
+
+@implementation StubBinaryMessenger
+
+- (void)sendOnChannel:(NSString *)channel message:(NSData *_Nullable)message {
+}
+- (void)sendOnChannel:(NSString *)channel
+              message:(NSData *_Nullable)message
+          binaryReply:(FlutterBinaryReply _Nullable)callback {
+}
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
+  return 0;
+}
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+}
+
+@end
+
 @interface StubViewProvider : NSObject <FVPViewProvider>
 #if TARGET_OS_IOS
 - (instancetype)initWithViewController:(UIViewController *)viewController;
@@ -253,6 +274,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
       displayLinkFactory:nil
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
             viewProvider:viewProvider
            assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
@@ -287,6 +309,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
             viewProvider:[[StubViewProvider alloc] init]
            assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
@@ -315,6 +338,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
             viewProvider:[[StubViewProvider alloc] init]
            assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
@@ -373,6 +397,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                            output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
             viewProvider:[[StubViewProvider alloc] init]
            assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
@@ -420,6 +445,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
             viewProvider:[[StubViewProvider alloc] init]
            assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
@@ -476,6 +502,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
             viewProvider:[[StubViewProvider alloc] init]
            assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];
@@ -900,6 +927,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
             viewProvider:[[StubViewProvider alloc] init]
            assetProvider:[[StubAssetProvider alloc] init]
                registrar:registrar];

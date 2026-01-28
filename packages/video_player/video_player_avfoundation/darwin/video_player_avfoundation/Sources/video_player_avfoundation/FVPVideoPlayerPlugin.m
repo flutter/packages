@@ -72,6 +72,7 @@
 
 @interface FVPVideoPlayerPlugin ()
 @property(readonly, strong, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
+@property(nonatomic, strong) NSObject<FlutterBinaryMessenger> *binaryMessenger;
 @property(nonatomic, strong) id<FVPDisplayLinkFactory> displayLinkFactory;
 @property(nonatomic, strong) id<FVPAVFactory> avFactory;
 @property(nonatomic, strong) NSObject<FVPViewProvider> *viewProvider;
@@ -95,6 +96,7 @@
 - (instancetype)initWithRegistrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   return [self initWithAVFactory:[[FVPDefaultAVFactory alloc] init]
               displayLinkFactory:[[FVPDefaultDisplayLinkFactory alloc] init]
+                 binaryMessenger:registrar.messenger
                     viewProvider:[[FVPDefaultViewProvider alloc] initWithRegistrar:registrar]
                    assetProvider:[[FVPDefaultAssetProvider alloc] initWithRegistrar:registrar]
                        registrar:registrar];
@@ -102,12 +104,14 @@
 
 - (instancetype)initWithAVFactory:(id<FVPAVFactory>)avFactory
                displayLinkFactory:(id<FVPDisplayLinkFactory>)displayLinkFactory
+                  binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger
                      viewProvider:(NSObject<FVPViewProvider> *)viewProvider
                     assetProvider:(NSObject<FVPAssetProvider> *)assetProvider
                         registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   NSAssert(self, @"super init cannot be nil");
   _registrar = registrar;
+  _binaryMessenger = binaryMessenger;
   _assetProvider = assetProvider;
   _viewProvider = viewProvider;
   _displayLinkFactory = displayLinkFactory ?: [[FVPDefaultDisplayLinkFactory alloc] init];
@@ -135,7 +139,7 @@
   int64_t playerIdentifier = self.nextPlayerIdentifier++;
   self.playersByIdentifier[@(playerIdentifier)] = player;
 
-  NSObject<FlutterBinaryMessenger> *messenger = self.registrar.messenger;
+  NSObject<FlutterBinaryMessenger> *messenger = self.binaryMessenger;
   NSString *channelSuffix = [NSString stringWithFormat:@"%lld", playerIdentifier];
   // Set up the player-specific API handler, and its onDispose unregistration.
   SetUpFVPVideoPlayerInstanceApiWithSuffix(messenger, player, channelSuffix);
