@@ -4,108 +4,102 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdDisplayContainerTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct AdDisplayContainerTests {
+  @Test func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(
       pigeonApi: api, adContainer: UIView(), companionSlots: [],
       adContainerViewController: UIViewController())
-    XCTAssertNotNil(instance)
   }
 
-  func testAdContainer() {
+  @Test func adContainer() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
-    let value = try? api.pigeonDelegate.adContainer(pigeonApi: api, pigeonInstance: instance)
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
+    let value = try api.pigeonDelegate.adContainer(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.adContainer)
+    #expect(value == instance.adContainer)
   }
 
-  func testCompanionSlots() {
+  @Test func companionSlots() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
-    let value = try? api.pigeonDelegate.companionSlots(pigeonApi: api, pigeonInstance: instance)
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(),
+      viewController: UIViewController(),
+      companionSlots: [IMACompanionAdSlot(view: UIView())])
+    let value = try api.pigeonDelegate.companionSlots(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, instance.companionSlots)
+    #expect(value == instance.companionSlots)
   }
 
-  func testSetAdContainerViewController() {
+  @Test func setAdContainerViewController() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     let controller = UIViewController()
-    try? api.pigeonDelegate.setAdContainerViewController(
+    try api.pigeonDelegate.setAdContainerViewController(
       pigeonApi: api, pigeonInstance: instance, controller: controller)
 
-    XCTAssertEqual(instance.adContainerViewController, controller)
+    #expect(instance.adContainerViewController == controller)
   }
 
-  func testGetAdContainerViewController() {
+  @Test func getAdContainerViewController() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     let adContainerViewController = UIViewController()
     instance.adContainerViewController = adContainerViewController
-    let value = try? api.pigeonDelegate.getAdContainerViewController(
+    let value = try api.pigeonDelegate.getAdContainerViewController(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertEqual(value, adContainerViewController)
+    #expect(value == adContainerViewController)
   }
 
-  func testRegisterFriendlyObstruction() {
+  @Test func registerFriendlyObstruction() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
     let friendlyObstruction = IMAFriendlyObstruction(
       view: UIView(), purpose: IMAFriendlyObstructionPurpose.closeAd, detailedReason: "reason")
-    try? api.pigeonDelegate.registerFriendlyObstruction(
+    try api.pigeonDelegate.registerFriendlyObstruction(
       pigeonApi: api, pigeonInstance: instance, friendlyObstruction: friendlyObstruction)
 
-    XCTAssertEqual(instance.registerFriendlyObstructionArgs, [friendlyObstruction])
+    #expect(instance.registerFriendlyObstructionArgs == [friendlyObstruction])
   }
 
-  func testUnregisterAllFriendlyObstructions() {
+  @Test func unregisterAllFriendlyObstructions() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdDisplayContainer(registrar)
 
-    let instance = TestAdDisplayContainer()
-    try? api.pigeonDelegate.unregisterAllFriendlyObstructions(
+    let instance = TestAdDisplayContainer(
+      adContainer: UIView(), viewController: UIViewController())
+    try api.pigeonDelegate.unregisterAllFriendlyObstructions(
       pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(instance.unregisterAllFriendlyObstructionsCalled)
+    #expect(instance.unregisterAllFriendlyObstructionsCalled)
   }
 }
 
-class TestAdDisplayContainer: IMAAdDisplayContainer {
-  private var adContainerTestValue = UIView()
-  private var companionSlotsTestValue = [IMACompanionAdSlot(view: UIView())]
-  var registerFriendlyObstructionArgs: [AnyHashable?]? = nil
+class TestAdDisplayContainer: IMAAdDisplayContainer, @unchecked Sendable {
+  var registerFriendlyObstructionArgs: [IMAFriendlyObstruction]? = nil
   var unregisterAllFriendlyObstructionsCalled = false
-
-  convenience init() {
-    self.init(adContainer: UIView(), viewController: UIViewController())
-  }
-
-  override var adContainer: UIView {
-    return adContainerTestValue
-  }
-
-  override var companionSlots: [IMACompanionAdSlot] {
-    return companionSlotsTestValue
-  }
 
   override func register(_ friendlyObstruction: IMAFriendlyObstruction) {
     registerFriendlyObstructionArgs = [friendlyObstruction]
