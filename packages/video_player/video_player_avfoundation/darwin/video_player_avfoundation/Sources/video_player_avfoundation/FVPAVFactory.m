@@ -4,7 +4,7 @@
 
 #import "./include/video_player_avfoundation/FVPAVFactory.h"
 
-#import <AVFoundation/AVFoundation.h>
+@import AVFoundation;
 
 @implementation FVPDefaultAVFactory
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {

@@ -3,9 +3,9 @@
 // found in the LICENSE file.
 
 #if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
+@import FlutterMacOS;
 #else
-#import <Flutter/Flutter.h>
+@import Flutter;
 #endif
 
 @interface FVPVideoPlayerPlugin : NSObject <FlutterPlugin>
