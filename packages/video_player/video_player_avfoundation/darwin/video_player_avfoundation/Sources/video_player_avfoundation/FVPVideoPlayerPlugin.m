@@ -136,11 +136,17 @@
 }
 
 - (int64_t)configurePlayer:(FVPVideoPlayer *)player
-    withExtraDisposeHandler:(nullable void (^)(void))extraDisposeHandler {
+    withExtraDisposeHandler:(nullable void (^)(void))extraDisposeHandler
+         backgroundPlayback:(nullable FVPBackgroundPlaybackMessage *)backgroundPlayback {
   int64_t playerIdentifier = self.nextPlayerIdentifier++;
   self.playersByIdentifier[@(playerIdentifier)] = player;
 
-  NSObject<FlutterBinaryMessenger> *messenger = self.binaryMessenger;
+  // Configure background playback if requested
+  if (backgroundPlayback != nil) {
+    [player configureBackgroundPlayback:backgroundPlayback];
+  }
+
+  NSObject<FlutterBinaryMessenger> *messenger = self.registrar.messenger;
   NSString *channelSuffix = [NSString stringWithFormat:@"%lld", playerIdentifier];
   // Set up the player-specific API handler, and its onDispose unregistration.
   SetUpFVPVideoPlayerInstanceApiWithSuffix(messenger, player, channelSuffix);
@@ -224,7 +230,9 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
                                                               avFactory:self.avFactory
                                                            viewProvider:self.viewProvider];
 
-    return @([self configurePlayer:player withExtraDisposeHandler:nil]);
+    return @([self configurePlayer:player
+           withExtraDisposeHandler:nil
+                backgroundPlayback:options.backgroundPlayback]);
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];
     return nil;
@@ -255,8 +263,9 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
     __weak typeof(self) weakSelf = self;
     int64_t playerIdentifier = [self configurePlayer:player
                              withExtraDisposeHandler:^() {
-                               [weakSelf.textureRegistry unregisterTexture:textureIdentifier];
-                             }];
+                               [weakSelf.registrar.textures unregisterTexture:textureIdentifier];
+                             }
+                                  backgroundPlayback:options.backgroundPlayback];
     return [FVPTexturePlayerIds makeWithPlayerId:playerIdentifier textureId:textureIdentifier];
   } @catch (NSException *exception) {
     *error = [FlutterError errorWithCode:@"video_player" message:exception.reason details:nil];

@@ -527,8 +527,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 }
 
-- (void)setBackgroundPlayback:(FVPBackgroundPlaybackMessage *)msg
-                        error:(FlutterError *_Nullable *_Nonnull)error {
+/// Configures background playback and media notification.
+/// Called during player creation if background playback is requested.
+- (void)configureBackgroundPlayback:(FVPBackgroundPlaybackMessage *)msg {
   _enableBackgroundPlayback = msg.enableBackground;
   _notificationMetadata = msg.notificationMetadata;
 
@@ -578,9 +579,10 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
     // Deactivate audio session to release audio hardware
     NSError *audioError = nil;
-    [[AVAudioSession sharedInstance] setActive:NO
-                                   withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
-                                         error:&audioError];
+    [[AVAudioSession sharedInstance]
+          setActive:NO
+        withOptions:AVAudioSessionSetActiveOptionNotifyOthersOnDeactivation
+              error:&audioError];
     if (audioError) {
       NSLog(@"Error deactivating audio session: %@", audioError);
     }
@@ -608,12 +610,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   // Toggle play/pause command
   [commandCenter.togglePlayPauseCommand setEnabled:YES];
-  [commandCenter.togglePlayPauseCommand addTarget:self action:@selector(handleTogglePlayPauseCommand:)];
+  [commandCenter.togglePlayPauseCommand addTarget:self
+                                           action:@selector(handleTogglePlayPauseCommand:)];
 
   // Change playback position command (seeking)
   [commandCenter.changePlaybackPositionCommand setEnabled:YES];
-  [commandCenter.changePlaybackPositionCommand addTarget:self
-                                                  action:@selector(handleChangePlaybackPositionCommand:)];
+  [commandCenter.changePlaybackPositionCommand
+      addTarget:self
+         action:@selector(handleChangePlaybackPositionCommand:)];
 
   // Skip forward command
   [commandCenter.skipForwardCommand setEnabled:YES];
@@ -648,7 +652,8 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 }
 
 - (MPRemoteCommandHandlerStatus)handleChangePlaybackPositionCommand:(MPRemoteCommandEvent *)event {
-  MPChangePlaybackPositionCommandEvent *positionEvent = (MPChangePlaybackPositionCommandEvent *)event;
+  MPChangePlaybackPositionCommandEvent *positionEvent =
+      (MPChangePlaybackPositionCommandEvent *)event;
   CMTime targetTime = CMTimeMakeWithSeconds(positionEvent.positionTime, NSEC_PER_SEC);
   [_player seekToTime:targetTime
       completionHandler:^(BOOL finished) {
@@ -692,11 +697,14 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   [commandCenter.playCommand removeTarget:self action:@selector(handlePlayCommand:)];
   [commandCenter.pauseCommand removeTarget:self action:@selector(handlePauseCommand:)];
-  [commandCenter.togglePlayPauseCommand removeTarget:self action:@selector(handleTogglePlayPauseCommand:)];
-  [commandCenter.changePlaybackPositionCommand removeTarget:self
-                                                     action:@selector(handleChangePlaybackPositionCommand:)];
+  [commandCenter.togglePlayPauseCommand removeTarget:self
+                                              action:@selector(handleTogglePlayPauseCommand:)];
+  [commandCenter.changePlaybackPositionCommand
+      removeTarget:self
+            action:@selector(handleChangePlaybackPositionCommand:)];
   [commandCenter.skipForwardCommand removeTarget:self action:@selector(handleSkipForwardCommand:)];
-  [commandCenter.skipBackwardCommand removeTarget:self action:@selector(handleSkipBackwardCommand:)];
+  [commandCenter.skipBackwardCommand removeTarget:self
+                                           action:@selector(handleSkipBackwardCommand:)];
 
   [commandCenter.playCommand setEnabled:NO];
   [commandCenter.pauseCommand setEnabled:NO];
@@ -796,11 +804,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 
   // Add periodic time observer to update Now Playing info
   __weak typeof(self) weakSelf = self;
-  _timeObserver = [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0, NSEC_PER_SEC)
-                                                        queue:dispatch_get_main_queue()
-                                                   usingBlock:^(CMTime time) {
-                                                     [weakSelf updateNowPlayingPlaybackState];
-                                                   }];
+  _timeObserver =
+      [_player addPeriodicTimeObserverForInterval:CMTimeMakeWithSeconds(1.0, NSEC_PER_SEC)
+                                            queue:dispatch_get_main_queue()
+                                       usingBlock:^(CMTime time) {
+                                         [weakSelf updateNowPlayingPlaybackState];
+                                       }];
 }
 
 - (void)removeTimeObserver {
@@ -829,9 +838,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
     if (image) {
       MPMediaItemArtwork *artwork =
           [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size
-                                         requestHandler:^UIImage *_Nonnull(CGSize size) {
-                                           return image;
-                                         }];
+                                          requestHandler:^UIImage *_Nonnull(CGSize size) {
+                                            return image;
+                                          }];
       completion(artwork);
     } else {
       completion(nil);
@@ -846,9 +855,9 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
         if (image) {
           MPMediaItemArtwork *artwork =
               [[MPMediaItemArtwork alloc] initWithBoundsSize:image.size
-                                             requestHandler:^UIImage *_Nonnull(CGSize size) {
-                                               return image;
-                                             }];
+                                              requestHandler:^UIImage *_Nonnull(CGSize size) {
+                                                return image;
+                                              }];
           completion(artwork);
         } else {
           completion(nil);

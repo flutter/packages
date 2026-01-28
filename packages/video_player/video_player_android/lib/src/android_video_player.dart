@@ -109,11 +109,33 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     if (uri == null) {
       throw ArgumentError('Unable to construct a video asset from $options');
     }
+    // Set up background playback configuration if provided
+    BackgroundPlaybackMessage? backgroundPlayback;
+    if (options.allowBackgroundPlayback) {
+      NotificationMetadataMessage? metadataMessage;
+      if (options.notificationMetadata != null) {
+        final NotificationMetadata metadata = options.notificationMetadata!;
+        metadataMessage = NotificationMetadataMessage(
+          id: metadata.id,
+          title: metadata.title,
+          artist: metadata.artist,
+          album: metadata.album,
+          durationMs: metadata.duration?.inMilliseconds,
+          artUri: metadata.artUri?.toString(),
+        );
+      }
+      backgroundPlayback = BackgroundPlaybackMessage(
+        enableBackground: true,
+        notificationMetadata: metadataMessage,
+      );
+    }
+
     final pigeonCreationOptions = CreationOptions(
       uri: uri,
       httpHeaders: httpHeaders,
       userAgent: userAgent,
       formatHint: formatHint,
+      backgroundPlayback: backgroundPlayback,
     );
 
     final int playerId;
@@ -266,38 +288,6 @@ class AndroidVideoPlayer extends VideoPlayerPlatform {
     return true;
   }
 
-  @override
-  bool isBackgroundPlaybackSupportAvailable() {
-    // Android supports background playback with media notifications
-    return true;
-  }
-
-  @override
-  Future<void> setBackgroundPlayback(
-    int playerId, {
-    required bool enableBackground,
-    NotificationMetadata? notificationMetadata,
-  }) {
-    NotificationMetadataMessage? metadataMessage;
-    if (notificationMetadata != null) {
-      metadataMessage = NotificationMetadataMessage(
-        id: notificationMetadata.id,
-        title: notificationMetadata.title,
-        artist: notificationMetadata.artist,
-        album: notificationMetadata.album,
-        durationMs: notificationMetadata.duration?.inMilliseconds,
-        artUri: notificationMetadata.artUri?.toString(),
-      );
-    }
-
-    return _playerWith(id: playerId).setBackgroundPlayback(
-      BackgroundPlaybackMessage(
-        enableBackground: enableBackground,
-        notificationMetadata: metadataMessage,
-      ),
-    );
-  }
-
   _PlayerInstance _playerWith({required int id}) {
     final _PlayerInstance? player = _players[id];
     return player ?? (throw StateError('No active player with ID $id.'));
@@ -414,10 +404,6 @@ class _PlayerInstance {
     } finally {
       _audioTrackSelectionCompleter = null;
     }
-  }
-
-  Future<void> setBackgroundPlayback(BackgroundPlaybackMessage msg) {
-    return _api.setBackgroundPlayback(msg);
   }
 
   Future<void> dispose() async {

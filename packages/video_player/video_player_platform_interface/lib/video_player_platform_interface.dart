@@ -129,24 +129,6 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('setWebOptions() has not been implemented.');
   }
 
-  /// Configures background playback and media notification.
-  ///
-  /// When [enableBackground] is true, video audio will continue playing when
-  /// the app is backgrounded.
-  ///
-  /// When [notificationMetadata] is provided, a system media notification will
-  /// be shown with playback controls and the provided metadata (title, artist, etc).
-  /// If [notificationMetadata] is null, no notification will be shown.
-  Future<void> setBackgroundPlayback(
-    int playerId, {
-    required bool enableBackground,
-    NotificationMetadata? notificationMetadata,
-  }) {
-    throw UnimplementedError(
-      'setBackgroundPlayback() has not been implemented.',
-    );
-  }
-
   /// Gets the available audio tracks for the video.
   Future<List<VideoAudioTrack>> getAudioTracks(int playerId) {
     throw UnimplementedError('getAudioTracks() has not been implemented.');
@@ -169,22 +151,6 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   /// The default implementation returns `false`. Platform implementations
   /// should override this to return `true` if they support audio track selection.
   bool isAudioTrackSupportAvailable() {
-    return false;
-  }
-
-  /// Returns whether background playback with media notifications is supported
-  /// on this platform.
-  ///
-  /// This method allows developers to query at runtime whether the current
-  /// platform supports background playback with system media notifications.
-  /// This is useful for platforms like web where background playback may not
-  /// be available.
-  ///
-  /// Returns `true` if [setBackgroundPlayback] is supported, `false` otherwise.
-  ///
-  /// The default implementation returns `false`. Platform implementations
-  /// should override this to return `true` if they support background playback.
-  bool isBackgroundPlaybackSupportAvailable() {
     return false;
   }
 }
@@ -548,13 +514,13 @@ class VideoPlayerOptions {
 
   /// Metadata for the system media notification.
   ///
-  /// When provided, a system notification will be shown with media controls
-  /// (play/pause, seek) and the provided metadata (title, artist, album art, etc.).
-  ///
-  /// Requires [allowBackgroundPlayback] to be true for background playback.
+  /// When provided along with [allowBackgroundPlayback], a system notification
+  /// will be shown with media controls (play/pause, seek) and the provided
+  /// metadata (title, artist, album art, etc.).
   ///
   /// Note: On Android, this requires setting up foreground service permissions.
   /// On iOS, this requires enabling background audio capability.
+  /// This feature is not available on web.
   final NotificationMetadata? notificationMetadata;
 
   /// Additional web controls
@@ -661,6 +627,8 @@ class VideoCreationOptions {
   const VideoCreationOptions({
     required this.dataSource,
     required this.viewType,
+    this.allowBackgroundPlayback = false,
+    this.notificationMetadata,
   });
 
   /// The data source used to create the player.
@@ -668,6 +636,17 @@ class VideoCreationOptions {
 
   /// The type of view to be used for displaying the video player
   final VideoViewType viewType;
+
+  /// Whether to allow background playback.
+  ///
+  /// When true, video audio will continue playing when the app is backgrounded.
+  final bool allowBackgroundPlayback;
+
+  /// Metadata for the system media notification.
+  ///
+  /// When provided along with [allowBackgroundPlayback], a system notification
+  /// will be shown with media controls and the provided metadata.
+  final NotificationMetadata? notificationMetadata;
 }
 
 /// Represents an audio track in a video with its metadata.

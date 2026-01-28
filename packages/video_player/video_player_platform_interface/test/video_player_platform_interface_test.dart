@@ -41,23 +41,6 @@ void main() {
     expect(initialInstance.isAudioTrackSupportAvailable(), false);
   });
 
-  test(
-    'default implementation setBackgroundPlayback throws unimplemented',
-    () async {
-      await expectLater(
-        () => initialInstance.setBackgroundPlayback(1, enableBackground: true),
-        throwsUnimplementedError,
-      );
-    },
-  );
-
-  test(
-    'default implementation isBackgroundPlaybackSupportAvailable returns false',
-    () {
-      expect(initialInstance.isBackgroundPlaybackSupportAvailable(), false);
-    },
-  );
-
   group('NotificationMetadata', () {
     test('constructs with required id', () {
       const metadata = NotificationMetadata(id: 'test_id');
