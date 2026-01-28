@@ -63,21 +63,23 @@ final class HttpVideoAsset extends VideoAsset {
     return getMediaSourceFactory(context, new DefaultHttpDataSource.Factory());
   }
 
-  /**
-   * Returns a configured media source factory, starting at the provided factory.
-   *
-   * <p>This method is provided for ease of testing without making real HTTP calls.
-   *
-   * @param context application context.
-   * @param initialFactory initial factory, to be configured.
-   * @return configured factory, or {@code null} if not needed for this asset type.
-   */
   @VisibleForTesting
   MediaSource.Factory getMediaSourceFactory(
       Context context, DefaultHttpDataSource.Factory initialFactory) {
-    unstableUpdateDataSourceFactory(initialFactory, httpHeaders, userAgent);
+    unstableUpdateDataSourceFactory(initialFactory, httpHeaders, userAgent, assetUrl, streamingFormat);
     DataSource.Factory dataSourceFactory = new DefaultDataSource.Factory(context, initialFactory);
-    return new DefaultMediaSourceFactory(context).setDataSourceFactory(dataSourceFactory);
+    
+    // Configure DefaultMediaSourceFactory - ExoPlayer handles ABR automatically
+    DefaultMediaSourceFactory mediaSourceFactory = new DefaultMediaSourceFactory(context)
+        .setDataSourceFactory(dataSourceFactory);
+    
+    // Log adaptive streaming readiness
+    if (streamingFormat == StreamingFormat.HTTP_LIVE || streamingFormat == StreamingFormat.DYNAMIC_ADAPTIVE) {
+      android.util.Log.i("HttpVideoAsset", 
+          "✅ " + streamingFormat.name() + " stream configured - adaptive bitrate streaming READY");
+    }
+    
+    return mediaSourceFactory;
   }
 
   // TODO: Migrate to stable API, see https://github.com/flutter/flutter/issues/147039.
@@ -85,10 +87,40 @@ final class HttpVideoAsset extends VideoAsset {
   private static void unstableUpdateDataSourceFactory(
       @NonNull DefaultHttpDataSource.Factory factory,
       @NonNull Map<String, String> httpHeaders,
-      @Nullable String userAgent) {
+      @Nullable String userAgent,
+      @Nullable String assetUrl,
+      @NonNull StreamingFormat streamingFormat) {
+    
     factory.setUserAgent(userAgent).setAllowCrossProtocolRedirects(true);
+    
     if (!httpHeaders.isEmpty()) {
       factory.setDefaultRequestProperties(httpHeaders);
     }
+    
+    // Enhanced logging for adaptive streaming
+    android.util.Log.d("HttpVideoAsset", "========== VIDEO INITIALIZATION ==========");
+    android.util.Log.d("HttpVideoAsset", "Video URL: " + assetUrl);
+    android.util.Log.d("HttpVideoAsset", "Streaming Format: " + streamingFormat.name());
+    android.util.Log.d("HttpVideoAsset", "User-Agent: " + userAgent);
+    android.util.Log.d("HttpVideoAsset", "HTTP Headers count: " + httpHeaders.size());
+    android.util.Log.d("HttpVideoAsset", "Allow Cross-Protocol Redirects: true");
+    
+    // Log streaming format specifics
+    switch (streamingFormat) {
+      case HTTP_LIVE:
+        android.util.Log.i("HttpVideoAsset", "🎯 HLS ADAPTIVE STREAMING - ExoPlayer will automatically switch between quality variants (360p/480p/720p/1080p) based on network speed");
+        break;
+      case DYNAMIC_ADAPTIVE:
+        android.util.Log.i("HttpVideoAsset", "🎯 DASH ADAPTIVE STREAMING - ExoPlayer will automatically switch between quality variants based on network speed");
+        break;
+      case SMOOTH:
+        android.util.Log.i("HttpVideoAsset", "🎯 SMOOTH STREAMING - ExoPlayer will handle adaptive quality");
+        break;
+      case UNKNOWN:
+        android.util.Log.d("HttpVideoAsset", "Format unknown - using default configuration (progressive download)");
+        break;
+    }
+    
+    android.util.Log.d("HttpVideoAsset", "========== END INITIALIZATION ==========");
   }
 }
