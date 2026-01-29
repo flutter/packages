@@ -46,10 +46,12 @@ class VideoAudioTrack {
   final String id;
 
   /// Human-readable label for the track.
+  ///
   /// May be null if not available from the platform.
   final String? label;
 
   /// Language code of the audio track (e.g., 'en', 'es', 'und').
+  ///
   /// May be null if not available from the platform.
   final String? language;
 
@@ -57,18 +59,22 @@ class VideoAudioTrack {
   final bool isSelected;
 
   /// Bitrate of the audio track in bits per second.
+  ///
   /// May be null if not available from the platform.
   final int? bitrate;
 
   /// Sample rate of the audio track in Hz.
+  ///
   /// May be null if not available from the platform.
   final int? sampleRate;
 
   /// Number of audio channels.
+  ///
   /// May be null if not available from the platform.
   final int? channelCount;
 
   /// Audio codec used (e.g., 'aac', 'mp3', 'ac3').
+  ///
   /// May be null if not available from the platform.
   final String? codec;
 
@@ -931,7 +937,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// each available audio track. The list may be empty if no audio tracks
   /// are available or if the video is not initialized.
   ///
-  /// Throws an exception if the video player is disposed.
+  /// Throws an error if the video player is disposed.
   Future<List<VideoAudioTrack>> getAudioTracks() async {
     if (_isDisposed) {
       throw StateError('VideoPlayerController is disposed');
@@ -950,7 +956,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// [getAudioTracks]. If the track ID is not found or invalid, the
   /// platform may ignore the request or throw an exception.
   ///
-  /// Throws an exception if the video player is disposed or not initialized.
+  /// Throws an error if the video player is disposed or not initialized.
   Future<void> selectAudioTrack(String trackId) async {
     if (_isDisposedOrNotInitialized) {
       throw StateError('VideoPlayerController is disposed or not initialized');
