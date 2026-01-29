@@ -1,3 +1,9 @@
+## 0.10.0
+
+* Adds video stabilization.
+  - Adds getSupportedVideoStabilizationModes method.
+  - Adds setVideoStabilizationMode method.
+
 ## 0.9.22+9
 
 * Migrates `FLTSavePhotoDelegate`, `FLTWritableData`, and `FLTImageStreamHandler` classes to Swift.
