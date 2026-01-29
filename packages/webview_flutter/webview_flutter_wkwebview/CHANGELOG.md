@@ -1,3 +1,7 @@
+## 3.23.6
+
+* Fixes crash when calling setOnConsoleMessage multiple times.
+
 ## 3.23.5
 
 * Removes internal native library Dart proxy.
