@@ -883,7 +883,7 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
     }
 
     try {
-      await cameraController.startVideoRecording();
+      await cameraController.startVideoRecording(onAvailable: (_) {});
     } on CameraException catch (e) {
       _showCameraException(e);
       return;
