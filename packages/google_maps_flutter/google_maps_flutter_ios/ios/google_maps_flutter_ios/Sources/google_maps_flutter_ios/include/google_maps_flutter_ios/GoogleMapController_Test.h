@@ -5,6 +5,7 @@
 @import Flutter;
 @import GoogleMaps;
 
+#import "FGMAssetProvider.h"
 #import "FGMCATransactionWrapper.h"
 #import "GoogleMapController.h"
 
@@ -45,11 +46,13 @@ NS_ASSUME_NONNULL_BEGIN
 /// @param mapView A map view that will be displayed by the controller
 /// @param viewId A unique identifier for the controller.
 /// @param creationParameters Parameters for initialising the map view.
-/// @param registrar The plugin registrar passed from Flutter.
+/// @param assetProvider The asset provider to use for looking up assets.
+/// @param binaryMessenger The binary messenger to use for sending messages to Dart.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
                  viewIdentifier:(int64_t)viewId
              creationParameters:(FGMPlatformMapViewCreationParams *)creationParameters
-                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
+                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                binaryMessenger:(NSObject<FlutterBinaryMessenger> *)binaryMessenger;
 
 // The main Pigeon API implementation.
 @property(nonatomic, strong, readonly) FGMMapCallHandler *callHandler;

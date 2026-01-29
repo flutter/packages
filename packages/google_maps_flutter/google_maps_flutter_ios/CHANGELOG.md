@@ -1,3 +1,7 @@
+## 2.17.1
+
+* Refactors code for improved testability.
+
 ## 2.17.0
 
 * Restructures code to prepare for SwiftPM support.
