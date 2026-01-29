@@ -700,7 +700,7 @@ class WebKitWebViewController extends PlatformWebViewController {
   @override
   Future<void> setOnConsoleMessage(
     void Function(JavaScriptConsoleMessage consoleMessage) onConsoleMessage,
-  ) {
+  ) async {
     _onConsoleMessageCallback = onConsoleMessage;
 
     final JavaScriptChannelParams channelParams = WebKitJavaScriptChannelParams(
@@ -736,7 +736,11 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
-    addJavaScriptChannel(channelParams);
+    if (_javaScriptChannelParams.containsKey('fltConsoleMessage')) {
+      await removeJavaScriptChannel('fltConsoleMessage');
+    }
+
+    await addJavaScriptChannel(channelParams);
     return _injectConsoleOverride();
   }
 
