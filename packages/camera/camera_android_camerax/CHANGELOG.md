@@ -1,6 +1,6 @@
 ## 0.6.29
 
-* Retrieve lens direction from CameraX directly versus manual detection.
+* Modifies lens direction logic to request the value from CameraX directly versus manual detection.
 
 ## 0.6.28
 
