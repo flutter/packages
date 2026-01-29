@@ -448,6 +448,15 @@ class MockCameraInfo extends _i1.Mock implements _i3.CameraInfo {
           as int);
 
   @override
+  _i2.LensFacing get lensFacing =>
+      (super.noSuchMethod(
+            Invocation.getter(#lensFacing),
+            returnValue: _i2.LensFacing.front,
+            returnValueForMissingStub: _i2.LensFacing.front,
+          )
+          as _i2.LensFacing);
+
+  @override
   _i2.ExposureState get exposureState =>
       (super.noSuchMethod(
             Invocation.getter(#exposureState),
