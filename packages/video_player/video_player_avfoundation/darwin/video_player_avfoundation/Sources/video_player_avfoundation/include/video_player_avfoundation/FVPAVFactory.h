@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Protocol for abstracting access to an AVPlayerItemVideoOutput, to allow tests to control pixel
 /// buffer delivery.
 @protocol FVPPixelBufferSource <NSObject>
-
+@required
 /// The underlying AVFoundation object.
 ///
 /// This can't be fully abstracted away because it's passed to other AVFoundation calls. Plugin
@@ -31,6 +31,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
+#if TARGET_OS_IOS
+/// Protocol for abstracting access to an AVAudioSession, to allow tests to validate audio session
+/// configuration.
+@protocol FVPAVAudioSession <NSObject>
+@required
+/// Wraps the AVAudioSession property of the same name.
+@property(nonatomic, readonly) AVAudioSessionCategory category;
+/// Wraps the AVAudioSession property of the same name.
+@property(nonatomic, readonly) AVAudioSessionCategoryOptions categoryOptions;
+/// Wraps the AVAudioSession method of the same name.
+- (BOOL)setCategory:(AVAudioSessionCategory)category
+        withOptions:(AVAudioSessionCategoryOptions)options
+              error:(NSError **)outError;
+@end
+#endif
+
 /// Protocol for AVFoundation object instance factory. Used for injecting framework objects in
 /// tests.
 @protocol FVPAVFactory
@@ -42,6 +58,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// attributes.
 - (NSObject<FVPPixelBufferSource> *)videoOutputWithPixelBufferAttributes:
     (NSDictionary<NSString *, id> *)attributes;
+
+#if TARGET_OS_IOS
+/// Returns the AVAudioSession shared instance, wrapped in the protocol.
+- (NSObject<FVPAVAudioSession> *)sharedAudioSession;
+#endif
 @end
 
 /// A default implementation of the FVPAVFactory protocol.

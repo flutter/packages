@@ -204,10 +204,32 @@
 }
 @end
 
+#if TARGET_OS_IOS
+@interface TestAudioSession : NSObject <FVPAVAudioSession>
+@property(nonatomic, readwrite) AVAudioSessionCategory category;
+@property(nonatomic, assign) AVAudioSessionCategoryOptions categoryOptions;
+
+/// Tracks whether setCategory:withOptions:error: has been called.
+@property(nonatomic, assign) BOOL setCategoryCalled;
+@end
+
+@implementation TestAudioSession
+- (BOOL)setCategory:(AVAudioSessionCategory)category
+        withOptions:(AVAudioSessionCategoryOptions)options
+              error:(NSError **)outError {
+  self.setCategoryCalled = YES;
+  self.category = category;
+  self.categoryOptions = options;
+  return YES;
+}
+@end
+#endif
+
 @interface StubFVPAVFactory : NSObject <FVPAVFactory>
 
 @property(nonatomic, strong) StubAVPlayer *stubAVPlayer;
 @property(nonatomic, strong) NSObject<FVPPixelBufferSource> *pixelBufferSource;
+@property(nonatomic, strong) NSObject<FVPAVAudioSession> *audioSession;
 
 - (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer
              pixelBufferSource:(NSObject<FVPPixelBufferSource> *)pixelBufferSource;
@@ -223,17 +245,24 @@
   self = [super init];
   _stubAVPlayer = stubAVPlayer;
   _pixelBufferSource = pixelBufferSource;
+  _audioSession = [[TestAudioSession alloc] init];
   return self;
 }
 
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
-  return _stubAVPlayer ?: [AVPlayer playerWithPlayerItem:playerItem];
+  return self.stubAVPlayer ?: [AVPlayer playerWithPlayerItem:playerItem];
 }
 
 - (NSObject<FVPPixelBufferSource> *)videoOutputWithPixelBufferAttributes:
     (NSDictionary<NSString *, id> *)attributes {
-  return _pixelBufferSource ?: [[TestPixelBufferSource alloc] init];
+  return self.pixelBufferSource ?: [[TestPixelBufferSource alloc] init];
 }
+
+#if TARGET_OS_IOS
+- (NSObject<FVPAVAudioSession> *)sharedAudioSession {
+  return self.audioSession;
+}
+#endif
 
 @end
 
@@ -1025,40 +1054,53 @@
 
 #if TARGET_OS_IOS
 - (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
-  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil pixelBufferSource:nil]
-      displayLinkFactory:nil
-         binaryMessenger:[[StubBinaryMessenger alloc] init]
-         textureRegistry:[[TestTextureRegistry alloc] init]
-            viewProvider:[[StubViewProvider alloc] init]
-           assetProvider:[[StubAssetProvider alloc] init]];
+  StubFVPAVFactory *stubFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                         pixelBufferSource:nil];
+  TestAudioSession *audioSession = [[TestAudioSession alloc] init];
+  stubFactory.audioSession = audioSession;
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubFactory
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
+
+  audioSession.category = AVAudioSessionCategoryPlayAndRecord;
+  audioSession.categoryOptions = AVAudioSessionCategoryOptionDefaultToSpeaker;
+
   FlutterError *error;
-
-  [AVAudioSession.sharedInstance setCategory:AVAudioSessionCategoryPlayAndRecord
-                                 withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
-                                       error:nil];
-
   [videoPlayerPlugin initialize:&error];
   [videoPlayerPlugin setMixWithOthers:true error:&error];
-  XCTAssert(AVAudioSession.sharedInstance.category == AVAudioSessionCategoryPlayAndRecord,
+  XCTAssert(audioSession.category == AVAudioSessionCategoryPlayAndRecord,
             @"Category should be PlayAndRecord.");
-  XCTAssert(
-      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionDefaultToSpeaker,
-      @"Flag DefaultToSpeaker was removed.");
-  XCTAssert(
-      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionMixWithOthers,
-      @"Flag MixWithOthers should be set.");
+  XCTAssert(audioSession.categoryOptions & AVAudioSessionCategoryOptionDefaultToSpeaker,
+            @"Flag DefaultToSpeaker was removed.");
+  XCTAssert(audioSession.categoryOptions & AVAudioSessionCategoryOptionMixWithOthers,
+            @"Flag MixWithOthers should be set.");
+}
 
-  id sessionMock = OCMClassMock([AVAudioSession class]);
-  OCMStub([sessionMock sharedInstance]).andReturn(sessionMock);
-  OCMStub([sessionMock category]).andReturn(AVAudioSessionCategoryPlayAndRecord);
-  OCMStub([sessionMock categoryOptions])
-      .andReturn(AVAudioSessionCategoryOptionMixWithOthers |
-                 AVAudioSessionCategoryOptionDefaultToSpeaker);
-  OCMReject([sessionMock setCategory:OCMOCK_ANY withOptions:0 error:[OCMArg setTo:nil]])
-      .ignoringNonObjectArgs();
+- (void)testSetMixWithOthersShouldNoOpWhenNoChangesAreRequired {
+  StubFVPAVFactory *stubFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                         pixelBufferSource:nil];
+  TestAudioSession *audioSession = [[TestAudioSession alloc] init];
+  stubFactory.audioSession = audioSession;
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubFactory
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
 
+  audioSession.category = AVAudioSessionCategoryPlayAndRecord;
+  audioSession.categoryOptions =
+      AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionDefaultToSpeaker;
+
+  FlutterError *error;
   [videoPlayerPlugin setMixWithOthers:true error:&error];
+
+  XCTAssertFalse(audioSession.setCategoryCalled);
 }
 
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {

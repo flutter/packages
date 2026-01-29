@@ -37,6 +37,29 @@
 
 #pragma mark -
 
+#if TARGET_OS_IOS
+@interface FVPDefaultAVAudioSession : NSObject <FVPAVAudioSession>
+@end
+
+@implementation FVPDefaultAVAudioSession
+- (AVAudioSessionCategory)category {
+  return AVAudioSession.sharedInstance.category;
+}
+
+- (AVAudioSessionCategoryOptions)categoryOptions {
+  return AVAudioSession.sharedInstance.categoryOptions;
+}
+
+- (BOOL)setCategory:(AVAudioSessionCategory)category
+        withOptions:(AVAudioSessionCategoryOptions)options
+              error:(NSError **)outError {
+  return [AVAudioSession.sharedInstance setCategory:category withOptions:options error:outError];
+}
+@end
+#endif
+
+#pragma mark -
+
 @implementation FVPDefaultAVFactory
 - (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
   return [AVPlayer playerWithPlayerItem:playerItem];
@@ -46,4 +69,10 @@
     (NSDictionary<NSString *, id> *)attributes {
   return [[FVPDefaultAVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
 }
+
+#if TARGET_OS_IOS
+- (NSObject<FVPAVAudioSession> *)sharedAudioSession {
+  return [[FVPDefaultAVAudioSession alloc] init];
+}
+#endif
 @end

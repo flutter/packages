@@ -171,15 +171,15 @@
 // that could affect other plugins which depend on this global state. Only change
 // category or options if there is change to prevent unnecessary lags and silence.
 #if TARGET_OS_IOS
-static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory,
+static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
+                                        AVAudioSessionCategory requestedCategory,
                                         AVAudioSessionCategoryOptions options,
                                         AVAudioSessionCategoryOptions clearOptions) {
   NSSet *playCategories = [NSSet
       setWithObjects:AVAudioSessionCategoryPlayback, AVAudioSessionCategoryPlayAndRecord, nil];
   NSSet *recordCategories =
       [NSSet setWithObjects:AVAudioSessionCategoryRecord, AVAudioSessionCategoryPlayAndRecord, nil];
-  NSSet *requiredCategories =
-      [NSSet setWithObjects:requestedCategory, AVAudioSession.sharedInstance.category, nil];
+  NSSet *requiredCategories = [NSSet setWithObjects:requestedCategory, session.category, nil];
   BOOL requiresPlay = [requiredCategories intersectsSet:playCategories];
   BOOL requiresRecord = [requiredCategories intersectsSet:recordCategories];
   if (requiresPlay && requiresRecord) {
@@ -189,19 +189,19 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
   } else if (requiresRecord) {
     requestedCategory = AVAudioSessionCategoryRecord;
   }
-  options = (AVAudioSession.sharedInstance.categoryOptions & ~clearOptions) | options;
-  if ([requestedCategory isEqualToString:AVAudioSession.sharedInstance.category] &&
-      options == AVAudioSession.sharedInstance.categoryOptions) {
+  options = (session.categoryOptions & ~clearOptions) | options;
+  if ([requestedCategory isEqualToString:session.category] && options == session.categoryOptions) {
     return;
   }
-  [AVAudioSession.sharedInstance setCategory:requestedCategory withOptions:options error:nil];
+  [session setCategory:requestedCategory withOptions:options error:nil];
 }
 #endif
 
 - (void)initialize:(FlutterError *__autoreleasing *)error {
 #if TARGET_OS_IOS
   // Allow audio playback when the Ring/Silent switch is set to silent
-  upgradeAudioSessionCategory(AVAudioSessionCategoryPlayback, 0, 0);
+  upgradeAudioSessionCategory(self.avFactory.sharedAudioSession, AVAudioSessionCategoryPlayback, 0,
+                              0);
 #endif
 
   FlutterError *disposeError;
@@ -268,11 +268,12 @@ static void upgradeAudioSessionCategory(AVAudioSessionCategory requestedCategory
 #if TARGET_OS_OSX
   // AVAudioSession doesn't exist on macOS, and audio always mixes, so just no-op.
 #else
+  NSObject<FVPAVAudioSession> *session = self.avFactory.sharedAudioSession;
   if (mixWithOthers) {
-    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category,
+    upgradeAudioSessionCategory(session, session.category,
                                 AVAudioSessionCategoryOptionMixWithOthers, 0);
   } else {
-    upgradeAudioSessionCategory(AVAudioSession.sharedInstance.category, 0,
+    upgradeAudioSessionCategory(session, session.category, 0,
                                 AVAudioSessionCategoryOptionMixWithOthers);
   }
 #endif
