@@ -1817,8 +1817,7 @@ window.addEventListener("error", function(e) {
       });
 
       test('setOnConsoleMessage called twice does not throw', () async {
-        final MockWKUserContentController mockUserContentController =
-            MockWKUserContentController();
+        final mockUserContentController = MockWKUserContentController();
         final WebKitWebViewController controller = createControllerWithMocks(
           mockUserContentController: mockUserContentController,
         );
@@ -1830,7 +1829,11 @@ window.addEventListener("error", function(e) {
           (JavaScriptConsoleMessage message) {},
         );
 
-        verify(mockUserContentController.removeScriptMessageHandler('fltConsoleMessage'));
+        verify(
+          mockUserContentController.removeScriptMessageHandler(
+            'fltConsoleMessage',
+          ),
+        );
       });
     });
 
