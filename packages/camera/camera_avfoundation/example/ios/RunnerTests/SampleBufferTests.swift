@@ -384,7 +384,7 @@ final class CameraSampleBufferTests: XCTestCase {
       return true
     }
 
-    inputMock.readyForMoreMediaData = true
+    inputMock.isReadyForMoreMediaData = true
     inputMock.appendStub = { buffer in
       appendedTime = CMSampleBufferGetPresentationTimeStamp(buffer)
       return true
@@ -469,7 +469,7 @@ final class CameraSampleBufferTests: XCTestCase {
       return true
     }
 
-    inputMock.readyForMoreMediaData = true
+    inputMock.isReadyForMoreMediaData = true
     inputMock.appendStub = { buffer in
       appendedTime = CMSampleBufferGetPresentationTimeStamp(buffer)
       return true
@@ -500,7 +500,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
     NotificationCenter.default.post(
       name: AVCaptureSession.wasInterruptedNotification,
-      object: camera.audioCaptureSession.captureSession)
+      object: camera.audioCaptureSession)
 
     appendedTime = .invalid
     appendAudioSample(11, 1)

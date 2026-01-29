@@ -43,8 +43,8 @@ final class DefaultCamera: NSObject, Camera {
   private let mediaSettings: FCPPlatformMediaSettings
   private let mediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper
 
-  private let videoCaptureSession: CaptureSession
-  private let audioCaptureSession: CaptureSession
+  let videoCaptureSession: CaptureSession
+  let audioCaptureSession: CaptureSession
 
   /// A wrapper for AVCaptureDevice creation to allow for dependency injection in tests.
   private let videoCaptureDeviceFactory: VideoCaptureDeviceFactory

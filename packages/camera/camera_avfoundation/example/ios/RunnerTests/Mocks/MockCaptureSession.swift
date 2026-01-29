@@ -27,7 +27,7 @@ final class MockCaptureSession: NSObject, CaptureSession {
   private(set) var addedAudioOutputCount: Int = 0
 
   var automaticallyConfiguresApplicationAudioSession = false
-  var running = true
+  var isRunning = true
 
   var sessionPreset: AVCaptureSession.Preset {
     get {
