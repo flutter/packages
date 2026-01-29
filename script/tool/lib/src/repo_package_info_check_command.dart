@@ -281,14 +281,84 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
         .childDirectory('.github')
         .childDirectory('workflows');
 
-    // 1. Verify specific batch workflow file.
+    errors.addAll(
+      _validateSpecificBatchWorkflow(
+        packageName,
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+      ),
+    );
+
+    errors.addAll(
+      _validateGlobalWorkflowTrigger(
+        'release_from_branches.yml',
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+        packageName: packageName,
+      ),
+    );
+    errors.addAll(
+      _validateGlobalWorkflowTrigger(
+        'sync_release_pr.yml',
+        workflowDir: workflowDir,
+        isBatchRelease: isBatchRelease,
+        packageName: packageName,
+      ),
+    );
+
+    errors.addAll(
+      await _validateRemoteReleaseBranch(
+        packageName,
+        isBatchRelease: isBatchRelease,
+      ),
+    );
+
+    return errors;
+  }
+
+  Future<List<String>> _validateRemoteReleaseBranch(
+    String packageName, {
+    required bool isBatchRelease,
+  }) async {
+    final errors = <String>[];
+    // Verify release branch exists on remote flutter/packages if it is a batch release package.
+    final io.ProcessResult result = await (await gitDir).runCommand(<String>[
+      'ls-remote',
+      '--exit-code',
+      '--heads',
+      'origin',
+      'release-$packageName',
+    ], throwOnError: false);
+    final branchExists = result.exitCode == 0;
+    if (isBatchRelease && !branchExists) {
+      errors.add(
+        'Branch release-$packageName does not exist on remote flutter/packages\n'
+        'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+      );
+    }
+    // Allow branch to exist on remote flutter/packages for non-batch release packages.
+    // Otherwise, it will be hard to opt package out of batch release.
+    //
+    // Enforcing this will run into a deadlock where the ci in the PR to opts out of batch release
+    // will require removal of the release branch. but removing the release branch will immediately break
+    // the latest main.
+    return errors;
+  }
+
+  List<String> _validateSpecificBatchWorkflow(
+    String packageName, {
+    required Directory workflowDir,
+    required bool isBatchRelease,
+  }) {
+    final errors = <String>[];
     final File batchWorkflowFile = workflowDir.childFile(
       '${packageName}_batch.yml',
     );
     if (isBatchRelease) {
       if (!batchWorkflowFile.existsSync()) {
         errors.add(
-          'Missing batch workflow file: .github/workflows/${packageName}_batch.yml',
+          'Missing batch workflow file: .github/workflows/${packageName}_batch.yml\n'
+          'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
         );
       } else {
         // Validate content.
@@ -331,7 +401,8 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
               'Invalid batch workflow content in ${packageName}_batch.yml. '
               'Must contain a step using peter-evans/repository-dispatch with:\n'
               '  event-type: batch-release-pr\n'
-              '  client-payload: \'{"package": "$packageName"}\'',
+              '  client-payload: \'{"package": "$packageName"}\'\n'
+              'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
             );
           }
         }
@@ -339,57 +410,10 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     } else {
       if (batchWorkflowFile.existsSync()) {
         errors.add(
-          'Unexpected batch workflow file: .github/workflows/${packageName}_batch.yml',
+          'Unexpected batch workflow file: .github/workflows/${packageName}_batch.yml\n',
         );
       }
     }
-
-    // 2. Verify both release_from_branches.yml and sync_release_pr.yml
-    //    have the correct trigger for batch release packages.
-    errors.addAll(
-      _validateGlobalWorkflowTrigger(
-        'release_from_branches.yml',
-        workflowDir: workflowDir,
-        isBatchRelease: isBatchRelease,
-        packageName: packageName,
-      ),
-    );
-    errors.addAll(
-      _validateGlobalWorkflowTrigger(
-        'sync_release_pr.yml',
-        workflowDir: workflowDir,
-        isBatchRelease: isBatchRelease,
-        packageName: packageName,
-      ),
-    );
-
-    // 3. Verify release branch exists on remote flutter/packages if it is a batch release package.
-    final io.ProcessResult result = await (await gitDir).runCommand(<String>[
-      'ls-remote',
-      '--exit-code',
-      '--heads',
-      'origin',
-      'release-$packageName',
-    ], throwOnError: false);
-    final branchExists = result.exitCode == 0;
-    if (isBatchRelease && !branchExists) {
-      errors.add(
-        'Branch release-$packageName does not exist on remote flutter/packages',
-      );
-    }
-    // Allow branch to exist on remote flutter/packages for non-batch release packages.
-    // Otherwise, it will be hard to opt package out of batch release.
-    //
-    // Enforcing this will run into a deadlock where the ci in the PR to opts out of batch release
-    // will require removal of the release branch. but removing the release branch will immediately break
-    // the latest main.
-
-    if (errors.isNotEmpty) {
-      for (final error in errors) {
-        printError('$indentation$error');
-      }
-    }
-
     return errors;
   }
 
@@ -404,20 +428,45 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     if (!workflowFile.existsSync()) {
       if (isBatchRelease) {
         errors.add(
-          'Missing global workflow file: .github/workflows/$workflowName',
+          'Missing global workflow file: .github/workflows/$workflowName\n'
+          'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
         );
       }
       return errors;
     }
+
     final String content = workflowFile.readAsStringSync();
-    final bool hasTrigger = content.contains("- 'release-$packageName'");
+    YamlMap? yaml;
+    try {
+      yaml = loadYaml(content) as YamlMap?;
+    } catch (e) {
+      errors.add('Invalid YAML in $workflowName: $e');
+    }
+
+    bool hasTrigger = false;
+    if (yaml != null) {
+      final on = yaml['on'] as YamlMap?;
+      if (on is YamlMap) {
+        final push = on['push'] as YamlMap?;
+        if (push is YamlMap) {
+          final branches = push['branches'] as YamlList?;
+          if (branches is YamlList) {
+            if (branches.contains('release-$packageName')) {
+              hasTrigger = true;
+            }
+          }
+        }
+      }
+    }
+
     if (isBatchRelease && !hasTrigger) {
       errors.add(
-        'Missing trigger for release-$packageName in .github/workflows/$workflowName',
+        'Missing trigger for release-$packageName in .github/workflows/$workflowName\n'
+        'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
       );
     } else if (!isBatchRelease && hasTrigger) {
       errors.add(
-        'Unexpected trigger for release-$packageName in .github/workflows/$workflowName',
+        'Unexpected trigger for release-$packageName in .github/workflows/$workflowName\n',
       );
     }
     return errors;
