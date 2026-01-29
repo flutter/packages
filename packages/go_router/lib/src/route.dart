@@ -11,8 +11,10 @@ import 'package:flutter/widgets.dart';
 // https://github.com/flutter/flutter/issues/171410
 import 'package:meta/meta.dart' as meta;
 
+import '../go_router.dart';
 import 'configuration.dart';
 import 'match.dart';
+import 'on_enter.dart';
 import 'path_utils.dart';
 import 'router.dart';
 import 'state.dart';
@@ -69,6 +71,7 @@ typedef NavigatorBuilder =
 /// exit as usual. Otherwise, the operation will abort.
 typedef ExitCallback =
     FutureOr<bool> Function(BuildContext context, GoRouterState state);
+
 
 /// The base class for [GoRoute] and [ShellRoute].
 ///
@@ -280,6 +283,7 @@ class GoRoute extends RouteBase {
     super.parentNavigatorKey,
     super.redirect,
     this.onExit,
+    this.onEnter,
     this.caseSensitive = true,
     super.routes = const <RouteBase>[],
   }) : assert(path.isNotEmpty, 'GoRoute path cannot be empty'),
@@ -448,6 +452,28 @@ class GoRoute extends RouteBase {
   /// );
   /// ```
   final ExitCallback? onExit;
+
+  /// Called before this route is entered.
+  ///
+  /// This callback can be used to implement navigation guards specific to this
+  /// route. Return [Allow] to proceed with navigation, or [Block] to prevent it.
+  ///
+  /// Example:
+  /// ```dart
+  /// GoRoute(
+  ///   path: '/protected',
+  ///   builder: (BuildContext context, GoRouterState state) =>
+  ///       ProtectedScreen(),
+  ///   onEnter: (BuildContext context, GoRouterState current,
+  ///             GoRouterState next, GoRouter router) {
+  ///     if (!AuthService.isAuthenticated) {
+  ///       return Block.then(() => router.go('/login'));
+  ///     }
+  ///     return const Allow();
+  ///   },
+  /// ),
+  /// ```
+  final OnEnter? onEnter;
 
   /// Determines whether the route matching is case sensitive.
   ///
