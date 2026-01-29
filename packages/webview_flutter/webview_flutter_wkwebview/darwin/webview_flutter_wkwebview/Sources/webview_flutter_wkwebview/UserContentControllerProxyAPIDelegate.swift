@@ -13,6 +13,9 @@ class UserContentControllerProxyAPIDelegate: PigeonApiDelegateWKUserContentContr
     pigeonApi: PigeonApiWKUserContentController, pigeonInstance: WKUserContentController,
     handler: WKScriptMessageHandler, name: String
   ) throws {
+    // WKUserContentController will crash if a script message handler with the same name
+    // is added twice. We remove the existing one (if any) to ensure the new one replaces it.
+    pigeonInstance.removeScriptMessageHandler(forName: name)
     pigeonInstance.add(handler, name: name)
   }
 
