@@ -5,8 +5,10 @@
 package io.flutter.plugins.camerax;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.OptIn;
 import androidx.camera.core.CameraInfo;
 import androidx.camera.core.CameraSelector;
+import androidx.camera.core.ExperimentalLensFacing;
 import androidx.camera.core.ExposureState;
 
 /**
@@ -25,6 +27,7 @@ class CameraInfoProxyApi extends PigeonApiCameraInfo {
   }
 
   @Override
+  @OptIn(markerClass = ExperimentalLensFacing.class)
   public LensFacing lensFacing(CameraInfo pigeonInstance) {
     int lensFacing = pigeonInstance.getLensFacing();
     switch (lensFacing) {
