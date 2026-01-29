@@ -2,9 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// This header is available in the Test module. Import via "@import google_sign_in.Test;"
-
 #import <google_sign_in_ios/FLTGoogleSignInPlugin.h>
+
+@import Foundation;
 
 #import <GoogleSignIn/GoogleSignIn.h>
 
