@@ -543,7 +543,7 @@ final class DefaultCamera: NSObject, Camera {
     // didOutputSampleBuffer had chance to call startWriting and lag at start of video
     // https://github.com/flutter/flutter/issues/132016
     // https://github.com/flutter/flutter/issues/151319
-    if videoWriter?.startWriting() == false {
+    guard let videoWriter = videoWriter, videoWriter.startWriting() else {
       completion(
         FlutterError(
           code: "IOError",
