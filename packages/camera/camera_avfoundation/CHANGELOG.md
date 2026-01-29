@@ -1,7 +1,7 @@
 ## 0.9.22+9
 
-* Handles video and audio interruptions and errors.
-* Uses a single time offset for both video and audio.
+* Handles video and audio interruptions and errors by "pausing" and reporting errors.
+* Uses a single time offset for both video and audio to avoid desync.
 
 ## 0.9.22+8
 

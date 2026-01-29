@@ -19,7 +19,6 @@ final class MockCaptureSession: NSObject, CaptureSession {
   var stopRunningStub: (() -> Void)?
   var canSetSessionPresetStub: ((AVCaptureSession.Preset) -> Bool)?
 
-  var captureSession = AVCaptureSession()
   var _sessionPreset = AVCaptureSession.Preset.high
   var inputs = [AVCaptureInput]()
   var outputs = [AVCaptureOutput]()

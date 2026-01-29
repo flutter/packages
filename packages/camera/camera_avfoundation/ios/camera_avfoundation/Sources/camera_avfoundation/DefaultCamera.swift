@@ -1241,12 +1241,12 @@ final class DefaultCamera: NSObject, Camera {
       }
 
       var currentSampleEndTime = sampleTime
-      let dur = CMSampleBufferGetDuration(sampleBuffer)
-      if CMTIME_IS_NUMERIC(dur) {
-        currentSampleEndTime = CMTimeAdd(currentSampleEndTime, dur)
+      let duration = CMSampleBufferGetDuration(sampleBuffer)
+      if CMTIME_IS_NUMERIC(duration) {
+        currentSampleEndTime = CMTimeAdd(currentSampleEndTime, duration)
       }
 
-      // Use a single time offset for both video and audio.
+      // Use a single time offset for both video and audio to avoid desync.
       // https://github.com/flutter/flutter/issues/149978
       if isRecordingDisconnected {
         if output == outputForOffsetAdjusting {
@@ -1445,6 +1445,5 @@ final class DefaultCamera: NSObject, Camera {
 
   deinit {
     motionManager.stopAccelerometerUpdates()
-    NotificationCenter.default.removeObserver(self)
   }
 }
