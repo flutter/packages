@@ -443,7 +443,7 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       errors.add('Invalid YAML in $workflowName: $e');
     }
 
-    bool hasTrigger = false;
+    var hasTrigger = false;
     if (yaml != null) {
       final on = yaml['on'] as YamlMap?;
       if (on is YamlMap) {
