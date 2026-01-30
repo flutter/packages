@@ -178,20 +178,20 @@ MarkerClusterer createMarkerClusterer(
   return MarkerClusterer(options);
 }
 
-///Converts events that clustering manager emits during rendering to stream
+/// Converts events emitted by the clustering manager during rendering into a stream
 Stream<ClusteringEvent> getClustererEvents(MarkerClusterer clusterer) {
-  late final StreamController<ClusteringEvent> controller;
+  StreamController<ClusteringEvent>? controller;
 
   final JSAny beginHandle = _gmapsAddListener(
     clusterer,
     'clusteringbegin',
-    ((JSAny mc) => controller.add(ClusteringEvent.begin)).toJS,
+    ((JSAny mc) => controller?.add(ClusteringEvent.begin)).toJS,
   );
 
   final JSAny endHandle = _gmapsAddListener(
     clusterer,
     'clusteringend',
-    ((JSAny mc) => controller.add(ClusteringEvent.end)).toJS,
+    ((JSAny mc) => controller?.add(ClusteringEvent.end)).toJS,
   );
 
   controller = StreamController<ClusteringEvent>(

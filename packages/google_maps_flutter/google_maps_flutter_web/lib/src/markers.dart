@@ -38,8 +38,10 @@ class MarkersController extends GeometryController {
       final List<gmaps.Marker> markers = await Future.wait(
         entry.value.map(_createMarker),
       );
-      if (entry.key != null) {
-        _clusterManagersController.addItems(entry.key!, markers);
+
+      final ClusterManagerId? clusterManagerId = entry.key;
+      if (clusterManagerId != null) {
+        _clusterManagersController.addItems(clusterManagerId, markers);
       } else {
         for (final marker in markers) {
           marker.map = googleMap;
@@ -50,8 +52,10 @@ class MarkersController extends GeometryController {
 
   Future<void> _addMarker(Marker marker) async {
     final gmaps.Marker gmapMarker = await _createMarker(marker);
-    if (marker.clusterManagerId != null) {
-      _clusterManagersController.addItem(marker.clusterManagerId!, gmapMarker);
+    final ClusterManagerId? clusterManagerId = marker.clusterManagerId;
+
+    if (clusterManagerId != null) {
+      _clusterManagersController.addItem(clusterManagerId, gmapMarker);
     } else {
       gmapMarker.map = googleMap;
     }

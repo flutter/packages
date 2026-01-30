@@ -25,14 +25,8 @@ void main() {
   const initialCameraPosition = CameraPosition(target: mapCenter);
 
   group('MarkersController', () {
-    late int testMapId;
-
-    tearDown(() {
-      plugin.dispose(mapId: testMapId);
-    });
-
     testWidgets('Marker clustering', (WidgetTester tester) async {
-      testMapId = 33930;
+      const testMapId = 33930;
       const clusterManagerId = ClusterManagerId('cluster 1');
 
       final clusterManagers = <ClusterManager>{
@@ -139,7 +133,7 @@ void main() {
           ),
       };
 
-      testMapId = 33931;
+      const testMapId = 33931;
       final events = StreamController<ClusteringEvent>();
       await _pumpMap(
         tester,
@@ -177,10 +171,10 @@ void main() {
       await expectLater(
         events.stream,
         emitsInAnyOrder([
-          //Once per initial markers
+          // Once per initial markers
           ClusteringEvent.begin,
           ClusteringEvent.end,
-          //Once per new cluster
+          // Once per new cluster
           ClusteringEvent.begin,
           ClusteringEvent.end,
           emitsDone,

@@ -10,7 +10,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import '../google_maps_flutter_web.dart';
 import 'marker_clustering_js_interop.dart';
-import 'marker_clustering_js_interop.dart' as interop;
+import 'marker_clustering_js_interop.dart' as interop show getClustererEvents;
 import 'types.dart';
 
 /// Events emitted by the marker clustering lifecycle.
