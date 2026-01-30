@@ -71,7 +71,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   BOOL _listenersRegistered;
 }
 
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+- (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
                          avFactory:(id<FVPAVFactory>)avFactory
                       viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   self = [super init];
@@ -79,7 +79,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 
   _viewProvider = viewProvider;
 
-  AVAsset *asset = [item asset];
+  NSObject<FVPAVAsset> *asset = item.asset;
   void (^assetCompletionHandler)(void) = ^{
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
       void (^processVideoTracks)(NSArray<AVAssetTrack *> *) = ^(NSArray<AVAssetTrack *> *tracks) {
@@ -100,9 +100,9 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
               // Video composition can only be used with file-based media and is not supported for
               // use with media served using HTTP Live Streaming.
               AVMutableVideoComposition *videoComposition =
-                  [self getVideoCompositionWithTransform:self->_preferredTransform
-                                               withAsset:asset
-                                          withVideoTrack:videoTrack];
+                  [self videoCompositionWithTransform:self->_preferredTransform
+                                                asset:asset
+                                           videoTrack:videoTrack];
               item.videoComposition = videoComposition;
             }
           };
@@ -142,7 +142,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
     (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
     (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
   };
-  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+  _pixelBufferSource = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
 
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
@@ -227,12 +227,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return degrees;
 };
 
-- (AVMutableVideoComposition *)getVideoCompositionWithTransform:(CGAffineTransform)transform
-                                                      withAsset:(AVAsset *)asset
-                                                 withVideoTrack:(AVAssetTrack *)videoTrack {
+- (AVMutableVideoComposition *)videoCompositionWithTransform:(CGAffineTransform)transform
+                                                       asset:(NSObject<FVPAVAsset> *)asset
+                                                  videoTrack:(AVAssetTrack *)videoTrack {
   AVMutableVideoCompositionInstruction *instruction =
       [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-  instruction.timeRange = CMTimeRangeMake(kCMTimeZero, [asset duration]);
+  instruction.timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration);
   AVMutableVideoCompositionLayerInstruction *layerInstruction =
       [AVMutableVideoCompositionLayerInstruction
           videoCompositionLayerInstructionWithAssetTrack:videoTrack];
@@ -308,7 +308,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       break;
     case AVPlayerItemStatusReadyToPlay:
       if (!_isInitialized) {
-        [item addOutput:_videoOutput];
+        [item addOutput:self.pixelBufferSource.videoOutput];
         [self reportInitialized];
         [self updatePlayingState];
       }
