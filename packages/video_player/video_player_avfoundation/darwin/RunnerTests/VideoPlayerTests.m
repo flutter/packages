@@ -6,8 +6,6 @@
 @import video_player_avfoundation;
 @import XCTest;
 
-#import <OCMock/OCMock.h>
-
 #if TARGET_OS_IOS
 @interface FakeAVAssetTrack : AVAssetTrack
 @property(readonly, nonatomic) CGAffineTransform preferredTransform;
@@ -249,8 +247,8 @@
 }
 
 - (void)setPixelBuffer:(CVPixelBufferRef)pixelBuffer {
-  _pixelBuffer = pixelBuffer;
-  CVPixelBufferRetain(pixelBuffer);
+  CVPixelBufferRelease(_pixelBuffer);
+  _pixelBuffer = CVPixelBufferRetain(pixelBuffer);
 }
 
 - (CMTime)itemTimeForHostTime:(CFTimeInterval)hostTimeInSeconds {
@@ -549,8 +547,8 @@
   // Simulate a buffer being available.
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  // This transfers ownership of the buffer.
   mockVideoOutput.pixelBuffer = bufferRef;
+  CVPixelBufferRelease(bufferRef);
   // Simulate a callback from the engine to request a new frame.
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
@@ -587,8 +585,8 @@
   // Simulate a buffer being available.
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  // This transfers ownership of the buffer.
   mockVideoOutput.pixelBuffer = bufferRef;
+  CVPixelBufferRelease(bufferRef);
   // Simulate a callback from the engine to request a new frame.
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
@@ -640,8 +638,8 @@
   // Simulate a buffer being available.
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  // This transfers ownership of the buffer.
   mockVideoOutput.pixelBuffer = bufferRef;
+  CVPixelBufferRelease(bufferRef);
   // Simulate a callback from the engine to request a new frame.
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
@@ -1104,8 +1102,8 @@
   void (^addFrame)(void) = ^{
     CVPixelBufferRef bufferRef;
     CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-    // This transfers ownership of the buffer.
     mockVideoOutput.pixelBuffer = bufferRef;
+    CVPixelBufferRelease(bufferRef);
   };
 
   addFrame();
