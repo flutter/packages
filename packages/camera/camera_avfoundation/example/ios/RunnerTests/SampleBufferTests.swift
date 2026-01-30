@@ -359,4 +359,31 @@ final class CameraSampleBufferTests: XCTestCase {
       AVAudioSession.sharedInstance().category == .playAndRecord,
       "Category should be PlayAndRecord.")
   }
+  func testStartVideoRecordingReportsErrorWhenStartWritingFails() {
+    let (camera, writerMock, _, _) = createCamera()
+
+    // Configure the mock to return false for startWriting
+    writerMock.startWritingStub = {
+      return false
+    }
+
+    // Configure a mock error
+    let mockError = NSError(
+      domain: "test", code: 123, userInfo: [NSLocalizedDescriptionKey: "Mock write error"])
+    writerMock.error = mockError
+
+    let expectation = self.expectation(description: "Completion handler called with error")
+
+    camera.startVideoRecording(
+      completion: { error in
+        XCTAssertNotNil(error)
+        XCTAssertEqual(error?.code, "IOError")
+        XCTAssertEqual(error?.message, "Unable to start writing")
+        XCTAssertEqual(error?.details as? String, "Mock write error")
+        XCTAssertFalse(camera.isRecording)
+        expectation.fulfill()
+      }, messengerForStreaming: nil)
+
+    waitForExpectations(timeout: 1.0, handler: nil)
+  }
 }

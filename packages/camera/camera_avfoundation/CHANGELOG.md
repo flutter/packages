@@ -1,3 +1,7 @@
+## 0.9.22+10
+
+* Fixes error handling in `startWriting`.
+
 ## 0.9.22+9
 
 * Migrates `FLTSavePhotoDelegate`, `FLTWritableData`, and `FLTImageStreamHandler` classes to Swift.
