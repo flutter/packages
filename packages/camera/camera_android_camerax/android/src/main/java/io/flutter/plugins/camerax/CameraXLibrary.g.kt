@@ -2181,6 +2181,9 @@ abstract class PigeonApiCameraInfo(
    */
   abstract fun sensorRotationDegrees(pigeon_instance: androidx.camera.core.CameraInfo): Long
 
+  /** Returns the lens facing of this camera. */
+  abstract fun lensFacing(pigeon_instance: androidx.camera.core.CameraInfo): LensFacing
+
   /** Returns a ExposureState. */
   abstract fun exposureState(
       pigeon_instance: androidx.camera.core.CameraInfo
@@ -2263,23 +2266,26 @@ abstract class PigeonApiCameraInfo(
       val pigeon_identifierArg =
           pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
       val sensorRotationDegreesArg = sensorRotationDegrees(pigeon_instanceArg)
+      val lensFacingArg = lensFacing(pigeon_instanceArg)
       val exposureStateArg = exposureState(pigeon_instanceArg)
       val binaryMessenger = pigeonRegistrar.binaryMessenger
       val codec = pigeonRegistrar.codec
       val channelName = "dev.flutter.pigeon.camera_android_camerax.CameraInfo.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-      channel.send(listOf(pigeon_identifierArg, sensorRotationDegreesArg, exposureStateArg)) {
-        if (it is List<*>) {
-          if (it.size > 1) {
-            callback(
-                Result.failure(CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
-          } else {
-            callback(Result.success(Unit))
+      channel.send(
+          listOf(pigeon_identifierArg, sensorRotationDegreesArg, lensFacingArg, exposureStateArg)) {
+            if (it is List<*>) {
+              if (it.size > 1) {
+                callback(
+                    Result.failure(
+                        CameraXError(it[0] as String, it[1] as String, it[2] as String?)))
+              } else {
+                callback(Result.success(Unit))
+              }
+            } else {
+              callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
+            }
           }
-        } else {
-          callback(Result.failure(CameraXLibraryPigeonUtils.createConnectionError(channelName)))
-        }
-      }
     }
   }
 }

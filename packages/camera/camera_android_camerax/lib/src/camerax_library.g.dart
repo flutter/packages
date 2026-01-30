@@ -2107,6 +2107,7 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
     super.pigeon_binaryMessenger,
     super.pigeon_instanceManager,
     required this.sensorRotationDegrees,
+    required this.lensFacing,
     required this.exposureState,
   });
 
@@ -2117,6 +2118,9 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
   /// (default) orientation.
   final int sensorRotationDegrees;
 
+  /// Returns the lens facing of this camera.
+  final LensFacing lensFacing;
+
   /// Returns a ExposureState.
   final ExposureState exposureState;
 
@@ -2124,7 +2128,11 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
     bool pigeon_clearHandlers = false,
     BinaryMessenger? pigeon_binaryMessenger,
     PigeonInstanceManager? pigeon_instanceManager,
-    CameraInfo Function(int sensorRotationDegrees, ExposureState exposureState)?
+    CameraInfo Function(
+      int sensorRotationDegrees,
+      LensFacing lensFacing,
+      ExposureState exposureState,
+    )?
     pigeon_newInstance,
   }) {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
@@ -2157,7 +2165,12 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
             arg_sensorRotationDegrees != null,
             'Argument for dev.flutter.pigeon.camera_android_camerax.CameraInfo.pigeon_newInstance was null, expected non-null int.',
           );
-          final ExposureState? arg_exposureState = (args[2] as ExposureState?);
+          final LensFacing? arg_lensFacing = (args[2] as LensFacing?);
+          assert(
+            arg_lensFacing != null,
+            'Argument for dev.flutter.pigeon.camera_android_camerax.CameraInfo.pigeon_newInstance was null, expected non-null LensFacing.',
+          );
+          final ExposureState? arg_exposureState = (args[3] as ExposureState?);
           assert(
             arg_exposureState != null,
             'Argument for dev.flutter.pigeon.camera_android_camerax.CameraInfo.pigeon_newInstance was null, expected non-null ExposureState.',
@@ -2167,12 +2180,14 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
                 .addHostCreatedInstance(
                   pigeon_newInstance?.call(
                         arg_sensorRotationDegrees!,
+                        arg_lensFacing!,
                         arg_exposureState!,
                       ) ??
                       CameraInfo.pigeon_detached(
                         pigeon_binaryMessenger: pigeon_binaryMessenger,
                         pigeon_instanceManager: pigeon_instanceManager,
                         sensorRotationDegrees: arg_sensorRotationDegrees!,
+                        lensFacing: arg_lensFacing!,
                         exposureState: arg_exposureState!,
                       ),
                   arg_pigeon_instanceIdentifier!,
@@ -2264,6 +2279,7 @@ class CameraInfo extends PigeonInternalProxyApiBaseClass {
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
       sensorRotationDegrees: sensorRotationDegrees,
+      lensFacing: lensFacing,
       exposureState: exposureState,
     );
   }
