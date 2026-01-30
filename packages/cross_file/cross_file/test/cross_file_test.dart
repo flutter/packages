@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:cross_file/cross_file.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
@@ -23,64 +24,94 @@ void main() {
 
       expect(await file.lastModified(), lastModified);
     });
-    //
-    // test('length', () async {
-    //   final file = PlatformXFile(
-    //     PlatformXFileCreationParams(uri: testFile.path),
-    //   );
-    //
-    //   expect(await file.length(), await testFile.length());
-    // });
-    //
-    // test('openRead', () async {
-    //   final file = PlatformXFile(
-    //     PlatformXFileCreationParams(uri: testFile.path),
-    //   );
-    //
-    //   expect(
-    //     await file.openRead().toList(),
-    //     await testFile.openRead().toList(),
-    //   );
-    // });
-    //
-    // test('readAsBytes', () async {
-    //   final file = PlatformXFile(
-    //     PlatformXFileCreationParams(uri: testFile.path),
-    //   );
-    //
-    //   expect(await file.readAsBytes(), await testFile.readAsBytes());
-    // });
-    //
-    // test('readAsString', () async {
-    //   final file = PlatformXFile(
-    //     PlatformXFileCreationParams(uri: testFile.path),
-    //   );
-    //
-    //   expect(await file.readAsString(), await testFile.readAsString());
-    // });
-    //
-    // test('canRead', () async {
-    //   final file = PlatformXFile(
-    //     PlatformXFileCreationParams(uri: testFile.path),
-    //   );
-    //
-    //   expect(await file.canRead(), testFile.existsSync());
-    // });
-    //
-    // test('exists', () async {
-    //   final file = PlatformXFile(
-    //     PlatformXFileCreationParams(uri: testFile.path),
-    //   );
-    //
-    //   expect(await file.exists(), testFile.existsSync());
-    // });
-    //
-    // test('name', () async {
-    //   final file = PlatformXFile(
-    //     PlatformXFileCreationParams(uri: testFile.path),
-    //   );
-    //
-    //   expect(await file.name(), 'test_file.txt');
-    // });
+
+    test('length', () async {
+      const length = 42;
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(params, onLength: () async => length),
+      );
+
+      final file = XFile('uri');
+
+      expect(await file.length(), length);
+    });
+
+    test('openRead', () async {
+      final data = <Uint8List>[
+        Uint8List.fromList(<int>[5, 6]),
+      ];
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(params, onOpenRead: () => Stream.fromIterable(data)),
+      );
+
+      final file = XFile('uri');
+
+      expect(await file.openRead().toList(), data);
+    });
+
+    test('readAsBytes', () async {
+      final bytes = Uint8List.fromList(<int>[1, 2, 3]);
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(params, onReadAsBytes: () async => bytes),
+      );
+
+      final file = XFile('uri');
+
+      expect(await file.readAsBytes(), bytes);
+    });
+
+    test('readAsString', () async {
+      const message = 'Hello, World!';
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(
+              params,
+              onReadAsString: ({required Encoding encoding}) async => message,
+            ),
+      );
+
+      final file = XFile('uri');
+
+      expect(await file.readAsString(), message);
+    });
+
+    test('canRead', () async {
+      const canRead = false;
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(params, onCanRead: () async => canRead),
+      );
+
+      final file = XFile('uri');
+
+      expect(await file.canRead(), canRead);
+    });
+
+    test('exists', () async {
+      const exists = true;
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(params, onExists: () async => exists),
+      );
+
+      final file = XFile('uri');
+
+      expect(await file.exists(), exists);
+    });
+
+    test('name', () async {
+      const name = 'name';
+      CrossFilePlatform.instance = TestCrossFilePlatform(
+        onCreatePlatformXFile: (PlatformXFileCreationParams params) =>
+            TestXFile(params, onName: () async => name),
+      );
+
+      final file = XFile('uri');
+
+      expect(await file.name(), name);
+    });
   });
 }

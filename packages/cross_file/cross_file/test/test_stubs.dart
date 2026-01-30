@@ -81,7 +81,7 @@ final class TestXFile extends PlatformXFile {
   Future<String?> Function()? onName;
   Stream<Uint8List> Function()? onOpenRead;
   Future<Uint8List> Function()? onReadAsBytes;
-  Future<String> Function({Encoding encoding})? onReadAsString;
+  Future<String> Function({required Encoding encoding})? onReadAsString;
 
   @override
   Future<bool> canRead() async {
@@ -229,5 +229,16 @@ final class TestScopedStorageXDirectory
     if (onList != null) {
       yield* onList!.call(params);
     }
+  }
+}
+
+final class TestXFileEntity extends PlatformXFileEntity {
+  TestXFileEntity(super.params, {this.onExists});
+
+  Future<bool> Function()? onExists;
+
+  @override
+  Future<bool> exists() async {
+    return await onExists?.call() ?? false;
   }
 }
