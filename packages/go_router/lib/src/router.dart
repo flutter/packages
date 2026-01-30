@@ -5,6 +5,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+// ignore: unnecessary_import, unblocks https://github.com/flutter/flutter/pull/181707
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
