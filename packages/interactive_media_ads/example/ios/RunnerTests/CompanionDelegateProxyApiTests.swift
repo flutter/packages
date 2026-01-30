@@ -4,37 +4,40 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
+import Testing
 import UIKit
-import XCTest
 
 @testable import interactive_media_ads
 
-class CompanionDelegateProxyApiTests: XCTestCase {
-  func testPigeonDefaultConstructor() {
+@MainActor
+struct CompanionDelegateProxyApiTests {
+  @Test
+  func pigeonDefaultConstructor() throws {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMACompanionDelegate(registrar)
 
-    let instance = try? api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
-    XCTAssertNotNil(instance)
+    let instance = try api.pigeonDelegate.pigeonDefaultConstructor(pigeonApi: api)
   }
 
-  func testCompanionAdSlotFilled() {
+  @Test
+  func companionAdSlotFilled() {
     let api = TestCompanionDelegateApi()
     let instance = CompanionDelegateImpl(api: api)
     let slot = IMACompanionAdSlot(view: UIView())
     let filled = true
     instance.companionSlot(slot, filled: filled)
 
-    XCTAssertEqual(api.companionAdSlotFilledArgs, [slot, filled])
+    #expect(api.companionAdSlotFilledArgs == [slot, filled])
   }
 
-  func testCompanionSlotWasClicked() {
+  @Test
+  func companionSlotWasClicked() {
     let api = TestCompanionDelegateApi()
     let instance = CompanionDelegateImpl(api: api)
     let slot = IMACompanionAdSlot(view: UIView())
     instance.companionSlotWasClicked(slot)
 
-    XCTAssertEqual(api.companionSlotWasClickedArgs, [slot])
+    #expect(api.companionSlotWasClickedArgs == [slot])
   }
 }
 
