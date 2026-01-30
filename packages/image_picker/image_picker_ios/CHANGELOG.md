@@ -1,3 +1,7 @@
+## 0.8.13+6
+
+* Replaces deprecated `kUTTypeGIF` with `UTTypeGIF` to fix iOS 15+ deprecation warnings.
+
 ## 0.8.13+5
 
 * Fixes camera confirmation buttons (e.g., Retake/Use Photo) taps passing through to the underlying Flutter UI while the picker is dismissing on some iOS versions (e.g., iOS 26).
