@@ -1,3 +1,7 @@
+## 2.3.0
+
+* Changes internal implementation to use JNI.
+
 ## 2.2.22
 
 * Bumps com.android.tools.build:gradle from 8.12.1 to 8.13.1.
