@@ -1,3 +1,8 @@
+## 0.9.22+10
+
+* Handles video and audio interruptions and errors by "pausing" and reporting errors.
+* Uses a single time offset for both video and audio to avoid desync.
+
 ## 0.9.22+9
 
 * Migrates `FLTSavePhotoDelegate`, `FLTWritableData`, and `FLTImageStreamHandler` classes to Swift.

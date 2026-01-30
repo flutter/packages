@@ -174,7 +174,7 @@ class CameraValue {
   }) {
     return CameraValue(
       isInitialized: isInitialized ?? this.isInitialized,
-      errorDescription: errorDescription,
+      errorDescription: errorDescription ?? this.errorDescription,
       previewSize: previewSize ?? this.previewSize,
       isRecordingVideo: isRecordingVideo ?? this.isRecordingVideo,
       isTakingPicture: isTakingPicture ?? this.isTakingPicture,
@@ -349,6 +349,14 @@ class CameraController extends ValueNotifier<CameraValue> {
           CameraInitializedEvent event,
         ) {
           initializeCompleter.complete(event);
+        }),
+      );
+
+      _unawaited(
+        CameraPlatform.instance.onCameraError(_cameraId).first.then((
+          CameraErrorEvent event,
+        ) {
+          value = value.copyWith(errorDescription: event.description);
         }),
       );
 
