@@ -254,12 +254,6 @@ class GoogleMapController {
 
   // Funnels map gmap events into the plugin's stream controller.
   void _attachMapEvents(gmaps.Map map) {
-    map.onTilesloaded.first.then((void _) {
-      // Report the map as ready to go the first time the tiles load
-      if (!_streamController.isClosed) {
-        _streamController.add(WebMapReadyEvent(_mapId));
-      }
-    });
     _onClickSubscription = map.onClick.listen((
       gmaps.MapMouseEventOrIconMouseEvent event,
     ) {
@@ -300,8 +294,13 @@ class GoogleMapController {
       }
     });
     _onMapLoadedSubscription = map.onTilesloaded.listen((void _) {
+      final bool isFirstTilesLoaded = !_tilesLoaded;
       _tilesLoaded = true;
       if (!_streamController.isClosed) {
+        if (isFirstTilesLoaded) {
+          // Report the map as ready to go the first time the tiles load
+          _streamController.add(WebMapReadyEvent(_mapId));
+        }
         _streamController.add(MapLoadedEvent(_mapId));
       }
     });
