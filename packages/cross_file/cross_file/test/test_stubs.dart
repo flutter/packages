@@ -166,7 +166,7 @@ final class TestScopedStorageXFile extends PlatformScopedStorageXFile {
   Future<String?> Function()? onName;
   Stream<Uint8List> Function()? onOpenRead;
   Future<Uint8List> Function()? onReadAsBytes;
-  Future<String> Function({Encoding encoding})? onReadAsString;
+  Future<String> Function({required Encoding encoding})? onReadAsString;
 
   @override
   Future<bool> canRead() async {
