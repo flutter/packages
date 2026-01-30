@@ -35,7 +35,7 @@
 
 @implementation FVPTextureBasedVideoPlayer
 
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+- (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(NSObject<FVPDisplayLink> *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory

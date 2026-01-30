@@ -216,7 +216,7 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
 - (nullable NSNumber *)createPlatformViewPlayerWithOptions:(nonnull FVPCreationOptions *)options
                                                      error:(FlutterError **)error {
   @try {
-    AVPlayerItem *item = [self playerItemWithCreationOptions:options];
+    NSObject<FVPAVPlayerItem> *item = [self playerItemWithCreationOptions:options];
 
     // FVPVideoPlayer contains all required logic for platform views.
     FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:item
@@ -234,7 +234,7 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
                                       (nonnull FVPCreationOptions *)options
                                                            error:(FlutterError **)error {
   @try {
-    AVPlayerItem *item = [self playerItemWithCreationOptions:options];
+    NSObject<FVPAVPlayerItem> *item = [self playerItemWithCreationOptions:options];
     FVPFrameUpdater *frameUpdater = [[FVPFrameUpdater alloc] initWithRegistry:self.textureRegistry];
     NSObject<FVPDisplayLink> *displayLink =
         [self.displayLinkFactory displayLinkWithViewProvider:self.viewProvider
@@ -302,13 +302,14 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
 }
 
 /// Returns the AVPlayerItem corresponding to the given player creation options.
-- (nonnull AVPlayerItem *)playerItemWithCreationOptions:(nonnull FVPCreationOptions *)options {
+- (nonnull NSObject<FVPAVPlayerItem> *)playerItemWithCreationOptions:
+    (nonnull FVPCreationOptions *)options {
   NSDictionary<NSString *, NSString *> *headers = options.httpHeaders;
   NSDictionary<NSString *, id> *itemOptions =
       headers.count == 0 ? nil : @{@"AVURLAssetHTTPHeaderFieldsKey" : headers};
-  AVURLAsset *asset = [AVURLAsset URLAssetWithURL:[NSURL URLWithString:options.uri]
-                                          options:itemOptions];
-  return [AVPlayerItem playerItemWithAsset:asset];
+  NSObject<FVPAVAsset> *asset = [self.avFactory URLAssetWithURL:[NSURL URLWithString:options.uri]
+                                                        options:itemOptions];
+  return [self.avFactory playerItemWithAsset:asset];
 }
 
 @end

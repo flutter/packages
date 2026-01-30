@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FVPTextureBasedVideoPlayer : FVPVideoPlayer <FlutterTexture>
 /// Initializes a new instance of FVPTextureBasedVideoPlayer with the given player item,
 /// frame updater, display link, AV factory, and view provider.
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+- (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(NSObject<FVPDisplayLink> *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory
