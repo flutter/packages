@@ -1412,9 +1412,9 @@
 #else
         [[StubViewProvider alloc] initWithViewController:nil];
 #endif
-    FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:item
-                                                              avFactory:stubAVFactory
-                                                           viewProvider:stubViewProvider];
+    FVPVideoPlayer *_ = [[FVPVideoPlayer alloc] initWithPlayerItem:item
+                                                         avFactory:stubAVFactory
+                                                      viewProvider:stubViewProvider];
     XCTAssertTrue(mockAsset.loadedTracksAsynchronously);
   }
 }
