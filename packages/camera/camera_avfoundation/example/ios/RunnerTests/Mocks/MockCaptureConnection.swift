@@ -28,4 +28,5 @@ final class MockCaptureConnection: NSObject, CaptureConnection {
   var inputPorts: [AVCaptureInput.Port] = []
   var isVideoMirroringSupported = false
   var isVideoOrientationSupported = false
+  var preferredVideoStabilizationMode = AVCaptureVideoStabilizationMode.off
 }
