@@ -190,6 +190,6 @@ class XFile extends XFileBase {
   /// For the web implementation, the path variable is ignored.
   @override
   Future<void> saveTo(String path) async {
-    await saveFileAs(this, path);
+    await saveFileAs(this);
   }
 }

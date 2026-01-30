@@ -150,8 +150,14 @@ void main() {
         final mockAnchor =
             html.document.createElement('a') as html.HTMLAnchorElement;
 
-        addTearDown(() => helpers.anchorElementOverride = null);
-        helpers.anchorElementOverride = (_, __) => mockAnchor;
+        // Save original function so we can restore it
+        final helpers.CreateAnchorElement original =
+            helpers.createAnchorElementFunction;
+
+        addTearDown(() {
+          helpers.createAnchorElementFunction = original;
+        });
+        helpers.createAnchorElementFunction = (_, __) => mockAnchor;
 
         final file = XFile.fromData(bytes, name: textFile.name);
 
