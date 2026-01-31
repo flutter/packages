@@ -42,6 +42,9 @@ typedef void (^FlutterResultAdapter)(NSArray<NSString *> *_Nullable, FlutterErro
 /// Maximum duration for videos. 0 indicates no maximum.
 @property(nonatomic, assign) NSTimeInterval maxDuration;
 
+/// Video quality for recording/picking. nil indicates default (high) quality.
+@property(nonatomic, strong, nullable) NSNumber *videoQuality;
+
 /// Whether the picker should include images in the list.
 @property(nonatomic, assign) BOOL includeImages;
 

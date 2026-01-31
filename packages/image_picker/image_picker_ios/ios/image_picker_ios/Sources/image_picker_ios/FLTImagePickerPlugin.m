@@ -96,6 +96,23 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
 }
 
+/// Returns the UIImagePickerControllerQualityType to use given [videoQualityBoxed].
+///
+/// @param videoQualityBoxed The video quality from Dart. nil defaults to High.
+- (UIImagePickerControllerQualityType)videoQualityForQuality:(FLTApiVideoQualityBox *)videoQualityBoxed {
+  if (videoQualityBoxed == nil) {
+    return UIImagePickerControllerQualityTypeHigh;
+  }
+  switch (videoQualityBoxed.value) {
+    case FLTApiVideoQualityLow:
+      return UIImagePickerControllerQualityTypeLow;
+    case FLTApiVideoQualityMedium:
+      return UIImagePickerControllerQualityTypeMedium;
+    case FLTApiVideoQualityHigh:
+      return UIImagePickerControllerQualityTypeHigh;
+  }
+}
+
 - (void)launchPHPickerWithContext:(nonnull FLTImagePickerMethodCallContext *)context
     API_AVAILABLE(ios(14)) {
   PHPickerConfiguration *config =
@@ -131,7 +148,10 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   }
   if (context.includeVideo) {
     [mediaTypes addObject:(NSString *)kUTTypeMovie];
-    imagePickerController.videoQuality = UIImagePickerControllerQualityTypeHigh;
+    UIImagePickerControllerQualityType quality = context.videoQuality != nil
+        ? (UIImagePickerControllerQualityType)context.videoQuality.integerValue
+        : UIImagePickerControllerQualityTypeHigh;
+    imagePickerController.videoQuality = quality;
   }
   imagePickerController.mediaTypes = mediaTypes;
   if (context.maxDuration != 0.0) {
@@ -250,6 +270,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
 
 - (void)pickVideoWithSource:(nonnull FLTSourceSpecification *)source
                 maxDuration:(nullable NSNumber *)maxDurationSeconds
+                videoQuality:(nullable FLTApiVideoQualityBox *)videoQualityBoxed
                  completion:
                      (nonnull void (^)(NSString *_Nullable, FlutterError *_Nullable))completion {
   [self cancelInProgressCall];
@@ -265,6 +286,7 @@ typedef NS_ENUM(NSInteger, ImagePickerClassType) { UIImagePickerClassType, PHPic
   context.includeVideo = YES;
   context.maxItemCount = 1;
   context.maxDuration = maxDurationSeconds.doubleValue;
+  context.videoQuality = @([self videoQualityForQuality:videoQualityBoxed]);
 
   if (source.type == FLTSourceTypeGallery) {  // Capture is not possible with PHPicker
     if (@available(iOS 14, *)) {

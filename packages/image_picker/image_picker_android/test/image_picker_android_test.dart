@@ -563,6 +563,32 @@ void main() {
       expect(api.passedVideoOptions?.maxDurationSeconds, 60);
     });
 
+    test('video quality defaults to high', () async {
+      await picker.getVideo(source: ImageSource.gallery);
+
+      expect(api.passedVideoOptions?.videoQuality, 1);
+    });
+
+    test('passes the video quality argument correctly', () async {
+      await picker.getVideo(
+        source: ImageSource.gallery,
+        quality: VideoQuality.low,
+      );
+      expect(api.passedVideoOptions?.videoQuality, 0);
+
+      await picker.getVideo(
+        source: ImageSource.gallery,
+        quality: VideoQuality.medium,
+      );
+      expect(api.passedVideoOptions?.videoQuality, 1);
+
+      await picker.getVideo(
+        source: ImageSource.gallery,
+        quality: VideoQuality.high,
+      );
+      expect(api.passedVideoOptions?.videoQuality, 1);
+    });
+
     test('handles a null video path response gracefully', () async {
       api.returnValue = null;
 

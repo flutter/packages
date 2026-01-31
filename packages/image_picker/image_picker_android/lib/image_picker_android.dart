@@ -161,10 +161,14 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     final List<String> paths = await _hostApi.pickVideos(
       _buildSourceSpec(source, preferredCameraDevice),
-      VideoSelectionOptions(maxDurationSeconds: maxDuration?.inSeconds),
+      VideoSelectionOptions(
+        maxDurationSeconds: maxDuration?.inSeconds,
+        videoQuality: _convertVideoQualityToAndroid(quality),
+      ),
       GeneralOptions(
         allowMultiple: false,
         usePhotoPicker: useAndroidPhotoPicker,
@@ -256,11 +260,13 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     final String? path = await _getVideoPath(
       source: source,
       maxDuration: maxDuration,
       preferredCameraDevice: preferredCameraDevice,
+      quality: quality,
     );
     return path != null ? XFile(path) : null;
   }
@@ -434,6 +440,27 @@ class ImagePickerAndroid extends ImagePickerPlatform {
     // switch as needing an update.
     // ignore: dead_code
     return SourceCamera.rear;
+  }
+
+  /// Converts a [VideoQuality] to Android's EXTRA_VIDEO_QUALITY value.
+  ///
+  /// Android only supports two quality levels (0=low, 1=high), while iOS supports
+  /// three (low, medium, high). Medium quality is mapped to high quality on Android.
+  int _convertVideoQualityToAndroid(VideoQuality quality) {
+    switch (quality) {
+      case VideoQuality.low:
+        return 0; // Low quality
+      case VideoQuality.medium:
+      case VideoQuality.high:
+        return 1; // High quality (medium is mapped to high)
+    }
+    // The enum comes from a different package, which could get a new value at
+    // any time, so provide a fallback that ensures this won't break when used
+    // with a version that contains new values. This is deliberately outside
+    // the switch rather than a `default` so that the linter will flag the
+    // switch as needing an update.
+    // ignore: dead_code
+    return 1; // Default to high quality
   }
 
   RetrieveType _retrieveTypeForCacheType(CacheRetrievalType type) {
