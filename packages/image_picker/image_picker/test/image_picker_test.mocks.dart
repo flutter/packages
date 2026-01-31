@@ -24,6 +24,7 @@ import 'package:mockito/mockito.dart' as _i1;
 // ignore_for_file: unnecessary_parenthesis
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
+// ignore_for_file: invalid_use_of_internal_member
 
 class _FakeLostData_0 extends _i1.SmartFake implements _i2.LostData {
   _FakeLostData_0(Object parent, Invocation parentInvocation)
@@ -156,12 +157,14 @@ class MockImagePickerPlatform extends _i1.Mock
     required _i2.ImageSource? source,
     _i2.CameraDevice? preferredCameraDevice = _i2.CameraDevice.rear,
     Duration? maxDuration,
+    _i2.VideoQuality? quality = _i2.VideoQuality.high,
   }) =>
       (super.noSuchMethod(
             Invocation.method(#getVideo, [], {
               #source: source,
               #preferredCameraDevice: preferredCameraDevice,
               #maxDuration: maxDuration,
+              #quality: quality,
             }),
             returnValue: _i4.Future<_i5.XFile?>.value(),
           )
