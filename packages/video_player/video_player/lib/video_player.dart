@@ -17,6 +17,7 @@ export 'package:video_player_platform_interface/video_player_platform_interface.
     show
         DataSourceType,
         DurationRange,
+        NotificationMetadata,
         VideoFormat,
         VideoPlayerOptions,
         VideoPlayerWebOptions,
@@ -461,6 +462,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     final creationOptions = VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
+      allowBackgroundPlayback:
+          videoPlayerOptions?.allowBackgroundPlayback ?? false,
+      notificationMetadata: videoPlayerOptions?.notificationMetadata,
     );
 
     if (videoPlayerOptions?.mixWithOthers != null) {
@@ -473,6 +477,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         (await _videoPlayerPlatform.createWithOptions(creationOptions)) ??
         kUninitializedPlayerId;
     _creatingCompleter!.complete(null);
+
     final initializingCompleter = Completer<void>();
 
     // Apply the web-specific options
