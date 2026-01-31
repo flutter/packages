@@ -67,6 +67,7 @@ void main() {
       MockURLRequest Function({required String url, dynamic observeValue})?
       createURLRequest,
       MockWKWebpagePreferences? mockWebpagePreferences,
+      bool? javaScriptCanOpenWindowsAutomatically,
     }) {
       final MockWKWebViewConfiguration nonNullMockWebViewConfiguration =
           mockWebViewConfiguration ?? MockWKWebViewConfiguration();
@@ -190,7 +191,10 @@ void main() {
             );
           };
       final PlatformWebViewControllerCreationParams controllerCreationParams =
-          WebKitWebViewControllerCreationParams();
+          WebKitWebViewControllerCreationParams(
+            javaScriptCanOpenWindowsAutomatically:
+                javaScriptCanOpenWindowsAutomatically,
+          );
 
       final controller = WebKitWebViewController(controllerCreationParams);
 
@@ -867,6 +871,43 @@ void main() {
         await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
 
         verify(mockPreferences.setJavaScriptEnabled(true));
+      },
+    );
+
+    test(
+      'setJavaScriptMode sets javaScriptCanOpenWindowsAutomatically from creation params',
+      () async {
+        final mockPreferences = MockWKPreferences();
+        final mockWebpagePreferences = MockWKWebpagePreferences();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockPreferences: mockPreferences,
+          mockWebpagePreferences: mockWebpagePreferences,
+          javaScriptCanOpenWindowsAutomatically: true,
+        );
+
+        await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+
+        verify(mockPreferences.setJavaScriptCanOpenWindowsAutomatically(true));
+      },
+    );
+
+    test(
+      'setJavaScriptMode does not set javaScriptCanOpenWindowsAutomatically when null',
+      () async {
+        final mockPreferences = MockWKPreferences();
+        final mockWebpagePreferences = MockWKWebpagePreferences();
+
+        final WebKitWebViewController controller = createControllerWithMocks(
+          mockPreferences: mockPreferences,
+          mockWebpagePreferences: mockWebpagePreferences,
+        );
+
+        await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+
+        verifyNever(
+          mockPreferences.setJavaScriptCanOpenWindowsAutomatically(any),
+        );
       },
     );
 

@@ -24,4 +24,16 @@ class PreferencesProxyAPITests: XCTestCase {
       XCTAssertEqual(instance.javaScriptEnabled, enabled)
     }
   }
+
+  @MainActor func testSetJavaScriptCanOpenWindowsAutomatically() throws {
+    let registrar = TestProxyApiRegistrar()
+    let api = registrar.apiDelegate.pigeonApiWKPreferences(registrar)
+
+    let instance = WKPreferences()
+    let enabled = true
+    try api.pigeonDelegate.setJavaScriptCanOpenWindowsAutomatically(
+      pigeonApi: api, pigeonInstance: instance, enabled: enabled)
+
+    XCTAssertEqual(instance.javaScriptCanOpenWindowsAutomatically, enabled)
+  }
 }
