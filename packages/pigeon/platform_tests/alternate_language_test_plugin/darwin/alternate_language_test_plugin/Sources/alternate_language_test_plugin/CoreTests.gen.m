@@ -8,13 +8,9 @@
 #import "./include/alternate_language_test_plugin/CoreTests.gen.h"
 
 #if TARGET_OS_OSX
-#import <FlutterMacOS/FlutterMacOS.h>
+@import FlutterMacOS;
 #else
-#import <Flutter/Flutter.h>
-#endif
-
-#if !__has_feature(objc_arc)
-#error File requires ARC to be enabled.
+@import Flutter;
 #endif
 
 static NSArray<id> *wrapResult(id result, FlutterError *error) {

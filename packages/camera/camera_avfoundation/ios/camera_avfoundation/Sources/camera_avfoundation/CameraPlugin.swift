@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import AVFoundation
 import Flutter
-import ObjectiveC
 
 // Import Objective-C part of the implementation when SwiftPM is used.
 #if canImport(camera_avfoundation_objc)
@@ -114,7 +114,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   func sendDeviceOrientation(_ orientation: UIDeviceOrientation) {
     DispatchQueue.main.async { [weak self] in
       self?.globalEventAPI.deviceOrientationChangedOrientation(
-        FCPGetPigeonDeviceOrientationForOrientation(orientation)
+        getPigeonDeviceOrientation(for: orientation)
       ) { _ in
         // Ignore errors; this is essentially a broadcast stream, and
         // it's fine if the other end doesn't receive the message
@@ -267,7 +267,7 @@ extension CameraPlugin: FCPCameraApi {
       camera?.close()
       camera = newCamera
 
-      FLTEnsureToRunOnMainQueue { [weak self] in
+      ensureToRunOnMainQueue { [weak self] in
         guard let strongSelf = self else { return }
         completion(NSNumber(value: strongSelf.registry.register(newCamera)), nil)
       }
@@ -298,12 +298,12 @@ extension CameraPlugin: FCPCameraApi {
   ) {
     guard let camera = camera else { return }
 
-    camera.videoFormat = FCPGetPixelFormatForPigeonFormat(imageFormat)
+    camera.videoFormat = getPixelFormat(for: imageFormat)
 
     camera.onFrameAvailable = { [weak self] in
       guard let camera = self?.camera else { return }
       if !camera.isPreviewPaused {
-        FLTEnsureToRunOnMainQueue {
+        ensureToRunOnMainQueue {
           self?.registry.textureFrameAvailable(Int64(cameraId))
         }
       }
