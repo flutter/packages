@@ -1,3 +1,7 @@
+## 0.9.23
+
+* Changes the default storage path for camera pictures and videos on iOS from the application's Documents directory to the system's temporaryDirectory.
+
 ## 0.9.22+9
 
 * Migrates `FLTSavePhotoDelegate`, `FLTWritableData`, and `FLTImageStreamHandler` classes to Swift.
