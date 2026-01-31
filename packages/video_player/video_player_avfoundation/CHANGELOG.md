@@ -1,3 +1,7 @@
+## NEXT
+
+* Automatic Bitrate Streaming support to iOS.
+
 ## 2.9.0
 
 * Implements `getAudioTracks()` and `selectAudioTrack()` methods.
