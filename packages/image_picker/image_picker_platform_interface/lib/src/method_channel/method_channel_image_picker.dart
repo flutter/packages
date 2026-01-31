@@ -281,6 +281,7 @@ class MethodChannelImagePicker extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     final String? path = await _getVideoPath(
       source: source,
