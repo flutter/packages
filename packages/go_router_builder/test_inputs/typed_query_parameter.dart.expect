@@ -1,0 +1,51 @@
+RouteBase get $overriddenParameterNameRoute => GoRouteData.$route(
+  path: '/typed-go-route-parameter',
+  factory: $OverriddenParameterNameRoute._fromState,
+);
+
+mixin $OverriddenParameterNameRoute on GoRouteData {
+  static OverriddenParameterNameRoute _fromState(GoRouterState state) =>
+      OverriddenParameterNameRoute(
+        withAnnotation: _$convertMapValue(
+          'parameterNameOverride',
+          state.uri.queryParameters,
+          int.tryParse,
+        ),
+        withSpace: state.uri.queryParameters['name with space'],
+      );
+
+  OverriddenParameterNameRoute get _self =>
+      this as OverriddenParameterNameRoute;
+
+  @override
+  String get location => GoRouteData.$location(
+    '/typed-go-route-parameter',
+    queryParams: {
+      if (_self.withAnnotation != null)
+        'parameterNameOverride': _self.withAnnotation!.toString(),
+      if (_self.withSpace != null) 'name with space': _self.withSpace,
+    },
+  );
+
+  @override
+  void go(BuildContext context) => context.go(location);
+
+  @override
+  Future<T?> push<T>(BuildContext context) => context.push<T>(location);
+
+  @override
+  void pushReplacement(BuildContext context) =>
+      context.pushReplacement(location);
+
+  @override
+  void replace(BuildContext context) => context.replace(location);
+}
+
+T? _$convertMapValue<T>(
+  String key,
+  Map<String, String> map,
+  T? Function(String) converter,
+) {
+  final value = map[key];
+  return value == null ? null : converter(value);
+}

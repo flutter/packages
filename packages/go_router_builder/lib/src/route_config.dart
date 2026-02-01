@@ -318,7 +318,6 @@ mixin _GoRouteMixin on RouteBaseConfig {
 
     for (final FormalParameterElement param in _ctorQueryParams) {
       final String parameterName = param.displayName;
-
       final conditions = <String>[];
       if (param.hasDefaultValue) {
         if (param.type.isNullableType) {
@@ -335,7 +334,7 @@ mixin _GoRouteMixin on RouteBaseConfig {
         line = 'if (${conditions.join(' && ')}) ';
       }
       line +=
-          '${escapeDartString(parameterName.kebab)}: '
+          '${param.uriName}: '
           '${_encodeFor(parameterName)},';
 
       buffer.writeln(line);

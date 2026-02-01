@@ -244,8 +244,7 @@ String _stateValueAccess(
   if (pathParameters.contains(element.displayName)) {
     access = 'pathParameters[${escapeDartString(element.displayName)}]$suffix';
   } else {
-    access =
-        'uri.queryParameters[${escapeDartString(element.displayName.kebab)}]$suffix';
+    access = 'uri.queryParameters[${element.uriName}]$suffix';
   }
 
   return access;
@@ -635,11 +634,11 @@ class _TypeHelperIterable extends _TypeHelperWithHelper {
 
       return '''
 state.uri.queryParametersAll[
-        ${escapeDartString(parameterElement.displayName.kebab)}]
+        ${parameterElement.uriName}]
         ?.map($entriesTypeDecoder)$convertToNotNull$iterableCaster$fallBack''';
     }
     return '''
-state.uri.queryParametersAll[${escapeDartString(parameterElement.displayName.kebab)}]''';
+state.uri.queryParametersAll[${parameterElement.uriName}]''';
   }
 
   @override
@@ -822,7 +821,7 @@ abstract class _TypeHelperWithHelper extends _TypeHelper {
     if (!pathParameters.contains(parameterName) &&
         (paramType.isNullableType || parameterElement.hasDefaultValue)) {
       return '$convertMapValueHelperName('
-          '${escapeDartString(parameterName.kebab)}, '
+          '${parameterElement.uriName}, '
           'state.uri.queryParameters, '
           '${helperName(paramType)})';
     }
@@ -853,6 +852,18 @@ extension FormalParameterElementExtension on FormalParameterElement {
 
   /// Returns `true` if `this` has a name that matches [extraFieldName];
   bool get isExtraField => displayName == extraFieldName;
+
+  /// Returns the URI name for this parameter, taking into account any
+  /// `TypedQueryParameter` annotation that may override the name.
+  String get uriName {
+    final typedQueryParameterReader = ConstantReader(
+      _typedQueryParameterChecker.firstAnnotationOf(this),
+    );
+    final String name =
+        typedQueryParameterReader.peek('name')?.stringValue ??
+        displayName.kebab;
+    return escapeDartString(name);
+  }
 }
 
 /// An error thrown when a default value is used with a nullable type.
@@ -865,3 +876,7 @@ class NullableDefaultValueError extends InvalidGenerationSourceError {
         element: element,
       );
 }
+
+const _typedQueryParameterChecker = TypeChecker.fromUrl(
+  'package:go_router/src/route_data.dart#TypedQueryParameter',
+);
