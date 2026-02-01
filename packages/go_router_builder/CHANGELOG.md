@@ -1,7 +1,7 @@
 ## 4.2.0
 
 - Adds supports for `TypedQueryParameter` annotation.
-  It's `name` parameter allows specifying a different name for the query parameter than the field name. The name is escaped to be URL-safe. For example `@TypedQueryParameter(name: 'field with space')` will generate a query parameter named `field+with+space`.
+  Its `name` parameter allows specifying a different name for the query parameter than the field name. The name is escaped to be URL-safe. For example `@TypedQueryParameter(name: 'field with space')` will generate a query parameter named `field+with+space`.
 
 ## 4.1.3
 
