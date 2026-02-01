@@ -643,5 +643,8 @@ class TypedQueryParameter {
   /// This will result in a route that matches
   /// `/my-route?custom_name=some_value` instead of the default
   /// `/my-route?my-parameter=some_value`.
+  ///
+  /// It is escaped to be URL-safe. For example `'field with space'` will
+  /// generate a query parameter named `'field+with+space'`.
   final String? name;
 }
