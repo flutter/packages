@@ -117,7 +117,7 @@
 - (NSArray<AVAssetTrack *> *)tracksWithMediaType:(AVMediaType)mediaType
     API_DEPRECATED("Use loadTracksWithMediaType:completionHandler: instead", macos(10.7, 15.0),
                    ios(4.0, 18.0)) {
-  return _tracks;
+  return _tracks ?: @[];
 }
 @end
 
@@ -294,7 +294,9 @@
 @property(nonatomic, strong) AVPlayer *player;
 @property(nonatomic, strong) NSObject<FVPAVPlayerItem> *playerItem;
 @property(nonatomic, strong) NSObject<FVPPixelBufferSource> *pixelBufferSource;
+#if TARGET_OS_IOS
 @property(nonatomic, strong) NSObject<FVPAVAudioSession> *audioSession;
+#endif
 
 @end
 
@@ -309,13 +311,14 @@
   // Create a player with a dummy item so that the player is valid, since most tests won't work
   // without a valid player.
   // TODO(stuartmorgan): Introduce a protocol for AVPlayer and use a stub here instead.
+  NSURL *dummyURL = [NSURL URLWithString:@""];
   _player =
-      player
-          ?: [[AVPlayer alloc]
-                 initWithPlayerItem:[AVPlayerItem playerItemWithURL:[NSURL URLWithString:@""]]];
+      player ?: [[AVPlayer alloc] initWithPlayerItem:[AVPlayerItem playerItemWithURL:dummyURL]];
   _playerItem = playerItem ?: [[StubPlayerItem alloc] init];
   _pixelBufferSource = pixelBufferSource;
+#if TARGET_OS_IOS
   _audioSession = [[TestAudioSession alloc] init];
+#endif
   return self;
 }
 
@@ -1412,9 +1415,10 @@
 #else
         [[StubViewProvider alloc] initWithViewController:nil];
 #endif
-    FVPVideoPlayer *_ = [[FVPVideoPlayer alloc] initWithPlayerItem:item
-                                                         avFactory:stubAVFactory
-                                                      viewProvider:stubViewProvider];
+    FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:item
+                                                              avFactory:stubAVFactory
+                                                           viewProvider:stubViewProvider];
+    XCTAssertNotNil(player);
     XCTAssertTrue(mockAsset.loadedTracksAsynchronously);
   }
 }
