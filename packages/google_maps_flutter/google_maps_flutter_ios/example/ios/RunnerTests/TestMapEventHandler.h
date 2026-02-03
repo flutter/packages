@@ -7,7 +7,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// Fake implementation of FGMAssetProvider for unit tests.
+/// Fake implementation of FGMMapEventDelegate for unit tests.
 @interface TestMapEventHandler : NSObject <FGMMapEventDelegate>
 @end
 
