@@ -169,4 +169,20 @@ class VideoPlayerPlugin extends VideoPlayerPlatform {
   /// Sets the audio mode to mix with other sources (ignored).
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) => Future<void>.value();
+
+  @override
+  Future<List<VideoTrack>> getVideoTracks(int playerId) {
+    throw UnimplementedError('getVideoTracks() is not supported on web');
+  }
+
+  @override
+  Future<void> selectVideoTrack(int playerId, VideoTrack? track) {
+    throw UnimplementedError('selectVideoTrack() is not supported on web');
+  }
+
+  @override
+  bool isVideoTrackSupportAvailable() {
+    // Web does not support video track selection
+    return false;
+  }
 }
