@@ -1,5 +1,6 @@
 ## NEXT
 
+* Automatic Bitrate Streaming support to Android and iOS.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 6.6.0

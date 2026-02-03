@@ -192,6 +192,18 @@ abstract class VideoPlayerInstanceApi {
 
   /// Selects which audio track is chosen for playback from its [groupIndex] and [trackIndex]
   void selectAudioTrack(int groupIndex, int trackIndex);
+
+  /// Sets the maximum bandwidth limit in bits per second for HLS adaptive bitrate streaming.
+  /// Pass 0 to remove any bandwidth limit and allow the player to select quality freely.
+  /// Common values:
+  ///   - 360p: 500000 bps (500 kbps)
+  ///   - 480p: 800000 bps (800 kbps)
+  ///   - 720p: 1200000 bps (1.2 Mbps)
+  ///   - 1080p: 2500000 bps (2.5 Mbps)
+  ///
+  /// Note: This helps ExoPlayer's track selector choose appropriate quality variants
+  /// for HLS streams. The player will attempt to stay within this bandwidth estimate.
+  void setBandwidthLimit(int maxBandwidthBps);
 }
 
 @EventChannelApi()
