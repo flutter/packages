@@ -40,7 +40,7 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
   }
 
   @MainActor func testWebViewForIdentifierHandlesIncorrectRegistry() {
-    let registry = EmptyRegistry()
+    let registry = TestRegistry(publishedValue: false)
     // Ensure that passing an empty registry, such as the FlutterAppDelegate
     // in an app that has adopted UIScene, gracefully returns nil.
     let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
@@ -49,31 +49,17 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
   }
 }
 
-/// A stub registry with no plugins registered.
-class EmptyRegistry: NSObject, FlutterPluginRegistry {
-  let registrar = TestFlutterPluginRegistrar()
-
-  #if os(iOS)
-    func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar? {
-      return nil
-    }
-  #elseif os(macOS)
-    func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar {
-      return nil
-    }
-  #endif
-
-  func hasPlugin(_ pluginKey: String) -> Bool {
-    return false
-  }
-
-  func valuePublished(byPlugin pluginKey: String) -> NSObject? {
-    return nil
-  }
-}
-
 class TestRegistry: NSObject, FlutterPluginRegistry {
   let registrar = TestFlutterPluginRegistrar()
+  let publishedValue: Bool
+
+  init(publishedValue: Bool) {
+    self.publishedValue = publishedValue
+  }
+
+  convenience override init() {
+    self.init(publishedValue: true)
+  }
 
   #if os(iOS)
     func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar? {
@@ -90,7 +76,7 @@ class TestRegistry: NSObject, FlutterPluginRegistry {
   }
 
   func valuePublished(byPlugin pluginKey: String) -> NSObject? {
-    if pluginKey == "WebViewFlutterPlugin" {
+    if publishedValue && pluginKey == "WebViewFlutterPlugin" {
       return registrar.plugin
     }
     return nil
