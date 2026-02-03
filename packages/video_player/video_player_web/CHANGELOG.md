@@ -1,5 +1,6 @@
-## NEXT
+## 2.5.0
 
+* Adds background playback with system media notification support.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 
 ## 2.4.0
