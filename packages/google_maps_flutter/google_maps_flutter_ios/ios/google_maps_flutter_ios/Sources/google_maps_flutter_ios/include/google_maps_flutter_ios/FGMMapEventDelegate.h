@@ -9,6 +9,10 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Delegate for map event notifications.
+///
+/// This is abstraction of the map event portions of FGMMapsCallbackApi, to
+/// avoid coupling all the individual controllers to the Pigeon implementation
+/// of event handling, and to allow for mocks/fakes in unit tests.
 @protocol FGMMapEventDelegate <NSObject>
 
 /// Called when the map camera starts moving.
