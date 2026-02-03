@@ -66,7 +66,9 @@ class MarkersController {
       if (clusterManagerId == null) {
         nonClusteredMarkers.add(markerBuilder);
       } else {
-        markersByCluster.computeIfAbsent(clusterManagerId, k -> new ArrayList<>()).add(markerBuilder);
+        markersByCluster
+            .computeIfAbsent(clusterManagerId, k -> new ArrayList<>())
+            .add(markerBuilder);
       }
     }
 
@@ -100,7 +102,9 @@ class MarkersController {
       if (!(Objects.equals(clusterManagerId, oldClusterManagerId))) {
         // Remove from old cluster manager
         if (oldClusterManagerId != null) {
-          markersToRemoveByCluster.computeIfAbsent(oldClusterManagerId, k -> new ArrayList<>()).add(markerBuilder);
+          markersToRemoveByCluster
+              .computeIfAbsent(oldClusterManagerId, k -> new ArrayList<>())
+              .add(markerBuilder);
         }
 
         // Prepare new marker for addition
@@ -114,7 +118,9 @@ class MarkersController {
         markerIdToMarkerBuilder.put(markerId, newMarkerBuilder);
 
         if (clusterManagerId != null) {
-          markersToAddByCluster.computeIfAbsent(clusterManagerId, k -> new ArrayList<>()).add(newMarkerBuilder);
+          markersToAddByCluster
+              .computeIfAbsent(clusterManagerId, k -> new ArrayList<>())
+              .add(newMarkerBuilder);
         } else {
           // Add to map immediately if not clustered
           addMarkerToCollection(markerId, newMarkerBuilder);
@@ -168,7 +174,9 @@ class MarkersController {
 
       final String clusterManagerId = markerBuilder.clusterManagerId();
       if (clusterManagerId != null) {
-        markersByCluster.computeIfAbsent(clusterManagerId, k -> new ArrayList<>()).add(markerBuilder);
+        markersByCluster
+            .computeIfAbsent(clusterManagerId, k -> new ArrayList<>())
+            .add(markerBuilder);
       } else {
         final MarkerController markerController = markerIdToController.get(markerId);
         if (markerController != null) {
