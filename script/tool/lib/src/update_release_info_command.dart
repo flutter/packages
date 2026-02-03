@@ -8,6 +8,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/output_utils.dart';
+import 'common/package_command.dart';
 import 'common/package_looping_command.dart';
 import 'common/package_state_utils.dart';
 import 'common/repository_package.dart';
@@ -109,7 +110,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
         throw UnimplementedError('Unimplemented version change type');
     }
 
-    await for (final entry in getPackagesToProcess()) {
+    await for (final PackageEnumerationEntry entry in getPackagesToProcess()) {
       if ((entry.package.parseCIConfig()?.isBatchRelease ?? false) &&
           (entry.package.parsePubspec().version?.isPreRelease ?? false)) {
         throw UsageException(
@@ -152,20 +153,12 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       }
     }
 
-    // For batch release, create a pending changelog entry instead of updating
-    // the files directly.
     final CIConfig? ciConfig = package.parseCIConfig();
     if (ciConfig?.isBatchRelease ?? false) {
-      return _createPendingChangelog(
-        package,
-        versionChange: versionChange,
-      );
+      return _createPendingChangelog(package, versionChange: versionChange);
     }
 
-    return _updateReleaseDirectly(
-      package,
-      versionChange: versionChange,
-    );
+    return _updateReleaseDirectly(package, versionChange: versionChange);
   }
 
   _ChangelogUpdateOutcome _updateChangelog(
