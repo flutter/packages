@@ -38,6 +38,38 @@ class FWFWebViewFlutterWKWebViewExternalAPITests: XCTestCase {
       forIdentifier: Int64(webViewIdentifier), withPluginRegistry: registry)
     XCTAssertEqual(result, webView)
   }
+
+  @MainActor func testWebViewForIdentifierHandlesIncorrectRegistry() {
+    let registry = EmptyRegistry()
+    // Ensure that passing an empty registry, such as the FlutterAppDelegate
+    // in an app that has adopted UIScene, gracefully returns nil.
+    let result = FWFWebViewFlutterWKWebViewExternalAPI.webView(
+      forIdentifier: 0, withPluginRegistry: registry)
+    XCTAssertEqual(result, nil)
+  }
+}
+
+/// A stub registry with no plugins registered.
+class EmptyRegistry: NSObject, FlutterPluginRegistry {
+  let registrar = TestFlutterPluginRegistrar()
+
+  #if os(iOS)
+    func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar? {
+      return nil
+    }
+  #elseif os(macOS)
+    func registrar(forPlugin pluginKey: String) -> FlutterPluginRegistrar {
+      return nil
+    }
+  #endif
+
+  func hasPlugin(_ pluginKey: String) -> Bool {
+    return false
+  }
+
+  func valuePublished(byPlugin pluginKey: String) -> NSObject? {
+    return nil
+  }
 }
 
 class TestRegistry: NSObject, FlutterPluginRegistry {
