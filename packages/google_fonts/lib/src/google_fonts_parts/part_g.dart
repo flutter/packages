@@ -2730,6 +2730,184 @@ class PartG {
     );
   }
 
+  /// Applies the Geom font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Geom
+  static TextStyle geom({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '98b7d211be4b524c461689f25b72f84b0adaa0c9706ac2cdb570f486fff255e2',
+        45448,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '40be22f178a9c32c7bb431bd6b2a38cb9744d8140fb9c7dad90a1f963d7d334a',
+        53412,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'f808e6e25b1aa510b3e7afa7d20ce6aa20ebe09222d9fa2985acc2cc6cd44d72',
+        53476,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '85b41f79dc0cfe7058a5a75428b16dff80bef98bff9272a163864bc3d73925de',
+        53356,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '555988aa5caac9bf380421447deec0b8cc6e623772f419ceaf2828113d09b044',
+        53352,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1da15df7946fd0c6866e433b1a6f1bf3b4791ba54b30c37b3b913c48f390f193',
+        53264,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b457204ec5f1afa5fc8b50805ff141738cc6aa06a78742b740a81945bbae49c1',
+        45420,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '9d94063d9083ce83ff1b97622044b7188dce65491484ee1fbe94115ff7965aea',
+        46804,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '47deb650232c0fc2afe1cc1f0c606ce9ab0c3df4a1110aa342b56d219e0b4a2f',
+        54660,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'd1981860004c6eb1d031fb221335f1fbf4bcc17a4c76af75a7ca967e33aac794',
+        54796,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'e79333ba2fad64e368949214ed6f319c275142493f612bc611f77215d1d0ee79',
+        54668,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '55a9d1fcebf12b5d0f84489ea848310f4bc889b7d08cdc175d4878090588bd0d',
+        54600,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '07cecd23ca6ceb1af9e4f75936ecf06bf17fef9da374743abfea01e39adcfec0',
+        54580,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'bdd89afaced562768c90cab902f4aabd76dfea45581577c2057ba308ebcf5430',
+        46760,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'Geom',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Geom font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Geom
+  static TextTheme geomTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: geom(textStyle: textTheme.displayLarge),
+      displayMedium: geom(textStyle: textTheme.displayMedium),
+      displaySmall: geom(textStyle: textTheme.displaySmall),
+      headlineLarge: geom(textStyle: textTheme.headlineLarge),
+      headlineMedium: geom(textStyle: textTheme.headlineMedium),
+      headlineSmall: geom(textStyle: textTheme.headlineSmall),
+      titleLarge: geom(textStyle: textTheme.titleLarge),
+      titleMedium: geom(textStyle: textTheme.titleMedium),
+      titleSmall: geom(textStyle: textTheme.titleSmall),
+      bodyLarge: geom(textStyle: textTheme.bodyLarge),
+      bodyMedium: geom(textStyle: textTheme.bodyMedium),
+      bodySmall: geom(textStyle: textTheme.bodySmall),
+      labelLarge: geom(textStyle: textTheme.labelLarge),
+      labelMedium: geom(textStyle: textTheme.labelMedium),
+      labelSmall: geom(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Georama font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -4799,6 +4977,142 @@ class PartG {
     );
   }
 
+  /// Applies the Google Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Google+Sans
+  static TextStyle googleSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '86a48b7777eca43fc3de8301af904fea22a910881edb1ee544c680937457ca8c',
+        1934704,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '582db67e51706253ea35c2fa6bf1d9488e436095c7f22d344ecee713e071c6e7',
+        1940644,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ef4d9928a58838b97567c31bbad347db2cb419c0c75e7eb622b3bf0b3cf5dc0e',
+        1937812,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '1d41821b8055088bce5bc9c1007a6321fcbc1a06d8572e0e4f6ee93c9f0c470f',
+        1937172,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '1cd38a80d2c71a9f94b2e55f6b857434f93ac7b2f3311655c4866e85cc88c449',
+        1998136,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        'eecd761274d5ad50c5469197c3e284a06f6356ddd5eb2675255459ac046eb94b',
+        2000588,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '926c3fec87d962545d6ca2bb7a366a756cb04bf27b01a570a0d628f6bb645a7f',
+        2001860,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.italic,
+      ): GoogleFontsFile(
+        '3fd76464b4827a4c2ee7a6136fe9f106c0a7fcf8820ee9d10bcdd8f71de73e3e',
+        2001328,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'GoogleSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Google Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Google+Sans
+  static TextTheme googleSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: googleSans(textStyle: textTheme.displayLarge),
+      displayMedium: googleSans(textStyle: textTheme.displayMedium),
+      displaySmall: googleSans(textStyle: textTheme.displaySmall),
+      headlineLarge: googleSans(textStyle: textTheme.headlineLarge),
+      headlineMedium: googleSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: googleSans(textStyle: textTheme.headlineSmall),
+      titleLarge: googleSans(textStyle: textTheme.titleLarge),
+      titleMedium: googleSans(textStyle: textTheme.titleMedium),
+      titleSmall: googleSans(textStyle: textTheme.titleSmall),
+      bodyLarge: googleSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: googleSans(textStyle: textTheme.bodyMedium),
+      bodySmall: googleSans(textStyle: textTheme.bodySmall),
+      labelLarge: googleSans(textStyle: textTheme.labelLarge),
+      labelMedium: googleSans(textStyle: textTheme.labelMedium),
+      labelSmall: googleSans(textStyle: textTheme.labelSmall),
+    );
+  }
+
   /// Applies the Google Sans Code font family from Google Fonts to the
   /// given [textStyle].
   ///
@@ -4960,6 +5274,149 @@ class PartG {
       labelLarge: googleSansCode(textStyle: textTheme.labelLarge),
       labelMedium: googleSansCode(textStyle: textTheme.labelMedium),
       labelSmall: googleSansCode(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Google Sans Flex font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Google+Sans+Flex
+  static TextStyle googleSansFlex({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w100,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd85824e6d12b762cc9f7bd163f0f2c49a395b46bd92e61d188d0c760ad0f41f8',
+        122848,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '07e36cd077536f5d511605383269a482437625e5cc7323b7955bd26459648adf',
+        122880,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd4df55b0f90f7c594045eebad375f3d154856913e270d2df825a6c244e4302ac',
+        122832,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'ae5f2d6dc93bb5933f70717436d6a7447138ffc35e84ee0749bc66b804a78fe9',
+        122680,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '4f93da8420978944a1a878d9d015d499256fa8442f526ceb54f8c61c5a037b58',
+        122928,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '6e7dc00d1c25fb4db008d83eea084a69533fde0216b0b30d59eb1dd9d74c3623',
+        123096,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '2f37b9fb083959d26aa06789b571c347fb81e7bc42d0919b251af6579de8b69d',
+        123152,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '328f20cae7bf7c5a635ea40d8e0a62428f17f3a8ff5b6e0e8652bbe723e4eccb',
+        123324,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w900,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '0f04967dc9af689aca5a6e28506bbd8fa8ee91168214060f9b087deca3e362f2',
+        123376,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'GoogleSansFlex',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Google Sans Flex font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Google+Sans+Flex
+  static TextTheme googleSansFlexTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: googleSansFlex(textStyle: textTheme.displayLarge),
+      displayMedium: googleSansFlex(textStyle: textTheme.displayMedium),
+      displaySmall: googleSansFlex(textStyle: textTheme.displaySmall),
+      headlineLarge: googleSansFlex(textStyle: textTheme.headlineLarge),
+      headlineMedium: googleSansFlex(textStyle: textTheme.headlineMedium),
+      headlineSmall: googleSansFlex(textStyle: textTheme.headlineSmall),
+      titleLarge: googleSansFlex(textStyle: textTheme.titleLarge),
+      titleMedium: googleSansFlex(textStyle: textTheme.titleMedium),
+      titleSmall: googleSansFlex(textStyle: textTheme.titleSmall),
+      bodyLarge: googleSansFlex(textStyle: textTheme.bodyLarge),
+      bodyMedium: googleSansFlex(textStyle: textTheme.bodyMedium),
+      bodySmall: googleSansFlex(textStyle: textTheme.bodySmall),
+      labelLarge: googleSansFlex(textStyle: textTheme.labelLarge),
+      labelMedium: googleSansFlex(textStyle: textTheme.labelMedium),
+      labelSmall: googleSansFlex(textStyle: textTheme.labelSmall),
     );
   }
 
