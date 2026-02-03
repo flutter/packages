@@ -108,12 +108,20 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       default:
         throw UnimplementedError('Unimplemented version change type');
     }
+
+    await for (final entry in getPackagesToProcess()) {
+      if ((entry.package.parseCIConfig()?.isBatchRelease ?? false) &&
+          (entry.package.parsePubspec().version?.isPreRelease ?? false)) {
+        throw UsageException(
+          'Batch release does not support pre-release versions.',
+          usage,
+        );
+      }
+    }
   }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
-    String nextVersionString;
-
     _VersionIncrementType? versionChange = _versionChange;
 
     // If the change type is `minimal` determine what changes, if any, are
@@ -144,36 +152,20 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       }
     }
 
-    if (versionChange != null) {
-      final Version? updatedVersion = _updatePubspecVersion(
+    // For batch release, create a pending changelog entry instead of updating
+    // the files directly.
+    final CIConfig? ciConfig = package.parseCIConfig();
+    if (ciConfig?.isBatchRelease ?? false) {
+      return _createPendingChangelog(
         package,
-        versionChange,
+        versionChange: versionChange,
       );
-      if (updatedVersion == null) {
-        return PackageResult.fail(<String>[
-          'Could not determine current version.',
-        ]);
-      }
-      nextVersionString = updatedVersion.toString();
-      print('${indentation}Incremented version to $nextVersionString.');
-    } else {
-      nextVersionString = 'NEXT';
     }
 
-    final _ChangelogUpdateOutcome updateOutcome = _updateChangelog(
+    return _updateReleaseDirectly(
       package,
-      nextVersionString,
+      versionChange: versionChange,
     );
-    switch (updateOutcome) {
-      case _ChangelogUpdateOutcome.addedSection:
-        print('${indentation}Added a $nextVersionString section.');
-      case _ChangelogUpdateOutcome.updatedSection:
-        print('${indentation}Updated NEXT section.');
-      case _ChangelogUpdateOutcome.failed:
-        return PackageResult.fail(<String>['Could not update CHANGELOG.md.']);
-    }
-
-    return PackageResult.success();
   }
 
   _ChangelogUpdateOutcome _updateChangelog(
@@ -313,5 +305,80 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
           build: '${buildNumber + 1}',
         );
     }
+  }
+
+  Future<PackageResult> _updateReleaseDirectly(
+    RepositoryPackage package, {
+    _VersionIncrementType? versionChange,
+  }) async {
+    String nextVersionString;
+    if (versionChange != null) {
+      final Version? updatedVersion = _updatePubspecVersion(
+        package,
+        versionChange,
+      );
+      if (updatedVersion == null) {
+        return PackageResult.fail(<String>[
+          'Could not determine current version.',
+        ]);
+      }
+      nextVersionString = updatedVersion.toString();
+      print('${indentation}Incremented version to $nextVersionString.');
+    } else {
+      nextVersionString = 'NEXT';
+    }
+
+    final _ChangelogUpdateOutcome updateOutcome = _updateChangelog(
+      package,
+      nextVersionString,
+    );
+    switch (updateOutcome) {
+      case _ChangelogUpdateOutcome.addedSection:
+        print('${indentation}Added a $nextVersionString section.');
+      case _ChangelogUpdateOutcome.updatedSection:
+        print('${indentation}Updated NEXT section.');
+      case _ChangelogUpdateOutcome.failed:
+        return PackageResult.fail(<String>['Could not update CHANGELOG.md.']);
+    }
+
+    return PackageResult.success();
+  }
+
+  Future<PackageResult> _createPendingChangelog(
+    RepositoryPackage package, {
+    _VersionIncrementType? versionChange,
+  }) async {
+    final VersionChange type;
+    switch (versionChange) {
+      case _VersionIncrementType.minor:
+        type = VersionChange.minor;
+      case _VersionIncrementType.bugfix:
+        type = VersionChange.patch;
+      case _VersionIncrementType.build:
+        throw UnimplementedError(
+          'Build version changes should not happen in batch mode. Please file an issue if you see this.',
+        );
+      case null:
+        type = VersionChange.skip;
+    }
+
+    final String changelogEntry = getStringArg(_changelogFlag);
+    final content =
+        '''
+changelog: |
+${changelogEntry.split('\n').map((line) => '  - $line').join('\n')}
+version: ${type.name}
+''';
+
+    final Directory pendingDirectory = package.pendingChangelogsDirectory;
+    if (!pendingDirectory.existsSync()) {
+      pendingDirectory.createSync();
+    }
+
+    final filename = 'change_${DateTime.now().millisecondsSinceEpoch}.yaml';
+    final File file = pendingDirectory.childFile(filename);
+    file.writeAsStringSync(content);
+    print('${indentation}Created pending changelog entry: $filename');
+    return PackageResult.success();
   }
 }
