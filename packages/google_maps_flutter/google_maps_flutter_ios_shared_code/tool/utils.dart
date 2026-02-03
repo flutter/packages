@@ -4,6 +4,51 @@
 
 import 'dart:io';
 
+import 'package:path/path.dart' as p;
+
+import 'unshared_source_files.dart';
+
+bool isIntentionallyUnsharedSourceFile(String packageRelativePath) {
+  return intentionallyUnsharedSourceFiles.contains(packageRelativePath);
+}
+
+List<String> unexpectedUnsharedSourceFiles(
+  Directory packageRoot,
+  String packageName,
+  Directory sharedSourceRoot,
+) {
+  final List<File> codeFiles = packageRoot
+      .listSync(recursive: true)
+      .whereType<File>()
+      // Only report code files.
+      .where(
+        (file) =>
+            <String>['.swift', '.m', '.h', '.dart'].any(file.path.endsWith),
+      )
+      // Flutter-generated files aren't expected to be shared.
+      .where((file) => !file.path.contains('GeneratedPluginRegistrant'))
+      // Ignore intermediate file directories.
+      .where((file) => !_isInIntermediateDirectory(file.path))
+      .toList();
+
+  final unsharedFiles = <String>[];
+  for (final file in codeFiles) {
+    final String relativePath = p.relative(file.path, from: packageRoot.path);
+    if (isIntentionallyUnsharedSourceFile(relativePath)) {
+      continue;
+    }
+    final String sharedPath = p.join(
+      sharedSourceRoot.path,
+      sharedSourceRelativePathForPackagePath(relativePath),
+    );
+    final sharedFile = File(sharedPath);
+    if (!sharedFile.existsSync()) {
+      unsharedFiles.add(relativePath);
+    }
+  }
+  return unsharedFiles;
+}
+
 /// Adjusts a package-relative path to account for the package name being part of
 /// the directory structure for Swift packages.
 String sharedSourceRelativePathForPackagePath(String packageRelativePath) {
@@ -68,4 +113,15 @@ void updatePackageNameInImports(File file, String packageName) {
     (match) => '${match.group(1)}import $packageName${match.group(2)}',
   );
   file.writeAsStringSync(newContents);
+}
+
+bool _isInIntermediateDirectory(String path) {
+  return <String>[
+    '.dart_tool',
+    '.symlinks',
+    '.build',
+    'build',
+    'ephemeral',
+    'Pods',
+  ].any((dir) => path.contains('/$dir/'));
 }

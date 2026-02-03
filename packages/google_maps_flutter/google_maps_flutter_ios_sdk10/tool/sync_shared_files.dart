@@ -112,7 +112,8 @@ void _syncSharedFiles(
       print('  $file');
     }
     print(
-      'If these files should no longer be shared, remove them from the shared source.',
+      'If these files should no longer be shared, remove them from the shared source.\n'
+      'If they should no longer exist at all, remove them from all copies of the package.',
     );
   }
 }
@@ -151,32 +152,11 @@ void _reportUnsharedFiles(
   String packageName,
   Directory sharedSourceRoot,
 ) {
-  final List<File> codeFiles = packageRoot
-      .listSync(recursive: true)
-      .whereType<File>()
-      // Only report code files.
-      .where(
-        (file) =>
-            <String>['.swift', '.m', '.h', '.dart'].any(file.path.endsWith),
-      )
-      // Flutter-generated files aren't expected to be shared.
-      .where((file) => !file.path.contains('GeneratedPluginRegistrant'))
-      // Ignore intermediate file directories.
-      .where((file) => !_isInIntermediateDirectory(file.path))
-      .toList();
-
-  final unsharedFiles = <String>[];
-  for (final file in codeFiles) {
-    final String relativePath = p.relative(file.path, from: packageRoot.path);
-    final String sharedPath = p.join(
-      sharedSourceRoot.path,
-      sharedSourceRelativePathForPackagePath(relativePath),
-    );
-    final sharedFile = File(sharedPath);
-    if (!sharedFile.existsSync()) {
-      unsharedFiles.add(relativePath);
-    }
-  }
+  final List<String> unsharedFiles = unexpectedUnsharedSourceFiles(
+    packageRoot,
+    packageName,
+    sharedSourceRoot,
+  );
 
   if (unsharedFiles.isNotEmpty) {
     print('\nThe following code files are not shared with other packages:');
@@ -184,19 +164,8 @@ void _reportUnsharedFiles(
       print('  $file');
     }
     print(
-      'If this is not intentional, copy the relevant files to '
-      '$_sharedSourceRootName, then re-run this tool.',
+      'If this is intentional, add the .\n'
+      'Otherwise, copy the relevant files to $_sharedSourceRootName, then re-run this tool.',
     );
   }
-}
-
-bool _isInIntermediateDirectory(String path) {
-  return <String>[
-    '.dart_tool',
-    '.symlinks',
-    '.build',
-    'build',
-    'ephemeral',
-    'Pods',
-  ].any((dir) => path.contains('/$dir/'));
 }

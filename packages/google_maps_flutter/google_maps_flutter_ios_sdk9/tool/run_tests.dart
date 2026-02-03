@@ -73,6 +73,24 @@ Future<void> main(List<String> args) async {
     }
   }
 
+  print(
+    '\nChecking for unshared source files that are not in '
+    'tool/unshared_source_files.dart...',
+  );
+  final List<String> unsharedFiles = unexpectedUnsharedSourceFiles(
+    packageRoot,
+    packageName,
+    sharedSourceRoot,
+  );
+  if (unsharedFiles.isEmpty) {
+    print('  No unexpected unshared files.');
+  } else {
+    failed = true;
+    for (final file in unsharedFiles) {
+      print('  $file is not shared');
+    }
+  }
+
   if (failed) {
     print('''
 
