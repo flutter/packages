@@ -5,7 +5,7 @@
 @import google_maps_flutter_ios;
 @import XCTest;
 
-#import <OCMock/OCMock.h>
+#import "TestAssetProvider.h"
 
 @interface ExtractIconFromDataTests : XCTestCase
 - (UIImage *)createOnePixelImage;
@@ -14,15 +14,14 @@
 @implementation ExtractIconFromDataTests
 
 - (void)testExtractIconFromDataAssetAuto {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
-  OCMStub([mockRegistrar lookupKeyForAsset:@"fakeImageNameKey"]).andReturn(@"fakeAssetKey");
-  OCMStub(ClassMethod([mockImageClass imageNamed:@"fakeAssetKey"])).andReturn(testImage);
+  NSString *assetName = @"fakeImageName";
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   FGMPlatformBitmapAssetMap *bitmap =
-      [FGMPlatformBitmapAssetMap makeWithAssetName:@"fakeImageNameKey"
+      [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
                                      bitmapScaling:FGMPlatformMapBitmapScalingAuto
                                    imagePixelRatio:1
                                              width:nil
@@ -31,7 +30,7 @@
   CGFloat screenScale = 3.0;
 
   UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], assetProvider, screenScale);
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
@@ -40,16 +39,15 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoWithScale {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
 
-  OCMStub([mockRegistrar lookupKeyForAsset:@"fakeImageNameKey"]).andReturn(@"fakeAssetKey");
-  OCMStub(ClassMethod([mockImageClass imageNamed:@"fakeAssetKey"])).andReturn(testImage);
+  NSString *assetName = @"fakeImageName";
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   FGMPlatformBitmapAssetMap *bitmap =
-      [FGMPlatformBitmapAssetMap makeWithAssetName:@"fakeImageNameKey"
+      [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
                                      bitmapScaling:FGMPlatformMapBitmapScalingAuto
                                    imagePixelRatio:10
                                              width:nil
@@ -58,7 +56,7 @@
   CGFloat screenScale = 3.0;
 
   UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], assetProvider, screenScale);
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 10);
@@ -67,18 +65,17 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithSameAspectRatio {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
   XCTAssertEqual(testImage.scale, 1.0);
 
-  OCMStub([mockRegistrar lookupKeyForAsset:@"fakeImageNameKey"]).andReturn(@"fakeAssetKey");
-  OCMStub(ClassMethod([mockImageClass imageNamed:@"fakeAssetKey"])).andReturn(testImage);
+  NSString *assetName = @"fakeImageName";
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   const CGFloat width = 15.0;
   FGMPlatformBitmapAssetMap *bitmap =
-      [FGMPlatformBitmapAssetMap makeWithAssetName:@"fakeImageNameKey"
+      [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
                                      bitmapScaling:FGMPlatformMapBitmapScalingAuto
                                    imagePixelRatio:1
                                              width:@(width)
@@ -87,7 +84,7 @@
   CGFloat screenScale = 3.0;
 
   UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], assetProvider, screenScale);
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(testImage.scale, 1.0);
 
@@ -101,18 +98,17 @@
 }
 
 - (void)testExtractIconFromDataAssetAutoAndSizeWithDifferentAspectRatio {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
 
-  OCMStub([mockRegistrar lookupKeyForAsset:@"fakeImageNameKey"]).andReturn(@"fakeAssetKey");
-  OCMStub(ClassMethod([mockImageClass imageNamed:@"fakeAssetKey"])).andReturn(testImage);
+  NSString *assetName = @"fakeImageName";
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   const CGFloat width = 15.0;
   const CGFloat height = 45.0;
   FGMPlatformBitmapAssetMap *bitmap =
-      [FGMPlatformBitmapAssetMap makeWithAssetName:@"fakeImageNameKey"
+      [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
                                      bitmapScaling:FGMPlatformMapBitmapScalingAuto
                                    imagePixelRatio:1
                                              width:@(width)
@@ -121,7 +117,7 @@
   CGFloat screenScale = 3.0;
 
   UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], assetProvider, screenScale);
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, screenScale);
   XCTAssertEqual(resultImage.size.width, width);
@@ -129,16 +125,15 @@
 }
 
 - (void)testExtractIconFromDataAssetNoScaling {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
-  id mockImageClass = OCMClassMock([UIImage class]);
   UIImage *testImage = [self createOnePixelImage];
 
-  OCMStub([mockRegistrar lookupKeyForAsset:@"fakeImageNameKey"]).andReturn(@"fakeAssetKey");
-  OCMStub(ClassMethod([mockImageClass imageNamed:@"fakeAssetKey"])).andReturn(testImage);
+  NSString *assetName = @"fakeImageName";
+  TestAssetProvider *assetProvider = [[TestAssetProvider alloc] initWithImage:testImage
+                                                                 forAssetName:assetName
+                                                                      package:nil];
 
   FGMPlatformBitmapAssetMap *bitmap =
-      [FGMPlatformBitmapAssetMap makeWithAssetName:@"fakeImageNameKey"
+      [FGMPlatformBitmapAssetMap makeWithAssetName:assetName
                                      bitmapScaling:FGMPlatformMapBitmapScalingNone
                                    imagePixelRatio:1
                                              width:nil
@@ -147,7 +142,7 @@
   CGFloat screenScale = 3.0;
 
   UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], assetProvider, screenScale);
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
@@ -156,8 +151,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAuto {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
   NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
@@ -172,8 +165,8 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+  UIImage *resultImage = FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap],
+                                           [[TestAssetProvider alloc] init], screenScale);
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
@@ -182,8 +175,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAutoWithScaling {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
   NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
@@ -198,8 +189,8 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+  UIImage *resultImage = FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap],
+                                           [[TestAssetProvider alloc] init], screenScale);
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 10);
   XCTAssertEqual(resultImage.size.width, 0.1);
@@ -207,8 +198,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAutoAndSizeWithSameAspectRatio {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
   NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
@@ -225,8 +214,8 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+  UIImage *resultImage = FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap],
+                                           [[TestAssetProvider alloc] init], screenScale);
 
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(testImage.scale, 1.0);
@@ -241,8 +230,6 @@
 }
 
 - (void)testExtractIconFromDataBytesAutoAndSizeWithDifferentAspectRatio {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
   NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
@@ -259,8 +246,8 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+  UIImage *resultImage = FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap],
+                                           [[TestAssetProvider alloc] init], screenScale);
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, screenScale);
   XCTAssertEqual(resultImage.size.width, width);
@@ -268,8 +255,6 @@
 }
 
 - (void)testExtractIconFromDataBytesNoScaling {
-  NSObject<FlutterPluginRegistrar> *mockRegistrar =
-      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   UIImage *testImage = [self createOnePixelImage];
   NSData *pngData = UIImagePNGRepresentation(testImage);
   XCTAssertNotNil(pngData);
@@ -284,8 +269,8 @@
 
   CGFloat screenScale = 3.0;
 
-  UIImage *resultImage =
-      FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap], mockRegistrar, screenScale);
+  UIImage *resultImage = FGMIconFromBitmap([FGMPlatformBitmap makeWithBitmap:bitmap],
+                                           [[TestAssetProvider alloc] init], screenScale);
   XCTAssertNotNil(resultImage);
   XCTAssertEqual(resultImage.scale, 1.0);
   XCTAssertEqual(resultImage.size.width, 1.0);
