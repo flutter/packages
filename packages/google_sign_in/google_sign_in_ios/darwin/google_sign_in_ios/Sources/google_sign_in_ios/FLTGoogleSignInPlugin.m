@@ -101,7 +101,7 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 
 @interface FLTGoogleSignInPlugin ()
 #if TARGET_OS_IOS
-<FlutterSceneLifeCycleDelegate>
+    <FlutterSceneLifeCycleDelegate>
 #endif
 
 // The contents of GoogleService-Info.plist, if it exists.
