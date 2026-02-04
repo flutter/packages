@@ -1,3 +1,7 @@
+## 2.17.2
+
+* Standardizes Objective-C class names.
+
 ## 2.17.1
 
 * Refactors code for improved testability.
