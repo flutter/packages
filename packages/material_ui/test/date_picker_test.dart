@@ -2775,7 +2775,7 @@ void main() {
     expect(tester.getSize(find.byType(DatePickerDialog)).isEmpty, isTrue);
   });
 
-  group('DateInputCalendarDelegate', () {
+  group('DateInputGregorianCalendarDelegate', () {
     Widget buildApp() {
       return MaterialApp(
         home: Material(
@@ -2790,7 +2790,7 @@ void main() {
                     firstDate: firstDate,
                     lastDate: lastDate,
                     initialEntryMode: DatePickerEntryMode.input,
-                    calendarDelegate: const TestDateInputCalendarDelegate(),
+                    calendarDelegate: const TestDateInputGregorianCalendarDelegate(),
                   );
                 },
               );
@@ -2819,7 +2819,7 @@ void main() {
                       firstDate: firstDate,
                       lastDate: lastDate,
                       initialEntryMode: DatePickerEntryMode.input,
-                      calendarDelegate: const TestDateInputCalendarDelegate(),
+                      calendarDelegate: const TestDateInputGregorianCalendarDelegate(),
                     );
                   },
                 );
@@ -3011,8 +3011,8 @@ class TestCalendarDelegate extends GregorianCalendarDelegate {
   }
 }
 
-class TestDateInputCalendarDelegate extends DateInputCalendarDelegate {
-  const TestDateInputCalendarDelegate();
+class TestDateInputGregorianCalendarDelegate extends DateInputGregorianCalendarDelegate {
+  const TestDateInputGregorianCalendarDelegate();
 
   @override
   List<TextInputFormatter> get inputFormatters => <TextInputFormatter>[
