@@ -28,7 +28,7 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
   GoogleMapController? controller;
   PointOfInterest? _lastPoi;
 
-  final CameraPosition _kSydney = const CameraPosition(
+  final CameraPosition _kKolkata = const CameraPosition(
     target: LatLng(22.54222641620606, 88.34560669761545),
     zoom: 16.0,
   );
