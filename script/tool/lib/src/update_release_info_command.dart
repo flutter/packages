@@ -111,12 +111,13 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     }
 
     await for (final PackageEnumerationEntry entry in getPackagesToProcess()) {
+      final Version? version = entry.package.parsePubspec().version;
       if ((entry.package.parseCIConfig()?.isBatchRelease ?? false) &&
-          (entry.package.parsePubspec().version?.isPreRelease ?? false)) {
+          (version?.isPreRelease ?? false)) {
         throw UsageException(
           'This command does not support batch releases packages with pre-release versions.\n'
           'Offending package: ${entry.package.displayName}\n'
-          'Pre-release version: ${entry.package.parsePubspec().version}\n',
+          'Pre-release version: $version\n',
           usage,
         );
       }
