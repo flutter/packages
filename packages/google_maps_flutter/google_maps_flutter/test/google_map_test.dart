@@ -659,4 +659,37 @@ void main() {
 
     expect(map.tileOverlaySets.length, 1);
   });
+
+  testWidgets('onPoiTap callback is called', (WidgetTester tester) async {
+    PointOfInterest? tappedPoi;
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: GoogleMap(
+          initialCameraPosition: const CameraPosition(target: LatLng(0, 0)),
+          onPoiTap: (PointOfInterest poi) => tappedPoi = poi,
+        ),
+      ),
+    );
+
+    // 🔥 IMPORTANT: Wait for the map initialization (onMapCreated) to complete
+    await tester.pumpAndSettle();
+
+    final FakeGoogleMapsFlutterPlatform platform =
+        GoogleMapsFlutterPlatform.instance as FakeGoogleMapsFlutterPlatform;
+
+    final PointOfInterest poi = PointOfInterest(
+      const LatLng(10, 10),
+      'name',
+      'id',
+    );
+
+    // 🔥 Inject the event through the stream controller
+    platform.mapEventStreamController.add(MapPoiTapEvent(0, poi));
+
+    // 🔥 Wait for the stream event to be processed by the listener in _GoogleMapState
+    await tester.pump();
+
+    expect(tappedPoi, poi);
+  });
 }

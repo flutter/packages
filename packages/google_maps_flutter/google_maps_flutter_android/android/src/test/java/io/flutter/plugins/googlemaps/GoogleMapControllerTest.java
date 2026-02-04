@@ -317,4 +317,18 @@ public class GoogleMapControllerTest {
     Assert.assertEquals(cameraPosition.tilt, result.getTilt(), 1e-15);
     Assert.assertEquals(cameraPosition.bearing, result.getBearing(), 1e-15);
   }
+
+  @Test
+  public void onPoiClick_SendsMethodCall() {
+    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
+    
+    // controller is the instance of GoogleMapController in your test file
+    controller.onPoiClick(poi);
+
+    // Verify the messenger sent the message to the correct channel
+    verify(binaryMessenger).send(
+        eq("plugins.flutter.io/google_maps_0"), 
+        any(ByteBuffer.class), 
+        any(BinaryMessenger.BinaryReply.class));
+  }
 }

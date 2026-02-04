@@ -1264,7 +1264,6 @@ class HostMapMessageHandler implements MapsCallbackApi {
 
   @override
   void onPoiTap(PlatformPointOfInterest poi) {
-    print('🎯 DART HostMapMessageHandler.onPoiTap received: ${poi.name}');
     streamController.add(
       MapPoiTapEvent(
         mapId,

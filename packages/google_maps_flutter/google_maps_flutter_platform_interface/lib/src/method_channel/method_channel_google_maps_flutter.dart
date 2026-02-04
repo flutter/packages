@@ -81,7 +81,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
   @override
   Future<void> init(int mapId) {
-    print("TestPOI: Inside method Channel");
     final MethodChannel channel = ensureChannelInitialized(mapId);
     return channel.invokeMethod<void>('map#waitForMap');
   }
@@ -146,7 +145,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
   @override
   Stream<MapPoiTapEvent> onPoiTap({required int mapId}) {
-    print("TestPOI: inside onPoiTap stream");
     return _events(mapId).whereType<MapPoiTapEvent>();
   }
 
@@ -181,7 +179,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call, int mapId) async {
-    print("📞 Channel Message: ${call.method} for mapId: $mapId");
     switch (call.method) {
       case 'camera#onMoveStarted':
         _mapEventStreamController.add(CameraMoveStartedEvent(mapId));
@@ -219,7 +216,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           ),
         );
       case 'marker#onDragEnd':
-        print("💙 Flutter MethodChannel Received POI Tap!");
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(
           MarkerDragEndEvent(
