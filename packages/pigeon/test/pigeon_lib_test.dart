@@ -136,6 +136,14 @@ void main() {
     ]);
     expect(opts.kotlinOptions?.package, equals('com.google.foo'));
   });
+  
+  test('parse args - kotlin_use_generated_annotation', () {
+    final PigeonOptions opts = Pigeon.parseArgs(<String>[
+      '--kotlin_use_generated_annotation',
+    ]);
+    expect(opts.kotlinOptions!.useGeneratedAnnotation, isTrue);
+  });
+
 
   test('parse args - cpp_header_out', () {
     final PigeonOptions opts = Pigeon.parseArgs(<String>[
