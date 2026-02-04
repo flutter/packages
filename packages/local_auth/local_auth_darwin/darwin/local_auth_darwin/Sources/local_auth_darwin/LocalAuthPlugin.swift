@@ -43,7 +43,7 @@ public final class LocalAuthPlugin: NSObject, FlutterPlugin, LocalAuthApi, @unch
   public static func register(with registrar: FlutterPluginRegistrar) {
     let instance = LocalAuthPlugin(
       contextFactory: DefaultAuthContextFactory())
-      registrar.addApplicationDelegate(instance)
+    registrar.addApplicationDelegate(instance)
     // Workaround for https://github.com/flutter/flutter/issues/118103.
     #if os(iOS)
       let messenger = registrar.messenger()
