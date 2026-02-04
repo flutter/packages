@@ -319,7 +319,7 @@ String? findFamilyWithVariantAssetPath(
       : ['.ttf', '.otf'];
 
   // Iterate by file type priority, ensuring preferred formats are selected.
-  for (final String fileType in fileTypes) {
+  for (final fileType in fileTypes) {
     for (final String asset in manifestValues) {
       if (asset.endsWith(fileType)) {
         final String assetWithoutExtension = asset.substring(
