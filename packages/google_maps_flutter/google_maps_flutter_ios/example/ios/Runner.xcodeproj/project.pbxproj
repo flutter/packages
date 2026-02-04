@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,9 @@
 		2A6906C72D263DF4001F8426 /* GroundOverlayControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 2A6906C62D263DE7001F8426 /* GroundOverlayControllerTests.m */; };
 		2BDE99378062AE3E60B40021 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */; };
 		330909FF2D99B7A60077A751 /* MarkerControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 330909FE2D99B79B0077A751 /* MarkerControllerTests.m */; };
+		3390B45E2F33AFA60094DEB9 /* PartiallyMockedMapView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.m */; };
+		3390B45F2F33AFA60094DEB9 /* TestAssetProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = 3390B45A2F33AFA60094DEB9 /* TestAssetProvider.m */; };
+		3390B4602F33AFA60094DEB9 /* TestMapEventHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.m */; };
 		339355BA2EB3E50300EBF864 /* CircleControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 339355B92EB3E4F900EBF864 /* CircleControllerTests.m */; };
 		339355BD2EB3E56300EBF864 /* TileOverlayControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 339355BC2EB3E55600EBF864 /* TileOverlayControllerTests.m */; };
 		339355BF2EB535A600EBF864 /* HeatmapControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 339355BE2EB5359B00EBF864 /* HeatmapControllerTests.m */; };
@@ -67,6 +70,12 @@
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		2A6906C62D263DE7001F8426 /* GroundOverlayControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GroundOverlayControllerTests.m; sourceTree = "<group>"; };
 		330909FE2D99B79B0077A751 /* MarkerControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MarkerControllerTests.m; sourceTree = "<group>"; };
+		3390B4572F33AFA60094DEB9 /* PartiallyMockedMapView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PartiallyMockedMapView.h; sourceTree = "<group>"; };
+		3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PartiallyMockedMapView.m; sourceTree = "<group>"; };
+		3390B4592F33AFA60094DEB9 /* TestAssetProvider.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestAssetProvider.h; sourceTree = "<group>"; };
+		3390B45A2F33AFA60094DEB9 /* TestAssetProvider.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestAssetProvider.m; sourceTree = "<group>"; };
+		3390B45B2F33AFA60094DEB9 /* TestMapEventHandler.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = TestMapEventHandler.h; sourceTree = "<group>"; };
+		3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TestMapEventHandler.m; sourceTree = "<group>"; };
 		339355B82EB3E4D500EBF864 /* PolygonControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PolygonControllerTests.m; sourceTree = "<group>"; };
 		339355B92EB3E4F900EBF864 /* CircleControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CircleControllerTests.m; sourceTree = "<group>"; };
 		339355BC2EB3E55600EBF864 /* TileOverlayControllerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = TileOverlayControllerTests.m; sourceTree = "<group>"; };
@@ -103,10 +112,6 @@
 		F7151F22265D7EE50028CB91 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedRootGroup section */
-		33EAC5392F294BEB00CB15CE /* TestUtils */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = TestUtils; sourceTree = "<group>"; };
-/* End PBXFileSystemSynchronizedRootGroup section */
-
 /* Begin PBXFrameworksBuildPhase section */
 		97C146EB1CF9000F007C117D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -142,6 +147,19 @@
 				3ACE0AFE8D82CD5962486AFD /* Pods_RunnerTests.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3390B45D2F33AFA60094DEB9 /* TestUtils */ = {
+			isa = PBXGroup;
+			children = (
+				3390B4572F33AFA60094DEB9 /* PartiallyMockedMapView.h */,
+				3390B4582F33AFA60094DEB9 /* PartiallyMockedMapView.m */,
+				3390B4592F33AFA60094DEB9 /* TestAssetProvider.h */,
+				3390B45A2F33AFA60094DEB9 /* TestAssetProvider.m */,
+				3390B45B2F33AFA60094DEB9 /* TestMapEventHandler.h */,
+				3390B45C2F33AFA60094DEB9 /* TestMapEventHandler.m */,
+			);
+			path = TestUtils;
 			sourceTree = "<group>";
 		};
 		9740EEB11CF90186004384FC /* Flutter */ = {
@@ -209,7 +227,7 @@
 		F7151F11265D7ED70028CB91 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				33EAC5392F294BEB00CB15CE /* TestUtils */,
+				3390B45D2F33AFA60094DEB9 /* TestUtils */,
 				F269303A2BB389BF00BF17C4 /* assets */,
 				528F16822C62941000148160 /* ClusterManagersControllerTests.m */,
 				6851F3552835BC180032B7C8 /* ConversionsUtilsTests.m */,
@@ -279,9 +297,6 @@
 			);
 			dependencies = (
 				F7151F16265D7ED70028CB91 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				33EAC5392F294BEB00CB15CE /* TestUtils */,
 			);
 			name = RunnerTests;
 			productName = RunnerTests;
@@ -509,6 +524,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3390B45E2F33AFA60094DEB9 /* PartiallyMockedMapView.m in Sources */,
+				3390B45F2F33AFA60094DEB9 /* TestAssetProvider.m in Sources */,
+				3390B4602F33AFA60094DEB9 /* TestMapEventHandler.m in Sources */,
 				528F16832C62941000148160 /* ClusterManagersControllerTests.m in Sources */,
 				339355BA2EB3E50300EBF864 /* CircleControllerTests.m in Sources */,
 				339355BF2EB535A600EBF864 /* HeatmapControllerTests.m in Sources */,
