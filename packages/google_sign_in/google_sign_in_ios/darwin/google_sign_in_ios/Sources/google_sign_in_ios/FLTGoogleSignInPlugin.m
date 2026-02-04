@@ -115,6 +115,8 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc]
       initWithViewProvider:[[FSIDefaultViewProvider alloc] initWithRegistrar:registrar]];
   [registrar addApplicationDelegate:instance];
+  [registrar addSceneDelegate:instance];
+
   SetUpFSIGoogleSignInApi(registrar.messenger, instance);
 }
 
@@ -149,6 +151,14 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
 #pragma mark - <FlutterPlugin> protocol
 
 #if TARGET_OS_IOS
+
+- (void)scene:(UIScene *)scene openURLContexts:(NSSet<UIOpenURLContext *> *)URLContexts {
+  for (UIOpenURLContext *context in URLContexts) {
+    NSURL *url = context.URL;
+    [self.signIn handleURL:url];
+  }
+}
+
 - (BOOL)application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary *)options {
   return [self.signIn handleURL:url];
 }

@@ -10,6 +10,6 @@
 
 #import "messages.g.h"
 
-@interface FLTGoogleSignInPlugin : NSObject <FlutterPlugin, FSIGoogleSignInApi>
+@interface FLTGoogleSignInPlugin : NSObject <FlutterPlugin, FSIGoogleSignInApi, FlutterSceneLifeCycleDelegate>
 - (instancetype)init NS_UNAVAILABLE;
 @end
