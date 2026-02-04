@@ -9,7 +9,6 @@ import 'dart:math' as math show max;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:video_player_platform_interface/video_player_platform_interface.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
     as platform_interface;
 
@@ -137,10 +136,11 @@ VideoAudioTrack _convertPlatformAudioTrack(
   );
 }
 
-VideoPlayerPlatform? _lastVideoPlayerPlatform;
+platform_interface.VideoPlayerPlatform? _lastVideoPlayerPlatform;
 
-VideoPlayerPlatform get _videoPlayerPlatform {
-  final VideoPlayerPlatform currentInstance = VideoPlayerPlatform.instance;
+platform_interface.VideoPlayerPlatform get _videoPlayerPlatform {
+  final platform_interface.VideoPlayerPlatform currentInstance =
+      platform_interface.VideoPlayerPlatform.instance;
   if (_lastVideoPlayerPlatform != currentInstance) {
     // This will clear all open videos on the platform when a full restart is
     // performed.
@@ -162,7 +162,7 @@ class VideoPlayerValue {
     this.position = Duration.zero,
     this.caption = Caption.none,
     this.captionOffset = Duration.zero,
-    this.buffered = const <DurationRange>[],
+    this.buffered = const <platform_interface.DurationRange>[],
     this.isInitialized = false,
     this.isPlaying = false,
     this.isLooping = false,
@@ -210,7 +210,7 @@ class VideoPlayerValue {
   final Duration captionOffset;
 
   /// The currently buffered ranges.
-  final List<DurationRange> buffered;
+  final List<platform_interface.DurationRange> buffered;
 
   /// True if the video is playing. False if it's paused.
   final bool isPlaying;
@@ -276,7 +276,7 @@ class VideoPlayerValue {
     Duration? position,
     Caption? caption,
     Duration? captionOffset,
-    List<DurationRange>? buffered,
+    List<platform_interface.DurationRange>? buffered,
     bool? isInitialized,
     bool? isPlaying,
     bool? isLooping,
@@ -393,9 +393,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     this.package,
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
-       dataSourceType = DataSourceType.asset,
+       dataSourceType = platform_interface.DataSourceType.asset,
        formatHint = null,
        httpHeaders = const <String, String>{},
        super(const VideoPlayerValue(duration: Duration.zero));
@@ -420,9 +420,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
-       dataSourceType = DataSourceType.network,
+       dataSourceType = platform_interface.DataSourceType.network,
        package = null,
        super(const VideoPlayerValue(duration: Duration.zero));
 
@@ -441,10 +441,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSource = url.toString(),
-       dataSourceType = DataSourceType.network,
+       dataSourceType = platform_interface.DataSourceType.network,
        package = null,
        super(const VideoPlayerValue(duration: Duration.zero));
 
@@ -457,10 +457,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
     this.httpHeaders = const <String, String>{},
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : _closedCaptionFileFuture = closedCaptionFile,
        dataSource = Uri.file(file.absolute.path).toString(),
-       dataSourceType = DataSourceType.file,
+       dataSourceType = platform_interface.DataSourceType.file,
        package = null,
        formatHint = null,
        super(const VideoPlayerValue(duration: Duration.zero));
@@ -473,14 +473,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     Uri contentUri, {
     Future<ClosedCaptionFile>? closedCaptionFile,
     this.videoPlayerOptions,
-    this.viewType = VideoViewType.textureView,
+    this.viewType = platform_interface.VideoViewType.textureView,
   }) : assert(
          defaultTargetPlatform == TargetPlatform.android,
          'VideoPlayerController.contentUri is only supported on Android.',
        ),
        _closedCaptionFileFuture = closedCaptionFile,
        dataSource = contentUri.toString(),
-       dataSourceType = DataSourceType.contentUri,
+       dataSourceType = platform_interface.DataSourceType.contentUri,
        package = null,
        formatHint = null,
        httpHeaders = const <String, String>{},
@@ -497,14 +497,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
 
   /// **Android only**. Will override the platform's generic file format
   /// detection with whatever is set here.
-  final VideoFormat? formatHint;
+  final platform_interface.VideoFormat? formatHint;
 
   /// Describes the type of data source this [VideoPlayerController]
   /// is constructed with.
-  final DataSourceType dataSourceType;
+  final platform_interface.DataSourceType dataSourceType;
 
   /// Provide additional configuration options (optional). Like setting the audio mode to mix
-  final VideoPlayerOptions? videoPlayerOptions;
+  final platform_interface.VideoPlayerOptions? videoPlayerOptions;
 
   /// Only set for [asset] videos. The package that the asset was loaded from.
   final String? package;
@@ -512,7 +512,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// The requested display mode for the video.
   ///
   /// Platforms that do not support the request view type will ignore this.
-  final VideoViewType viewType;
+  final platform_interface.VideoViewType viewType;
 
   Future<ClosedCaptionFile>? _closedCaptionFileFuture;
   ClosedCaptionFile? _closedCaptionFile;
@@ -542,35 +542,35 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _lifeCycleObserver?.initialize();
     _creatingCompleter = Completer<void>();
 
-    final DataSource dataSourceDescription;
+    final platform_interface.DataSource dataSourceDescription;
     switch (dataSourceType) {
-      case DataSourceType.asset:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.asset,
+      case platform_interface.DataSourceType.asset:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.asset,
           asset: dataSource,
           package: package,
         );
-      case DataSourceType.network:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.network,
+      case platform_interface.DataSourceType.network:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.network,
           uri: dataSource,
           formatHint: formatHint,
           httpHeaders: httpHeaders,
         );
-      case DataSourceType.file:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.file,
+      case platform_interface.DataSourceType.file:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.file,
           uri: dataSource,
           httpHeaders: httpHeaders,
         );
-      case DataSourceType.contentUri:
-        dataSourceDescription = DataSource(
-          sourceType: DataSourceType.contentUri,
+      case platform_interface.DataSourceType.contentUri:
+        dataSourceDescription = platform_interface.DataSource(
+          sourceType: platform_interface.DataSourceType.contentUri,
           uri: dataSource,
         );
     }
 
-    final creationOptions = VideoCreationOptions(
+    final creationOptions = platform_interface.VideoCreationOptions(
       dataSource: dataSourceDescription,
       viewType: viewType,
     );
@@ -595,13 +595,13 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       );
     }
 
-    void eventListener(VideoEvent event) {
+    void eventListener(platform_interface.VideoEvent event) {
       if (_isDisposed) {
         return;
       }
 
       switch (event.eventType) {
-        case VideoEventType.initialized:
+        case platform_interface.VideoEventType.initialized:
           value = value.copyWith(
             duration: event.duration,
             size: event.size,
@@ -624,20 +624,20 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           _applyLooping();
           _applyVolume();
           _applyPlayPause();
-        case VideoEventType.completed:
+        case platform_interface.VideoEventType.completed:
           // In this case we need to stop _timer, set isPlaying=false, and
           // position=value.duration. Instead of setting the values directly,
           // we use pause() and seekTo() to ensure the platform stops playing
           // and seeks to the last frame of the video.
           pause().then((void pauseResult) => seekTo(value.duration));
           value = value.copyWith(isCompleted: true);
-        case VideoEventType.bufferingUpdate:
+        case platform_interface.VideoEventType.bufferingUpdate:
           value = value.copyWith(buffered: event.buffered);
-        case VideoEventType.bufferingStart:
+        case platform_interface.VideoEventType.bufferingStart:
           value = value.copyWith(isBuffering: true);
-        case VideoEventType.bufferingEnd:
+        case platform_interface.VideoEventType.bufferingEnd:
           value = value.copyWith(isBuffering: false);
-        case VideoEventType.isPlayingStateUpdate:
+        case platform_interface.VideoEventType.isPlayingStateUpdate:
           if (event.isPlaying ?? false) {
             value = value.copyWith(
               isPlaying: event.isPlaying,
@@ -646,7 +646,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
-        case VideoEventType.unknown:
+        case platform_interface.VideoEventType.unknown:
           break;
       }
     }
@@ -1072,7 +1072,7 @@ class _VideoPlayerState extends State<VideoPlayer> {
         : _VideoPlayerWithRotation(
             rotation: widget.controller.value.rotationCorrection,
             child: _videoPlayerPlatform.buildViewWithOptions(
-              VideoViewOptions(playerId: _playerId),
+              platform_interface.VideoViewOptions(playerId: _playerId),
             ),
           );
   }
@@ -1285,7 +1285,10 @@ class _VideoProgressIndicatorState extends State<VideoProgressIndicator> {
       final double maxBuffering = duration == 0.0
           ? 0.0
           : controller.value.buffered
-                    .map((DurationRange range) => range.end.inMilliseconds)
+                    .map(
+                      (platform_interface.DurationRange range) =>
+                          range.end.inMilliseconds,
+                    )
                     .fold(0, math.max) /
                 duration;
       progressIndicator = Stack(
