@@ -547,7 +547,7 @@ final class DefaultCamera: NSObject, Camera {
       completion(
         FlutterError(
           code: "IOError",
-          message: "Unable to start writing",
+          message: "AVAssetWriter failed to start writing",
           details: videoWriter?.error?.localizedDescription))
       return
     }

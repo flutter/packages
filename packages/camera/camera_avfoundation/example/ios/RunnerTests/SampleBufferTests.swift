@@ -531,7 +531,7 @@ final class CameraSampleBufferTests: XCTestCase {
       completion: { error in
         XCTAssertNotNil(error)
         XCTAssertEqual(error?.code, "IOError")
-        XCTAssertEqual(error?.message, "Unable to start writing")
+        XCTAssertEqual(error?.message, "AVAssetWriter failed to start writing")
         XCTAssertEqual(error?.details as? String, "Mock write error")
         XCTAssertFalse(camera.isRecording)
         expectation.fulfill()
