@@ -37,6 +37,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.TileOverlay;
@@ -50,11 +51,16 @@ import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import io.flutter.plugins.googlemaps.Messages.MapsApi;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
+import io.flutter.plugin.common.MethodChannel;
 import java.io.ByteArrayOutputStream;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
+import java.util.Map;
+
 
 /** Controller of a single GoogleMaps MapView instance. */
 class GoogleMapController
@@ -67,6 +73,7 @@ class GoogleMapController
         MapsApi,
         MapsInspectorApi,
         OnMapReadyCallback,
+        GoogleMap.OnPoiClickListener,
         PlatformView {
 
   private static final String TAG = "GoogleMapController";
@@ -200,6 +207,7 @@ class GoogleMapController
     this.googleMap.setIndoorEnabled(this.indoorEnabled);
     this.googleMap.setTrafficEnabled(this.trafficEnabled);
     this.googleMap.setBuildingsEnabled(this.buildingsEnabled);
+    this.googleMap.setOnPoiClickListener(this);
     installInvalidator();
     if (mapReadyResult != null) {
       mapReadyResult.success();
@@ -361,6 +369,20 @@ class GoogleMapController
   @Override
   public void onMarkerDragEnd(Marker marker) {
     markersController.onMarkerDragEnd(marker.getId(), marker.getPosition());
+  }
+
+  @Override
+  public void onPoiClick(PointOfInterest poi) {
+    Log.e("POI_TEST", "Native POI Click Detected: " + poi.name);
+    Log.e("POI_TEST", "Native Tap! Sending to Channel ID: " + id);
+    Messages.PlatformPointOfInterest platformPoi = 
+        new Messages.PlatformPointOfInterest.Builder()
+            .setPosition(Convert.latLngToPigeon(poi.latLng))
+            .setName(poi.name)
+            .setPlaceId(poi.placeId)
+            .build();
+    
+    flutterApi.onPoiTap(platformPoi, new NoOpVoidResult());
   }
 
   @Override

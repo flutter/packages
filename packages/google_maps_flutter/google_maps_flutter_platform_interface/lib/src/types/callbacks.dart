@@ -15,6 +15,9 @@ typedef CameraPositionCallback = void Function(CameraPosition position);
 /// Callback function taking a single argument.
 typedef ArgumentCallback<T> = void Function(T argument);
 
+/// Callback method for when a [PointOfInterest] is tapped.
+typedef POIClickCallback = void Function(PointOfInterest poi);
+
 /// Mutable collection of [ArgumentCallback] instances, itself an [ArgumentCallback].
 ///
 /// Additions and removals happening during a single [call] invocation do not

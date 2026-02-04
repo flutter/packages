@@ -81,6 +81,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
 
   @override
   Future<void> init(int mapId) {
+    print("TestPOI: Inside method Channel");
     final MethodChannel channel = ensureChannelInitialized(mapId);
     return channel.invokeMethod<void>('map#waitForMap');
   }
@@ -144,6 +145,12 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MapPoiTapEvent> onPoiTap({required int mapId}) {
+    print("TestPOI: inside onPoiTap stream");
+    return _events(mapId).whereType<MapPoiTapEvent>();
+  }
+
+  @override
   Stream<PolylineTapEvent> onPolylineTap({required int mapId}) {
     return _events(mapId).whereType<PolylineTapEvent>();
   }
@@ -174,6 +181,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }
 
   Future<dynamic> _handleMethodCall(MethodCall call, int mapId) async {
+    print("📞 Channel Message: ${call.method} for mapId: $mapId");
     switch (call.method) {
       case 'camera#onMoveStarted':
         _mapEventStreamController.add(CameraMoveStartedEvent(mapId));
@@ -211,6 +219,7 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           ),
         );
       case 'marker#onDragEnd':
+        print("💙 Flutter MethodChannel Received POI Tap!");
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(
           MarkerDragEndEvent(
@@ -219,6 +228,21 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
             MarkerId(arguments['markerId']! as String),
           ),
         );
+
+      case 'map#onPoiTap':
+        final Map<String, Object?> arguments = _getArgumentDictionary(call);
+        _mapEventStreamController.add(
+          MapPoiTapEvent(
+            mapId,
+            PointOfInterest(
+              LatLng.fromJson(arguments['position'])!,
+              arguments['name']! as String,
+              arguments['placeId']! as String,
+            ),
+          ),
+        );
+        break;
+
       case 'infoWindow#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(

@@ -128,6 +128,12 @@ class MarkerDragEndEvent extends _PositionedMapEvent<MarkerId> {
   MarkerDragEndEvent(super.mapId, super.position, super.markerId);
 }
 
+/// An event fired when a [PointOfInterest] is tapped.
+class MapPoiTapEvent extends MapEvent<PointOfInterest> {
+  /// Creates a [MapPoiTapEvent].
+  MapPoiTapEvent(super.mapId, super.value);
+}
+
 /// An event fired when a [Polyline] is tapped.
 class PolylineTapEvent extends MapEvent<PolylineId> {
   /// Build an PolylineTap Event triggered from the map represented by `mapId`.
