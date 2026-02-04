@@ -300,7 +300,9 @@ class AnalyzeCommand extends PackageLoopingCommand {
 
     if (getBoolArg(_downgradeFlag)) {
       if (!await _runPubCommand(package, 'downgrade')) {
-        return PackageResult.fail(<String>['Unable to downgrade dependencies']);
+        return PackageResult.fail(<String>[
+          'Unable to resolve downgraded dependencies',
+        ]);
       }
     }
 

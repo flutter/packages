@@ -14,7 +14,6 @@ Enables Google Sign-In in Flutter apps.
   s.source           = { :http => 'https://github.com/flutter/packages/tree/main/packages/google_sign_in/google_sign_in_ios' }
   s.source_files = 'google_sign_in_ios/Sources/google_sign_in_ios/**/*.{h,m}'
   s.public_header_files = 'google_sign_in_ios/Sources/google_sign_in_ios/include/**/*.h'
-  s.module_map = 'google_sign_in_ios/Sources/google_sign_in_ios/include/FLTGoogleSignInPlugin.modulemap'
 
   # GTMSessionFetcher is a GoogleSignIn transitive dependency, added here as a
   # direct dependency to ensure a version which defines modules.

@@ -179,6 +179,40 @@ class AVFoundationVideoPlayer extends VideoPlayerPlatform {
   }
 
   @override
+  Future<List<VideoAudioTrack>> getAudioTracks(int playerId) async {
+    final List<MediaSelectionAudioTrackData> nativeData = await _playerWith(
+      id: playerId,
+    ).getAudioTracks();
+    final tracks = <VideoAudioTrack>[];
+
+    for (final track in nativeData) {
+      final String? label = track.commonMetadataTitle ?? track.displayName;
+      tracks.add(
+        VideoAudioTrack(
+          id: track.index.toString(),
+          label: label,
+          language: track.languageCode,
+          isSelected: track.isSelected,
+        ),
+      );
+    }
+
+    return tracks;
+  }
+
+  @override
+  Future<void> selectAudioTrack(int playerId, String trackId) {
+    final int trackIndex = int.parse(trackId);
+    return _playerWith(id: playerId).selectAudioTrack(trackIndex);
+  }
+
+  @override
+  bool isAudioTrackSupportAvailable() {
+    // iOS/macOS with AVFoundation supports audio track selection
+    return true;
+  }
+
+  @override
   Widget buildView(int playerId) {
     return buildViewWithOptions(VideoViewOptions(playerId: playerId));
   }
@@ -248,6 +282,12 @@ class _PlayerInstance {
   Future<Duration> getPosition() async {
     return Duration(milliseconds: await _api.getPosition());
   }
+
+  Future<List<MediaSelectionAudioTrackData>> getAudioTracks() =>
+      _api.getAudioTracks();
+
+  Future<void> selectAudioTrack(int trackIndex) =>
+      _api.selectAudioTrack(trackIndex);
 
   Stream<VideoEvent> get videoEvents {
     _eventSubscription ??= _eventChannel.receiveBroadcastStream().listen(

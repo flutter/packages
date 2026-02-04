@@ -18,7 +18,9 @@
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		F76AC1A52666D0540040C8BC /* GoogleSignInTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F76AC1A42666D0540040C8BC /* GoogleSignInTests.m */; };
+		C2FB9CBA01DB0A2DE5F31E12 /* libPods-Runner.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0263E28FA425D1CE928BDE15 /* libPods-Runner.a */; };
+		C56D3B06A42F3B35C1F47A43 /* libPods-RunnerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 18AD6475292B9C45B529DDC9 /* libPods-RunnerTests.a */; };
+		F76AC1A52666D0540040C8BC /* GoogleSignInTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F76AC1A42666D0540040C8BC /* GoogleSignInTests.swift */; };
 		F76AC1B32666D0610040C8BC /* GoogleSignInUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = F76AC1B22666D0610040C8BC /* GoogleSignInUITests.m */; };
 /* End PBXBuildFile section */
 
@@ -75,7 +77,7 @@
 		997F740A65A2CA90D21D7589 /* libPods-Runner.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Runner.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B4499399B9FE32E9AA163B4B /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		F76AC1A22666D0540040C8BC /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		F76AC1A42666D0540040C8BC /* GoogleSignInTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = GoogleSignInTests.m; path = ../../darwin/Tests/GoogleSignInTests.m; sourceTree = SOURCE_ROOT; };
+		F76AC1A42666D0540040C8BC /* GoogleSignInTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = GoogleSignInTests.swift; path = ../../darwin/Tests/GoogleSignInTests.swift; sourceTree = SOURCE_ROOT; };
 		F76AC1A62666D0540040C8BC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F76AC1B02666D0610040C8BC /* RunnerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F76AC1B22666D0610040C8BC /* GoogleSignInUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GoogleSignInUITests.m; sourceTree = "<group>"; };
@@ -195,7 +197,7 @@
 			isa = PBXGroup;
 			children = (
 				7A303C2D1E89D76400B1F19E /* GoogleService-Info.plist */,
-				F76AC1A42666D0540040C8BC /* GoogleSignInTests.m */,
+				F76AC1A42666D0540040C8BC /* GoogleSignInTests.swift */,
 				F76AC1A62666D0540040C8BC /* Info.plist */,
 			);
 			path = RunnerTests;
@@ -443,7 +445,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F76AC1A52666D0540040C8BC /* GoogleSignInTests.m in Sources */,
+				F76AC1A52666D0540040C8BC /* GoogleSignInTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -658,6 +660,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
 			name = Debug;
@@ -676,6 +679,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
 			name = Release;

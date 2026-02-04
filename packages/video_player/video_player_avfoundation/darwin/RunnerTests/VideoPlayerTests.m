@@ -6,13 +6,6 @@
 @import video_player_avfoundation;
 @import XCTest;
 
-#import <OCMock/OCMock.h>
-#import <video_player_avfoundation/AVAssetTrackUtils.h>
-#import <video_player_avfoundation/FVPEventBridge.h>
-#import <video_player_avfoundation/FVPNativeVideoViewFactory.h>
-#import <video_player_avfoundation/FVPTextureBasedVideoPlayer_Test.h>
-#import <video_player_avfoundation/FVPVideoPlayerPlugin_Test.h>
-
 #if TARGET_OS_IOS
 @interface FakeAVAssetTrack : AVAssetTrack
 @property(readonly, nonatomic) CGAffineTransform preferredTransform;
@@ -56,13 +49,15 @@
 @interface VideoPlayerTests : XCTestCase
 @end
 
-@interface StubAVPlayer : AVPlayer
+/// An AVPlayer subclass that records method call parameters for inspection.
+// TODO(stuartmorgan): Replace with a protocol like the other classes.
+@interface InspectableAVPlayer : AVPlayer
 @property(readonly, nonatomic) NSNumber *beforeTolerance;
 @property(readonly, nonatomic) NSNumber *afterTolerance;
 @property(readonly, assign) CMTime lastSeekTime;
 @end
 
-@implementation StubAVPlayer
+@implementation InspectableAVPlayer
 
 - (void)seekToTime:(CMTime)time
       toleranceBefore:(CMTime)toleranceBefore
@@ -79,33 +74,229 @@
 
 @end
 
-// Convience to avoid having two copies of the StubViewProvider code.
-#if TARGET_OS_OSX
-#define PROVIDED_VIEW_TYPE NSView
-#else
-#define PROVIDED_VIEW_TYPE UIView
-#endif
+@interface TestAsset : NSObject <FVPAVAsset>
+@property(nonatomic, readonly) CMTime duration;
+@property(nonatomic, nullable, readonly) NSArray<AVAssetTrack *> *tracks;
 
-@interface StubViewProvider : NSObject <FVPViewProvider>
-- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view;
-@property(nonatomic, nullable) PROVIDED_VIEW_TYPE *view;
+@property(nonatomic, assign) BOOL loadedTracksAsynchronously;
 @end
 
-@implementation StubViewProvider
-- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view {
+@implementation TestAsset
+- (instancetype)init {
+  return [self initWithDuration:kCMTimeZero tracks:nil];
+}
+
+- (instancetype)initWithDuration:(CMTime)duration
+                          tracks:(nullable NSArray<AVAssetTrack *> *)tracks {
   self = [super init];
-  _view = view;
+  _duration = duration;
+  _tracks = tracks;
+  return self;
+}
+
+- (AVKeyValueStatus)statusOfValueForKey:(NSString *)key
+                                  error:(NSError *_Nullable *_Nullable)outError {
+  return self.tracks == nil ? AVKeyValueStatusLoading : AVKeyValueStatusLoaded;
+}
+
+- (void)loadValuesAsynchronouslyForKeys:(NSArray<NSString *> *)keys
+                      completionHandler:(nullable void (^NS_SWIFT_SENDABLE)(void))handler {
+  if (handler) {
+    handler();
+  }
+}
+
+- (void)loadTracksWithMediaType:(AVMediaType)mediaType
+              completionHandler:(void (^NS_SWIFT_SENDABLE)(NSArray<AVAssetTrack *> *_Nullable,
+                                                           NSError *_Nullable))completionHandler
+    API_AVAILABLE(macos(12.0), ios(15.0)) {
+  self.loadedTracksAsynchronously = YES;
+  completionHandler(_tracks, nil);
+}
+
+- (NSArray<AVAssetTrack *> *)tracksWithMediaType:(AVMediaType)mediaType
+    API_DEPRECATED("Use loadTracksWithMediaType:completionHandler: instead", macos(10.7, 15.0),
+                   ios(4.0, 18.0)) {
+  return _tracks ?: @[];
+}
+@end
+
+@interface StubPlayerItem : NSObject <FVPAVPlayerItem>
+@property(nonatomic, readonly) NSObject<FVPAVAsset> *asset;
+@property(nonatomic, copy, nullable) AVVideoComposition *videoComposition;
+@end
+
+@implementation StubPlayerItem
+- (instancetype)init {
+  return [self initWithAsset:[[TestAsset alloc] init]];
+}
+
+- (instancetype)initWithAsset:(NSObject<FVPAVAsset> *)asset {
+  self = [super init];
+  _asset = asset;
   return self;
 }
 @end
 
+@interface StubBinaryMessenger : NSObject <FlutterBinaryMessenger>
+@end
+
+@implementation StubBinaryMessenger
+
+- (void)sendOnChannel:(NSString *)channel message:(NSData *_Nullable)message {
+}
+- (void)sendOnChannel:(NSString *)channel
+              message:(NSData *_Nullable)message
+          binaryReply:(FlutterBinaryReply _Nullable)callback {
+}
+- (FlutterBinaryMessengerConnection)setMessageHandlerOnChannel:(NSString *)channel
+                                          binaryMessageHandler:
+                                              (FlutterBinaryMessageHandler _Nullable)handler {
+  return 0;
+}
+- (void)cleanUpConnection:(FlutterBinaryMessengerConnection)connection {
+}
+@end
+
+@interface TestTextureRegistry : NSObject <FlutterTextureRegistry>
+@property(nonatomic, assign) BOOL registeredTexture;
+@property(nonatomic, assign) BOOL unregisteredTexture;
+@property(nonatomic, assign) int textureFrameAvailableCount;
+@end
+
+@implementation TestTextureRegistry
+- (int64_t)registerTexture:(NSObject<FlutterTexture> *)texture {
+  self.registeredTexture = true;
+  return 1;
+}
+
+- (void)unregisterTexture:(int64_t)textureId {
+  if (textureId != 1) {
+    XCTFail(@"Unregistering texture with wrong ID");
+  }
+  self.unregisteredTexture = true;
+}
+
+- (void)textureFrameAvailable:(int64_t)textureId {
+  if (textureId != 1) {
+    XCTFail(@"Texture frame available with wrong ID");
+  }
+  self.textureFrameAvailableCount++;
+}
+@end
+
+@interface StubViewProvider : NSObject <FVPViewProvider>
+#if TARGET_OS_IOS
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+@property(nonatomic, nullable) UIViewController *viewController;
+#else
+- (instancetype)initWithView:(NSView *)view;
+@property(nonatomic, nullable) NSView *view;
+#endif
+@end
+
+@implementation StubViewProvider
+#if TARGET_OS_IOS
+- (instancetype)initWithViewController:(UIViewController *)viewController {
+  self = [super init];
+  _viewController = viewController;
+  return self;
+}
+#else
+- (instancetype)initWithView:(NSView *)view {
+  self = [super init];
+  _view = view;
+  return self;
+}
+#endif
+@end
+
+@interface StubAssetProvider : NSObject <FVPAssetProvider>
+@end
+
+@implementation StubAssetProvider
+- (NSString *)lookupKeyForAsset:(NSString *)asset {
+  return asset;
+}
+
+- (NSString *)lookupKeyForAsset:(NSString *)asset fromPackage:(NSString *)package {
+  return asset;
+}
+@end
+
+@interface TestPixelBufferSource : NSObject <FVPPixelBufferSource>
+@property(nonatomic) CVPixelBufferRef pixelBuffer;
+@property(nonatomic, readonly) AVPlayerItemVideoOutput *videoOutput;
+@end
+
+@implementation TestPixelBufferSource
+- (instancetype)init {
+  self = [super init];
+  // Create an arbitrary video output to for attaching to actual AVFoundation
+  // objects. The attributes don't matter since this isn't used to implement
+  // the methods called by the plugin.
+  _videoOutput = [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:@{
+    (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
+    (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
+  }];
+  return self;
+}
+
+- (void)dealloc {
+  CVPixelBufferRelease(_pixelBuffer);
+}
+
+- (void)setPixelBuffer:(CVPixelBufferRef)pixelBuffer {
+  CVPixelBufferRelease(_pixelBuffer);
+  _pixelBuffer = CVPixelBufferRetain(pixelBuffer);
+}
+
+- (CMTime)itemTimeForHostTime:(CFTimeInterval)hostTimeInSeconds {
+  return CMTimeMakeWithSeconds(hostTimeInSeconds, 1000);
+}
+
+- (BOOL)hasNewPixelBufferForItemTime:(CMTime)itemTime {
+  return _pixelBuffer != NULL;
+}
+
+- (nullable CVPixelBufferRef)copyPixelBufferForItemTime:(CMTime)itemTime
+                                     itemTimeForDisplay:(nullable CMTime *)outItemTimeForDisplay {
+  CVPixelBufferRef pixelBuffer = _pixelBuffer;
+  // Ownership is transferred to the caller.
+  _pixelBuffer = NULL;
+  return pixelBuffer;
+}
+@end
+
+#if TARGET_OS_IOS
+@interface TestAudioSession : NSObject <FVPAVAudioSession>
+@property(nonatomic, readwrite) AVAudioSessionCategory category;
+@property(nonatomic, assign) AVAudioSessionCategoryOptions categoryOptions;
+
+/// Tracks whether setCategory:withOptions:error: has been called.
+@property(nonatomic, assign) BOOL setCategoryCalled;
+@end
+
+@implementation TestAudioSession
+- (BOOL)setCategory:(AVAudioSessionCategory)category
+        withOptions:(AVAudioSessionCategoryOptions)options
+              error:(NSError **)outError {
+  self.setCategoryCalled = YES;
+  self.category = category;
+  self.categoryOptions = options;
+  return YES;
+}
+@end
+#endif
+
 @interface StubFVPAVFactory : NSObject <FVPAVFactory>
 
-@property(nonatomic, strong) StubAVPlayer *stubAVPlayer;
-@property(nonatomic, strong) AVPlayerItemVideoOutput *output;
-
-- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer
-                        output:(AVPlayerItemVideoOutput *)output;
+@property(nonatomic, strong) AVPlayer *player;
+@property(nonatomic, strong) NSObject<FVPAVPlayerItem> *playerItem;
+@property(nonatomic, strong) NSObject<FVPPixelBufferSource> *pixelBufferSource;
+#if TARGET_OS_IOS
+@property(nonatomic, strong) NSObject<FVPAVAudioSession> *audioSession;
+#endif
 
 @end
 
@@ -113,22 +304,47 @@
 
 // Creates a factory that returns the given items. Any items that are nil will instead return
 // a real object just as the non-test implementation would.
-- (instancetype)initWithPlayer:(StubAVPlayer *)stubAVPlayer
-                        output:(AVPlayerItemVideoOutput *)output {
+- (instancetype)initWithPlayer:(nullable AVPlayer *)player
+                    playerItem:(nullable NSObject<FVPAVPlayerItem> *)playerItem
+             pixelBufferSource:(nullable NSObject<FVPPixelBufferSource> *)pixelBufferSource {
   self = [super init];
-  _stubAVPlayer = stubAVPlayer;
-  _output = output;
+  // Create a player with a dummy item so that the player is valid, since most tests won't work
+  // without a valid player.
+  // TODO(stuartmorgan): Introduce a protocol for AVPlayer and use a stub here instead.
+  NSURL *dummyURL = [NSURL URLWithString:@""];
+  _player =
+      player ?: [[AVPlayer alloc] initWithPlayerItem:[AVPlayerItem playerItemWithURL:dummyURL]];
+  _playerItem = playerItem ?: [[StubPlayerItem alloc] init];
+  _pixelBufferSource = pixelBufferSource;
+#if TARGET_OS_IOS
+  _audioSession = [[TestAudioSession alloc] init];
+#endif
   return self;
 }
 
-- (AVPlayer *)playerWithPlayerItem:(AVPlayerItem *)playerItem {
-  return _stubAVPlayer ?: [AVPlayer playerWithPlayerItem:playerItem];
+- (NSObject<FVPAVAsset> *)URLAssetWithURL:(NSURL *)URL
+                                  options:(nullable NSDictionary<NSString *, id> *)options {
+  return self.playerItem.asset;
 }
 
-- (AVPlayerItemVideoOutput *)videoOutputWithPixelBufferAttributes:
-    (NSDictionary<NSString *, id> *)attributes {
-  return _output ?: [[AVPlayerItemVideoOutput alloc] initWithPixelBufferAttributes:attributes];
+- (NSObject<FVPAVPlayerItem> *)playerItemWithAsset:(NSObject<FVPAVAsset> *)asset {
+  return self.playerItem;
 }
+
+- (AVPlayer *)playerWithPlayerItem:(NSObject<FVPAVPlayerItem> *)playerItem {
+  return self.player;
+}
+
+- (NSObject<FVPPixelBufferSource> *)videoOutputWithPixelBufferAttributes:
+    (NSDictionary<NSString *, id> *)attributes {
+  return self.pixelBufferSource ?: [[TestPixelBufferSource alloc] init];
+}
+
+#if TARGET_OS_IOS
+- (NSObject<FVPAVAudioSession> *)sharedAudioSession {
+  return self.audioSession;
+}
+#endif
 
 @end
 
@@ -157,8 +373,8 @@
   _displayLink = [[StubFVPDisplayLink alloc] init];
   return self;
 }
-- (NSObject<FVPDisplayLink> *)displayLinkWithRegistrar:(id<FlutterPluginRegistrar>)registrar
-                                              callback:(void (^)(void))callback {
+- (NSObject<FVPDisplayLink> *)displayLinkWithViewProvider:(NSObject<FVPViewProvider> *)viewProvider
+                                                 callback:(void (^)(void))callback {
   self.fireDisplayLink = callback;
   return self.displayLink;
 }
@@ -227,15 +443,23 @@
 #if TARGET_OS_OSX
   NSView *view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
   view.wantsLayer = true;
+  id<FVPViewProvider> viewProvider = [[StubViewProvider alloc] initWithView:view];
 #else
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+  UIViewController *viewController = [[UIViewController alloc] init];
+  viewController.view = view;
+  id<FVPViewProvider> viewProvider =
+      [[StubViewProvider alloc] initWithViewController:viewController];
 #endif
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
-      displayLinkFactory:nil
-            viewProvider:[[StubViewProvider alloc] initWithView:view]
-               registrar:registrar];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                                                    playerItem:nil
+                                                                             pixelBufferSource:nil]
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:viewProvider
+                                        assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
@@ -258,17 +482,17 @@
 }
 
 - (void)testPlayerForPlatformViewDoesNotRegisterTexture {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
+  TestTextureRegistry *textureRegistry = [[TestTextureRegistry alloc] init];
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
-  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
-      displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
-               registrar:registrar];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                                                    playerItem:nil
+                                                                             pixelBufferSource:nil]
+                                   displayLinkFactory:stubDisplayLinkFactory
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:textureRegistry
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *initializationError;
   [videoPlayerPlugin initialize:&initializationError];
@@ -279,23 +503,23 @@
   FlutterError *createError;
   [videoPlayerPlugin createPlatformViewPlayerWithOptions:create error:&createError];
 
-  OCMVerify(never(), [mockTextureRegistry registerTexture:[OCMArg any]]);
+  XCTAssertFalse(textureRegistry.registeredTexture);
 }
 
 - (void)testSeekToWhilePausedStartsDisplayLinkTemporarily {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                       playerItem:nil
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
-               registrar:registrar];
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
+         textureRegistry:[[TestTextureRegistry alloc] init]
+            viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *initializationError;
   [videoPlayerPlugin initialize:&initializationError];
@@ -324,14 +548,10 @@
   XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andReturn(YES);
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
-      .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+  mockVideoOutput.pixelBuffer = bufferRef;
+  CVPixelBufferRelease(bufferRef);
   // Simulate a callback from the engine to request a new frame.
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
@@ -340,19 +560,17 @@
 }
 
 - (void)testInitStartsDisplayLinkTemporarily {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
-  StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
-                                                           output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                       playerItem:nil
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
-               registrar:registrar];
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
+         textureRegistry:[[TestTextureRegistry alloc] init]
+            viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *initializationError;
   [videoPlayerPlugin initialize:&initializationError];
@@ -368,14 +586,10 @@
   XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andReturn(YES);
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
-      .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+  mockVideoOutput.pixelBuffer = bufferRef;
+  CVPixelBufferRelease(bufferRef);
   // Simulate a callback from the engine to request a new frame.
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
@@ -386,19 +600,19 @@
 }
 
 - (void)testSeekToWhilePlayingDoesNotStopDisplayLink {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                       playerItem:nil
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
-               registrar:registrar];
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
+         textureRegistry:[[TestTextureRegistry alloc] init]
+            viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *initializationError;
   [videoPlayerPlugin initialize:&initializationError];
@@ -425,14 +639,10 @@
   XCTAssertTrue(stubDisplayLinkFactory.displayLink.running);
 
   // Simulate a buffer being available.
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andReturn(YES);
   CVPixelBufferRef bufferRef;
   CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero itemTimeForDisplay:NULL])
-      .ignoringNonObjectArgs()
-      .andReturn(bufferRef);
+  mockVideoOutput.pixelBuffer = bufferRef;
+  CVPixelBufferRelease(bufferRef);
   // Simulate a callback from the engine to request a new frame.
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
@@ -441,19 +651,18 @@
 }
 
 - (void)testPauseWhileWaitingForFrameDoesNotStopDisplayLink {
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
   // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
   // the player via the plugin instead of directly to include that logic in the test.
-  FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
-      displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
-               registrar:registrar];
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                                                    playerItem:nil
+                                                                             pixelBufferSource:nil]
+                                   displayLinkFactory:stubDisplayLinkFactory
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *initializationError;
   [videoPlayerPlugin initialize:&initializationError];
@@ -477,9 +686,15 @@
 }
 
 - (void)testDeregistersFromPlayer {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin =
-      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                                                    playerItem:nil
+                                                                             pixelBufferSource:nil]
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
@@ -494,21 +709,21 @@
   XCTAssertNotNil(identifiers);
   FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
   XCTAssertNotNil(player);
-  AVPlayer *avPlayer = player.player;
-
-  [self keyValueObservingExpectationForObject:avPlayer keyPath:@"currentItem" expectedValue:nil];
 
   [player disposeWithError:&error];
   XCTAssertEqual(videoPlayerPlugin.playersByIdentifier.count, 0);
   XCTAssertNil(error);
-
-  [self waitForExpectationsWithTimeout:30.0 handler:nil];
 }
 
 - (void)testBufferingStateFromPlayer {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
-      (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:realObjectFactory
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
@@ -599,14 +814,15 @@
 #endif
 
 - (void)testSeekToleranceWhenNotSeekingToEnd {
-  StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
-  StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
-                                                                      output:nil];
+  InspectableAVPlayer *inspectableAVPlayer = [[InspectableAVPlayer alloc] init];
+  StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:inspectableAVPlayer
+                                                                  playerItem:nil
+                                                           pixelBufferSource:nil];
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[[StubPlayerItem alloc] init]
                                        avFactory:stubAVFactory
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
-  NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  NSObject<FVPVideoEventListener> *listener = [[StubEventListener alloc] init];
   player.eventListener = listener;
 
   XCTestExpectation *seekExpectation =
@@ -617,19 +833,20 @@
       }];
 
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
-  XCTAssertEqual([stubAVPlayer.beforeTolerance intValue], 0);
-  XCTAssertEqual([stubAVPlayer.afterTolerance intValue], 0);
+  XCTAssertEqual([inspectableAVPlayer.beforeTolerance intValue], 0);
+  XCTAssertEqual([inspectableAVPlayer.afterTolerance intValue], 0);
 }
 
 - (void)testSeekToleranceWhenSeekingToEnd {
-  StubAVPlayer *stubAVPlayer = [[StubAVPlayer alloc] init];
-  StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
-                                                                      output:nil];
+  InspectableAVPlayer *inspectableAVPlayer = [[InspectableAVPlayer alloc] init];
+  StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:inspectableAVPlayer
+                                                                  playerItem:nil
+                                                           pixelBufferSource:nil];
   FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[[StubPlayerItem alloc] init]
                                        avFactory:stubAVFactory
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
-  NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  NSObject<FVPVideoEventListener> *listener = [[StubEventListener alloc] init];
   player.eventListener = listener;
 
   XCTestExpectation *seekExpectation =
@@ -640,8 +857,8 @@
         [seekExpectation fulfill];
       }];
   [self waitForExpectationsWithTimeout:30.0 handler:nil];
-  XCTAssertGreaterThan([stubAVPlayer.beforeTolerance intValue], 0);
-  XCTAssertGreaterThan([stubAVPlayer.afterTolerance intValue], 0);
+  XCTAssertGreaterThan([inspectableAVPlayer.beforeTolerance intValue], 0);
+  XCTAssertGreaterThan([inspectableAVPlayer.afterTolerance intValue], 0);
 }
 
 /// Sanity checks a video player playing the given URL with the actual AVPlayer. This is essentially
@@ -649,12 +866,13 @@
 ///
 /// Returns the stub event listener to allow tests to inspect the call state.
 - (StubEventListener *)sanityTestURI:(NSString *)testURI {
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
   NSURL *testURL = [NSURL URLWithString:testURI];
   XCTAssertNotNil(testURL);
-  FVPVideoPlayer *player =
-      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:testURL]
-                                       avFactory:[[FVPDefaultAVFactory alloc] init]
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
+      initWithPlayerItem:[self playerItemWithURL:testURL factory:realObjectFactory]
+               avFactory:realObjectFactory
+            viewProvider:[[StubViewProvider alloc] init]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -691,7 +909,7 @@
 //
 // Failing to de-register results in a crash in [AVPlayer willChangeValueForKey:].
 - (void)testDoesNotCrashOnRateObservationAfterDisposal {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
 
   AVPlayer *avPlayer = nil;
   __weak FVPVideoPlayer *weakPlayer = nil;
@@ -699,7 +917,12 @@
   // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
   @autoreleasepool {
     FVPVideoPlayerPlugin *videoPlayerPlugin =
-        (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+        [[FVPVideoPlayerPlugin alloc] initWithAVFactory:realObjectFactory
+                                     displayLinkFactory:nil
+                                        binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                        textureRegistry:[[TestTextureRegistry alloc] init]
+                                           viewProvider:[[StubViewProvider alloc] init]
+                                          assetProvider:[[StubAssetProvider alloc] init]];
 
     FlutterError *error;
     [videoPlayerPlugin initialize:&error];
@@ -743,14 +966,19 @@
 // Both of these methods dispatch [FVPVideoPlayer dispose] on the main thread
 // leading to a possible crash when de-registering observers twice.
 - (void)testHotReloadDoesNotCrash {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-
   __weak FVPVideoPlayer *weakPlayer = nil;
 
   // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
   @autoreleasepool {
-    FVPVideoPlayerPlugin *videoPlayerPlugin =
-        (FVPVideoPlayerPlugin *)[[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+    FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
+         initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                         playerItem:nil
+                                                  pixelBufferSource:nil]
+        displayLinkFactory:nil
+           binaryMessenger:[[StubBinaryMessenger alloc] init]
+           textureRegistry:[[TestTextureRegistry alloc] init]
+              viewProvider:[[StubViewProvider alloc] init]
+             assetProvider:[[StubAssetProvider alloc] init]];
 
     FlutterError *error;
     [videoPlayerPlugin initialize:&error];
@@ -790,34 +1018,16 @@
                                handler:nil];  // No assertions needed. Lack of crash is a success.
 }
 
-- (void)testNativeVideoViewFactoryRegistration {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-
-  OCMExpect([registrar registerViewFactory:[OCMArg isKindOfClass:[FVPNativeVideoViewFactory class]]
-                                    withId:@"plugins.flutter.dev/video_player_ios"]);
-  [FVPVideoPlayerPlugin registerWithRegistrar:registrar];
-
-  OCMVerifyAll(registrar);
-}
-
-- (void)testPublishesInRegistration {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  __block NSObject *publishedValue;
-  OCMStub([registrar publish:[OCMArg checkWithBlock:^BOOL(id value) {
-                       publishedValue = value;
-                       return YES;
-                     }]]);
-
-  [FVPVideoPlayerPlugin registerWithRegistrar:registrar];
-
-  XCTAssertNotNil(publishedValue);
-  XCTAssertTrue([publishedValue isKindOfClass:[FVPVideoPlayerPlugin class]]);
-}
-
 - (void)testFailedToLoadVideoEventShouldBeAlwaysSent {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  // Use real objects to test a real failure flow.
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
-      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:realObjectFactory
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
   FlutterError *error;
 
   [videoPlayerPlugin initialize:&error];
@@ -847,10 +1057,11 @@
 }
 
 - (void)testUpdatePlayingStateShouldNotResetRate {
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
   FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
-      initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
-               avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+      initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL factory:realObjectFactory]
+               avFactory:realObjectFactory
+            viewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   StubEventListener *listener =
@@ -865,18 +1076,19 @@
 }
 
 - (void)testPlayerShouldNotDropEverySecondFrame {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
-  NSObject<FlutterTextureRegistry> *mockTextureRegistry =
-      OCMProtocolMock(@protocol(FlutterTextureRegistry));
-  OCMStub([registrar textures]).andReturn(mockTextureRegistry);
+  TestTextureRegistry *textureRegistry = [[TestTextureRegistry alloc] init];
 
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
-  AVPlayerItemVideoOutput *mockVideoOutput = OCMPartialMock([[AVPlayerItemVideoOutput alloc] init]);
+  TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
-       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
+       initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                       playerItem:nil
+                                                pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
-               registrar:registrar];
+         binaryMessenger:[[StubBinaryMessenger alloc] init]
+         textureRegistry:textureRegistry
+            viewProvider:[[StubViewProvider alloc] init]
+           assetProvider:[[StubAssetProvider alloc] init]];
 
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
@@ -887,59 +1099,36 @@
   FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
                                                                                  error:&error];
   NSInteger playerIdentifier = identifiers.playerId;
-  NSInteger textureIdentifier = identifiers.textureId;
   FVPTextureBasedVideoPlayer *player =
       (FVPTextureBasedVideoPlayer *)videoPlayerPlugin.playersByIdentifier[@(playerIdentifier)];
 
-  __block CMTime currentTime = kCMTimeZero;
-  OCMStub([mockVideoOutput itemTimeForHostTime:0])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        [invocation setReturnValue:&currentTime];
-      });
-  __block NSMutableSet *pixelBuffers = NSMutableSet.new;
-  OCMStub([mockVideoOutput hasNewPixelBufferForItemTime:kCMTimeZero])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        CMTime itemTime;
-        [invocation getArgument:&itemTime atIndex:2];
-        BOOL has = [pixelBuffers containsObject:[NSValue valueWithCMTime:itemTime]];
-        [invocation setReturnValue:&has];
-      });
-  OCMStub([mockVideoOutput copyPixelBufferForItemTime:kCMTimeZero
-                                   itemTimeForDisplay:[OCMArg anyPointer]])
-      .ignoringNonObjectArgs()
-      .andDo(^(NSInvocation *invocation) {
-        CMTime itemTime;
-        [invocation getArgument:&itemTime atIndex:2];
-        CVPixelBufferRef bufferRef = NULL;
-        if ([pixelBuffers containsObject:[NSValue valueWithCMTime:itemTime]]) {
-          CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
-        }
-        [pixelBuffers removeObject:[NSValue valueWithCMTime:itemTime]];
-        [invocation setReturnValue:&bufferRef];
-      });
-  void (^advanceFrame)(void) = ^{
-    currentTime.value++;
-    [pixelBuffers addObject:[NSValue valueWithCMTime:currentTime]];
+  void (^addFrame)(void) = ^{
+    CVPixelBufferRef bufferRef;
+    CVPixelBufferCreate(NULL, 1, 1, kCVPixelFormatType_32BGRA, NULL, &bufferRef);
+    mockVideoOutput.pixelBuffer = bufferRef;
+    CVPixelBufferRelease(bufferRef);
   };
 
-  advanceFrame();
-  OCMExpect([mockTextureRegistry textureFrameAvailable:textureIdentifier]);
+  addFrame();
   stubDisplayLinkFactory.fireDisplayLink();
-  OCMVerifyAllWithDelay(mockTextureRegistry, 10);
-
-  advanceFrame();
-  OCMExpect([mockTextureRegistry textureFrameAvailable:textureIdentifier]);
   CFRelease([player copyPixelBuffer]);
+  XCTAssertEqual(textureRegistry.textureFrameAvailableCount, 1);
+
+  addFrame();
   stubDisplayLinkFactory.fireDisplayLink();
-  OCMVerifyAllWithDelay(mockTextureRegistry, 10);
+  CFRelease([player copyPixelBuffer]);
+  XCTAssertEqual(textureRegistry.textureFrameAvailableCount, 2);
 }
 
 - (void)testVideoOutputIsAddedWhenAVPlayerItemBecomesReady {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
-      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:realObjectFactory
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
   FlutterError *error;
   [videoPlayerPlugin initialize:&error];
   XCTAssertNil(error);
@@ -965,36 +1154,55 @@
 
 #if TARGET_OS_IOS
 - (void)testVideoPlayerShouldNotOverwritePlayAndRecordNorDefaultToSpeaker {
-  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  StubFVPAVFactory *stubFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                                playerItem:nil
+                                                         pixelBufferSource:nil];
+  TestAudioSession *audioSession = [[TestAudioSession alloc] init];
+  stubFactory.audioSession = audioSession;
   FVPVideoPlayerPlugin *videoPlayerPlugin =
-      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubFactory
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
+
+  audioSession.category = AVAudioSessionCategoryPlayAndRecord;
+  audioSession.categoryOptions = AVAudioSessionCategoryOptionDefaultToSpeaker;
+
   FlutterError *error;
-
-  [AVAudioSession.sharedInstance setCategory:AVAudioSessionCategoryPlayAndRecord
-                                 withOptions:AVAudioSessionCategoryOptionDefaultToSpeaker
-                                       error:nil];
-
   [videoPlayerPlugin initialize:&error];
   [videoPlayerPlugin setMixWithOthers:true error:&error];
-  XCTAssert(AVAudioSession.sharedInstance.category == AVAudioSessionCategoryPlayAndRecord,
+  XCTAssert(audioSession.category == AVAudioSessionCategoryPlayAndRecord,
             @"Category should be PlayAndRecord.");
-  XCTAssert(
-      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionDefaultToSpeaker,
-      @"Flag DefaultToSpeaker was removed.");
-  XCTAssert(
-      AVAudioSession.sharedInstance.categoryOptions & AVAudioSessionCategoryOptionMixWithOthers,
-      @"Flag MixWithOthers should be set.");
+  XCTAssert(audioSession.categoryOptions & AVAudioSessionCategoryOptionDefaultToSpeaker,
+            @"Flag DefaultToSpeaker was removed.");
+  XCTAssert(audioSession.categoryOptions & AVAudioSessionCategoryOptionMixWithOthers,
+            @"Flag MixWithOthers should be set.");
+}
 
-  id sessionMock = OCMClassMock([AVAudioSession class]);
-  OCMStub([sessionMock sharedInstance]).andReturn(sessionMock);
-  OCMStub([sessionMock category]).andReturn(AVAudioSessionCategoryPlayAndRecord);
-  OCMStub([sessionMock categoryOptions])
-      .andReturn(AVAudioSessionCategoryOptionMixWithOthers |
-                 AVAudioSessionCategoryOptionDefaultToSpeaker);
-  OCMReject([sessionMock setCategory:OCMOCK_ANY withOptions:0 error:[OCMArg setTo:nil]])
-      .ignoringNonObjectArgs();
+- (void)testSetMixWithOthersShouldNoOpWhenNoChangesAreRequired {
+  StubFVPAVFactory *stubFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                                playerItem:nil
+                                                         pixelBufferSource:nil];
+  TestAudioSession *audioSession = [[TestAudioSession alloc] init];
+  stubFactory.audioSession = audioSession;
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithAVFactory:stubFactory
+                                   displayLinkFactory:nil
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]
+                                      textureRegistry:[[TestTextureRegistry alloc] init]
+                                         viewProvider:[[StubViewProvider alloc] init]
+                                        assetProvider:[[StubAssetProvider alloc] init]];
 
+  audioSession.category = AVAudioSessionCategoryPlayAndRecord;
+  audioSession.categoryOptions =
+      AVAudioSessionCategoryOptionMixWithOthers | AVAudioSessionCategoryOptionDefaultToSpeaker;
+
+  FlutterError *error;
   [videoPlayerPlugin setMixWithOthers:true error:&error];
+
+  XCTAssertFalse(audioSession.setCategoryCalled);
 }
 
 - (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
@@ -1047,44 +1255,171 @@
       URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"];
 }
 
-- (nonnull AVPlayerItem *)playerItemWithURL:(NSURL *)url {
-  return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
+- (nonnull NSObject<FVPAVPlayerItem> *)playerItemWithURL:(NSURL *)url
+                                                 factory:(NSObject<FVPAVFactory> *)factory {
+  return [factory playerItemWithAsset:[factory URLAssetWithURL:url options:nil]];
+}
+
+#pragma mark - Audio Track Tests
+
+// Tests getAudioTracks with a regular MP4 video file using real AVFoundation.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksWithRealMP4Video {
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
+      initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL factory:realObjectFactory]
+               avFactory:realObjectFactory
+            viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular MP4 files do not have media selection groups for audio.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
+// Tests getAudioTracks with an HLS stream using real AVFoundation.
+// HLS streams use media selection groups for audio track selection.
+- (void)testGetAudioTracksWithRealHLSStream {
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
+  NSURL *hlsURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
+  XCTAssertNotNil(hlsURL);
+
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
+      initWithPlayerItem:[self playerItemWithURL:hlsURL factory:realObjectFactory]
+               avFactory:realObjectFactory
+            viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // For HLS streams with multiple audio options, we get media selection tracks.
+  // The bee.m3u8 stream may or may not have multiple audio tracks.
+  // We verify the method returns valid data without crashing.
+  for (FVPMediaSelectionAudioTrackData *track in result) {
+    XCTAssertNotNil(track.displayName);
+    XCTAssertGreaterThanOrEqual(track.index, 0);
+  }
+
+  [player disposeWithError:&error];
+}
+
+// Tests that getAudioTracks returns valid data for audio-only files.
+// Regular audio files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksWithRealAudioFile {
+  // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+  // can use a fake item/asset instead of loading an actual remote asset.
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
+  NSURL *audioURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
+  XCTAssertNotNil(audioURL);
+
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
+      initWithPlayerItem:[self playerItemWithURL:audioURL factory:realObjectFactory]
+               avFactory:realObjectFactory
+            viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular audio files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
+// Tests that getAudioTracks works correctly through the plugin API with a real video.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksViaPluginWithRealVideo {
+  // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
+  // can use a fake item/asset instead of loading an actual remote asset.
+  NSObject<FVPAVFactory> *realObjectFactory = [[FVPDefaultAVFactory alloc] init];
+  NSURL *testURL =
+      [NSURL URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"];
+  XCTAssertNotNil(testURL);
+  FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
+      initWithPlayerItem:[self playerItemWithURL:testURL factory:realObjectFactory]
+               avFactory:realObjectFactory
+            viewProvider:[[StubViewProvider alloc] init]];
+
+  // Wait for player item to become ready
+  AVPlayerItem *item = player.player.currentItem;
+  [self keyValueObservingExpectationForObject:(id)item
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusReadyToPlay)];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular MP4 files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
 }
 
 - (void)testLoadTracksWithMediaTypeIsCalledOnNewerOS {
   if (@available(iOS 15.0, macOS 12.0, *)) {
-    AVAsset *mockAsset = OCMClassMock([AVAsset class]);
-    AVPlayerItem *mockItem = OCMClassMock([AVPlayerItem class]);
-    OCMStub([mockItem asset]).andReturn(mockAsset);
+    TestAsset *mockAsset = [[TestAsset alloc] initWithDuration:CMTimeMake(1, 1) tracks:@[]];
+    NSObject<FVPAVPlayerItem> *item = [[StubPlayerItem alloc] initWithAsset:mockAsset];
 
-    // Stub loadValuesAsynchronouslyForKeys to immediately call completion
-    OCMStub([mockAsset loadValuesAsynchronouslyForKeys:[OCMArg any]
-                                     completionHandler:[OCMArg invokeBlock]]);
-
-    // Stub statusOfValueForKey to return Loaded
-    OCMStub([mockAsset statusOfValueForKey:@"tracks" error:[OCMArg anyObjectRef]])
-        .andReturn(AVKeyValueStatusLoaded);
-
-    // Expect loadTracksWithMediaType:completionHandler:
-    XCTestExpectation *expectation =
-        [self expectationWithDescription:@"loadTracksWithMediaType called"];
-    OCMExpect([mockAsset loadTracksWithMediaType:AVMediaTypeVideo completionHandler:[OCMArg any]])
-        .andDo(^(NSInvocation *invocation) {
-          [expectation fulfill];
-          // Invoke the completion handler to prevent leaks or hangs if the code waits for it
-          void (^completion)(NSArray<AVAssetTrack *> *, NSError *);
-          [invocation getArgument:&completion atIndex:3];
-          completion(@[], nil);
-        });
-
-    StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil output:nil];
-    FVPVideoPlayer *player =
-        [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
-                                         avFactory:stubAVFactory
-                                      viewProvider:[[StubViewProvider alloc] initWithView:nil]];
-    (void)player;  // Keep reference
-
-    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+    StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil
+                                                                    playerItem:item
+                                                             pixelBufferSource:nil];
+    StubViewProvider *stubViewProvider =
+#if TARGET_OS_OSX
+        [[StubViewProvider alloc] initWithView:nil];
+#else
+        [[StubViewProvider alloc] initWithViewController:nil];
+#endif
+    FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:item
+                                                              avFactory:stubAVFactory
+                                                           viewProvider:stubViewProvider];
+    XCTAssertNotNil(player);
+    XCTAssertTrue(mockAsset.loadedTracksAsynchronously);
   }
 }
 

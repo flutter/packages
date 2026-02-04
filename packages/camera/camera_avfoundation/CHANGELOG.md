@@ -1,3 +1,17 @@
+## 0.9.23
+
+* Changes the default storage path for camera pictures and videos on iOS from the application's Documents directory to the system's temporaryDirectory.
+
+## 0.9.22+10
+
+* Handles video and audio interruptions and errors by "pausing" and reporting errors.
+* Uses a single time offset for both video and audio to avoid desync.
+
+## 0.9.22+9
+
+* Migrates `FLTSavePhotoDelegate`, `FLTWritableData`, and `FLTImageStreamHandler` classes to Swift.
+* Migrates `CameraProperties` and `QueueUtils` helpers to Swift.
+
 ## 0.9.22+8
 
 * Migrates `FLTPermissionServicing` and `FLTCameraPermissionManager` classes to Swift.

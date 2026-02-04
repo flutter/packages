@@ -40,7 +40,7 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /darwin/Tests/GoogleService-Info.plist
-  - /darwin/Tests/GoogleSignInTests.m
+  - /darwin/Tests/GoogleSignInTests.swift
   - /example/ios/Runner/Info.plist
   - /example/lib/main.dart
   - /example/macos/Runner/Info.plist

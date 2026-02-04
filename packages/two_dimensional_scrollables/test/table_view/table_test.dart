@@ -2130,6 +2130,35 @@ void main() {
           ),
         );
       });
+
+      testWidgets('Binary search correctly finds first/last non-pinned cells', (
+        WidgetTester tester,
+      ) async {
+        Future<void> runScrollTest(Widget tableView) async {
+          await tester.pumpWidget(MaterialApp(home: tableView));
+          await tester.pumpAndSettle();
+          expect(verticalController.position.pixels, 0.0);
+          expect(horizontalController.position.pixels, 0.0);
+          expect(find.text('R0:C0'), findsOneWidget);
+          expect(find.text('R4:C5'), findsOneWidget);
+          // No columns laid out beyond column 5.
+          expect(find.text('R0:C6'), findsNothing);
+          // Change the vertical scroll offset, validate more rows were
+          verticalController.jumpTo(1000000.0);
+          await tester.pump();
+          expect(find.text('R5000:C0'), findsOneWidget);
+          expect(find.text('R5004:C0'), findsOneWidget);
+          expect(find.text('R4990:C0'), findsNothing); // Not laid out
+          expect(find.text('R5007:C0'), findsNothing); // Not laid out
+          await tester.pumpWidget(Container());
+        }
+
+        // infinite rows & columns
+        await runScrollTest(getTableView());
+
+        // finite rows & columns
+        await runScrollTest(getTableView(rowCount: 10000, columnCount: 200));
+      });
     });
   });
 

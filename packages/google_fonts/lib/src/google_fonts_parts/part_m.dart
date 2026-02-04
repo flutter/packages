@@ -315,50 +315,50 @@ class PartM {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '2f96afa8e7d1d619cae4b2bc790c035d3e1602734966932117438a1e3023ffb1',
-        1721500,
+        'b7a65de45aa3f4388e30b58fb15656c3a94eaa547c7425fb9c49fbb6e2cc60ff',
+        1726044,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '62b50570c65b7c2b41c1877b99dba8c817a58d26943b74727d705ce09c782d7b',
-        1717044,
+        '30af32f6656bd6300b725101ff759d124a23be1e1ed9b16e6fcc9710dd8752a5',
+        1721568,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'c1b2390e10b4782d810617d24c61c5a400332cd36ac2f38667a7d81dd6159829',
-        1708652,
+        '160c38aaf943fb13385698d248ff589f402756ddc6ab702a632e4893426bb2ec',
+        1713156,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '0ac7ee85786cd38987882cd92bcc07b2bd0ab54cae0ce8e585f18416d1531f54',
-        1708628,
+        'f01f6a239acf374b53f647f771b0afc480462a4bc8c0b96ffadb768af9dac9bf',
+        1713168,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'bd7d9d3012055752a4583aa13fc88eceb022d84b3cfe1991e510546f0c4983d1',
-        1716128,
+        '8fdcd109d276a810523c19d719a458600efd6b55e9be7b93fe83a7b41e1df2fc',
+        1720668,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'a079330286b45b9233d2f4b4881043c3a3407f2fb3e080d62748a244e9485e96',
-        1722924,
+        'b3cf38ea9c8892645eb22b141f3328dbb28d6ac6e274ff79e5eecdcbd2b62576',
+        1727560,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '5bd8357a15f4a8d68896374486ebc47ad64bb0cfd7d2245949aec6daba077ece',
-        1723200,
+        '0a873fa85033323f8a93a11fa65da8ecc4a607467cdbb908a0e14d0120c67f7f',
+        1727784,
       ),
     };
 
@@ -716,50 +716,50 @@ class PartM {
         fontWeight: FontWeight.w100,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6db157410fd61e3a54d6dc27417982ea47cc9a059677a2b2e27482eb6655fe7d',
-        2817936,
+        '9898083d91ebffece4be7b30cb82f27812d7d55807636fd26bb973d35acaeaee',
+        2826364,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w300,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '6db9182056d90556adfb4beedf4fdac026737bc5baca1b76d82cac5632199f17',
-        3191904,
+        '37f7c825858976ee795e3343b3b22288d7357c01e8896d3c7bfc2b3d9fbd1c3b',
+        3201440,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w400,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '89ae16059c75746476ba26890da8753482df07ab37675ddcce221a5e4d5a4419',
-        3283076,
+        'e0c21ebf6da2d09232143a54dde35af510dbef383b2962e3528489544e62f6c2',
+        3292944,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w500,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '79ef24a1eee1de77fa822da827258ade779203f238459006ecc7dd92c252902b',
-        3324352,
+        '4ffed8bf4a305e697824a7b3e4ee957cb6f375bf997eedfd5576ddf9b1d7a15f',
+        3334428,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w700,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        '4c8fe2f953225f4788dd9a6c1d44e426d32d21c9678caaf4743fda41752e42ec',
-        3431756,
+        'c9ef3f95ff397f82c8af5b1ed6d5f0c3ec7eaa684067724988caf839edac7f75',
+        3442128,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w800,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'ac4e770ec6841ae0fc2f0007f79cb0a6a510daeb3b54e7f9abbe1aaa18bde295',
-        3514180,
+        'fa410e2dfe3d14c83a568b164786b24fc5b47f4a8a0c6f059df58b7110c96295',
+        3525040,
       ),
       const GoogleFontsVariant(
         fontWeight: FontWeight.w900,
         fontStyle: FontStyle.normal,
       ): GoogleFontsFile(
-        'e322622aa425a72f0d71b9d2a13cb6326298fd5379c8dd9e234fb9eaaba8ad07',
-        3520824,
+        '008f28da777fab5f4d296959c34ccbc8358072303c69680087a1bda5298815d2',
+        3531604,
       ),
     };
 
@@ -8445,6 +8445,309 @@ class PartM {
       labelLarge: molle(textStyle: textTheme.labelLarge),
       labelMedium: molle(textStyle: textTheme.labelMedium),
       labelSmall: molle(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Momo Signature font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Momo+Signature
+  static TextStyle momoSignature({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '9d48197a74eaf1ea17b55ae73d72f462ee5209d2f1f0c5cb267b7ce964f4f97c',
+        319148,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'MomoSignature',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Momo Signature font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Momo+Signature
+  static TextTheme momoSignatureTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: momoSignature(textStyle: textTheme.displayLarge),
+      displayMedium: momoSignature(textStyle: textTheme.displayMedium),
+      displaySmall: momoSignature(textStyle: textTheme.displaySmall),
+      headlineLarge: momoSignature(textStyle: textTheme.headlineLarge),
+      headlineMedium: momoSignature(textStyle: textTheme.headlineMedium),
+      headlineSmall: momoSignature(textStyle: textTheme.headlineSmall),
+      titleLarge: momoSignature(textStyle: textTheme.titleLarge),
+      titleMedium: momoSignature(textStyle: textTheme.titleMedium),
+      titleSmall: momoSignature(textStyle: textTheme.titleSmall),
+      bodyLarge: momoSignature(textStyle: textTheme.bodyLarge),
+      bodyMedium: momoSignature(textStyle: textTheme.bodyMedium),
+      bodySmall: momoSignature(textStyle: textTheme.bodySmall),
+      labelLarge: momoSignature(textStyle: textTheme.labelLarge),
+      labelMedium: momoSignature(textStyle: textTheme.labelMedium),
+      labelSmall: momoSignature(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Momo Trust Display font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Momo+Trust+Display
+  static TextStyle momoTrustDisplay({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '5513cc233f58462700237b24a6975a4677b32f87ee372b2bcbfa628fb2dc856b',
+        70964,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'MomoTrustDisplay',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Momo Trust Display font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Momo+Trust+Display
+  static TextTheme momoTrustDisplayTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: momoTrustDisplay(textStyle: textTheme.displayLarge),
+      displayMedium: momoTrustDisplay(textStyle: textTheme.displayMedium),
+      displaySmall: momoTrustDisplay(textStyle: textTheme.displaySmall),
+      headlineLarge: momoTrustDisplay(textStyle: textTheme.headlineLarge),
+      headlineMedium: momoTrustDisplay(textStyle: textTheme.headlineMedium),
+      headlineSmall: momoTrustDisplay(textStyle: textTheme.headlineSmall),
+      titleLarge: momoTrustDisplay(textStyle: textTheme.titleLarge),
+      titleMedium: momoTrustDisplay(textStyle: textTheme.titleMedium),
+      titleSmall: momoTrustDisplay(textStyle: textTheme.titleSmall),
+      bodyLarge: momoTrustDisplay(textStyle: textTheme.bodyLarge),
+      bodyMedium: momoTrustDisplay(textStyle: textTheme.bodyMedium),
+      bodySmall: momoTrustDisplay(textStyle: textTheme.bodySmall),
+      labelLarge: momoTrustDisplay(textStyle: textTheme.labelLarge),
+      labelMedium: momoTrustDisplay(textStyle: textTheme.labelMedium),
+      labelSmall: momoTrustDisplay(textStyle: textTheme.labelSmall),
+    );
+  }
+
+  /// Applies the Momo Trust Sans font family from Google Fonts to the
+  /// given [textStyle].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Momo+Trust+Sans
+  static TextStyle momoTrustSans({
+    TextStyle? textStyle,
+    Color? color,
+    Color? backgroundColor,
+    double? fontSize,
+    FontWeight? fontWeight,
+    FontStyle? fontStyle,
+    double? letterSpacing,
+    double? wordSpacing,
+    TextBaseline? textBaseline,
+    double? height,
+    Locale? locale,
+    Paint? foreground,
+    Paint? background,
+    List<ui.Shadow>? shadows,
+    List<ui.FontFeature>? fontFeatures,
+    TextDecoration? decoration,
+    Color? decorationColor,
+    TextDecorationStyle? decorationStyle,
+    double? decorationThickness,
+  }) {
+    final fonts = <GoogleFontsVariant, GoogleFontsFile>{
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w200,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '8486afe0b795b54d0e9bf415054c79f3140369bae4dbe6b290885b86b38c4323',
+        68072,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w300,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'd2d4cabc780347794319af6b0fc56cb04180b11926a42e10290a7775144f3604',
+        68004,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w400,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '70d925651908c8f2c9e8afbf5a66c5c6c6c865ad1e1607e4e2d516bec73ecb49',
+        67932,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w500,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'b7cafefecb6370d2adfb707c041d5a95406cfacd3987a109d5a6ed19a978cc3b',
+        68000,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w600,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '916a59cd0f012207b33831a589261d6c02feef0fb506f5c4bc856bf31786dafc',
+        68064,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w700,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        'a612e7f38830813d22497678449a91b88e90d9e1be3ef978d94824248af754fa',
+        67952,
+      ),
+      const GoogleFontsVariant(
+        fontWeight: FontWeight.w800,
+        fontStyle: FontStyle.normal,
+      ): GoogleFontsFile(
+        '20183638605df86a71c23f3d2a73a8d46ddbbcb83a8b35dcae92313726b5949d',
+        68020,
+      ),
+    };
+
+    return googleFontsTextStyle(
+      textStyle: textStyle,
+      fontFamily: 'MomoTrustSans',
+      color: color,
+      backgroundColor: backgroundColor,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      fontStyle: fontStyle,
+      letterSpacing: letterSpacing,
+      wordSpacing: wordSpacing,
+      textBaseline: textBaseline,
+      height: height,
+      locale: locale,
+      foreground: foreground,
+      background: background,
+      shadows: shadows,
+      fontFeatures: fontFeatures,
+      decoration: decoration,
+      decorationColor: decorationColor,
+      decorationStyle: decorationStyle,
+      decorationThickness: decorationThickness,
+      fonts: fonts,
+    );
+  }
+
+  /// Applies the Momo Trust Sans font family from Google Fonts to every
+  /// [TextStyle] in the given [textTheme].
+  ///
+  /// See:
+  ///  * https://fonts.google.com/specimen/Momo+Trust+Sans
+  static TextTheme momoTrustSansTextTheme([TextTheme? textTheme]) {
+    textTheme ??= ThemeData.light().textTheme;
+    return TextTheme(
+      displayLarge: momoTrustSans(textStyle: textTheme.displayLarge),
+      displayMedium: momoTrustSans(textStyle: textTheme.displayMedium),
+      displaySmall: momoTrustSans(textStyle: textTheme.displaySmall),
+      headlineLarge: momoTrustSans(textStyle: textTheme.headlineLarge),
+      headlineMedium: momoTrustSans(textStyle: textTheme.headlineMedium),
+      headlineSmall: momoTrustSans(textStyle: textTheme.headlineSmall),
+      titleLarge: momoTrustSans(textStyle: textTheme.titleLarge),
+      titleMedium: momoTrustSans(textStyle: textTheme.titleMedium),
+      titleSmall: momoTrustSans(textStyle: textTheme.titleSmall),
+      bodyLarge: momoTrustSans(textStyle: textTheme.bodyLarge),
+      bodyMedium: momoTrustSans(textStyle: textTheme.bodyMedium),
+      bodySmall: momoTrustSans(textStyle: textTheme.bodySmall),
+      labelLarge: momoTrustSans(textStyle: textTheme.labelLarge),
+      labelMedium: momoTrustSans(textStyle: textTheme.labelMedium),
+      labelSmall: momoTrustSans(textStyle: textTheme.labelSmall),
     );
   }
 
