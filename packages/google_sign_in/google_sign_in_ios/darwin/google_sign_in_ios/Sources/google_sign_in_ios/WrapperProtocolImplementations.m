@@ -28,18 +28,10 @@
 #pragma clang diagnostic ignored "-Wdeprecated-declarations"
   // TODO(stuartmorgan) Provide a non-deprecated codepath. See
   // https://github.com/flutter/flutter/issues/104117
-  for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
-        if ([scene isKindOfClass:[UIWindowScene class]] &&
-            scene.activationState == UISceneActivationStateForegroundActive) {
-          UIWindowScene *windowScene = (UIWindowScene *)scene;
-          // Handle iOS 15+ deprecation of 'keyWindow'
-          for (UIWindow *window in windowScene.windows) {
-               if (window.isKeyWindow) {
-                   return window.rootViewController;
-               }
-          }
-        }
-  };
+#if TARGET_OS_IOS
+  return self.registrar.viewController;
+#endif
+  return UIApplication.sharedApplication.keyWindow.rootViewController;
 #pragma clang diagnostic pop
 }
 #endif
