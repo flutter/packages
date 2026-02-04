@@ -1,3 +1,7 @@
+## 7.2.8
+
+* Bumps kotlin_version to 2.3.0.
+
 ## 7.2.7
 
 * Bumps kotlin_version to 2.2.21.

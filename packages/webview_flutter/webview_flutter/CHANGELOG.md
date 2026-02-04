@@ -1,5 +1,6 @@
-## NEXT
+## 4.13.1
 
+* Fixes HTML in legacy dartdocs.
 * Updates minimum supported SDK version to Flutter 3.32/Dart 3.8.
 * Updates README to reflect currently supported OS versions for the latest
   versions of the endorsed platform implementations.

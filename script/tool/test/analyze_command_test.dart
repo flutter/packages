@@ -613,7 +613,7 @@ void main() {
       expect(
         output,
         containsAllInOrder(<Matcher>[
-          contains('Unable to downgrade dependencies'),
+          contains('Unable to resolve downgraded dependencies'),
         ]),
       );
     });

@@ -10,10 +10,11 @@ on:
 jobs:
   dispatch_release_pr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Repository Dispatch
         uses: peter-evans/repository-dispatch@5fc4efd1a4797ddb68ffd0714a238564e4cc0e6f
         with:
-          token: "${{ secrets.GITHUB_TOKEN }}"
-          event-type: batch_release_pr
+          event-type: batch-release-pr
           client-payload: '{"package": "go_router"}'

@@ -5,15 +5,6 @@
 package io.flutter.plugins.googlemaps;
 
 import static com.google.android.gms.maps.GoogleMap.MAP_TYPE_HYBRID;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_DATA_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLORS_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_GRADIENT_START_POINTS_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_ID_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_MAX_INTENSITY_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_OPACITY_KEY;
-import static io.flutter.plugins.googlemaps.Convert.HEATMAP_RADIUS_KEY;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -39,7 +30,6 @@ import io.flutter.plugins.googlemaps.Convert.BitmapDescriptorFactoryWrapper;
 import io.flutter.plugins.googlemaps.Convert.FlutterInjectorWrapper;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -540,10 +530,15 @@ public class ConvertTest {
   @Test()
   public void ConvertToWeightedLatLngReturnsCorrectData() {
     final double intensity = 3.3;
-    final Object data = List.of(List.of(1.1, 2.2), intensity);
+    final Messages.PlatformWeightedLatLng data =
+        new Messages.PlatformWeightedLatLng.Builder()
+            .setPoint(
+                new Messages.PlatformLatLng.Builder().setLatitude(1.1).setLongitude(2.2).build())
+            .setWeight(intensity)
+            .build();
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
-    final WeightedLatLng result = Convert.toWeightedLatLng(data);
+    final WeightedLatLng result = Convert.weightedLatLngFromPigeon(data);
 
     Assert.assertEquals(point.x, result.getPoint().x, 0);
     Assert.assertEquals(point.y, result.getPoint().y, 0);
@@ -553,10 +548,19 @@ public class ConvertTest {
   @Test()
   public void ConvertToWeightedDataReturnsCorrectData() {
     final double intensity = 3.3;
-    final List<Object> data = List.of(List.of(List.of(1.1, 2.2), intensity));
+    final List<Messages.PlatformWeightedLatLng> data =
+        List.of(
+            new Messages.PlatformWeightedLatLng.Builder()
+                .setPoint(
+                    new Messages.PlatformLatLng.Builder()
+                        .setLatitude(1.1)
+                        .setLongitude(2.2)
+                        .build())
+                .setWeight(intensity)
+                .build());
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
-    final List<WeightedLatLng> result = Convert.toWeightedData(data);
+    final List<WeightedLatLng> result = Convert.weightedDataFromPigeon(data);
 
     Assert.assertEquals(1, result.size());
     Assert.assertEquals(point.x, result.get(0).getPoint().x, 0);
@@ -566,22 +570,25 @@ public class ConvertTest {
 
   @Test()
   public void ConvertToGradientReturnsCorrectData() {
-    final int color1 = 0;
-    final int color2 = 1;
-    final int color3 = 2;
-    final List<Object> colorData = List.of(color1, color2, color3);
+    final long color1 = 0;
+    final long color2 = 1;
+    final long color3 = 2;
+    final List<Messages.PlatformColor> colorData =
+        List.of(
+            createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3));
     final double startPoint1 = 0.0;
     final double startPoint2 = 1.0;
     final double startPoint3 = 2.0;
-    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
-    final int colorMapSize = 3;
-    final Map<String, Object> data =
-        Map.of(
-            HEATMAP_GRADIENT_COLORS_KEY, colorData,
-            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
-            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
+    List<Double> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final long colorMapSize = 3;
+    final Messages.PlatformHeatmapGradient data =
+        new Messages.PlatformHeatmapGradient.Builder()
+            .setColors(colorData)
+            .setStartPoints(startPointData)
+            .setColorMapSize(colorMapSize)
+            .build();
 
-    final Gradient result = Convert.toGradient(data);
+    final Gradient result = Convert.gradientFromPigeon(data);
 
     Assert.assertEquals(3, result.getColors().length);
     Assert.assertEquals(color1, result.getColors()[0]);
@@ -597,43 +604,50 @@ public class ConvertTest {
   @Test()
   public void ConvertInterpretHeatmapOptionsReturnsCorrectData() {
     final double intensity = 3.3;
-    final List<Object> dataData = List.of(List.of(List.of(1.1, 2.2), intensity));
+    final List<Messages.PlatformWeightedLatLng> dataData =
+        List.of(
+            new Messages.PlatformWeightedLatLng.Builder()
+                .setPoint(
+                    new Messages.PlatformLatLng.Builder()
+                        .setLatitude(1.1)
+                        .setLongitude(2.2)
+                        .build())
+                .setWeight(intensity)
+                .build());
     final Point point = sProjection.toPoint(new LatLng(1.1, 2.2));
 
-    final int color1 = 0;
-    final int color2 = 1;
-    final int color3 = 2;
-    final List<Object> colorData = List.of(color1, color2, color3);
+    final long color1 = 0;
+    final long color2 = 1;
+    final long color3 = 2;
+    final List<Messages.PlatformColor> colorData =
+        List.of(
+            createPlatformColor(color1), createPlatformColor(color2), createPlatformColor(color3));
     final double startPoint1 = 0.0;
     final double startPoint2 = 1.0;
     final double startPoint3 = 2.0;
-    List<Object> startPointData = List.of(startPoint1, startPoint2, startPoint3);
-    final int colorMapSize = 3;
-    final Map<String, ?> gradientData =
-        Map.of(
-            HEATMAP_GRADIENT_COLORS_KEY, colorData,
-            HEATMAP_GRADIENT_START_POINTS_KEY, startPointData,
-            HEATMAP_GRADIENT_COLOR_MAP_SIZE_KEY, colorMapSize);
+    List<Double> startPointData = List.of(startPoint1, startPoint2, startPoint3);
+    final long colorMapSize = 3;
+    final Messages.PlatformHeatmapGradient gradientData =
+        new Messages.PlatformHeatmapGradient.Builder()
+            .setColors(colorData)
+            .setStartPoints(startPointData)
+            .setColorMapSize(colorMapSize)
+            .build();
 
-    final double maxIntensity = 4.4;
+    final double maxIntensity = 4.0;
     final double opacity = 5.5;
-    final int radius = 6;
+    final long radius = 6;
     final String idData = "heatmap_1";
 
-    final Map<String, Object> data =
-        Map.of(
-            HEATMAP_DATA_KEY,
-            dataData,
-            HEATMAP_GRADIENT_KEY,
-            gradientData,
-            HEATMAP_MAX_INTENSITY_KEY,
-            maxIntensity,
-            HEATMAP_OPACITY_KEY,
-            opacity,
-            HEATMAP_RADIUS_KEY,
-            radius,
-            HEATMAP_ID_KEY,
-            idData);
+    final Messages.PlatformHeatmap data =
+        new Messages.PlatformHeatmap.Builder()
+            .setData(dataData)
+            .setGradient(gradientData)
+            .setMaxIntensity(maxIntensity)
+            .setOpacity(opacity)
+            .setRadius(radius)
+            .setHeatmapId(idData)
+            .build();
 
     final MockHeatmapBuilder builder = new MockHeatmapBuilder();
     final String id = Convert.interpretHeatmapOptions(data, builder);
@@ -655,6 +669,10 @@ public class ConvertTest {
     Assert.assertEquals(opacity, builder.getOpacity(), 0);
     Assert.assertEquals(radius, builder.getRadius());
     Assert.assertEquals(idData, id);
+  }
+
+  private Messages.PlatformColor createPlatformColor(long rgba) {
+    return new Messages.PlatformColor.Builder().setArgbValue(rgba).build();
   }
 
   @Test

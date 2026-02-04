@@ -2,7 +2,7 @@ name: "Creates Batch Release for a Package"
 
 on:
   repository_dispatch:
-    types: [batch_release_pr]
+    types: [batch-release-pr]
 
 jobs:
   create_release_pr:
@@ -11,7 +11,9 @@ jobs:
       BRANCH_NAME: ${{ github.event.client_payload.package }}-${{ github.run_id }}-${{ github.run_attempt }}
     steps:
       - name: checkout repository
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - name: "Install Flutter"
+        uses: ./.github/workflows/internals/install_flutter
       - name: Set up tools
         run: dart pub get
         working-directory: ${{ github.workspace }}/script/tool
@@ -34,7 +36,7 @@ jobs:
 
       - name: Create batch release PR
         if: steps.check-branch-exists.outputs.exists == 'true'
-        uses: peter-evans/create-pull-request@4320041ed380b20e97d388d56a7fb4f9b8c20e79
+        uses: peter-evans/create-pull-request@c0f553fe549906ede9cf27b5156039d195d2ece0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "[${{ github.event.client_payload.package }}] Batch release"

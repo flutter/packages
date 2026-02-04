@@ -79,24 +79,30 @@
 
 @end
 
-// Convience to avoid having two copies of the StubViewProvider code.
-#if TARGET_OS_OSX
-#define PROVIDED_VIEW_TYPE NSView
-#else
-#define PROVIDED_VIEW_TYPE UIView
-#endif
-
 @interface StubViewProvider : NSObject <FVPViewProvider>
-- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view;
-@property(nonatomic, nullable) PROVIDED_VIEW_TYPE *view;
+#if TARGET_OS_IOS
+- (instancetype)initWithViewController:(UIViewController *)viewController;
+@property(nonatomic, nullable) UIViewController *viewController;
+#else
+- (instancetype)initWithView:(NSView *)view;
+@property(nonatomic, nullable) NSView *view;
+#endif
 @end
 
 @implementation StubViewProvider
-- (instancetype)initWithView:(PROVIDED_VIEW_TYPE *)view {
+#if TARGET_OS_IOS
+- (instancetype)initWithViewController:(UIViewController *)viewController {
+  self = [super init];
+  _viewController = viewController;
+  return self;
+}
+#else
+- (instancetype)initWithView:(NSView *)view {
   self = [super init];
   _view = view;
   return self;
 }
+#endif
 @end
 
 @interface StubFVPAVFactory : NSObject <FVPAVFactory>
@@ -227,14 +233,19 @@
 #if TARGET_OS_OSX
   NSView *view = [[NSView alloc] initWithFrame:NSMakeRect(0, 0, 10, 10)];
   view.wantsLayer = true;
+  id<FVPViewProvider> viewProvider = [[StubViewProvider alloc] initWithView:view];
 #else
   UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 10, 10)];
+  UIViewController *viewController = [[UIViewController alloc] init];
+  viewController.view = view;
+  id<FVPViewProvider> viewProvider =
+      [[StubViewProvider alloc] initWithViewController:viewController];
 #endif
   NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
       displayLinkFactory:nil
-            viewProvider:[[StubViewProvider alloc] initWithView:view]
+            viewProvider:viewProvider
                registrar:registrar];
 
   FlutterError *error;
@@ -267,7 +278,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -294,7 +305,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -351,7 +362,7 @@
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:stubAVPlayer
                                                            output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -397,7 +408,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -452,7 +463,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *initializationError;
@@ -605,7 +616,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
   player.eventListener = listener;
 
@@ -628,7 +639,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                                        avFactory:stubAVFactory
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   NSObject<FVPVideoEventListener> *listener = OCMProtocolMock(@protocol(FVPVideoEventListener));
   player.eventListener = listener;
 
@@ -654,7 +665,7 @@
   FVPVideoPlayer *player =
       [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:testURL]
                                        avFactory:[[FVPDefaultAVFactory alloc] init]
-                                    viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+                                    viewProvider:[[StubViewProvider alloc] init]];
   XCTAssertNotNil(player);
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
@@ -850,7 +861,7 @@
   FVPVideoPlayer *player = [[FVPVideoPlayer alloc]
       initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
                avFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:nil]
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]];
+            viewProvider:[[StubViewProvider alloc] init]];
 
   XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
   StubEventListener *listener =
@@ -875,7 +886,7 @@
   FVPVideoPlayerPlugin *videoPlayerPlugin = [[FVPVideoPlayerPlugin alloc]
        initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil output:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
-            viewProvider:[[StubViewProvider alloc] initWithView:nil]
+            viewProvider:[[StubViewProvider alloc] init]
                registrar:registrar];
 
   FlutterError *error;
@@ -1049,6 +1060,191 @@
 
 - (nonnull AVPlayerItem *)playerItemWithURL:(NSURL *)url {
   return [AVPlayerItem playerItemWithAsset:[AVURLAsset URLAssetWithURL:url options:nil]];
+}
+
+#pragma mark - Audio Track Tests
+
+// Tests getAudioTracks with a regular MP4 video file using real AVFoundation.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksWithRealMP4Video {
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:self.mp4TestURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular MP4 files do not have media selection groups for audio.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
+// Tests getAudioTracks with an HLS stream using real AVFoundation.
+// HLS streams use media selection groups for audio track selection.
+- (void)testGetAudioTracksWithRealHLSStream {
+  NSURL *hlsURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"];
+  XCTAssertNotNil(hlsURL);
+
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:hlsURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // For HLS streams with multiple audio options, we get media selection tracks.
+  // The bee.m3u8 stream may or may not have multiple audio tracks.
+  // We verify the method returns valid data without crashing.
+  for (FVPMediaSelectionAudioTrackData *track in result) {
+    XCTAssertNotNil(track.displayName);
+    XCTAssertGreaterThanOrEqual(track.index, 0);
+  }
+
+  [player disposeWithError:&error];
+}
+
+// Tests that getAudioTracks returns valid data for audio-only files.
+// Regular audio files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksWithRealAudioFile {
+  NSURL *audioURL = [NSURL
+      URLWithString:@"https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"];
+  XCTAssertNotNil(audioURL);
+
+  FVPVideoPlayer *player =
+      [[FVPVideoPlayer alloc] initWithPlayerItem:[self playerItemWithURL:audioURL]
+                                       avFactory:[[FVPDefaultAVFactory alloc] init]
+                                    viewProvider:[[StubViewProvider alloc] init]];
+  XCTAssertNotNil(player);
+
+  XCTestExpectation *initializedExpectation = [self expectationWithDescription:@"initialized"];
+  StubEventListener *listener =
+      [[StubEventListener alloc] initWithInitializationExpectation:initializedExpectation];
+  player.eventListener = listener;
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  FlutterError *error = nil;
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular audio files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
+// Tests that getAudioTracks works correctly through the plugin API with a real video.
+// Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
+- (void)testGetAudioTracksViaPluginWithRealVideo {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
+  FVPVideoPlayerPlugin *videoPlayerPlugin =
+      [[FVPVideoPlayerPlugin alloc] initWithRegistrar:registrar];
+
+  FlutterError *error;
+  [videoPlayerPlugin initialize:&error];
+  XCTAssertNil(error);
+
+  FVPCreationOptions *create = [FVPCreationOptions
+      makeWithUri:@"https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+      httpHeaders:@{}];
+  FVPTexturePlayerIds *identifiers = [videoPlayerPlugin createTexturePlayerWithOptions:create
+                                                                                 error:&error];
+  XCTAssertNil(error);
+  XCTAssertNotNil(identifiers);
+
+  FVPVideoPlayer *player = videoPlayerPlugin.playersByIdentifier[@(identifiers.playerId)];
+  XCTAssertNotNil(player);
+
+  // Wait for player item to become ready
+  AVPlayerItem *item = player.player.currentItem;
+  [self keyValueObservingExpectationForObject:(id)item
+                                      keyPath:@"status"
+                                expectedValue:@(AVPlayerItemStatusReadyToPlay)];
+  [self waitForExpectationsWithTimeout:30.0 handler:nil];
+
+  // Now test getAudioTracks
+  NSArray<FVPMediaSelectionAudioTrackData *> *result = [player getAudioTracks:&error];
+
+  XCTAssertNil(error);
+  XCTAssertNotNil(result);
+
+  // Regular MP4 files do not have media selection groups.
+  // getAudioTracks only returns selectable audio tracks from HLS streams.
+  XCTAssertEqual(result.count, 0);
+
+  [player disposeWithError:&error];
+}
+
+- (void)testLoadTracksWithMediaTypeIsCalledOnNewerOS {
+  if (@available(iOS 15.0, macOS 12.0, *)) {
+    AVAsset *mockAsset = OCMClassMock([AVAsset class]);
+    AVPlayerItem *mockItem = OCMClassMock([AVPlayerItem class]);
+    OCMStub([mockItem asset]).andReturn(mockAsset);
+
+    // Stub loadValuesAsynchronouslyForKeys to immediately call completion
+    OCMStub([mockAsset loadValuesAsynchronouslyForKeys:[OCMArg any]
+                                     completionHandler:[OCMArg invokeBlock]]);
+
+    // Stub statusOfValueForKey to return Loaded
+    OCMStub([mockAsset statusOfValueForKey:@"tracks" error:[OCMArg anyObjectRef]])
+        .andReturn(AVKeyValueStatusLoaded);
+
+    // Expect loadTracksWithMediaType:completionHandler:
+    XCTestExpectation *expectation =
+        [self expectationWithDescription:@"loadTracksWithMediaType called"];
+    OCMExpect([mockAsset loadTracksWithMediaType:AVMediaTypeVideo completionHandler:[OCMArg any]])
+        .andDo(^(NSInvocation *invocation) {
+          [expectation fulfill];
+          // Invoke the completion handler to prevent leaks or hangs if the code waits for it
+          void (^completion)(NSArray<AVAssetTrack *> *, NSError *);
+          [invocation getArgument:&completion atIndex:3];
+          completion(@[], nil);
+        });
+
+    StubFVPAVFactory *stubAVFactory = [[StubFVPAVFactory alloc] initWithPlayer:nil output:nil];
+    StubViewProvider *stubViewProvider =
+#if TARGET_OS_OSX
+        [[StubViewProvider alloc] initWithView:nil];
+#else
+        [[StubViewProvider alloc] initWithViewController:nil];
+#endif
+    FVPVideoPlayer *player = [[FVPVideoPlayer alloc] initWithPlayerItem:mockItem
+                                                              avFactory:stubAVFactory
+                                                           viewProvider:stubViewProvider];
+    (void)player;  // Keep reference
+
+    [self waitForExpectationsWithTimeout:5.0 handler:nil];
+  }
 }
 
 @end

@@ -1,3 +1,18 @@
+## 2.9.0
+
+* Implements `getAudioTracks()` and `selectAudioTrack()` methods.
+* Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
+
+## 2.8.10
+
+* Improves compatibility with `UIScene`.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 2.8.9
+
+* Resolve `tracksWithMediaType:` deprecations.
+* Use `loadTracksWithMediaType:completionHandler:` for iOS 15.0+/macOS 12.0+.
+
 ## 2.8.8
 
 * Refactors Dart internals for maintainability.
