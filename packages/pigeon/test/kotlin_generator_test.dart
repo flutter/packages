@@ -1016,7 +1016,6 @@ void main() {
       dartPackageName: DEFAULT_PACKAGE_NAME,
     );
     final code = sink.toString();
-    expect(code, contains('@javax.annotation.Generated("dev.flutter.pigeon")'));
     expect(
       code,
       isNot(contains('@javax.annotation.Generated("dev.flutter.pigeon")')),
