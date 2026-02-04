@@ -982,6 +982,48 @@ void main() {
     expect(code, startsWith('// hello world'));
   });
 
+  test('generated annotation', () {
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    final kotlinOptions = InternalKotlinOptions(
+      copyrightHeader: makeIterable('hello world'),
+      kotlinOut: ''
+      useGeneratedAnnotation: true,
+    );
+    const generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('@javax.annotation.Generated("dev.flutter.pigeon")'));
+  });
+
+  test('no generated annotation', () {
+    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+    final sink = StringBuffer();
+    final kotlinOptions = InternalKotlinOptions(
+      copyrightHeader: makeIterable('hello world'),
+      kotlinOut: ''
+      useGeneratedAnnotation: true,
+    );
+    const generator = KotlinGenerator();
+    generator.generate(
+      kotlinOptions,
+      root,
+      sink,
+      dartPackageName: DEFAULT_PACKAGE_NAME,
+    );
+    final code = sink.toString();
+    expect(code, contains('@javax.annotation.Generated("dev.flutter.pigeon")'));
+    expect(
+      code,
+      isNot(contains('@javax.annotation.Generated("dev.flutter.pigeon")')),
+    );
+  });
+
   test('generics - list', () {
     final classDefinition = Class(
       name: 'Foobar',
