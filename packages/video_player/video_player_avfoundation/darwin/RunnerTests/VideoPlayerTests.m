@@ -482,7 +482,7 @@
 }
 
 - (void)testPlayerForPlatformViewDoesNotRegisterTexture {
-  TestTextureRegistry *mockTextureRegistry = [[TestTextureRegistry alloc] init];
+  TestTextureRegistry *textureRegistry = [[TestTextureRegistry alloc] init];
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   FVPVideoPlayerPlugin *videoPlayerPlugin =
       [[FVPVideoPlayerPlugin alloc] initWithAVFactory:[[StubFVPAVFactory alloc] initWithPlayer:nil
@@ -490,7 +490,7 @@
                                                                              pixelBufferSource:nil]
                                    displayLinkFactory:stubDisplayLinkFactory
                                       binaryMessenger:[[StubBinaryMessenger alloc] init]
-                                      textureRegistry:mockTextureRegistry
+                                      textureRegistry:textureRegistry
                                          viewProvider:[[StubViewProvider alloc] init]
                                         assetProvider:[[StubAssetProvider alloc] init]];
 
@@ -503,7 +503,7 @@
   FlutterError *createError;
   [videoPlayerPlugin createPlatformViewPlayerWithOptions:create error:&createError];
 
-  XCTAssertFalse(mockTextureRegistry.registeredTexture);
+  XCTAssertFalse(textureRegistry.registeredTexture);
 }
 
 - (void)testSeekToWhilePausedStartsDisplayLinkTemporarily {
@@ -1076,7 +1076,7 @@
 }
 
 - (void)testPlayerShouldNotDropEverySecondFrame {
-  TestTextureRegistry *mockTextureRegistry = [[TestTextureRegistry alloc] init];
+  TestTextureRegistry *textureRegistry = [[TestTextureRegistry alloc] init];
 
   StubFVPDisplayLinkFactory *stubDisplayLinkFactory = [[StubFVPDisplayLinkFactory alloc] init];
   TestPixelBufferSource *mockVideoOutput = [[TestPixelBufferSource alloc] init];
@@ -1086,7 +1086,7 @@
                                                 pixelBufferSource:mockVideoOutput]
       displayLinkFactory:stubDisplayLinkFactory
          binaryMessenger:[[StubBinaryMessenger alloc] init]
-         textureRegistry:mockTextureRegistry
+         textureRegistry:textureRegistry
             viewProvider:[[StubViewProvider alloc] init]
            assetProvider:[[StubAssetProvider alloc] init]];
 
@@ -1112,12 +1112,12 @@
   addFrame();
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
-  XCTAssertEqual(mockTextureRegistry.textureFrameAvailableCount, 1);
+  XCTAssertEqual(textureRegistry.textureFrameAvailableCount, 1);
 
   addFrame();
   stubDisplayLinkFactory.fireDisplayLink();
   CFRelease([player copyPixelBuffer]);
-  XCTAssertEqual(mockTextureRegistry.textureFrameAvailableCount, 2);
+  XCTAssertEqual(textureRegistry.textureFrameAvailableCount, 2);
 }
 
 - (void)testVideoOutputIsAddedWhenAVPlayerItemBecomesReady {

@@ -200,8 +200,9 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
 - (void)initialize:(FlutterError *__autoreleasing *)error {
 #if TARGET_OS_IOS
   // Allow audio playback when the Ring/Silent switch is set to silent
-  upgradeAudioSessionCategory(self.avFactory.sharedAudioSession, AVAudioSessionCategoryPlayback, 0,
-                              0);
+  upgradeAudioSessionCategory(self.avFactory.sharedAudioSession, AVAudioSessionCategoryPlayback,
+                              /* options */ 0,
+                              /* clearOptions */ 0);
 #endif
 
   FlutterError *disposeError;
@@ -271,10 +272,11 @@ static void upgradeAudioSessionCategory(NSObject<FVPAVAudioSession> *session,
   NSObject<FVPAVAudioSession> *session = self.avFactory.sharedAudioSession;
   if (mixWithOthers) {
     upgradeAudioSessionCategory(session, session.category,
-                                AVAudioSessionCategoryOptionMixWithOthers, 0);
+                                /* options */ AVAudioSessionCategoryOptionMixWithOthers,
+                                /* clearOptions */ 0);
   } else {
-    upgradeAudioSessionCategory(session, session.category, 0,
-                                AVAudioSessionCategoryOptionMixWithOthers);
+    upgradeAudioSessionCategory(session, session.category, /* options */ 0,
+                                /* clearOptions */ AVAudioSessionCategoryOptionMixWithOthers);
   }
 #endif
 }
