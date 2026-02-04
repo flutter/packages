@@ -736,6 +736,7 @@ class WebKitWebViewController extends PlatformWebViewController {
       },
     );
 
+    // If fltConsoleMessage is already present, it would crash when adding it again.
     if (_javaScriptChannelParams.containsKey('fltConsoleMessage')) {
       await removeJavaScriptChannel('fltConsoleMessage');
     }
