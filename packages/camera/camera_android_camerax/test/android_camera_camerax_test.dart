@@ -516,27 +516,12 @@ void main() {
 
       // Create mocks to use
       final mockProcessCameraProvider = MockProcessCameraProvider();
-      final mockFrontCameraSelector = MockCameraSelector();
-      final mockBackCameraSelector = MockCameraSelector();
       final mockFrontCameraInfo = MockCameraInfo();
       final mockBackCameraInfo = MockCameraInfo();
 
       // Tell plugin to create mock CameraSelectors for testing.
       PigeonOverrides.processCameraProvider_getInstance = () async =>
           mockProcessCameraProvider;
-      PigeonOverrides.cameraSelector_new =
-          ({LensFacing? requireLensFacing, dynamic cameraInfoForFilter}) {
-            switch (requireLensFacing) {
-              case LensFacing.front:
-                return mockFrontCameraSelector;
-              case LensFacing.back:
-              case LensFacing.external:
-              case LensFacing.unknown:
-              case null:
-            }
-
-            return mockBackCameraSelector;
-          };
       PigeonOverrides.camera2CameraInfo_from = ({required dynamic cameraInfo}) {
         final camera2cameraInfo = MockCamera2CameraInfo();
         var cameraId = '';
@@ -559,20 +544,11 @@ void main() {
       when(mockProcessCameraProvider.getAvailableCameraInfos()).thenAnswer(
         (_) async => <MockCameraInfo>[mockBackCameraInfo, mockFrontCameraInfo],
       );
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[]);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
       when(mockBackCameraInfo.sensorRotationDegrees).thenReturn(0);
+      when(mockBackCameraInfo.lensFacing).thenReturn(LensFacing.back);
+
       when(mockFrontCameraInfo.sensorRotationDegrees).thenReturn(90);
+      when(mockFrontCameraInfo.lensFacing).thenReturn(LensFacing.front);
 
       final List<CameraDescription> cameraDescriptions = await camera
           .availableCameras();
@@ -1738,6 +1714,10 @@ void main() {
       final mockBackCameraInfoOne = MockCameraInfo();
       final mockBackCameraInfoTwo = MockCameraInfo();
 
+      when(mockFrontCameraInfo.lensFacing).thenReturn(LensFacing.front);
+      when(mockBackCameraInfoOne.lensFacing).thenReturn(LensFacing.back);
+      when(mockBackCameraInfoTwo.lensFacing).thenReturn(LensFacing.back);
+
       // Mock/Detached objects for (typically attached) objects created by
       // createCamera.
       final mockPreview = MockPreview();
@@ -1931,24 +1911,6 @@ void main() {
           mockFrontCameraInfo,
         ];
       });
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoOne]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfoOne]);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoTwo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfoTwo]);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoOne]),
-      ).thenAnswer((_) async => <MockCameraInfo>[]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfoTwo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
 
       final List<CameraDescription> cameraDescriptions = await camera
           .availableCameras();
@@ -3500,18 +3462,6 @@ void main() {
       when(
         mockProcessCameraProvider.bindToLifecycle(any, any),
       ).thenAnswer((_) async => mockCamera);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
 
       camera.processCameraProvider = mockProcessCameraProvider;
       camera.liveCameraState = mockLiveCameraState;
@@ -3775,18 +3725,6 @@ void main() {
       when(
         mockProcessCameraProvider.bindToLifecycle(any, any),
       ).thenAnswer((_) async => mockCamera);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-      when(
-        mockBackCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockBackCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockBackCameraInfo]);
-      when(
-        mockFrontCameraSelector.filter(<MockCameraInfo>[mockFrontCameraInfo]),
-      ).thenAnswer((_) async => <MockCameraInfo>[mockFrontCameraInfo]);
 
       camera.processCameraProvider = mockProcessCameraProvider;
       camera.enableRecordingAudio = false;
@@ -3854,20 +3792,27 @@ void main() {
       final mockProcessCameraProvider = MockProcessCameraProvider();
       final mockCamera = MockCamera();
       final mockCameraInfo = MockCameraInfo();
+      final mockImageCapture = MockImageCapture();
       const testPicturePath = 'test/absolute/path/to/picture';
 
       // Set directly for test versus calling createCamera.
-      camera.imageCapture = MockImageCapture();
+      camera.imageCapture = mockImageCapture;
       camera.processCameraProvider = mockProcessCameraProvider;
       camera.cameraSelector = MockCameraSelector();
 
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
 
-      // Tell plugin to create detached camera state observers.
+      // Tell plugin to create detached camera state observers and mock systemServicesManager.
       GenericsPigeonOverrides.observerNew =
           <T>({required void Function(Observer<T>, T) onChanged}) {
             return Observer<T>.detached(onChanged: onChanged);
+          };
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
           };
 
       when(
@@ -3884,7 +3829,7 @@ void main() {
         mockCameraInfo.getCameraState(),
       ).thenAnswer((_) async => MockLiveCameraState());
       when(
-        camera.imageCapture!.takePicture(),
+        mockImageCapture.takePicture(argThat(isA<SystemServicesManager>())),
       ).thenAnswer((_) async => testPicturePath);
 
       final XFile imageFile = await camera.takePicture(3);
@@ -3907,7 +3852,7 @@ void main() {
       camera.imageCapture = mockImageCapture;
       camera.processCameraProvider = mockProcessCameraProvider;
 
-      // Tell plugin to mock call to get current photo orientation.
+      // Tell plugin to mock call to get current photo orientation and systemServicesManager.
       PigeonOverrides.deviceOrientationManager_new =
           ({
             required void Function(DeviceOrientationManager, String)
@@ -3919,12 +3864,18 @@ void main() {
             ).thenAnswer((_) async => defaultTargetRotation);
             return mockDeviceOrientationManager;
           };
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
+          };
 
       when(
         mockProcessCameraProvider.isBound(camera.imageCapture),
       ).thenAnswer((_) async => true);
       when(
-        camera.imageCapture!.takePicture(),
+        mockImageCapture.takePicture(argThat(isA<SystemServicesManager>())),
       ).thenAnswer((_) async => 'test/absolute/path/to/picture');
 
       // Orientation is unlocked and plugin does not need to set default target
@@ -3969,6 +3920,14 @@ void main() {
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
 
+      // Tell plugin to mock call to get systemServicesManager.
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
+          };
+
       when(
         mockProcessCameraProvider.isBound(camera.imageCapture),
       ).thenAnswer((_) async => true);
@@ -3994,6 +3953,14 @@ void main() {
       // Ignore setting target rotation for this test; tested seprately.
       camera.captureOrientationLocked = true;
       camera.processCameraProvider = mockProcessCameraProvider;
+
+      // Tell plugin to mock call to get current photo orientation and systemServicesManager.
+      PigeonOverrides.systemServicesManager_new =
+          ({
+            required void Function(SystemServicesManager, String) onCameraError,
+          }) {
+            return MockSystemServicesManager();
+          };
 
       when(
         mockProcessCameraProvider.isBound(camera.imageCapture),
