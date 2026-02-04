@@ -1007,7 +1007,6 @@ void main() {
     final kotlinOptions = InternalKotlinOptions(
       copyrightHeader: makeIterable('hello world'),
       kotlinOut: '',
-      useGeneratedAnnotation: true,
     );
     const generator = KotlinGenerator();
     generator.generate(
