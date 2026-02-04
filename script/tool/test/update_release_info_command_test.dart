@@ -995,7 +995,11 @@ packages/different_package/lib/foo.dart
       expect(commandError, isA<UsageException>());
       expect(
         commandError.toString(),
-        contains('Batch release does not support pre-release versions.'),
+        contains(
+          'This command does not support batch releases packages with pre-release versions.\n'
+          'Offending package: a_package\n'
+          'Pre-release version: 1.0.0-dev.1',
+        ),
       );
     });
   });

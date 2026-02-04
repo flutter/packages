@@ -114,7 +114,9 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       if ((entry.package.parseCIConfig()?.isBatchRelease ?? false) &&
           (entry.package.parsePubspec().version?.isPreRelease ?? false)) {
         throw UsageException(
-          'Batch release does not support pre-release versions.',
+          'This command does not support batch releases packages with pre-release versions.\n'
+          'Offending package: ${entry.package.displayName}\n'
+          'Pre-release version: ${entry.package.parsePubspec().version}\n',
           usage,
         );
       }
