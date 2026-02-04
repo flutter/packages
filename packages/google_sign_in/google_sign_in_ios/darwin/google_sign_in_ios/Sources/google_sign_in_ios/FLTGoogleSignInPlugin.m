@@ -115,7 +115,9 @@ static FSIGoogleSignInErrorCode FSIPigeonErrorCodeForGIDSignInErrorCode(NSIntege
   FLTGoogleSignInPlugin *instance = [[FLTGoogleSignInPlugin alloc]
       initWithViewProvider:[[FSIDefaultViewProvider alloc] initWithRegistrar:registrar]];
   [registrar addApplicationDelegate:instance];
+#if os(iOS)
   [registrar addSceneDelegate:instance];
+#endif
 
   SetUpFSIGoogleSignInApi(registrar.messenger, instance);
 }
