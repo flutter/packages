@@ -12,7 +12,7 @@
 
 /// Function to update the gms ground overlay from platform ground overlay.
 - (void)updateFromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)groundOverlay
-                              registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                          assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
                             screenScale:(CGFloat)screenScale;
 
 /// Updates the underlying GMSGroundOverlay with the properties from the given
@@ -22,7 +22,7 @@
 + (void)updateGroundOverlay:(GMSGroundOverlay *)groundOverlay
     fromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)groundOverlay
                   withMapView:(GMSMapView *)mapView
-                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
+                assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
                   screenScale:(CGFloat)screenScale
                   usingBounds:(BOOL)useBounds;
 
