@@ -94,7 +94,7 @@ class KotlinOptions {
       'includeErrorClass': includeErrorClass,
       if (fileSpecificClassNameComponent != null)
         'fileSpecificClassNameComponent': fileSpecificClassNameComponent!,
-      'useGeneratedAnnotation': useGeneratedAnnotation!,
+      'useGeneratedAnnotation': useGeneratedAnnotation,
     };
     return result;
   }

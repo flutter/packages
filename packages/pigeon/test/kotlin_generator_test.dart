@@ -987,7 +987,7 @@ void main() {
     final sink = StringBuffer();
     final kotlinOptions = InternalKotlinOptions(
       copyrightHeader: makeIterable('hello world'),
-      kotlinOut: ''
+      kotlinOut: '',
       useGeneratedAnnotation: true,
     );
     const generator = KotlinGenerator();
@@ -1006,7 +1006,7 @@ void main() {
     final sink = StringBuffer();
     final kotlinOptions = InternalKotlinOptions(
       copyrightHeader: makeIterable('hello world'),
-      kotlinOut: ''
+      kotlinOut: '',
       useGeneratedAnnotation: true,
     );
     const generator = KotlinGenerator();
