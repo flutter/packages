@@ -1,3 +1,7 @@
+## 0.6.30
+
+* Bump camerax_version from 1.5.2 to 1.5.3.
+
 ## 0.6.29
 
 * Modifies lens direction logic to request the value from CameraX directly versus manual detection.
