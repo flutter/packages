@@ -39,7 +39,6 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  path: ^1.8.1
 
 topics:
   - files
