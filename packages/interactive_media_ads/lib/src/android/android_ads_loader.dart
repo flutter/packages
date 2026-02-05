@@ -146,10 +146,10 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
           onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
             weakThis.target?.params.onAdsLoaded(
               PlatformOnAdsLoadedData(
-                // `manager` is only null when when using dynamic ad insertion
-                // (DAI) which this plugin does not currently support.
+                // `manager` is only null when using Dynamic Ad Insertion (DAI),
+                // which this plugin does not currently support.
                 // TODO(bparrishMines): Platform interface and app-facing
-                // interface should be updated to set this value as null.
+                // interface should be updated to set this value as nullable.
                 manager: AndroidAdsManager(event.manager!),
               ),
             );
