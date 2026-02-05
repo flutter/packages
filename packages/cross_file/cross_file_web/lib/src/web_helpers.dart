@@ -56,7 +56,10 @@ void downloadObjectUrl(
       : createAnchorElement(objectUrl, name);
 
   // Clear the children in target.
-  target.replaceChildren(JSArray<JSAny?>());
+  while (target.children.length > 0) {
+    target.removeChild(target.children.item(0)!);
+  }
+
   // Add the new `element` and click.
   addElementToContainerAndClick(target, element);
 }
