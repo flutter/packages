@@ -114,8 +114,9 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
     final Version? version = package.parsePubspec().version;
-    if ((package.parseCIConfig()?.isBatchRelease ?? false) &&
-        (version?.isPreRelease ?? false)) {
+    final bool isBatchRelease =
+        package.parseCIConfig()?.isBatchRelease ?? false;
+    if (isBatchRelease && (version?.isPreRelease ?? false)) {
       return PackageResult.fail(<String>[
         'This command does not support batch releases packages with pre-release versions.',
         'Pre-release version: $version',
@@ -152,8 +153,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       }
     }
 
-    final CIConfig? ciConfig = package.parseCIConfig();
-    if (ciConfig?.isBatchRelease ?? false) {
+    if (isBatchRelease) {
       return _createPendingBatchChangelog(
         package,
         versionChange: versionChange,
