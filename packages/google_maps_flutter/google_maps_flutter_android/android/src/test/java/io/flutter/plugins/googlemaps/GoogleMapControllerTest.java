@@ -319,16 +319,19 @@ public class GoogleMapControllerTest {
   }
 
   @Test
-  public void onPoiClick_SendsMethodCall() {
+  public void onPoiClick_sendsCorrectData() {
+    // Assuming 'controller' and 'flutterApi' are set up as in other tests.
     PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
-    
-    // controller is the instance of GoogleMapController in your test file
+
     controller.onPoiClick(poi);
 
-    // Verify the messenger sent the message to the correct channel
-    verify(binaryMessenger).send(
-        eq("plugins.flutter.io/google_maps_0"), 
-        any(ByteBuffer.class), 
-        any(BinaryMessenger.BinaryReply.class));
+    ArgumentCaptor<Messages.PlatformPointOfInterest> poiCaptor = ArgumentCaptor.forClass(Messages.PlatformPointOfInterest.class);
+    verify(flutterApi).onPoiTap(poiCaptor.capture(), any(Messages.VoidResult.class));
+
+    Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
+    assertEquals("name", capturedPoi.getName());
+    assertEquals("placeId", capturedPoi.getPlaceId());
+    assertEquals(1.0, capturedPoi.getPosition().getLatitude(), 1e-6);
+    assertEquals(2.0, capturedPoi.getPosition().getLongitude(), 1e-6);
   }
 }
