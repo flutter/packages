@@ -30,3 +30,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+dependency_overrides:
+  file_selector:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_file_selector
+      path: packages/file_selector/file_selector
