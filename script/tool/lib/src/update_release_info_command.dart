@@ -8,7 +8,6 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/output_utils.dart';
-
 import 'common/package_looping_command.dart';
 import 'common/package_state_utils.dart';
 import 'common/repository_package.dart';
