@@ -1,3 +1,7 @@
+## 2.9.1
+
+* Refactors native code for improved testability.
+
 ## 2.9.0
 
 * Implements `getAudioTracks()` and `selectAudioTrack()` methods.
