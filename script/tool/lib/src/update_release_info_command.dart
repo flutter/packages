@@ -8,7 +8,7 @@ import 'package:pub_semver/pub_semver.dart';
 import 'package:yaml_edit/yaml_edit.dart';
 
 import 'common/output_utils.dart';
-import 'common/package_command.dart';
+
 import 'common/package_looping_command.dart';
 import 'common/package_state_utils.dart';
 import 'common/repository_package.dart';
@@ -109,23 +109,19 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
       default:
         throw UnimplementedError('Unimplemented version change type');
     }
-
-    await for (final PackageEnumerationEntry entry in getPackagesToProcess()) {
-      final Version? version = entry.package.parsePubspec().version;
-      if ((entry.package.parseCIConfig()?.isBatchRelease ?? false) &&
-          (version?.isPreRelease ?? false)) {
-        throw UsageException(
-          'This command does not support batch releases packages with pre-release versions.\n'
-          'Offending package: ${entry.package.displayName}\n'
-          'Pre-release version: $version\n',
-          usage,
-        );
-      }
-    }
   }
 
   @override
   Future<PackageResult> runForPackage(RepositoryPackage package) async {
+    final Version? version = package.parsePubspec().version;
+    if ((package.parseCIConfig()?.isBatchRelease ?? false) &&
+        (version?.isPreRelease ?? false)) {
+      return PackageResult.fail(<String>[
+        'This command does not support batch releases packages with pre-release versions.',
+        'Pre-release version: $version',
+      ]);
+    }
+
     _VersionIncrementType? versionChange = _versionChange;
 
     // If the change type is `minimal` determine what changes, if any, are
@@ -158,10 +154,13 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
 
     final CIConfig? ciConfig = package.parseCIConfig();
     if (ciConfig?.isBatchRelease ?? false) {
-      return _createPendingChangelog(package, versionChange: versionChange);
+      return _createPendingBatchChangelog(
+        package,
+        versionChange: versionChange,
+      );
     }
 
-    return _updateReleaseDirectly(package, versionChange: versionChange);
+    return _updatePubspecAndChangelog(package, versionChange: versionChange);
   }
 
   _ChangelogUpdateOutcome _updateChangelog(
@@ -303,7 +302,11 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     }
   }
 
-  Future<PackageResult> _updateReleaseDirectly(
+  /// Updates the `pubspec.yaml` and `CHANGELOG.md` files directly.
+  ///
+  /// This is used for standard releases, where changes will be released
+  /// immediately.
+  Future<PackageResult> _updatePubspecAndChangelog(
     RepositoryPackage package, {
     _VersionIncrementType? versionChange,
   }) async {
@@ -340,10 +343,23 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
     return PackageResult.success();
   }
 
-  Future<PackageResult> _createPendingChangelog(
+  /// Creates a pending changelog entry in the package's `pending_changelogs`
+  /// directory.
+  ///
+  /// This is used for batch releases, where changes are accumulated in
+  /// individual files before being merged into the main CHANGELOG.md and
+  /// pubspec.yaml during the release process.
+  Future<PackageResult> _createPendingBatchChangelog(
     RepositoryPackage package, {
     _VersionIncrementType? versionChange,
   }) async {
+    final Directory pendingDirectory = package.pendingChangelogsDirectory;
+    if (!pendingDirectory.existsSync()) {
+      return PackageResult.fail(<String>[
+        'Could not create pending changelog entry. Pending changelog directory does not exist.',
+      ]);
+    }
+
     final VersionChange type;
     switch (versionChange) {
       case _VersionIncrementType.minor:
@@ -365,12 +381,6 @@ changelog: |
 ${changelogEntry.split('\n').map((line) => '  - $line').join('\n')}
 version: ${type.name}
 ''';
-
-    final Directory pendingDirectory = package.pendingChangelogsDirectory;
-    if (!pendingDirectory.existsSync()) {
-      pendingDirectory.createSync();
-    }
-
     final filename = 'change_${DateTime.now().millisecondsSinceEpoch}.yaml';
     final File file = pendingDirectory.childFile(filename);
     file.writeAsStringSync(content);

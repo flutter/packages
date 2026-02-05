@@ -788,6 +788,7 @@ packages/a_package/test/plugin_test.dart
         version: '1.0.0',
       );
       package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      package.pendingChangelogsDirectory.createSync();
       const originalChangelog = '''
 ## 1.0.0
 
@@ -829,6 +830,7 @@ packages/a_package/test/plugin_test.dart
         version: '1.0.0',
       );
       package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      package.pendingChangelogsDirectory.createSync();
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'update-release-info',
@@ -860,6 +862,7 @@ packages/a_package/test/plugin_test.dart
         version: '1.0.0',
       );
       package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+      package.pendingChangelogsDirectory.createSync();
 
       final List<String> output = await runCapturingPrint(runner, <String>[
         'update-release-info',
@@ -893,6 +896,7 @@ packages/a_package/test/plugin_test.dart
           version: '1.0.0',
         );
         package.ciConfigFile.writeAsStringSync('release:\n  batch: true');
+        package.pendingChangelogsDirectory.createSync();
         gitProcessRunner.mockProcessesForExecutable['git-diff'] =
             <FakeProcessInfo>[
               FakeProcessInfo(
@@ -978,8 +982,8 @@ packages/different_package/lib/foo.dart
 ''';
       package.changelogFile.writeAsStringSync(originalChangelog);
 
-      Exception? commandError;
-      await runCapturingPrint(
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
         runner,
         <String>[
           'update-release-info',
@@ -987,18 +991,17 @@ packages/different_package/lib/foo.dart
           '--changelog',
           'A change.',
         ],
-        exceptionHandler: (Exception e) {
+        errorHandler: (Error e) {
           commandError = e;
         },
       );
 
-      expect(commandError, isA<UsageException>());
+      expect(commandError, isA<ToolExit>());
       expect(
-        commandError.toString(),
+        output.join('\n'),
         contains(
           'This command does not support batch releases packages with pre-release versions.\n'
-          'Offending package: a_package\n'
-          'Pre-release version: 1.0.0-dev.1',
+          '    Pre-release version: 1.0.0-dev.1',
         ),
       );
     });
