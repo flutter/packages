@@ -1829,7 +1829,7 @@ window.addEventListener("error", function(e) {
           (JavaScriptConsoleMessage message) {},
         );
 
-        verify(
+        verifyNever(
           mockUserContentController.removeScriptMessageHandler(
             'fltConsoleMessage',
           ),
