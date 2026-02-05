@@ -661,33 +661,37 @@ void main() {
   });
 
   testWidgets('onPoiTap callback is called', (WidgetTester tester) async {
+    // 1. Setup variables to capture the result
     PointOfInterest? tappedPoi;
+    final Completer<void> mapCreatedCompleter = Completer<void>();
+
     await tester.pumpWidget(
       Directionality(
         textDirection: TextDirection.ltr,
         child: GoogleMap(
           initialCameraPosition: const CameraPosition(target: LatLng(0, 0)),
           onPoiTap: (PointOfInterest poi) => tappedPoi = poi,
+          // 2. Signal when initialization is done
+          onMapCreated: (_) => mapCreatedCompleter.complete(),
         ),
       ),
     );
 
-    // 🔥 IMPORTANT: Wait for the map initialization (onMapCreated) to complete
-    await tester.pumpAndSettle();
+    // 3. 🔥 FIX: Wait for the logic-specific Future, NOT a rendering timer
+    await mapCreatedCompleter.future;
 
-    final FakeGoogleMapsFlutterPlatform platform =
+    final platform =
         GoogleMapsFlutterPlatform.instance as FakeGoogleMapsFlutterPlatform;
 
-    final PointOfInterest poi = PointOfInterest(
+    const poi = PointOfInterest(
       const LatLng(10, 10),
       'name',
       'id',
     );
 
-    // 🔥 Inject the event through the stream controller
+    // 4. Inject the event
     platform.mapEventStreamController.add(MapPoiTapEvent(0, poi));
 
-    // 🔥 Wait for the stream event to be processed by the listener in _GoogleMapState
     await tester.pump();
 
     expect(tappedPoi, poi);
