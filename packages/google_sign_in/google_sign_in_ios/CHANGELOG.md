@@ -1,6 +1,6 @@
 ## 6.3.0
 
-* Add UIScene compatibility.
+* Adds UIScene compatibility.
 * Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
 ## 6.2.5
 
