@@ -514,6 +514,9 @@ protocol WebKitLibraryPigeonProxyApiDelegate {
   /// `SecCertificate` to the Dart `InstanceManager` and make calls to Dart.
   func pigeonApiSecCertificate(_ registrar: WebKitLibraryPigeonProxyApiRegistrar)
     -> PigeonApiSecCertificate
+  /// An implementation of [PigeonApiUIColor] used to add a new Dart instance of
+  /// `UIColor` to the Dart `InstanceManager` and make calls to Dart.
+  func pigeonApiUIColor(_ registrar: WebKitLibraryPigeonProxyApiRegistrar) -> PigeonApiUIColor
 }
 
 extension WebKitLibraryPigeonProxyApiDelegate {
@@ -619,6 +622,8 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiSecTrust(self))
     PigeonApiSecCertificate.setUpMessageHandlers(
       binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiSecCertificate(self))
+    PigeonApiUIColor.setUpMessageHandlers(
+      binaryMessenger: binaryMessenger, api: apiDelegate.pigeonApiUIColor(self))
   }
   func tearDown() {
     WebKitLibraryPigeonInstanceManagerApi.setUpMessageHandlers(
@@ -651,6 +656,7 @@ open class WebKitLibraryPigeonProxyApiRegistrar {
     PigeonApiWKWebpagePreferences.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiSecTrust.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
     PigeonApiSecCertificate.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
+    PigeonApiUIColor.setUpMessageHandlers(binaryMessenger: binaryMessenger, api: nil)
   }
 }
 private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStandardReaderWriter {
@@ -1094,6 +1100,19 @@ private class WebKitLibraryPigeonInternalProxyApiCodecReaderWriter: FlutterStand
             forInstance: instance as AnyObject)!)
         return
       }
+
+      #if !os(macOS)
+        if let instance = value as? UIColor {
+          pigeonRegistrar.apiDelegate.pigeonApiUIColor(pigeonRegistrar).pigeonNewInstance(
+            pigeonInstance: instance
+          ) { _ in }
+          super.writeByte(128)
+          super.writeValue(
+            pigeonRegistrar.instanceManager.identifierWithStrongReference(
+              forInstance: instance as AnyObject)!)
+          return
+        }
+      #endif
 
       if let instance = value as? NSObject {
         pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar).pigeonNewInstance(
@@ -2895,7 +2914,7 @@ final class PigeonApiWKWebsiteDataStore: PigeonApiProtocolWKWebsiteDataStore {
 protocol PigeonApiDelegateUIView {
   #if !os(macOS)
     /// The view’s background color.
-    func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: Int64?)
+    func setBackgroundColor(pigeonApi: PigeonApiUIView, pigeonInstance: UIView, value: UIColor?)
       throws
   #endif
   #if !os(macOS)
@@ -2934,7 +2953,7 @@ final class PigeonApiUIView: PigeonApiProtocolUIView {
         setBackgroundColorChannel.setMessageHandler { message, reply in
           let args = message as! [Any?]
           let pigeonInstanceArg = args[0] as! UIView
-          let valueArg: Int64? = nilOrValue(args[1])
+          let valueArg: UIColor? = nilOrValue(args[1])
           do {
             try api.pigeonDelegate.setBackgroundColor(
               pigeonApi: api, pigeonInstance: pigeonInstanceArg, value: valueArg)
@@ -7700,4 +7719,108 @@ final class PigeonApiSecCertificate: PigeonApiProtocolSecCertificate {
       }
     }
   }
+}
+protocol PigeonApiDelegateUIColor {
+  #if !os(macOS)
+    /// Creates a color object using the specified opacity and RGB component
+    /// values.
+    ///
+    /// The colors are specified in an extended color space, and the input value
+    /// is never clamped.
+    func pigeonDefaultConstructor(
+      pigeonApi: PigeonApiUIColor, red: Double, green: Double, blue: Double, alpha: Double
+    ) throws -> UIColor
+  #endif
+}
+
+protocol PigeonApiProtocolUIColor {
+}
+
+final class PigeonApiUIColor: PigeonApiProtocolUIColor {
+  unowned let pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar
+  let pigeonDelegate: PigeonApiDelegateUIColor
+  ///An implementation of [NSObject] used to access callback methods
+  var pigeonApiNSObject: PigeonApiNSObject {
+    return pigeonRegistrar.apiDelegate.pigeonApiNSObject(pigeonRegistrar)
+  }
+
+  init(pigeonRegistrar: WebKitLibraryPigeonProxyApiRegistrar, delegate: PigeonApiDelegateUIColor) {
+    self.pigeonRegistrar = pigeonRegistrar
+    self.pigeonDelegate = delegate
+  }
+  static func setUpMessageHandlers(binaryMessenger: FlutterBinaryMessenger, api: PigeonApiUIColor?)
+  {
+    let codec: FlutterStandardMessageCodec =
+      api != nil
+      ? FlutterStandardMessageCodec(
+        readerWriter: WebKitLibraryPigeonInternalProxyApiCodecReaderWriter(
+          pigeonRegistrar: api!.pigeonRegistrar))
+      : FlutterStandardMessageCodec.sharedInstance()
+    #if !os(macOS)
+      let pigeonDefaultConstructorChannel = FlutterBasicMessageChannel(
+        name: "dev.flutter.pigeon.webview_flutter_wkwebview.UIColor.pigeon_defaultConstructor",
+        binaryMessenger: binaryMessenger, codec: codec)
+      if let api = api {
+        pigeonDefaultConstructorChannel.setMessageHandler { message, reply in
+          let args = message as! [Any?]
+          let pigeonIdentifierArg = args[0] as! Int64
+          let redArg = args[1] as! Double
+          let greenArg = args[2] as! Double
+          let blueArg = args[3] as! Double
+          let alphaArg = args[4] as! Double
+          do {
+            api.pigeonRegistrar.instanceManager.addDartCreatedInstance(
+              try api.pigeonDelegate.pigeonDefaultConstructor(
+                pigeonApi: api, red: redArg, green: greenArg, blue: blueArg, alpha: alphaArg),
+              withIdentifier: pigeonIdentifierArg)
+            reply(wrapResult(nil))
+          } catch {
+            reply(wrapError(error))
+          }
+        }
+      } else {
+        pigeonDefaultConstructorChannel.setMessageHandler(nil)
+      }
+    #endif
+  }
+
+  #if !os(macOS)
+    ///Creates a Dart instance of UIColor and attaches it to [pigeonInstance].
+    func pigeonNewInstance(
+      pigeonInstance: UIColor, completion: @escaping (Result<Void, PigeonError>) -> Void
+    ) {
+      if pigeonRegistrar.ignoreCallsToDart {
+        completion(
+          .failure(
+            PigeonError(
+              code: "ignore-calls-error",
+              message: "Calls to Dart are being ignored.", details: "")))
+      } else if pigeonRegistrar.instanceManager.containsInstance(pigeonInstance as AnyObject) {
+        completion(.success(()))
+      } else {
+        let pigeonIdentifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(
+          pigeonInstance as AnyObject)
+        let binaryMessenger = pigeonRegistrar.binaryMessenger
+        let codec = pigeonRegistrar.codec
+        let channelName: String =
+          "dev.flutter.pigeon.webview_flutter_wkwebview.UIColor.pigeon_newInstance"
+        let channel = FlutterBasicMessageChannel(
+          name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+        channel.sendMessage([pigeonIdentifierArg] as [Any?]) { response in
+          guard let listResponse = response as? [Any?] else {
+            completion(.failure(createConnectionError(withChannelName: channelName)))
+            return
+          }
+          if listResponse.count > 1 {
+            let code: String = listResponse[0] as! String
+            let message: String? = nilOrValue(listResponse[1])
+            let details: String? = nilOrValue(listResponse[2])
+            completion(.failure(PigeonError(code: code, message: message, details: details)))
+          } else {
+            completion(.success(()))
+          }
+        }
+      }
+    }
+  #endif
 }
