@@ -1,3 +1,7 @@
+## 0.9.23+1
+
+* Fixes error handling in `startWriting`.
+
 ## 0.9.23
 
 * Changes the default storage path for camera pictures and videos on iOS from the application's Documents directory to the system's temporaryDirectory.
