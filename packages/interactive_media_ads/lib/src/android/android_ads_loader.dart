@@ -4,6 +4,8 @@
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show debugPrint;
+
 import '../platform_interface/platform_interface.dart';
 import 'android_ad_display_container.dart';
 import 'android_ads_manager.dart';
@@ -144,15 +146,21 @@ base class AndroidAdsLoader extends PlatformAdsLoader {
       ..addAdsLoadedListener(
         ima.AdsLoadedListener(
           onAdsManagerLoaded: (_, ima.AdsManagerLoadedEvent event) {
-            weakThis.target?.params.onAdsLoaded(
-              PlatformOnAdsLoadedData(
-                // `manager` is only null when using Dynamic Ad Insertion (DAI),
-                // which this plugin does not currently support.
-                // TODO(bparrishMines): Platform interface and app-facing
-                // interface should be updated to set this value as nullable.
-                manager: AndroidAdsManager(event.manager!),
-              ),
-            );
+            if (event.manager case final ima.AdsManager manager) {
+              weakThis.target?.params.onAdsLoaded(
+                PlatformOnAdsLoadedData(
+                  // `manager` is only null when using Dynamic Ad Insertion (DAI),
+                  // which this plugin does not currently support.
+                  // TODO(bparrishMines): Platform interface and app-facing
+                  // interface should be updated to set this value as nullable.
+                  manager: AndroidAdsManager(manager),
+                ),
+              );
+            } else {
+              debugPrint(
+                'Failed to call `AndroidAdsLoader.onAdsLoaded` because `AdsLoadedListener.onAdsManagerLoaded` was called with a null AdsManager',
+              );
+            }
           },
         ),
       )
