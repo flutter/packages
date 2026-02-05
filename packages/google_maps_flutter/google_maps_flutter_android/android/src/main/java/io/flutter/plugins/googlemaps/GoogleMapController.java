@@ -373,8 +373,6 @@ class GoogleMapController
 
   @Override
   public void onPoiClick(PointOfInterest poi) {
-    Log.e("POI_TEST", "Native POI Click Detected: " + poi.name);
-    Log.e("POI_TEST", "Native Tap! Sending to Channel ID: " + id);
     Messages.PlatformPointOfInterest platformPoi = 
         new Messages.PlatformPointOfInterest.Builder()
             .setPosition(Convert.latLngToPigeon(poi.latLng))
