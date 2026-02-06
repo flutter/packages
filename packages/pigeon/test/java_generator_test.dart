@@ -1613,20 +1613,28 @@ void main() {
   });
 
   group('generated annotation', () {
-    test('with generated annotation', () {
-      final classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
-      final root = Root(
+    late Class classDefinition;
+    late Root root;
+    late StringBuffer sink;
+    late JavaGenerator generator;
+
+    setUp(() {
+      classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
+      root = Root(
         apis: <Api>[],
         classes: <Class>[classDefinition],
         enums: <Enum>[],
       );
-      final sink = StringBuffer();
+      sink = StringBuffer();
+      generator = const JavaGenerator();
+    });
+
+    test('with generated annotation', () {
       const javaOptions = InternalJavaOptions(
         className: 'Messages',
         useGeneratedAnnotation: true,
         javaOut: '',
       );
-      const generator = JavaGenerator();
       generator.generate(
         javaOptions,
         root,
@@ -1638,18 +1646,10 @@ void main() {
     });
 
     test('without generated annotation', () {
-      final classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
-      final root = Root(
-        apis: <Api>[],
-        classes: <Class>[classDefinition],
-        enums: <Enum>[],
-      );
-      final sink = StringBuffer();
       const javaOptions = InternalJavaOptions(
         className: 'Messages',
         javaOut: '',
       );
-      const generator = JavaGenerator();
       generator.generate(
         javaOptions,
         root,
