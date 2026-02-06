@@ -12,13 +12,17 @@ import 'types.dart';
 @immutable
 class PointOfInterest {
   /// Creates an immutable representation of a point of interest.
-  const PointOfInterest(this.position, this.name, this.placeId);
+  const PointOfInterest({
+    required this.position,
+    this.name,
+    required this.placeId,
+  });
 
   /// The geographical location of the POI.
   final LatLng position;
 
   /// The name of the POI (e.g., "Googleplex").
-  final String name;
+  final String? name;
 
   /// The unique Place ID defined by Google (e.g., "ChIJj61dQgK6j4AR4GeTYWZsKWw").
   final String placeId;

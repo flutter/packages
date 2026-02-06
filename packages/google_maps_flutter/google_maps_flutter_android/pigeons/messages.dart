@@ -240,12 +240,12 @@ class PlatformMarker {
 class PlatformPointOfInterest {
   PlatformPointOfInterest({
     required this.position,
-    required this.name,
+    this.name,
     required this.placeId,
   });
 
   final PlatformLatLng position;
-  final String name;
+  final String? name;
   final String placeId;
 }
 

@@ -231,9 +231,9 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
           MapPoiTapEvent(
             mapId,
             PointOfInterest(
-              LatLng.fromJson(arguments['position'])!,
-              arguments['name']! as String,
-              arguments['placeId']! as String,
+              position: LatLng.fromJson(arguments['position'])!,
+              name: arguments['name']! as String,
+              placeId: arguments['placeId']! as String,
             ),
           ),
         );

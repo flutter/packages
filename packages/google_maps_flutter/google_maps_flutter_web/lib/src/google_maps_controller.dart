@@ -270,9 +270,9 @@ class GoogleMapController {
             MapPoiTapEvent(
               _mapId,
               PointOfInterest(
-                gmLatLngToLatLng(event.latLng!),
-                '', // Name is not available in the Web SDK click event
-                placeId,
+                position: gmLatLngToLatLng(event.latLng!),
+                name: null,
+                placeId: placeId,
               ),
             ),
           );

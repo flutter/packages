@@ -3,7 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_flutter_example/example_google_map.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import 'page.dart';
 
@@ -25,15 +26,15 @@ class PlacePoiBody extends StatefulWidget {
 }
 
 class PlacePoiBodyState extends State<PlacePoiBody> {
-  GoogleMapController? controller;
+  ExampleGoogleMapController? controller;
   PointOfInterest? _lastPoi;
 
-  final CameraPosition _kKolkata = const CameraPosition(
+  final CameraPosition _kSydney = const CameraPosition(
     target: LatLng(22.54222641620606, 88.34560669761545),
     zoom: 16.0,
   );
 
-  void _onMapCreated(GoogleMapController controller) {
+  void _onMapCreated(ExampleGoogleMapController controller) {
     this.controller = controller;
   }
 
@@ -50,9 +51,9 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
     return Column(
       children: <Widget>[
         Expanded(
-          child: GoogleMap(
+          child: ExampleGoogleMap(
             onMapCreated: _onMapCreated,
-            initialCameraPosition: _kKolkata,
+            initialCameraPosition: _kSydney,
             onPoiTap: _onPoiTap,
             myLocationButtonEnabled: false,
             mapType: MapType.normal,

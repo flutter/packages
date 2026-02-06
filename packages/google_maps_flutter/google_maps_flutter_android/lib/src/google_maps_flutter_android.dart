@@ -1268,9 +1268,9 @@ class HostMapMessageHandler implements MapsCallbackApi {
       MapPoiTapEvent(
         mapId,
         PointOfInterest(
-          LatLng(poi.position.latitude, poi.position.longitude),
-          poi.name,
-          poi.placeId,
+          position: LatLng(poi.position.latitude, poi.position.longitude),
+          name: poi.name,
+          placeId: poi.placeId,
         ),
       ),
     );
