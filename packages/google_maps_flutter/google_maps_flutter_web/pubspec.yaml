@@ -40,3 +40,4 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/web/index.html
+dependency_overrides:   {}

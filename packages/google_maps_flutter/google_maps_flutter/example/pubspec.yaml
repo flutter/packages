@@ -33,3 +33,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+dependency_overrides:   {}

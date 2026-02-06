@@ -37,3 +37,4 @@ topics:
   - google-maps
   - google-maps-flutter
   - map
+dependency_overrides:   {}
