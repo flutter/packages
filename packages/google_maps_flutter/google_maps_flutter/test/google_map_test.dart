@@ -684,9 +684,9 @@ void main() {
         GoogleMapsFlutterPlatform.instance as FakeGoogleMapsFlutterPlatform;
 
     const poi = PointOfInterest(
-      const LatLng(10, 10),
-      'name',
-      'id',
+      position: const LatLng(10, 10),
+      name: 'name',
+      placeId: 'id',
     );
 
     // 4. Inject the event

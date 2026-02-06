@@ -1496,4 +1496,40 @@ void main() {
       reason: 'Should pass mapId in PlatformView creation message',
     );
   });
+
+  test('onPoiTap sends events to correct stream', () async {
+    const int mapId = 1;
+    final PlatformLatLng fakePosition = PlatformLatLng(latitude: 12.34, longitude: 56.78);
+    const String fakeName = 'Googleplex';
+    const String fakePlaceId = 'iso_id_123';
+
+    final GoogleMapsFlutterAndroid maps = GoogleMapsFlutterAndroid();
+    // Initialize the handler which receives messages from the native side
+    final HostMapMessageHandler callbackHandler = maps.ensureHandlerInitialized(
+      mapId,
+    );
+
+    final StreamQueue<MapPoiTapEvent> stream = StreamQueue<MapPoiTapEvent>(
+      maps.onPoiTap(mapId: mapId),
+    );
+
+    // Simulate a message from the native Android side (via Pigeon generated handler)
+    callbackHandler.onPoiTap(
+      PlatformPointOfInterest(
+        position: fakePosition,
+        name: fakeName,
+        placeId: fakePlaceId,
+      ),
+    );
+
+    // Verify the event in the stream
+    final MapPoiTapEvent event = await stream.next;
+    expect(event.mapId, mapId);
+    
+    final PointOfInterest poi = event.value;
+    expect(poi.position.latitude, fakePosition.latitude);
+    expect(poi.position.longitude, fakePosition.longitude);
+    expect(poi.name, fakeName);
+    expect(poi.placeId, fakePlaceId);
+  });
 }
