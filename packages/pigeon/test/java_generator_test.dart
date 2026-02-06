@@ -4,6 +4,7 @@
 
 import 'package:pigeon/pigeon.dart';
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart';
 import 'package:pigeon/src/java/java_generator.dart';
 import 'package:test/test.dart';
 
@@ -1611,51 +1612,53 @@ void main() {
     );
   });
 
-  test('generated annotation', () {
-    final classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
-    final root = Root(
-      apis: <Api>[],
-      classes: <Class>[classDefinition],
-      enums: <Enum>[],
-    );
-    final sink = StringBuffer();
-    const javaOptions = InternalJavaOptions(
-      className: 'Messages',
-      useGeneratedAnnotation: true,
-      javaOut: '',
-    );
-    const generator = JavaGenerator();
-    generator.generate(
-      javaOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final code = sink.toString();
-    expect(code, contains('@javax.annotation.Generated("dev.flutter.pigeon")'));
-  });
+  group('generated annotation', () {
+    test('with generated annotation', () {
+      final classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
+      final root = Root(
+        apis: <Api>[],
+        classes: <Class>[classDefinition],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const javaOptions = InternalJavaOptions(
+        className: 'Messages',
+        useGeneratedAnnotation: true,
+        javaOut: '',
+      );
+      const generator = JavaGenerator();
+      generator.generate(
+        javaOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains(generatedAnnotation));
+    });
 
-  test('no generated annotation', () {
-    final classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
-    final root = Root(
-      apis: <Api>[],
-      classes: <Class>[classDefinition],
-      enums: <Enum>[],
-    );
-    final sink = StringBuffer();
-    const javaOptions = InternalJavaOptions(className: 'Messages', javaOut: '');
-    const generator = JavaGenerator();
-    generator.generate(
-      javaOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final code = sink.toString();
-    expect(
-      code,
-      isNot(contains('@javax.annotation.Generated("dev.flutter.pigeon")')),
-    );
+    test('without generated annotation', () {
+      final classDefinition = Class(name: 'Foobar', fields: <NamedType>[]);
+      final root = Root(
+        apis: <Api>[],
+        classes: <Class>[classDefinition],
+        enums: <Enum>[],
+      );
+      final sink = StringBuffer();
+      const javaOptions = InternalJavaOptions(
+        className: 'Messages',
+        javaOut: '',
+      );
+      const generator = JavaGenerator();
+      generator.generate(
+        javaOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, isNot(contains(generatedAnnotation)));
+    });
   });
 
   test('transfers documentation comments', () {

@@ -208,7 +208,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.writeln('// $seeAlsoWarning');
     indent.writeln('@file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")');
     if (generatorOptions.useGeneratedAnnotation) {
-      indent.writeln('@javax.annotation.Generated("dev.flutter.pigeon")');
+      indent.writeln(generatedAnnotation);
     }
   }
 

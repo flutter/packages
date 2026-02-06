@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:pigeon/src/ast.dart';
+import 'package:pigeon/src/generator_tools.dart';
 import 'package:pigeon/src/kotlin/kotlin_generator.dart';
 import 'package:test/test.dart';
 
@@ -982,44 +983,47 @@ void main() {
     expect(code, startsWith('// hello world'));
   });
 
-  test('generated annotation', () {
-    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final sink = StringBuffer();
-    final kotlinOptions = InternalKotlinOptions(
-      copyrightHeader: makeIterable('hello world'),
-      kotlinOut: '',
-      useGeneratedAnnotation: true,
-    );
-    const generator = KotlinGenerator();
-    generator.generate(
-      kotlinOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final code = sink.toString();
-    expect(code, contains('@javax.annotation.Generated("dev.flutter.pigeon")'));
-  });
+  group('generated annotation', () {
+    late Root root;
+    late KotlinGenerator generator;
+    late StringBuffer sink;
 
-  test('no generated annotation', () {
-    final root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
-    final sink = StringBuffer();
-    final kotlinOptions = InternalKotlinOptions(
-      copyrightHeader: makeIterable('hello world'),
-      kotlinOut: '',
-    );
-    const generator = KotlinGenerator();
-    generator.generate(
-      kotlinOptions,
-      root,
-      sink,
-      dartPackageName: DEFAULT_PACKAGE_NAME,
-    );
-    final code = sink.toString();
-    expect(
-      code,
-      isNot(contains('@javax.annotation.Generated("dev.flutter.pigeon")')),
-    );
+    setUp(() {
+      root = Root(apis: <Api>[], classes: <Class>[], enums: <Enum>[]);
+      generator = const KotlinGenerator();
+      sink = StringBuffer();
+    });
+
+    test('with generated annotation', () {
+      final kotlinOptions = InternalKotlinOptions(
+        copyrightHeader: makeIterable('hello world'),
+        kotlinOut: '',
+        useGeneratedAnnotation: true,
+      );
+      generator.generate(
+        kotlinOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, contains(generatedAnnotation));
+    });
+
+    test('without generated annotation', () {
+      final kotlinOptions = InternalKotlinOptions(
+        copyrightHeader: makeIterable('hello world'),
+        kotlinOut: '',
+      );
+      generator.generate(
+        kotlinOptions,
+        root,
+        sink,
+        dartPackageName: DEFAULT_PACKAGE_NAME,
+      );
+      final code = sink.toString();
+      expect(code, isNot(contains(generatedAnnotation)));
+    });
   });
 
   test('generics - list', () {
