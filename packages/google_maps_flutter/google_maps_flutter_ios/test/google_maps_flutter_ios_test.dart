@@ -1350,18 +1350,18 @@ void main() {
   });
 
   test('onPoiTap sends events to correct stream', () async {
-    const int mapId = 1;
-    final PlatformLatLng fakePosition = PlatformLatLng(latitude: 12.34, longitude: 56.78);
-    const String fakeName = 'Googleplex';
-    const String fakePlaceId = 'iso_id_123';
+    const mapId = 1;
+    final fakePosition = PlatformLatLng(latitude: 12.34, longitude: 56.78);
+    const fakeName = 'Googleplex';
+    const fakePlaceId = 'iso_id_123';
 
-    final GoogleMapsFlutterIOS maps = GoogleMapsFlutterIOS();
+    final maps = GoogleMapsFlutterIOS();
     // Initialize the handler which receives messages from the native side
     final HostMapMessageHandler callbackHandler = maps.ensureHandlerInitialized(
       mapId,
     );
 
-    final StreamQueue<MapPoiTapEvent> stream = StreamQueue<MapPoiTapEvent>(
+    final stream = StreamQueue<MapPoiTapEvent>(
       maps.onPoiTap(mapId: mapId),
     );
 

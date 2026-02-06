@@ -139,17 +139,17 @@ void main() {
       );
     });
     test('onPoiTap', () async {
-      final MethodChannelGoogleMapsFlutter platform =
+      final platform =
           MethodChannelGoogleMapsFlutter();
-      const int mapId = 0;
+      const mapId = 0;
       platform.ensureChannelInitialized(mapId);
 
-      final List<MapPoiTapEvent> events = <MapPoiTapEvent>[];
+      final events = <MapPoiTapEvent>[];
       platform
           .onPoiTap(mapId: mapId)
           .listen((MapPoiTapEvent event) => events.add(event));
 
-      final Map<String, Object> poiData = <String, Object>{
+      final poiData = <String, Object>{
         'placeId': 'place123',
         'name': 'Googleplex',
         'position': <double>[37.422, -122.084],

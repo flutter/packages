@@ -271,7 +271,6 @@ class GoogleMapController {
               _mapId,
               PointOfInterest(
                 position: gmLatLngToLatLng(event.latLng!),
-                name: null,
                 placeId: placeId,
               ),
             ),

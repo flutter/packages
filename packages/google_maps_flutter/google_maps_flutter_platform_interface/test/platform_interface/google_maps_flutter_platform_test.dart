@@ -156,7 +156,7 @@ void main() {
   });
 
   test('onPoiTap default implementation throws UnimplementedError', () {
-    final ExtendsGoogleMapsFlutterPlatform platform =
+    final platform =
         ExtendsGoogleMapsFlutterPlatform();
     // Most stream methods in the platform interface should provide a stream or throw.
     // Verify that your new onPoiTap is reachable.

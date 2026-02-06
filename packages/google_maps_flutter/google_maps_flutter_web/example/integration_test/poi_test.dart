@@ -56,7 +56,7 @@ void main() {
 
     testWidgets('Emits MapPoiTapEvent when clicking a POI', (WidgetTester tester) async {
       final latLng = gmaps.LatLng(10, 20);
-      bool stopCalled = false;
+      bool? stopCalled = false;
 
       final event = FakeIconMouseEvent(
         latLng: latLng,

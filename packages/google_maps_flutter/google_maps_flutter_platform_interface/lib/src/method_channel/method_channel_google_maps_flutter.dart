@@ -237,7 +237,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
             ),
           ),
         );
-        break;
 
       case 'infoWindow#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);

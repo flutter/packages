@@ -3,14 +3,17 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter_example/example_google_map.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
+// ignore: prefer_relative_imports
+import 'example_google_map.dart';
 import 'page.dart';
 
+/// Page for demonstrating Point of Interest (POI) tapping.
 class PlacePoiPage extends GoogleMapExampleAppPage {
+  /// Default constructor.
   const PlacePoiPage({super.key})
-    : super(const Icon(Icons.business), 'Place POI');
+      : super(const Icon(Icons.business), 'Place POI');
 
   @override
   Widget build(BuildContext context) {
@@ -18,14 +21,18 @@ class PlacePoiPage extends GoogleMapExampleAppPage {
   }
 }
 
+/// Body of the POI page.
 class PlacePoiBody extends StatefulWidget {
+  /// Default constructor.
   const PlacePoiBody({super.key});
 
   @override
   State<StatefulWidget> createState() => PlacePoiBodyState();
 }
 
+/// State for [PlacePoiBody].
 class PlacePoiBodyState extends State<PlacePoiBody> {
+  /// The controller for the map.
   ExampleGoogleMapController? controller;
   PointOfInterest? _lastPoi;
 
@@ -34,6 +41,7 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
     zoom: 16.0,
   );
 
+  // ignore: use_setters_to_change_properties
   void _onMapCreated(ExampleGoogleMapController controller) {
     this.controller = controller;
   }
@@ -56,7 +64,6 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
             initialCameraPosition: _kSydney,
             onPoiTap: _onPoiTap,
             myLocationButtonEnabled: false,
-            mapType: MapType.normal,
           ),
         ),
         Container(

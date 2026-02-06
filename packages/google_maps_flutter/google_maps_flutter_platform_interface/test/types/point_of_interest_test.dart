@@ -8,7 +8,7 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 void main() {
   group('PointOfInterest', () {
     test('constructor with all named parameters', () {
-      const PointOfInterest poi = PointOfInterest(
+      const poi = PointOfInterest(
         position: LatLng(10.0, 20.0),
         name: 'Test Name',
         placeId: 'test_id',
@@ -19,7 +19,7 @@ void main() {
     });
 
     test('constructor with null name (Web support)', () {
-      const PointOfInterest poi = PointOfInterest(
+      const poi = PointOfInterest(
         position: LatLng(10.0, 20.0),
         placeId: 'test_id',
       );
@@ -27,17 +27,17 @@ void main() {
     });
 
     test('equality', () {
-      const PointOfInterest poi1 = PointOfInterest(
+      const poi1 = PointOfInterest(
         position: LatLng(10.0, 20.0),
         name: 'A',
         placeId: 'ID',
       );
-      const PointOfInterest poi2 = PointOfInterest(
+      const poi2 = PointOfInterest(
         position: LatLng(10.0, 20.0),
         name: 'A',
         placeId: 'ID',
       );
-      const PointOfInterest poi3 = PointOfInterest(
+      const poi3 = PointOfInterest(
         position: LatLng(10.1, 20.0),
         name: 'A',
         placeId: 'ID',
@@ -48,12 +48,12 @@ void main() {
     });
 
     test('hashCode', () {
-      const PointOfInterest poi1 = PointOfInterest(
+      const poi1 = PointOfInterest(
         position: LatLng(10.0, 20.0),
         name: 'A',
         placeId: 'ID',
       );
-      const PointOfInterest poi2 = PointOfInterest(
+      const poi2 = PointOfInterest(
         position: LatLng(10.0, 20.0),
         name: 'A',
         placeId: 'ID',
