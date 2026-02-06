@@ -323,21 +323,21 @@ public class GoogleMapControllerTest {
 
   @Test
   public void onPoiClick() {
-      // Note: ensure googleMapController is initialized in your @Before method
-      PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
-      
-      googleMapController.onPoiClick(poi); // Use the correct variable name
+    // Note: ensure googleMapController is initialized in your @Before method
+    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
 
-      ArgumentCaptor<Messages.PlatformPointOfInterest> poiCaptor = 
-          ArgumentCaptor.forClass(Messages.PlatformPointOfInterest.class);
-      
-      // Verify that the listener was called and capture the result
-      verify(mockListener).onPoiClick(poiCaptor.capture());
-      
-      Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
-      assertEquals("name", capturedPoi.getName());
-      assertEquals("placeId", capturedPoi.getPlaceId());
-      assertEquals(1.0, capturedPoi.getPosition().getLatitude(), 1e-6);
-      assertEquals(2.0, capturedPoi.getPosition().getLongitude(), 1e-6);
+    googleMapController.onPoiClick(poi); // Use the correct variable name
+
+    ArgumentCaptor<Messages.PlatformPointOfInterest> poiCaptor =
+        ArgumentCaptor.forClass(Messages.PlatformPointOfInterest.class);
+
+    // Verify that the listener was called and capture the result
+    verify(mockListener).onPoiClick(poiCaptor.capture());
+
+    Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
+    assertEquals("name", capturedPoi.getName());
+    assertEquals("placeId", capturedPoi.getPlaceId());
+    assertEquals(1.0, capturedPoi.getPosition().getLatitude(), 1e-6);
+    assertEquals(2.0, capturedPoi.getPosition().getLongitude(), 1e-6);
   }
 }

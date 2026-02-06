@@ -51,16 +51,11 @@ import io.flutter.plugins.googlemaps.Messages.FlutterError;
 import io.flutter.plugins.googlemaps.Messages.MapsApi;
 import io.flutter.plugins.googlemaps.Messages.MapsCallbackApi;
 import io.flutter.plugins.googlemaps.Messages.MapsInspectorApi;
-import io.flutter.plugin.common.MethodChannel;
 import java.io.ByteArrayOutputStream;
-import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.Set;
-import java.util.Map;
-
 
 /** Controller of a single GoogleMaps MapView instance. */
 class GoogleMapController
@@ -373,13 +368,13 @@ class GoogleMapController
 
   @Override
   public void onPoiClick(PointOfInterest poi) {
-    Messages.PlatformPointOfInterest platformPoi = 
+    Messages.PlatformPointOfInterest platformPoi =
         new Messages.PlatformPointOfInterest.Builder()
             .setPosition(Convert.latLngToPigeon(poi.latLng))
             .setName(poi.name)
             .setPlaceId(poi.placeId)
             .build();
-    
+
     flutterApi.onPoiTap(platformPoi, new NoOpVoidResult());
   }
 
