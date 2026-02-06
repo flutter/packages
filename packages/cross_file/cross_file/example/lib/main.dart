@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:file_selector/file_selector.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:flutter/material.dart';
 import 'package:mime/mime.dart' as mime;
 
@@ -19,13 +18,14 @@ class FileOpenScreen extends StatelessWidget {
   Future<void> _openFile(BuildContext context) async {
     final XFile? file = await openFile();
 
-    final String? fileName = await file.name() ?? file.uri;
-
-    if (!context.mounted) {
+    if (file == null) {
+      // User canceled the dialog.
       return;
     }
 
-    if (file case final XFile file) {
+    final String fileName = await file.name() ?? file.uri;
+
+    if (context.mounted) {
       switch (mime.lookupMimeType(fileName)) {
         case final String mimeType when mimeType.startsWith('text'):
           await showDialog<void>(
@@ -35,7 +35,7 @@ class FileOpenScreen extends StatelessWidget {
         case final String mimeType when mimeType.startsWith('image'):
         case final String mimeType when mimeType.startsWith('application'):
         case null:
-          debugPrint('Unsupported file type: ${file.path}');
+          debugPrint('Unsupported file type: $fileName');
           return;
       }
     }
@@ -78,7 +78,7 @@ class TextDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(file.path),
+      title: Text(file.uri),
       content: Scrollbar(
         child: SingleChildScrollView(
           child: FutureBuilder<String>(
