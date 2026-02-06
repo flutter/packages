@@ -26,13 +26,25 @@ flutter:
 
 dependencies:
   cross_file_android:
-    path: ../cross_file_android
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_android
   cross_file_darwin:
-    path: ../cross_file_darwin
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_darwin
   cross_file_io:
-    path: ../cross_file_io
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_io
   cross_file_platform_interface:
-    path: ../cross_file_platform_interface
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_platform_interface
   flutter:
     sdk: flutter
 

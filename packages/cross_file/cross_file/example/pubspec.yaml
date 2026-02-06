@@ -14,7 +14,11 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  #file_selector: ^1.1.0
+  file_selector:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_file_selector
+      path: packages/file_selector/file_selector
   flutter:
     sdk: flutter
   flutter_driver:
