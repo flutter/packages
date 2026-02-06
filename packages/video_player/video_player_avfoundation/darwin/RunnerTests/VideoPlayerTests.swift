@@ -9,10 +9,11 @@ import XCTest
 
 @MainActor class VideoPlayerTests: XCTestCase {
 
-  let mp4TestURL = URL(
-    string: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")!
-  let hlsTestURL = URL(
-    string: "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8")!
+  let mp4TestURI = "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+  let hlsTestURI = "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+  let mp3AudioTestURI = "https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"
+  let hlsAudioTestURI =
+    "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee_audio_only.m3u8"
 
   func testBlankVideoBugWithEncryptedVideoStreamAndInvertedAspectRatioBugForSomeVideoStream() {
     // This is to fix 2 bugs: 1. blank video for encrypted video streams on iOS 16
@@ -42,9 +43,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -71,9 +70,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
     videoPlayerPlugin.createPlatformViewPlayer(with: create, error: &error)
     XCTAssertNil(error)
 
@@ -97,9 +94,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -145,9 +140,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
 
@@ -182,9 +175,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let player =
@@ -227,9 +218,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let player =
@@ -258,9 +247,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -286,9 +273,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -320,24 +305,21 @@ import XCTest
   }
 
   func testVideoControls() {
-    let eventListener = sanityTestURI(
-      "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")
+    let eventListener = sanityTestURI(mp4TestURI)
     XCTAssertEqual(eventListener.initializationSize.height, 720)
     XCTAssertEqual(eventListener.initializationSize.width, 1280)
     XCTAssertEqual(Double(eventListener.initializationDuration), 4000, accuracy: 200)
   }
 
   func testAudioControls() {
-    let eventListener = sanityTestURI(
-      "https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3")
+    let eventListener = sanityTestURI(mp3AudioTestURI)
     XCTAssertEqual(eventListener.initializationSize.height, 0)
     XCTAssertEqual(eventListener.initializationSize.width, 0)
     XCTAssertEqual(Double(eventListener.initializationDuration), 5400, accuracy: 200)
   }
 
   func testHLSControls() {
-    let eventListener = sanityTestURI(
-      "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8")
+    let eventListener = sanityTestURI(hlsTestURI)
     XCTAssertEqual(eventListener.initializationSize.height, 720)
     XCTAssertEqual(eventListener.initializationSize.width, 1280)
     XCTAssertEqual(Double(eventListener.initializationDuration), 4000, accuracy: 200)
@@ -346,8 +328,7 @@ import XCTest
   func testAudioOnlyHLSControls() throws {
     throw XCTSkip("Flaky; see https://github.com/flutter/flutter/issues/164381")
 
-    let eventListener = sanityTestURI(
-      "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee_audio_only.m3u8")
+    let eventListener = sanityTestURI(hlsAudioTestURI)
     XCTAssertEqual(eventListener.initializationSize.height, 0)
     XCTAssertEqual(eventListener.initializationSize.width, 0)
     XCTAssertEqual(Double(eventListener.initializationDuration), 4000, accuracy: 200)
@@ -529,9 +510,7 @@ import XCTest
       videoPlayerPlugin.initialize(&error)
       XCTAssertNil(error)
 
-      let create = FVPCreationOptions.make(
-        withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-        httpHeaders: [:])
+      let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
       let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
       XCTAssertNil(error)
       XCTAssertNotNil(identifiers)
@@ -581,9 +560,7 @@ import XCTest
       videoPlayerPlugin.initialize(&error)
       XCTAssertNil(error)
 
-      let create = FVPCreationOptions.make(
-        withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-        httpHeaders: [:])
+      let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
       let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
       XCTAssertNil(error)
       XCTAssertNotNil(identifiers)
@@ -651,7 +628,7 @@ import XCTest
   func testUpdatePlayingStateShouldNotResetRate() {
     let realObjectFactory = FVPDefaultAVFactory()
     let player = FVPVideoPlayer(
-      playerItem: playerItem(with: mp4TestURL, factory: realObjectFactory),
+      playerItem: playerItem(with: URL(string: mp4TestURI)!, factory: realObjectFactory),
       avFactory: realObjectFactory,
       viewProvider: StubViewProvider())
 
@@ -684,9 +661,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-      httpHeaders: [:])
+    let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let playerIdentifier = identifiers!.playerId
@@ -723,10 +698,7 @@ import XCTest
     videoPlayerPlugin.initialize(&error)
     XCTAssertNil(error)
 
-    let create = FVPCreationOptions.make(
-      withUri: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4",
-      httpHeaders: [:])
-
+    let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -802,7 +774,7 @@ import XCTest
   func testGetAudioTracksWithRealMP4Video() {
     let realObjectFactory = FVPDefaultAVFactory()
     let player = FVPVideoPlayer(
-      playerItem: playerItem(with: mp4TestURL, factory: realObjectFactory),
+      playerItem: playerItem(with: URL(string: mp4TestURI)!, factory: realObjectFactory),
       avFactory: realObjectFactory,
       viewProvider: StubViewProvider())
     XCTAssertNotNil(player)
@@ -830,8 +802,7 @@ import XCTest
   // HLS streams use media selection groups for audio track selection.
   func testGetAudioTracksWithRealHLSStream() {
     let realObjectFactory = FVPDefaultAVFactory()
-    let hlsURL = URL(
-      string: "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8")!
+    let hlsURL = URL(string: hlsTestURI)!
 
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: hlsURL, factory: realObjectFactory),
@@ -868,8 +839,7 @@ import XCTest
     // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
     let realObjectFactory = FVPDefaultAVFactory()
-    let audioURL = URL(
-      string: "https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3")!
+    let audioURL = URL(string: mp3AudioTestURI)!
 
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: audioURL, factory: realObjectFactory),
@@ -902,8 +872,7 @@ import XCTest
     // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
     let realObjectFactory = FVPDefaultAVFactory()
-    let testURL = URL(
-      string: "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4")!
+    let testURL = URL(string: mp4TestURI)!
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
       avFactory: realObjectFactory,
