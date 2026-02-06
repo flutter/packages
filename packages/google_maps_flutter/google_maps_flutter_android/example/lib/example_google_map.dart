@@ -84,6 +84,9 @@ class ExampleGoogleMapController {
           (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value),
         );
     GoogleMapsFlutterPlatform.instance
+      .onPoiTap(mapId: mapId)
+      .listen((MapPoiTapEvent e) => _googleMapState.onPoiTap(e.value));
+    GoogleMapsFlutterPlatform.instance
         .onPolylineTap(mapId: mapId)
         .listen((PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value));
     GoogleMapsFlutterPlatform.instance

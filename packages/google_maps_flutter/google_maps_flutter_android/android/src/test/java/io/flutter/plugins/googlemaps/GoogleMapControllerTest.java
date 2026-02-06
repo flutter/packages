@@ -4,6 +4,7 @@
 
 package io.flutter.plugins.googlemaps;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,6 +27,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
@@ -319,19 +322,22 @@ public class GoogleMapControllerTest {
   }
 
   @Test
-  public void onPoiClick_sendsCorrectData() {
-    // Assuming 'controller' and 'flutterApi' are set up as in other tests.
-    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
+  public void onPoiClick() {
+      // Note: ensure googleMapController is initialized in your @Before method
+      PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
+      
+      googleMapController.onPoiClick(poi); // Use the correct variable name
 
-    controller.onPoiClick(poi);
-
-    ArgumentCaptor<Messages.PlatformPointOfInterest> poiCaptor = ArgumentCaptor.forClass(Messages.PlatformPointOfInterest.class);
-    verify(flutterApi).onPoiTap(poiCaptor.capture(), any(Messages.VoidResult.class));
-
-    Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
-    assertEquals("name", capturedPoi.getName());
-    assertEquals("placeId", capturedPoi.getPlaceId());
-    assertEquals(1.0, capturedPoi.getPosition().getLatitude(), 1e-6);
-    assertEquals(2.0, capturedPoi.getPosition().getLongitude(), 1e-6);
+      ArgumentCaptor<Messages.PlatformPointOfInterest> poiCaptor = 
+          ArgumentCaptor.forClass(Messages.PlatformPointOfInterest.class);
+      
+      // Verify that the listener was called and capture the result
+      verify(mockListener).onPoiClick(poiCaptor.capture());
+      
+      Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
+      assertEquals("name", capturedPoi.getName());
+      assertEquals("placeId", capturedPoi.getPlaceId());
+      assertEquals(1.0, capturedPoi.getPosition().getLatitude(), 1e-6);
+      assertEquals(2.0, capturedPoi.getPosition().getLongitude(), 1e-6);
   }
 }
