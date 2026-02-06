@@ -252,7 +252,6 @@ import XCTest
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
-    XCTAssertNotNil(player)
 
     player.disposeWithError(&error)
     XCTAssertNil(error)
@@ -278,7 +277,6 @@ import XCTest
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
-    XCTAssertNotNil(player)
     let avPlayer = player.player
     avPlayer.play()
 
@@ -456,7 +454,6 @@ import XCTest
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
       avFactory: realObjectFactory,
       viewProvider: StubViewProvider())
-    XCTAssertNotNil(player)
 
     let initializedExpectation = expectation(description: "initialized")
     let listener = StubEventListener(initializationExpectation: initializedExpectation)
@@ -516,7 +513,6 @@ import XCTest
       XCTAssertNotNil(identifiers)
 
       let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
-      XCTAssertNotNil(player)
       weakPlayer = player
       avPlayer = player.player
 
@@ -604,7 +600,6 @@ import XCTest
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
-    XCTAssertNotNil(player)
 
     let item = player.player.currentItem!
     keyValueObservingExpectation(for: item, keyPath: "status") { _, change in
@@ -703,7 +698,6 @@ import XCTest
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
-    XCTAssertNotNil(player)
 
     let item = player.player.currentItem!
     keyValueObservingExpectation(for: item, keyPath: "status") { _, change in
@@ -777,7 +771,6 @@ import XCTest
       playerItem: playerItem(with: URL(string: mp4TestURI)!, factory: realObjectFactory),
       avFactory: realObjectFactory,
       viewProvider: StubViewProvider())
-    XCTAssertNotNil(player)
 
     let initializedExpectation = expectation(description: "initialized")
     let listener = StubEventListener(initializationExpectation: initializedExpectation)
@@ -808,7 +801,6 @@ import XCTest
       playerItem: playerItem(with: hlsURL, factory: realObjectFactory),
       avFactory: realObjectFactory,
       viewProvider: StubViewProvider())
-    XCTAssertNotNil(player)
 
     let initializedExpectation = expectation(description: "initialized")
     let listener = StubEventListener(initializationExpectation: initializedExpectation)
@@ -845,7 +837,6 @@ import XCTest
       playerItem: playerItem(with: audioURL, factory: realObjectFactory),
       avFactory: realObjectFactory,
       viewProvider: StubViewProvider())
-    XCTAssertNotNil(player)
 
     let initializedExpectation = expectation(description: "initialized")
     let listener = StubEventListener(initializationExpectation: initializedExpectation)
@@ -908,7 +899,6 @@ import XCTest
       let stubViewProvider = StubViewProvider()
       let player = FVPVideoPlayer(
         playerItem: item, avFactory: stubAVFactory, viewProvider: stubViewProvider)
-      XCTAssertNotNil(player)
       XCTAssertTrue(mockAsset.loadedTracksAsynchronously)
     }
   }
