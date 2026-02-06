@@ -31,19 +31,10 @@ import XCTest
       view.wantsLayer = true
       let viewProvider = StubViewProvider(view: view)
     #endif
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
-      avFactory: StubFVPAVFactory(),
-      displayLinkFactory: StubFVPDisplayLinkFactory(),
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: viewProvider,
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+    let videoPlayerPlugin = createInitializedPlugin(viewProvider: viewProvider)
 
     let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -58,19 +49,12 @@ import XCTest
   func testPlayerForPlatformViewDoesNotRegisterTexture() {
     let textureRegistry = TestTextureRegistry()
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
-      avFactory: StubFVPAVFactory(),
+    let videoPlayerPlugin = createInitializedPlugin(
       displayLinkFactory: stubDisplayLinkFactory,
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: textureRegistry,
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+      textureRegistry: textureRegistry)
 
     let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
+    var error: FlutterError?
     videoPlayerPlugin.createPlatformViewPlayer(with: create, error: &error)
     XCTAssertNil(error)
 
@@ -82,19 +66,12 @@ import XCTest
     let mockVideoOutput = TestPixelBufferSource()
     // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
-      displayLinkFactory: stubDisplayLinkFactory,
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+      displayLinkFactory: stubDisplayLinkFactory)
 
     let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -128,19 +105,12 @@ import XCTest
   func testInitStartsDisplayLinkTemporarily() {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
-      displayLinkFactory: stubDisplayLinkFactory,
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+      displayLinkFactory: stubDisplayLinkFactory)
 
     let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
 
@@ -163,19 +133,12 @@ import XCTest
   func testSeekToWhilePlayingDoesNotStopDisplayLink() {
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
-      displayLinkFactory: stubDisplayLinkFactory,
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+      displayLinkFactory: stubDisplayLinkFactory)
 
     let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let player =
@@ -206,19 +169,10 @@ import XCTest
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     // Display link and frame updater wire-up is currently done in FVPVideoPlayerPlugin, so create
     // the player via the plugin instead of directly to include that logic in the test.
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
-      avFactory: StubFVPAVFactory(),
-      displayLinkFactory: stubDisplayLinkFactory,
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+    let videoPlayerPlugin = createInitializedPlugin(displayLinkFactory: stubDisplayLinkFactory)
 
     let create = FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let player =
@@ -235,19 +189,10 @@ import XCTest
   }
 
   func testDeregistersFromPlayer() {
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
-      avFactory: StubFVPAVFactory(),
-      displayLinkFactory: StubFVPDisplayLinkFactory(),
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+    let videoPlayerPlugin = createInitializedPlugin()
 
     let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -260,19 +205,10 @@ import XCTest
 
   func testBufferingStateFromPlayer() {
     let realObjectFactory = FVPDefaultAVFactory()
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
-      avFactory: realObjectFactory,
-      displayLinkFactory: StubFVPDisplayLinkFactory(),
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
     let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -495,19 +431,10 @@ import XCTest
 
     // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
     autoreleasepool {
-      let videoPlayerPlugin = FVPVideoPlayerPlugin(
-        avFactory: realObjectFactory,
-        displayLinkFactory: StubFVPDisplayLinkFactory(),
-        binaryMessenger: StubBinaryMessenger(),
-        textureRegistry: TestTextureRegistry(),
-        viewProvider: StubViewProvider(),
-        assetProvider: StubAssetProvider())
-
-      var error: FlutterError?
-      videoPlayerPlugin.initialize(&error)
-      XCTAssertNil(error)
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
       let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
+      var error: FlutterError?
       let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
       XCTAssertNil(error)
       XCTAssertNotNil(identifiers)
@@ -544,19 +471,10 @@ import XCTest
 
     // Autoreleasepool is needed to simulate conditions of FVPVideoPlayer deallocation.
     autoreleasepool {
-      let videoPlayerPlugin = FVPVideoPlayerPlugin(
-        avFactory: StubFVPAVFactory(),
-        displayLinkFactory: StubFVPDisplayLinkFactory(),
-        binaryMessenger: StubBinaryMessenger(),
-        textureRegistry: TestTextureRegistry(),
-        viewProvider: StubViewProvider(),
-        assetProvider: StubAssetProvider())
-
-      var error: FlutterError?
-      videoPlayerPlugin.initialize(&error)
-      XCTAssertNil(error)
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: StubFVPAVFactory())
 
       let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
+      var error: FlutterError?
       let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
       XCTAssertNil(error)
       XCTAssertNotNil(identifiers)
@@ -584,19 +502,10 @@ import XCTest
   func testFailedToLoadVideoEventShouldBeAlwaysSent() {
     // Use real objects to test a real failure flow.
     let realObjectFactory = FVPDefaultAVFactory()
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
-      avFactory: realObjectFactory,
-      displayLinkFactory: StubFVPDisplayLinkFactory(),
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
     let create = FVPCreationOptions.make(withUri: "", httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers!.playerId] as! FVPVideoPlayer
@@ -644,19 +553,13 @@ import XCTest
     let textureRegistry = TestTextureRegistry()
     let stubDisplayLinkFactory = StubFVPDisplayLinkFactory()
     let mockVideoOutput = TestPixelBufferSource()
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
+    let videoPlayerPlugin = createInitializedPlugin(
       avFactory: StubFVPAVFactory(pixelBufferSource: mockVideoOutput),
       displayLinkFactory: stubDisplayLinkFactory,
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: textureRegistry,
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+      textureRegistry: textureRegistry)
 
     let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     let playerIdentifier = identifiers!.playerId
@@ -682,18 +585,10 @@ import XCTest
 
   func testVideoOutputIsAddedWhenAVPlayerItemBecomesReady() {
     let realObjectFactory = FVPDefaultAVFactory()
-    let videoPlayerPlugin = FVPVideoPlayerPlugin(
-      avFactory: realObjectFactory,
-      displayLinkFactory: StubFVPDisplayLinkFactory(),
-      binaryMessenger: StubBinaryMessenger(),
-      textureRegistry: TestTextureRegistry(),
-      viewProvider: StubViewProvider(),
-      assetProvider: StubAssetProvider())
-    var error: FlutterError?
-    videoPlayerPlugin.initialize(&error)
-    XCTAssertNil(error)
+    let videoPlayerPlugin = createInitializedPlugin(avFactory: realObjectFactory)
 
     let create = FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:])
+    var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(with: create, error: &error)
     XCTAssertNil(error)
     XCTAssertNotNil(identifiers)
@@ -713,20 +608,11 @@ import XCTest
       let stubFactory = StubFVPAVFactory()
       let audioSession = TestAudioSession()
       stubFactory.audioSession = audioSession
-      let videoPlayerPlugin = FVPVideoPlayerPlugin(
-        avFactory: stubFactory,
-        displayLinkFactory: StubFVPDisplayLinkFactory(),
-        binaryMessenger: StubBinaryMessenger(),
-        textureRegistry: TestTextureRegistry(),
-        viewProvider: StubViewProvider(),
-        assetProvider: StubAssetProvider())
-
       audioSession.category = .playAndRecord
       audioSession.categoryOptions = .defaultToSpeaker
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: stubFactory)
 
       var error: FlutterError?
-      videoPlayerPlugin.initialize(&error)
-      XCTAssertNil(error)
       videoPlayerPlugin.setMixWithOthers(true, error: &error)
       XCTAssertNil(error)
       XCTAssertEqual(audioSession.category, .playAndRecord, "Category should be PlayAndRecord.")
@@ -741,20 +627,11 @@ import XCTest
       let stubFactory = StubFVPAVFactory()
       let audioSession = TestAudioSession()
       stubFactory.audioSession = audioSession
-      let videoPlayerPlugin = FVPVideoPlayerPlugin(
-        avFactory: stubFactory,
-        displayLinkFactory: StubFVPDisplayLinkFactory(),
-        binaryMessenger: StubBinaryMessenger(),
-        textureRegistry: TestTextureRegistry(),
-        viewProvider: StubViewProvider(),
-        assetProvider: StubAssetProvider())
-
       audioSession.category = .playAndRecord
       audioSession.categoryOptions = [.mixWithOthers, .defaultToSpeaker]
+      let videoPlayerPlugin = createInitializedPlugin(avFactory: stubFactory)
 
       var error: FlutterError?
-      videoPlayerPlugin.initialize(&error)
-      XCTAssertNil(error)
       videoPlayerPlugin.setMixWithOthers(true, error: &error)
       XCTAssertNil(error)
       XCTAssertFalse(audioSession.setCategoryCalled)
@@ -899,10 +776,35 @@ import XCTest
       let stubViewProvider = StubViewProvider()
       let player = FVPVideoPlayer(
         playerItem: item, avFactory: stubAVFactory, viewProvider: stubViewProvider)
+      XCTAssertNotNil(player)
       XCTAssertTrue(mockAsset.loadedTracksAsynchronously)
     }
   }
+
   // MARK: - Helper Methods
+
+  /// Creates a plugin with the given dependencies, and default stubs for any that aren't provided,
+  /// then initializes it.
+  private func createInitializedPlugin(
+    avFactory: FVPAVFactory = StubFVPAVFactory(),
+    displayLinkFactory: FVPDisplayLinkFactory = StubFVPDisplayLinkFactory(),
+    binaryMessenger: FlutterBinaryMessenger = StubBinaryMessenger(),
+    textureRegistry: FlutterTextureRegistry = TestTextureRegistry(),
+    viewProvider: FVPViewProvider = StubViewProvider(),
+    assetProvider: FVPAssetProvider = StubAssetProvider()
+  ) -> FVPVideoPlayerPlugin {
+    let plugin = FVPVideoPlayerPlugin(
+      avFactory: avFactory,
+      displayLinkFactory: displayLinkFactory,
+      binaryMessenger: binaryMessenger,
+      textureRegistry: textureRegistry,
+      viewProvider: viewProvider,
+      assetProvider: assetProvider)
+    var error: FlutterError?
+    plugin.initialize(&error)
+    XCTAssertNil(error)
+    return plugin
+  }
 
   private func playerItem(with url: URL, factory: FVPAVFactory) -> FVPAVPlayerItem {
     let asset = factory.urlAsset(with: url, options: nil)
