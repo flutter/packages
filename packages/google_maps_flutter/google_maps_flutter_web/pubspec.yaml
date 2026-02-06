@@ -23,7 +23,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   google_maps: ^8.1.0
-  google_maps_flutter_platform_interface: ^2.14.0
+  google_maps_flutter_platform_interface: ^2.15.0
   sanitize_html: ^2.0.0
   stream_transform: ^2.0.0
   web: ">=0.5.1 <2.0.0"
@@ -40,4 +40,6 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/web/index.html
-dependency_overrides:   {}
+dependency_overrides:
+  google_maps_flutter_platform_interface:
+    path: ../google_maps_flutter_platform_interface
