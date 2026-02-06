@@ -6,49 +6,6 @@
 @import video_player_avfoundation;
 @import XCTest;
 
-#if TARGET_OS_IOS
-@interface FakeAVAssetTrack : AVAssetTrack
-@property(readonly, nonatomic) CGAffineTransform preferredTransform;
-@property(readonly, nonatomic) CGSize naturalSize;
-@property(readonly, nonatomic) UIImageOrientation orientation;
-- (instancetype)initWithOrientation:(UIImageOrientation)orientation;
-@end
-
-@implementation FakeAVAssetTrack
-
-- (instancetype)initWithOrientation:(UIImageOrientation)orientation {
-  _orientation = orientation;
-  _naturalSize = CGSizeMake(800, 600);
-  return self;
-}
-
-- (CGAffineTransform)preferredTransform {
-  switch (_orientation) {
-    case UIImageOrientationUp:
-      return CGAffineTransformMake(1, 0, 0, 1, 0, 0);
-    case UIImageOrientationDown:
-      return CGAffineTransformMake(-1, 0, 0, -1, 0, 0);
-    case UIImageOrientationLeft:
-      return CGAffineTransformMake(0, -1, 1, 0, 0, 0);
-    case UIImageOrientationRight:
-      return CGAffineTransformMake(0, 1, -1, 0, 0, 0);
-    case UIImageOrientationUpMirrored:
-      return CGAffineTransformMake(-1, 0, 0, 1, 0, 0);
-    case UIImageOrientationDownMirrored:
-      return CGAffineTransformMake(1, 0, 0, -1, 0, 0);
-    case UIImageOrientationLeftMirrored:
-      return CGAffineTransformMake(0, -1, -1, 0, 0, 0);
-    case UIImageOrientationRightMirrored:
-      return CGAffineTransformMake(0, 1, 1, 0, 0, 0);
-  }
-}
-
-@end
-#endif
-
-@interface VideoPlayerTests : XCTestCase
-@end
-
 /// An AVPlayer subclass that records method call parameters for inspection.
 // TODO(stuartmorgan): Replace with a protocol like the other classes.
 @interface InspectableAVPlayer : AVPlayer
@@ -432,6 +389,9 @@
 
 #pragma mark -
 
+@interface VideoPlayerTests : XCTestCase
+@end
+
 @implementation VideoPlayerTests
 
 - (void)testBlankVideoBugWithEncryptedVideoStreamAndInvertedAspectRatioBugForSomeVideoStream {
@@ -801,15 +761,68 @@
 }
 
 #if TARGET_OS_IOS
-- (void)testTransformFix {
-  [self validateTransformFixForOrientation:UIImageOrientationUp];
-  [self validateTransformFixForOrientation:UIImageOrientationDown];
-  [self validateTransformFixForOrientation:UIImageOrientationLeft];
-  [self validateTransformFixForOrientation:UIImageOrientationRight];
-  [self validateTransformFixForOrientation:UIImageOrientationUpMirrored];
-  [self validateTransformFixForOrientation:UIImageOrientationDownMirrored];
-  [self validateTransformFixForOrientation:UIImageOrientationLeftMirrored];
-  [self validateTransformFixForOrientation:UIImageOrientationRightMirrored];
+- (void)testTransformFixOrientationUp {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(1, 0, 0, 1, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, 0);
+  XCTAssertEqual(t.ty, 0);
+}
+
+- (void)testTransformFixOrientationDown {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(-1, 0, 0, -1, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, size.width);
+  XCTAssertEqual(t.ty, size.height);
+}
+
+- (void)testTransformFixOrientationLeft {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(0, -1, 1, 0, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, 0);
+  XCTAssertEqual(t.ty, size.width);
+}
+
+- (void)testTransformFixOrientationRight {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(0, 1, -1, 0, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, size.height);
+  XCTAssertEqual(t.ty, 0);
+}
+
+- (void)testTransformFixOrientationUpMirrored {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(-1, 0, 0, 1, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, size.width);
+  XCTAssertEqual(t.ty, 0);
+}
+
+- (void)testTransformFixOrientationDownMirrored {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(1, 0, 0, -1, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, 0);
+  XCTAssertEqual(t.ty, size.height);
+}
+
+- (void)testTransformFixOrientationLeftMirrored {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(0, -1, -1, 0, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, size.height);
+  XCTAssertEqual(t.ty, size.width);
+}
+
+- (void)testTransformFixOrientationRightMirrored {
+  CGSize size = CGSizeMake(800, 600);
+  CGAffineTransform naturalTransform = CGAffineTransformMake(0, 1, 1, 0, 0, 0);
+  CGAffineTransform t = FVPGetStandardizedTrackTransform(naturalTransform, size);
+  XCTAssertEqual(t.tx, 0);
+  XCTAssertEqual(t.ty, 0);
 }
 #endif
 
@@ -1203,49 +1216,6 @@
   [videoPlayerPlugin setMixWithOthers:true error:&error];
 
   XCTAssertFalse(audioSession.setCategoryCalled);
-}
-
-- (void)validateTransformFixForOrientation:(UIImageOrientation)orientation {
-  AVAssetTrack *track = [[FakeAVAssetTrack alloc] initWithOrientation:orientation];
-  CGAffineTransform t = FVPGetStandardizedTransformForTrack(track);
-  CGSize size = track.naturalSize;
-  CGFloat expectX, expectY;
-  switch (orientation) {
-    case UIImageOrientationUp:
-      expectX = 0;
-      expectY = 0;
-      break;
-    case UIImageOrientationDown:
-      expectX = size.width;
-      expectY = size.height;
-      break;
-    case UIImageOrientationLeft:
-      expectX = 0;
-      expectY = size.width;
-      break;
-    case UIImageOrientationRight:
-      expectX = size.height;
-      expectY = 0;
-      break;
-    case UIImageOrientationUpMirrored:
-      expectX = size.width;
-      expectY = 0;
-      break;
-    case UIImageOrientationDownMirrored:
-      expectX = 0;
-      expectY = size.height;
-      break;
-    case UIImageOrientationLeftMirrored:
-      expectX = size.height;
-      expectY = size.width;
-      break;
-    case UIImageOrientationRightMirrored:
-      expectX = 0;
-      expectY = 0;
-      break;
-  }
-  XCTAssertEqual(t.tx, expectX);
-  XCTAssertEqual(t.ty, expectY);
 }
 #endif
 
