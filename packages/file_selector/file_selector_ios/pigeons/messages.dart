@@ -26,7 +26,4 @@ abstract class FileSelectorApi {
   @async
   @ObjCSelector('openFileSelectorWithConfig:')
   List<String> openFile(FileSelectorConfig config);
-
-  @async
-  List<String> openFile2(FileSelectorConfig config);
 }

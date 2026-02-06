@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cross_file_ios/cross_file_ios.dart';
-import 'package:file_selector_ios/file_selector_ios.dart';
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
 import 'package:flutter/material.dart';
 
@@ -17,27 +15,22 @@ class OpenTextPage extends StatelessWidget {
     const typeGroup = XTypeGroup(
       label: 'text',
       extensions: <String>['txt', 'json'],
-      //uniformTypeIdentifiers: <String>['somefile.txt'],
+      uniformTypeIdentifiers: <String>['public.text'],
     );
-    final IOSXFile? file = await FileSelectorIOS().openFile2(
-      //acceptedTypeGroups: <XTypeGroup>[typeGroup],
+    final XFile? file = await FileSelectorPlatform.instance.openFile(
+      acceptedTypeGroups: <XTypeGroup>[typeGroup],
     );
     if (file == null) {
       // Operation was canceled by the user.
       return;
     }
-    //final String fileName = file.name;
-    print(file.params.path);
-    print(await file.canRead());
-    print(await file.exists());
-    print(await file.lastModified());
-    print(await file.length());
+    final String fileName = file.name;
     final String fileContent = await file.readAsString();
 
     if (context.mounted) {
       await showDialog<void>(
         context: context,
-        builder: (BuildContext context) => TextDisplay('FileName', fileContent),
+        builder: (BuildContext context) => TextDisplay(fileName, fileContent),
       );
     }
   }
