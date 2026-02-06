@@ -547,8 +547,10 @@ ${_argParser.usage}''';
       help: 'The package that generated Kotlin code will be in.',
       aliases: const <String>['experimental_kotlin_package'],
     )
-    ..addFlag('kotlin_use_generated_annotation',
-        help: 'Adds javax.annotation.Generated annotation to the output.')
+    ..addFlag(
+      'kotlin_use_generated_annotation',
+      help: 'Adds javax.annotation.Generated annotation to the output.',
+    )
     ..addOption(
       'cpp_header_out',
       help: 'Path to generated C++ header file (.h).',
@@ -640,7 +642,8 @@ ${_argParser.usage}''';
       kotlinOut: results['kotlin_out'] as String?,
       kotlinOptions: KotlinOptions(
         package: results['kotlin_package'] as String?,
-        useGeneratedAnnotation: results['kotlin_use_generated_annotation'] as bool? ?? false,
+        useGeneratedAnnotation:
+            results['kotlin_use_generated_annotation'] as bool? ?? false,
       ),
       cppHeaderOut: results['cpp_header_out'] as String?,
       cppSourceOut: results['cpp_source_out'] as String?,
