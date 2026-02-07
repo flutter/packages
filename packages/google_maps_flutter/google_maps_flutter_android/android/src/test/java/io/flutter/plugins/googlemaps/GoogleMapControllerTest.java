@@ -323,16 +323,15 @@ public class GoogleMapControllerTest {
 
   @Test
   public void onPoiClick() {
-    // Note: ensure googleMapController is initialized in your @Before method
+    GoogleMapController controller = getGoogleMapControllerWithMockedDependencies();
     PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
 
-    googleMapController.onPoiClick(poi); // Use the correct variable name
+    controller.onPoiClick(poi);
 
     ArgumentCaptor<Messages.PlatformPointOfInterest> poiCaptor =
         ArgumentCaptor.forClass(Messages.PlatformPointOfInterest.class);
 
-    // Verify that the listener was called and capture the result
-    verify(mockListener).onPoiClick(poiCaptor.capture());
+    verify(flutterApi).onPoiTap(poiCaptor.capture(), any(Messages.VoidResult.class));
 
     Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
     assertEquals("name", capturedPoi.getName());

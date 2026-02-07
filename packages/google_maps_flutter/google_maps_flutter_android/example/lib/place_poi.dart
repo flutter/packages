@@ -13,7 +13,7 @@ import 'page.dart';
 class PlacePoiPage extends GoogleMapExampleAppPage {
   /// Default constructor.
   const PlacePoiPage({super.key})
-      : super(const Icon(Icons.business), 'Place POI');
+    : super(const Icon(Icons.business), 'Place POI');
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +36,7 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
   ExampleGoogleMapController? controller;
   PointOfInterest? _lastPoi;
 
-  final CameraPosition _kSydney = const CameraPosition(
+  final CameraPosition _kKolkata = const CameraPosition(
     target: LatLng(22.54222641620606, 88.34560669761545),
     zoom: 16.0,
   );
@@ -61,7 +61,7 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
         Expanded(
           child: ExampleGoogleMap(
             onMapCreated: _onMapCreated,
-            initialCameraPosition: _kSydney,
+            initialCameraPosition: _kKolkata,
             onPoiTap: _onPoiTap,
             myLocationButtonEnabled: false,
           ),
@@ -80,7 +80,7 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
               ),
               const SizedBox(height: 8),
               if (_lastPoi != null) ...<Widget>[
-                Text('Name: ${_lastPoi!.name}'),
+                Text('Name: ${_lastPoi!.name ?? "Unknown"}'),
                 Text('Place ID: ${_lastPoi!.placeId}'),
                 Text(
                   'Lat/Lng: ${_lastPoi!.position.latitude.toStringAsFixed(5)}, ${_lastPoi!.position.longitude.toStringAsFixed(5)}',

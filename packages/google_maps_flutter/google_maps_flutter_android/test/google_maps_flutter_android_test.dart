@@ -1504,7 +1504,6 @@ void main() {
     const fakePlaceId = 'iso_id_123';
 
     final maps = GoogleMapsFlutterAndroid();
-    // Initialize the handler which receives messages from the native side
     final HostMapMessageHandler callbackHandler = maps.ensureHandlerInitialized(
       mapId,
     );
@@ -1513,7 +1512,6 @@ void main() {
       maps.onPoiTap(mapId: mapId),
     );
 
-    // Simulate a message from the native Android side (via Pigeon generated handler)
     callbackHandler.onPoiTap(
       PlatformPointOfInterest(
         position: fakePosition,
@@ -1522,7 +1520,6 @@ void main() {
       ),
     );
 
-    // Verify the event in the stream
     final MapPoiTapEvent event = await stream.next;
     expect(event.mapId, mapId);
     

@@ -1115,7 +1115,7 @@ class PlatformPointOfInterest {
     result as List<Object?>;
     return PlatformPointOfInterest(
       position: result[0]! as PlatformLatLng,
-      name: result[1]! as String,
+      name: result[1] as String?,
       placeId: result[2]! as String,
     );
   }

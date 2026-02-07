@@ -11,7 +11,7 @@ import 'page.dart';
 class PlacePoiPage extends GoogleMapExampleAppPage {
   /// Default constructor.
   const PlacePoiPage({super.key})
-      : super(const Icon(Icons.business), 'Place POI');
+    : super(const Icon(Icons.business), 'Place POI');
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class PlacePoiBody extends StatefulWidget {
 /// State for [PlacePoiBody].
 class PlacePoiBodyState extends State<PlacePoiBody> {
   /// The controller for the map.
-  /// 
+  ///
   /// This is public to match the example pattern, but marked with a doc comment.
   GoogleMapController? controller;
   PointOfInterest? _lastPoi;
@@ -80,7 +80,7 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
               ),
               const SizedBox(height: 8),
               if (_lastPoi != null) ...<Widget>[
-                Text('Name: ${_lastPoi!.name}'),
+                Text('Name: ${_lastPoi!.name ?? "Unknown"}'),
                 Text('Place ID: ${_lastPoi!.placeId}'),
                 Text(
                   'Lat/Lng: ${_lastPoi!.position.latitude.toStringAsFixed(5)}, ${_lastPoi!.position.longitude.toStringAsFixed(5)}',

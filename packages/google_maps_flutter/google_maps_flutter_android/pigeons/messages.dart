@@ -235,7 +235,6 @@ class PlatformMarker {
   final String? clusterManagerId;
 }
 
-
 /// Pigeon equivalent of the Point of Interest class.
 class PlatformPointOfInterest {
   PlatformPointOfInterest({
@@ -656,7 +655,6 @@ class PlatformBitmapBytesMap {
   final double? width;
   final double? height;
 }
-
 
 /// Interface for non-test interactions with the native SDK.
 ///
