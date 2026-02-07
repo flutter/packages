@@ -209,10 +209,12 @@ class PodspecCheckCommand extends PackageLoopingCommand {
     // This errs on the side of being too strict, to minimize the chance of
     // accidental incorrect configuration. If we ever need more flexibility
     // due to a false negative we can adjust this as necessary.
+    // The $(inherited) prefix is optional but recommended to preserve any
+    // search paths that Xcode or CocoaPods may generate.
     final workaround = RegExp(r'''
 \s*s\.(?:ios\.)?xcconfig = {[^}]*
-\s*'LIBRARY_SEARCH_PATHS' => '\$\(TOOLCHAIN_DIR\)/usr/lib/swift/\$\(PLATFORM_NAME\)/ \$\(SDKROOT\)/usr/lib/swift',
-\s*'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',[^}]*
+\s*'LIBRARY_SEARCH_PATHS' => '(?:\$\(inherited\) )?\$\(TOOLCHAIN_DIR\)/usr/lib/swift/\$\(PLATFORM_NAME\)/ \$\(SDKROOT\)/usr/lib/swift',
+\s*'LD_RUNPATH_SEARCH_PATHS' => '(?:\$\(inherited\) )?/usr/lib/swift',[^}]*
 \s*}''', dotAll: true);
     return !workaround.hasMatch(podspec.readAsStringSync());
   }
