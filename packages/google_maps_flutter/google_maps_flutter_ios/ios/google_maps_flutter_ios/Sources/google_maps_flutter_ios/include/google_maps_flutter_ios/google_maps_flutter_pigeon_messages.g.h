@@ -114,26 +114,26 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @interface FGMPlatformCameraPosition : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithBearing:(double )bearing
-    target:(FGMPlatformLatLng *)target
-    tilt:(double )tilt
-    zoom:(double )zoom;
-@property(nonatomic, assign) double  bearing;
-@property(nonatomic, strong) FGMPlatformLatLng * target;
-@property(nonatomic, assign) double  tilt;
-@property(nonatomic, assign) double  zoom;
++ (instancetype)makeWithBearing:(double)bearing
+                         target:(FGMPlatformLatLng *)target
+                           tilt:(double)tilt
+                           zoom:(double)zoom;
+@property(nonatomic, assign) double bearing;
+@property(nonatomic, strong) FGMPlatformLatLng *target;
+@property(nonatomic, assign) double tilt;
+@property(nonatomic, assign) double zoom;
 @end
 
 /// Pigeon representation of a CameraUpdate.
 @interface FGMPlatformCameraUpdate : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithCameraUpdate:(id )cameraUpdate;
++ (instancetype)makeWithCameraUpdate:(id)cameraUpdate;
 /// This Object must be one of the classes below prefixed with
 /// PlatformCameraUpdate. Each such class represents a different type of
 /// camera update, and each holds a different set of data, preventing the
 /// use of a single unified class.
-@property(nonatomic, strong) id  cameraUpdate;
+@property(nonatomic, strong) id cameraUpdate;
 @end
 
 /// Pigeon equivalent of NewCameraPosition
@@ -149,87 +149,83 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithLatLng:(FGMPlatformLatLng *)latLng;
-@property(nonatomic, strong) FGMPlatformLatLng * latLng;
+@property(nonatomic, strong) FGMPlatformLatLng *latLng;
 @end
 
 /// Pigeon equivalent of NewLatLngBounds
 @interface FGMPlatformCameraUpdateNewLatLngBounds : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds
-    padding:(double )padding;
-@property(nonatomic, strong) FGMPlatformLatLngBounds * bounds;
-@property(nonatomic, assign) double  padding;
++ (instancetype)makeWithBounds:(FGMPlatformLatLngBounds *)bounds padding:(double)padding;
+@property(nonatomic, strong) FGMPlatformLatLngBounds *bounds;
+@property(nonatomic, assign) double padding;
 @end
 
 /// Pigeon equivalent of NewLatLngZoom
 @interface FGMPlatformCameraUpdateNewLatLngZoom : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithLatLng:(FGMPlatformLatLng *)latLng
-    zoom:(double )zoom;
-@property(nonatomic, strong) FGMPlatformLatLng * latLng;
-@property(nonatomic, assign) double  zoom;
++ (instancetype)makeWithLatLng:(FGMPlatformLatLng *)latLng zoom:(double)zoom;
+@property(nonatomic, strong) FGMPlatformLatLng *latLng;
+@property(nonatomic, assign) double zoom;
 @end
 
 /// Pigeon equivalent of ScrollBy
 @interface FGMPlatformCameraUpdateScrollBy : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithDx:(double )dx
-    dy:(double )dy;
-@property(nonatomic, assign) double  dx;
-@property(nonatomic, assign) double  dy;
++ (instancetype)makeWithDx:(double)dx dy:(double)dy;
+@property(nonatomic, assign) double dx;
+@property(nonatomic, assign) double dy;
 @end
 
 /// Pigeon equivalent of ZoomBy
 @interface FGMPlatformCameraUpdateZoomBy : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithAmount:(double )amount
-    focus:(nullable FGMPlatformPoint *)focus;
-@property(nonatomic, assign) double  amount;
-@property(nonatomic, strong, nullable) FGMPlatformPoint * focus;
++ (instancetype)makeWithAmount:(double)amount focus:(nullable FGMPlatformPoint *)focus;
+@property(nonatomic, assign) double amount;
+@property(nonatomic, strong, nullable) FGMPlatformPoint *focus;
 @end
 
 /// Pigeon equivalent of ZoomIn/ZoomOut
 @interface FGMPlatformCameraUpdateZoom : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithOut:(BOOL )out;
-@property(nonatomic, assign) BOOL  out;
++ (instancetype)makeWithOut:(BOOL)out;
+@property(nonatomic, assign) BOOL out;
 @end
 
 /// Pigeon equivalent of ZoomTo
 @interface FGMPlatformCameraUpdateZoomTo : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithZoom:(double )zoom;
-@property(nonatomic, assign) double  zoom;
++ (instancetype)makeWithZoom:(double)zoom;
+@property(nonatomic, assign) double zoom;
 @end
 
 /// Pigeon equivalent of the Circle class.
 @interface FGMPlatformCircle : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithConsumeTapEvents:(BOOL )consumeTapEvents
-    fillColor:(FGMPlatformColor *)fillColor
-    strokeColor:(FGMPlatformColor *)strokeColor
-    visible:(BOOL )visible
-    strokeWidth:(NSInteger )strokeWidth
-    zIndex:(double )zIndex
-    center:(FGMPlatformLatLng *)center
-    radius:(double )radius
-    circleId:(NSString *)circleId;
-@property(nonatomic, assign) BOOL  consumeTapEvents;
-@property(nonatomic, strong) FGMPlatformColor * fillColor;
-@property(nonatomic, strong) FGMPlatformColor * strokeColor;
-@property(nonatomic, assign) BOOL  visible;
-@property(nonatomic, assign) NSInteger  strokeWidth;
-@property(nonatomic, assign) double  zIndex;
-@property(nonatomic, strong) FGMPlatformLatLng * center;
-@property(nonatomic, assign) double  radius;
-@property(nonatomic, copy) NSString * circleId;
++ (instancetype)makeWithConsumeTapEvents:(BOOL)consumeTapEvents
+                               fillColor:(FGMPlatformColor *)fillColor
+                             strokeColor:(FGMPlatformColor *)strokeColor
+                                 visible:(BOOL)visible
+                             strokeWidth:(NSInteger)strokeWidth
+                                  zIndex:(double)zIndex
+                                  center:(FGMPlatformLatLng *)center
+                                  radius:(double)radius
+                                circleId:(NSString *)circleId;
+@property(nonatomic, assign) BOOL consumeTapEvents;
+@property(nonatomic, strong) FGMPlatformColor *fillColor;
+@property(nonatomic, strong) FGMPlatformColor *strokeColor;
+@property(nonatomic, assign) BOOL visible;
+@property(nonatomic, assign) NSInteger strokeWidth;
+@property(nonatomic, assign) double zIndex;
+@property(nonatomic, strong) FGMPlatformLatLng *center;
+@property(nonatomic, assign) double radius;
+@property(nonatomic, copy) NSString *circleId;
 @end
 
 /// Pigeon equivalent of the Heatmap class.
@@ -261,21 +257,20 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithColors:(NSArray<FGMPlatformColor *> *)colors
-    startPoints:(NSArray<NSNumber *> *)startPoints
-    colorMapSize:(NSInteger )colorMapSize;
-@property(nonatomic, copy) NSArray<FGMPlatformColor *> * colors;
-@property(nonatomic, copy) NSArray<NSNumber *> * startPoints;
-@property(nonatomic, assign) NSInteger  colorMapSize;
+                   startPoints:(NSArray<NSNumber *> *)startPoints
+                  colorMapSize:(NSInteger)colorMapSize;
+@property(nonatomic, copy) NSArray<FGMPlatformColor *> *colors;
+@property(nonatomic, copy) NSArray<NSNumber *> *startPoints;
+@property(nonatomic, assign) NSInteger colorMapSize;
 @end
 
 /// Pigeon equivalent of the WeightedLatLng class.
 @interface FGMPlatformWeightedLatLng : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithPoint:(FGMPlatformLatLng *)point
-    weight:(double )weight;
-@property(nonatomic, strong) FGMPlatformLatLng * point;
-@property(nonatomic, assign) double  weight;
++ (instancetype)makeWithPoint:(FGMPlatformLatLng *)point weight:(double)weight;
+@property(nonatomic, strong) FGMPlatformLatLng *point;
+@property(nonatomic, assign) double weight;
 @end
 
 /// Pigeon equivalent of the InfoWindow class.
@@ -309,39 +304,39 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithIdentifier:(NSString *)identifier;
-@property(nonatomic, copy) NSString * identifier;
+@property(nonatomic, copy) NSString *identifier;
 @end
 
 /// Pigeon equivalent of the Marker class.
 @interface FGMPlatformMarker : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithAlpha:(double )alpha
-    anchor:(FGMPlatformPoint *)anchor
-    consumeTapEvents:(BOOL )consumeTapEvents
-    draggable:(BOOL )draggable
-    flat:(BOOL )flat
-    icon:(FGMPlatformBitmap *)icon
-    infoWindow:(FGMPlatformInfoWindow *)infoWindow
-    position:(FGMPlatformLatLng *)position
-    rotation:(double )rotation
-    visible:(BOOL )visible
-    zIndex:(NSInteger )zIndex
-    markerId:(NSString *)markerId
-    clusterManagerId:(nullable NSString *)clusterManagerId;
-@property(nonatomic, assign) double  alpha;
-@property(nonatomic, strong) FGMPlatformPoint * anchor;
-@property(nonatomic, assign) BOOL  consumeTapEvents;
-@property(nonatomic, assign) BOOL  draggable;
-@property(nonatomic, assign) BOOL  flat;
-@property(nonatomic, strong) FGMPlatformBitmap * icon;
-@property(nonatomic, strong) FGMPlatformInfoWindow * infoWindow;
-@property(nonatomic, strong) FGMPlatformLatLng * position;
-@property(nonatomic, assign) double  rotation;
-@property(nonatomic, assign) BOOL  visible;
-@property(nonatomic, assign) NSInteger  zIndex;
-@property(nonatomic, copy) NSString * markerId;
-@property(nonatomic, copy, nullable) NSString * clusterManagerId;
++ (instancetype)makeWithAlpha:(double)alpha
+                       anchor:(FGMPlatformPoint *)anchor
+             consumeTapEvents:(BOOL)consumeTapEvents
+                    draggable:(BOOL)draggable
+                         flat:(BOOL)flat
+                         icon:(FGMPlatformBitmap *)icon
+                   infoWindow:(FGMPlatformInfoWindow *)infoWindow
+                     position:(FGMPlatformLatLng *)position
+                     rotation:(double)rotation
+                      visible:(BOOL)visible
+                       zIndex:(NSInteger)zIndex
+                     markerId:(NSString *)markerId
+             clusterManagerId:(nullable NSString *)clusterManagerId;
+@property(nonatomic, assign) double alpha;
+@property(nonatomic, strong) FGMPlatformPoint *anchor;
+@property(nonatomic, assign) BOOL consumeTapEvents;
+@property(nonatomic, assign) BOOL draggable;
+@property(nonatomic, assign) BOOL flat;
+@property(nonatomic, strong) FGMPlatformBitmap *icon;
+@property(nonatomic, strong) FGMPlatformInfoWindow *infoWindow;
+@property(nonatomic, strong) FGMPlatformLatLng *position;
+@property(nonatomic, assign) double rotation;
+@property(nonatomic, assign) BOOL visible;
+@property(nonatomic, assign) NSInteger zIndex;
+@property(nonatomic, copy) NSString *markerId;
+@property(nonatomic, copy, nullable) NSString *clusterManagerId;
 @end
 
 /// Pigeon equivalent of the Point of Interest class.
@@ -387,49 +382,48 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithPolylineId:(NSString *)polylineId
-    consumesTapEvents:(BOOL )consumesTapEvents
-    color:(FGMPlatformColor *)color
-    geodesic:(BOOL )geodesic
-    jointType:(FGMPlatformJointType)jointType
-    patterns:(NSArray<FGMPlatformPatternItem *> *)patterns
-    points:(NSArray<FGMPlatformLatLng *> *)points
-    visible:(BOOL )visible
-    width:(NSInteger )width
-    zIndex:(NSInteger )zIndex;
-@property(nonatomic, copy) NSString * polylineId;
-@property(nonatomic, assign) BOOL  consumesTapEvents;
-@property(nonatomic, strong) FGMPlatformColor * color;
-@property(nonatomic, assign) BOOL  geodesic;
+                 consumesTapEvents:(BOOL)consumesTapEvents
+                             color:(FGMPlatformColor *)color
+                          geodesic:(BOOL)geodesic
+                         jointType:(FGMPlatformJointType)jointType
+                          patterns:(NSArray<FGMPlatformPatternItem *> *)patterns
+                            points:(NSArray<FGMPlatformLatLng *> *)points
+                           visible:(BOOL)visible
+                             width:(NSInteger)width
+                            zIndex:(NSInteger)zIndex;
+@property(nonatomic, copy) NSString *polylineId;
+@property(nonatomic, assign) BOOL consumesTapEvents;
+@property(nonatomic, strong) FGMPlatformColor *color;
+@property(nonatomic, assign) BOOL geodesic;
 /// The joint type.
 @property(nonatomic, assign) FGMPlatformJointType jointType;
 /// The pattern data, as a list of pattern items.
-@property(nonatomic, copy) NSArray<FGMPlatformPatternItem *> * patterns;
-@property(nonatomic, copy) NSArray<FGMPlatformLatLng *> * points;
-@property(nonatomic, assign) BOOL  visible;
-@property(nonatomic, assign) NSInteger  width;
-@property(nonatomic, assign) NSInteger  zIndex;
+@property(nonatomic, copy) NSArray<FGMPlatformPatternItem *> *patterns;
+@property(nonatomic, copy) NSArray<FGMPlatformLatLng *> *points;
+@property(nonatomic, assign) BOOL visible;
+@property(nonatomic, assign) NSInteger width;
+@property(nonatomic, assign) NSInteger zIndex;
 @end
 
 /// Pigeon equivalent of the PatternItem class.
 @interface FGMPlatformPatternItem : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithType:(FGMPlatformPatternItemType)type
-    length:(nullable NSNumber *)length;
++ (instancetype)makeWithType:(FGMPlatformPatternItemType)type length:(nullable NSNumber *)length;
 @property(nonatomic, assign) FGMPlatformPatternItemType type;
-@property(nonatomic, strong, nullable) NSNumber * length;
+@property(nonatomic, strong, nullable) NSNumber *length;
 @end
 
 /// Pigeon equivalent of the Tile class.
 @interface FGMPlatformTile : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithWidth:(NSInteger )width
-    height:(NSInteger )height
-    data:(nullable FlutterStandardTypedData *)data;
-@property(nonatomic, assign) NSInteger  width;
-@property(nonatomic, assign) NSInteger  height;
-@property(nonatomic, strong, nullable) FlutterStandardTypedData * data;
++ (instancetype)makeWithWidth:(NSInteger)width
+                       height:(NSInteger)height
+                         data:(nullable FlutterStandardTypedData *)data;
+@property(nonatomic, assign) NSInteger width;
+@property(nonatomic, assign) NSInteger height;
+@property(nonatomic, strong, nullable) FlutterStandardTypedData *data;
 @end
 
 /// Pigeon equivalent of the TileOverlay class.
@@ -437,41 +431,37 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithTileOverlayId:(NSString *)tileOverlayId
-    fadeIn:(BOOL )fadeIn
-    transparency:(double )transparency
-    zIndex:(NSInteger )zIndex
-    visible:(BOOL )visible
-    tileSize:(NSInteger )tileSize;
-@property(nonatomic, copy) NSString * tileOverlayId;
-@property(nonatomic, assign) BOOL  fadeIn;
-@property(nonatomic, assign) double  transparency;
-@property(nonatomic, assign) NSInteger  zIndex;
-@property(nonatomic, assign) BOOL  visible;
-@property(nonatomic, assign) NSInteger  tileSize;
+                               fadeIn:(BOOL)fadeIn
+                         transparency:(double)transparency
+                               zIndex:(NSInteger)zIndex
+                              visible:(BOOL)visible
+                             tileSize:(NSInteger)tileSize;
+@property(nonatomic, copy) NSString *tileOverlayId;
+@property(nonatomic, assign) BOOL fadeIn;
+@property(nonatomic, assign) double transparency;
+@property(nonatomic, assign) NSInteger zIndex;
+@property(nonatomic, assign) BOOL visible;
+@property(nonatomic, assign) NSInteger tileSize;
 @end
 
 /// Pigeon equivalent of Flutter's EdgeInsets.
 @interface FGMPlatformEdgeInsets : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithTop:(double )top
-    bottom:(double )bottom
-    left:(double )left
-    right:(double )right;
-@property(nonatomic, assign) double  top;
-@property(nonatomic, assign) double  bottom;
-@property(nonatomic, assign) double  left;
-@property(nonatomic, assign) double  right;
++ (instancetype)makeWithTop:(double)top bottom:(double)bottom left:(double)left right:(double)right;
+@property(nonatomic, assign) double top;
+@property(nonatomic, assign) double bottom;
+@property(nonatomic, assign) double left;
+@property(nonatomic, assign) double right;
 @end
 
 /// Pigeon equivalent of LatLng.
 @interface FGMPlatformLatLng : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithLatitude:(double )latitude
-    longitude:(double )longitude;
-@property(nonatomic, assign) double  latitude;
-@property(nonatomic, assign) double  longitude;
++ (instancetype)makeWithLatitude:(double)latitude longitude:(double)longitude;
+@property(nonatomic, assign) double latitude;
+@property(nonatomic, assign) double longitude;
 @end
 
 /// Pigeon equivalent of LatLngBounds.
@@ -498,147 +488,142 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithGroundOverlayId:(NSString *)groundOverlayId
-    image:(FGMPlatformBitmap *)image
-    position:(nullable FGMPlatformLatLng *)position
-    bounds:(nullable FGMPlatformLatLngBounds *)bounds
-    anchor:(nullable FGMPlatformPoint *)anchor
-    transparency:(double )transparency
-    bearing:(double )bearing
-    zIndex:(NSInteger )zIndex
-    visible:(BOOL )visible
-    clickable:(BOOL )clickable
-    zoomLevel:(nullable NSNumber *)zoomLevel;
-@property(nonatomic, copy) NSString * groundOverlayId;
-@property(nonatomic, strong) FGMPlatformBitmap * image;
-@property(nonatomic, strong, nullable) FGMPlatformLatLng * position;
-@property(nonatomic, strong, nullable) FGMPlatformLatLngBounds * bounds;
-@property(nonatomic, strong, nullable) FGMPlatformPoint * anchor;
-@property(nonatomic, assign) double  transparency;
-@property(nonatomic, assign) double  bearing;
-@property(nonatomic, assign) NSInteger  zIndex;
-@property(nonatomic, assign) BOOL  visible;
-@property(nonatomic, assign) BOOL  clickable;
-@property(nonatomic, strong, nullable) NSNumber * zoomLevel;
+                                  image:(FGMPlatformBitmap *)image
+                               position:(nullable FGMPlatformLatLng *)position
+                                 bounds:(nullable FGMPlatformLatLngBounds *)bounds
+                                 anchor:(nullable FGMPlatformPoint *)anchor
+                           transparency:(double)transparency
+                                bearing:(double)bearing
+                                 zIndex:(NSInteger)zIndex
+                                visible:(BOOL)visible
+                              clickable:(BOOL)clickable
+                              zoomLevel:(nullable NSNumber *)zoomLevel;
+@property(nonatomic, copy) NSString *groundOverlayId;
+@property(nonatomic, strong) FGMPlatformBitmap *image;
+@property(nonatomic, strong, nullable) FGMPlatformLatLng *position;
+@property(nonatomic, strong, nullable) FGMPlatformLatLngBounds *bounds;
+@property(nonatomic, strong, nullable) FGMPlatformPoint *anchor;
+@property(nonatomic, assign) double transparency;
+@property(nonatomic, assign) double bearing;
+@property(nonatomic, assign) NSInteger zIndex;
+@property(nonatomic, assign) BOOL visible;
+@property(nonatomic, assign) BOOL clickable;
+@property(nonatomic, strong, nullable) NSNumber *zoomLevel;
 @end
 
 /// Information passed to the platform view creation.
 @interface FGMPlatformMapViewCreationParams : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithInitialCameraPosition:(FGMPlatformCameraPosition *)initialCameraPosition
-    mapConfiguration:(FGMPlatformMapConfiguration *)mapConfiguration
-    initialCircles:(NSArray<FGMPlatformCircle *> *)initialCircles
-    initialMarkers:(NSArray<FGMPlatformMarker *> *)initialMarkers
-    initialPolygons:(NSArray<FGMPlatformPolygon *> *)initialPolygons
-    initialPolylines:(NSArray<FGMPlatformPolyline *> *)initialPolylines
-    initialHeatmaps:(NSArray<FGMPlatformHeatmap *> *)initialHeatmaps
-    initialTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)initialTileOverlays
-    initialClusterManagers:(NSArray<FGMPlatformClusterManager *> *)initialClusterManagers
-    initialGroundOverlays:(NSArray<FGMPlatformGroundOverlay *> *)initialGroundOverlays;
-@property(nonatomic, strong) FGMPlatformCameraPosition * initialCameraPosition;
-@property(nonatomic, strong) FGMPlatformMapConfiguration * mapConfiguration;
-@property(nonatomic, copy) NSArray<FGMPlatformCircle *> * initialCircles;
-@property(nonatomic, copy) NSArray<FGMPlatformMarker *> * initialMarkers;
-@property(nonatomic, copy) NSArray<FGMPlatformPolygon *> * initialPolygons;
-@property(nonatomic, copy) NSArray<FGMPlatformPolyline *> * initialPolylines;
-@property(nonatomic, copy) NSArray<FGMPlatformHeatmap *> * initialHeatmaps;
-@property(nonatomic, copy) NSArray<FGMPlatformTileOverlay *> * initialTileOverlays;
-@property(nonatomic, copy) NSArray<FGMPlatformClusterManager *> * initialClusterManagers;
-@property(nonatomic, copy) NSArray<FGMPlatformGroundOverlay *> * initialGroundOverlays;
++ (instancetype)
+    makeWithInitialCameraPosition:(FGMPlatformCameraPosition *)initialCameraPosition
+                 mapConfiguration:(FGMPlatformMapConfiguration *)mapConfiguration
+                   initialCircles:(NSArray<FGMPlatformCircle *> *)initialCircles
+                   initialMarkers:(NSArray<FGMPlatformMarker *> *)initialMarkers
+                  initialPolygons:(NSArray<FGMPlatformPolygon *> *)initialPolygons
+                 initialPolylines:(NSArray<FGMPlatformPolyline *> *)initialPolylines
+                  initialHeatmaps:(NSArray<FGMPlatformHeatmap *> *)initialHeatmaps
+              initialTileOverlays:(NSArray<FGMPlatformTileOverlay *> *)initialTileOverlays
+           initialClusterManagers:(NSArray<FGMPlatformClusterManager *> *)initialClusterManagers
+            initialGroundOverlays:(NSArray<FGMPlatformGroundOverlay *> *)initialGroundOverlays;
+@property(nonatomic, strong) FGMPlatformCameraPosition *initialCameraPosition;
+@property(nonatomic, strong) FGMPlatformMapConfiguration *mapConfiguration;
+@property(nonatomic, copy) NSArray<FGMPlatformCircle *> *initialCircles;
+@property(nonatomic, copy) NSArray<FGMPlatformMarker *> *initialMarkers;
+@property(nonatomic, copy) NSArray<FGMPlatformPolygon *> *initialPolygons;
+@property(nonatomic, copy) NSArray<FGMPlatformPolyline *> *initialPolylines;
+@property(nonatomic, copy) NSArray<FGMPlatformHeatmap *> *initialHeatmaps;
+@property(nonatomic, copy) NSArray<FGMPlatformTileOverlay *> *initialTileOverlays;
+@property(nonatomic, copy) NSArray<FGMPlatformClusterManager *> *initialClusterManagers;
+@property(nonatomic, copy) NSArray<FGMPlatformGroundOverlay *> *initialGroundOverlays;
 @end
 
 /// Pigeon equivalent of MapConfiguration.
 @interface FGMPlatformMapConfiguration : NSObject
 + (instancetype)makeWithCompassEnabled:(nullable NSNumber *)compassEnabled
-    cameraTargetBounds:(nullable FGMPlatformCameraTargetBounds *)cameraTargetBounds
-    mapType:(nullable FGMPlatformMapTypeBox *)mapType
-    minMaxZoomPreference:(nullable FGMPlatformZoomRange *)minMaxZoomPreference
-    rotateGesturesEnabled:(nullable NSNumber *)rotateGesturesEnabled
-    scrollGesturesEnabled:(nullable NSNumber *)scrollGesturesEnabled
-    tiltGesturesEnabled:(nullable NSNumber *)tiltGesturesEnabled
-    trackCameraPosition:(nullable NSNumber *)trackCameraPosition
-    zoomGesturesEnabled:(nullable NSNumber *)zoomGesturesEnabled
-    myLocationEnabled:(nullable NSNumber *)myLocationEnabled
-    myLocationButtonEnabled:(nullable NSNumber *)myLocationButtonEnabled
-    padding:(nullable FGMPlatformEdgeInsets *)padding
-    indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
-    trafficEnabled:(nullable NSNumber *)trafficEnabled
-    buildingsEnabled:(nullable NSNumber *)buildingsEnabled
-    mapId:(nullable NSString *)mapId
-    style:(nullable NSString *)style;
-@property(nonatomic, strong, nullable) NSNumber * compassEnabled;
-@property(nonatomic, strong, nullable) FGMPlatformCameraTargetBounds * cameraTargetBounds;
-@property(nonatomic, strong, nullable) FGMPlatformMapTypeBox * mapType;
-@property(nonatomic, strong, nullable) FGMPlatformZoomRange * minMaxZoomPreference;
-@property(nonatomic, strong, nullable) NSNumber * rotateGesturesEnabled;
-@property(nonatomic, strong, nullable) NSNumber * scrollGesturesEnabled;
-@property(nonatomic, strong, nullable) NSNumber * tiltGesturesEnabled;
-@property(nonatomic, strong, nullable) NSNumber * trackCameraPosition;
-@property(nonatomic, strong, nullable) NSNumber * zoomGesturesEnabled;
-@property(nonatomic, strong, nullable) NSNumber * myLocationEnabled;
-@property(nonatomic, strong, nullable) NSNumber * myLocationButtonEnabled;
-@property(nonatomic, strong, nullable) FGMPlatformEdgeInsets * padding;
-@property(nonatomic, strong, nullable) NSNumber * indoorViewEnabled;
-@property(nonatomic, strong, nullable) NSNumber * trafficEnabled;
-@property(nonatomic, strong, nullable) NSNumber * buildingsEnabled;
-@property(nonatomic, copy, nullable) NSString * mapId;
-@property(nonatomic, copy, nullable) NSString * style;
+                    cameraTargetBounds:(nullable FGMPlatformCameraTargetBounds *)cameraTargetBounds
+                               mapType:(nullable FGMPlatformMapTypeBox *)mapType
+                  minMaxZoomPreference:(nullable FGMPlatformZoomRange *)minMaxZoomPreference
+                 rotateGesturesEnabled:(nullable NSNumber *)rotateGesturesEnabled
+                 scrollGesturesEnabled:(nullable NSNumber *)scrollGesturesEnabled
+                   tiltGesturesEnabled:(nullable NSNumber *)tiltGesturesEnabled
+                   trackCameraPosition:(nullable NSNumber *)trackCameraPosition
+                   zoomGesturesEnabled:(nullable NSNumber *)zoomGesturesEnabled
+                     myLocationEnabled:(nullable NSNumber *)myLocationEnabled
+               myLocationButtonEnabled:(nullable NSNumber *)myLocationButtonEnabled
+                               padding:(nullable FGMPlatformEdgeInsets *)padding
+                     indoorViewEnabled:(nullable NSNumber *)indoorViewEnabled
+                        trafficEnabled:(nullable NSNumber *)trafficEnabled
+                      buildingsEnabled:(nullable NSNumber *)buildingsEnabled
+                                 mapId:(nullable NSString *)mapId
+                                 style:(nullable NSString *)style;
+@property(nonatomic, strong, nullable) NSNumber *compassEnabled;
+@property(nonatomic, strong, nullable) FGMPlatformCameraTargetBounds *cameraTargetBounds;
+@property(nonatomic, strong, nullable) FGMPlatformMapTypeBox *mapType;
+@property(nonatomic, strong, nullable) FGMPlatformZoomRange *minMaxZoomPreference;
+@property(nonatomic, strong, nullable) NSNumber *rotateGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *scrollGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *tiltGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *trackCameraPosition;
+@property(nonatomic, strong, nullable) NSNumber *zoomGesturesEnabled;
+@property(nonatomic, strong, nullable) NSNumber *myLocationEnabled;
+@property(nonatomic, strong, nullable) NSNumber *myLocationButtonEnabled;
+@property(nonatomic, strong, nullable) FGMPlatformEdgeInsets *padding;
+@property(nonatomic, strong, nullable) NSNumber *indoorViewEnabled;
+@property(nonatomic, strong, nullable) NSNumber *trafficEnabled;
+@property(nonatomic, strong, nullable) NSNumber *buildingsEnabled;
+@property(nonatomic, copy, nullable) NSString *mapId;
+@property(nonatomic, copy, nullable) NSString *style;
 @end
 
 /// Pigeon representation of an x,y coordinate.
 @interface FGMPlatformPoint : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithX:(double )x
-    y:(double )y;
-@property(nonatomic, assign) double  x;
-@property(nonatomic, assign) double  y;
++ (instancetype)makeWithX:(double)x y:(double)y;
+@property(nonatomic, assign) double x;
+@property(nonatomic, assign) double y;
 @end
 
 /// Pigeon representation of a size.
 @interface FGMPlatformSize : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithWidth:(double )width
-    height:(double )height;
-@property(nonatomic, assign) double  width;
-@property(nonatomic, assign) double  height;
++ (instancetype)makeWithWidth:(double)width height:(double)height;
+@property(nonatomic, assign) double width;
+@property(nonatomic, assign) double height;
 @end
 
 /// Pigeon representation of a color.
 @interface FGMPlatformColor : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithRed:(double )red
-    green:(double )green
-    blue:(double )blue
-    alpha:(double )alpha;
-@property(nonatomic, assign) double  red;
-@property(nonatomic, assign) double  green;
-@property(nonatomic, assign) double  blue;
-@property(nonatomic, assign) double  alpha;
++ (instancetype)makeWithRed:(double)red green:(double)green blue:(double)blue alpha:(double)alpha;
+@property(nonatomic, assign) double red;
+@property(nonatomic, assign) double green;
+@property(nonatomic, assign) double blue;
+@property(nonatomic, assign) double alpha;
 @end
 
 /// Pigeon equivalent of GMSTileLayer properties.
 @interface FGMPlatformTileLayer : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithVisible:(BOOL )visible
-    fadeIn:(BOOL )fadeIn
-    opacity:(double )opacity
-    zIndex:(NSInteger )zIndex;
-@property(nonatomic, assign) BOOL  visible;
-@property(nonatomic, assign) BOOL  fadeIn;
-@property(nonatomic, assign) double  opacity;
-@property(nonatomic, assign) NSInteger  zIndex;
++ (instancetype)makeWithVisible:(BOOL)visible
+                         fadeIn:(BOOL)fadeIn
+                        opacity:(double)opacity
+                         zIndex:(NSInteger)zIndex;
+@property(nonatomic, assign) BOOL visible;
+@property(nonatomic, assign) BOOL fadeIn;
+@property(nonatomic, assign) double opacity;
+@property(nonatomic, assign) NSInteger zIndex;
 @end
 
 /// Pigeon equivalent of MinMaxZoomPreference.
 @interface FGMPlatformZoomRange : NSObject
-+ (instancetype)makeWithMin:(nullable NSNumber *)min
-    max:(nullable NSNumber *)max;
-@property(nonatomic, strong, nullable) NSNumber * min;
-@property(nonatomic, strong, nullable) NSNumber * max;
++ (instancetype)makeWithMin:(nullable NSNumber *)min max:(nullable NSNumber *)max;
+@property(nonatomic, strong, nullable) NSNumber *min;
+@property(nonatomic, strong, nullable) NSNumber *max;
 @end
 
 /// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
@@ -669,19 +654,18 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)makeWithByteData:(FlutterStandardTypedData *)byteData
-    size:(nullable FGMPlatformSize *)size;
-@property(nonatomic, strong) FlutterStandardTypedData * byteData;
-@property(nonatomic, strong, nullable) FGMPlatformSize * size;
+                            size:(nullable FGMPlatformSize *)size;
+@property(nonatomic, strong) FlutterStandardTypedData *byteData;
+@property(nonatomic, strong, nullable) FGMPlatformSize *size;
 @end
 
 /// Pigeon equivalent of [AssetBitmap].
 @interface FGMPlatformBitmapAsset : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithName:(NSString *)name
-    pkg:(nullable NSString *)pkg;
-@property(nonatomic, copy) NSString * name;
-@property(nonatomic, copy, nullable) NSString * pkg;
++ (instancetype)makeWithName:(NSString *)name pkg:(nullable NSString *)pkg;
+@property(nonatomic, copy) NSString *name;
+@property(nonatomic, copy, nullable) NSString *pkg;
 @end
 
 /// Pigeon equivalent of [AssetImageBitmap].
@@ -741,54 +725,87 @@ NSObject<FlutterMessageCodec> *FGMGetGoogleMapsFlutterPigeonMessagesCodec(void);
 ///
 /// Only non-null configuration values will result in updates; options with
 /// null values will remain unchanged.
-- (void)updateWithMapConfiguration:(FGMPlatformMapConfiguration *)configuration error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updateWithMapConfiguration:(FGMPlatformMapConfiguration *)configuration
+                             error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of circles on the map.
-- (void)updateCirclesByAdding:(NSArray<FGMPlatformCircle *> *)toAdd changing:(NSArray<FGMPlatformCircle *> *)toChange removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updateCirclesByAdding:(NSArray<FGMPlatformCircle *> *)toAdd
+                     changing:(NSArray<FGMPlatformCircle *> *)toChange
+                     removing:(NSArray<NSString *> *)idsToRemove
+                        error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of heatmaps on the map.
-- (void)updateHeatmapsByAdding:(NSArray<FGMPlatformHeatmap *> *)toAdd changing:(NSArray<FGMPlatformHeatmap *> *)toChange removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updateHeatmapsByAdding:(NSArray<FGMPlatformHeatmap *> *)toAdd
+                      changing:(NSArray<FGMPlatformHeatmap *> *)toChange
+                      removing:(NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of custer managers for clusters on the map.
-- (void)updateClusterManagersByAdding:(NSArray<FGMPlatformClusterManager *> *)toAdd removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updateClusterManagersByAdding:(NSArray<FGMPlatformClusterManager *> *)toAdd
+                             removing:(NSArray<NSString *> *)idsToRemove
+                                error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of markers on the map.
-- (void)updateMarkersByAdding:(NSArray<FGMPlatformMarker *> *)toAdd changing:(NSArray<FGMPlatformMarker *> *)toChange removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updateMarkersByAdding:(NSArray<FGMPlatformMarker *> *)toAdd
+                     changing:(NSArray<FGMPlatformMarker *> *)toChange
+                     removing:(NSArray<NSString *> *)idsToRemove
+                        error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of polygonss on the map.
-- (void)updatePolygonsByAdding:(NSArray<FGMPlatformPolygon *> *)toAdd changing:(NSArray<FGMPlatformPolygon *> *)toChange removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updatePolygonsByAdding:(NSArray<FGMPlatformPolygon *> *)toAdd
+                      changing:(NSArray<FGMPlatformPolygon *> *)toChange
+                      removing:(NSArray<NSString *> *)idsToRemove
+                         error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of polylines on the map.
-- (void)updatePolylinesByAdding:(NSArray<FGMPlatformPolyline *> *)toAdd changing:(NSArray<FGMPlatformPolyline *> *)toChange removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updatePolylinesByAdding:(NSArray<FGMPlatformPolyline *> *)toAdd
+                       changing:(NSArray<FGMPlatformPolyline *> *)toChange
+                       removing:(NSArray<NSString *> *)idsToRemove
+                          error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of tile overlays on the map.
-- (void)updateTileOverlaysByAdding:(NSArray<FGMPlatformTileOverlay *> *)toAdd changing:(NSArray<FGMPlatformTileOverlay *> *)toChange removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updateTileOverlaysByAdding:(NSArray<FGMPlatformTileOverlay *> *)toAdd
+                          changing:(NSArray<FGMPlatformTileOverlay *> *)toChange
+                          removing:(NSArray<NSString *> *)idsToRemove
+                             error:(FlutterError *_Nullable *_Nonnull)error;
 /// Updates the set of ground overlays on the map.
-- (void)updateGroundOverlaysByAdding:(NSArray<FGMPlatformGroundOverlay *> *)toAdd changing:(NSArray<FGMPlatformGroundOverlay *> *)toChange removing:(NSArray<NSString *> *)idsToRemove error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)updateGroundOverlaysByAdding:(NSArray<FGMPlatformGroundOverlay *> *)toAdd
+                            changing:(NSArray<FGMPlatformGroundOverlay *> *)toChange
+                            removing:(NSArray<NSString *> *)idsToRemove
+                               error:(FlutterError *_Nullable *_Nonnull)error;
 /// Gets the screen coordinate for the given map location.
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable FGMPlatformPoint *)screenCoordinatesForLatLng:(FGMPlatformLatLng *)latLng error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformPoint *)screenCoordinatesForLatLng:(FGMPlatformLatLng *)latLng
+                                                    error:(FlutterError *_Nullable *_Nonnull)error;
 /// Gets the map location for the given screen coordinate.
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable FGMPlatformLatLng *)latLngForScreenCoordinate:(FGMPlatformPoint *)screenCoordinate error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformLatLng *)latLngForScreenCoordinate:(FGMPlatformPoint *)screenCoordinate
+                                                    error:(FlutterError *_Nullable *_Nonnull)error;
 /// Gets the map region currently displayed on the map.
 ///
 /// @return `nil` only when `error != nil`.
 - (nullable FGMPlatformLatLngBounds *)visibleMapRegion:(FlutterError *_Nullable *_Nonnull)error;
 /// Moves the camera according to [cameraUpdate] immediately, with no
 /// animation.
-- (void)moveCameraWithUpdate:(FGMPlatformCameraUpdate *)cameraUpdate error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)moveCameraWithUpdate:(FGMPlatformCameraUpdate *)cameraUpdate
+                       error:(FlutterError *_Nullable *_Nonnull)error;
 /// Moves the camera according to [cameraUpdate], animating the update using a
 /// duration in milliseconds if provided.
-- (void)animateCameraWithUpdate:(FGMPlatformCameraUpdate *)cameraUpdate duration:(nullable NSNumber *)durationMilliseconds error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)animateCameraWithUpdate:(FGMPlatformCameraUpdate *)cameraUpdate
+                       duration:(nullable NSNumber *)durationMilliseconds
+                          error:(FlutterError *_Nullable *_Nonnull)error;
 /// Gets the current map zoom level.
 ///
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)currentZoomLevel:(FlutterError *_Nullable *_Nonnull)error;
 /// Show the info window for the marker with the given ID.
-- (void)showInfoWindowForMarkerWithIdentifier:(NSString *)markerId error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)showInfoWindowForMarkerWithIdentifier:(NSString *)markerId
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
 /// Hide the info window for the marker with the given ID.
-- (void)hideInfoWindowForMarkerWithIdentifier:(NSString *)markerId error:(FlutterError *_Nullable *_Nonnull)error;
+- (void)hideInfoWindowForMarkerWithIdentifier:(NSString *)markerId
+                                        error:(FlutterError *_Nullable *_Nonnull)error;
 /// Returns true if the marker with the given ID is currently displaying its
 /// info window.
 ///
 /// @return `nil` only when `error != nil`.
-- (nullable NSNumber *)isShowingInfoWindowForMarkerWithIdentifier:(NSString *)markerId error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSNumber *)
+    isShowingInfoWindowForMarkerWithIdentifier:(NSString *)markerId
+                                         error:(FlutterError *_Nullable *_Nonnull)error;
 /// Sets the style to the given map style string, where an empty string
 /// indicates that the style should be cleared.
 ///
@@ -911,19 +928,29 @@ extern void SetUpFGMMapsPlatformViewApiWithSuffix(id<FlutterBinaryMessenger> bin
 - (nullable NSNumber *)isMyLocationButtonEnabledWithError:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable NSNumber *)isTrafficEnabledWithError:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable FGMPlatformTileLayer *)tileOverlayWithIdentifier:(NSString *)tileOverlayId error:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable FGMPlatformGroundOverlay *)groundOverlayWithIdentifier:(NSString *)groundOverlayId error:(FlutterError *_Nullable *_Nonnull)error;
-- (nullable FGMPlatformHeatmap *)heatmapWithIdentifier:(NSString *)heatmapId error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformTileLayer *)tileOverlayWithIdentifier:(NSString *)tileOverlayId
+                                                       error:
+                                                           (FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformGroundOverlay *)
+    groundOverlayWithIdentifier:(NSString *)groundOverlayId
+                          error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable FGMPlatformHeatmap *)heatmapWithIdentifier:(NSString *)heatmapId
+                                                 error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable FGMPlatformZoomRange *)zoomRange:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
-- (nullable NSArray<FGMPlatformCluster *> *)clustersWithIdentifier:(NSString *)clusterManagerId error:(FlutterError *_Nullable *_Nonnull)error;
+- (nullable NSArray<FGMPlatformCluster *> *)
+    clustersWithIdentifier:(NSString *)clusterManagerId
+                     error:(FlutterError *_Nullable *_Nonnull)error;
 /// @return `nil` only when `error != nil`.
 - (nullable FGMPlatformCameraPosition *)cameraPosition:(FlutterError *_Nullable *_Nonnull)error;
 @end
 
-extern void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FGMMapsInspectorApi> *_Nullable api);
+extern void SetUpFGMMapsInspectorApi(id<FlutterBinaryMessenger> binaryMessenger,
+                                     NSObject<FGMMapsInspectorApi> *_Nullable api);
 
-extern void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger, NSObject<FGMMapsInspectorApi> *_Nullable api, NSString *messageChannelSuffix);
+extern void SetUpFGMMapsInspectorApiWithSuffix(id<FlutterBinaryMessenger> binaryMessenger,
+                                               NSObject<FGMMapsInspectorApi> *_Nullable api,
+                                               NSString *messageChannelSuffix);
 
 NS_ASSUME_NONNULL_END

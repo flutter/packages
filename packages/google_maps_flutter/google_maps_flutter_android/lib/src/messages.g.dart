@@ -31,64 +31,43 @@ List<Object?> wrapResponse({
   }
   return <Object?>[error.code, error.message, error.details];
 }
+
 bool _deepEquals(Object? a, Object? b) {
   if (a is List && b is List) {
     return a.length == b.length &&
-        a.indexed
-        .every(((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]));
+        a.indexed.every(
+          ((int, dynamic) item) => _deepEquals(item.$2, b[item.$1]),
+        );
   }
   if (a is Map && b is Map) {
-    return a.length == b.length && a.entries.every((MapEntry<Object?, Object?> entry) =>
-        (b as Map<Object?, Object?>).containsKey(entry.key) &&
-        _deepEquals(entry.value, b[entry.key]));
+    return a.length == b.length &&
+        a.entries.every(
+          (MapEntry<Object?, Object?> entry) =>
+              (b as Map<Object?, Object?>).containsKey(entry.key) &&
+              _deepEquals(entry.value, b[entry.key]),
+        );
   }
   return a == b;
 }
 
-
 /// Pigeon equivalent of MapType
-enum PlatformMapType {
-  none,
-  normal,
-  satellite,
-  terrain,
-  hybrid,
-}
+enum PlatformMapType { none, normal, satellite, terrain, hybrid }
 
-enum PlatformRendererType {
-  legacy,
-  latest,
-}
+enum PlatformRendererType { legacy, latest }
 
 /// Join types for polyline joints.
-enum PlatformJointType {
-  mitered,
-  bevel,
-  round,
-}
+enum PlatformJointType { mitered, bevel, round }
 
 /// Enumeration of possible types of PlatformCap, corresponding to the
 /// subclasses of Cap in the Google Maps Android SDK.
 /// See https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/Cap.
-enum PlatformCapType {
-  buttCap,
-  roundCap,
-  squareCap,
-  customCap,
-}
+enum PlatformCapType { buttCap, roundCap, squareCap, customCap }
 
 /// Enumeration of possible types for PatternItem.
-enum PlatformPatternItemType {
-  dot,
-  dash,
-  gap,
-}
+enum PlatformPatternItemType { dot, dash, gap }
 
 /// Pigeon equivalent of [MapBitmapScaling].
-enum PlatformMapBitmapScaling {
-  auto,
-  none,
-}
+enum PlatformMapBitmapScaling { auto, none }
 
 /// Pigeon representatation of a CameraPosition.
 class PlatformCameraPosition {
@@ -2732,8 +2711,10 @@ class MapsApi {
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
   MapsApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+    : pigeonVar_binaryMessenger = binaryMessenger,
+      pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+          ? '.$messageChannelSuffix'
+          : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -2742,7 +2723,8 @@ class MapsApi {
 
   /// Returns once the map instance is available.
   Future<void> waitForMap() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.waitForMap$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.waitForMap$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -2767,14 +2749,19 @@ class MapsApi {
   ///
   /// Only non-null configuration values will result in updates; options with
   /// null values will remain unchanged.
-  Future<void> updateMapConfiguration(PlatformMapConfiguration configuration) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration$pigeonVar_messageChannelSuffix';
+  Future<void> updateMapConfiguration(
+    PlatformMapConfiguration configuration,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMapConfiguration$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[configuration]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[configuration],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2790,14 +2777,21 @@ class MapsApi {
   }
 
   /// Updates the set of circles on the map.
-  Future<void> updateCircles(List<PlatformCircle> toAdd, List<PlatformCircle> toChange, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles$pigeonVar_messageChannelSuffix';
+  Future<void> updateCircles(
+    List<PlatformCircle> toAdd,
+    List<PlatformCircle> toChange,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateCircles$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, toChange, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2813,14 +2807,21 @@ class MapsApi {
   }
 
   /// Updates the set of heatmaps on the map.
-  Future<void> updateHeatmaps(List<PlatformHeatmap> toAdd, List<PlatformHeatmap> toChange, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps$pigeonVar_messageChannelSuffix';
+  Future<void> updateHeatmaps(
+    List<PlatformHeatmap> toAdd,
+    List<PlatformHeatmap> toChange,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateHeatmaps$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, toChange, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2836,14 +2837,20 @@ class MapsApi {
   }
 
   /// Updates the set of custer managers for clusters on the map.
-  Future<void> updateClusterManagers(List<PlatformClusterManager> toAdd, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers$pigeonVar_messageChannelSuffix';
+  Future<void> updateClusterManagers(
+    List<PlatformClusterManager> toAdd,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateClusterManagers$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2859,14 +2866,21 @@ class MapsApi {
   }
 
   /// Updates the set of markers on the map.
-  Future<void> updateMarkers(List<PlatformMarker> toAdd, List<PlatformMarker> toChange, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers$pigeonVar_messageChannelSuffix';
+  Future<void> updateMarkers(
+    List<PlatformMarker> toAdd,
+    List<PlatformMarker> toChange,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateMarkers$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, toChange, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2882,14 +2896,21 @@ class MapsApi {
   }
 
   /// Updates the set of polygonss on the map.
-  Future<void> updatePolygons(List<PlatformPolygon> toAdd, List<PlatformPolygon> toChange, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons$pigeonVar_messageChannelSuffix';
+  Future<void> updatePolygons(
+    List<PlatformPolygon> toAdd,
+    List<PlatformPolygon> toChange,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolygons$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, toChange, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2905,14 +2926,21 @@ class MapsApi {
   }
 
   /// Updates the set of polylines on the map.
-  Future<void> updatePolylines(List<PlatformPolyline> toAdd, List<PlatformPolyline> toChange, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines$pigeonVar_messageChannelSuffix';
+  Future<void> updatePolylines(
+    List<PlatformPolyline> toAdd,
+    List<PlatformPolyline> toChange,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updatePolylines$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, toChange, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2928,14 +2956,21 @@ class MapsApi {
   }
 
   /// Updates the set of tile overlays on the map.
-  Future<void> updateTileOverlays(List<PlatformTileOverlay> toAdd, List<PlatformTileOverlay> toChange, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays$pigeonVar_messageChannelSuffix';
+  Future<void> updateTileOverlays(
+    List<PlatformTileOverlay> toAdd,
+    List<PlatformTileOverlay> toChange,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateTileOverlays$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, toChange, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2951,14 +2986,21 @@ class MapsApi {
   }
 
   /// Updates the set of ground overlays on the map.
-  Future<void> updateGroundOverlays(List<PlatformGroundOverlay> toAdd, List<PlatformGroundOverlay> toChange, List<String> idsToRemove) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateGroundOverlays$pigeonVar_messageChannelSuffix';
+  Future<void> updateGroundOverlays(
+    List<PlatformGroundOverlay> toAdd,
+    List<PlatformGroundOverlay> toChange,
+    List<String> idsToRemove,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.updateGroundOverlays$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[toAdd, toChange, idsToRemove]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[toAdd, toChange, idsToRemove],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -2975,13 +3017,16 @@ class MapsApi {
 
   /// Gets the screen coordinate for the given map location.
   Future<PlatformPoint> getScreenCoordinate(PlatformLatLng latLng) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getScreenCoordinate$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getScreenCoordinate$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[latLng]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[latLng],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3003,13 +3048,16 @@ class MapsApi {
 
   /// Gets the map location for the given screen coordinate.
   Future<PlatformLatLng> getLatLng(PlatformPoint screenCoordinate) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getLatLng$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getLatLng$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[screenCoordinate]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[screenCoordinate],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3031,7 +3079,8 @@ class MapsApi {
 
   /// Gets the map region currently displayed on the map.
   Future<PlatformLatLngBounds> getVisibleRegion() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getVisibleRegion$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getVisibleRegion$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -3060,13 +3109,16 @@ class MapsApi {
   /// Moves the camera according to [cameraUpdate] immediately, with no
   /// animation.
   Future<void> moveCamera(PlatformCameraUpdate cameraUpdate) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.moveCamera$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[cameraUpdate]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[cameraUpdate],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3083,14 +3135,20 @@ class MapsApi {
 
   /// Moves the camera according to [cameraUpdate], animating the update using a
   /// duration in milliseconds if provided.
-  Future<void> animateCamera(PlatformCameraUpdate cameraUpdate, int? durationMilliseconds) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera$pigeonVar_messageChannelSuffix';
+  Future<void> animateCamera(
+    PlatformCameraUpdate cameraUpdate,
+    int? durationMilliseconds,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.animateCamera$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[cameraUpdate, durationMilliseconds]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[cameraUpdate, durationMilliseconds],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3107,7 +3165,8 @@ class MapsApi {
 
   /// Gets the current map zoom level.
   Future<double> getZoomLevel() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getZoomLevel$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.getZoomLevel$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -3135,13 +3194,16 @@ class MapsApi {
 
   /// Show the info window for the marker with the given ID.
   Future<void> showInfoWindow(String markerId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.showInfoWindow$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.showInfoWindow$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[markerId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[markerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3158,13 +3220,16 @@ class MapsApi {
 
   /// Hide the info window for the marker with the given ID.
   Future<void> hideInfoWindow(String markerId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.hideInfoWindow$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.hideInfoWindow$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[markerId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[markerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3182,13 +3247,16 @@ class MapsApi {
   /// Returns true if the marker with the given ID is currently displaying its
   /// info window.
   Future<bool> isInfoWindowShown(String markerId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isInfoWindowShown$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.isInfoWindowShown$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[markerId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[markerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3214,13 +3282,16 @@ class MapsApi {
   /// Returns false if there was an error setting the style, such as an invalid
   /// style string.
   Future<bool> setStyle(String style) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.setStyle$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.setStyle$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[style]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[style],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3246,7 +3317,8 @@ class MapsApi {
   /// This allows checking asynchronously for initial style failures, as there
   /// is no way to return failures from map initialization.
   Future<bool> didLastStyleSucceed() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.didLastStyleSucceed$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.didLastStyleSucceed$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -3274,13 +3346,16 @@ class MapsApi {
 
   /// Clears the cache of tiles previously requseted from the tile provider.
   Future<void> clearTileCache(String tileOverlayId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.clearTileCache$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.clearTileCache$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[tileOverlayId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[tileOverlayId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3297,7 +3372,8 @@ class MapsApi {
 
   /// Takes a snapshot of the map and returns its image data.
   Future<Uint8List> takeSnapshot() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.takeSnapshot$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsApi.takeSnapshot$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -3376,14 +3452,26 @@ abstract class MapsCallbackApi {
   void onGroundOverlayTap(String groundOverlayId);
 
   /// Called to get data for a map tile.
-  Future<PlatformTile> getTileOverlayTile(String tileOverlayId, PlatformPoint location, int zoom);
+  Future<PlatformTile> getTileOverlayTile(
+    String tileOverlayId,
+    PlatformPoint location,
+    int zoom,
+  );
 
-  static void setUp(MapsCallbackApi? api, {BinaryMessenger? binaryMessenger, String messageChannelSuffix = '',}) {
-    messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  static void setUp(
+    MapsCallbackApi? api, {
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) {
+    messageChannelSuffix = messageChannelSuffix.isNotEmpty
+        ? '.$messageChannelSuffix'
+        : '';
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMoveStarted$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3393,41 +3481,54 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
-          final PlatformCameraPosition? arg_cameraPosition = (args[0] as PlatformCameraPosition?);
-          assert(arg_cameraPosition != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove was null, expected non-null PlatformCameraPosition.');
+          final PlatformCameraPosition? arg_cameraPosition =
+              (args[0] as PlatformCameraPosition?);
+          assert(
+            arg_cameraPosition != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraMove was null, expected non-null PlatformCameraPosition.',
+          );
           try {
             api.onCameraMove(arg_cameraPosition!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCameraIdle$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
@@ -3437,373 +3538,502 @@ abstract class MapsCallbackApi {
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final PlatformLatLng? arg_position = (args[0] as PlatformLatLng?);
-          assert(arg_position != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap was null, expected non-null PlatformLatLng.');
+          assert(
+            arg_position != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onTap was null, expected non-null PlatformLatLng.',
+          );
           try {
             api.onTap(arg_position!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final PlatformLatLng? arg_position = (args[0] as PlatformLatLng?);
-          assert(arg_position != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress was null, expected non-null PlatformLatLng.');
+          assert(
+            arg_position != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onLongPress was null, expected non-null PlatformLatLng.',
+          );
           try {
             api.onLongPress(arg_position!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
-          assert(arg_markerId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap was null, expected non-null String.');
+          assert(
+            arg_markerId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerTap was null, expected non-null String.',
+          );
           try {
             api.onMarkerTap(arg_markerId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
-          assert(arg_markerId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null, expected non-null String.');
+          assert(
+            arg_markerId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null, expected non-null String.',
+          );
           final PlatformLatLng? arg_position = (args[1] as PlatformLatLng?);
-          assert(arg_position != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null, expected non-null PlatformLatLng.');
+          assert(
+            arg_position != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragStart was null, expected non-null PlatformLatLng.',
+          );
           try {
             api.onMarkerDragStart(arg_markerId!, arg_position!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
-          assert(arg_markerId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null, expected non-null String.');
+          assert(
+            arg_markerId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null, expected non-null String.',
+          );
           final PlatformLatLng? arg_position = (args[1] as PlatformLatLng?);
-          assert(arg_position != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null, expected non-null PlatformLatLng.');
+          assert(
+            arg_position != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDrag was null, expected non-null PlatformLatLng.',
+          );
           try {
             api.onMarkerDrag(arg_markerId!, arg_position!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
-          assert(arg_markerId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null, expected non-null String.');
+          assert(
+            arg_markerId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null, expected non-null String.',
+          );
           final PlatformLatLng? arg_position = (args[1] as PlatformLatLng?);
-          assert(arg_position != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null, expected non-null PlatformLatLng.');
+          assert(
+            arg_position != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onMarkerDragEnd was null, expected non-null PlatformLatLng.',
+          );
           try {
             api.onMarkerDragEnd(arg_markerId!, arg_position!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_markerId = (args[0] as String?);
-          assert(arg_markerId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap was null, expected non-null String.');
+          assert(
+            arg_markerId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onInfoWindowTap was null, expected non-null String.',
+          );
           try {
             api.onInfoWindowTap(arg_markerId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_circleId = (args[0] as String?);
-          assert(arg_circleId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap was null, expected non-null String.');
+          assert(
+            arg_circleId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onCircleTap was null, expected non-null String.',
+          );
           try {
             api.onCircleTap(arg_circleId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final PlatformCluster? arg_cluster = (args[0] as PlatformCluster?);
-          assert(arg_cluster != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap was null, expected non-null PlatformCluster.');
+          assert(
+            arg_cluster != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onClusterTap was null, expected non-null PlatformCluster.',
+          );
           try {
             api.onClusterTap(arg_cluster!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPoiTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPoiTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPoiTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPoiTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
-          final PlatformPointOfInterest? arg_poi = (args[0] as PlatformPointOfInterest?);
-          assert(arg_poi != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPoiTap was null, expected non-null PlatformPointOfInterest.');
+          final PlatformPointOfInterest? arg_poi =
+              (args[0] as PlatformPointOfInterest?);
+          assert(
+            arg_poi != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPoiTap was null, expected non-null PlatformPointOfInterest.',
+          );
           try {
             api.onPoiTap(arg_poi!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_polygonId = (args[0] as String?);
-          assert(arg_polygonId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap was null, expected non-null String.');
+          assert(
+            arg_polygonId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolygonTap was null, expected non-null String.',
+          );
           try {
             api.onPolygonTap(arg_polygonId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_polylineId = (args[0] as String?);
-          assert(arg_polylineId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap was null, expected non-null String.');
+          assert(
+            arg_polylineId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onPolylineTap was null, expected non-null String.',
+          );
           try {
             api.onPolylineTap(arg_polylineId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_groundOverlayId = (args[0] as String?);
-          assert(arg_groundOverlayId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap was null, expected non-null String.');
+          assert(
+            arg_groundOverlayId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.onGroundOverlayTap was null, expected non-null String.',
+          );
           try {
             api.onGroundOverlayTap(arg_groundOverlayId!);
             return wrapResponse(empty: true);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
     }
     {
       final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile$messageChannelSuffix', pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile$messageChannelSuffix',
+        pigeonChannelCodec,
+        binaryMessenger: binaryMessenger,
+      );
       if (api == null) {
         pigeonVar_channel.setMessageHandler(null);
       } else {
         pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null.');
+          assert(
+            message != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null.',
+          );
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_tileOverlayId = (args[0] as String?);
-          assert(arg_tileOverlayId != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null String.');
+          assert(
+            arg_tileOverlayId != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null String.',
+          );
           final PlatformPoint? arg_location = (args[1] as PlatformPoint?);
-          assert(arg_location != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null PlatformPoint.');
+          assert(
+            arg_location != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null PlatformPoint.',
+          );
           final int? arg_zoom = (args[2] as int?);
-          assert(arg_zoom != null,
-              'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null int.');
+          assert(
+            arg_zoom != null,
+            'Argument for dev.flutter.pigeon.google_maps_flutter_android.MapsCallbackApi.getTileOverlayTile was null, expected non-null int.',
+          );
           try {
-            final PlatformTile output = await api.getTileOverlayTile(arg_tileOverlayId!, arg_location!, arg_zoom!);
+            final PlatformTile output = await api.getTileOverlayTile(
+              arg_tileOverlayId!,
+              arg_location!,
+              arg_zoom!,
+            );
             return wrapResponse(result: output);
           } on PlatformException catch (e) {
             return wrapResponse(error: e);
-          }          catch (e) {
-            return wrapResponse(error: PlatformException(code: 'error', message: e.toString()));
+          } catch (e) {
+            return wrapResponse(
+              error: PlatformException(code: 'error', message: e.toString()),
+            );
           }
         });
       }
@@ -3816,9 +4046,13 @@ class MapsInitializerApi {
   /// Constructor for [MapsInitializerApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapsInitializerApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  MapsInitializerApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -3831,14 +4065,19 @@ class MapsInitializerApi {
   ///
   /// Calling this more than once in the lifetime of an application will result
   /// in an error.
-  Future<PlatformRendererType> initializeWithPreferredRenderer(PlatformRendererType? type) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer$pigeonVar_messageChannelSuffix';
+  Future<PlatformRendererType> initializeWithPreferredRenderer(
+    PlatformRendererType? type,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.initializeWithPreferredRenderer$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[type]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[type],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3861,7 +4100,8 @@ class MapsInitializerApi {
   /// Attempts to trigger any thread-blocking work
   /// the Google Maps SDK normally does when a map is shown for the first time.
   Future<void> warmup() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInitializerApi.warmup$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -3890,9 +4130,13 @@ class MapsPlatformViewApi {
   /// Constructor for [MapsPlatformViewApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapsPlatformViewApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  MapsPlatformViewApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -3900,13 +4144,16 @@ class MapsPlatformViewApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<void> createView(PlatformMapViewCreationParams? type) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsPlatformViewApi.createView$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[type]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[type],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -3927,9 +4174,13 @@ class MapsInspectorApi {
   /// Constructor for [MapsInspectorApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  MapsInspectorApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  MapsInspectorApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -3937,7 +4188,8 @@ class MapsInspectorApi {
   final String pigeonVar_messageChannelSuffix;
 
   Future<bool> areBuildingsEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areBuildingsEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areBuildingsEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -3964,7 +4216,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areRotateGesturesEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areRotateGesturesEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areRotateGesturesEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -3991,7 +4244,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areZoomControlsEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomControlsEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomControlsEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4018,7 +4272,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areScrollGesturesEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areScrollGesturesEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areScrollGesturesEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4045,7 +4300,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areTiltGesturesEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areTiltGesturesEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areTiltGesturesEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4072,7 +4328,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> areZoomGesturesEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomGesturesEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.areZoomGesturesEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4099,7 +4356,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> isCompassEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isCompassEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isCompassEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4126,7 +4384,8 @@ class MapsInspectorApi {
   }
 
   Future<bool?> isLiteModeEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isLiteModeEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isLiteModeEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4148,7 +4407,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> isMapToolbarEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMapToolbarEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMapToolbarEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4175,7 +4435,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> isMyLocationButtonEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMyLocationButtonEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isMyLocationButtonEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4202,7 +4463,8 @@ class MapsInspectorApi {
   }
 
   Future<bool> isTrafficEnabled() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isTrafficEnabled$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.isTrafficEnabled$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4229,13 +4491,16 @@ class MapsInspectorApi {
   }
 
   Future<PlatformTileLayer?> getTileOverlayInfo(String tileOverlayId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getTileOverlayInfo$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getTileOverlayInfo$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[tileOverlayId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[tileOverlayId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4250,14 +4515,19 @@ class MapsInspectorApi {
     }
   }
 
-  Future<PlatformGroundOverlay?> getGroundOverlayInfo(String groundOverlayId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getGroundOverlayInfo$pigeonVar_messageChannelSuffix';
+  Future<PlatformGroundOverlay?> getGroundOverlayInfo(
+    String groundOverlayId,
+  ) async {
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getGroundOverlayInfo$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[groundOverlayId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[groundOverlayId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4273,7 +4543,8 @@ class MapsInspectorApi {
   }
 
   Future<PlatformZoomRange> getZoomRange() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getZoomRange$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getZoomRange$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
@@ -4300,13 +4571,16 @@ class MapsInspectorApi {
   }
 
   Future<List<PlatformCluster>> getClusters(String clusterManagerId) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getClusters$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getClusters$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[clusterManagerId]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[clusterManagerId],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -4322,12 +4596,14 @@ class MapsInspectorApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (pigeonVar_replyList[0] as List<Object?>?)!.cast<PlatformCluster>();
+      return (pigeonVar_replyList[0] as List<Object?>?)!
+          .cast<PlatformCluster>();
     }
   }
 
   Future<PlatformCameraPosition> getCameraPosition() async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getCameraPosition$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.google_maps_flutter_android.MapsInspectorApi.getCameraPosition$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
