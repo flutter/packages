@@ -176,7 +176,7 @@ void main() {
   });
   testWidgets('onPoiTap callback is called', (WidgetTester tester) async {
     PointOfInterest? tappedPoi;
-    final Completer<void> mapCreatedCompleter = Completer<void>();
+    final mapCreatedCompleter = Completer<void>();
 
     await tester.pumpWidget(
       Directionality(
@@ -191,7 +191,7 @@ void main() {
 
     await mapCreatedCompleter.future;
 
-    const PointOfInterest poi = PointOfInterest(
+    const poi = PointOfInterest(
       position: LatLng(10.0, 10.0),
       name: 'Test POI',
       placeId: 'test_id_123',
