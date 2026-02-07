@@ -1,3 +1,7 @@
+## 0.9.23+2
+
+* Code refactor related to Swift pigeon's generated struct MediaSettings being immutable.
+
 ## 0.9.23+1
 
 * Fixes error handling in `startWriting`.

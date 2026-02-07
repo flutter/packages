@@ -86,8 +86,8 @@ private final class TestMediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper {
     if let compressionProperties = outputSettings?[AVVideoCompressionPropertiesKey]
       as? [String: Any],
       let bitrate = compressionProperties[AVVideoAverageBitRateKey] as? Int,
-      let frameRate = compressionProperties[AVVideoExpectedSourceFrameRateKey] as? Int,
-      bitrate == testVideoBitrate, frameRate == testFramesPerSecond
+      let frameRate = compressionProperties[AVVideoExpectedSourceFrameRateKey] as? Double,
+      bitrate == testVideoBitrate, frameRate == Double(testFramesPerSecond)
     {
       videoSettingsExpectation.fulfill()
     }
