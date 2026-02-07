@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_example/example_google_map.dart';
@@ -172,5 +173,36 @@ void main() {
     expect(map.polylineUpdates[2].polylineIdsToRemove.isEmpty, true);
 
     await tester.pumpAndSettle();
+  });
+  testWidgets('onPoiTap callback is called', (WidgetTester tester) async {
+    PointOfInterest? tappedPoi;
+    final Completer<void> mapCreatedCompleter = Completer<void>();
+
+    await tester.pumpWidget(
+      Directionality(
+        textDirection: TextDirection.ltr,
+        child: ExampleGoogleMap(
+          initialCameraPosition: const CameraPosition(target: LatLng(0, 0)),
+          onPoiTap: (PointOfInterest poi) => tappedPoi = poi,
+          onMapCreated: (_) => mapCreatedCompleter.complete(),
+        ),
+      ),
+    );
+
+    await mapCreatedCompleter.future;
+
+    const PointOfInterest poi = PointOfInterest(
+      position: LatLng(10.0, 10.0),
+      name: 'Test POI',
+      placeId: 'test_id_123',
+    );
+
+    platform.mapEventStreamController.add(MapPoiTapEvent(0, poi));
+
+    await tester.pump();
+
+    expect(tappedPoi, poi);
+    expect(tappedPoi!.name, 'Test POI');
+    expect(tappedPoi!.placeId, 'test_id_123');
   });
 }
