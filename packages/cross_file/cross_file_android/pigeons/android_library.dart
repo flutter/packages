@@ -111,7 +111,7 @@ abstract class InputStreamReadBytesResponse {
   kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.io.InputStream'),
 )
 abstract class InputStream {
-  // TODO: maybe return empty list instead of new class?
+  // TODO(bparrishMines): maybe return empty list instead of new class?
   /// Reads some number of bytes from the input stream and stores them into the
   /// returns them.
   InputStreamReadBytesResponse readBytes(int len);
