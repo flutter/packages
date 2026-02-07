@@ -63,7 +63,8 @@
 @interface FLTPolylinesController ()
 
 @property(strong, nonatomic) NSMutableDictionary *polylineIdentifierToController;
-@property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
+@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
@@ -72,12 +73,14 @@
 @implementation FLTPolylinesController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _eventDelegate = eventDelegate;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _polylineIdentifierToController = [NSMutableDictionary dictionaryWithCapacity:1];
+    _registrar = registrar;
   }
   return self;
 }
@@ -122,7 +125,9 @@
   if (!controller) {
     return;
   }
-  [self.eventDelegate didTapPolylineWithIdentifier:identifier];
+  [self.callbackHandler didTapPolylineWithIdentifier:identifier
+                                          completion:^(FlutterError *_Nullable _){
+                                          }];
 }
 
 - (bool)hasPolylineWithIdentifier:(NSString *)identifier {

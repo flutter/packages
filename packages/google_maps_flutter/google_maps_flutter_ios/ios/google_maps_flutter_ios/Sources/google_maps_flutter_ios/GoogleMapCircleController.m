@@ -60,7 +60,7 @@
 
 @interface FLTCirclesController ()
 
-@property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 @property(weak, nonatomic) GMSMapView *mapView;
 @property(strong, nonatomic) NSMutableDictionary *circleIdToController;
 
@@ -69,10 +69,11 @@
 @implementation FLTCirclesController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _eventDelegate = eventDelegate;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _circleIdToController = [NSMutableDictionary dictionaryWithCapacity:1];
   }
@@ -121,7 +122,9 @@
   if (!controller) {
     return;
   }
-  [self.eventDelegate didTapCircleWithIdentifier:identifier];
+  [self.callbackHandler didTapCircleWithIdentifier:identifier
+                                        completion:^(FlutterError *_Nullable _){
+                                        }];
 }
 
 @end

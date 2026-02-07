@@ -84,9 +84,6 @@ class ExampleGoogleMapController {
           (InfoWindowTapEvent e) => _googleMapState.onInfoWindowTap(e.value),
         );
     GoogleMapsFlutterPlatform.instance
-        .onPoiTap(mapId: mapId)
-        .listen((MapPoiTapEvent e) => _googleMapState.onPoiTap(e.value));
-    GoogleMapsFlutterPlatform.instance
         .onPolylineTap(mapId: mapId)
         .listen((PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value));
     GoogleMapsFlutterPlatform.instance
@@ -104,9 +101,6 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
-    GoogleMapsFlutterPlatform.instance
-        .onPoiTap(mapId: mapId)
-        .listen((MapPoiTapEvent e) => _googleMapState.onPoiTap(e.value));
     GoogleMapsFlutterPlatform.instance
         .onLongPress(mapId: mapId)
         .listen(
@@ -313,7 +307,6 @@ class ExampleGoogleMap extends StatefulWidget {
     this.markers = const <Marker>{},
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
-    this.onPoiTap,
     this.circles = const <Circle>{},
     this.clusterManagers = const <ClusterManager>{},
     this.onCameraMoveStarted,
@@ -385,9 +378,6 @@ class ExampleGoogleMap extends StatefulWidget {
 
   /// Polylines to be placed on the map.
   final Set<Polyline> polylines;
-
-  ///Point of Interest Callback
-  final ArgumentCallback<PointOfInterest>? onPoiTap;
 
   /// Circles to be placed on the map.
   final Set<Circle> circles;
@@ -656,10 +646,6 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 
   void onTap(LatLng position) {
     widget.onTap?.call(position);
-  }
-
-  void onPoiTap(PointOfInterest pointOfInterest) {
-    widget.onPoiTap?.call(pointOfInterest);
   }
 
   void onLongPress(LatLng position) {

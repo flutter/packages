@@ -3,13 +3,12 @@
 // found in the LICENSE file.
 
 @import google_maps_flutter_ios;
-@import Flutter;
 @import XCTest;
 @import GoogleMaps;
 
+#import <Flutter/Flutter.h>
+#import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
-#import "TestAssetProvider.h"
-#import "TestMapEventHandler.h"
 
 @interface FGMClusterManagersControllerTests : XCTestCase
 @end
@@ -17,6 +16,7 @@
 @implementation FGMClusterManagersControllerTests
 
 - (void)testClustering {
+  NSObject<FlutterPluginRegistrar> *registrar = OCMProtocolMock(@protocol(FlutterPluginRegistrar));
   CGRect frame = CGRectMake(0, 0, 100, 100);
 
   GMSMapViewOptions *mapViewOptions = [[GMSMapViewOptions alloc] init];
@@ -24,16 +24,17 @@
   mapViewOptions.camera = [[GMSCameraPosition alloc] initWithLatitude:0 longitude:0 zoom:0];
 
   PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:mapViewOptions];
-  TestMapEventHandler *eventHandler = [[TestMapEventHandler alloc] init];
+
+  id handler = OCMClassMock([FGMMapsCallbackApi class]);
 
   FGMClusterManagersController *clusterManagersController =
-      [[FGMClusterManagersController alloc] initWithMapView:mapView eventDelegate:eventHandler];
+      [[FGMClusterManagersController alloc] initWithMapView:mapView callbackHandler:handler];
 
   FLTMarkersController *markersController =
       [[FLTMarkersController alloc] initWithMapView:mapView
-                                      eventDelegate:eventHandler
+                                    callbackHandler:handler
                           clusterManagersController:clusterManagersController
-                                      assetProvider:[[TestAssetProvider alloc] init]];
+                                          registrar:registrar];
 
   // Add cluster managers.
   NSString *clusterManagerId = @"cm";

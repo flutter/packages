@@ -5,9 +5,9 @@
 #import "FVPTextureBasedVideoPlayer.h"
 
 #if TARGET_OS_OSX
-@import FlutterMacOS;
+#import <FlutterMacOS/FlutterMacOS.h>
 #else
-@import Flutter;
+#import <Flutter/Flutter.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN

@@ -37,7 +37,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.TileOverlay;
@@ -68,7 +67,6 @@ class GoogleMapController
         MapsApi,
         MapsInspectorApi,
         OnMapReadyCallback,
-        GoogleMap.OnPoiClickListener,
         PlatformView {
 
   private static final String TAG = "GoogleMapController";
@@ -202,7 +200,6 @@ class GoogleMapController
     this.googleMap.setIndoorEnabled(this.indoorEnabled);
     this.googleMap.setTrafficEnabled(this.trafficEnabled);
     this.googleMap.setBuildingsEnabled(this.buildingsEnabled);
-    this.googleMap.setOnPoiClickListener(this);
     installInvalidator();
     if (mapReadyResult != null) {
       mapReadyResult.success();
@@ -364,18 +361,6 @@ class GoogleMapController
   @Override
   public void onMarkerDragEnd(Marker marker) {
     markersController.onMarkerDragEnd(marker.getId(), marker.getPosition());
-  }
-
-  @Override
-  public void onPoiClick(PointOfInterest poi) {
-    Messages.PlatformPointOfInterest platformPoi =
-        new Messages.PlatformPointOfInterest.Builder()
-            .setPosition(Convert.latLngToPigeon(poi.latLng))
-            .setName(poi.name)
-            .setPlaceId(poi.placeId)
-            .build();
-
-    flutterApi.onPoiTap(platformPoi, new NoOpVoidResult());
   }
 
   @Override

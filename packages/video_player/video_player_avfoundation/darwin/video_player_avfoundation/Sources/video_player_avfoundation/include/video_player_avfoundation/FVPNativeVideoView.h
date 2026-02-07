@@ -2,12 +2,12 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import AVFoundation;
+#import <AVFoundation/AVFoundation.h>
 
 #if TARGET_OS_OSX
-@import FlutterMacOS;
+#import <FlutterMacOS/FlutterMacOS.h>
 #else
-@import Flutter;
+#import <Flutter/Flutter.h>
 #endif
 
 /// A class used to create a native video view that can be embedded in a Flutter app.

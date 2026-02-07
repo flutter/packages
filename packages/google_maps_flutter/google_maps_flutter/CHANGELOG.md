@@ -1,8 +1,3 @@
-## 2.15.0
-
-* Adds `onPoiTap` support to the `GoogleMap` widget to handle taps on base map landmarks and businesses.
-* Adds a "Place POI" example to the example app.
-
 ## 2.14.1
 
 * Replaces internal use of deprecated methods.

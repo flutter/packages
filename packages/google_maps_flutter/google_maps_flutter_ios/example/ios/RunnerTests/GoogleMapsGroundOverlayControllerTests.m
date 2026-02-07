@@ -6,8 +6,8 @@
 @import XCTest;
 @import GoogleMaps;
 
+#import <OCMock/OCMock.h>
 #import "PartiallyMockedMapView.h"
-#import "TestAssetProvider.h"
 
 /// A GMSGroundOverlay that ensures that property updates are made before the map is set.
 @interface PropertyOrderValidatingGroundOverlay : GMSGroundOverlay {
@@ -73,6 +73,8 @@
 
   FGMPlatformBitmap *bitmap =
       [FGMPlatformBitmap makeWithBitmap:[FGMPlatformBitmapDefaultMarker makeWithHue:0]];
+  NSObject<FlutterPluginRegistrar> *mockRegistrar =
+      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FGMPlatformGroundOverlay *platformGroundOverlay =
       [FGMPlatformGroundOverlay makeWithGroundOverlayId:@"id_1"
@@ -88,7 +90,7 @@
                                               zoomLevel:@14.0];
 
   [groundOverlayController updateFromPlatformGroundOverlay:platformGroundOverlay
-                                             assetProvider:[[TestAssetProvider alloc] init]
+                                                 registrar:mockRegistrar
                                                screenScale:1.0];
 
   XCTAssertNotNil(groundOverlayController.groundOverlay.icon);
@@ -127,6 +129,8 @@
 
   FGMPlatformBitmap *bitmap =
       [FGMPlatformBitmap makeWithBitmap:[FGMPlatformBitmapDefaultMarker makeWithHue:0]];
+  NSObject<FlutterPluginRegistrar> *mockRegistrar =
+      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
 
   FGMPlatformGroundOverlay *platformGroundOverlay =
       [FGMPlatformGroundOverlay makeWithGroundOverlayId:@"id_1"
@@ -142,7 +146,7 @@
                                               zoomLevel:nil];
 
   [groundOverlayController updateFromPlatformGroundOverlay:platformGroundOverlay
-                                             assetProvider:[[TestAssetProvider alloc] init]
+                                                 registrar:mockRegistrar
                                                screenScale:1.0];
 
   XCTAssertNotNil(groundOverlayController.groundOverlay.icon);
@@ -205,7 +209,7 @@
                             clickable:YES
                             zoomLevel:nil]
                     withMapView:[GoogleMapsGroundOverlayControllerTests mapView]
-                  assetProvider:[[TestAssetProvider alloc] init]
+                      registrar:nil
                     screenScale:1.0
                     usingBounds:YES];
   XCTAssertTrue(groundOverlay.hasSetMap);

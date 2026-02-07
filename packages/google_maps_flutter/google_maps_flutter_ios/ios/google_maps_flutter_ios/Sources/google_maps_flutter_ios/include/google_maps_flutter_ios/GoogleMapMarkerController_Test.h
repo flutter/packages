@@ -16,7 +16,7 @@
 + (void)updateMarker:(GMSMarker *)marker
            fromPlatformMarker:(FGMPlatformMarker *)platformMarker
                   withMapView:(GMSMapView *)mapView
-                assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                   screenScale:(CGFloat)screenScale
     usingOpacityForVisibility:(BOOL)useOpacityForVisibility;
 

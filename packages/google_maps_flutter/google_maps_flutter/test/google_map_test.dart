@@ -659,41 +659,4 @@ void main() {
 
     expect(map.tileOverlaySets.length, 1);
   });
-
-  testWidgets('onPoiTap callback is called', (WidgetTester tester) async {
-    PointOfInterest? tappedPoi;
-    final mapCreatedCompleter = Completer<void>();
-
-    await tester.pumpWidget(
-      Directionality(
-        textDirection: TextDirection.ltr,
-        child: GoogleMap(
-          initialCameraPosition: const CameraPosition(target: LatLng(0, 0)),
-          onPoiTap: (PointOfInterest poi) => tappedPoi = poi,
-          onMapCreated: (_) => mapCreatedCompleter.complete(),
-        ),
-      ),
-    );
-
-    // Wait for the map to be fully initialized in the fake platform.
-    await mapCreatedCompleter.future;
-
-    // Use the top-level 'platform' variable instead of redeclaring it.
-    const poi = PointOfInterest(
-      position: LatLng(10.0, 10.0),
-      name: 'Test POI',
-      placeId: 'test_id_123',
-    );
-
-    // Inject the event into the fake platform's stream.
-    // mapId 0 is used as it's the first map created in the test.
-    platform.mapEventStreamController.add(MapPoiTapEvent(0, poi));
-
-    // Allow the stream and callback to process.
-    await tester.pump();
-
-    expect(tappedPoi, poi);
-    expect(tappedPoi!.name, 'Test POI');
-    expect(tappedPoi!.placeId, 'test_id_123');
-  });
 }

@@ -1,7 +1,3 @@
-## 2.18.0
-
-* Implements `onPoiTap` support for iOS using `didTapPOIWithPlaceID`.
-
 ## 2.17.0
 
 * Restructures code to prepare for SwiftPM support.

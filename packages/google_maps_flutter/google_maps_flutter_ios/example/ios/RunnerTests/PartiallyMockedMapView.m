@@ -31,9 +31,4 @@
   }
 }
 
-- (void)animateWithCameraUpdate:(GMSCameraUpdate *)cameraUpdate {
-  [super animateWithCameraUpdate:cameraUpdate];
-  self.didAnimateCamera = YES;
-}
-
 @end

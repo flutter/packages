@@ -290,11 +290,6 @@ class GoogleMapsPlugin extends GoogleMapsFlutterPlatform {
   }
 
   @override
-  Stream<MapPoiTapEvent> onPoiTap({required int mapId}) {
-    return _events(mapId).whereType<MapPoiTapEvent>();
-  }
-
-  @override
   Stream<MapTapEvent> onTap({required int mapId}) {
     return _events(mapId).whereType<MapTapEvent>();
   }

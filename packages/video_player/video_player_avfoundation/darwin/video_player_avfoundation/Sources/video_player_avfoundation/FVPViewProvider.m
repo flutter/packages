@@ -5,10 +5,8 @@
 #import "./include/video_player_avfoundation/FVPViewProvider.h"
 
 #if TARGET_OS_OSX
-@import FlutterMacOS;
 @import Cocoa;
 #else
-@import Flutter;
 @import UIKit;
 #endif
 

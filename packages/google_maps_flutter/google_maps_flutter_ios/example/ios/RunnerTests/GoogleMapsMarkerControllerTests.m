@@ -6,9 +6,9 @@
 @import XCTest;
 @import GoogleMaps;
 
+#import <OCMock/OCMock.h>
+
 #import "PartiallyMockedMapView.h"
-#import "TestAssetProvider.h"
-#import "TestMapEventHandler.h"
 
 /// A GMSMarker that ensures that property updates are made before the map is set.
 @interface PropertyOrderValidatingMarker : GMSMarker {
@@ -32,13 +32,13 @@
 /// Returns a FLTMarkersController instance instantiated with the given map view.
 ///
 /// The mapView should outlive the controller, as the controller keeps a weak reference to it.
-- (FLTMarkersController *)markersControllerWithMapView:(GMSMapView *)mapView
-                                         eventDelegate:
-                                             (NSObject<FGMMapEventDelegate> *)eventDelegate {
+- (FLTMarkersController *)markersControllerWithMapView:(GMSMapView *)mapView {
+  NSObject<FlutterPluginRegistrar> *mockRegistrar =
+      OCMStrictProtocolMock(@protocol(FlutterPluginRegistrar));
   return [[FLTMarkersController alloc] initWithMapView:mapView
-                                         eventDelegate:eventDelegate
+                                       callbackHandler:[[FGMMapsCallbackApi alloc] init]
                              clusterManagersController:nil
-                                         assetProvider:[[TestAssetProvider alloc] init]];
+                                             registrar:mockRegistrar];
 }
 
 - (FGMPlatformBitmap *)placeholderBitmap {
@@ -47,9 +47,7 @@
 
 - (void)testSetsMarkerNumericProperties {
   GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
-  TestMapEventHandler *eventHandler = [[TestMapEventHandler alloc] init];
-  FLTMarkersController *controller = [self markersControllerWithMapView:mapView
-                                                          eventDelegate:eventHandler];
+  FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
   double anchorX = 3.14;
@@ -96,9 +94,7 @@
 // another property.
 - (void)testSetsDraggable {
   GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
-  TestMapEventHandler *eventHandler = [[TestMapEventHandler alloc] init];
-  FLTMarkersController *controller = [self markersControllerWithMapView:mapView
-                                                          eventDelegate:eventHandler];
+  FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
   [controller addMarkers:@[ [FGMPlatformMarker
@@ -130,9 +126,7 @@
 // another property.
 - (void)testSetsFlat {
   GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
-  TestMapEventHandler *eventHandler = [[TestMapEventHandler alloc] init];
-  FLTMarkersController *controller = [self markersControllerWithMapView:mapView
-                                                          eventDelegate:eventHandler];
+  FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
   [controller addMarkers:@[ [FGMPlatformMarker
@@ -164,9 +158,7 @@
 // another property.
 - (void)testSetsVisible {
   GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
-  TestMapEventHandler *eventHandler = [[TestMapEventHandler alloc] init];
-  FLTMarkersController *controller = [self markersControllerWithMapView:mapView
-                                                          eventDelegate:eventHandler];
+  FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
   [controller addMarkers:@[ [FGMPlatformMarker
@@ -197,9 +189,7 @@
 
 - (void)testSetsMarkerInfoWindowProperties {
   GMSMapView *mapView = [GoogleMapsMarkerControllerTests mapView];
-  TestMapEventHandler *eventHandler = [[TestMapEventHandler alloc] init];
-  FLTMarkersController *controller = [self markersControllerWithMapView:mapView
-                                                          eventDelegate:eventHandler];
+  FLTMarkersController *controller = [self markersControllerWithMapView:mapView];
 
   NSString *markerIdentifier = @"marker";
   NSString *title = @"info title";
@@ -262,7 +252,7 @@
                                             markerId:@"marker"
                                     clusterManagerId:nil]
                     withMapView:[GoogleMapsMarkerControllerTests mapView]
-                  assetProvider:[[TestAssetProvider alloc] init]
+                      registrar:nil
                     screenScale:1
       usingOpacityForVisibility:NO];
   XCTAssertTrue(marker.hasSetMap);

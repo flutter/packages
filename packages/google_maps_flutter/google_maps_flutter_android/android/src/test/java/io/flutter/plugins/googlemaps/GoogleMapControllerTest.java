@@ -4,7 +4,6 @@
 
 package io.flutter.plugins.googlemaps;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.PointOfInterest;
 import com.google.maps.android.clustering.ClusterManager;
 import io.flutter.plugin.common.BinaryMessenger;
 import java.util.ArrayList;
@@ -37,7 +35,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.MockitoAnnotations;
@@ -319,24 +316,5 @@ public class GoogleMapControllerTest {
     Assert.assertEquals(cameraPosition.zoom, result.getZoom(), 1e-15);
     Assert.assertEquals(cameraPosition.tilt, result.getTilt(), 1e-15);
     Assert.assertEquals(cameraPosition.bearing, result.getBearing(), 1e-15);
-  }
-
-  @Test
-  public void onPoiClick() {
-    GoogleMapController controller = getGoogleMapControllerWithMockedDependencies();
-    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
-
-    controller.onPoiClick(poi);
-
-    ArgumentCaptor<Messages.PlatformPointOfInterest> poiCaptor =
-        ArgumentCaptor.forClass(Messages.PlatformPointOfInterest.class);
-
-    verify(flutterApi).onPoiTap(poiCaptor.capture(), any(Messages.VoidResult.class));
-
-    Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
-    assertEquals("name", capturedPoi.getName());
-    assertEquals("placeId", capturedPoi.getPlaceId());
-    assertEquals(1.0, capturedPoi.getPosition().getLatitude(), 1e-6);
-    assertEquals(2.0, capturedPoi.getPosition().getLongitude(), 1e-6);
   }
 }

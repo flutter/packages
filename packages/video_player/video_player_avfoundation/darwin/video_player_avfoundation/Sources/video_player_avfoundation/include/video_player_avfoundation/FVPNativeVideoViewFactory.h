@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 #import "FVPVideoPlayer.h"
 
 #if TARGET_OS_OSX
-@import FlutterMacOS;
+#import <FlutterMacOS/FlutterMacOS.h>
 #else
-@import Flutter;
+#import <Flutter/Flutter.h>
 #endif
 
 /// A factory class responsible for creating native video views that can be embedded in a

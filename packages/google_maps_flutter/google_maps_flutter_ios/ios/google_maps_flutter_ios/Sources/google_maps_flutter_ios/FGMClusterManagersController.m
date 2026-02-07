@@ -13,8 +13,8 @@
 @property(strong, nonatomic)
     NSMutableDictionary<NSString *, GMUClusterManager *> *clusterManagerIdentifierToManagers;
 
-/// The delegate for handling interactions with clusters.
-@property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
+/// The callback handler interface for calls to Flutter.
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 
 /// The current map instance on which the cluster managers are operating.
 @property(strong, nonatomic) GMSMapView *mapView;
@@ -23,10 +23,10 @@
 
 @implementation FGMClusterManagersController
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler {
   self = [super init];
   if (self) {
-    _eventDelegate = eventDelegate;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _clusterManagerIdentifierToManagers = [[NSMutableDictionary alloc] init];
   }
@@ -106,7 +106,9 @@
     return;
   }
   FGMPlatformCluster *platFormCluster = FGMGetPigeonCluster(cluster, clusterManagerId);
-  [self.eventDelegate didTapCluster:platFormCluster];
+  [self.callbackHandler didTapCluster:platFormCluster
+                           completion:^(FlutterError *_Nullable _){
+                           }];
 }
 
 #pragma mark - Private methods

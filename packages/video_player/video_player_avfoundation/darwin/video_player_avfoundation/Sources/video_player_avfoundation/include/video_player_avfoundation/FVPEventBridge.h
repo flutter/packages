@@ -2,14 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import Foundation;
+#import <Foundation/Foundation.h>
 
 #import "FVPVideoEventListener.h"
 
 #if TARGET_OS_OSX
-@import FlutterMacOS;
+#import <FlutterMacOS/FlutterMacOS.h>
 #else
-@import Flutter;
+#import <Flutter/Flutter.h>
 #endif
 
 /// An implementation of FVPVideoEventListener that forwards messages to Dart via an event channel.

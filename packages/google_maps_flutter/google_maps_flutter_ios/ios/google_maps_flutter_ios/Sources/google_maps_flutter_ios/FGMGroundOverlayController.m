@@ -36,12 +36,12 @@
 }
 
 - (void)updateFromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)groundOverlay
-                          assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                              registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                             screenScale:(CGFloat)screenScale {
   [FGMGroundOverlayController updateGroundOverlay:self.groundOverlay
                         fromPlatformGroundOverlay:groundOverlay
                                       withMapView:self.mapView
-                                    assetProvider:assetProvider
+                                        registrar:registrar
                                       screenScale:screenScale
                                       usingBounds:self.createdWithBounds];
 }
@@ -49,14 +49,14 @@
 + (void)updateGroundOverlay:(GMSGroundOverlay *)groundOverlay
     fromPlatformGroundOverlay:(FGMPlatformGroundOverlay *)platformGroundOverlay
                   withMapView:(GMSMapView *)mapView
-                assetProvider:(NSObject<FGMAssetProvider> *)assetProvider
+                    registrar:(NSObject<FlutterPluginRegistrar> *)registrar
                   screenScale:(CGFloat)screenScale
                   usingBounds:(BOOL)useBounds {
   groundOverlay.tappable = platformGroundOverlay.clickable;
   groundOverlay.zIndex = (int)platformGroundOverlay.zIndex;
   groundOverlay.anchor =
       CGPointMake(platformGroundOverlay.anchor.x, platformGroundOverlay.anchor.y);
-  UIImage *image = FGMIconFromBitmap(platformGroundOverlay.image, assetProvider, screenScale);
+  UIImage *image = FGMIconFromBitmap(platformGroundOverlay.image, registrar, screenScale);
   groundOverlay.icon = image;
   groundOverlay.bearing = platformGroundOverlay.bearing;
   groundOverlay.opacity = 1.0 - platformGroundOverlay.transparency;
@@ -86,10 +86,10 @@
     *groundOverlayControllerByIdentifier;
 
 /// A callback api for the map interactions.
-@property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
 
-/// Asset provider used to load images.
-@property(weak, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
+/// Flutter Plugin Registrar used to load images.
+@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 
 /// The map view used to generate the controllers.
 @property(weak, nonatomic) GMSMapView *mapView;
@@ -99,14 +99,14 @@
 @implementation FLTGroundOverlaysController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate
-                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _eventDelegate = eventDelegate;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _groundOverlayControllerByIdentifier = [[NSMutableDictionary alloc] init];
-    _assetProvider = assetProvider;
+    _registrar = registrar;
   }
   return self;
 }
@@ -129,7 +129,7 @@
                           coordinate:CLLocationCoordinate2DMake(
                                          groundOverlay.bounds.southwest.latitude,
                                          groundOverlay.bounds.southwest.longitude)]
-                             icon:FGMIconFromBitmap(groundOverlay.image, self.assetProvider,
+                             icon:FGMIconFromBitmap(groundOverlay.image, self.registrar,
                                                     [self getScreenScale])];
     } else {
       NSAssert(groundOverlay.zoomLevel != nil,
@@ -137,7 +137,7 @@
       gmsOverlay = [GMSGroundOverlay
           groundOverlayWithPosition:CLLocationCoordinate2DMake(groundOverlay.position.latitude,
                                                                groundOverlay.position.longitude)
-                               icon:FGMIconFromBitmap(groundOverlay.image, self.assetProvider,
+                               icon:FGMIconFromBitmap(groundOverlay.image, self.registrar,
                                                       [self getScreenScale])
                           zoomLevel:[groundOverlay.zoomLevel doubleValue]];
     }
@@ -148,7 +148,7 @@
                                               isCreatedWithBounds:isCreatedWithBounds];
     controller.zoomLevel = groundOverlay.zoomLevel;
     [controller updateFromPlatformGroundOverlay:groundOverlay
-                                  assetProvider:self.assetProvider
+                                      registrar:self.registrar
                                     screenScale:[self getScreenScale]];
     self.groundOverlayControllerByIdentifier[identifier] = controller;
   }
@@ -159,7 +159,7 @@
     NSString *identifier = groundOverlay.groundOverlayId;
     FGMGroundOverlayController *controller = self.groundOverlayControllerByIdentifier[identifier];
     [controller updateFromPlatformGroundOverlay:groundOverlay
-                                  assetProvider:self.assetProvider
+                                      registrar:self.registrar
                                     screenScale:[self getScreenScale]];
   }
 }
@@ -180,7 +180,9 @@
   if (!controller) {
     return;
   }
-  [self.eventDelegate didTapGroundOverlayWithIdentifier:identifier];
+  [self.callbackHandler didTapGroundOverlayWithIdentifier:identifier
+                                               completion:^(FlutterError *_Nullable _){
+                                               }];
 }
 
 - (bool)hasGroundOverlaysWithIdentifier:(NSString *)identifier {

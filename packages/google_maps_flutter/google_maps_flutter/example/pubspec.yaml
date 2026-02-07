@@ -18,8 +18,8 @@ dependencies:
     # The example app is bundled with the plugin so we use a path dependency on
     # the parent directory to use the current plugin's version.
     path: ../
-  google_maps_flutter_android: ^2.19.0
-  google_maps_flutter_platform_interface: ^2.15.0
+  google_maps_flutter_android: ^2.16.1
+  google_maps_flutter_platform_interface: ^2.14.0
 
 dev_dependencies:
   build_runner: ^2.1.10
@@ -33,14 +33,3 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
-dependency_overrides:
-  google_maps_flutter:
-    path: ../
-  google_maps_flutter_android:
-    path: ../../google_maps_flutter_android
-  google_maps_flutter_ios:
-    path: ../../google_maps_flutter_ios
-  google_maps_flutter_platform_interface:
-    path: ../../google_maps_flutter_platform_interface
-  google_maps_flutter_web:
-    path: ../../google_maps_flutter_web

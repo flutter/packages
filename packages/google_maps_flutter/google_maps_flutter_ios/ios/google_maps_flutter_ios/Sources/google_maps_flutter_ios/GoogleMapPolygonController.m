@@ -70,7 +70,8 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
 @interface FLTPolygonsController ()
 
 @property(strong, nonatomic) NSMutableDictionary *polygonIdentifierToController;
-@property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
+@property(strong, nonatomic) FGMMapsCallbackApi *callbackHandler;
+@property(weak, nonatomic) NSObject<FlutterPluginRegistrar> *registrar;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end
@@ -78,12 +79,14 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
 @implementation FLTPolygonsController
 
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate {
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar {
   self = [super init];
   if (self) {
-    _eventDelegate = eventDelegate;
+    _callbackHandler = callbackHandler;
     _mapView = mapView;
     _polygonIdentifierToController = [NSMutableDictionary dictionaryWithCapacity:1];
+    _registrar = registrar;
   }
   return self;
 }
@@ -128,7 +131,9 @@ static NSArray<GMSMutablePath *> *FMGPathHolesFromLocationHoles(
   if (!controller) {
     return;
   }
-  [self.eventDelegate didTapPolygonWithIdentifier:identifier];
+  [self.callbackHandler didTapPolygonWithIdentifier:identifier
+                                         completion:^(FlutterError *_Nullable _){
+                                         }];
 }
 
 - (bool)hasPolygonWithIdentifier:(NSString *)identifier {

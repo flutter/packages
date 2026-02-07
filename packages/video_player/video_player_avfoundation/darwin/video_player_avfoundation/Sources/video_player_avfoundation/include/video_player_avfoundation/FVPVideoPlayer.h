@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-@import AVFoundation;
+#import <AVFoundation/AVFoundation.h>
 
 #import "./messages.g.h"
 #import "FVPAVFactory.h"
@@ -10,9 +10,9 @@
 #import "FVPViewProvider.h"
 
 #if TARGET_OS_OSX
-@import FlutterMacOS;
+#import <FlutterMacOS/FlutterMacOS.h>
 #else
-@import Flutter;
+#import <Flutter/Flutter.h>
 #endif
 
 NS_ASSUME_NONNULL_BEGIN
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Initializes a new instance of FVPVideoPlayer with the given AVPlayerItem, AV factory, and view
 /// provider.
-- (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
+- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
                          avFactory:(id<FVPAVFactory>)avFactory
                       viewProvider:(NSObject<FVPViewProvider> *)viewProvider;
 

@@ -235,19 +235,6 @@ class PlatformMarker {
   final String? clusterManagerId;
 }
 
-/// Pigeon equivalent of the Point of Interest class.
-class PlatformPointOfInterest {
-  PlatformPointOfInterest({
-    required this.position,
-    this.name,
-    required this.placeId,
-  });
-
-  final PlatformLatLng position;
-  final String? name;
-  final String placeId;
-}
-
 /// Pigeon equivalent of the Polygon class.
 class PlatformPolygon {
   PlatformPolygon({
@@ -818,9 +805,6 @@ abstract class MapsCallbackApi {
 
   /// Called when a marker cluster is tapped.
   void onClusterTap(PlatformCluster cluster);
-
-  /// Called when a POI is tapped.
-  void onPoiTap(PlatformPointOfInterest poi);
 
   /// Called when a polygon is tapped.
   void onPolygonTap(String polygonId);

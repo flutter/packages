@@ -5,14 +5,11 @@
 @import Flutter;
 @import GoogleMaps;
 
-#import "FGMAssetProvider.h"
 #import "FGMClusterManagersController.h"
-#import "FGMMapEventDelegate.h"
+#import "GoogleMapController.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-#pragma mark -
 
 // Defines marker controllable by Flutter.
 @interface FLTGoogleMapMarkerController : NSObject
@@ -28,9 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface FLTMarkersController : NSObject
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler
       clusterManagersController:(nullable FGMClusterManagersController *)clusterManagersController
-                  assetProvider:(NSObject<FGMAssetProvider> *)assetProvider;
+                      registrar:(NSObject<FlutterPluginRegistrar> *)registrar;
 - (void)addMarkers:(NSArray<FGMPlatformMarker *> *)markersToAdd;
 - (void)changeMarkers:(NSArray<FGMPlatformMarker *> *)markersToChange;
 - (void)removeMarkersWithIdentifiers:(NSArray<NSString *> *)identifiers;

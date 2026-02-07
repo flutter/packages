@@ -6,7 +6,6 @@
 @import GoogleMaps;
 @import GoogleMapsUtils;
 
-#import "FGMMapEventDelegate.h"
 #import "google_maps_flutter_pigeon_messages.g.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -16,10 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Initializes cluster manager controller.
 ///
-/// @param eventDelegate A delegate that will receive events from the cluster managers.
+/// @param callbackHandler A callback handler.
 /// @param mapView A map view that will be used to display clustered markers.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
-                  eventDelegate:(NSObject<FGMMapEventDelegate> *)eventDelegate;
+                callbackHandler:(FGMMapsCallbackApi *)callbackHandler;
 
 /// Creates cluster managers and initializes them.
 ///
