@@ -2,7 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_driver/driver_extension.dart';
@@ -25,7 +24,7 @@ class FileOpenScreen extends StatelessWidget {
   const FileOpenScreen({super.key});
 
   Future<void> _openFile(BuildContext context) async {
-    final PlatformXFile? file = (await openFile())?.platform;
+    final XFile? file = await openFile();
 
     final String? filename = await file?.name();
 
