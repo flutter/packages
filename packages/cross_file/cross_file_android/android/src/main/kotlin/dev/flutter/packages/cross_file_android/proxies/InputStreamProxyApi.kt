@@ -4,7 +4,6 @@
 
 package dev.flutter.packages.cross_file_android.proxies
 
-import dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse
 import dev.flutter.packages.cross_file_android.ProxyApiRegistrar
 import java.io.InputStream
 
