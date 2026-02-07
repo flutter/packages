@@ -43,6 +43,7 @@ final class DefaultCamera: NSObject, Camera {
   private let captureSessionQueue: DispatchQueue
 
   private let mediaSettings: FCPPlatformMediaSettings
+  private var framesPerSecond: Double?
   private let mediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper
 
   let videoCaptureSession: CaptureSession
@@ -217,14 +218,14 @@ final class DefaultCamera: NSObject, Camera {
 
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
 
-      FormatUtils.selectBestFormat(
+      (captureDevice.flutterActiveFormat, framesPerSecond) = FormatUtils.findBestFormat(
         for: captureDevice,
         mediaSettings: mediaSettings,
         videoDimensionsConverter: videoDimensionsConverter)
 
-      if let framesPerSecond = mediaSettings.framesPerSecond {
+      if let framesPerSecond = framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
-        let fpsNominator = floor(framesPerSecond.doubleValue * 10.0)
+        let fpsNominator = floor(framesPerSecond * 10.0)
         let duration = CMTimeMake(value: 10, timescale: Int32(fpsNominator))
 
         mediaSettingsAVWrapper.setMinFrameDuration(duration, on: captureDevice)
@@ -580,14 +581,14 @@ final class DefaultCamera: NSObject, Camera {
       for: captureVideoOutput
     )
 
-    if mediaSettings.videoBitrate != nil || mediaSettings.framesPerSecond != nil {
+    if mediaSettings.videoBitrate != nil || framesPerSecond != nil {
       var compressionProperties: [String: Any] = [:]
 
       if let videoBitrate = mediaSettings.videoBitrate {
         compressionProperties[AVVideoAverageBitRateKey] = videoBitrate
       }
 
-      if let framesPerSecond = mediaSettings.framesPerSecond {
+      if let framesPerSecond = framesPerSecond {
         compressionProperties[AVVideoExpectedSourceFrameRateKey] = framesPerSecond
       }
 
