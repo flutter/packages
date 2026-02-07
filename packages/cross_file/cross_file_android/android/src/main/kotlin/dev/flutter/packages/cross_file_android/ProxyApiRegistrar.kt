@@ -31,10 +31,6 @@ open class ProxyApiRegistrar(binaryMessenger: BinaryMessenger, var context: Cont
     return ContentResolverProxyApi(this)
   }
 
-  override fun getPigeonApiInputStreamReadBytesResponse(): PigeonApiInputStreamReadBytesResponse {
-    return InputStreamReadBytesResponseProxyApi(this)
-  }
-
   override fun getPigeonApiInputStream(): PigeonApiInputStream {
     return InputStreamProxyApi(this)
   }

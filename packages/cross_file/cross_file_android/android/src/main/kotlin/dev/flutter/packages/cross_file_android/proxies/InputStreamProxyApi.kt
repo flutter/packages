@@ -19,9 +19,14 @@ class InputStreamProxyApi(override val pigeonRegistrar: ProxyApiRegistrar) :
   override fun readBytes(
       pigeon_instance: InputStream,
       len: Long,
-  ): InputStreamReadBytesResponse {
+  ): ByteArray {
     val bytes = ByteArray(len.toInt())
-    return InputStreamReadBytesResponse(pigeon_instance.read(bytes), bytes)
+    val bytesRead = pigeon_instance.read(bytes)
+    if (bytesRead == -1) {
+      return byteArrayOf()
+    } else {
+      return bytes.copyOfRange(0, bytesRead)
+    }
   }
 
   override fun readAllBytes(pigeon_instance: InputStream): ByteArray {

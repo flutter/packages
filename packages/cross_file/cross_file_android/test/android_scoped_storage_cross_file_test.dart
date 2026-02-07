@@ -307,10 +307,7 @@ void setUpInputStreamWithBytes(
     final List<int> bytesRead = remainingBytes.take(len).toList();
     remainingBytes = remainingBytes.skip(len);
 
-    return android.InputStreamReadBytesResponse.pigeon_detached(
-      returnValue: remainingBytes.isEmpty ? -1 : bytesRead.length,
-      bytes: Uint8List.fromList(bytesRead),
-    );
+    return Uint8List.fromList(bytesRead);
   });
 }
 

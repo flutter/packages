@@ -66,14 +66,12 @@ base class AndroidScopedStorageXFile extends PlatformScopedStorageXFile {
         await inputStream.skip(start);
       }
 
-      late android.InputStreamReadBytesResponse response;
+      late Uint8List bytes;
       do {
-        response = await inputStream.readBytes(
-          min(bytesToRead, maxByteArrayLen),
-        );
-        yield response.bytes;
-        bytesToRead -= response.returnValue;
-      } while (response.returnValue > -1 && bytesToRead > 0);
+        bytes = await inputStream.readBytes(min(bytesToRead, maxByteArrayLen));
+        yield bytes;
+        bytesToRead -= bytes.length;
+      } while (bytesToRead > 0 && bytes.isNotEmpty);
     } else {
       throw NullInputStreamError(params.uri);
     }

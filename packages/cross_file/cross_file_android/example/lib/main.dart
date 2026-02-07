@@ -2,6 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_driver/driver_extension.dart';
@@ -24,14 +25,16 @@ class FileOpenScreen extends StatelessWidget {
   const FileOpenScreen({super.key});
 
   Future<void> _openFile(BuildContext context) async {
-    final XFile? file = await openFile();
+    final PlatformXFile? file = (await openFile())?.platform;
+
+    final String? filename = await file?.name();
 
     if (!context.mounted) {
       return;
     }
 
     if (file case final XFile file) {
-      switch (mime.lookupMimeType(file.name)) {
+      switch (mime.lookupMimeType(filename ?? file.uri)) {
         case final String mimeType when mimeType.startsWith('text'):
           await showDialog<void>(
             context: context,
@@ -40,7 +43,7 @@ class FileOpenScreen extends StatelessWidget {
         case final String mimeType when mimeType.startsWith('image'):
         case final String mimeType when mimeType.startsWith('application'):
         case null:
-          debugPrint('Unsupported file type: ${file.path}');
+          debugPrint('Unsupported file type: ${file.uri}');
           return;
       }
     }
@@ -83,7 +86,7 @@ class TextDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(file.path),
+      title: Text(file.uri),
       content: Scrollbar(
         child: SingleChildScrollView(
           child: FutureBuilder<String>(

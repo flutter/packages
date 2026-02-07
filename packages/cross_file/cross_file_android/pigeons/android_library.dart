@@ -85,24 +85,6 @@ abstract class ContentResolver {
   InputStream? openInputStream(String uri);
 }
 
-/// Return type for [InputStream.readBytes] that handles returning two values.
-@ProxyApi(
-  kotlinOptions: KotlinProxyApiOptions(
-    fullClassName:
-        'dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse',
-  ),
-)
-abstract class InputStreamReadBytesResponse {
-  /// The total number of bytes read into `bytes`, or -1 if there is no more
-  /// data because the end of the stream has been reached.
-  ///
-  /// The returned value when calling the native `InputStream.readBytes` method.
-  late final int bytesRead;
-
-  /// The byte array into which the data is read.
-  late final Uint8List bytes;
-}
-
 /// This abstract class is the superclass of all classes representing an input
 /// stream of bytes.
 ///
@@ -111,10 +93,9 @@ abstract class InputStreamReadBytesResponse {
   kotlinOptions: KotlinProxyApiOptions(fullClassName: 'java.io.InputStream'),
 )
 abstract class InputStream {
-  // TODO(bparrishMines): maybe return empty list instead of new class?
   /// Reads some number of bytes from the input stream and stores them into the
   /// returns them.
-  InputStreamReadBytesResponse readBytes(int len);
+  Uint8List readBytes(int len);
 
   /// Reads all remaining bytes from the input stream.
   Uint8List readAllBytes();

@@ -42,16 +42,8 @@ class _FakeDocumentFile_2 extends _i1.SmartFake implements _i2.DocumentFile {
     : super(parent, parentInvocation);
 }
 
-class _FakeInputStreamReadBytesResponse_3 extends _i1.SmartFake
-    implements _i2.InputStreamReadBytesResponse {
-  _FakeInputStreamReadBytesResponse_3(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(parent, parentInvocation);
-}
-
-class _FakeInputStream_4 extends _i1.SmartFake implements _i2.InputStream {
-  _FakeInputStream_4(Object parent, Invocation parentInvocation)
+class _FakeInputStream_3 extends _i1.SmartFake implements _i2.InputStream {
+  _FakeInputStream_3(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
@@ -229,17 +221,12 @@ class MockInputStream extends _i1.Mock implements _i2.InputStream {
           as _i2.PigeonInstanceManager);
 
   @override
-  _i3.Future<_i2.InputStreamReadBytesResponse> readBytes(int? len) =>
+  _i3.Future<_i5.Uint8List> readBytes(int? len) =>
       (super.noSuchMethod(
             Invocation.method(#readBytes, [len]),
-            returnValue: _i3.Future<_i2.InputStreamReadBytesResponse>.value(
-              _FakeInputStreamReadBytesResponse_3(
-                this,
-                Invocation.method(#readBytes, [len]),
-              ),
-            ),
+            returnValue: _i3.Future<_i5.Uint8List>.value(_i5.Uint8List(0)),
           )
-          as _i3.Future<_i2.InputStreamReadBytesResponse>);
+          as _i3.Future<_i5.Uint8List>);
 
   @override
   _i3.Future<_i5.Uint8List> readAllBytes() =>
@@ -261,7 +248,7 @@ class MockInputStream extends _i1.Mock implements _i2.InputStream {
   _i2.InputStream pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
-            returnValue: _FakeInputStream_4(
+            returnValue: _FakeInputStream_3(
               this,
               Invocation.method(#pigeon_copy, []),
             ),
