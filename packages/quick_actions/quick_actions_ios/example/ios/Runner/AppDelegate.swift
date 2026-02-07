@@ -12,6 +12,8 @@ import UIKit
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    // For UI integration tests. See https://github.com/flutter/plugins/pull/3811.
+    return false
   }
 }
