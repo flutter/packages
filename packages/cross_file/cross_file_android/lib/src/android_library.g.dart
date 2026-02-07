@@ -165,7 +165,6 @@ class PigeonInstanceManager {
     _PigeonInternalInstanceManagerApi.setUpMessageHandlers(instanceManager: instanceManager);
     DocumentFile.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     ContentResolver.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
-    InputStreamReadBytesResponse.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     InputStream.pigeon_setUpMessageHandlers(pigeon_instanceManager: instanceManager);
     return instanceManager;
   }
@@ -1092,98 +1091,6 @@ class ContentResolver extends PigeonInternalProxyApiBaseClass {
     return ContentResolver.pigeon_detached(
       pigeon_binaryMessenger: pigeon_binaryMessenger,
       pigeon_instanceManager: pigeon_instanceManager,
-    );
-  }
-}
-
-/// Return type for [InputStream.readBytes] that handles returning two values.
-class InputStreamReadBytesResponse extends PigeonInternalProxyApiBaseClass {
-  /// Constructs [InputStreamReadBytesResponse] without creating the associated native object.
-  ///
-  /// This should only be used by subclasses created by this library or to
-  /// create copies for an [PigeonInstanceManager].
-  @protected
-  InputStreamReadBytesResponse.pigeon_detached({
-    super.pigeon_binaryMessenger,
-    super.pigeon_instanceManager,
-    required this.bytesRead,
-    required this.bytes,
-  });
-
-  /// The total number of bytes read into `bytes`, or -1 if there is no more
-  /// data because the end of the stream has been reached.
-  ///
-  /// The returned value when calling the native `InputStream.readBytes` method.
-  final int bytesRead;
-
-  /// The byte array into which the data is read.
-  final Uint8List bytes;
-
-  static void pigeon_setUpMessageHandlers({
-    bool pigeon_clearHandlers = false,
-    BinaryMessenger? pigeon_binaryMessenger,
-    PigeonInstanceManager? pigeon_instanceManager,
-    InputStreamReadBytesResponse Function(
-      int bytesRead,
-      Uint8List bytes,
-    )? pigeon_newInstance,
-  }) {
-    final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
-        _PigeonInternalProxyApiBaseCodec(
-            pigeon_instanceManager ?? PigeonInstanceManager.instance);
-    final BinaryMessenger? binaryMessenger = pigeon_binaryMessenger;
-    {
-      final pigeonVar_channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.cross_file_android.InputStreamReadBytesResponse.pigeon_newInstance',
-          pigeonChannelCodec,
-          binaryMessenger: binaryMessenger);
-      if (pigeon_clearHandlers) {
-        pigeonVar_channel.setMessageHandler(null);
-      } else {
-        pigeonVar_channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-              'Argument for dev.flutter.pigeon.cross_file_android.InputStreamReadBytesResponse.pigeon_newInstance was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final int? arg_pigeon_instanceIdentifier = (args[0] as int?);
-          assert(arg_pigeon_instanceIdentifier != null,
-              'Argument for dev.flutter.pigeon.cross_file_android.InputStreamReadBytesResponse.pigeon_newInstance was null, expected non-null int.');
-          final int? arg_bytesRead = (args[1] as int?);
-          assert(arg_bytesRead != null,
-              'Argument for dev.flutter.pigeon.cross_file_android.InputStreamReadBytesResponse.pigeon_newInstance was null, expected non-null int.');
-          final Uint8List? arg_bytes = (args[2] as Uint8List?);
-          assert(arg_bytes != null,
-              'Argument for dev.flutter.pigeon.cross_file_android.InputStreamReadBytesResponse.pigeon_newInstance was null, expected non-null Uint8List.');
-          try {
-            (pigeon_instanceManager ?? PigeonInstanceManager.instance)
-                .addHostCreatedInstance(
-              pigeon_newInstance?.call(arg_bytesRead!, arg_bytes!) ??
-                  InputStreamReadBytesResponse.pigeon_detached(
-                    pigeon_binaryMessenger: pigeon_binaryMessenger,
-                    pigeon_instanceManager: pigeon_instanceManager,
-                    bytesRead: arg_bytesRead!,
-                    bytes: arg_bytes!,
-                  ),
-              arg_pigeon_instanceIdentifier!,
-            );
-            return wrapResponse(empty: true);
-          } on PlatformException catch (e) {
-            return wrapResponse(error: e);
-          } catch (e) {
-            return wrapResponse(
-                error: PlatformException(code: 'error', message: e.toString()));
-          }
-        });
-      }
-    }
-  }
-
-  @override
-  InputStreamReadBytesResponse pigeon_copy() {
-    return InputStreamReadBytesResponse.pigeon_detached(
-      pigeon_binaryMessenger: pigeon_binaryMessenger,
-      pigeon_instanceManager: pigeon_instanceManager,
-      bytesRead: bytesRead,
-      bytes: bytes,
     );
   }
 }

@@ -412,12 +412,6 @@ abstract class AndroidLibraryPigeonProxyApiRegistrar(val binaryMessenger: Binary
   abstract fun getPigeonApiContentResolver(): PigeonApiContentResolver
 
   /**
-   * An implementation of [PigeonApiInputStreamReadBytesResponse] used to add a new Dart instance of
-   * `InputStreamReadBytesResponse` to the Dart `InstanceManager`.
-   */
-  abstract fun getPigeonApiInputStreamReadBytesResponse(): PigeonApiInputStreamReadBytesResponse
-
-  /**
    * An implementation of [PigeonApiInputStream] used to add a new Dart instance of
    * `InputStream` to the Dart `InstanceManager`.
    */
@@ -478,13 +472,6 @@ private class AndroidLibraryPigeonProxyApiBaseCodec(val registrar: AndroidLibrar
       registrar.getPigeonApiContentResolver().pigeon_newInstance(value) {
         if (it.isFailure) {
           logNewInstanceFailure("ContentResolver", value, it.exceptionOrNull())
-        }
-      }
-    }
-     else if (value is dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse) {
-      registrar.getPigeonApiInputStreamReadBytesResponse().pigeon_newInstance(value) {
-        if (it.isFailure) {
-          logNewInstanceFailure("InputStreamReadBytesResponse", value, it.exceptionOrNull())
         }
       }
     }
@@ -889,53 +876,6 @@ abstract class PigeonApiContentResolver(open val pigeonRegistrar: AndroidLibrary
       val channelName = "dev.flutter.pigeon.cross_file_android.ContentResolver.pigeon_newInstance"
       val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
       channel.send(listOf(pigeon_identifierArg)) {
-        if (it is List<*>) {
-          if (it.size > 1) {
-            callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
-          } else {
-            callback(Result.success(Unit))
-          }
-        } else {
-          callback(Result.failure(AndroidLibraryPigeonUtils.createConnectionError(channelName)))
-        } 
-      }
-    }
-  }
-
-}
-/** Return type for [InputStream.readBytes] that handles returning two values. */
-@Suppress("UNCHECKED_CAST")
-abstract class PigeonApiInputStreamReadBytesResponse(open val pigeonRegistrar: AndroidLibraryPigeonProxyApiRegistrar) {
-  /**
-   * The total number of bytes read into `bytes`, or -1 if there is no more
-   * data because the end of the stream has been reached.
-   *
-   * The returned value when calling the native `InputStream.readBytes` method.
-   */
-  abstract fun bytesRead(pigeon_instance: dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse): Long
-
-  /** The byte array into which the data is read. */
-  abstract fun bytes(pigeon_instance: dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse): ByteArray
-
-  @Suppress("LocalVariableName", "FunctionName")
-  /** Creates a Dart instance of InputStreamReadBytesResponse and attaches it to [pigeon_instanceArg]. */
-  fun pigeon_newInstance(pigeon_instanceArg: dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse, callback: (Result<Unit>) -> Unit)
-{
-    if (pigeonRegistrar.ignoreCallsToDart) {
-      callback(
-          Result.failure(
-              FlutterError("ignore-calls-error", "Calls to Dart are being ignored.", "")))
-    }     else if (pigeonRegistrar.instanceManager.containsInstance(pigeon_instanceArg)) {
-      callback(Result.success(Unit))
-    }     else {
-      val pigeon_identifierArg = pigeonRegistrar.instanceManager.addHostCreatedInstance(pigeon_instanceArg)
-      val bytesReadArg = bytesRead(pigeon_instanceArg)
-      val bytesArg = bytes(pigeon_instanceArg)
-      val binaryMessenger = pigeonRegistrar.binaryMessenger
-      val codec = pigeonRegistrar.codec
-      val channelName = "dev.flutter.pigeon.cross_file_android.InputStreamReadBytesResponse.pigeon_newInstance"
-      val channel = BasicMessageChannel<Any?>(binaryMessenger, channelName, codec)
-      channel.send(listOf(pigeon_identifierArg, bytesReadArg, bytesArg)) {
         if (it is List<*>) {
           if (it.size > 1) {
             callback(Result.failure(FlutterError(it[0] as String, it[1] as String, it[2] as String?)))
