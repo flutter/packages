@@ -104,7 +104,7 @@ class ExampleGoogleMapController {
     GoogleMapsFlutterPlatform.instance
         .onTap(mapId: mapId)
         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
-     GoogleMapsFlutterPlatform.instance
+    GoogleMapsFlutterPlatform.instance
         .onPoiTap(mapId: mapId)
         .listen((MapPoiTapEvent e) => _googleMapState.onPoiTap(e.value));
     GoogleMapsFlutterPlatform.instance

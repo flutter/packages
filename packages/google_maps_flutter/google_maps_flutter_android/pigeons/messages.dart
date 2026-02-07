@@ -819,7 +819,7 @@ abstract class MapsCallbackApi {
   /// Called when a marker cluster is tapped.
   void onClusterTap(PlatformCluster cluster);
 
-    /// Called when a POI is tapped.
+  /// Called when a POI is tapped.
   void onPoiTap(PlatformPointOfInterest poi);
 
   /// Called when a polygon is tapped.

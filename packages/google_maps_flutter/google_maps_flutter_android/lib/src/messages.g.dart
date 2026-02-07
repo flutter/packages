@@ -18,7 +18,11 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-List<Object?> wrapResponse({Object? result, PlatformException? error, bool empty = false}) {
+List<Object?> wrapResponse({
+  Object? result,
+  PlatformException? error,
+  bool empty = false,
+}) {
   if (empty) {
     return <Object?>[];
   }
@@ -104,16 +108,12 @@ class PlatformCameraPosition {
   double zoom;
 
   List<Object?> _toList() {
-    return <Object?>[
-      bearing,
-      target,
-      tilt,
-      zoom,
-    ];
+    return <Object?>[bearing, target, tilt, zoom];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraPosition decode(Object result) {
     result as List<Object?>;
@@ -139,15 +139,12 @@ class PlatformCameraPosition {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon representation of a CameraUpdate.
 class PlatformCameraUpdate {
-  PlatformCameraUpdate({
-    required this.cameraUpdate,
-  });
+  PlatformCameraUpdate({required this.cameraUpdate});
 
   /// This Object shall be any of the below classes prefixed with
   /// PlatformCameraUpdate. Each such class represents a different type of
@@ -158,19 +155,16 @@ class PlatformCameraUpdate {
   Object cameraUpdate;
 
   List<Object?> _toList() {
-    return <Object?>[
-      cameraUpdate,
-    ];
+    return <Object?>[cameraUpdate];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdate decode(Object result) {
     result as List<Object?>;
-    return PlatformCameraUpdate(
-      cameraUpdate: result[0]!,
-    );
+    return PlatformCameraUpdate(cameraUpdate: result[0]!);
   }
 
   @override
@@ -187,26 +181,22 @@ class PlatformCameraUpdate {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of NewCameraPosition
 class PlatformCameraUpdateNewCameraPosition {
-  PlatformCameraUpdateNewCameraPosition({
-    required this.cameraPosition,
-  });
+  PlatformCameraUpdateNewCameraPosition({required this.cameraPosition});
 
   PlatformCameraPosition cameraPosition;
 
   List<Object?> _toList() {
-    return <Object?>[
-      cameraPosition,
-    ];
+    return <Object?>[cameraPosition];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateNewCameraPosition decode(Object result) {
     result as List<Object?>;
@@ -218,7 +208,8 @@ class PlatformCameraUpdateNewCameraPosition {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewCameraPosition || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewCameraPosition ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -229,38 +220,33 @@ class PlatformCameraUpdateNewCameraPosition {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of NewLatLng
 class PlatformCameraUpdateNewLatLng {
-  PlatformCameraUpdateNewLatLng({
-    required this.latLng,
-  });
+  PlatformCameraUpdateNewLatLng({required this.latLng});
 
   PlatformLatLng latLng;
 
   List<Object?> _toList() {
-    return <Object?>[
-      latLng,
-    ];
+    return <Object?>[latLng];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateNewLatLng decode(Object result) {
     result as List<Object?>;
-    return PlatformCameraUpdateNewLatLng(
-      latLng: result[0]! as PlatformLatLng,
-    );
+    return PlatformCameraUpdateNewLatLng(latLng: result[0]! as PlatformLatLng);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewLatLng || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewLatLng ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -271,8 +257,7 @@ class PlatformCameraUpdateNewLatLng {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of NewLatLngBounds
@@ -287,14 +272,12 @@ class PlatformCameraUpdateNewLatLngBounds {
   double padding;
 
   List<Object?> _toList() {
-    return <Object?>[
-      bounds,
-      padding,
-    ];
+    return <Object?>[bounds, padding];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateNewLatLngBounds decode(Object result) {
     result as List<Object?>;
@@ -307,7 +290,8 @@ class PlatformCameraUpdateNewLatLngBounds {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewLatLngBounds || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewLatLngBounds ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -318,30 +302,24 @@ class PlatformCameraUpdateNewLatLngBounds {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of NewLatLngZoom
 class PlatformCameraUpdateNewLatLngZoom {
-  PlatformCameraUpdateNewLatLngZoom({
-    required this.latLng,
-    required this.zoom,
-  });
+  PlatformCameraUpdateNewLatLngZoom({required this.latLng, required this.zoom});
 
   PlatformLatLng latLng;
 
   double zoom;
 
   List<Object?> _toList() {
-    return <Object?>[
-      latLng,
-      zoom,
-    ];
+    return <Object?>[latLng, zoom];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateNewLatLngZoom decode(Object result) {
     result as List<Object?>;
@@ -354,7 +332,8 @@ class PlatformCameraUpdateNewLatLngZoom {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateNewLatLngZoom || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateNewLatLngZoom ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -365,30 +344,24 @@ class PlatformCameraUpdateNewLatLngZoom {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of ScrollBy
 class PlatformCameraUpdateScrollBy {
-  PlatformCameraUpdateScrollBy({
-    required this.dx,
-    required this.dy,
-  });
+  PlatformCameraUpdateScrollBy({required this.dx, required this.dy});
 
   double dx;
 
   double dy;
 
   List<Object?> _toList() {
-    return <Object?>[
-      dx,
-      dy,
-    ];
+    return <Object?>[dx, dy];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateScrollBy decode(Object result) {
     result as List<Object?>;
@@ -401,7 +374,8 @@ class PlatformCameraUpdateScrollBy {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateScrollBy || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateScrollBy ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -412,30 +386,24 @@ class PlatformCameraUpdateScrollBy {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of ZoomBy
 class PlatformCameraUpdateZoomBy {
-  PlatformCameraUpdateZoomBy({
-    required this.amount,
-    this.focus,
-  });
+  PlatformCameraUpdateZoomBy({required this.amount, this.focus});
 
   double amount;
 
   PlatformDoublePair? focus;
 
   List<Object?> _toList() {
-    return <Object?>[
-      amount,
-      focus,
-    ];
+    return <Object?>[amount, focus];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateZoomBy decode(Object result) {
     result as List<Object?>;
@@ -448,7 +416,8 @@ class PlatformCameraUpdateZoomBy {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateZoomBy || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateZoomBy ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -459,38 +428,33 @@ class PlatformCameraUpdateZoomBy {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of ZoomIn/ZoomOut
 class PlatformCameraUpdateZoom {
-  PlatformCameraUpdateZoom({
-    required this.out,
-  });
+  PlatformCameraUpdateZoom({required this.out});
 
   bool out;
 
   List<Object?> _toList() {
-    return <Object?>[
-      out,
-    ];
+    return <Object?>[out];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateZoom decode(Object result) {
     result as List<Object?>;
-    return PlatformCameraUpdateZoom(
-      out: result[0]! as bool,
-    );
+    return PlatformCameraUpdateZoom(out: result[0]! as bool);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateZoom || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateZoom ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -501,38 +465,33 @@ class PlatformCameraUpdateZoom {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of ZoomTo
 class PlatformCameraUpdateZoomTo {
-  PlatformCameraUpdateZoomTo({
-    required this.zoom,
-  });
+  PlatformCameraUpdateZoomTo({required this.zoom});
 
   double zoom;
 
   List<Object?> _toList() {
-    return <Object?>[
-      zoom,
-    ];
+    return <Object?>[zoom];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraUpdateZoomTo decode(Object result) {
     result as List<Object?>;
-    return PlatformCameraUpdateZoomTo(
-      zoom: result[0]! as double,
-    );
+    return PlatformCameraUpdateZoomTo(zoom: result[0]! as double);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraUpdateZoomTo || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraUpdateZoomTo ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -543,8 +502,7 @@ class PlatformCameraUpdateZoomTo {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Circle class.
@@ -594,7 +552,8 @@ class PlatformCircle {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCircle decode(Object result) {
     result as List<Object?>;
@@ -625,8 +584,7 @@ class PlatformCircle {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Heatmap class.
@@ -653,18 +611,12 @@ class PlatformHeatmap {
   double? maxIntensity;
 
   List<Object?> _toList() {
-    return <Object?>[
-      heatmapId,
-      data,
-      gradient,
-      opacity,
-      radius,
-      maxIntensity,
-    ];
+    return <Object?>[heatmapId, data, gradient, opacity, radius, maxIntensity];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformHeatmap decode(Object result) {
     result as List<Object?>;
@@ -692,8 +644,7 @@ class PlatformHeatmap {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the HeatmapGradient class.
@@ -715,15 +666,12 @@ class PlatformHeatmapGradient {
   int colorMapSize;
 
   List<Object?> _toList() {
-    return <Object?>[
-      colors,
-      startPoints,
-      colorMapSize,
-    ];
+    return <Object?>[colors, startPoints, colorMapSize];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformHeatmapGradient decode(Object result) {
     result as List<Object?>;
@@ -748,30 +696,24 @@ class PlatformHeatmapGradient {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the WeightedLatLng class.
 class PlatformWeightedLatLng {
-  PlatformWeightedLatLng({
-    required this.point,
-    required this.weight,
-  });
+  PlatformWeightedLatLng({required this.point, required this.weight});
 
   PlatformLatLng point;
 
   double weight;
 
   List<Object?> _toList() {
-    return <Object?>[
-      point,
-      weight,
-    ];
+    return <Object?>[point, weight];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformWeightedLatLng decode(Object result) {
     result as List<Object?>;
@@ -795,32 +737,26 @@ class PlatformWeightedLatLng {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the ClusterManager class.
 class PlatformClusterManager {
-  PlatformClusterManager({
-    required this.identifier,
-  });
+  PlatformClusterManager({required this.identifier});
 
   String identifier;
 
   List<Object?> _toList() {
-    return <Object?>[
-      identifier,
-    ];
+    return <Object?>[identifier];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformClusterManager decode(Object result) {
     result as List<Object?>;
-    return PlatformClusterManager(
-      identifier: result[0]! as String,
-    );
+    return PlatformClusterManager(identifier: result[0]! as String);
   }
 
   @override
@@ -837,37 +773,28 @@ class PlatformClusterManager {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pair of double values, such as for an offset or size.
 class PlatformDoublePair {
-  PlatformDoublePair({
-    required this.x,
-    required this.y,
-  });
+  PlatformDoublePair({required this.x, required this.y});
 
   double x;
 
   double y;
 
   List<Object?> _toList() {
-    return <Object?>[
-      x,
-      y,
-    ];
+    return <Object?>[x, y];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformDoublePair decode(Object result) {
     result as List<Object?>;
-    return PlatformDoublePair(
-      x: result[0]! as double,
-      y: result[1]! as double,
-    );
+    return PlatformDoublePair(x: result[0]! as double, y: result[1]! as double);
   }
 
   @override
@@ -884,34 +811,28 @@ class PlatformDoublePair {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Color class.
 ///
 /// See https://developer.android.com/reference/android/graphics/Color.html.
 class PlatformColor {
-  PlatformColor({
-    required this.argbValue,
-  });
+  PlatformColor({required this.argbValue});
 
   int argbValue;
 
   List<Object?> _toList() {
-    return <Object?>[
-      argbValue,
-    ];
+    return <Object?>[argbValue];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformColor decode(Object result) {
     result as List<Object?>;
-    return PlatformColor(
-      argbValue: result[0]! as int,
-    );
+    return PlatformColor(argbValue: result[0]! as int);
   }
 
   @override
@@ -928,17 +849,12 @@ class PlatformColor {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the InfoWindow class.
 class PlatformInfoWindow {
-  PlatformInfoWindow({
-    this.title,
-    this.snippet,
-    required this.anchor,
-  });
+  PlatformInfoWindow({this.title, this.snippet, required this.anchor});
 
   String? title;
 
@@ -947,15 +863,12 @@ class PlatformInfoWindow {
   PlatformDoublePair anchor;
 
   List<Object?> _toList() {
-    return <Object?>[
-      title,
-      snippet,
-      anchor,
-    ];
+    return <Object?>[title, snippet, anchor];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformInfoWindow decode(Object result) {
     result as List<Object?>;
@@ -980,8 +893,7 @@ class PlatformInfoWindow {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Marker class.
@@ -1047,7 +959,8 @@ class PlatformMarker {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformMarker decode(Object result) {
     result as List<Object?>;
@@ -1082,8 +995,7 @@ class PlatformMarker {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Point of Interest class.
@@ -1101,15 +1013,12 @@ class PlatformPointOfInterest {
   String placeId;
 
   List<Object?> _toList() {
-    return <Object?>[
-      position,
-      name,
-      placeId,
-    ];
+    return <Object?>[position, name, placeId];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPointOfInterest decode(Object result) {
     result as List<Object?>;
@@ -1134,8 +1043,7 @@ class PlatformPointOfInterest {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Polygon class.
@@ -1189,7 +1097,8 @@ class PlatformPolygon {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPolygon decode(Object result) {
     result as List<Object?>;
@@ -1221,8 +1130,7 @@ class PlatformPolygon {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Polyline class.
@@ -1288,7 +1196,8 @@ class PlatformPolyline {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPolyline decode(Object result) {
     result as List<Object?>;
@@ -1322,18 +1231,13 @@ class PlatformPolyline {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of Cap from the platform interface.
 /// https://github.com/flutter/packages/blob/main/packages/google_maps_flutter/google_maps_flutter_platform_interface/lib/src/types/cap.dart
 class PlatformCap {
-  PlatformCap({
-    required this.type,
-    this.bitmapDescriptor,
-    this.refWidth,
-  });
+  PlatformCap({required this.type, this.bitmapDescriptor, this.refWidth});
 
   PlatformCapType type;
 
@@ -1342,15 +1246,12 @@ class PlatformCap {
   double? refWidth;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      bitmapDescriptor,
-      refWidth,
-    ];
+    return <Object?>[type, bitmapDescriptor, refWidth];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCap decode(Object result) {
     result as List<Object?>;
@@ -1375,30 +1276,24 @@ class PlatformCap {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the PatternItem class.
 class PlatformPatternItem {
-  PlatformPatternItem({
-    required this.type,
-    this.length,
-  });
+  PlatformPatternItem({required this.type, this.length});
 
   PlatformPatternItemType type;
 
   double? length;
 
   List<Object?> _toList() {
-    return <Object?>[
-      type,
-      length,
-    ];
+    return <Object?>[type, length];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPatternItem decode(Object result) {
     result as List<Object?>;
@@ -1422,17 +1317,12 @@ class PlatformPatternItem {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the Tile class.
 class PlatformTile {
-  PlatformTile({
-    required this.width,
-    required this.height,
-    this.data,
-  });
+  PlatformTile({required this.width, required this.height, this.data});
 
   int width;
 
@@ -1441,15 +1331,12 @@ class PlatformTile {
   Uint8List? data;
 
   List<Object?> _toList() {
-    return <Object?>[
-      width,
-      height,
-      data,
-    ];
+    return <Object?>[width, height, data];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformTile decode(Object result) {
     result as List<Object?>;
@@ -1474,8 +1361,7 @@ class PlatformTile {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the TileOverlay class.
@@ -1513,7 +1399,8 @@ class PlatformTileOverlay {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformTileOverlay decode(Object result) {
     result as List<Object?>;
@@ -1541,8 +1428,7 @@ class PlatformTileOverlay {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of Flutter's EdgeInsets.
@@ -1563,16 +1449,12 @@ class PlatformEdgeInsets {
   double right;
 
   List<Object?> _toList() {
-    return <Object?>[
-      top,
-      bottom,
-      left,
-      right,
-    ];
+    return <Object?>[top, bottom, left, right];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformEdgeInsets decode(Object result) {
     result as List<Object?>;
@@ -1598,30 +1480,24 @@ class PlatformEdgeInsets {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of LatLng.
 class PlatformLatLng {
-  PlatformLatLng({
-    required this.latitude,
-    required this.longitude,
-  });
+  PlatformLatLng({required this.latitude, required this.longitude});
 
   double latitude;
 
   double longitude;
 
   List<Object?> _toList() {
-    return <Object?>[
-      latitude,
-      longitude,
-    ];
+    return <Object?>[latitude, longitude];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformLatLng decode(Object result) {
     result as List<Object?>;
@@ -1645,30 +1521,24 @@ class PlatformLatLng {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of LatLngBounds.
 class PlatformLatLngBounds {
-  PlatformLatLngBounds({
-    required this.northeast,
-    required this.southwest,
-  });
+  PlatformLatLngBounds({required this.northeast, required this.southwest});
 
   PlatformLatLng northeast;
 
   PlatformLatLng southwest;
 
   List<Object?> _toList() {
-    return <Object?>[
-      northeast,
-      southwest,
-    ];
+    return <Object?>[northeast, southwest];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformLatLngBounds decode(Object result) {
     result as List<Object?>;
@@ -1692,8 +1562,7 @@ class PlatformLatLngBounds {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of Cluster.
@@ -1714,16 +1583,12 @@ class PlatformCluster {
   List<String> markerIds;
 
   List<Object?> _toList() {
-    return <Object?>[
-      clusterManagerId,
-      position,
-      bounds,
-      markerIds,
-    ];
+    return <Object?>[clusterManagerId, position, bounds, markerIds];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCluster decode(Object result) {
     result as List<Object?>;
@@ -1749,8 +1614,7 @@ class PlatformCluster {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of the GroundOverlay class.
@@ -1812,7 +1676,8 @@ class PlatformGroundOverlay {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformGroundOverlay decode(Object result) {
     result as List<Object?>;
@@ -1846,8 +1711,7 @@ class PlatformGroundOverlay {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of CameraTargetBounds.
@@ -1855,20 +1719,17 @@ class PlatformGroundOverlay {
 /// As with the Dart version, it exists to distinguish between not setting a
 /// a target, and having an explicitly unbounded target (null [bounds]).
 class PlatformCameraTargetBounds {
-  PlatformCameraTargetBounds({
-    this.bounds,
-  });
+  PlatformCameraTargetBounds({this.bounds});
 
   PlatformLatLngBounds? bounds;
 
   List<Object?> _toList() {
-    return <Object?>[
-      bounds,
-    ];
+    return <Object?>[bounds];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformCameraTargetBounds decode(Object result) {
     result as List<Object?>;
@@ -1880,7 +1741,8 @@ class PlatformCameraTargetBounds {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformCameraTargetBounds || other.runtimeType != runtimeType) {
+    if (other is! PlatformCameraTargetBounds ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1891,8 +1753,7 @@ class PlatformCameraTargetBounds {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Information passed to the platform view creation.
@@ -1946,7 +1807,8 @@ class PlatformMapViewCreationParams {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformMapViewCreationParams decode(Object result) {
     result as List<Object?>;
@@ -1958,16 +1820,20 @@ class PlatformMapViewCreationParams {
       initialPolygons: (result[4] as List<Object?>?)!.cast<PlatformPolygon>(),
       initialPolylines: (result[5] as List<Object?>?)!.cast<PlatformPolyline>(),
       initialHeatmaps: (result[6] as List<Object?>?)!.cast<PlatformHeatmap>(),
-      initialTileOverlays: (result[7] as List<Object?>?)!.cast<PlatformTileOverlay>(),
-      initialClusterManagers: (result[8] as List<Object?>?)!.cast<PlatformClusterManager>(),
-      initialGroundOverlays: (result[9] as List<Object?>?)!.cast<PlatformGroundOverlay>(),
+      initialTileOverlays: (result[7] as List<Object?>?)!
+          .cast<PlatformTileOverlay>(),
+      initialClusterManagers: (result[8] as List<Object?>?)!
+          .cast<PlatformClusterManager>(),
+      initialGroundOverlays: (result[9] as List<Object?>?)!
+          .cast<PlatformGroundOverlay>(),
     );
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformMapViewCreationParams || other.runtimeType != runtimeType) {
+    if (other is! PlatformMapViewCreationParams ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -1978,8 +1844,7 @@ class PlatformMapViewCreationParams {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of MapConfiguration.
@@ -2073,7 +1938,8 @@ class PlatformMapConfiguration {
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformMapConfiguration decode(Object result) {
     result as List<Object?>;
@@ -2104,7 +1970,8 @@ class PlatformMapConfiguration {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformMapConfiguration || other.runtimeType != runtimeType) {
+    if (other is! PlatformMapConfiguration ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2115,37 +1982,28 @@ class PlatformMapConfiguration {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon representation of an x,y coordinate.
 class PlatformPoint {
-  PlatformPoint({
-    required this.x,
-    required this.y,
-  });
+  PlatformPoint({required this.x, required this.y});
 
   int x;
 
   int y;
 
   List<Object?> _toList() {
-    return <Object?>[
-      x,
-      y,
-    ];
+    return <Object?>[x, y];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformPoint decode(Object result) {
     result as List<Object?>;
-    return PlatformPoint(
-      x: result[0]! as int,
-      y: result[1]! as int,
-    );
+    return PlatformPoint(x: result[0]! as int, y: result[1]! as int);
   }
 
   @override
@@ -2162,8 +2020,7 @@ class PlatformPoint {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of native TileOverlay properties.
@@ -2184,16 +2041,12 @@ class PlatformTileLayer {
   double zIndex;
 
   List<Object?> _toList() {
-    return <Object?>[
-      visible,
-      fadeIn,
-      transparency,
-      zIndex,
-    ];
+    return <Object?>[visible, fadeIn, transparency, zIndex];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformTileLayer decode(Object result) {
     result as List<Object?>;
@@ -2219,30 +2072,24 @@ class PlatformTileLayer {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Possible outcomes of launching a URL.
 class PlatformZoomRange {
-  PlatformZoomRange({
-    this.min,
-    this.max,
-  });
+  PlatformZoomRange({this.min, this.max});
 
   double? min;
 
   double? max;
 
   List<Object?> _toList() {
-    return <Object?>[
-      min,
-      max,
-    ];
+    return <Object?>[min, max];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformZoomRange decode(Object result) {
     result as List<Object?>;
@@ -2266,17 +2113,14 @@ class PlatformZoomRange {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of [BitmapDescriptor]. As there are multiple disjoint
 /// types of [BitmapDescriptor], [PlatformBitmap] contains a single field which
 /// may hold the pigeon equivalent type of any of them.
 class PlatformBitmap {
-  PlatformBitmap({
-    required this.bitmap,
-  });
+  PlatformBitmap({required this.bitmap});
 
   /// One of [PlatformBitmapAssetMap], [PlatformBitmapAsset],
   /// [PlatformBitmapAssetImage], [PlatformBitmapBytesMap],
@@ -2288,19 +2132,16 @@ class PlatformBitmap {
   Object bitmap;
 
   List<Object?> _toList() {
-    return <Object?>[
-      bitmap,
-    ];
+    return <Object?>[bitmap];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBitmap decode(Object result) {
     result as List<Object?>;
-    return PlatformBitmap(
-      bitmap: result[0]!,
-    );
+    return PlatformBitmap(bitmap: result[0]!);
   }
 
   @override
@@ -2317,39 +2158,34 @@ class PlatformBitmap {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of [DefaultMarker]. See
 /// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#defaultMarker(float)
 class PlatformBitmapDefaultMarker {
-  PlatformBitmapDefaultMarker({
-    this.hue,
-  });
+  PlatformBitmapDefaultMarker({this.hue});
 
   double? hue;
 
   List<Object?> _toList() {
-    return <Object?>[
-      hue,
-    ];
+    return <Object?>[hue];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBitmapDefaultMarker decode(Object result) {
     result as List<Object?>;
-    return PlatformBitmapDefaultMarker(
-      hue: result[0] as double?,
-    );
+    return PlatformBitmapDefaultMarker(hue: result[0] as double?);
   }
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformBitmapDefaultMarker || other.runtimeType != runtimeType) {
+    if (other is! PlatformBitmapDefaultMarker ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2360,31 +2196,25 @@ class PlatformBitmapDefaultMarker {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of [BytesBitmap]. See
 /// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#fromBitmap(android.graphics.Bitmap)
 class PlatformBitmapBytes {
-  PlatformBitmapBytes({
-    required this.byteData,
-    this.size,
-  });
+  PlatformBitmapBytes({required this.byteData, this.size});
 
   Uint8List byteData;
 
   PlatformDoublePair? size;
 
   List<Object?> _toList() {
-    return <Object?>[
-      byteData,
-      size,
-    ];
+    return <Object?>[byteData, size];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBitmapBytes decode(Object result) {
     result as List<Object?>;
@@ -2408,31 +2238,25 @@ class PlatformBitmapBytes {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of [AssetBitmap]. See
 /// https://developers.google.com/maps/documentation/android-sdk/reference/com/google/android/libraries/maps/model/BitmapDescriptorFactory#public-static-bitmapdescriptor-fromasset-string-assetname
 class PlatformBitmapAsset {
-  PlatformBitmapAsset({
-    required this.name,
-    this.pkg,
-  });
+  PlatformBitmapAsset({required this.name, this.pkg});
 
   String name;
 
   String? pkg;
 
   List<Object?> _toList() {
-    return <Object?>[
-      name,
-      pkg,
-    ];
+    return <Object?>[name, pkg];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBitmapAsset decode(Object result) {
     result as List<Object?>;
@@ -2456,8 +2280,7 @@ class PlatformBitmapAsset {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of [AssetImageBitmap]. See
@@ -2476,15 +2299,12 @@ class PlatformBitmapAssetImage {
   PlatformDoublePair? size;
 
   List<Object?> _toList() {
-    return <Object?>[
-      name,
-      scale,
-      size,
-    ];
+    return <Object?>[name, scale, size];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBitmapAssetImage decode(Object result) {
     result as List<Object?>;
@@ -2498,7 +2318,8 @@ class PlatformBitmapAssetImage {
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
   bool operator ==(Object other) {
-    if (other is! PlatformBitmapAssetImage || other.runtimeType != runtimeType) {
+    if (other is! PlatformBitmapAssetImage ||
+        other.runtimeType != runtimeType) {
       return false;
     }
     if (identical(this, other)) {
@@ -2509,8 +2330,7 @@ class PlatformBitmapAssetImage {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of [AssetMapBitmap]. See
@@ -2535,17 +2355,12 @@ class PlatformBitmapAssetMap {
   double? height;
 
   List<Object?> _toList() {
-    return <Object?>[
-      assetName,
-      bitmapScaling,
-      imagePixelRatio,
-      width,
-      height,
-    ];
+    return <Object?>[assetName, bitmapScaling, imagePixelRatio, width, height];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBitmapAssetMap decode(Object result) {
     result as List<Object?>;
@@ -2572,8 +2387,7 @@ class PlatformBitmapAssetMap {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
 
 /// Pigeon equivalent of [BytesMapBitmap]. See
@@ -2598,17 +2412,12 @@ class PlatformBitmapBytesMap {
   double? height;
 
   List<Object?> _toList() {
-    return <Object?>[
-      byteData,
-      bitmapScaling,
-      imagePixelRatio,
-      width,
-      height,
-    ];
+    return <Object?>[byteData, bitmapScaling, imagePixelRatio, width, height];
   }
 
   Object encode() {
-    return _toList();  }
+    return _toList();
+  }
 
   static PlatformBitmapBytesMap decode(Object result) {
     result as List<Object?>;
@@ -2635,10 +2444,8 @@ class PlatformBitmapBytesMap {
 
   @override
   // ignore: avoid_equals_and_hash_code_on_mutable_classes
-  int get hashCode => Object.hashAll(_toList())
-;
+  int get hashCode => Object.hashAll(_toList());
 }
-
 
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
@@ -2647,154 +2454,154 @@ class _PigeonCodec extends StandardMessageCodec {
     if (value is int) {
       buffer.putUint8(4);
       buffer.putInt64(value);
-    }    else if (value is PlatformMapType) {
+    } else if (value is PlatformMapType) {
       buffer.putUint8(129);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformRendererType) {
+    } else if (value is PlatformRendererType) {
       buffer.putUint8(130);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformJointType) {
+    } else if (value is PlatformJointType) {
       buffer.putUint8(131);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformCapType) {
+    } else if (value is PlatformCapType) {
       buffer.putUint8(132);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformPatternItemType) {
+    } else if (value is PlatformPatternItemType) {
       buffer.putUint8(133);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformMapBitmapScaling) {
+    } else if (value is PlatformMapBitmapScaling) {
       buffer.putUint8(134);
       writeValue(buffer, value.index);
-    }    else if (value is PlatformCameraPosition) {
+    } else if (value is PlatformCameraPosition) {
       buffer.putUint8(135);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdate) {
+    } else if (value is PlatformCameraUpdate) {
       buffer.putUint8(136);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateNewCameraPosition) {
+    } else if (value is PlatformCameraUpdateNewCameraPosition) {
       buffer.putUint8(137);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateNewLatLng) {
+    } else if (value is PlatformCameraUpdateNewLatLng) {
       buffer.putUint8(138);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateNewLatLngBounds) {
+    } else if (value is PlatformCameraUpdateNewLatLngBounds) {
       buffer.putUint8(139);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateNewLatLngZoom) {
+    } else if (value is PlatformCameraUpdateNewLatLngZoom) {
       buffer.putUint8(140);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateScrollBy) {
+    } else if (value is PlatformCameraUpdateScrollBy) {
       buffer.putUint8(141);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateZoomBy) {
+    } else if (value is PlatformCameraUpdateZoomBy) {
       buffer.putUint8(142);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateZoom) {
+    } else if (value is PlatformCameraUpdateZoom) {
       buffer.putUint8(143);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraUpdateZoomTo) {
+    } else if (value is PlatformCameraUpdateZoomTo) {
       buffer.putUint8(144);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCircle) {
+    } else if (value is PlatformCircle) {
       buffer.putUint8(145);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformHeatmap) {
+    } else if (value is PlatformHeatmap) {
       buffer.putUint8(146);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformHeatmapGradient) {
+    } else if (value is PlatformHeatmapGradient) {
       buffer.putUint8(147);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformWeightedLatLng) {
+    } else if (value is PlatformWeightedLatLng) {
       buffer.putUint8(148);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformClusterManager) {
+    } else if (value is PlatformClusterManager) {
       buffer.putUint8(149);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformDoublePair) {
+    } else if (value is PlatformDoublePair) {
       buffer.putUint8(150);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformColor) {
+    } else if (value is PlatformColor) {
       buffer.putUint8(151);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformInfoWindow) {
+    } else if (value is PlatformInfoWindow) {
       buffer.putUint8(152);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformMarker) {
+    } else if (value is PlatformMarker) {
       buffer.putUint8(153);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPointOfInterest) {
+    } else if (value is PlatformPointOfInterest) {
       buffer.putUint8(154);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPolygon) {
+    } else if (value is PlatformPolygon) {
       buffer.putUint8(155);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPolyline) {
+    } else if (value is PlatformPolyline) {
       buffer.putUint8(156);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCap) {
+    } else if (value is PlatformCap) {
       buffer.putUint8(157);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPatternItem) {
+    } else if (value is PlatformPatternItem) {
       buffer.putUint8(158);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformTile) {
+    } else if (value is PlatformTile) {
       buffer.putUint8(159);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformTileOverlay) {
+    } else if (value is PlatformTileOverlay) {
       buffer.putUint8(160);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformEdgeInsets) {
+    } else if (value is PlatformEdgeInsets) {
       buffer.putUint8(161);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformLatLng) {
+    } else if (value is PlatformLatLng) {
       buffer.putUint8(162);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformLatLngBounds) {
+    } else if (value is PlatformLatLngBounds) {
       buffer.putUint8(163);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCluster) {
+    } else if (value is PlatformCluster) {
       buffer.putUint8(164);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformGroundOverlay) {
+    } else if (value is PlatformGroundOverlay) {
       buffer.putUint8(165);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformCameraTargetBounds) {
+    } else if (value is PlatformCameraTargetBounds) {
       buffer.putUint8(166);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformMapViewCreationParams) {
+    } else if (value is PlatformMapViewCreationParams) {
       buffer.putUint8(167);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformMapConfiguration) {
+    } else if (value is PlatformMapConfiguration) {
       buffer.putUint8(168);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformPoint) {
+    } else if (value is PlatformPoint) {
       buffer.putUint8(169);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformTileLayer) {
+    } else if (value is PlatformTileLayer) {
       buffer.putUint8(170);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformZoomRange) {
+    } else if (value is PlatformZoomRange) {
       buffer.putUint8(171);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBitmap) {
+    } else if (value is PlatformBitmap) {
       buffer.putUint8(172);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBitmapDefaultMarker) {
+    } else if (value is PlatformBitmapDefaultMarker) {
       buffer.putUint8(173);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBitmapBytes) {
+    } else if (value is PlatformBitmapBytes) {
       buffer.putUint8(174);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBitmapAsset) {
+    } else if (value is PlatformBitmapAsset) {
       buffer.putUint8(175);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBitmapAssetImage) {
+    } else if (value is PlatformBitmapAssetImage) {
       buffer.putUint8(176);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBitmapAssetMap) {
+    } else if (value is PlatformBitmapAssetMap) {
       buffer.putUint8(177);
       writeValue(buffer, value.encode());
-    }    else if (value is PlatformBitmapBytesMap) {
+    } else if (value is PlatformBitmapBytesMap) {
       buffer.putUint8(178);
       writeValue(buffer, value.encode());
     } else {
@@ -2805,111 +2612,111 @@ class _PigeonCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 129: 
+      case 129:
         final value = readValue(buffer) as int?;
         return value == null ? null : PlatformMapType.values[value];
-      case 130: 
+      case 130:
         final value = readValue(buffer) as int?;
         return value == null ? null : PlatformRendererType.values[value];
-      case 131: 
+      case 131:
         final value = readValue(buffer) as int?;
         return value == null ? null : PlatformJointType.values[value];
-      case 132: 
+      case 132:
         final value = readValue(buffer) as int?;
         return value == null ? null : PlatformCapType.values[value];
-      case 133: 
+      case 133:
         final value = readValue(buffer) as int?;
         return value == null ? null : PlatformPatternItemType.values[value];
-      case 134: 
+      case 134:
         final value = readValue(buffer) as int?;
         return value == null ? null : PlatformMapBitmapScaling.values[value];
-      case 135: 
+      case 135:
         return PlatformCameraPosition.decode(readValue(buffer)!);
-      case 136: 
+      case 136:
         return PlatformCameraUpdate.decode(readValue(buffer)!);
-      case 137: 
+      case 137:
         return PlatformCameraUpdateNewCameraPosition.decode(readValue(buffer)!);
-      case 138: 
+      case 138:
         return PlatformCameraUpdateNewLatLng.decode(readValue(buffer)!);
-      case 139: 
+      case 139:
         return PlatformCameraUpdateNewLatLngBounds.decode(readValue(buffer)!);
-      case 140: 
+      case 140:
         return PlatformCameraUpdateNewLatLngZoom.decode(readValue(buffer)!);
-      case 141: 
+      case 141:
         return PlatformCameraUpdateScrollBy.decode(readValue(buffer)!);
-      case 142: 
+      case 142:
         return PlatformCameraUpdateZoomBy.decode(readValue(buffer)!);
-      case 143: 
+      case 143:
         return PlatformCameraUpdateZoom.decode(readValue(buffer)!);
-      case 144: 
+      case 144:
         return PlatformCameraUpdateZoomTo.decode(readValue(buffer)!);
-      case 145: 
+      case 145:
         return PlatformCircle.decode(readValue(buffer)!);
-      case 146: 
+      case 146:
         return PlatformHeatmap.decode(readValue(buffer)!);
-      case 147: 
+      case 147:
         return PlatformHeatmapGradient.decode(readValue(buffer)!);
-      case 148: 
+      case 148:
         return PlatformWeightedLatLng.decode(readValue(buffer)!);
-      case 149: 
+      case 149:
         return PlatformClusterManager.decode(readValue(buffer)!);
-      case 150: 
+      case 150:
         return PlatformDoublePair.decode(readValue(buffer)!);
-      case 151: 
+      case 151:
         return PlatformColor.decode(readValue(buffer)!);
-      case 152: 
+      case 152:
         return PlatformInfoWindow.decode(readValue(buffer)!);
-      case 153: 
+      case 153:
         return PlatformMarker.decode(readValue(buffer)!);
-      case 154: 
+      case 154:
         return PlatformPointOfInterest.decode(readValue(buffer)!);
-      case 155: 
+      case 155:
         return PlatformPolygon.decode(readValue(buffer)!);
-      case 156: 
+      case 156:
         return PlatformPolyline.decode(readValue(buffer)!);
-      case 157: 
+      case 157:
         return PlatformCap.decode(readValue(buffer)!);
-      case 158: 
+      case 158:
         return PlatformPatternItem.decode(readValue(buffer)!);
-      case 159: 
+      case 159:
         return PlatformTile.decode(readValue(buffer)!);
-      case 160: 
+      case 160:
         return PlatformTileOverlay.decode(readValue(buffer)!);
-      case 161: 
+      case 161:
         return PlatformEdgeInsets.decode(readValue(buffer)!);
-      case 162: 
+      case 162:
         return PlatformLatLng.decode(readValue(buffer)!);
-      case 163: 
+      case 163:
         return PlatformLatLngBounds.decode(readValue(buffer)!);
-      case 164: 
+      case 164:
         return PlatformCluster.decode(readValue(buffer)!);
-      case 165: 
+      case 165:
         return PlatformGroundOverlay.decode(readValue(buffer)!);
-      case 166: 
+      case 166:
         return PlatformCameraTargetBounds.decode(readValue(buffer)!);
-      case 167: 
+      case 167:
         return PlatformMapViewCreationParams.decode(readValue(buffer)!);
-      case 168: 
+      case 168:
         return PlatformMapConfiguration.decode(readValue(buffer)!);
-      case 169: 
+      case 169:
         return PlatformPoint.decode(readValue(buffer)!);
-      case 170: 
+      case 170:
         return PlatformTileLayer.decode(readValue(buffer)!);
-      case 171: 
+      case 171:
         return PlatformZoomRange.decode(readValue(buffer)!);
-      case 172: 
+      case 172:
         return PlatformBitmap.decode(readValue(buffer)!);
-      case 173: 
+      case 173:
         return PlatformBitmapDefaultMarker.decode(readValue(buffer)!);
-      case 174: 
+      case 174:
         return PlatformBitmapBytes.decode(readValue(buffer)!);
-      case 175: 
+      case 175:
         return PlatformBitmapAsset.decode(readValue(buffer)!);
-      case 176: 
+      case 176:
         return PlatformBitmapAssetImage.decode(readValue(buffer)!);
-      case 177: 
+      case 177:
         return PlatformBitmapAssetMap.decode(readValue(buffer)!);
-      case 178: 
+      case 178:
         return PlatformBitmapBytesMap.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);

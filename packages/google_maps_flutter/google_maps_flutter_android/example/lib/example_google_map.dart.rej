@@ -1,0 +1,11 @@
+--- packages/google_maps_flutter/google_maps_flutter_android/example/lib/example_google_map.dart
++++ packages/google_maps_flutter/google_maps_flutter_android/example/lib/example_google_map.dart
+@@ -104,7 +104,7 @@ class ExampleGoogleMapController {
+     GoogleMapsFlutterPlatform.instance
+         .onTap(mapId: mapId)
+         .listen((MapTapEvent e) => _googleMapState.onTap(e.position));
+-     GoogleMapsFlutterPlatform.instance
++    GoogleMapsFlutterPlatform.instance
+         .onPoiTap(mapId: mapId)
+         .listen((MapPoiTapEvent e) => _googleMapState.onPoiTap(e.value));
+     GoogleMapsFlutterPlatform.instance

@@ -237,7 +237,6 @@ class PlatformMarker {
   final String? clusterManagerId;
 }
 
-
 /// Pigeon equivalent of the Point of Interest class.
 class PlatformPointOfInterest {
   PlatformPointOfInterest({

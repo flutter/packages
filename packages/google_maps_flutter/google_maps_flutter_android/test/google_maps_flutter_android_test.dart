@@ -1508,9 +1508,7 @@ void main() {
       mapId,
     );
 
-    final stream = StreamQueue<MapPoiTapEvent>(
-      maps.onPoiTap(mapId: mapId),
-    );
+    final stream = StreamQueue<MapPoiTapEvent>(maps.onPoiTap(mapId: mapId));
 
     callbackHandler.onPoiTap(
       PlatformPointOfInterest(
@@ -1522,7 +1520,7 @@ void main() {
 
     final MapPoiTapEvent event = await stream.next;
     expect(event.mapId, mapId);
-    
+
     final PointOfInterest poi = event.value;
     expect(poi.position.latitude, fakePosition.latitude);
     expect(poi.position.longitude, fakePosition.longitude);

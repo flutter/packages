@@ -1361,9 +1361,7 @@ void main() {
       mapId,
     );
 
-    final stream = StreamQueue<MapPoiTapEvent>(
-      maps.onPoiTap(mapId: mapId),
-    );
+    final stream = StreamQueue<MapPoiTapEvent>(maps.onPoiTap(mapId: mapId));
 
     // Simulate a message from the native side via the Pigeon generated handler
     callbackHandler.onPoiTap(
@@ -1377,7 +1375,7 @@ void main() {
     // Verify the event in the stream
     final MapPoiTapEvent event = await stream.next;
     expect(event.mapId, mapId);
-    
+
     final PointOfInterest poi = event.value;
     expect(poi.position.latitude, fakePosition.latitude);
     expect(poi.position.longitude, fakePosition.longitude);

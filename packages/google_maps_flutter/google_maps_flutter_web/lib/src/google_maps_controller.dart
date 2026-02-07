@@ -262,9 +262,9 @@ class GoogleMapController {
       if (!_streamController.isClosed) {
         if (event is gmaps.IconMouseEvent && event.placeId != null) {
           final String placeId = event.placeId!;
-          
+
           // Stop the event to prevent the default Google Maps InfoWindow from popping up
-          event.stop(); 
+          event.stop();
 
           _streamController.add(
             MapPoiTapEvent(

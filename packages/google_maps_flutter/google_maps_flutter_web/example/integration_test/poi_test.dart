@@ -13,8 +13,6 @@ import 'package:google_maps_flutter_web/google_maps_flutter_web.dart';
 import 'package:google_maps_flutter_web/src/utils.dart';
 import 'package:integration_test/integration_test.dart';
 
-
-
 @JS()
 @anonymous
 extension type FakeIconMouseEvent._(JSObject _) implements JSObject {
@@ -54,7 +52,9 @@ void main() {
       controller.dispose();
     });
 
-    testWidgets('Emits MapPoiTapEvent when clicking a POI', (WidgetTester tester) async {
+    testWidgets('Emits MapPoiTapEvent when clicking a POI', (
+      WidgetTester tester,
+    ) async {
       final latLng = gmaps.LatLng(10, 20);
       bool? stopCalled = false;
 
@@ -80,10 +80,11 @@ void main() {
       expect(stopCalled, isTrue);
     });
 
-    testWidgets('Emits MapTapEvent when clicking (no POI)', (WidgetTester tester) async {
+    testWidgets('Emits MapTapEvent when clicking (no POI)', (
+      WidgetTester tester,
+    ) async {
       final latLng = gmaps.LatLng(30, 40);
-      final event = gmaps.MapMouseEvent()
-        ..latLng = latLng;
+      final event = gmaps.MapMouseEvent()..latLng = latLng;
 
       gmaps.event.trigger(map, 'click', event);
 

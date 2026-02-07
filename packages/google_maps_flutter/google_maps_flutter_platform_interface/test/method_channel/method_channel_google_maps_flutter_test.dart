@@ -139,8 +139,7 @@ void main() {
       );
     });
     test('onPoiTap', () async {
-      final platform =
-          MethodChannelGoogleMapsFlutter();
+      final platform = MethodChannelGoogleMapsFlutter();
       const mapId = 0;
       platform.ensureChannelInitialized(mapId);
 
