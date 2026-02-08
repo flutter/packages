@@ -26,26 +26,30 @@ class FileOpenScreen extends StatelessWidget {
   Future<void> _openFile(BuildContext context) async {
     final XFile? file = await openFile();
 
-    final String? filename = await file?.name();
-
-    if (!context.mounted) {
-      return;
-    }
-
     if (file case final XFile file) {
-      switch (mime.lookupMimeType(filename ?? file.uri)) {
+      final String filename = await file.name() ?? file.uri;
+
+      switch (mime.lookupMimeType(filename)) {
         case final String mimeType when mimeType.startsWith('text'):
-          await showDialog<void>(
-            context: context,
-            builder: (BuildContext context) => TextDisplay(file),
-          );
-        case final String mimeType when mimeType.startsWith('image'):
-        case final String mimeType when mimeType.startsWith('application'):
-        case null:
-          debugPrint('Unsupported file type: ${file.uri}');
+          final String fileContents = await file.readAsString();
+          if (context.mounted) {
+            await showDialog<void>(
+              context: context,
+              builder: (BuildContext context) =>
+                  TextDisplay(filename: filename, fileContents: fileContents),
+            );
+          }
+        case _:
+          debugPrint('File Uri: ${file.uri}');
+          debugPrint('Filename: $filename');
+          debugPrint('Can Read File: ${await file.canRead()}');
+          debugPrint('File Length: ${await file.length()}');
+          debugPrint('File Last Modified: ${await file.lastModified()}');
           return;
       }
     }
+
+    debugPrint('No file selected.');
   }
 
   @override
@@ -77,28 +81,24 @@ class FileOpenScreen extends StatelessWidget {
 /// Widget that displays a text file in a dialog.
 class TextDisplay extends StatelessWidget {
   /// Default Constructor.
-  const TextDisplay(this.file, {super.key});
+  const TextDisplay({
+    super.key,
+    required this.filename,
+    required this.fileContents,
+  });
 
-  /// The file.
-  final XFile file;
+  /// The name of the file.
+  final String filename;
+
+  /// The contents of the file.
+  final String fileContents;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(file.uri),
+      title: Text(filename),
       content: Scrollbar(
-        child: SingleChildScrollView(
-          child: FutureBuilder<String>(
-            future: file.readAsString(),
-            builder: (_, AsyncSnapshot<String> snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data!);
-              } else {
-                return const CircularProgressIndicator();
-              }
-            },
-          ),
-        ),
+        child: SingleChildScrollView(child: Text(fileContents)),
       ),
       actions: <Widget>[
         TextButton(
