@@ -6569,8 +6569,9 @@ protocol PigeonApiDelegateWKHTTPCookieStore {
   func setCookie(
     pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, cookie: HTTPCookie,
     completion: @escaping (Result<Void, Error>) -> Void)
-  func getCookies(
-    pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore, domain: String?,
+  /// Fetches all stored cookies.
+  func getAllCookies(
+    pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore,
     completion: @escaping (Result<[HTTPCookie], Error>) -> Void)
 }
 
@@ -6623,17 +6624,15 @@ final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore {
     } else {
       setCookieChannel.setMessageHandler(nil)
     }
-    let getCookiesChannel = FlutterBasicMessageChannel(
-      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.getCookies",
+    let getAllCookiesChannel = FlutterBasicMessageChannel(
+      name: "dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.getAllCookies",
       binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getCookiesChannel.setMessageHandler { message, reply in
+      getAllCookiesChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pigeonInstanceArg = args[0] as! WKHTTPCookieStore
-        let domainArg: String? = nilOrValue(args[1])
-        api.pigeonDelegate.getCookies(
-          pigeonApi: api, pigeonInstance: pigeonInstanceArg, domain: domainArg
-        ) { result in
+        api.pigeonDelegate.getAllCookies(pigeonApi: api, pigeonInstance: pigeonInstanceArg) {
+          result in
           switch result {
           case .success(let res):
             reply(wrapResult(res))
@@ -6643,7 +6642,7 @@ final class PigeonApiWKHTTPCookieStore: PigeonApiProtocolWKHTTPCookieStore {
         }
       }
     } else {
-      getCookiesChannel.setMessageHandler(nil)
+      getAllCookiesChannel.setMessageHandler(nil)
     }
   }
 

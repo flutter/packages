@@ -1516,13 +1516,16 @@ abstract class PigeonApiCookieManager(
   )
 
   /**
-   * Gets all the cookies for the given URL. This may return multiple key-value pairs if multiple
-   * cookies are associated with this URL, in which case each cookie will be delimited by "; "
-   * characters (semicolon followed by a space). Each key-value pair will be of the form
-   * "key=value". Note: Any cookies set with the "Partitioned" attribute will only be returned for
-   * the top-level partition of url.
+   * Gets all the cookies for the given URL.
+   *
+   * This may return multiple key-value pairs if multiple cookies are associated with this URL, in
+   * which case each cookie will be delimited by "; " characters (semicolon followed by a space).
+   * Each key-value pair will be of the form "key=value".
+   *
+   * Note: Any cookies set with the "Partitioned" attribute will only be returned for the top-level
+   * partition of url.
    */
-  abstract fun getCookies(pigeon_instance: android.webkit.CookieManager, domain: String): String
+  abstract fun getCookies(pigeon_instance: android.webkit.CookieManager, url: String): String?
 
   companion object {
     @Suppress("LocalVariableName")
@@ -1636,10 +1639,10 @@ abstract class PigeonApiCookieManager(
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val pigeon_instanceArg = args[0] as android.webkit.CookieManager
-            val domainArg = args[1] as String
+            val urlArg = args[1] as String
             val wrapped: List<Any?> =
                 try {
-                  listOf(api.getCookies(pigeon_instanceArg, domainArg))
+                  listOf(api.getCookies(pigeon_instanceArg, urlArg))
                 } catch (exception: Throwable) {
                   AndroidWebkitLibraryPigeonUtils.wrapError(exception)
                 }

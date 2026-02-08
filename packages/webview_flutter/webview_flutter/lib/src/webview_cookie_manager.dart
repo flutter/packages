@@ -90,11 +90,8 @@ class WebViewCookieManager {
   /// Gets a list of existing cookie for specified domain from all
   /// WebView instances of the application.
   ///
-  /// On iOS & macOS if domain is not provided then it returns all cookies.
-  ///
-  /// Android: Entire domain must be provided alongside scheme.
-  ///
-  /// iOS & macOS: ignores scheme and uses partial match based on host.
-  Future<List<WebViewCookie>> getCookies({Uri? domain}) =>
+  /// Each platform can have different url requirements. Please check individual
+  /// platform implementation for details
+  Future<List<WebViewCookie>> getCookies({required Uri domain}) =>
       platform.getCookies(domain);
 }

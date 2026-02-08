@@ -53,10 +53,9 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
 
     // Test fetching all cookies
     let expectAll = expectation(description: "Wait for getAllCookies.")
-    api.pigeonDelegate.getCookies(
+    api.pigeonDelegate.getAllCookies(
       pigeonApi: api,
-      pigeonInstance: instance!,
-      domain: nil
+      pigeonInstance: instance!
     ) { result in
       switch result {
       case .success(let cookies):
@@ -69,26 +68,7 @@ class HTTPCookieStoreProxyAPITests: XCTestCase {
       }
     }
 
-    // Test fetching cookies filtered by domain
-    let expectFiltered = expectation(
-      description: "Wait for getCookies filtered."
-    )
-    api.pigeonDelegate.getCookies(
-      pigeonApi: api,
-      pigeonInstance: instance!,
-      domain: "google.com"
-    ) { result in
-      switch result {
-      case .success(let cookies):
-        XCTAssertEqual(cookies.count, 1)
-        XCTAssertEqual(cookies.first, cookie1)
-        expectFiltered.fulfill()
-      case .failure(_):
-        break
-      }
-    }
-
-    wait(for: [expectAll, expectFiltered], timeout: 1.0)
+    wait(for: [expectAll], timeout: 1.0)
   }
 }
 

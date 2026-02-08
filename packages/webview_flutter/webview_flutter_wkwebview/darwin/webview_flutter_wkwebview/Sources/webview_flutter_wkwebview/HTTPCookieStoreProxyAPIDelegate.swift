@@ -21,18 +21,12 @@ class HTTPCookieStoreProxyAPIDelegate: PigeonApiDelegateWKHTTPCookieStore {
     }
   }
 
-  func getCookies(
-    pigeonApi: PigeonApiWKHTTPCookieStore,
-    pigeonInstance: WKHTTPCookieStore,
-    domain: String?,
+  func getAllCookies(
+    pigeonApi: PigeonApiWKHTTPCookieStore, pigeonInstance: WKHTTPCookieStore,
     completion: @escaping (Result<[HTTPCookie], any Error>) -> Void
   ) {
     pigeonInstance.getAllCookies { cookies in
-      if let domain {
-        completion(.success(cookies.filter { $0.domain.contains(domain) }))
-      } else {
-        completion(.success(cookies))
-      }
+      completion(.success(cookies))
     }
   }
 

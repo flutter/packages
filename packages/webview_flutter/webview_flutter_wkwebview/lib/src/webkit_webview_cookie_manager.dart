@@ -75,11 +75,11 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
   }
 
   @override
-  Future<List<WebViewCookie>> getCookies(Uri? domain) async {
+  Future<List<WebViewCookie>> getCookies(Uri url) async {
     final List<HTTPCookie> httpCookies = await _webkitParams
         ._websiteDataStore
         .httpCookieStore
-        .getCookies(domain?.host);
+        .getAllCookies();
 
     final Iterable<Future<WebViewCookie?>> webviewCookies = httpCookies.map((
       cookie,
@@ -91,10 +91,15 @@ class WebKitWebViewCookieManager extends PlatformWebViewCookieManager {
         return null;
       }
 
+      final domain = props[HttpCookiePropertyKey.domain].toString();
+      if (!domain.contains(url.host)) {
+        return null;
+      }
+
       return WebViewCookie(
         name: props[HttpCookiePropertyKey.name].toString(),
         value: props[HttpCookiePropertyKey.value].toString(),
-        domain: props[HttpCookiePropertyKey.domain].toString(),
+        domain: domain,
         path: props[HttpCookiePropertyKey.path].toString(),
       );
     });

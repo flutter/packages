@@ -1791,9 +1791,14 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
     }
   }
 
-  /// Gets all the cookies for the given URL. This may return multiple key-value pairs if multiple cookies are associated with this URL, in which case each cookie will be delimited by "; " characters (semicolon followed by a space). Each key-value pair will be of the form "key=value".
+  /// Gets all the cookies for the given URL.
+  ///
+  /// This may return multiple key-value pairs if multiple cookies are associated with this URL,
+  /// in which case each cookie will be delimited by "; " characters (semicolon followed by a space).
+  /// Each key-value pair will be of the form "key=value".
+  ///
   /// Note: Any cookies set with the "Partitioned" attribute will only be returned for the top-level partition of url.
-  Future<String> getCookies(String domain) async {
+  Future<String?> getCookies(String url) async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecCookieManager;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
@@ -1805,7 +1810,7 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[this, domain],
+      <Object?>[this, url],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
@@ -1816,13 +1821,8 @@ class CookieManager extends PigeonInternalProxyApiBaseClass {
         message: pigeonVar_replyList[1] as String?,
         details: pigeonVar_replyList[2],
       );
-    } else if (pigeonVar_replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
     } else {
-      return (pigeonVar_replyList[0] as String?)!;
+      return (pigeonVar_replyList[0] as String?);
     }
   }
 

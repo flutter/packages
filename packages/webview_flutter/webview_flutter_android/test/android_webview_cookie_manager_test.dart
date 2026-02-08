@@ -169,25 +169,6 @@ void main() {
     verify(mockCookieManager.getCookies('https://flutter.dev')).called(1);
   });
 
-  test('getCookies should throw UnsupportedError if domain is null', () async {
-    final mockCookieManager = MockCookieManager();
-
-    final params =
-        AndroidWebViewCookieManagerCreationParams.fromPlatformWebViewCookieManagerCreationParams(
-          const PlatformWebViewCookieManagerCreationParams(),
-        );
-
-    final cookieManager = AndroidWebViewCookieManager(
-      params,
-      cookieManager: mockCookieManager,
-    );
-
-    expect(
-      () => cookieManager.getCookies(null),
-      throwsA(isA<UnsupportedError>()),
-    );
-  });
-
   test('getCookies should handle single cookie correctly', () async {
     final mockCookieManager = MockCookieManager();
 

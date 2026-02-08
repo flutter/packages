@@ -8430,19 +8430,20 @@ class WKHTTPCookieStore extends NSObject {
     }
   }
 
-  Future<List<HTTPCookie>> getCookies(String? domain) async {
+  /// Fetches all stored cookies.
+  Future<List<HTTPCookie>> getAllCookies() async {
     final _PigeonInternalProxyApiBaseCodec pigeonChannelCodec =
         _pigeonVar_codecWKHTTPCookieStore;
     final BinaryMessenger? pigeonVar_binaryMessenger = pigeon_binaryMessenger;
     const pigeonVar_channelName =
-        'dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.getCookies';
+        'dev.flutter.pigeon.webview_flutter_wkwebview.WKHTTPCookieStore.getAllCookies';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
     final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
-      <Object?>[this, domain],
+      <Object?>[this],
     );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
