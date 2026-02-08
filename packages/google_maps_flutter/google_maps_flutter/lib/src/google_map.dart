@@ -133,6 +133,7 @@ class GoogleMap extends StatefulWidget {
     this.onCameraIdle,
     this.onTap,
     this.onLongPress,
+    this.onPoiTap,
     this.cloudMapId,
   });
 
@@ -234,6 +235,9 @@ class GoogleMap extends StatefulWidget {
   /// On the web, an extra step is required to enable clusters.
   /// See https://pub.dev/packages/google_maps_flutter_web.
   final Set<ClusterManager> clusterManagers;
+
+  /// Callback for Point of Interests tap
+  final ArgumentCallback<PointOfInterest>? onPoiTap;
 
   /// Ground overlays to be initialized for the map.
   ///
@@ -609,6 +613,12 @@ class _GoogleMapState extends State<GoogleMap> {
     final ValueChanged<LatLng>? onDragEnd = marker.onDragEnd;
     if (onDragEnd != null) {
       onDragEnd(position);
+    }
+  }
+
+  void onPoiTap(PointOfInterest poi) {
+    if (widget.onPoiTap != null) {
+      widget.onPoiTap!(poi);
     }
   }
 

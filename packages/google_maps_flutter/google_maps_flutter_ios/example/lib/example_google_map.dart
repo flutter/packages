@@ -107,6 +107,9 @@ class ExampleGoogleMapController {
           (MapLongPressEvent e) => _googleMapState.onLongPress(e.position),
         );
     GoogleMapsFlutterPlatform.instance
+        .onPoiTap(mapId: mapId)
+        .listen((MapPoiTapEvent e) => _googleMapState.onPoiTap(e.value));
+    GoogleMapsFlutterPlatform.instance
         .onClusterTap(mapId: mapId)
         .listen((ClusterTapEvent e) => _googleMapState.onClusterTap(e.value));
   }
@@ -303,6 +306,7 @@ class ExampleGoogleMap extends StatefulWidget {
     this.trafficEnabled = false,
     this.buildingsEnabled = true,
     this.markers = const <Marker>{},
+    this.onPoiTap,
     this.polygons = const <Polygon>{},
     this.polylines = const <Polyline>{},
     this.circles = const <Circle>{},
@@ -364,6 +368,9 @@ class ExampleGoogleMap extends StatefulWidget {
 
   /// Markers to be placed on the map.
   final Set<Marker> markers;
+
+  /// Point of Interest Callback
+  final void Function(PointOfInterest poi)? onPoiTap;
 
   /// Polygons to be placed on the map.
   final Set<Polygon> polygons;
@@ -638,6 +645,10 @@ class _ExampleGoogleMapState extends State<ExampleGoogleMap> {
 
   void onTap(LatLng position) {
     widget.onTap?.call(position);
+  }
+
+  void onPoiTap(PointOfInterest poi) {
+    widget.onPoiTap?.call(poi);
   }
 
   void onLongPress(LatLng position) {

@@ -560,6 +560,20 @@
   [self.mapEventHandler didTapAtPosition:FGMGetPigeonLatLngForCoordinate(coordinate)];
 }
 
+- (void)mapView:(GMSMapView *)mapView
+    didTapPOIWithPlaceID:(NSString *)placeID
+                    name:(NSString *)name
+                location:(CLLocationCoordinate2D)location {
+  FGMPlatformPointOfInterest *poi =
+      [FGMPlatformPointOfInterest makeWithPosition:FGMGetPigeonLatLngForCoordinate(location)
+                                              name:name
+                                           placeId:placeID];
+
+  [self.dartCallbackHandler didTapPointOfInterest:poi
+                                       completion:^(FlutterError *_Nullable _){
+                                       }];
+}
+
 - (void)mapView:(GMSMapView *)mapView didLongPressAtCoordinate:(CLLocationCoordinate2D)coordinate {
   [self.mapEventHandler didLongPressAtPosition:FGMGetPigeonLatLngForCoordinate(coordinate)];
 }

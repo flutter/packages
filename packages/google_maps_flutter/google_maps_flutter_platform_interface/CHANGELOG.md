@@ -2,7 +2,6 @@
 
 * Adds `PointOfInterest` type.
 * Adds `MapPoiTapEvent` to support point-of-interest tap events.
-* Adds `onPoiTap` to `GoogleMapsFlutterPlatform` to support Point of Interest tapping.
 
 ## 2.14.1
 

@@ -2,6 +2,10 @@
 
 * Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
+## 0.6.0
+
+* Added support for Tap detection on Point of Interest
+
 ## 0.5.14+3
 
 * Replaces uses of deprecated `Color` properties.

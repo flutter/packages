@@ -22,6 +22,7 @@ import 'padding.dart';
 import 'page.dart';
 import 'place_circle.dart';
 import 'place_marker.dart';
+import 'place_poi.dart';
 import 'place_polygon.dart';
 import 'place_polyline.dart';
 import 'scrolling_map.dart';
@@ -40,6 +41,7 @@ final List<GoogleMapExampleAppPage> _allPages = <GoogleMapExampleAppPage>[
   const PlacePolylinePage(),
   const PlacePolygonPage(),
   const PlaceCirclePage(),
+  const PlacePoiPage(),
   const PaddingPage(),
   const SnapshotPage(),
   const LiteModePage(),
