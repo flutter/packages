@@ -21,13 +21,11 @@ class InputStreamTest {
 
     val instance = mock<InputStream>()
     val bytesCaptor = ArgumentCaptor.forClass(ByteArray::class.java)
-    val len = 2
-    val value = 3
+    val len = 3
+    val value = 2
     whenever(instance.read(bytesCaptor.capture())).thenReturn(value)
 
-    assertEquals(
-      api.readBytes(instance, len.toLong()),
-      value.toLong())
+    assertEquals(api.readBytes(instance, len.toLong()).size, value)
     assertEquals(bytesCaptor.value.size, len)
   }
 
