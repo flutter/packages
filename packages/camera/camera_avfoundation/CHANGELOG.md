@@ -1,3 +1,7 @@
+## 0.9.23+3
+
+* Migrates to Swift-based pigeon interface.
+
 ## 0.9.23+2
 
 * Code refactor related to Swift pigeon's generated struct MediaSettings being immutable.

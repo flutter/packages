@@ -79,8 +79,8 @@ final class CameraSampleBufferTests: XCTestCase {
     let input = MockAssetWriterInput()
 
     let configuration = CameraTestUtils.createTestCameraConfiguration()
-    configuration.mediaSettings = FCPPlatformMediaSettings.make(
-      with: .medium,
+    configuration.mediaSettings = PlatformMediaSettings(
+      resolutionPreset: .medium,
       framesPerSecond: nil,
       videoBitrate: nil,
       audioBitrate: nil,
@@ -300,7 +300,7 @@ final class CameraSampleBufferTests: XCTestCase {
 
     camera.startVideoRecording(completion: { error in }, messengerForStreaming: nil)
     var completionCalled = false
-    camera.stopVideoRecording(completion: { path, error in
+    camera.stopVideoRecording(completion: { result in
       completionCalled = true
     })
 
@@ -528,13 +528,18 @@ final class CameraSampleBufferTests: XCTestCase {
     let expectation = self.expectation(description: "Completion handler called with error")
 
     camera.startVideoRecording(
-      completion: { error in
-        XCTAssertNotNil(error)
-        XCTAssertEqual(error?.code, "IOError")
-        XCTAssertEqual(error?.message, "AVAssetWriter failed to start writing")
-        XCTAssertEqual(error?.details as? String, "Mock write error")
-        XCTAssertFalse(camera.isRecording)
-        expectation.fulfill()
+      completion: { result in
+        switch result {
+        case .failure(let error as PigeonError):
+          XCTAssertEqual(error.code, "IOError")
+          XCTAssertEqual(error.message, "AVAssetWriter failed to start writing")
+          XCTAssertEqual(error.details as? String, "Mock write error")
+          XCTAssertFalse(camera.isRecording)
+          expectation.fulfill()
+        default:
+          XCTFail("Expected PigeonError")
+        }
+
       }, messengerForStreaming: nil)
 
     waitForExpectations(timeout: 1.0, handler: nil)

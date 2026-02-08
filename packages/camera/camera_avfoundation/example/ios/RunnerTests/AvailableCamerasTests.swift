@@ -62,10 +62,14 @@ final class AvailableCamerasTest: XCTestCase {
       return cameras
     }
 
-    var resultValue: [FCPPlatformCameraDescription]?
-    cameraPlugin.availableCameras { result, error in
-      XCTAssertNil(error)
-      resultValue = result
+    var resultValue: [PlatformCameraDescription]?
+    cameraPlugin.getAvailableCameras { result in
+      switch result {
+      case .success(let result):
+        resultValue = result
+      case .failure(_):
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)
@@ -100,10 +104,14 @@ final class AvailableCamerasTest: XCTestCase {
       return cameras
     }
 
-    var resultValue: [FCPPlatformCameraDescription]?
-    cameraPlugin.availableCameras { result, error in
-      XCTAssertNil(error)
-      resultValue = result
+    var resultValue: [PlatformCameraDescription]?
+    cameraPlugin.getAvailableCameras { result in
+      switch result {
+      case .success(let result):
+        resultValue = result
+      case .failure(_):
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)
@@ -133,10 +141,14 @@ final class AvailableCamerasTest: XCTestCase {
       return cameras
     }
 
-    var resultValue: [FCPPlatformCameraDescription]?
-    cameraPlugin.availableCameras { result, error in
-      XCTAssertNil(error)
-      resultValue = result
+    var resultValue: [PlatformCameraDescription]?
+    cameraPlugin.getAvailableCameras { result in
+      switch result {
+      case .success(let result):
+        resultValue = result
+      case .failure(_):
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
     waitForExpectations(timeout: 30, handler: nil)

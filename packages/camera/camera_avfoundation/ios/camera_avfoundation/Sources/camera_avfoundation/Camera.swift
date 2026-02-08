@@ -17,7 +17,7 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 {
   /// The API instance used to communicate with the Dart side of the plugin.
   /// Once initially set, this should only ever be accessed on the main thread.
-  var dartAPI: FCPCameraEventApi? { get set }
+  var dartAPI: CameraEventApi? { get set }
 
   var onFrameAvailable: (() -> Void)? { get set }
 
@@ -54,29 +54,29 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   ///
   /// @param messenger Nullable messenger for capturing each frame.
   func startVideoRecording(
-    completion: @escaping (_ error: FlutterError?) -> Void,
+    completion: @escaping (Result<Void, any Error>) -> Void,
     messengerForStreaming: FlutterBinaryMessenger?
   )
   func pauseVideoRecording()
   func resumeVideoRecording()
-  func stopVideoRecording(completion: @escaping (_ path: String?, _ error: FlutterError?) -> Void)
+  func stopVideoRecording(completion: @escaping (Result<String, any Error>) -> Void)
 
-  func captureToFile(completion: @escaping (_ path: String?, _ error: FlutterError?) -> Void)
+  func captureToFile(completion: @escaping (Result<String, any Error>) -> Void)
 
-  func lockCaptureOrientation(_ orientation: FCPPlatformDeviceOrientation)
+  func lockCaptureOrientation(_ orientation: PlatformDeviceOrientation)
   func unlockCaptureOrientation()
 
-  func setImageFileFormat(_ fileFormat: FCPPlatformImageFileFormat)
+  func setImageFileFormat(_ fileFormat: PlatformImageFileFormat)
 
-  func setExposureMode(_ mode: FCPPlatformExposureMode)
+  func setExposureMode(_ mode: PlatformExposureMode)
   func setExposureOffset(_ offset: Double)
 
   /// Sets the exposure point, in a (0,1) coordinate system.
   ///
   /// If @c point is nil, the exposure point will reset to the center.
   func setExposurePoint(
-    _ point: FCPPlatformPoint?,
-    withCompletion: @escaping (_ error: FlutterError?) -> Void
+    _ point: PlatformPoint?,
+    withCompletion: @escaping (Result<Void, any Error>) -> Void
   )
 
   /// Sets FocusMode on the current AVCaptureDevice.
@@ -90,21 +90,21 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
   /// be set.
   ///
   /// @param mode The focus mode that should be applied.
-  func setFocusMode(_ mode: FCPPlatformFocusMode)
+  func setFocusMode(_ mode: PlatformFocusMode)
 
   /// Sets the focus point, in a (0,1) coordinate system.
   ///
   /// If @c point is nil, the focus point will reset to the center.
   func setFocusPoint(
-    _ point: FCPPlatformPoint?,
-    completion: @escaping (_ error: FlutterError?) -> Void
+    _ point: PlatformPoint?,
+    completion: @escaping (Result<Void, any Error>) -> Void
   )
 
-  func setZoomLevel(_ zoom: CGFloat, withCompletion: @escaping (_ error: FlutterError?) -> Void)
+  func setZoomLevel(_ zoom: CGFloat, withCompletion: @escaping (Result<Void, any Error>) -> Void)
 
   func setFlashMode(
-    _ mode: FCPPlatformFlashMode,
-    withCompletion: @escaping (_ error: FlutterError?) -> Void
+    _ mode: PlatformFlashMode,
+    withCompletion: @escaping (Result<Void, any Error>) -> Void
   )
 
   func pausePreview()
@@ -112,11 +112,11 @@ protocol Camera: FlutterTexture, AVCaptureVideoDataOutputSampleBufferDelegate,
 
   func setDescriptionWhileRecording(
     _ cameraName: String,
-    withCompletion: @escaping (_ error: FlutterError?) -> Void
+    withCompletion: @escaping (Result<Void, any Error>) -> Void
   )
 
   func startImageStream(
-    with: FlutterBinaryMessenger, completion: @escaping (_ error: FlutterError?) -> Void)
+    with: FlutterBinaryMessenger, completion: @escaping (Result<Void, any Error>) -> Void)
   func stopImageStream()
 
   // Override to make `AVCaptureVideoDataOutputSampleBufferDelegate`/

@@ -138,8 +138,14 @@ final class FLTCamSetFocusModeTests: XCTestCase {
       }
     }
 
-    camera.setFocusPoint(FCPPlatformPoint.makeWith(x: 1, y: 1)) { error in
-      XCTAssertNil(error)
+    camera.setFocusPoint(PlatformPoint(x: 1, y: 1)) {
+      result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        XCTFail("Unexpected failure")
+      }
     }
 
     XCTAssertTrue(setFocusPointOfInterestCalled)
@@ -154,10 +160,14 @@ final class FLTCamSetFocusModeTests: XCTestCase {
 
     let expectation = self.expectation(description: "Completion with error")
 
-    camera.setFocusPoint(FCPPlatformPoint.makeWith(x: 1, y: 1)) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "setFocusPointFailed")
-      XCTAssertEqual(error?.message, "Device does not have focus point capabilities")
+    camera.setFocusPoint(PlatformPoint(x: 1, y: 1)) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "setFocusPointFailed")
+        XCTAssertEqual(error.message, "Device does not have focus point capabilities")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 
