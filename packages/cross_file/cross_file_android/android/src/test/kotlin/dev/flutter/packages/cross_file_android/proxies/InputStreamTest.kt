@@ -4,7 +4,6 @@
 
 package dev.flutter.packages.cross_file_android.proxies
 
-import dev.flutter.packages.cross_file_android.InputStreamReadBytesResponse
 import dev.flutter.packages.cross_file_android.TestProxyApiRegistrar
 import java.io.ByteArrayInputStream
 import java.io.InputStream
@@ -27,8 +26,8 @@ class InputStreamTest {
     whenever(instance.read(bytesCaptor.capture())).thenReturn(value)
 
     assertEquals(
-        api.readBytes(instance, len.toLong()),
-        InputStreamReadBytesResponse(value, bytesCaptor.value))
+      api.readBytes(instance, len.toLong()),
+      value.toLong())
     assertEquals(bytesCaptor.value.size, len)
   }
 
