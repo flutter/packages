@@ -143,7 +143,6 @@ Future<int> generateTestPigeons({
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinIncludeErrorClass: input != 'primitive',
-      kotlinUseGeneratedAnnotation: input == 'core_tests',
       // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
@@ -209,6 +208,25 @@ Future<int> generateTestPigeons({
       return generateCode;
     }
   }
+
+  // Test case for useGeneratedAnnotation feature with core_tests
+  final corePascalCaseName = _snakeToPascalCase('core_tests');
+  int generateCodeWithAnnotation = await runPigeon(
+    input: './pigeons/core_tests.dart',
+    kotlinOut: '$outputBase/android/src/main/kotlin/com/example/test_plugin/${corePascalCaseName}WithAnnotation.gen.kt',
+    kotlinPackage: 'com.example.test_plugin',
+    kotlinErrorClassName: 'FlutterError',
+    kotlinIncludeErrorClass: true,
+    kotlinUseGeneratedAnnotation: true,
+    javaOut: '$alternateOutputBase/android/src/main/java/com/example/alternate_language_test_plugin/${corePascalCaseName}WithAnnotation.java',
+    javaPackage: 'com.example.alternate_language_test_plugin',
+    javaUseGeneratedAnnotation: true,
+    suppressVersion: true,
+  );
+  if (generateCodeWithAnnotation != 0) {
+    return generateCodeWithAnnotation;
+  }
+
   return 0;
 }
 
@@ -232,6 +250,7 @@ Future<int> runPigeon({
   String? gobjectModule,
   String? javaOut,
   String? javaPackage,
+  bool javaUseGeneratedAnnotation = false,
   String? objcHeaderOut,
   String? objcSourceOut,
   String objcPrefix = '',
@@ -287,7 +306,10 @@ Future<int> runPigeon({
           ? null
           : GObjectOptions(module: gobjectModule),
       javaOut: javaOut,
-      javaOptions: JavaOptions(package: javaPackage),
+      javaOptions: JavaOptions(
+        package: javaPackage,
+        useGeneratedAnnotation: javaUseGeneratedAnnotation,
+      ),
       kotlinOut: kotlinOut,
       kotlinOptions: KotlinOptions(
         package: kotlinPackage,
