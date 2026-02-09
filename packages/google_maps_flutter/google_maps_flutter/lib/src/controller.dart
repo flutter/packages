@@ -101,6 +101,11 @@ class GoogleMapController {
     );
     _streamSubscriptions.add(
       GoogleMapsFlutterPlatform.instance
+          .onPoiTap(mapId: mapId)
+          .listen((MapPoiTapEvent e) => _googleMapState.onPoiTap(e.value)),
+    );
+    _streamSubscriptions.add(
+      GoogleMapsFlutterPlatform.instance
           .onPolylineTap(mapId: mapId)
           .listen(
             (PolylineTapEvent e) => _googleMapState.onPolylineTap(e.value),

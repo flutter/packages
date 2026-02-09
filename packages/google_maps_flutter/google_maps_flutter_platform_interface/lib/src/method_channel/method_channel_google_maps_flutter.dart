@@ -144,6 +144,11 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
   }
 
   @override
+  Stream<MapPoiTapEvent> onPoiTap({required int mapId}) {
+    return _events(mapId).whereType<MapPoiTapEvent>();
+  }
+
+  @override
   Stream<PolylineTapEvent> onPolylineTap({required int mapId}) {
     return _events(mapId).whereType<PolylineTapEvent>();
   }
@@ -219,6 +224,20 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
             MarkerId(arguments['markerId']! as String),
           ),
         );
+
+      case 'map#onPoiTap':
+        final Map<String, Object?> arguments = _getArgumentDictionary(call);
+        _mapEventStreamController.add(
+          MapPoiTapEvent(
+            mapId,
+            PointOfInterest(
+              position: LatLng.fromJson(arguments['position'])!,
+              name: arguments['name']! as String,
+              placeId: arguments['placeId']! as String,
+            ),
+          ),
+        );
+
       case 'infoWindow#onTap':
         final Map<String, Object?> arguments = _getArgumentDictionary(call);
         _mapEventStreamController.add(

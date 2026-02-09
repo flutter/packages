@@ -154,6 +154,13 @@ void main() {
       },
     );
   });
+
+  test('onPoiTap default implementation throws UnimplementedError', () {
+    final platform = ExtendsGoogleMapsFlutterPlatform();
+    // Most stream methods in the platform interface should provide a stream or throw.
+    // Verify that your new onPoiTap is reachable.
+    expect(() => platform.onPoiTap(mapId: 0), throwsUnimplementedError);
+  });
 }
 
 class GoogleMapsFlutterPlatformMock extends Mock

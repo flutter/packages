@@ -1,3 +1,8 @@
+## 2.15.0
+
+* Adds `PointOfInterest` type.
+* Adds `MapPoiTapEvent` to support point-of-interest tap events.
+
 ## 2.14.1
 
 * Replaces internal use of deprecated methods.

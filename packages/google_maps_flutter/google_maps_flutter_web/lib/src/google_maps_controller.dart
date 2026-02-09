@@ -260,9 +260,27 @@ class GoogleMapController {
     ) {
       assert(event.latLng != null);
       if (!_streamController.isClosed) {
-        _streamController.add(
-          MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
-        );
+        if (event is gmaps.IconMouseEvent && event.placeId != null) {
+          final String placeId = event.placeId!;
+
+          // Stop the event to prevent the default Google Maps InfoWindow from popping up
+          event.stop();
+
+          _streamController.add(
+            MapPoiTapEvent(
+              _mapId,
+              PointOfInterest(
+                position: gmLatLngToLatLng(event.latLng!),
+                placeId: placeId,
+              ),
+            ),
+          );
+        } else {
+          // If no placeId, treat it as a standard map tap
+          _streamController.add(
+            MapTapEvent(_mapId, gmLatLngToLatLng(event.latLng!)),
+          );
+        }
       }
     });
     _onRightClickSubscription = map.onRightclick.listen((

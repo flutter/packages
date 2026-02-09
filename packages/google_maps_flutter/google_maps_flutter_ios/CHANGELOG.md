@@ -1,6 +1,6 @@
-## 2.17.1
+## 2.18.0
 
-* Refactors code for improved testability.
+* Implements `onPoiTap` support for iOS using `didTapPOIWithPlaceID`.
 
 ## 2.17.0
 

@@ -138,5 +138,36 @@ void main() {
         equals('drag-end-marker'),
       );
     });
+    test('onPoiTap', () async {
+      final platform = MethodChannelGoogleMapsFlutter();
+      const mapId = 0;
+      platform.ensureChannelInitialized(mapId);
+
+      final events = <MapPoiTapEvent>[];
+      platform
+          .onPoiTap(mapId: mapId)
+          .listen((MapPoiTapEvent event) => events.add(event));
+
+      final poiData = <String, Object>{
+        'placeId': 'place123',
+        'name': 'Googleplex',
+        'position': <double>[37.422, -122.084],
+      };
+
+      await platform
+          .ensureChannelInitialized(mapId)
+          .binaryMessenger
+          .handlePlatformMessage(
+            'plugins.flutter.io/google_maps_0',
+            const StandardMethodCodec().encodeMethodCall(
+              MethodCall('map#onPoiTap', poiData),
+            ),
+            (ByteData? data) {},
+          );
+
+      expect(events.length, 1);
+      expect(events[0].value.name, 'Googleplex');
+      expect(events[0].value.placeId, 'place123');
+    });
   });
 }
