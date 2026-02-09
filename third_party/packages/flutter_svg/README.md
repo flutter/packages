@@ -118,7 +118,7 @@ import 'dart:ui' as ui;
     null,
   );
 
-  // You can scale the canvas to achieve lossless scaling
+  // You can scale the canvas to achieve lossless scaling:
   canvas.scale(1.2, 1.2);
 
   // You can draw the picture to a canvas:
