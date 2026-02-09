@@ -33,8 +33,8 @@ void _writeFakePodspec(
   final swiftWorkaround = includeSwiftWorkaround
       ? '''
   s.${scopeSwiftWorkaround ? 'ios.' : ''}xcconfig = {
-     'LIBRARY_SEARCH_PATHS' => '\$(TOOLCHAIN_DIR)/usr/lib/swift/\$(PLATFORM_NAME)/ \$(SDKROOT)/usr/lib/swift',
-     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+     'LIBRARY_SEARCH_PATHS' => '\$(inherited) \$(TOOLCHAIN_DIR)/usr/lib/swift/\$(PLATFORM_NAME)/ \$(SDKROOT)/usr/lib/swift',
+     'LD_RUNPATH_SEARCH_PATHS' => '\$(inherited) /usr/lib/swift',
   }
 '''
       : '';
@@ -288,8 +288,8 @@ void main() {
           containsAllInOrder(<Matcher>[
             contains(r'''
   s.xcconfig = {
-    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
-    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
   }'''),
             contains('The following packages had errors:'),
             contains(
@@ -327,8 +327,8 @@ void main() {
           containsAllInOrder(<Matcher>[
             contains(r'''
   s.xcconfig = {
-    'LIBRARY_SEARCH_PATHS' => '$(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
-    'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
+    'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
+    'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
   }'''),
             contains('The following packages had errors:'),
             contains(
