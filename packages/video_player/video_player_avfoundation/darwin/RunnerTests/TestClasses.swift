@@ -3,7 +3,7 @@
 // found in the LICENSE file.
 
 import AVFoundation
-import XCTest
+import Testing
 import video_player_avfoundation
 
 #if os(iOS)
@@ -102,14 +102,14 @@ class TestTextureRegistry: NSObject, FlutterTextureRegistry {
 
   func unregisterTexture(_ textureId: Int64) {
     if textureId != 1 {
-      XCTFail("Unregistering texture with wrong ID")
+      Issue.record("Unregistering texture with wrong ID")
     }
     unregisteredTexture = true
   }
 
   func textureFrameAvailable(_ textureId: Int64) {
     if textureId != 1 {
-      XCTFail("Texture frame available with wrong ID")
+      Issue.record("Texture frame available with wrong ID")
     }
     textureFrameAvailableCount += 1
   }
@@ -256,12 +256,12 @@ class StubFVPDisplayLinkFactory: NSObject, FVPDisplayLinkFactory {
 }
 
 class StubEventListener: NSObject, FVPVideoEventListener {
-  var initializationExpectation: XCTestExpectation?
+  var initializationContinuation: CheckedContinuation<Void, Never>?
   private(set) var initializationDuration: Int64 = 0
   private(set) var initializationSize: CGSize = .zero
 
-  init(initializationExpectation: XCTestExpectation? = nil) {
-    self.initializationExpectation = initializationExpectation
+  init(initializationContinuation: CheckedContinuation<Void, Never>? = nil) {
+    self.initializationContinuation = initializationContinuation
     super.init()
   }
 
@@ -269,7 +269,7 @@ class StubEventListener: NSObject, FVPVideoEventListener {
   func videoPlayerDidEndBuffering() {}
   func videoPlayerDidError(withMessage errorMessage: String) {}
   func videoPlayerDidInitialize(withDuration duration: Int64, size: CGSize) {
-    initializationExpectation?.fulfill()
+    initializationContinuation?.resume()
     initializationDuration = duration
     initializationSize = size
   }
