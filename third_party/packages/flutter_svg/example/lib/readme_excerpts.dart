@@ -6,11 +6,9 @@
 // intended for use as an actual example application.
 
 // #docregion OutputConversion
-// #docregion OutputScaling
 import 'dart:ui' as ui;
 
 // #enddocregion OutputConversion
-// #enddocregion OutputScaling
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -92,6 +90,9 @@ Future<ui.Image> convertSvgOutput() async {
     null,
   );
 
+  // You can scale the canvas to achieve lossless scaling
+  canvas.scale(1.2, 1.2);
+
   // You can draw the picture to a canvas:
   canvas.drawPicture(pictureInfo.picture);
 
@@ -101,41 +102,6 @@ Future<ui.Image> convertSvgOutput() async {
   pictureInfo.picture.dispose();
   // #enddocregion OutputConversion
   return image;
-}
-
-/// Demonstrates scaling SVG to a larger image
-Future<ui.Image> scaleSvgOutput() async {
-  // #docregion OutputScaling
-  const rawSvg = '''<svg ...>...</svg>''';
-  final PictureInfo pictureInfo = await vg.loadPicture(
-    const SvgStringLoader(rawSvg),
-    null,
-  );
-
-  // You can convert the picture to a scaled image:
-  const double targetWidth = 512;
-  const double targetHeight = 512;
-  final pictureRecorder = ui.PictureRecorder();
-  final canvas = Canvas(
-    pictureRecorder,
-    Rect.fromPoints(
-      Offset.zero,
-      const Offset(targetWidth, targetHeight),
-    ),
-  );
-  canvas.scale(
-    targetWidth / pictureInfo.size.width,
-    targetHeight / pictureInfo.size.height,
-  );
-  canvas.drawPicture(pictureInfo.picture);
-  final ui.Image scaledImage = await pictureRecorder.endRecording().toImage(
-    targetWidth.ceil(),
-    targetHeight.ceil(),
-  );
-
-  pictureInfo.picture.dispose();
-  // #enddocregion OutputScaling
-  return scaledImage;
 }
 
 // #docregion ColorMapper
