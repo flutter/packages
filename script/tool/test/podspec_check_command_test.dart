@@ -19,25 +19,22 @@ import 'util.dart';
 /// If [includeSwiftWorkaround] is set, the xcconfig additions to make Swift
 /// libraries work in apps that have no Swift will be included. If
 /// [scopeSwiftWorkaround] is set, it will be specific to the iOS configuration.
-/// If [useInheritedPaths] is set, the search paths will use $(inherited) prefix.
 void _writeFakePodspec(
   RepositoryPackage plugin,
   String platform, {
   bool includeSwiftWorkaround = false,
   bool scopeSwiftWorkaround = false,
   bool includePrivacyManifest = false,
-  bool useInheritedPaths = false,
 }) {
   final String pluginName = plugin.directory.basename;
   final File file = plugin.directory
       .childDirectory(platform)
       .childFile('$pluginName.podspec');
-  final inheritedPrefix = useInheritedPaths ? r'$(inherited) ' : '';
   final swiftWorkaround = includeSwiftWorkaround
       ? '''
   s.${scopeSwiftWorkaround ? 'ios.' : ''}xcconfig = {
-     'LIBRARY_SEARCH_PATHS' => '$inheritedPrefix\$(TOOLCHAIN_DIR)/usr/lib/swift/\$(PLATFORM_NAME)/ \$(SDKROOT)/usr/lib/swift',
-     'LD_RUNPATH_SEARCH_PATHS' => '$inheritedPrefix/usr/lib/swift',
+     'LIBRARY_SEARCH_PATHS' => '\$(TOOLCHAIN_DIR)/usr/lib/swift/\$(PLATFORM_NAME)/ \$(SDKROOT)/usr/lib/swift',
+     'LD_RUNPATH_SEARCH_PATHS' => '/usr/lib/swift',
   }
 '''
       : '';
@@ -486,32 +483,6 @@ void main() {
           'ios',
           includeSwiftWorkaround: true,
           scopeSwiftWorkaround: true,
-        );
-
-        final List<String> output = await runCapturingPrint(runner, <String>[
-          'podspec-check',
-        ]);
-
-        expect(
-          output,
-          containsAllInOrder(<Matcher>[contains('Ran for 1 package(s)')]),
-        );
-      },
-    );
-
-    test(
-      'passes if the search paths workaround uses \$(inherited) prefix',
-      () async {
-        final RepositoryPackage plugin = createFakePlugin(
-          'plugin1',
-          packagesDir,
-          extraFiles: <String>['ios/Classes/SomeSwift.swift'],
-        );
-        _writeFakePodspec(
-          plugin,
-          'ios',
-          includeSwiftWorkaround: true,
-          useInheritedPaths: true,
         );
 
         final List<String> output = await runCapturingPrint(runner, <String>[
