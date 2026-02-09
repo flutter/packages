@@ -23,7 +23,8 @@
 /* Begin PBXBuildFile section */
 		18AD5E2A5B24DAFCF3749529 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7FA146FB7E9341C7D2257338 /* Pods_RunnerTests.framework */; };
 		335BBD1B22A9A15E00E9071D /* GeneratedPluginRegistrant.swift in Sources */ = {isa = PBXBuildFile; fileRef = 335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */; };
-		33683FF12ABCAC94007305E4 /* VideoPlayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 33683FF02ABCAC94007305E4 /* VideoPlayerTests.m */; };
+		33C53DEF2F3A6F65008AFBB3 /* TestClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C53DED2F3A6F65008AFBB3 /* TestClasses.swift */; };
+		33C53DF02F3A6F65008AFBB3 /* VideoPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33C53DEE2F3A6F65008AFBB3 /* VideoPlayerTests.swift */; };
 		33CC10F12044A3C60003C045 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33CC10F02044A3C60003C045 /* AppDelegate.swift */; };
 		33CC10F32044A3C60003C045 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F22044A3C60003C045 /* Assets.xcassets */; };
 		33CC10F62044A3C60003C045 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 33CC10F42044A3C60003C045 /* MainMenu.xib */; };
@@ -68,7 +69,8 @@
 		331C80D5294CF71000263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		333000ED22D3DE5D00554162 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		335BBD1A22A9A15E00E9071D /* GeneratedPluginRegistrant.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GeneratedPluginRegistrant.swift; sourceTree = "<group>"; };
-		33683FF02ABCAC94007305E4 /* VideoPlayerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = VideoPlayerTests.m; path = ../../darwin/RunnerTests/VideoPlayerTests.m; sourceTree = SOURCE_ROOT; };
+		33C53DED2F3A6F65008AFBB3 /* TestClasses.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestClasses.swift; path = /Users/stuartmorgan/src/packages/packages/video_player/video_player_avfoundation/darwin/RunnerTests/TestClasses.swift; sourceTree = "<absolute>"; };
+		33C53DEE2F3A6F65008AFBB3 /* VideoPlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = VideoPlayerTests.swift; path = /Users/stuartmorgan/src/packages/packages/video_player/video_player_avfoundation/darwin/RunnerTests/VideoPlayerTests.swift; sourceTree = "<absolute>"; };
 		33CC10ED2044A3C60003C045 /* video_player_avfoundation_example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = video_player_avfoundation_example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		33CC10F02044A3C60003C045 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		33CC10F22044A3C60003C045 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Runner/Assets.xcassets; sourceTree = "<group>"; };
@@ -115,7 +117,8 @@
 		330B3F8E2B1F9C6A00E6DC3F /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				33683FF02ABCAC94007305E4 /* VideoPlayerTests.m */,
+				33C53DEE2F3A6F65008AFBB3 /* VideoPlayerTests.swift */,
+				33C53DED2F3A6F65008AFBB3 /* TestClasses.swift */,
 			);
 			name = RunnerTests;
 			sourceTree = "<group>";
@@ -268,7 +271,7 @@
 				TargetAttributes = {
 					331C80D4294CF70F00263BE5 = {
 						CreatedOnToolsVersion = 14.0;
-						LastSwiftMigration = 1500;
+						LastSwiftMigration = 2620;
 						TestTargetID = 33CC10EC2044A3C60003C045;
 					};
 					33CC10EC2044A3C60003C045 = {
@@ -436,7 +439,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				33683FF12ABCAC94007305E4 /* VideoPlayerTests.m in Sources */,
+				33C53DEF2F3A6F65008AFBB3 /* TestClasses.swift in Sources */,
+				33C53DF02F3A6F65008AFBB3 /* VideoPlayerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

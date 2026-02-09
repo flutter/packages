@@ -3,9 +3,15 @@
 // found in the LICENSE file.
 
 import AVFoundation
-import Flutter
 import Testing
 @preconcurrency import video_player_avfoundation
+
+#if os(iOS)
+  import Flutter
+#else
+  import FlutterMacOS
+#endif
+
 
 @MainActor struct VideoPlayerTests {
 
