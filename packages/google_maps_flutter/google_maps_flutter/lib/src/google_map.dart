@@ -291,11 +291,7 @@ class GoogleMap extends StatefulWidget {
   /// Called every time a [GoogleMap] is long pressed.
   final ArgumentCallback<LatLng>? onLongPress;
 
-  /// Called when the tiles have been loaded.
-  ///
-  /// This implementation maps to [Map.tilesloaded](https://developers.google.com/maps/documentation/javascript/reference/map#Map.tilesloaded) on Web,
-  /// [GoogleMap.OnMapLoadedCallback](https://developers.google.com/android/reference/com/google/android/gms/maps/GoogleMap.OnMapLoadedCallback) on Android,
-  /// and [GMSMapViewDelegate.mapViewDidFinishTileRendering](https://developers.google.com/maps/documentation/ios-sdk/reference/objc/Protocols/GMSMapViewDelegate#-mapviewdidfinishtilerendering:) on iOS.
+  /// Called when all the visible tiles have been loaded and rendered.
   final VoidCallback? onMapLoaded;
 
   /// True if a "My Location" layer should be shown on the map.
