@@ -218,10 +218,6 @@ Future<int> generateTestPigeons({
     kotlinPackage: 'com.example.test_plugin',
     kotlinErrorClassName: 'FlutterError',
     kotlinUseGeneratedAnnotation: true,
-    javaOut:
-        '$alternateOutputBase/android/src/main/java/com/example/alternate_language_test_plugin/${corePascalCaseName}WithAnnotation.java',
-    javaPackage: 'com.example.alternate_language_test_plugin',
-    javaUseGeneratedAnnotation: true,
   );
   if (generateCodeWithAnnotation != 0) {
     return generateCodeWithAnnotation;
