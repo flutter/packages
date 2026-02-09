@@ -143,6 +143,7 @@ Future<int> generateTestPigeons({
       kotlinPackage: 'com.example.test_plugin',
       kotlinErrorClassName: kotlinErrorName,
       kotlinIncludeErrorClass: input != 'primitive',
+      kotlinUseGeneratedAnnotation: input == 'core_tests',
       // iOS/macOS
       swiftOut: skipLanguages.contains(GeneratorLanguage.swift)
           ? null
@@ -217,6 +218,7 @@ Future<int> runPigeon({
   String? kotlinPackage,
   String? kotlinErrorClassName,
   bool kotlinIncludeErrorClass = true,
+  bool kotlinUseGeneratedAnnotation = false,
   bool swiftIncludeErrorClass = true,
   String? swiftOut,
   String? swiftErrorClassName,
@@ -291,6 +293,7 @@ Future<int> runPigeon({
         package: kotlinPackage,
         errorClassName: kotlinErrorClassName,
         includeErrorClass: kotlinIncludeErrorClass,
+        useGeneratedAnnotation: kotlinUseGeneratedAnnotation,
       ),
       objcHeaderOut: objcHeaderOut,
       objcSourceOut: objcSourceOut,
