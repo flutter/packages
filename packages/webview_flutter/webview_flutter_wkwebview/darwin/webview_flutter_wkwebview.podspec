@@ -26,5 +26,5 @@ Downloaded by pub (not CocoaPods).
     'LIBRARY_SEARCH_PATHS' => '$(inherited) $(TOOLCHAIN_DIR)/usr/lib/swift/$(PLATFORM_NAME)/ $(SDKROOT)/usr/lib/swift',
     'LD_RUNPATH_SEARCH_PATHS' => '$(inherited) /usr/lib/swift',
   }
-  s.swift_version = '6.0'
+  s.swift_version = '5.0'
 end
