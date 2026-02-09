@@ -1,4 +1,4 @@
-## 2.14.2
+## 2.15.0
 
 * Adds support for `onMapLoaded` callback.
 * Adds `onMapLoaded` and `onGroundOverlayTap` implementations to `MethodChannelGoogleMapsFlutter`.

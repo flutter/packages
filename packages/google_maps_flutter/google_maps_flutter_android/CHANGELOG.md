@@ -1,4 +1,4 @@
-## 2.18.9
+## 2.19.0
 
 * Adds support for `onMapLoaded` callback.
 
