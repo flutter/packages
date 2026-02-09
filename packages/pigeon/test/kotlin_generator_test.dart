@@ -1007,7 +1007,7 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final code = sink.toString();
-      expect(code, contains(generatedAnnotation));
+      expect(code, contains(kotlinGeneratedAnnotation));
     });
 
     test('without generated annotation', () {
@@ -1022,7 +1022,7 @@ void main() {
         dartPackageName: DEFAULT_PACKAGE_NAME,
       );
       final code = sink.toString();
-      expect(code, isNot(contains(generatedAnnotation)));
+      expect(code, isNot(contains(kotlinGeneratedAnnotation)));
     });
   });
 

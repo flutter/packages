@@ -35,6 +35,9 @@ const String _pigeonMethodChannelCodec = 'PigeonMethodCodec';
 
 const String _overflowClassName = '${classNamePrefix}CodecOverflow';
 
+/// Kotlin file-level annotation for generated code.
+const String kotlinGeneratedAnnotation = '@file:$generatedAnnotation';
+
 /// Options that control how Kotlin code will be generated.
 class KotlinOptions {
   /// Creates a [KotlinOptions] object
@@ -208,7 +211,7 @@ class KotlinGenerator extends StructuredGenerator<InternalKotlinOptions> {
     indent.writeln('// $seeAlsoWarning');
     indent.writeln('@file:Suppress("UNCHECKED_CAST", "ArrayInDataClass")');
     if (generatorOptions.useGeneratedAnnotation) {
-      indent.writeln(generatedAnnotation);
+      indent.writeln(kotlinGeneratedAnnotation);
     }
   }
 
