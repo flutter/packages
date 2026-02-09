@@ -3,6 +3,10 @@
 * Adds support for `javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
   `window.open()` to work without user interaction on iOS and macOS.
 
+## 3.23.6
+
+* Fixes a crash if WebViewFlutterWKWebViewExternalAPI is passed the wrong registry.
+
 ## 3.23.5
 
 * Removes internal native library Dart proxy.
