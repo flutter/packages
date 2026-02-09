@@ -213,12 +213,14 @@ Future<int> generateTestPigeons({
   final corePascalCaseName = _snakeToPascalCase('core_tests');
   int generateCodeWithAnnotation = await runPigeon(
     input: './pigeons/core_tests.dart',
-    kotlinOut: '$outputBase/android/src/main/kotlin/com/example/test_plugin/${corePascalCaseName}WithAnnotation.gen.kt',
+    kotlinOut:
+        '$outputBase/android/src/main/kotlin/com/example/test_plugin/${corePascalCaseName}WithAnnotation.gen.kt',
     kotlinPackage: 'com.example.test_plugin',
     kotlinErrorClassName: 'FlutterError',
     kotlinIncludeErrorClass: true,
     kotlinUseGeneratedAnnotation: true,
-    javaOut: '$alternateOutputBase/android/src/main/java/com/example/alternate_language_test_plugin/${corePascalCaseName}WithAnnotation.java',
+    javaOut:
+        '$alternateOutputBase/android/src/main/java/com/example/alternate_language_test_plugin/${corePascalCaseName}WithAnnotation.java',
     javaPackage: 'com.example.alternate_language_test_plugin',
     javaUseGeneratedAnnotation: true,
     suppressVersion: true,
