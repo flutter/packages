@@ -648,26 +648,25 @@ class WebKitWebViewController extends PlatformWebViewController {
 
   @override
   Future<void> setJavaScriptMode(JavaScriptMode javaScriptMode) async {
+    final bool? javaScriptCanOpenWindowsAutomatically =
+        _webKitParams.javaScriptCanOpenWindowsAutomatically;
+    if (javaScriptCanOpenWindowsAutomatically != null) {
+      final WKPreferences preferences =
+          await _webView.configuration.getPreferences();
+      await preferences.setJavaScriptCanOpenWindowsAutomatically(
+        javaScriptCanOpenWindowsAutomatically,
+      );
+    }
+
     // Attempt to set the value that requires iOS 14+.
     try {
-      final WKWebpagePreferences webpagePreferences = await _webView
-          .configuration
-          .getDefaultWebpagePreferences();
+      final WKWebpagePreferences webpagePreferences =
+          await _webView.configuration.getDefaultWebpagePreferences();
       switch (javaScriptMode) {
         case JavaScriptMode.disabled:
           await webpagePreferences.setAllowsContentJavaScript(false);
         case JavaScriptMode.unrestricted:
           await webpagePreferences.setAllowsContentJavaScript(true);
-      }
-      // Set javaScriptCanOpenWindowsAutomatically on WKPreferences only if explicitly set
-      final bool? javaScriptCanOpenWindowsAutomatically =
-          _webKitParams.javaScriptCanOpenWindowsAutomatically;
-      if (javaScriptCanOpenWindowsAutomatically != null) {
-        final WKPreferences preferences = await _webView.configuration
-            .getPreferences();
-        await preferences.setJavaScriptCanOpenWindowsAutomatically(
-          javaScriptCanOpenWindowsAutomatically,
-        );
       }
       return;
     } on PlatformException catch (exception) {
@@ -678,20 +677,13 @@ class WebKitWebViewController extends PlatformWebViewController {
       rethrow;
     }
 
-    final WKPreferences preferences = await _webView.configuration
-        .getPreferences();
+    final WKPreferences preferences =
+        await _webView.configuration.getPreferences();
     switch (javaScriptMode) {
       case JavaScriptMode.disabled:
         await preferences.setJavaScriptEnabled(false);
       case JavaScriptMode.unrestricted:
         await preferences.setJavaScriptEnabled(true);
-    }
-    final bool? javaScriptCanOpenWindowsAutomatically =
-        _webKitParams.javaScriptCanOpenWindowsAutomatically;
-    if (javaScriptCanOpenWindowsAutomatically != null) {
-      await preferences.setJavaScriptCanOpenWindowsAutomatically(
-        javaScriptCanOpenWindowsAutomatically,
-      );
     }
   }
 
