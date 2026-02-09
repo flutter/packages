@@ -1,3 +1,7 @@
+## 3.23.6
+
+* Adds `$(inherited)` to xcconfig search paths to fix linker errors on Xcode 26.
+
 ## 3.23.5
 
 * Removes internal native library Dart proxy.
