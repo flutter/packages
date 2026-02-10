@@ -30,7 +30,6 @@ void main() {
     runner.addCommand(command);
   });
 
-
   group('flags', () {
     test('fails if --changelog is missing', () async {
       Error? commandError;
