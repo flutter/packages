@@ -5,6 +5,8 @@
 import 'package:cross_file_io/cross_file_io.dart';
 import 'package:cross_file_platform_interface/cross_file_platform_interface.dart';
 
+import 'darwin_cross_directory.dart';
+import 'darwin_cross_file.dart';
 import 'darwin_scoped_storage_cross_directory.dart';
 import 'darwin_scoped_storage_cross_file.dart';
 
@@ -13,6 +15,18 @@ base class CrossFileDarwin extends CrossFileIO {
   /// Registers this class as the default instance of [CrossFilePlatform].
   static void registerWith() {
     CrossFilePlatform.instance = CrossFileDarwin();
+  }
+
+  @override
+  DarwinXFile createPlatformXFile(PlatformXFileCreationParams params) {
+    return DarwinXFile(params);
+  }
+
+  @override
+  DarwinXDirectory createPlatformXDirectory(
+    PlatformXDirectoryCreationParams params,
+  ) {
+    return DarwinXDirectory(params);
   }
 
   @override

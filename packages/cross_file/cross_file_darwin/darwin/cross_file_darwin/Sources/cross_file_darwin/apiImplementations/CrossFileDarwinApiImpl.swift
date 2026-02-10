@@ -77,4 +77,12 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
   func list(url: String) throws -> [String] {
     return try fileManager.contentsOfDirectory(atPath: url)
   }
+
+    func startAccessingSecurityScopedResource(url: String) throws -> Bool {
+        return URL(fileURLWithPath: url).startAccessingSecurityScopedResource()
+    }
+
+    func stopAccessingSecurityScopedResource(url: String) throws {
+        URL(fileURLWithPath: url).stopAccessingSecurityScopedResource()
+    }
 }

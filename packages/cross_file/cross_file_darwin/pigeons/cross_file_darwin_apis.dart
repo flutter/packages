@@ -44,6 +44,14 @@ abstract class CrossFileDarwinApi {
   /// Performs a shallow search of the specified directory and returns the paths
   /// of any contained items.
   List<String> list(String url);
+
+  /// In an app that has adopted App Sandbox, makes the resource pointed to by a
+  /// security-scoped URL available to the app.
+  bool startAccessingSecurityScopedResource(String url);
+
+  /// In an app that adopts App Sandbox, revokes access to the resource pointed
+  /// to by a security-scoped URL.
+  void stopAccessingSecurityScopedResource(String url);
 }
 
 /// An object-oriented wrapper for a file descriptor.
