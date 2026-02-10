@@ -291,7 +291,18 @@ class GoogleMap extends StatefulWidget {
   /// Called every time a [GoogleMap] is long pressed.
   final ArgumentCallback<LatLng>? onLongPress;
 
-  /// Called when all the visible tiles have been loaded and rendered.
+  /// Called when the map has finished rendering.
+  ///
+  /// **Platform-specific behavior:**
+  /// - **Android**: Called once when all visible tiles have been loaded and rendered.
+  ///   This is a one-time callback for the initial map load.
+  /// - **iOS**: Called when tile rendering completes, which can occur multiple times
+  ///   (e.g., after camera movements, zoom changes).
+  /// - **Web**: Similar to iOS, can be called multiple times when tiles reload.
+  ///
+  /// For cross-platform consistency when you need to detect ongoing map state changes,
+  /// consider using [onCameraIdle] instead, which fires on all platforms after
+  /// camera movements complete and the map stabilizes.
   final VoidCallback? onMapLoaded;
 
   /// True if a "My Location" layer should be shown on the map.
