@@ -30,6 +30,7 @@ void main() {
     runner.addCommand(command);
   });
 
+
   group('flags', () {
     test('fails if --changelog is missing', () async {
       Error? commandError;
@@ -918,7 +919,11 @@ packages/a_package/lib/plugin.dart
         expect(
           output,
           containsAllInOrder(<Matcher>[
-            contains('  Created pending changelog entry: change_'),
+            contains(
+              RegExp(
+                r'  Created pending changelog entry: change_\d{4}_\d{2}_\d{2}_\d+\.yaml',
+              ),
+            ),
           ]),
         );
 

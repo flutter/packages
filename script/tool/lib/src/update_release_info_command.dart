@@ -303,7 +303,7 @@ class UpdateReleaseInfoCommand extends PackageLoopingCommand {
 
   /// Updates the `pubspec.yaml` and `CHANGELOG.md` files directly.
   ///
-  /// This is used for standard releases, where changes will be released
+  /// This is used for continuous releases, where changes will be released
   /// immediately.
   Future<PackageResult> _updatePubspecAndChangelog(
     RepositoryPackage package, {
@@ -380,7 +380,10 @@ changelog: |
 ${changelogEntry.split('\n').map((line) => '  - $line').join('\n')}
 version: ${type.name}
 ''';
-    final filename = 'change_${DateTime.now().millisecondsSinceEpoch}.yaml';
+    final now = DateTime.now();
+    final date =
+        '${now.year}_${now.month.toString().padLeft(2, '0')}_${now.day.toString().padLeft(2, '0')}';
+    final filename = 'change_${date}_${now.millisecondsSinceEpoch}.yaml';
     final File file = pendingDirectory.childFile(filename);
     file.writeAsStringSync(content);
     print('${indentation}Created pending changelog entry: $filename');
