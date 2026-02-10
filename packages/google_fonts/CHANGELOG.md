@@ -1,3 +1,38 @@
+## 8.0.1
+
+- Fixes WOFF2/WOFF font selection when loading fonts bundled with the app to prefer compressed formats regardless of asset manifest order.
+
+## 8.0.0
+
+- Added fonts:
+  - `Amarna`
+  - `BBH Bartle`
+  - `BBH Bogle`
+  - `BBH Hegarty`
+  - `Cause`
+  - `Elms Sans`
+  - `Geom`
+  - `Google Sans`
+  - `Google Sans Flex`
+  - `Kedebideri`
+  - `Lilex`
+  - `Momo Signature`
+  - `Momo Trust Display`
+  - `Momo Trust Sans`
+  - `Noto Sans Syriac Western`
+  - `Science Gothic`
+  - `Sekuya`
+  - `Stack Sans Headline`
+  - `Stack Sans Notch`
+  - `Stack Sans Text`
+- Removed fonts:
+  - `Chiron GoRound TC`
+  - `Chiron Sung HK`
+
+## 7.1.0
+
+- Adds support for WOFF2 and WOFF font formats on web platforms when loading fonts bundled with the app, providing improved performance and smaller bundle sizes.
+
 ## 7.0.2
 
 - Adds missing public API documentation

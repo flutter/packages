@@ -714,7 +714,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/url_launcher_example_example.app/Contents/MacOS/url_launcher_example_example";
 			};
 			name = Debug;
@@ -733,7 +733,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/url_launcher_example_example.app/Contents/MacOS/url_launcher_example_example";
 			};
 			name = Release;
@@ -752,7 +752,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = dev.flutter.plugins.RunnerTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/url_launcher_example_example.app/Contents/MacOS/url_launcher_example_example";
 			};
 			name = Profile;

@@ -71,7 +71,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
   BOOL _listenersRegistered;
 }
 
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+- (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
                          avFactory:(id<FVPAVFactory>)avFactory
                       viewProvider:(NSObject<FVPViewProvider> *)viewProvider {
   self = [super init];
@@ -79,7 +79,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
 
   _viewProvider = viewProvider;
 
-  AVAsset *asset = [item asset];
+  NSObject<FVPAVAsset> *asset = item.asset;
   void (^assetCompletionHandler)(void) = ^{
     if ([asset statusOfValueForKey:@"tracks" error:nil] == AVKeyValueStatusLoaded) {
       void (^processVideoTracks)(NSArray<AVAssetTrack *> *) = ^(NSArray<AVAssetTrack *> *tracks) {
@@ -100,9 +100,9 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
               // Video composition can only be used with file-based media and is not supported for
               // use with media served using HTTP Live Streaming.
               AVMutableVideoComposition *videoComposition =
-                  [self getVideoCompositionWithTransform:self->_preferredTransform
-                                               withAsset:asset
-                                          withVideoTrack:videoTrack];
+                  [self videoCompositionWithTransform:self->_preferredTransform
+                                                asset:asset
+                                           videoTrack:videoTrack];
               item.videoComposition = videoComposition;
             }
           };
@@ -142,7 +142,7 @@ static NSDictionary<NSString *, NSValue *> *FVPGetPlayerItemObservations(void) {
     (id)kCVPixelBufferPixelFormatTypeKey : @(kCVPixelFormatType_32BGRA),
     (id)kCVPixelBufferIOSurfacePropertiesKey : @{}
   };
-  _videoOutput = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
+  _pixelBufferSource = [avFactory videoOutputWithPixelBufferAttributes:pixBuffAttributes];
 
   [asset loadValuesAsynchronouslyForKeys:@[ @"tracks" ] completionHandler:assetCompletionHandler];
 
@@ -227,12 +227,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   return degrees;
 };
 
-- (AVMutableVideoComposition *)getVideoCompositionWithTransform:(CGAffineTransform)transform
-                                                      withAsset:(AVAsset *)asset
-                                                 withVideoTrack:(AVAssetTrack *)videoTrack {
+- (AVMutableVideoComposition *)videoCompositionWithTransform:(CGAffineTransform)transform
+                                                       asset:(NSObject<FVPAVAsset> *)asset
+                                                  videoTrack:(AVAssetTrack *)videoTrack {
   AVMutableVideoCompositionInstruction *instruction =
       [AVMutableVideoCompositionInstruction videoCompositionInstruction];
-  instruction.timeRange = CMTimeRangeMake(kCMTimeZero, [asset duration]);
+  instruction.timeRange = CMTimeRangeMake(kCMTimeZero, asset.duration);
   AVMutableVideoCompositionLayerInstruction *layerInstruction =
       [AVMutableVideoCompositionLayerInstruction
           videoCompositionLayerInstructionWithAssetTrack:videoTrack];
@@ -308,7 +308,7 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
       break;
     case AVPlayerItemStatusReadyToPlay:
       if (!_isInitialized) {
-        [item addOutput:_videoOutput];
+        [item addOutput:self.pixelBufferSource.videoOutput];
         [self reportInitialized];
         [self updatePlayingState];
       }
@@ -441,6 +441,70 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)setPlaybackSpeed:(double)speed error:(FlutterError *_Nullable *_Nonnull)error {
   _targetPlaybackSpeed = @(speed);
   [self updatePlayingState];
+}
+
+- (nullable NSArray<FVPMediaSelectionAudioTrackData *> *)getAudioTracks:
+    (FlutterError *_Nullable *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  NSAssert(currentItem, @"currentItem should not be nil");
+  AVAsset *asset = currentItem.asset;
+
+  // Get tracks from media selection (for HLS streams)
+  AVMediaSelectionGroup *audioGroup =
+      [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  NSMutableArray<FVPMediaSelectionAudioTrackData *> *mediaSelectionTracks =
+      [[NSMutableArray alloc] init];
+
+  if (audioGroup.options.count > 0) {
+    AVMediaSelection *mediaSelection = currentItem.currentMediaSelection;
+    AVMediaSelectionOption *currentSelection =
+        [mediaSelection selectedMediaOptionInMediaSelectionGroup:audioGroup];
+
+    for (NSInteger i = 0; i < audioGroup.options.count; i++) {
+      AVMediaSelectionOption *option = audioGroup.options[i];
+      NSString *displayName = option.displayName;
+
+      NSString *languageCode = nil;
+      if (option.locale) {
+        languageCode = option.locale.languageCode;
+      }
+
+      NSArray<AVMetadataItem *> *titleItems =
+          [AVMetadataItem metadataItemsFromArray:option.commonMetadata
+                                         withKey:AVMetadataCommonKeyTitle
+                                        keySpace:AVMetadataKeySpaceCommon];
+      NSString *commonMetadataTitle = titleItems.firstObject.stringValue;
+
+      BOOL isSelected = [currentSelection isEqual:option];
+
+      FVPMediaSelectionAudioTrackData *trackData =
+          [FVPMediaSelectionAudioTrackData makeWithIndex:i
+                                             displayName:displayName
+                                            languageCode:languageCode
+                                              isSelected:isSelected
+                                     commonMetadataTitle:commonMetadataTitle];
+
+      [mediaSelectionTracks addObject:trackData];
+    }
+  }
+
+  return mediaSelectionTracks;
+}
+
+- (void)selectAudioTrackAtIndex:(NSInteger)trackIndex
+                          error:(FlutterError *_Nullable __autoreleasing *_Nonnull)error {
+  AVPlayerItem *currentItem = _player.currentItem;
+  NSAssert(currentItem, @"currentItem should not be nil");
+  AVAsset *asset = currentItem.asset;
+
+  AVMediaSelectionGroup *audioGroup =
+      [asset mediaSelectionGroupForMediaCharacteristic:AVMediaCharacteristicAudible];
+
+  if (audioGroup && trackIndex >= 0 && trackIndex < (NSInteger)audioGroup.options.count) {
+    AVMediaSelectionOption *option = audioGroup.options[trackIndex];
+    [currentItem selectMediaOption:option inMediaSelectionGroup:audioGroup];
+  }
 }
 
 #pragma mark - Private

@@ -2,10 +2,13 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+@import AVFoundation;
+
 #import "FVPDisplayLink.h"
 #import "FVPFrameUpdater.h"
 #import "FVPVideoPlayer.h"
 #import "FVPVideoPlayer_Internal.h"
+#import "FVPViewProvider.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FVPTextureBasedVideoPlayer : FVPVideoPlayer <FlutterTexture>
 /// Initializes a new instance of FVPTextureBasedVideoPlayer with the given player item,
 /// frame updater, display link, AV factory, and view provider.
-- (instancetype)initWithPlayerItem:(AVPlayerItem *)item
+- (instancetype)initWithPlayerItem:(NSObject<FVPAVPlayerItem> *)item
                       frameUpdater:(FVPFrameUpdater *)frameUpdater
                        displayLink:(NSObject<FVPDisplayLink> *)displayLink
                          avFactory:(id<FVPAVFactory>)avFactory
