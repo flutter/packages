@@ -420,11 +420,21 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
 - (void)playWithError:(FlutterError *_Nullable *_Nonnull)error {
   _isPlaying = YES;
   [self updatePlayingState];
+#if TARGET_OS_IOS
+  if (_enableBackgroundPlayback) {
+    [self updateNowPlayingPlaybackState];
+  }
+#endif
 }
 
 - (void)pauseWithError:(FlutterError *_Nullable *_Nonnull)error {
   _isPlaying = NO;
   [self updatePlayingState];
+#if TARGET_OS_IOS
+  if (_enableBackgroundPlayback) {
+    [self updateNowPlayingPlaybackState];
+  }
+#endif
 }
 
 - (nullable NSNumber *)position:(FlutterError *_Nullable *_Nonnull)error {
@@ -774,6 +784,12 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   }
 
   [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfo;
+
+  // Set initial playbackState for CarPlay CPNowPlayingTemplate.
+  if (@available(iOS 14.0, *)) {
+    [MPNowPlayingInfoCenter defaultCenter].playbackState =
+        _isPlaying ? MPNowPlayingPlaybackStatePlaying : MPNowPlayingPlaybackStatePaused;
+  }
 }
 
 - (void)updateNowPlayingPlaybackState {
@@ -793,10 +809,24 @@ NS_INLINE CGFloat radiansToDegrees(CGFloat radians) {
   nowPlayingInfo[MPNowPlayingInfoPropertyPlaybackRate] = @(_isPlaying ? _player.rate : 0.0);
 
   [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nowPlayingInfo;
+
+  // Update playbackState explicitly for CarPlay CPNowPlayingTemplate.
+  // The lock screen / Control Center infers play/pause from playbackRate in the
+  // nowPlayingInfo dictionary, but CarPlay's CPNowPlayingTemplate reads the
+  // playbackState property instead.  Although Apple documents this as macOS-only,
+  // it works on iOS 14+ and is required for CarPlay to reflect the correct
+  // play/pause button state.
+  if (@available(iOS 14.0, *)) {
+    [MPNowPlayingInfoCenter defaultCenter].playbackState =
+        _isPlaying ? MPNowPlayingPlaybackStatePlaying : MPNowPlayingPlaybackStatePaused;
+  }
 }
 
 - (void)clearNowPlayingInfo {
   [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = nil;
+  if (@available(iOS 14.0, *)) {
+    [MPNowPlayingInfoCenter defaultCenter].playbackState = MPNowPlayingPlaybackStateStopped;
+  }
 }
 
 - (void)setupTimeObserver {
