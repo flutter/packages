@@ -12,7 +12,6 @@ import Testing
   import FlutterMacOS
 #endif
 
-
 @MainActor struct VideoPlayerTests {
 
   let mp4TestURI = "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
