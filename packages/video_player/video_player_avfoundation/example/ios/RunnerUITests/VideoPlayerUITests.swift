@@ -6,18 +6,16 @@ import XCTest
 
 @MainActor
 class VideoPlayerUITests: XCTestCase {
-  var app: XCUIApplication!
 
-  override func setUp() async throws {
-    try await super.setUp()
+  override func setUp() {
+    super.setUp()
     continueAfterFailure = false
-
-    app = XCUIApplication()
-    app.launch()
   }
 
   func testPlayVideo() {
-    let app = self.app!
+    let app = XCUIApplication()
+    app.launch()
+
     let remoteTab = app.otherElements.matching(NSPredicate(format: "selected == YES")).element(
       boundBy: 0)
     XCTAssertTrue(remoteTab.waitForExistence(timeout: 30.0))
