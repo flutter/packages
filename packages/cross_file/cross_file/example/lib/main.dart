@@ -39,9 +39,9 @@ class FileOpenScreen extends StatelessWidget {
           debugPrint('File Last Modified: ${await file.lastModified()}');
           return;
       }
+    } else {
+      debugPrint('No file selected.');
     }
-
-    debugPrint('No file selected.');
   }
 
   Future<void> _openDirectory() async {
