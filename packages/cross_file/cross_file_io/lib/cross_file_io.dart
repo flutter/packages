@@ -3,5 +3,5 @@
 // found in the LICENSE file.
 
 export 'src/cross_file_io.dart';
-export 'src/io_cross_directory.dart' show IOXDirectoryCreationParams, IOXDirectoryExtension;
-export 'src/io_cross_file.dart' show IOXFileCreationParams, IOXFileExtension;
+export 'src/io_cross_directory.dart';
+export 'src/io_cross_file.dart';
