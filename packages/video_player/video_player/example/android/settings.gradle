@@ -14,6 +14,18 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.id == "com.android.application" && requested.id.id != null) {
+                gradle.ext.capturedAgpVersion = requested.version
+                println "===================================================="
+                println "At the flutter app project-level settings.gradle file."
+                println "AGP version from settings: $gradle.capturedAgpVersion"
+                println "===================================================="
+            }
+        }
+    }
 }
 
 // See https://github.com/flutter/flutter/blob/master/docs/ecosystem/Plugins-and-Packages-repository-structure.md#gradle-structure for more info.

@@ -1,8 +1,10 @@
-plugins {
-    id "com.android.application"
-    id "org.jetbrains.kotlin.android"
-    id "dev.flutter.flutter-gradle-plugin"
+apply plugin: "com.android.application"
+
+if (!gradle.hasProperty('capturedAgpVersion') || gradle.capturedAgpVersion != "9.0.0") {
+    apply plugin: "org.jetbrains.kotlin.android"
 }
+
+apply plugin: "dev.flutter.flutter-gradle-plugin"
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
