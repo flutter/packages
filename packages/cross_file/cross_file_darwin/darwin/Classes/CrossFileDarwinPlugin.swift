@@ -38,7 +38,7 @@ public class CrossFileDarwinPlugin: NSObject, FlutterPlugin {
       let messenger = registrar.messenger
     #endif
 
-    CrossFileDarwinApiSetup.setUp(binaryMessenger: registrar.messenger(), api: nil)
+    CrossFileDarwinApiSetup.setUp(binaryMessenger: messenger, api: nil)
     proxyApiRegistrar!.ignoreCallsToDart = true
     proxyApiRegistrar!.tearDown()
     proxyApiRegistrar = nil

@@ -16,7 +16,6 @@ dependencies:
   flutter:
     sdk: flutter
   mime: ^2.0.0
-  video_player: ^2.8.6
 
 dev_dependencies:
   flutter_test:

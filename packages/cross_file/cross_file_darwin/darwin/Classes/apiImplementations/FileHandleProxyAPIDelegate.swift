@@ -2,7 +2,14 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+#if os(iOS)
 import Flutter
+#elseif os(macOS)
+import FlutterMacOS
+#else
+#error("Unsupported platform.")
+#endif
+
 import Foundation
 
 /// ProxyApi implementation for `FileHandle`.
@@ -18,7 +25,7 @@ class FileHandleProxyAPIDelegate: PigeonApiDelegateFileHandle {
     throws -> FlutterStandardTypedData?
   {
     var data: Data?
-    if #available(iOS 13.4, *) {
+    if #available(iOS 13.4, macOS 10.15.4, *) {
       data = try pigeonInstance.read(upToCount: Int(count))
     } else {
       data = pigeonInstance.readData(ofLength: Int(count))
@@ -35,7 +42,7 @@ class FileHandleProxyAPIDelegate: PigeonApiDelegateFileHandle {
     -> FlutterStandardTypedData?
   {
     var bytes: Data?
-    if #available(iOS 13.4, *) {
+    if #available(iOS 13.4, macOS 10.15.4, *) {
       bytes = try pigeonInstance.readToEnd()
     } else {
       bytes = pigeonInstance.readDataToEndOfFile()
