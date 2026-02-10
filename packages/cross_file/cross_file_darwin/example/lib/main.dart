@@ -44,6 +44,28 @@ class FileOpenScreen extends StatelessWidget {
     debugPrint('No file selected.');
   }
 
+  Future<void> _openDirectory() async {
+    final XDirectory? directory = await getDirectoryPath();
+
+    if (directory != null) {
+      debugPrint('Directory Uri: ${directory.uri}');
+      debugPrint('Directory exists: ${await directory.exists()}');
+
+      debugPrint('List of Entities:');
+      await for (final XFileEntity entity in directory.list()) {
+        switch (entity) {
+          case final XFile file:
+            final String filename = await file.name() ?? file.uri;
+            debugPrint('\tFile: $filename');
+          case final XDirectory directory:
+            debugPrint('\tDirectory: ${directory.uri}');
+        }
+      }
+    } else {
+      debugPrint('No directory selected.');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,6 +84,14 @@ class FileOpenScreen extends StatelessWidget {
               ),
               child: const Text('Open File'),
               onPressed: () => _openFile(context),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.blue,
+                backgroundColor: Colors.white,
+              ),
+              child: const Text('Open Directory'),
+              onPressed: () => _openDirectory(),
             ),
           ],
         ),
