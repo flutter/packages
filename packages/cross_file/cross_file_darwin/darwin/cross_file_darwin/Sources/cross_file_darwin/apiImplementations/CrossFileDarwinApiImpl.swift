@@ -14,12 +14,6 @@ import Foundation
 
 /// Implementation of `CrossFileDarwinApi`.
 class CrossFileDarwinApiImpl: CrossFileDarwinApi {
-  let fileManager: FileManager
-
-  init(fileManager: FileManager = FileManager.default) {
-    self.fileManager = fileManager
-  }
-
   func tryCreateBookmarkedUrl(url: String) throws -> String? {
     let nativeUrl = URL(fileURLWithPath: url)
     if nativeUrl.startAccessingSecurityScopedResource() {

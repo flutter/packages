@@ -3,3 +3,8 @@
 //
 
 import Foundation
+
+
+struct A: URL {
+  
+}
