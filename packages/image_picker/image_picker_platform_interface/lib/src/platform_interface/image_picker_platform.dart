@@ -241,6 +241,8 @@ abstract class ImagePickerPlatform extends PlatformInterface {
   /// The `preferredCameraDevice` is ignored when `source` is [ImageSource.gallery]. It is also ignored if the chosen camera is not supported on the device.
   /// Defaults to [CameraDevice.rear].
   ///
+  /// The [quality] argument specifies the video quality for recording/picking. Defaults to [VideoQuality.high].
+  ///
   /// In Android, the MainActivity can be destroyed for various reasons. If that happens, the result will be lost
   /// in this call. You can then call [getLostData] when your app relaunches to retrieve the lost data.
   ///
@@ -249,6 +251,7 @@ abstract class ImagePickerPlatform extends PlatformInterface {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) {
     throw UnimplementedError('getVideo() has not been implemented.');
   }
@@ -390,6 +393,7 @@ abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
     required ImageSource source,
     CameraDevice preferredCameraDevice = CameraDevice.rear,
     Duration? maxDuration,
+    VideoQuality quality = VideoQuality.high,
   }) async {
     if (source == ImageSource.camera) {
       final ImagePickerCameraDelegate? delegate = cameraDelegate;
@@ -410,6 +414,7 @@ abstract class CameraDelegatingImagePickerPlatform extends ImagePickerPlatform {
       source: source,
       preferredCameraDevice: preferredCameraDevice,
       maxDuration: maxDuration,
+      quality: quality,
     );
   }
 }

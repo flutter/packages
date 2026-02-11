@@ -389,6 +389,10 @@ public class ImagePickerDelegate
       int maxSeconds = localVideoOptions.getMaxDurationSeconds().intValue();
       intent.putExtra(MediaStore.EXTRA_DURATION_LIMIT, maxSeconds);
     }
+    if (localVideoOptions != null && localVideoOptions.getVideoQuality() != null) {
+      int videoQuality = localVideoOptions.getVideoQuality().intValue();
+      intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, videoQuality);
+    }
     if (cameraDevice == CameraDevice.FRONT) {
       useFrontCamera(intent);
     }

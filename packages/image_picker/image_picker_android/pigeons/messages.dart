@@ -44,10 +44,16 @@ class MediaSelectionOptions {
 
 /// Options for image selection and output.
 class VideoSelectionOptions {
-  VideoSelectionOptions({this.maxDurationSeconds});
+  VideoSelectionOptions({this.maxDurationSeconds, this.videoQuality});
 
   /// The maximum desired length for the video, in seconds.
   int? maxDurationSeconds;
+
+  /// The video quality setting for Android.
+  /// 0 = low quality, 1 = high quality
+  /// Note: Android only supports two quality levels, while iOS supports three.
+  /// Medium quality is mapped to high quality (1) on Android.
+  int? videoQuality;
 }
 
 // Corresponds to `CameraDevice` from the platform interface package.

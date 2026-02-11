@@ -940,6 +940,7 @@ class _FakeImagePickerApi implements ImagePickerApi {
   Future<String?> pickVideo(
     SourceSpecification source,
     int? maxDurationSeconds,
+    ApiVideoQuality? videoQuality,
   ) async {
     passedSelectionType = _SelectionType.video;
     passedSource = source;
