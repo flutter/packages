@@ -93,7 +93,7 @@ import Testing
     player.pauseWithError(&error)
     #expect(error == nil)
 
-    error = await player.seek(to: 1234)
+    await asyncSeekTo(player: player, time: 1234)
 
     // Seeking to a new position should start the display link temporarily.
     #expect(stubDisplayLinkFactory.displayLink.running)
@@ -158,7 +158,7 @@ import Testing
     player.playWithError(&error)
     #expect(error == nil)
 
-    error = await player.seek(to: 1234)
+    await asyncSeekTo(player: player, time: 1234)
 
     #expect(stubDisplayLinkFactory.displayLink.running)
 
@@ -357,7 +357,7 @@ import Testing
     let listener = StubEventListener()
     player.eventListener = listener
 
-    await player.seek(to: 1234)
+    await asyncSeekTo(player: player, time: 1234)
 
     #expect(inspectableAVPlayer.beforeTolerance?.intValue == 0)
     #expect(inspectableAVPlayer.afterTolerance?.intValue == 0)
@@ -373,7 +373,7 @@ import Testing
     let listener = StubEventListener()
     player.eventListener = listener
 
-    await player.seek(to: 0)
+    await asyncSeekTo(player: player, time: 0)
 
     #expect((inspectableAVPlayer.beforeTolerance?.intValue ?? 0) > 0)
     #expect((inspectableAVPlayer.afterTolerance?.intValue ?? 0) > 0)
@@ -824,6 +824,20 @@ import Testing
           observation?.invalidate()
           continuation.resume()
         }
+      }
+    }
+  }
+
+  // TODO(stuartmorgan): Remove this in favor of just `await player.seek(...)` once
+  // Pigeon is generating Swift 6-friendly output. Currently using the automatic async
+  // conversion generates warnings due to the lack of concurrency annotations
+  // ("non-sendable type 'FlutterError?' returned by implicitly asynchronous call to
+  // nonisolated function cannot cross actor boundary").
+  private func asyncSeekTo(player: FVPVideoPlayer, time: Int) async {
+    await withCheckedContinuation { continuation in
+      player.seek(to: time) { error in
+        #expect(error == nil)
+        continuation.resume()
       }
     }
   }
