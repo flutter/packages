@@ -12,16 +12,16 @@ import Testing
   import FlutterMacOS
 #endif
 
-@MainActor struct VideoPlayerTests {
+private let mp4TestURI =
+  "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
+private let hlsTestURI =
+  "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
+private let mp3AudioTestURI =
+  "https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"
+private let hlsAudioTestURI =
+  "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee_audio_only.m3u8"
 
-  private static let mp4TestURI =
-    "https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4"
-  private static let hlsTestURI =
-    "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee.m3u8"
-  private static let mp3AudioTestURI =
-    "https://flutter.github.io/assets-for-api-docs/assets/audio/rooster.mp3"
-  private static let hlsAudioTestURI =
-    "https://flutter.github.io/assets-for-api-docs/assets/videos/hls/bee_audio_only.m3u8"
+@MainActor struct VideoPlayerTests {
 
   @Test func blankVideoBugWithEncryptedVideoStreamAndInvertedAspectRatioBugForSomeVideoStream()
     throws
@@ -46,7 +46,7 @@ import Testing
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: VideoPlayerTests.mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
         error: &error))
     #expect(error == nil)
     let player =
@@ -64,7 +64,7 @@ import Testing
 
     var error: FlutterError?
     videoPlayerPlugin.createPlatformViewPlayer(
-      with: FVPCreationOptions.make(withUri: VideoPlayerTests.hlsTestURI, httpHeaders: [:]),
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
       error: &error)
     #expect(error == nil)
 
@@ -83,7 +83,7 @@ import Testing
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: VideoPlayerTests.hlsTestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
         error: &error))
     #expect(error == nil)
     let player =
@@ -119,7 +119,7 @@ import Testing
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: VideoPlayerTests.hlsTestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
         error: &error))
     #expect(error == nil)
 
@@ -148,7 +148,7 @@ import Testing
 
     var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(
-      with: FVPCreationOptions.make(withUri: VideoPlayerTests.hlsTestURI, httpHeaders: [:]),
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
       error: &error)
     #expect(error == nil)
     let player =
@@ -180,7 +180,7 @@ import Testing
 
     var error: FlutterError?
     let identifiers = videoPlayerPlugin.createTexturePlayer(
-      with: FVPCreationOptions.make(withUri: VideoPlayerTests.hlsTestURI, httpHeaders: [:]),
+      with: FVPCreationOptions.make(withUri: hlsTestURI, httpHeaders: [:]),
       error: &error)
     #expect(error == nil)
     let player =
@@ -202,7 +202,7 @@ import Testing
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: VideoPlayerTests.mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
         error: &error))
     #expect(error == nil)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
@@ -221,7 +221,7 @@ import Testing
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: VideoPlayerTests.mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
         error: &error))
     #expect(error == nil)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
@@ -253,21 +253,21 @@ import Testing
   }
 
   @Test func videoControls() async throws {
-    let eventListener = try await sanityTestURI(VideoPlayerTests.mp4TestURI)
+    let eventListener = try await sanityTestURI(mp4TestURI)
     #expect(eventListener.initializationSize.height == 720)
     #expect(eventListener.initializationSize.width == 1280)
     #expect(durationApproximatelyEquals(eventListener.initializationDuration, 4000, tolerance: 200))
   }
 
   @Test func audioControls() async throws {
-    let eventListener = try await sanityTestURI(VideoPlayerTests.mp3AudioTestURI)
+    let eventListener = try await sanityTestURI(mp3AudioTestURI)
     #expect(eventListener.initializationSize.height == 0)
     #expect(eventListener.initializationSize.width == 0)
     #expect(durationApproximatelyEquals(eventListener.initializationDuration, 5400, tolerance: 200))
   }
 
   @Test func hLSControls() async throws {
-    let eventListener = try await sanityTestURI(VideoPlayerTests.hlsTestURI)
+    let eventListener = try await sanityTestURI(hlsTestURI)
     #expect(eventListener.initializationSize.height == 720)
     #expect(eventListener.initializationSize.width == 1280)
     #expect(durationApproximatelyEquals(eventListener.initializationDuration, 4000, tolerance: 200))
@@ -275,7 +275,7 @@ import Testing
 
   @Test(.disabled("Flaky"), .bug("https://github.com/flutter/flutter/issues/164381"))
   func audioOnlyHLSControls() async throws {
-    let eventListener = try await sanityTestURI(VideoPlayerTests.hlsAudioTestURI)
+    let eventListener = try await sanityTestURI(hlsAudioTestURI)
     #expect(eventListener.initializationSize.height == 0)
     #expect(eventListener.initializationSize.width == 0)
     #expect(durationApproximatelyEquals(eventListener.initializationDuration, 4000, tolerance: 200))
@@ -437,7 +437,7 @@ import Testing
       var error: FlutterError?
       let identifiers = try #require(
         videoPlayerPlugin.createTexturePlayer(
-          with: FVPCreationOptions.make(withUri: VideoPlayerTests.mp4TestURI, httpHeaders: [:]),
+          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
           error: &error))
       #expect(error == nil)
 
@@ -482,7 +482,7 @@ import Testing
       var error: FlutterError?
       let identifiers = try #require(
         videoPlayerPlugin.createTexturePlayer(
-          with: FVPCreationOptions.make(withUri: VideoPlayerTests.mp4TestURI, httpHeaders: [:]),
+          with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
           error: &error))
       #expect(error == nil)
 
@@ -534,7 +534,7 @@ import Testing
 
   @Test func updatePlayingStateShouldNotResetRate() async throws {
     let realObjectFactory = FVPDefaultAVFactory()
-    let testURL = try #require(URL(string: VideoPlayerTests.mp4TestURI))
+    let testURL = try #require(URL(string: mp4TestURI))
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
       avFactory: realObjectFactory,
@@ -565,7 +565,7 @@ import Testing
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: VideoPlayerTests.mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
         error: &error))
     #expect(error == nil)
     let playerIdentifier = identifiers.playerId
@@ -596,7 +596,7 @@ import Testing
     var error: FlutterError?
     let identifiers = try #require(
       videoPlayerPlugin.createTexturePlayer(
-        with: FVPCreationOptions.make(withUri: VideoPlayerTests.mp4TestURI, httpHeaders: [:]),
+        with: FVPCreationOptions.make(withUri: mp4TestURI, httpHeaders: [:]),
         error: &error))
     #expect(error == nil)
     let player = videoPlayerPlugin.playersByIdentifier[identifiers.playerId] as! FVPVideoPlayer
@@ -650,7 +650,7 @@ import Testing
   // Regular MP4 files do not have media selection groups, so getAudioTracks returns an empty array.
   @Test func getAudioTracksWithRealMP4Video() async throws {
     let realObjectFactory = FVPDefaultAVFactory()
-    let testURL = try #require(URL(string: VideoPlayerTests.mp4TestURI))
+    let testURL = try #require(URL(string: mp4TestURI))
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
       avFactory: realObjectFactory,
@@ -677,7 +677,7 @@ import Testing
   // HLS streams use media selection groups for audio track selection.
   @Test func getAudioTracksWithRealHLSStream() async throws {
     let realObjectFactory = FVPDefaultAVFactory()
-    let hlsURL = try #require(URL(string: VideoPlayerTests.hlsTestURI))
+    let hlsURL = try #require(URL(string: hlsTestURI))
 
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: hlsURL, factory: realObjectFactory),
@@ -711,7 +711,7 @@ import Testing
     // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
     let realObjectFactory = FVPDefaultAVFactory()
-    let audioURL = try #require(URL(string: VideoPlayerTests.mp3AudioTestURI))
+    let audioURL = try #require(URL(string: mp3AudioTestURI))
 
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: audioURL, factory: realObjectFactory),
@@ -741,7 +741,7 @@ import Testing
     // TODO(stuartmorgan): Add more use of protocols in FVPVideoPlayer so that this test
     // can use a fake item/asset instead of loading an actual remote asset.
     let realObjectFactory = FVPDefaultAVFactory()
-    let testURL = try #require(URL(string: VideoPlayerTests.mp4TestURI))
+    let testURL = try #require(URL(string: mp4TestURI))
     let player = FVPVideoPlayer(
       playerItem: playerItem(with: testURL, factory: realObjectFactory),
       avFactory: realObjectFactory,
