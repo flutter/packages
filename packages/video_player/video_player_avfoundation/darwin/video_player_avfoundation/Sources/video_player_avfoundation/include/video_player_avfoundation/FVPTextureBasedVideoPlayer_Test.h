@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Called when the texture is unregistered.
 /// This method is used to clean up resources associated with the texture.
-- (void)onTextureUnregistered:(nullable NSObject<FlutterTexture> *)texture;
+- (void)onTextureUnregistered:(NSObject<FlutterTexture> *)texture;
 @end
 
 NS_ASSUME_NONNULL_END
