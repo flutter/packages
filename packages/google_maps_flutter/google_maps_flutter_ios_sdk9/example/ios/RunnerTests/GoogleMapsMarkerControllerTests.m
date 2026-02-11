@@ -268,6 +268,23 @@
   XCTAssertTrue(marker.hasSetMap);
 }
 
+- (void)testAssetProviderIsRetained {
+  FLTMarkersController *markerController;
+  __weak TestAssetProvider *weakAssetProvider;
+  @autoreleasepool {
+    TestAssetProvider *assetProvider = [[TestAssetProvider alloc] init];
+    weakAssetProvider = assetProvider;
+
+    markerController =
+        [[FLTMarkersController alloc] initWithMapView:[GoogleMapsMarkerControllerTests mapView]
+                                        eventDelegate:[[TestMapEventHandler alloc] init]
+                            clusterManagersController:nil
+                                        assetProvider:assetProvider];
+  }
+  XCTAssertNotNil(markerController);
+  XCTAssertNotNil(weakAssetProvider, @"AssetProvider should be retained by the marker controller");
+}
+
 @end
 
 @implementation PropertyOrderValidatingMarker

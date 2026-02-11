@@ -8,6 +8,7 @@
 
 #import "PartiallyMockedMapView.h"
 #import "TestAssetProvider.h"
+#import "TestMapEventHandler.h"
 
 /// A GMSGroundOverlay that ensures that property updates are made before the map is set.
 @interface PropertyOrderValidatingGroundOverlay : GMSGroundOverlay {
@@ -209,6 +210,21 @@
                     screenScale:1.0
                     usingBounds:YES];
   XCTAssertTrue(groundOverlay.hasSetMap);
+}
+
+- (void)testAssetProviderIsRetained {
+  FLTGroundOverlaysController *groundOverlayController;
+  __weak TestAssetProvider *weakAssetProvider;
+  @autoreleasepool {
+    TestAssetProvider *assetProvider = [[TestAssetProvider alloc] init];
+    weakAssetProvider = assetProvider;
+    groundOverlayController = [[FLTGroundOverlaysController alloc]
+        initWithMapView:[GoogleMapsGroundOverlayControllerTests mapView]
+          eventDelegate:[[TestMapEventHandler alloc] init]
+          assetProvider:assetProvider];
+  }
+  XCTAssertNotNil(groundOverlayController);
+  XCTAssertNotNil(weakAssetProvider);
 }
 
 /// Returns a simple map view to add map objects to.
