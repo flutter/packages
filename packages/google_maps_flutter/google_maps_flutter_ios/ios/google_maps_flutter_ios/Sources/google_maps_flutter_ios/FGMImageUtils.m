@@ -80,7 +80,6 @@ UIImage *FGMIconFromBitmap(FGMPlatformBitmap *platformBitmap,
     // Refer to the flutter google_maps_flutter_platform_interface package for details.
     FGMPlatformBitmapBytes *bitmapBytes = bitmap;
     @try {
-//      CGFloat mainScreenScale = screenScale;
       image = [UIImage imageWithData:bitmapBytes.byteData.data scale:screenScale];
     } @catch (NSException *exception) {
       @throw [NSException exceptionWithName:@"InvalidByteDescriptor"

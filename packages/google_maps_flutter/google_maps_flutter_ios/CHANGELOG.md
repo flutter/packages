@@ -1,3 +1,7 @@
+## 2.17.2
+
+* Adds UIScene compatibility.
+
 ## 2.17.1
 
 * Refactors code for improved testability.
