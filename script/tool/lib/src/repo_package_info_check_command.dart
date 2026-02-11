@@ -313,6 +313,14 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       ),
     );
 
+    if (isBatchRelease &&
+        (package.parsePubspec().version?.isPreRelease ?? false)) {
+      errors.add(
+        'Batch release packages must not have a pre-release version.\n'
+        'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+      );
+    }
+
     return errors;
   }
 
@@ -363,48 +371,47 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
       } else {
         // Validate content.
         final String content = batchWorkflowFile.readAsStringSync();
-        YamlMap? yaml;
+        final YamlMap yaml;
         try {
-          yaml = loadYaml(content) as YamlMap?;
+          yaml = loadYaml(content) as YamlMap;
         } catch (e) {
           errors.add('Invalid YAML in ${packageName}_batch.yml: $e');
+          return errors;
         }
 
-        if (yaml != null) {
-          var foundDispatch = false;
-          final jobs = yaml['jobs'] as YamlMap?;
-          if (jobs != null) {
-            for (final Object? job in jobs.values) {
-              if (job is YamlMap && job['steps'] is YamlList) {
-                final steps = job['steps'] as YamlList;
-                for (final Object? step in steps) {
-                  if (step is YamlMap &&
-                      step['uses'] is String &&
-                      (step['uses'] as String).startsWith(
-                        'peter-evans/repository-dispatch',
-                      )) {
-                    final withArgs = step['with'] as YamlMap?;
-                    if (withArgs != null &&
-                        withArgs['event-type'] == 'batch-release-pr' &&
-                        withArgs['client-payload'] ==
-                            '{"package": "$packageName"}') {
-                      foundDispatch = true;
-                    }
+        var foundDispatch = false;
+        final jobs = yaml['jobs'] as YamlMap?;
+        if (jobs != null) {
+          for (final Object? job in jobs.values) {
+            if (job is YamlMap && job['steps'] is YamlList) {
+              final steps = job['steps'] as YamlList;
+              for (final Object? step in steps) {
+                if (step is YamlMap &&
+                    step['uses'] is String &&
+                    (step['uses'] as String).startsWith(
+                      'peter-evans/repository-dispatch',
+                    )) {
+                  final withArgs = step['with'] as YamlMap?;
+                  if (withArgs != null &&
+                      withArgs['event-type'] == 'batch-release-pr' &&
+                      withArgs['client-payload'] ==
+                          '{"package": "$packageName"}') {
+                    foundDispatch = true;
                   }
                 }
               }
             }
           }
+        }
 
-          if (!foundDispatch) {
-            errors.add(
-              'Invalid batch workflow content in ${packageName}_batch.yml. '
-              'Must contain a step using peter-evans/repository-dispatch with:\n'
-              '  event-type: batch-release-pr\n'
-              '  client-payload: \'{"package": "$packageName"}\'\n'
-              'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
-            );
-          }
+        if (!foundDispatch) {
+          errors.add(
+            'Invalid batch workflow content in ${packageName}_batch.yml. '
+            'Must contain a step using peter-evans/repository-dispatch with:\n'
+            '  event-type: batch-release-pr\n'
+            '  client-payload: \'{"package": "$packageName"}\'\n'
+            'See https://github.com/flutter/flutter/blob/master/docs/ecosystem/release/README.md#batch-release',
+          );
         }
       }
     } else {
@@ -436,24 +443,23 @@ class RepoPackageInfoCheckCommand extends PackageLoopingCommand {
     }
 
     final String content = workflowFile.readAsStringSync();
-    YamlMap? yaml;
+    final YamlMap yaml;
     try {
-      yaml = loadYaml(content) as YamlMap?;
+      yaml = loadYaml(content) as YamlMap;
     } catch (e) {
       errors.add('Invalid YAML in $workflowName: $e');
+      return errors;
     }
 
     var hasTrigger = false;
-    if (yaml != null) {
-      final on = yaml['on'] as YamlMap?;
-      if (on is YamlMap) {
-        final push = on['push'] as YamlMap?;
-        if (push is YamlMap) {
-          final branches = push['branches'] as YamlList?;
-          if (branches is YamlList) {
-            if (branches.contains('release-$packageName')) {
-              hasTrigger = true;
-            }
+    final on = yaml['on'] as YamlMap?;
+    if (on is YamlMap) {
+      final push = on['push'] as YamlMap?;
+      if (push is YamlMap) {
+        final branches = push['branches'] as YamlList?;
+        if (branches is YamlList) {
+          if (branches.contains('release-$packageName')) {
+            hasTrigger = true;
           }
         }
       }

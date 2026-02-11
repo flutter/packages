@@ -829,6 +829,39 @@ on:
       );
     });
 
+    test('fails if batch package has pre-release version', () async {
+      final RepositoryPackage package = setupReleaseStrategyTest();
+      writeBatchConfig(package);
+      writeWorkflowFiles();
+      package.pubspecFile.writeAsStringSync('''
+name: a_package
+version: 1.0.0-wip
+''');
+      gitProcessRunner.mockProcessesForExecutable['git-ls-remote'] =
+          <FakeProcessInfo>[
+            FakeProcessInfo(MockProcess()), // git ls-remote succeeds
+          ];
+
+      Error? commandError;
+      final List<String> output = await runCapturingPrint(
+        runner,
+        <String>['repo-package-info-check'],
+        errorHandler: (Error e) {
+          commandError = e;
+        },
+      );
+
+      expect(commandError, isA<ToolExit>());
+      expect(
+        output,
+        contains(
+          contains(
+            'Batch release packages must not have a pre-release version.',
+          ),
+        ),
+      );
+    });
+
     test('fails if batch workflow file is missing', () async {
       final RepositoryPackage package = setupReleaseStrategyTest();
       writeBatchConfig(package);
@@ -919,10 +952,10 @@ jobs:
           .childDirectory('workflows');
       workflowDir
           .childFile('release_from_branches.yml')
-          .writeAsStringSync('something');
+          .writeAsStringSync('name: something');
       workflowDir
           .childFile('sync_release_pr.yml')
-          .writeAsStringSync('something');
+          .writeAsStringSync('name: something');
 
       gitProcessRunner.mockProcessesForExecutable['git'] = <FakeProcessInfo>[
         FakeProcessInfo(MockProcess()),
