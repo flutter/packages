@@ -834,7 +834,8 @@ public class GoogleSignInTest {
     callbackCaptor
         .getValue()
         .onSuccess(
-            new AuthorizationResult(serverAuthCode, accessToken, "idToken", scopes, null, null));
+            new AuthorizationResult(
+                serverAuthCode, accessToken, "idToken", scopes, null, null, null));
     assertTrue(callbackCalled[0]);
   }
 
@@ -897,7 +898,7 @@ public class GoogleSignInTest {
     callbackCaptor
         .getValue()
         .onSuccess(
-            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent, null));
     assertTrue(callbackCalled[0]);
   }
 
@@ -934,7 +935,7 @@ public class GoogleSignInTest {
     callbackCaptor
         .getValue()
         .onSuccess(
-            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent, null));
     assertTrue(callbackCalled[0]);
   }
 
@@ -950,7 +951,8 @@ public class GoogleSignInTest {
     try {
       when(mockAuthorizationClient.getAuthorizationResultFromIntent(any()))
           .thenReturn(
-              new AuthorizationResult(serverAuthCode, accessToken, "idToken", scopes, null, null));
+              new AuthorizationResult(
+                  serverAuthCode, accessToken, "idToken", scopes, null, null, null));
     } catch (ApiException e) {
       fail();
     }
@@ -980,7 +982,7 @@ public class GoogleSignInTest {
     callbackCaptor
         .getValue()
         .onSuccess(
-            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent, null));
     try {
       verify(mockActivity)
           .startIntentSenderForResult(
@@ -1047,7 +1049,7 @@ public class GoogleSignInTest {
     callbackCaptor
         .getValue()
         .onSuccess(
-            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent, null));
 
     assertTrue(callbackCalled[0]);
   }
@@ -1090,7 +1092,7 @@ public class GoogleSignInTest {
     callbackCaptor
         .getValue()
         .onSuccess(
-            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent));
+            new AuthorizationResult(null, null, null, scopes, null, mockAuthorizationIntent, null));
     try {
       verify(mockActivity)
           .startIntentSenderForResult(
