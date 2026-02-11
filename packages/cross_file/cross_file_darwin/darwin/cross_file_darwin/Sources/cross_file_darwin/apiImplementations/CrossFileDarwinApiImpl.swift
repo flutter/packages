@@ -42,47 +42,11 @@ class CrossFileDarwinApiImpl: CrossFileDarwinApi {
     return nil
   }
 
-  func isReadableFile(url: String) throws -> Bool {
-    return fileManager.isReadableFile(atPath: url)
+  func startAccessingSecurityScopedResource(url: String) throws -> Bool {
+      return URL(fileURLWithPath: url).startAccessingSecurityScopedResource()
   }
 
-  func fileExists(url: String) throws -> FileExistsResult {
-    var isDirectory: ObjCBool = true
-    let exists = fileManager.fileExists(atPath: url, isDirectory: &isDirectory)
-    return FileExistsResult(exists: exists, isDirectory: isDirectory.boolValue)
+  func stopAccessingSecurityScopedResource(url: String) throws {
+      URL(fileURLWithPath: url).stopAccessingSecurityScopedResource()
   }
-
-  func fileIsDirectory(url: String) throws -> Bool {
-    var isDirectory: ObjCBool = true
-    return fileManager.fileExists(atPath: url, isDirectory: &isDirectory)
-      && isDirectory.boolValue
-  }
-
-  func fileModificationDate(url: String) throws -> Int64? {
-    let attributes: NSDictionary =
-      try fileManager.attributesOfItem(atPath: url) as NSDictionary
-    if let date = attributes.fileModificationDate() {
-      return Int64(date.timeIntervalSince1970 * 1000)
-    }
-
-    return nil
-  }
-
-  func fileSize(url: String) throws -> Int64? {
-    let attributes: NSDictionary =
-      try fileManager.attributesOfItem(atPath: url) as NSDictionary
-    return Int64(attributes.fileSize())
-  }
-
-  func list(url: String) throws -> [String] {
-    return try fileManager.contentsOfDirectory(atPath: url)
-  }
-
-    func startAccessingSecurityScopedResource(url: String) throws -> Bool {
-        return URL(fileURLWithPath: url).startAccessingSecurityScopedResource()
-    }
-
-    func stopAccessingSecurityScopedResource(url: String) throws {
-        URL(fileURLWithPath: url).stopAccessingSecurityScopedResource()
-    }
 }

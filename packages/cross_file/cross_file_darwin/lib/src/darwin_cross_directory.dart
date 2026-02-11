@@ -52,6 +52,11 @@ base class DarwinXDirectory extends IOXDirectory
   Future<void> stopAccessingSecurityScopedResource() {
     return params.api.stopAccessingSecurityScopedResource(params.uri);
   }
+
+  @override
+  Future<String?> toBookmarkedUri() async {
+    return params.api.tryCreateBookmarkedUrl(params.uri);
+  }
 }
 
 /// Provides platform specific features for [DarwinXDirectory].

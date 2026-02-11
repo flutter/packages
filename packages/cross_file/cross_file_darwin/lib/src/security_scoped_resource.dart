@@ -11,4 +11,11 @@ mixin SecurityScopedResource {
   /// In an app that adopts App Sandbox, revokes access to the resource pointed
   /// to by a security-scoped URL.
   Future<void> stopAccessingSecurityScopedResource();
+
+  /// Attempt to create a bookmarked URI that serves as a persistent reference
+  /// to the resource.
+  ///
+  /// Throws exception if the file could not be bookmarked or null if the
+  /// bookmark is stale.
+  Future<String?> toBookmarkedUri();
 }
