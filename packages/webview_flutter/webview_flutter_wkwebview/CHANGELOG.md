@@ -1,3 +1,7 @@
+## 3.23.7
+
+* Adds $(inherited) to xcconfig search paths to fix linker errors on Xcode 26.
+
 ## 3.23.6
 
 * Fixes a crash if WebViewFlutterWKWebViewExternalAPI is passed the wrong registry.
