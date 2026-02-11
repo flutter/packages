@@ -53,14 +53,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _launchInBrowser(String url) async {
     final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
-    if (!await launcher.launch(
-        url,
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: <String, String>{'my_header_key': 'my_header_value'},
+    if (!await launcher.launchUrl(
+      url,
+      const LaunchOptions(mode: PreferredLaunchMode.externalApplication),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -68,44 +63,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _launchInWebViewOrVC(String url) async {
     final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
-    if (!await launcher.launch(
-        url,
-        useSafariVC: true,
-        useWebView: true,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: <String, String>{'my_header_key': 'my_header_value'},
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchInWebViewWithJavaScript(String url) async {
-    final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
-    if (!await launcher.launch(
-        url,
-        useSafariVC: true,
-        useWebView: true,
-        enableJavaScript: true,
-        enableDomStorage: false,
-        universalLinksOnly: false,
-        headers: <String, String>{},
-    )) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  Future<void> _launchInWebViewWithDomStorage(String url) async {
-    final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
-    if (!await launcher.launch(
-        url,
-        useSafariVC: true,
-        useWebView: true,
-        enableJavaScript: false,
-        enableDomStorage: true,
-        universalLinksOnly: false,
-        headers: <String, String>{},
+    if (!await launcher.launchUrl(
+      url,
+      const LaunchOptions(mode: PreferredLaunchMode.inAppBrowserView),
     )) {
       throw Exception('Could not launch $url');
     }
@@ -113,24 +73,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _launchUniversalLinkIos(String url) async {
     final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
-      final bool nativeAppLaunchSucceeded = await launcher.launch(
+    final bool nativeAppLaunchSucceeded = await launcher.launchUrl(
+      url,
+      const LaunchOptions(
+        mode: PreferredLaunchMode.externalNonBrowserApplication,
+      ),
+    );
+    if (!nativeAppLaunchSucceeded) {
+      await launcher.launchUrl(
         url,
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: true,
-        headers: <String, String>{},
-      );
-      if (!nativeAppLaunchSucceeded) {
-        await launcher.launch(
-          url,
-          useSafariVC: true,
-          useWebView: true,
-          enableJavaScript: false,
-          enableDomStorage: false,
-          universalLinksOnly: true,
-          headers: <String, String>{},
+        const LaunchOptions(mode: PreferredLaunchMode.inAppBrowserView),
       );
     }
   }
@@ -145,15 +97,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _makePhoneCall(String url) async {
     final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
-    if (!await launcher.launch(
-        url,
-        useSafariVC: false,
-        useWebView: false,
-        enableJavaScript: false,
-        enableDomStorage: false,
-        universalLinksOnly: true,
-        headers: <String, String>{},
-    )) {
+    if (!await launcher.launchUrl(url, const LaunchOptions())) {
       throw Exception('Could not launch $url');
     }
   }
@@ -203,18 +147,6 @@ class _MyHomePageState extends State<MyHomePage> {
                   _launched = _launchInWebViewOrVC(toLaunch);
                 }),
                 child: const Text('Launch in app'),
-              ),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithJavaScript(toLaunch);
-                }),
-                child: const Text('Launch in app(JavaScript ON)'),
-              ),
-              ElevatedButton(
-                onPressed: () => setState(() {
-                  _launched = _launchInWebViewWithDomStorage(toLaunch);
-                }),
-                child: const Text('Launch in app(DOM storage ON)'),
               ),
               const Padding(padding: EdgeInsets.all(16.0)),
               ElevatedButton(
