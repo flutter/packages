@@ -57,6 +57,7 @@ class FileOpenScreen extends StatelessWidget {
           case final XFile file:
             final String filename = await file.name() ?? file.uri;
             debugPrint('\tFile: $filename');
+            debugPrint('\t\tFile Length: ${await file.length()}');
           case final XDirectory directory:
             debugPrint('\tDirectory: ${directory.uri}');
         }
