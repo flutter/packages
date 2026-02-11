@@ -651,8 +651,8 @@ class WebKitWebViewController extends PlatformWebViewController {
     final bool? javaScriptCanOpenWindowsAutomatically =
         _webKitParams.javaScriptCanOpenWindowsAutomatically;
     if (javaScriptCanOpenWindowsAutomatically != null) {
-      final WKPreferences preferences =
-          await _webView.configuration.getPreferences();
+      final WKPreferences preferences = await _webView.configuration
+          .getPreferences();
       await preferences.setJavaScriptCanOpenWindowsAutomatically(
         javaScriptCanOpenWindowsAutomatically,
       );
@@ -660,8 +660,9 @@ class WebKitWebViewController extends PlatformWebViewController {
 
     // Attempt to set the value that requires iOS 14+.
     try {
-      final WKWebpagePreferences webpagePreferences =
-          await _webView.configuration.getDefaultWebpagePreferences();
+      final WKWebpagePreferences webpagePreferences = await _webView
+          .configuration
+          .getDefaultWebpagePreferences();
       switch (javaScriptMode) {
         case JavaScriptMode.disabled:
           await webpagePreferences.setAllowsContentJavaScript(false);
@@ -677,8 +678,8 @@ class WebKitWebViewController extends PlatformWebViewController {
       rethrow;
     }
 
-    final WKPreferences preferences =
-        await _webView.configuration.getPreferences();
+    final WKPreferences preferences = await _webView.configuration
+        .getPreferences();
     switch (javaScriptMode) {
       case JavaScriptMode.disabled:
         await preferences.setJavaScriptEnabled(false);
