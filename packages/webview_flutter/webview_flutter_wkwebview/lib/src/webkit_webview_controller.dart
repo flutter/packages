@@ -154,14 +154,8 @@ class WebKitWebViewControllerCreationParams
 
   /// Whether JavaScript can open windows without user interaction.
   ///
-  /// Setting this to `true` allows JavaScript's `window.open()` to create
-  /// new windows automatically without requiring a user gesture.
-  ///
-  /// When `null`, the platform's native default is used:
-  /// - iOS: `false`
-  /// - macOS: `true`
-  ///
-  /// See https://developer.apple.com/documentation/webkit/wkpreferences/1536573-javascriptcanopenwindowsautomati
+  /// When `null`, the platform's native default is used
+  /// (`false` on iOS, `true` on macOS).
   final bool? javaScriptCanOpenWindowsAutomatically;
 }
 
