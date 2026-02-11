@@ -9,7 +9,8 @@ import 'package:pigeon/pigeon.dart';
 @ConfigurePigeon(
   PigeonOptions(
     dartOut: 'lib/src/cross_file_darwin_apis.g.dart',
-    swiftOut: 'darwin/Classes/CrossFileDarwinApis.g.swift',
+    swiftOut:
+        'darwin/cross_file_darwin/Sources/cross_file_darwin/CrossFileDarwinApis.g.swift',
     copyrightHeader: 'pigeons/copyright.txt',
   ),
 )
