@@ -1,3 +1,7 @@
+## 2.2.4
+
+* Updates README with example to scale SVG without losing quality
+
 ## 2.2.3
 
 * Replaces use of deprecated Color.value.
