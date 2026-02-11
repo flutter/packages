@@ -1,6 +1,10 @@
-## 2.17.2
+## 2.17.3
 
 * Adds UIScene compatibility.
+
+## 2.17.2
+
+* Fixes a regression in custom marker icon handling.
 
 ## 2.17.1
 
