@@ -8,3 +8,4 @@ export 'package:cross_file_platform_interface/cross_file_platform_interface.dart
 export 'src/cross_file_darwin.dart';
 export 'src/darwin_cross_directory.dart' show DarwinXDirectoryExtension;
 export 'src/darwin_cross_file.dart' show DarwinXFileExtension;
+export 'src/security_scoped_resource.dart';
