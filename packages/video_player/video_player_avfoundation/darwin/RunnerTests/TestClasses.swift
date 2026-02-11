@@ -15,13 +15,15 @@ import video_player_avfoundation
 
 /// An AVPlayer subclass that records method call parameters for inspection.
 // TODO(stuartmorgan): Replace with a protocol like the other classes.
-@MainActor class InspectableAVPlayer: AVPlayer {
+@MainActor final class InspectableAVPlayer: AVPlayer {
   private(set) nonisolated(unsafe) var beforeTolerance: NSNumber?
   private(set) nonisolated(unsafe) var afterTolerance: NSNumber?
   private(set) nonisolated(unsafe) var lastSeekTime: CMTime = .invalid
 
   override func seek(
-    to time: CMTime, toleranceBefore: CMTime, toleranceAfter: CMTime,
+    to time: CMTime,
+    toleranceBefore: CMTime,
+    toleranceAfter: CMTime,
     completionHandler: @escaping @Sendable (Bool) -> Void
   ) {
     beforeTolerance = NSNumber(value: toleranceBefore.value)
@@ -33,7 +35,7 @@ import video_player_avfoundation
   }
 }
 
-class TestAsset: NSObject, FVPAVAsset {
+final class TestAsset: NSObject, FVPAVAsset {
   let duration: CMTime
   let tracks: [AVAssetTrack]?
 
@@ -67,7 +69,7 @@ class TestAsset: NSObject, FVPAVAsset {
   }
 }
 
-class StubPlayerItem: NSObject, FVPAVPlayerItem {
+final class StubPlayerItem: NSObject, FVPAVPlayerItem {
   let asset: FVPAVAsset
   var videoComposition: AVVideoComposition?
 
@@ -77,20 +79,23 @@ class StubPlayerItem: NSObject, FVPAVPlayerItem {
   }
 }
 
-class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
+final class StubBinaryMessenger: NSObject, FlutterBinaryMessenger {
   func send(onChannel channel: String, message: Data?) {}
   func send(
-    onChannel channel: String, message: Data?, binaryReply callback: FlutterBinaryReply? = nil
+    onChannel channel: String,
+    message: Data?,
+    binaryReply callback: FlutterBinaryReply? = nil
   ) {}
   func setMessageHandlerOnChannel(
-    _ channel: String, binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
+    _ channel: String,
+    binaryMessageHandler handler: FlutterBinaryMessageHandler? = nil
   ) -> FlutterBinaryMessengerConnection {
     return 0
   }
   func cleanUpConnection(_ connection: FlutterBinaryMessengerConnection) {}
 }
 
-class TestTextureRegistry: NSObject, FlutterTextureRegistry {
+final class TestTextureRegistry: NSObject, FlutterTextureRegistry {
   private(set) var registeredTexture = false
   private(set) var unregisteredTexture = false
   private(set) var textureFrameAvailableCount = 0
@@ -115,7 +120,7 @@ class TestTextureRegistry: NSObject, FlutterTextureRegistry {
   }
 }
 
-class StubViewProvider: NSObject, FVPViewProvider {
+final class StubViewProvider: NSObject, FVPViewProvider {
   #if os(iOS)
     var viewController: UIViewController?
     init(viewController: UIViewController? = nil) {
@@ -131,7 +136,7 @@ class StubViewProvider: NSObject, FVPViewProvider {
   #endif
 }
 
-class StubAssetProvider: NSObject, FVPAssetProvider {
+final class StubAssetProvider: NSObject, FVPAssetProvider {
   func lookupKey(forAsset asset: String) -> String? {
     return asset
   }
@@ -141,7 +146,7 @@ class StubAssetProvider: NSObject, FVPAssetProvider {
   }
 }
 
-class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
+final class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
   var pixelBuffer: CVPixelBuffer?
   let videoOutput: AVPlayerItemVideoOutput
 
@@ -162,7 +167,8 @@ class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
   }
 
   func copyPixelBuffer(
-    forItemTime itemTime: CMTime, itemTimeForDisplay: UnsafeMutablePointer<CMTime>?
+    forItemTime itemTime: CMTime,
+    itemTimeForDisplay: UnsafeMutablePointer<CMTime>?
   ) -> CVPixelBuffer? {
     let buffer = pixelBuffer
     // Ownership is transferred to the caller.
@@ -172,7 +178,7 @@ class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
 }
 
 #if os(iOS)
-  class TestAudioSession: NSObject, FVPAVAudioSession {
+  final class TestAudioSession: NSObject, FVPAVAudioSession {
     var category: AVAudioSession.Category = .ambient
     var categoryOptions: AVAudioSession.CategoryOptions = []
     private(set) var setCategoryCalled = false
@@ -188,7 +194,7 @@ class TestPixelBufferSource: NSObject, FVPPixelBufferSource {
   }
 #endif
 
-class StubFVPAVFactory: NSObject, FVPAVFactory {
+final class StubFVPAVFactory: NSObject, FVPAVFactory {
   let player: AVPlayer
   let playerItem: FVPAVPlayerItem
   let pixelBufferSource: FVPPixelBufferSource?
@@ -236,32 +242,33 @@ class StubFVPAVFactory: NSObject, FVPAVFactory {
   #endif
 }
 
-class StubFVPDisplayLink: NSObject, FVPDisplayLink {
+final class StubFVPDisplayLink: NSObject, FVPDisplayLink {
   var running: Bool = false
   var duration: CFTimeInterval {
     return 1.0 / 60.0
   }
 }
 
-class StubFVPDisplayLinkFactory: NSObject, FVPDisplayLinkFactory {
+final class StubFVPDisplayLinkFactory: NSObject, FVPDisplayLinkFactory {
   let displayLink = StubFVPDisplayLink()
   var fireDisplayLink: (() -> Void)?
 
-  func displayLink(with viewProvider: FVPViewProvider, callback: @escaping () -> Void)
-    -> FVPDisplayLink
-  {
+  func displayLink(
+    with viewProvider: FVPViewProvider,
+    callback: @escaping () -> Void
+  ) -> FVPDisplayLink {
     fireDisplayLink = callback
     return displayLink
   }
 }
 
-class StubEventListener: NSObject, FVPVideoEventListener {
-  var initializationContinuation: CheckedContinuation<Void, Never>?
+final class StubEventListener: NSObject, FVPVideoEventListener {
+  var onInitialized: (() -> Void)?
   private(set) var initializationDuration: Int64 = 0
   private(set) var initializationSize: CGSize = .zero
 
-  init(initializationContinuation: CheckedContinuation<Void, Never>? = nil) {
-    self.initializationContinuation = initializationContinuation
+  init(onInitialized: (() -> Void)? = nil) {
+    self.onInitialized = onInitialized
     super.init()
   }
 
@@ -269,7 +276,7 @@ class StubEventListener: NSObject, FVPVideoEventListener {
   func videoPlayerDidEndBuffering() {}
   func videoPlayerDidError(withMessage errorMessage: String) {}
   func videoPlayerDidInitialize(withDuration duration: Int64, size: CGSize) {
-    initializationContinuation?.resume()
+    onInitialized?()
     initializationDuration = duration
     initializationSize = size
   }
@@ -279,7 +286,7 @@ class StubEventListener: NSObject, FVPVideoEventListener {
   func videoPlayerWasDisposed() {}
 }
 
-class StubTexture: NSObject, FlutterTexture {
+final class StubTexture: NSObject, FlutterTexture {
   func copyPixelBuffer() -> Unmanaged<CVPixelBuffer>? {
     return nil
   }
