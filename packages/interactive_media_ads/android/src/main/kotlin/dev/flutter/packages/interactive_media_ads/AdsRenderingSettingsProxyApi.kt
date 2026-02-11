@@ -31,7 +31,7 @@ class AdsRenderingSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistr
     return pigeon_instance.focusSkipButtonWhenAvailable
   }
 
-  override fun getMimeTypes(pigeon_instance: AdsRenderingSettings): List<String> {
+  override fun getMimeTypes(pigeon_instance: AdsRenderingSettings): List<String>? {
     return pigeon_instance.mimeTypes
   }
 
@@ -65,7 +65,7 @@ class AdsRenderingSettingsProxyApi(override val pigeonRegistrar: ProxyApiRegistr
   }
 
   override fun setMimeTypes(pigeon_instance: AdsRenderingSettings, mimeTypes: List<String>) {
-    pigeon_instance.mimeTypes = mimeTypes
+    pigeon_instance.setMimeTypes(mimeTypes)
   }
 
   override fun setPlayAdsAfterTime(pigeon_instance: AdsRenderingSettings, time: Double) {

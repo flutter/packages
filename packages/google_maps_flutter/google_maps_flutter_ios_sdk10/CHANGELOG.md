@@ -1,3 +1,3 @@
-## 2.17.2
+## 2.17.3
 
-* Initial release, based on 2.17.2 of `google_maps_flutter_ios`.
+* Initial release, based on 2.17.3 of `google_maps_flutter_ios`.
