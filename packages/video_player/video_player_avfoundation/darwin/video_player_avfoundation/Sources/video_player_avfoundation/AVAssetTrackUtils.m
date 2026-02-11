@@ -4,9 +4,7 @@
 
 @import AVFoundation;
 
-CGAffineTransform FVPGetStandardizedTransformForTrack(AVAssetTrack *track) {
-  CGAffineTransform t = track.preferredTransform;
-  CGSize size = track.naturalSize;
+CGAffineTransform FVPGetStandardizedTrackTransform(CGAffineTransform t, CGSize size) {
   // Each case of control flows corresponds to a specific
   // `UIImageOrientation`, with 8 cases in total.
   if (t.a == 1 && t.b == 0 && t.c == 0 && t.d == 1) {
