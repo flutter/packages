@@ -21,6 +21,12 @@ base class DarwinXFileCreationParams extends IOXFileCreationParams {
     @visibleForTesting CrossFileDarwinApi? api,
   }) : api = api ?? CrossFileDarwinApi();
 
+  DarwinXFileCreationParams.fromFilePath({
+    required String path,
+    @visibleForTesting CrossFileDarwinApi? api,
+  }) : api = api ?? CrossFileDarwinApi(),
+       super(uri: 'file:///$path');
+
   /// The API used to call to native code to interact with files.
   @visibleForTesting
   final CrossFileDarwinApi api;
