@@ -4,12 +4,13 @@
 
 import Flutter
 import GoogleInteractiveMediaAds
-import XCTest
+import Testing
 
 @testable import interactive_media_ads
 
-final class AdsLoadedDataTests: XCTestCase {
-  func testAdsManager() {
+@MainActor
+struct AdsLoadedDataTests {
+  @Test func adsManager() {
     let registrar = TestProxyApiRegistrar()
     let api = registrar.apiDelegate.pigeonApiIMAAdsLoadedData(registrar)
 
@@ -17,7 +18,7 @@ final class AdsLoadedDataTests: XCTestCase {
 
     let value = try? api.pigeonDelegate.adsManager(pigeonApi: api, pigeonInstance: instance)
 
-    XCTAssertTrue(value is TestAdsManager)
+    #expect(value is TestAdsManager)
   }
 }
 
@@ -25,8 +26,9 @@ class TestAdsLoadedData: IMAAdsLoadedData {
   // Workaround to subclass an Objective-C class that has an `init` constructor with NS_UNAVAILABLE
   static func customInit() -> TestAdsLoadedData {
     let instance =
-      TestAdsLoadedData.perform(NSSelectorFromString("new")).takeRetainedValue()
-      as! TestAdsLoadedData
+      try! #require(
+        TestAdsLoadedData.perform(NSSelectorFromString("new")).takeRetainedValue()
+          as? TestAdsLoadedData)
     return instance
   }
 
