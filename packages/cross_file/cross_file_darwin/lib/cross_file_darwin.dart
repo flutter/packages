@@ -6,6 +6,8 @@ export 'package:cross_file_platform_interface/cross_file_platform_interface.dart
     show ListParams, PlatformXFileEntity;
 
 export 'src/cross_file_darwin.dart';
-export 'src/darwin_cross_directory.dart' show DarwinXDirectoryCreationParams, DarwinXDirectoryExtension;
-export 'src/darwin_cross_file.dart' show DarwinXFileCreationParams, DarwinXFileExtension;
+export 'src/darwin_cross_directory.dart'
+    show DarwinXDirectoryCreationParams, DarwinXDirectoryExtension;
+export 'src/darwin_cross_file.dart'
+    show DarwinXFileCreationParams, DarwinXFileExtension;
 export 'src/security_scoped_resource.dart';

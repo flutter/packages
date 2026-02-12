@@ -7,22 +7,22 @@
 import PackageDescription
 
 let package = Package(
-    name: "cross_file_darwin",
-    platforms: [
-      .iOS("13.0"),
-      .macOS("10.15"),
-    ],
-    products: [
-      .library(name: "cross-file-darwin", targets: ["cross_file_darwin"])
-    ],
-    dependencies: [],
-    targets: [
-      .target(
-          name: "cross_file_darwin",
-          dependencies: [],
-          resources: [
-            .process("Resources")
-          ]
-      )
-    ]
+  name: "cross_file_darwin",
+  platforms: [
+    .iOS("13.0"),
+    .macOS("10.15"),
+  ],
+  products: [
+    .library(name: "cross-file-darwin", targets: ["cross_file_darwin"])
+  ],
+  dependencies: [],
+  targets: [
+    .target(
+      name: "cross_file_darwin",
+      dependencies: [],
+      resources: [
+        .process("Resources")
+      ]
+    )
+  ]
 )

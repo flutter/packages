@@ -67,7 +67,6 @@ private func nilOrValue<T>(_ value: Any?) -> T? {
   return value as! T?
 }
 
-
 private class CrossFileDarwinApisPigeonCodecReader: FlutterStandardReader {
 }
 
@@ -85,7 +84,8 @@ private class CrossFileDarwinApisPigeonCodecReaderWriter: FlutterStandardReaderW
 }
 
 class CrossFileDarwinApisPigeonCodec: FlutterStandardMessageCodec, @unchecked Sendable {
-  static let shared = CrossFileDarwinApisPigeonCodec(readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
+  static let shared = CrossFileDarwinApisPigeonCodec(
+    readerWriter: CrossFileDarwinApisPigeonCodecReaderWriter())
 }
 
 /// Api for getting access to file information.
@@ -107,11 +107,17 @@ protocol CrossFileDarwinApi {
 class CrossFileDarwinApiSetup {
   static var codec: FlutterStandardMessageCodec { CrossFileDarwinApisPigeonCodec.shared }
   /// Sets up an instance of `CrossFileDarwinApi` to handle messages through the `binaryMessenger`.
-  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: CrossFileDarwinApi?, messageChannelSuffix: String = "") {
+  static func setUp(
+    binaryMessenger: FlutterBinaryMessenger, api: CrossFileDarwinApi?,
+    messageChannelSuffix: String = ""
+  ) {
     let channelSuffix = messageChannelSuffix.count > 0 ? ".\(messageChannelSuffix)" : ""
     /// Attempt to create a bookmarked URL that serves as a persistent reference
     /// to a file.
-    let tryCreateBookmarkedUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let tryCreateBookmarkedUrlChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       tryCreateBookmarkedUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -128,7 +134,10 @@ class CrossFileDarwinApiSetup {
     }
     /// In an app that has adopted App Sandbox, makes the resource pointed to by a
     /// security-scoped URL available to the app.
-    let startAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.startAccessingSecurityScopedResource\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let startAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.startAccessingSecurityScopedResource\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startAccessingSecurityScopedResourceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
@@ -145,7 +154,10 @@ class CrossFileDarwinApiSetup {
     }
     /// In an app that adopts App Sandbox, revokes access to the resource pointed
     /// to by a security-scoped URL.
-    let stopAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.stopAccessingSecurityScopedResource\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    let stopAccessingSecurityScopedResourceChannel = FlutterBasicMessageChannel(
+      name:
+        "dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.stopAccessingSecurityScopedResource\(channelSuffix)",
+      binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       stopAccessingSecurityScopedResourceChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]

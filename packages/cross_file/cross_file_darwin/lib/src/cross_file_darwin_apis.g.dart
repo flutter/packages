@@ -18,7 +18,6 @@ PlatformException _createConnectionError(String channelName) {
   );
 }
 
-
 class _PigeonCodec extends StandardMessageCodec {
   const _PigeonCodec();
   @override
@@ -45,9 +44,13 @@ class CrossFileDarwinApi {
   /// Constructor for [CrossFileDarwinApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
   /// BinaryMessenger will be used which routes to the host platform.
-  CrossFileDarwinApi({BinaryMessenger? binaryMessenger, String messageChannelSuffix = ''})
-      : pigeonVar_binaryMessenger = binaryMessenger,
-        pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty ? '.$messageChannelSuffix' : '';
+  CrossFileDarwinApi({
+    BinaryMessenger? binaryMessenger,
+    String messageChannelSuffix = '',
+  }) : pigeonVar_binaryMessenger = binaryMessenger,
+       pigeonVar_messageChannelSuffix = messageChannelSuffix.isNotEmpty
+           ? '.$messageChannelSuffix'
+           : '';
   final BinaryMessenger? pigeonVar_binaryMessenger;
 
   static const MessageCodec<Object?> pigeonChannelCodec = _PigeonCodec();
@@ -57,13 +60,16 @@ class CrossFileDarwinApi {
   /// Attempt to create a bookmarked URL that serves as a persistent reference
   /// to a file.
   Future<String?> tryCreateBookmarkedUrl(String url) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.tryCreateBookmarkedUrl$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -81,13 +87,16 @@ class CrossFileDarwinApi {
   /// In an app that has adopted App Sandbox, makes the resource pointed to by a
   /// security-scoped URL available to the app.
   Future<bool> startAccessingSecurityScopedResource(String url) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.startAccessingSecurityScopedResource$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.startAccessingSecurityScopedResource$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
@@ -110,13 +119,16 @@ class CrossFileDarwinApi {
   /// In an app that adopts App Sandbox, revokes access to the resource pointed
   /// to by a security-scoped URL.
   Future<void> stopAccessingSecurityScopedResource(String url) async {
-    final pigeonVar_channelName = 'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.stopAccessingSecurityScopedResource$pigeonVar_messageChannelSuffix';
+    final pigeonVar_channelName =
+        'dev.flutter.pigeon.cross_file_darwin.CrossFileDarwinApi.stopAccessingSecurityScopedResource$pigeonVar_messageChannelSuffix';
     final pigeonVar_channel = BasicMessageChannel<Object?>(
       pigeonVar_channelName,
       pigeonChannelCodec,
       binaryMessenger: pigeonVar_binaryMessenger,
     );
-    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(<Object?>[url]);
+    final Future<Object?> pigeonVar_sendFuture = pigeonVar_channel.send(
+      <Object?>[url],
+    );
     final pigeonVar_replyList = await pigeonVar_sendFuture as List<Object?>?;
     if (pigeonVar_replyList == null) {
       throw _createConnectionError(pigeonVar_channelName);
