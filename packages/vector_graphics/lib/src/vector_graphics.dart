@@ -443,7 +443,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
 
   @override
   Widget build(BuildContext context) {
-    final PictureInfo? pictureInfo = this._pictureData?.pictureInfo;
+    final PictureInfo? pictureInfo = _pictureData?.pictureInfo;
 
     Widget child;
     if (pictureInfo != null) {
@@ -471,14 +471,14 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       if (_webRenderObject) {
         child = _RawWebVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: this._pictureData!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
       } else if (widget.strategy == RenderingStrategy.raster) {
         child = _RawVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: this._pictureData!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
           scale: scale,
@@ -486,7 +486,7 @@ class _VectorGraphicWidgetState extends State<VectorGraphic> {
       } else {
         child = _RawPictureVectorGraphicWidget(
           pictureInfo: pictureInfo,
-          assetKey: this._pictureData!.key,
+          assetKey: _pictureData!.key,
           colorFilter: widget.colorFilter,
           opacity: widget.opacity,
         );
