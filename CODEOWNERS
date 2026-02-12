@@ -88,6 +88,8 @@ packages/camera/camera_avfoundation/**                        @hellohuanlin @lou
 packages/file_selector/file_selector_ios/**                   @okorohelijah @vashworth
 packages/file_selector/file_selector_macos/**                 @okorohelijah @vashworth
 packages/google_maps_flutter/google_maps_flutter_ios/**       @vashworth @LongCatIsLooong
+packages/google_maps_flutter/google_maps_flutter_ios_sdk9/**  @vashworth @LongCatIsLooong
+packages/google_maps_flutter/google_maps_flutter_ios_sdk10/** @vashworth @LongCatIsLooong
 packages/google_sign_in/google_sign_in_ios/**                 @LongCatIsLooong @okorohelijah
 packages/image_picker/image_picker_ios/**                     @okorohelijah @vashworth
 packages/image_picker/image_picker_macos/**                   @okorohelijah @vashworth
