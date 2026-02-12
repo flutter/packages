@@ -2,6 +2,16 @@
 
 An abstraction to allow working with files across multiple platforms.
 
+<?code-excerpt path-base="example/lib"?>
+
+[![pub package](https://img.shields.io/pub/v/cross_file.svg)](https://pub.dartlang.org/packages/cross_file)
+
+A Flutter plugin that manages files and interactions with file dialogs.
+
+|             | Android | iOS     | Linux | macOS  | Web | Windows     |
+|-------------|---------|---------|-------|--------|-----|-------------|
+| **Support** | SDK 24+ | iOS 13+ | Any   | 10.15+ | Any | Windows 10+ |
+
 ## Usage
 
 Import `package:cross_file/cross_file.dart`, instantiate a `XFile`
@@ -10,7 +20,7 @@ access the file and its metadata.
 
 Example:
 
-<?code-excerpt "example/lib/readme_excerpts.dart (Instantiate)"?>
+<?code-excerpt "readme_excerpts.dart (Instantiate)"?>
 ```dart
 final file = XFile.fromUri(Uri.file('assets/hello.txt'));
 
@@ -41,12 +51,12 @@ your app or package:
 
 Next, add the imports of the implementation packages to your app or package:
 
-<?code-excerpt "main.dart (platform_imports)"?>
+<?code-excerpt "readme_excerpts.dart (platform_imports)"?>
 ```dart
-// Import for Android Scoped Storage features.
-import 'package:cross_file_android/cross_file_android.dart';
-// Import for iOS/macOS App Sandbox features.
+// Import for Darwin App Sandbox features.
 import 'package:cross_file_darwin/cross_file_darwin.dart';
+// Import for Web features.
+import 'package:cross_file_web/cross_file_web.dart';
 ```
 
 Now, additional features can be accessed through the platform implementations. Classes
@@ -61,22 +71,21 @@ additional functionality provided by the platform and is followed by an example.
 
 Below is an example of setting additional iOS/macOS and Android parameters on a `XFile`.
 
-<?code-excerpt "main.dart (platform_features)"?>
+<?code-excerpt "readme_excerpts.dart (platform_features)"?>
 ```dart
 var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
 
-if (CrossFilePlatform.instance is CrossFileIO) {
-  params = IOXFileCreationParams.fromCreationParams(
-    params,
+if (CrossFilePlatform.instance is CrossFileWeb) {
+  params = WebXFileCreationParams.fromObjectUrl(
+    objectUrl: 'blob:https://some/url:for/file',
   );
 }
 
 final file = XFile.fromCreationParams(params);
 
-final IOXFileExtension? ioExtension = file.maybeGetExtension<IOXFileExtension>();
-if (ioExtension != null) {
-  print(ioExtension.file.path);
-}
+await file
+    .maybeGetExtension<DarwinXFileExtension>()
+    ?.stopAccessingSecurityScopedResource();
 ```
 
 See https://pub.dev/documentation/cross_file_darwin/latest/cross_file_darwin/cross_file_darwin-library.html

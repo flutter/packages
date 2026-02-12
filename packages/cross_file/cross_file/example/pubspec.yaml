@@ -17,6 +17,16 @@ dependencies:
       url: https://github.com/bparrishMines/packages
       ref: new_crossfile
       path: packages/cross_file/cross_file
+  cross_file_darwin:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_darwin
+  cross_file_web:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_web
   file_selector:
     git:
       url: https://github.com/bparrishMines/packages

@@ -45,6 +45,11 @@ dependencies:
       url: https://github.com/bparrishMines/packages
       ref: new_crossfile
       path: packages/cross_file/cross_file_platform_interface
+  cross_file_web:
+    git:
+      url: https://github.com/bparrishMines/packages
+      ref: new_crossfile
+      path: packages/cross_file/cross_file_web
   flutter:
     sdk: flutter
 

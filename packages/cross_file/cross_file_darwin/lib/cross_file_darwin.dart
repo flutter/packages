@@ -3,7 +3,12 @@
 // found in the LICENSE file.
 
 export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
-    show ListParams, PlatformXFileEntity;
+    show
+        CrossFilePlatform,
+        ListParams,
+        PlatformXDirectoryCreationParams,
+        PlatformXFileCreationParams,
+        PlatformXFileEntity;
 
 export 'src/cross_file_darwin.dart';
 export 'src/darwin_cross_directory.dart'

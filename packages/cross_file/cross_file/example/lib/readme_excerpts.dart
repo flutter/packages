@@ -3,6 +3,12 @@
 // found in the LICENSE file.
 
 import 'package:cross_file/cross_file.dart';
+// #docregion platform_imports
+// Import for Darwin App Sandbox features.
+import 'package:cross_file_darwin/cross_file_darwin.dart';
+// Import for Web features.
+import 'package:cross_file_web/cross_file_web.dart';
+// #enddocregion platform_imports
 import 'package:flutter/foundation.dart' show debugPrint;
 
 /// Demonstrate instantiating an XFile for the README.
@@ -19,6 +25,27 @@ Future<XFile> instantiateXFile() async {
     debugPrint('Content of the file: $fileContent');
   }
   // #enddocregion Instantiate
+
+  return file;
+}
+
+/// Demonstrate accessing platform features.
+Future<XFile> accessPlatformFeatures() async {
+  // #docregion platform_features
+  var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
+
+  if (CrossFilePlatform.instance is CrossFileWeb) {
+    params = WebXFileCreationParams.fromObjectUrl(
+      objectUrl: 'blob:https://some/url:for/file',
+    );
+  }
+
+  final file = XFile.fromCreationParams(params);
+
+  await file
+      .maybeGetExtension<DarwinXFileExtension>()
+      ?.stopAccessingSecurityScopedResource();
+  // #enddocregion platform_features
 
   return file;
 }

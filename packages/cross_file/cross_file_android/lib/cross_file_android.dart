@@ -3,6 +3,11 @@
 // found in the LICENSE file.
 
 export 'package:cross_file_platform_interface/cross_file_platform_interface.dart'
-    show ListParams, PlatformXFileEntity;
+    show
+        CrossFilePlatform,
+        ListParams,
+        PlatformScopedStorageXDirectoryCreationParams,
+        PlatformScopedStorageXFileCreationParams,
+        PlatformXFileEntity;
 
 export 'src/cross_file_android.dart';
