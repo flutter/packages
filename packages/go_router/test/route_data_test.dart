@@ -794,4 +794,10 @@ void main() {
           ),
     );
   });
+
+  test('TypedQueryParameter stores the name', () {
+    const parameter = TypedQueryParameter(name: 'customName');
+
+    expect(parameter.name, 'customName');
+  });
 }
