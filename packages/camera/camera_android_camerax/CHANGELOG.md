@@ -1,3 +1,7 @@
+## 0.6.30+1
+
+* Updates example to demonstrate correct exception handling for async return statements, ensuring exceptions thrown during return are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).
+
 ## 0.6.30
 
 * Bump camerax_version from 1.5.2 to 1.5.3.
@@ -375,7 +379,7 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 * Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
   that `createCamera` should have been called before building the preview. Fixes
-  https://github.com/flutter/flutter/issues/140567.
+  <https://github.com/flutter/flutter/issues/140567>.
 
 ## 0.5.0+28
 
@@ -501,9 +505,9 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 ## 0.5.0
 
 * Initial release of this `camera` implementation that supports:
-    * Image capture
-    * Video recording
-    * Displaying a live camera preview
-    * Image streaming
+  * Image capture
+  * Video recording
+  * Displaying a live camera preview
+  * Image streaming
 
   See [`README.md`](README.md) for more details on the limitations of this implementation.
