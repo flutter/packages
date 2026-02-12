@@ -20,7 +20,7 @@ import 'cross_file.dart';
 /// the Android implementation of `cross_file`:
 ///
 /// ```dart
-/// final ScopedStorageXFile file = ScopedStorageXFile(uri: 'context://my/file.txt');
+/// final ScopedStorageXFile file = ScopedStorageXFile(uri: 'content://my/file.txt');
 ///
 /// final AndroidScopedStorageXFileExtension? androidExtension =
 ///     file.maybeGetExtension<AndroidScopedStorageXFileExtension>();
@@ -47,7 +47,7 @@ class ScopedStorageXFile extends XFile {
   /// the Android implementation of `cross_file`:
   ///
   /// ```dart
-  /// var params = const PlatformXFileCreationParams(uri: 'file:///my/file.txt');
+  /// var params = const PlatformScopedStorageXFileCreationParams(uri: 'content://my/file.txt');
   ///
   /// if (CrossFilePlatform.instance is CrossFileAndroid) {
   ///   params = AndroidScopedStorageXFileCreationParams.fromCreationParams(

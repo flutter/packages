@@ -21,7 +21,7 @@ import 'cross_directory.dart';
 /// the Android implementation of `cross_file`:
 ///
 /// ```dart
-/// final ScopedStorageXDirectory directory = ScopedStorageXDirectory(uri: 'context://my/dir');
+/// final ScopedStorageXDirectory directory = ScopedStorageXDirectory(uri: 'content://my/dir');
 ///
 /// final AndroidScopedStorageXDirectoryExtension? androidExtension =
 ///     file.maybeGetExtension<AndroidScopedStorageXDirectoryExtension>();
@@ -48,7 +48,7 @@ class ScopedStorageXDirectory extends XDirectory {
   /// the Android implementation of `cross_file`:
   ///
   /// ```dart
-  /// var params = const PlatformXDirectoryCreationParams(uri: 'context://my/docs');
+  /// var params = const PlatformScopedStorageXDirectoryCreationParams(uri: 'content://my/docs');
   ///
   /// if (CrossFilePlatform.instance is CrossFileAndroid) {
   ///   params = AndroidScopedStorageXDirectoryCreationParams.fromCreationParams(
