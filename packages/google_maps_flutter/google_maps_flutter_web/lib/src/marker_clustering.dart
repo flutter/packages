@@ -9,7 +9,7 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import '../google_maps_flutter_web.dart';
-import 'marker_clustering_js_interop.dart';
+import 'marker_clustering_js_interop.dart' hide getClustererEvents;
 import 'marker_clustering_js_interop.dart' as interop show getClustererEvents;
 import 'types.dart';
 
