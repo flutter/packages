@@ -13,9 +13,10 @@ import 'darwin_cross_directory_test.mocks.dart';
 @GenerateMocks(<Type>[CrossFileDarwinApi])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
   test('startAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
+    const uri = 'uri/';
     const result = true;
     when(
       mockApi.startAccessingSecurityScopedResource(uri),
@@ -30,7 +31,7 @@ void main() {
 
   test('stopAccessingSecurityScopedResource', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
+    const uri = 'uri/';
 
     final file = DarwinXDirectory(
       DarwinXDirectoryCreationParams(uri: uri, api: mockApi),
@@ -42,8 +43,8 @@ void main() {
 
   test('tryCreateBookmarkedUrl', () async {
     final mockApi = MockCrossFileDarwinApi();
-    const uri = 'uri';
-    const bookmarkedUri = 'newUri';
+    const uri = 'uri/';
+    const bookmarkedUri = 'newUri/';
     when(
       mockApi.tryCreateBookmarkedUrl(uri),
     ).thenAnswer((_) async => bookmarkedUri);
