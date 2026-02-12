@@ -260,14 +260,12 @@
   controller.dartCallbackHandler = mockHandler;
 
   NSString *placeId = @"test_place_id";
-  NSString *name = @"Test POI Name";
   CLLocationCoordinate2D location = CLLocationCoordinate2DMake(10.0, 20.0);
 
-  [controller mapView:mapView didTapPOIWithPlaceID:placeId name:name location:location];
+  [controller mapView:mapView didTapPOIWithPlaceID:placeId location:location];
 
   XCTAssertNotNil(mockHandler.lastPoiTap, @"The POI tap should have been recorded.");
   XCTAssertEqualObjects(mockHandler.lastPoiTap.placeId, placeId);
-  XCTAssertEqualObjects(mockHandler.lastPoiTap.name, name);
   XCTAssertEqual(mockHandler.lastPoiTap.position.latitude, 10.0);
   XCTAssertEqual(mockHandler.lastPoiTap.position.longitude, 20.0);
 }

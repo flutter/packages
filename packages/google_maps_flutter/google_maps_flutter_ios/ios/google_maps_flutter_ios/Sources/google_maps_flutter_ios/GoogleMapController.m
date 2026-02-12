@@ -562,7 +562,6 @@
 
 - (void)mapView:(GMSMapView *)mapView
     didTapPOIWithPlaceID:(NSString *)placeID
-                    name:(NSString *)name
                 location:(CLLocationCoordinate2D)location {
   FGMPlatformPointOfInterest *poi =
       [FGMPlatformPointOfInterest makeWithPosition:FGMGetPigeonLatLngForCoordinate(location)
