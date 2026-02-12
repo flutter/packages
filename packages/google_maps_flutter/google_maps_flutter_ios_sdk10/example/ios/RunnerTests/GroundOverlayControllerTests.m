@@ -214,10 +214,10 @@
   @autoreleasepool {
     TestAssetProvider *assetProvider = [[TestAssetProvider alloc] init];
     weakAssetProvider = assetProvider;
-    groundOverlayController = [[FGMGroundOverlaysController alloc]
-        initWithMapView:[GroundOverlayControllerTests mapView]
-          eventDelegate:[[TestMapEventHandler alloc] init]
-          assetProvider:assetProvider];
+    groundOverlayController =
+        [[FGMGroundOverlaysController alloc] initWithMapView:[GroundOverlayControllerTests mapView]
+                                               eventDelegate:[[TestMapEventHandler alloc] init]
+                                               assetProvider:assetProvider];
   }
   XCTAssertNotNil(groundOverlayController);
   XCTAssertNotNil(weakAssetProvider);
