@@ -18,23 +18,52 @@ class FileOpenScreen extends StatelessWidget {
   Future<void> _openFile(BuildContext context) async {
     final XFile? file = await openFile();
 
-    if (!context.mounted) {
-      return;
-    }
-
     if (file case final XFile file) {
-      switch (mime.lookupMimeType(file.path)) {
+      final String filename = await file.name() ?? file.uri;
+
+      switch (mime.lookupMimeType(filename)) {
         case final String mimeType when mimeType.startsWith('text'):
-          await showDialog<void>(
-            context: context,
-            builder: (BuildContext context) => TextDisplay(file),
-          );
-        case final String mimeType when mimeType.startsWith('image'):
-        case final String mimeType when mimeType.startsWith('application'):
-        case null:
-          debugPrint('Unsupported file type: ${file.path}');
+          final String fileContents = await file.readAsString();
+          if (context.mounted) {
+            await showDialog<void>(
+              context: context,
+              builder: (BuildContext context) =>
+                  TextDisplay(filename: filename, fileContents: fileContents),
+            );
+          }
+        case _:
+          debugPrint('File Uri: ${file.uri}');
+          debugPrint('Filename: $filename');
+          debugPrint('Can Read File: ${await file.canRead()}');
+          debugPrint('File Length: ${await file.length()}');
+          debugPrint('File Last Modified: ${await file.lastModified()}');
           return;
       }
+    } else {
+      debugPrint('No file selected.');
+    }
+  }
+
+  Future<void> _openDirectory() async {
+    final XDirectory? directory = await getDirectoryPath();
+
+    if (directory != null) {
+      debugPrint('Directory Uri: ${directory.uri}');
+      debugPrint('Directory exists: ${await directory.exists()}');
+
+      debugPrint('List of Entities:');
+      await for (final XFileEntity entity in directory.list()) {
+        switch (entity) {
+          case final XFile file:
+            final String filename = await file.name() ?? file.uri;
+            debugPrint('\tFile: $filename');
+            debugPrint('\t\tFile Length: ${await file.length()}');
+          case final XDirectory directory:
+            debugPrint('\tDirectory: ${directory.uri}');
+        }
+      }
+    } else {
+      debugPrint('No directory selected.');
     }
   }
 
@@ -57,6 +86,14 @@ class FileOpenScreen extends StatelessWidget {
               child: const Text('Open File'),
               onPressed: () => _openFile(context),
             ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.blue,
+                backgroundColor: Colors.white,
+              ),
+              child: const Text('Open Directory'),
+              onPressed: () => _openDirectory(),
+            ),
           ],
         ),
       ),
@@ -67,28 +104,24 @@ class FileOpenScreen extends StatelessWidget {
 /// Widget that displays a text file in a dialog.
 class TextDisplay extends StatelessWidget {
   /// Default Constructor.
-  const TextDisplay(this.file, {super.key});
+  const TextDisplay({
+    super.key,
+    required this.filename,
+    required this.fileContents,
+  });
 
-  /// The file.
-  final XFile file;
+  /// The name of the file.
+  final String filename;
+
+  /// The contents of the file.
+  final String fileContents;
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(file.path),
+      title: Text(filename),
       content: Scrollbar(
-        child: SingleChildScrollView(
-          child: FutureBuilder<String>(
-            future: file.readAsString(),
-            builder: (_, AsyncSnapshot<String> snapshot) {
-              if (snapshot.hasData) {
-                return Text(snapshot.data!);
-              } else {
-                return const CircularProgressIndicator();
-              }
-            },
-          ),
-        ),
+        child: SingleChildScrollView(child: Text(fileContents)),
       ),
       actions: <Widget>[
         TextButton(
