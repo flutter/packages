@@ -40,11 +40,11 @@ enum FormatUtils {
   /// and frame rate which bestFrameRate returned for that format.
   static func findBestFormat(
     for captureDevice: CaptureDevice,
-    mediaSettings: FCPPlatformMediaSettings,
+    mediaSettings: PlatformMediaSettings,
     videoDimensionsConverter: VideoDimensionsConverter
   ) -> (format: CaptureDeviceFormat, frameRate: Double) {
     let targetResolution = videoDimensionsConverter(captureDevice.flutterActiveFormat)
-    let targetFrameRate = mediaSettings.framesPerSecond?.doubleValue ?? 0
+    let targetFrameRate = Double(mediaSettings.framesPerSecond ?? 0)
     let preferredSubType = CMFormatDescriptionGetMediaSubType(
       captureDevice.flutterActiveFormat.formatDescription)
 

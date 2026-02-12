@@ -44,9 +44,14 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       onFrameAvailableSet = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
 
@@ -64,9 +69,14 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       dartAPISet = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
 
@@ -78,9 +88,14 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
   func testInitializeCamera_sendsDeviceOrientation() {
     let (cameraPlugin, _, mockGlobalEventApi, captureSessionQueue) = createCameraPlugin()
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        XCTFail("Unexpected failure")
+      }
     }
 
     waitForQueueRoundTrip(with: captureSessionQueue)
@@ -97,9 +112,14 @@ final class CameraPluginInitializeCameraTests: XCTestCase {
       startCalled = true
     }
 
-    cameraPlugin.initializeCamera(0, withImageFormat: FCPPlatformImageFormatGroup.bgra8888) {
-      error in
-      XCTAssertNil(error)
+    cameraPlugin.initialize(cameraId: 0, imageFormat: PlatformImageFormatGroup.bgra8888) {
+      result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
 

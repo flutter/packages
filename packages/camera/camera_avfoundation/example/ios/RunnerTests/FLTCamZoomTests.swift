@@ -39,8 +39,14 @@ final class FLTCamZoomTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setZoomLevel(targetZoom) { error in
-      XCTAssertNil(error)
+    camera.setZoomLevel(targetZoom) {
+      result in
+      switch result {
+      case .success:
+        break
+      case .failure:
+        XCTFail("Unexpected failure")
+      }
       expectation.fulfill()
     }
 
@@ -58,9 +64,13 @@ final class FLTCamZoomTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setZoomLevel(CGFloat(1.0)) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "ZOOM_ERROR")
+    camera.setZoomLevel(CGFloat(1.0)) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "ZOOM_ERROR")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 
@@ -76,9 +86,13 @@ final class FLTCamZoomTests: XCTestCase {
 
     let expectation = expectation(description: "Call completed")
 
-    camera.setZoomLevel(CGFloat(2.0)) { error in
-      XCTAssertNotNil(error)
-      XCTAssertEqual(error?.code, "ZOOM_ERROR")
+    camera.setZoomLevel(CGFloat(2.0)) { result in
+      switch result {
+      case .failure(let error as PigeonError):
+        XCTAssertEqual(error.code, "ZOOM_ERROR")
+      default:
+        XCTFail("Expected failure")
+      }
       expectation.fulfill()
     }
 

@@ -13,7 +13,7 @@ import Flutter
 public final class CameraPlugin: NSObject, FlutterPlugin {
   private let registry: FlutterTextureRegistry
   private let messenger: FlutterBinaryMessenger
-  private let globalEventAPI: FCPCameraGlobalEventApi
+  private let globalEventAPI: CameraGlobalEventApiProtocol
   private let deviceDiscoverer: CameraDeviceDiscoverer
   private let permissionManager: CameraPermissionManager
   private let captureDeviceFactory: VideoCaptureDeviceFactory
@@ -30,7 +30,7 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     let instance = CameraPlugin(
       registry: registrar.textures(),
       messenger: registrar.messenger(),
-      globalAPI: FCPCameraGlobalEventApi(binaryMessenger: registrar.messenger()),
+      globalAPI: CameraGlobalEventApi(binaryMessenger: registrar.messenger()),
       deviceDiscoverer: DefaultCameraDeviceDiscoverer(),
       permissionManager: CameraPermissionManager(
         permissionService: DefaultPermissionService()),
@@ -43,13 +43,13 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
       captureSessionQueue: DispatchQueue(label: "io.flutter.camera.captureSessionQueue")
     )
 
-    SetUpFCPCameraApi(registrar.messenger(), instance)
+    CameraApiSetup.setUp(binaryMessenger: registrar.messenger(), api: instance)
   }
 
   init(
     registry: FlutterTextureRegistry,
     messenger: FlutterBinaryMessenger,
-    globalAPI: FCPCameraGlobalEventApi,
+    globalAPI: CameraGlobalEventApiProtocol,
     deviceDiscoverer: CameraDeviceDiscoverer,
     permissionManager: CameraPermissionManager,
     deviceFactory: @escaping VideoCaptureDeviceFactory,
@@ -86,8 +86,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
     UIDevice.current.endGeneratingDeviceOrientationNotifications()
   }
 
-  private static func flutterErrorFromNSError(_ error: NSError) -> FlutterError {
-    return FlutterError(
+  private static func pigeonErrorFromNSError(_ error: NSError) -> PigeonError {
+    return PigeonError(
       code: "Error \(error.code)",
       message: error.localizedDescription,
       details: error.domain)
@@ -113,8 +113,8 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
 
   func sendDeviceOrientation(_ orientation: UIDeviceOrientation) {
     DispatchQueue.main.async { [weak self] in
-      self?.globalEventAPI.deviceOrientationChangedOrientation(
-        getPigeonDeviceOrientation(for: orientation)
+      self?.globalEventAPI.deviceOrientationChanged(
+        orientation: getPigeonDeviceOrientation(for: orientation)
       ) { _ in
         // Ignore errors; this is essentially a broadcast stream, and
         // it's fine if the other end doesn't receive the message
@@ -124,9 +124,10 @@ public final class CameraPlugin: NSObject, FlutterPlugin {
   }
 }
 
-extension CameraPlugin: FCPCameraApi {
-  public func availableCameras(
-    completion: @escaping ([FCPPlatformCameraDescription]?, FlutterError?) -> Void
+extension CameraPlugin: CameraApi {
+
+  func getAvailableCameras(
+    completion: @escaping (Result<[PlatformCameraDescription], any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
@@ -142,24 +143,24 @@ extension CameraPlugin: FCPCameraApi {
         mediaType: .video,
         position: .unspecified)
 
-      var reply: [FCPPlatformCameraDescription] = []
+      var reply: [PlatformCameraDescription] = []
 
       for device in devices {
         let lensFacing = strongSelf.platformLensDirection(for: device)
         let lensType = strongSelf.platformLensType(for: device)
-        let cameraDescription = FCPPlatformCameraDescription.make(
-          withName: device.uniqueID,
+        let cameraDescription = PlatformCameraDescription(
+          name: device.uniqueID,
           lensDirection: lensFacing,
           lensType: lensType
         )
         reply.append(cameraDescription)
       }
 
-      completion(reply, nil)
+      completion(.success(reply))
     }
   }
 
-  private func platformLensDirection(for device: CaptureDevice) -> FCPPlatformCameraLensDirection {
+  private func platformLensDirection(for device: CaptureDevice) -> PlatformCameraLensDirection {
     switch device.position {
     case .back:
       return .back
@@ -172,7 +173,7 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  private func platformLensType(for device: CaptureDevice) -> FCPPlatformCameraLensType {
+  private func platformLensType(for device: CaptureDevice) -> PlatformCameraLensType {
     switch device.deviceType {
     case .builtInWideAngleCamera:
       return .wide
@@ -187,10 +188,9 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  public func createCamera(
-    withName cameraName: String,
-    settings: FCPPlatformMediaSettings,
-    completion: @escaping (NSNumber?, FlutterError?) -> Void
+  func create(
+    cameraName: String, settings: PlatformMediaSettings,
+    completion: @escaping (Result<Int64, any Error>) -> Void
   ) {
     // Create FLTCam only if granted camera access (and audio access if audio is enabled)
     captureSessionQueue.async { [weak self] in
@@ -198,7 +198,7 @@ extension CameraPlugin: FCPCameraApi {
         guard let strongSelf = self else { return }
 
         if let error = error {
-          completion(nil, error)
+          completion(.failure(error))
           return
         }
 
@@ -212,7 +212,7 @@ extension CameraPlugin: FCPCameraApi {
             guard let strongSelf = self else { return }
 
             if let audioError = audioError {
-              completion(nil, audioError)
+              completion(.failure(audioError))
               return
             }
 
@@ -233,8 +233,8 @@ extension CameraPlugin: FCPCameraApi {
 
   func createCameraOnSessionQueue(
     withName: String,
-    settings: FCPPlatformMediaSettings,
-    completion: @escaping (NSNumber?, FlutterError?) -> Void
+    settings: PlatformMediaSettings,
+    completion: @escaping (Result<Int64, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.sessionQueueCreateCamera(name: withName, settings: settings, completion: completion)
@@ -245,8 +245,8 @@ extension CameraPlugin: FCPCameraApi {
   // to make it easier to reason about strong/weak self pointers.
   private func sessionQueueCreateCamera(
     name: String,
-    settings: FCPPlatformMediaSettings,
-    completion: @escaping (NSNumber?, FlutterError?) -> Void
+    settings: PlatformMediaSettings,
+    completion: @escaping (Result<Int64, any Error>) -> Void
   ) {
     let mediaSettingsAVWrapper = FLTCamMediaSettingsAVWrapper()
 
@@ -269,17 +269,16 @@ extension CameraPlugin: FCPCameraApi {
 
       ensureToRunOnMainQueue { [weak self] in
         guard let strongSelf = self else { return }
-        completion(NSNumber(value: strongSelf.registry.register(newCamera)), nil)
+        completion(.success(strongSelf.registry.register(newCamera)))
       }
     } catch let error as NSError {
-      completion(nil, CameraPlugin.flutterErrorFromNSError(error))
+      completion(.failure(CameraPlugin.pigeonErrorFromNSError(error)))
     }
   }
 
-  public func initializeCamera(
-    _ cameraId: Int,
-    withImageFormat imageFormat: FCPPlatformImageFormatGroup,
-    completion: @escaping (FlutterError?) -> Void
+  func initialize(
+    cameraId: Int64, imageFormat: PlatformImageFormatGroup,
+    completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.sessionQueueInitializeCamera(
@@ -292,9 +291,9 @@ extension CameraPlugin: FCPCameraApi {
   // This must be called on captureSessionQueue. It is extracted from initializeCamera to make it
   // easier to reason about strong/weak self pointers.
   private func sessionQueueInitializeCamera(
-    _ cameraId: Int,
-    withImageFormat imageFormat: FCPPlatformImageFormatGroup,
-    completion: @escaping (FlutterError?) -> Void
+    _ cameraId: Int64,
+    withImageFormat imageFormat: PlatformImageFormatGroup,
+    completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     guard let camera = camera else { return }
 
@@ -309,7 +308,7 @@ extension CameraPlugin: FCPCameraApi {
       }
     }
 
-    camera.dartAPI = FCPCameraEventApi(
+    camera.dartAPI = CameraEventApi(
       binaryMessenger: messenger,
       messageChannelSuffix: "\(cameraId)"
     )
@@ -317,77 +316,75 @@ extension CameraPlugin: FCPCameraApi {
     camera.reportInitializationState()
     sendDeviceOrientation(UIDevice.current.orientation)
     camera.start()
-    completion(nil)
+    completion(.success(()))
   }
 
-  public func startImageStream(completion: @escaping (FlutterError?) -> Void) {
+  func startImageStream(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else {
-        completion(nil)
+        completion(.success(()))
         return
       }
       strongSelf.camera?.startImageStream(with: strongSelf.messenger, completion: completion)
     }
   }
 
-  public func stopImageStream(completion: @escaping (FlutterError?) -> Void) {
+  func stopImageStream(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.stopImageStream()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func receivedImageStreamData(completion: @escaping (FlutterError?) -> Void) {
+  func receivedImageStreamData(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.receivedImageStreamData()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func disposeCamera(_ cameraId: Int, completion: @escaping (FlutterError?) -> Void) {
+  func dispose(cameraId: Int64, completion: @escaping (Result<Void, any Error>) -> Void) {
     registry.unregisterTexture(Int64(cameraId))
     captureSessionQueue.async { [weak self] in
       if let strongSelf = self {
         strongSelf.camera?.close()
         strongSelf.camera = nil
       }
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func lockCapture(
-    _ orientation: FCPPlatformDeviceOrientation,
-    completion: @escaping (FlutterError?) -> Void
+  func lockCaptureOrientation(
+    orientation: PlatformDeviceOrientation, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.lockCaptureOrientation(orientation)
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func unlockCaptureOrientation(completion: @escaping (FlutterError?) -> Void) {
+  func unlockCaptureOrientation(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.unlockCaptureOrientation()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func takePicture(completion: @escaping (String?, FlutterError?) -> Void) {
+  func takePicture(completion: @escaping (Result<String, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.captureToFile(completion: completion)
     }
   }
 
-  public func prepareForVideoRecording(completion: @escaping (FlutterError?) -> Void) {
+  func prepareForVideoRecording(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setUpCaptureSessionForAudioIfNeeded()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func startVideoRecording(
-    withStreaming enableStream: Bool,
-    completion: @escaping (FlutterError?) -> Void
+  func startVideoRecording(
+    enableStream: Bool, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       guard let strongSelf = self else { return }
@@ -397,153 +394,148 @@ extension CameraPlugin: FCPCameraApi {
     }
   }
 
-  public func stopVideoRecording(completion: @escaping (String?, FlutterError?) -> Void) {
+  func stopVideoRecording(completion: @escaping (Result<String, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.stopVideoRecording(completion: completion)
     }
   }
 
-  public func pauseVideoRecording(completion: @escaping (FlutterError?) -> Void) {
+  func pauseVideoRecording(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.pauseVideoRecording()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func resumeVideoRecording(completion: @escaping (FlutterError?) -> Void) {
+  func resumeVideoRecording(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.resumeVideoRecording()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func setFlashMode(
-    _ mode: FCPPlatformFlashMode,
-    completion: @escaping (FlutterError?) -> Void
+  func setFlashMode(
+    mode: PlatformFlashMode, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setFlashMode(mode, withCompletion: completion)
     }
   }
 
-  public func setExposureMode(
-    _ mode: FCPPlatformExposureMode,
-    completion: @escaping (FlutterError?) -> Void
+  func setExposureMode(
+    mode: PlatformExposureMode, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setExposureMode(mode)
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func setExposurePoint(
-    _ point: FCPPlatformPoint?,
-    completion: @escaping (FlutterError?) -> Void
+  func setExposurePoint(
+    point: PlatformPoint?, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setExposurePoint(point, withCompletion: completion)
     }
   }
 
-  public func getMinimumExposureOffset(_ completion: @escaping (NSNumber?, FlutterError?) -> Void) {
+  func getMinExposureOffset(completion: @escaping (Result<Double, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       if let minOffset = self?.camera?.minimumExposureOffset {
-        completion(NSNumber(value: minOffset), nil)
+        completion(.success(minOffset))
       } else {
-        completion(nil, nil)
+        completion(.success(0))
       }
     }
   }
 
-  public func getMaximumExposureOffset(_ completion: @escaping (NSNumber?, FlutterError?) -> Void) {
+  func getMaxExposureOffset(completion: @escaping (Result<Double, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       if let maxOffset = self?.camera?.maximumExposureOffset {
-        completion(NSNumber(value: maxOffset), nil)
+        completion(.success(maxOffset))
       } else {
-        completion(nil, nil)
+        completion(.success(0))
       }
     }
   }
 
-  public func setExposureOffset(_ offset: Double, completion: @escaping (FlutterError?) -> Void) {
+  func setExposureOffset(offset: Double, completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setExposureOffset(offset)
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func setFocusMode(
-    _ mode: FCPPlatformFocusMode,
-    completion: @escaping (FlutterError?) -> Void
+  func setFocusMode(
+    mode: PlatformFocusMode, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setFocusMode(mode)
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func setFocus(_ point: FCPPlatformPoint?, completion: @escaping (FlutterError?) -> Void) {
+  func setFocusPoint(point: PlatformPoint?, completion: @escaping (Result<Void, any Error>) -> Void)
+  {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setFocusPoint(point, completion: completion)
     }
   }
 
-  public func getMinimumZoomLevel(_ completion: @escaping (NSNumber?, FlutterError?) -> Void) {
+  func getMinZoomLevel(completion: @escaping (Result<Double, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       if let minZoom = self?.camera?.minimumAvailableZoomFactor {
-        completion(NSNumber(value: minZoom), nil)
+        completion(.success(minZoom))
       } else {
-        completion(nil, nil)
+        completion(.success(0))
       }
     }
   }
 
-  public func getMaximumZoomLevel(_ completion: @escaping (NSNumber?, FlutterError?) -> Void) {
+  func getMaxZoomLevel(completion: @escaping (Result<Double, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       if let maxZoom = self?.camera?.maximumAvailableZoomFactor {
-        completion(NSNumber(value: maxZoom), nil)
+        completion(.success(maxZoom))
       } else {
-        completion(nil, nil)
+        completion(.success(0))
       }
     }
   }
 
-  public func setZoomLevel(_ zoom: Double, completion: @escaping (FlutterError?) -> Void) {
+  func setZoomLevel(zoom: Double, completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setZoomLevel(zoom, withCompletion: completion)
     }
   }
 
-  public func pausePreview(completion: @escaping (FlutterError?) -> Void) {
+  func pausePreview(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.pausePreview()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func resumePreview(completion: @escaping (FlutterError?) -> Void) {
+  func resumePreview(completion: @escaping (Result<Void, any Error>) -> Void) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.resumePreview()
-      completion(nil)
+      completion(.success(()))
     }
   }
 
-  public func updateDescriptionWhileRecordingCameraName(
-    _ cameraName: String,
-    completion: @escaping (FlutterError?) -> Void
+  func updateDescriptionWhileRecording(
+    cameraName: String, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setDescriptionWhileRecording(cameraName, withCompletion: completion)
     }
   }
 
-  public func setImageFileFormat(
-    _ format: FCPPlatformImageFileFormat,
-    completion: @escaping (FlutterError?) -> Void
+  func setImageFileFormat(
+    format: PlatformImageFileFormat, completion: @escaping (Result<Void, any Error>) -> Void
   ) {
     captureSessionQueue.async { [weak self] in
       self?.camera?.setImageFileFormat(format)
-      completion(nil)
+      completion(.success(()))
     }
   }
 }
