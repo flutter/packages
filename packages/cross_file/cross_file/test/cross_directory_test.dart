@@ -17,7 +17,7 @@ void main() {
             TestXDirectory(params, onExists: () async => exists),
       );
 
-      final directory = XDirectory('uri');
+      final directory = XDirectory(uri: 'uri');
 
       expect(await directory.exists(), exists);
     });
@@ -36,7 +36,7 @@ void main() {
             ),
       );
 
-      final directory = XDirectory('uri');
+      final directory = XDirectory(uri: 'uri');
 
       final List<XFileEntity> directoryEntities = await directory
           .list()

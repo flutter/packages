@@ -21,7 +21,7 @@ void main() {
                 ),
       );
 
-      final directory = ScopedStorageXDirectory('uri');
+      final directory = ScopedStorageXDirectory(uri: 'uri');
 
       expect(await directory.exists(), exists);
     });
@@ -45,7 +45,7 @@ void main() {
                 ),
       );
 
-      final directory = ScopedStorageXDirectory('uri');
+      final directory = ScopedStorageXDirectory(uri: 'uri');
 
       final List<XFileEntity> directoryEntities = await directory
           .list()

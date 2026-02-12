@@ -25,7 +25,7 @@ import 'scoped_storage_cross_file.dart';
 /// the dart:io implementation of `cross_file`:
 ///
 /// ```dart
-/// final XDirectory dir = XFile('my/docs/');
+/// final XDirectory dir = XDirectory.fromUri(Uri.directory('my/docs/.'));
 ///
 /// final IOXDirectoryExtension? ioExtension = file.maybeGetExtension<IOXDirectoryExtension>();
 /// if (ioExtension != null) {
@@ -36,10 +36,16 @@ import 'scoped_storage_cross_file.dart';
 class XDirectory extends XFileEntity {
   /// Constructs a [XDirectory].
   ///
-  /// See [XDirectory.fromCreationParams] for setting parameters for a
-  /// specific platform.
-  XDirectory(String uri)
+  /// See [XDirectory.fromCreationParams] for setting parameters for a specific
+  /// platform.
+  XDirectory({required String uri})
     : this.fromCreationParams(PlatformXDirectoryCreationParams(uri: uri));
+
+  /// Constructs a [XDirectory].
+  ///
+  /// See [XDirectory.fromCreationParams] for setting parameters for a specific
+  /// platform.
+  XDirectory.fromUri(Uri uri) : this(uri: uri.toString());
 
   /// Constructs a [XDirectory] from creation params for a specific platform.
   ///

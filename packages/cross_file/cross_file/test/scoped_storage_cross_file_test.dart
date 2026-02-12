@@ -24,7 +24,7 @@ void main() {
                 ),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.lastModified(), lastModified);
     });
@@ -37,7 +37,7 @@ void main() {
                 TestScopedStorageXFile(params, onLength: () async => length),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.length(), length);
     });
@@ -55,7 +55,7 @@ void main() {
                 ),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.openRead().toList(), data);
     });
@@ -71,7 +71,7 @@ void main() {
                 ),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.readAsBytes(), bytes);
     });
@@ -88,7 +88,7 @@ void main() {
                 ),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.readAsString(), message);
     });
@@ -101,7 +101,7 @@ void main() {
                 TestScopedStorageXFile(params, onCanRead: () async => canRead),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.canRead(), canRead);
     });
@@ -114,7 +114,7 @@ void main() {
                 TestScopedStorageXFile(params, onExists: () async => exists),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.exists(), exists);
     });
@@ -127,7 +127,7 @@ void main() {
                 TestScopedStorageXFile(params, onName: () async => name),
       );
 
-      final file = ScopedStorageXFile('uri');
+      final file = ScopedStorageXFile(uri: 'uri');
 
       expect(await file.name(), name);
     });

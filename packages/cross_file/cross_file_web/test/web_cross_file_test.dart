@@ -82,7 +82,7 @@ void main() {
 
     group('Create with File', () {
       test('lastModified', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(
           await file.lastModified(),
@@ -91,49 +91,49 @@ void main() {
       });
 
       test('length', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.length(), testFile.size);
       });
 
       test('openRead', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.openRead().first, testFileBytes);
       });
 
       test('openRead with partial data', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.openRead(2, 5).first, testFileBytes.sublist(2, 5));
       });
 
       test('readAsBytes', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.readAsBytes(), testFileBytes);
       });
 
       test('readAsString', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.readAsString(), testFileStringContents);
       });
 
       test('canRead', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.canRead(), true);
       });
 
       test('exists', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.exists(), true);
       });
 
       test('name', () async {
-        final file = PlatformXFile(BlobWebXFileCreationParams(testFile));
+        final file = PlatformXFile(WebXFileCreationParams.fromBlob(testFile));
 
         expect(await file.name(), testFile.name);
       });
@@ -144,7 +144,7 @@ void main() {
 
       group('XFile download', () {
         test('creates a DOM container', () async {
-          final file = WebXFile(BlobWebXFileCreationParams(testFile));
+          final file = WebXFile(WebXFileCreationParams.fromBlob(testFile));
 
           await file.download('');
 
@@ -156,7 +156,7 @@ void main() {
         });
 
         test('create anchor element', () async {
-          final file = WebXFile(BlobWebXFileCreationParams(testFile));
+          final file = WebXFile(WebXFileCreationParams.fromBlob(testFile));
 
           await file.download('path');
 
@@ -187,7 +187,10 @@ void main() {
           );
 
           final file = WebXFile(
-            BlobWebXFileCreationParams(testFile, testOverrides: testOverrides),
+            WebXFileCreationParams.fromBlob(
+              testFile,
+              testOverrides: testOverrides,
+            ),
           );
 
           var clicked = false;

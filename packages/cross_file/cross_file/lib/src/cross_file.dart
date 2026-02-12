@@ -22,7 +22,7 @@ import 'cross_file_entity.dart';
 /// the dart:io implementation of `cross_file`:
 ///
 /// ```dart
-/// final XFile file = XFile('my/file.txt');
+/// final XFile file = XFile.fromUri(Uri.file('my/file.txt'));
 ///
 /// final IOXFileExtension? ioExtension = file.maybeGetExtension<IOXFileExtension>();
 /// if (ioExtension != null) {
@@ -33,10 +33,16 @@ import 'cross_file_entity.dart';
 class XFile extends XFileEntity {
   /// Constructs a [XFile].
   ///
-  /// See [XFile.fromCreationParams] for setting parameters for a
-  /// specific platform.
-  XFile(String uri)
+  /// See [XFile.fromCreationParams] for setting parameters for a specific
+  /// platform.
+  XFile({required String uri})
     : this.fromCreationParams(PlatformXFileCreationParams(uri: uri));
+
+  /// Constructs a [XFile].
+  ///
+  /// See [XFile.fromCreationParams] for setting parameters for a specific
+  /// platform.
+  XFile.fromUri(Uri uri) : this(uri: uri.toString());
 
   /// Constructs a [XFile] from creation params for a specific platform.
   ///

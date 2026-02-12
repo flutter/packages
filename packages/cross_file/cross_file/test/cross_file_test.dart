@@ -20,7 +20,7 @@ void main() {
             TestXFile(params, onLastModified: () async => lastModified),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.lastModified(), lastModified);
     });
@@ -32,7 +32,7 @@ void main() {
             TestXFile(params, onLength: () async => length),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.length(), length);
     });
@@ -46,7 +46,7 @@ void main() {
             TestXFile(params, onOpenRead: () => Stream.fromIterable(data)),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.openRead().toList(), data);
     });
@@ -58,7 +58,7 @@ void main() {
             TestXFile(params, onReadAsBytes: () async => bytes),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.readAsBytes(), bytes);
     });
@@ -73,7 +73,7 @@ void main() {
             ),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.readAsString(), message);
     });
@@ -85,7 +85,7 @@ void main() {
             TestXFile(params, onCanRead: () async => canRead),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.canRead(), canRead);
     });
@@ -97,7 +97,7 @@ void main() {
             TestXFile(params, onExists: () async => exists),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.exists(), exists);
     });
@@ -109,7 +109,7 @@ void main() {
             TestXFile(params, onName: () async => name),
       );
 
-      final file = XFile('uri');
+      final file = XFile(uri: 'uri');
 
       expect(await file.name(), name);
     });

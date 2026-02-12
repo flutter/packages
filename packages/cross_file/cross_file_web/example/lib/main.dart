@@ -17,8 +17,9 @@ class FileOpenScreen extends StatelessWidget {
 
   Future<void> _openFile(BuildContext context) async {
     final XFile? file = await openFile();
+    print('here: ${file?.uri}');
 
-    if (file case final XFile file) {
+    if (file != null) {
       final String filename = await file.name() ?? file.uri;
 
       switch (mime.lookupMimeType(filename)) {

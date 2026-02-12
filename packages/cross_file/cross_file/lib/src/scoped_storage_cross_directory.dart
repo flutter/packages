@@ -21,7 +21,7 @@ import 'cross_directory.dart';
 /// the Android implementation of `cross_file`:
 ///
 /// ```dart
-/// final ScopedStorageXDirectory directory = XDirectory('my/dir');
+/// final ScopedStorageXDirectory directory = ScopedStorageXDirectory(uri: 'context://my/dir');
 ///
 /// final AndroidScopedStorageXDirectoryExtension? androidExtension =
 ///     file.maybeGetExtension<AndroidScopedStorageXDirectoryExtension>();
@@ -35,7 +35,7 @@ class ScopedStorageXDirectory extends XDirectory {
   ///
   /// See [ScopedStorageXDirectory.fromCreationParams] for setting parameters
   /// for a specific platform.
-  ScopedStorageXDirectory(String uri)
+  ScopedStorageXDirectory({required String uri})
     : this.fromCreationParams(
         PlatformScopedStorageXDirectoryCreationParams(uri: uri),
       );
