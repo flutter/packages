@@ -1,6 +1,15 @@
-## 2.17.2
+## 2.17.4
 
 * Standardizes Objective-C class names.
+
+## 2.17.3
+
+* Adds a README section about Swift Package Manager and the new
+  `google_maps_flutter_ios_sdk*` packages.
+
+## 2.17.2
+
+* Fixes a regression in custom marker icon handling.
 
 ## 2.17.1
 

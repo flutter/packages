@@ -4,8 +4,8 @@
 
 @import google_maps_flutter_ios;
 @import Flutter;
-@import XCTest;
 @import GoogleMaps;
+@import XCTest;
 
 #import "TestUtils/PartiallyMockedMapView.h"
 #import "TestUtils/TestAssetProvider.h"

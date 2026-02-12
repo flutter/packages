@@ -113,7 +113,7 @@
 @property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
 /// Controller for adding/removing/fetching cluster managers
 @property(weak, nonatomic, nullable) FGMClusterManagersController *clusterManagersController;
-@property(weak, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
+@property(strong, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
 @property(weak, nonatomic) GMSMapView *mapView;
 
 @end

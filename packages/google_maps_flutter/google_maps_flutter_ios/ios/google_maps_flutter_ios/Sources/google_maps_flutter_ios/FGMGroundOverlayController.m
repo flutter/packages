@@ -89,7 +89,7 @@
 @property(weak, nonatomic) NSObject<FGMMapEventDelegate> *eventDelegate;
 
 /// Asset provider used to load images.
-@property(weak, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
+@property(strong, nonatomic) NSObject<FGMAssetProvider> *assetProvider;
 
 /// The map view used to generate the controllers.
 @property(weak, nonatomic) GMSMapView *mapView;
