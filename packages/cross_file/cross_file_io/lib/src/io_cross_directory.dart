@@ -14,11 +14,11 @@ import 'io_cross_file.dart';
 base class IOXDirectoryCreationParams extends PlatformXDirectoryCreationParams {
   /// Constructs an [IOXDirectoryCreationParams].
   IOXDirectoryCreationParams({required String uri})
-    : this.fromFile(Directory(uri));
+    : this.fromDirectory(Directory.fromUri(Uri.parse(uri)));
 
   /// Constructs an [IOXDirectoryCreationParams] from a [Directory].
-  IOXDirectoryCreationParams.fromFile(this.directory)
-    : super(uri: directory.path);
+  IOXDirectoryCreationParams.fromDirectory(this.directory)
+    : super(uri: directory.uri.toString());
 
   /// Constructs an [IOXDirectoryCreationParams] from a [PlatformXDirectoryCreationParams].
   factory IOXDirectoryCreationParams.fromCreationParams(
@@ -57,10 +57,10 @@ base class IOXDirectory extends PlatformXDirectory with IOXDirectoryExtension {
       switch (entity) {
         case final Directory directory:
           yield IOXDirectory(
-            PlatformXDirectoryCreationParams(uri: directory.path),
+            IOXDirectoryCreationParams.fromDirectory(directory),
           );
         case final File file:
-          yield IOXFile(PlatformXFileCreationParams(uri: file.path));
+          yield IOXFile(IOXFileCreationParams.fromFile(file));
       }
     }
   }

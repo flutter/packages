@@ -13,10 +13,11 @@ import 'package:path/path.dart' as path;
 @immutable
 base class IOXFileCreationParams extends PlatformXFileCreationParams {
   /// Constructs an [IOXFileCreationParams].
-  IOXFileCreationParams({required String uri}) : this.fromFile(File(uri));
+  IOXFileCreationParams({required String uri})
+    : this.fromFile(File.fromUri(Uri.parse(uri)));
 
   /// Constructs an [IOXFileCreationParams] from a [File].
-  IOXFileCreationParams.fromFile(this.file) : super(uri: file.path);
+  IOXFileCreationParams.fromFile(this.file) : super(uri: file.uri.toString());
 
   /// Constructs an [IOXFileCreationParams] from a [PlatformXFileCreationParams].
   factory IOXFileCreationParams.fromCreationParams(

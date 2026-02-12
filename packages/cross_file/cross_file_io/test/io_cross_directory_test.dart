@@ -37,7 +37,7 @@ void main() {
           (PlatformXFileEntity entity) => entity.params.uri,
         ),
         (await testDirectory.list().toList()).map(
-          (FileSystemEntity entity) => entity.path,
+          (FileSystemEntity entity) => entity.uri.toString(),
         ),
       );
     });
