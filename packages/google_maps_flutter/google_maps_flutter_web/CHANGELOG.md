@@ -1,7 +1,7 @@
 ## 0.6.1
 
 * Batches clustered marker add/remove operations to avoid redundant re-rendering.
-  
+
 ## 0.6.0
 
 * **BREAKING CHANGES**: Adds type constraints to generic type parameters:
