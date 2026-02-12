@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 /// Controller of multiple ground overlays on the map.
-@interface FLTGroundOverlaysController : NSObject
+@interface FGMGroundOverlaysController : NSObject
 
 /// Initializes the controller with a GMSMapView, event delegate, and asset provider.
 - (instancetype)initWithMapView:(GMSMapView *)mapView
