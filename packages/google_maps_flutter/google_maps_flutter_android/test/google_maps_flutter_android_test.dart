@@ -1500,7 +1500,6 @@ void main() {
   test('onPoiTap sends events to correct stream', () async {
     const mapId = 1;
     final fakePosition = PlatformLatLng(latitude: 12.34, longitude: 56.78);
-    const fakeName = 'Googleplex';
     const fakePlaceId = 'iso_id_123';
 
     final maps = GoogleMapsFlutterAndroid();
@@ -1511,11 +1510,7 @@ void main() {
     final stream = StreamQueue<MapPoiTapEvent>(maps.onPoiTap(mapId: mapId));
 
     callbackHandler.onPoiTap(
-      PlatformPointOfInterest(
-        position: fakePosition,
-        name: fakeName,
-        placeId: fakePlaceId,
-      ),
+      PlatformPointOfInterest(position: fakePosition, placeId: fakePlaceId),
     );
 
     final MapPoiTapEvent event = await stream.next;
@@ -1524,7 +1519,6 @@ void main() {
     final PointOfInterest poi = event.value;
     expect(poi.position.latitude, fakePosition.latitude);
     expect(poi.position.longitude, fakePosition.longitude);
-    expect(poi.name, fakeName);
     expect(poi.placeId, fakePlaceId);
   });
 }

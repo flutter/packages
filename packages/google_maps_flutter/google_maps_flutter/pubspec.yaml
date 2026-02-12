@@ -41,6 +41,7 @@ topics:
 # The example deliberately includes limited-use secrets.
 false_secrets:
   - /example/web/index.html
+
 dependency_overrides:
   google_maps_flutter_android:
     path: ../google_maps_flutter_android

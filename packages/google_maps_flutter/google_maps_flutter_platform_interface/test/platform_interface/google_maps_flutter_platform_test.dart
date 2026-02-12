@@ -155,11 +155,11 @@ void main() {
     );
   });
 
-  test('onPoiTap default implementation throws UnimplementedError', () {
+  test('onPoiTap default implementation returns an empty stream', () {
     final platform = ExtendsGoogleMapsFlutterPlatform();
-    // Most stream methods in the platform interface should provide a stream or throw.
-    // Verify that your new onPoiTap is reachable.
-    expect(() => platform.onPoiTap(mapId: 0), throwsUnimplementedError);
+    // The default implementation should now return a stream, not throw.
+    final Stream<MapPoiTapEvent> stream = platform.onPoiTap(mapId: 0);
+    expect(stream, isA<Stream<MapPoiTapEvent>>());
   });
 }
 

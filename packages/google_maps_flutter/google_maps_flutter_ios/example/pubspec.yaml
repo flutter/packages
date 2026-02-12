@@ -31,6 +31,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+
 dependency_overrides:
   google_maps_flutter_platform_interface:
     path: ../../google_maps_flutter_platform_interface

@@ -80,7 +80,6 @@ class PlacePoiBodyState extends State<PlacePoiBody> {
               ),
               const SizedBox(height: 8),
               if (_lastPoi != null) ...<Widget>[
-                Text('Name: ${_lastPoi!.name ?? "Unknown"}'),
                 Text('Place ID: ${_lastPoi!.placeId}'),
                 Text(
                   'Lat/Lng: ${_lastPoi!.position.latitude.toStringAsFixed(5)}, ${_lastPoi!.position.longitude.toStringAsFixed(5)}',

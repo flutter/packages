@@ -27,6 +27,7 @@ dev_dependencies:
 flutter:
   assets:
     - assets/
+
 dependency_overrides:
   google_maps_flutter:
     path: ../../google_maps_flutter
@@ -37,4 +38,4 @@ dependency_overrides:
   google_maps_flutter_platform_interface:
     path: ../../google_maps_flutter_platform_interface
   google_maps_flutter_web:
-    path: ../
+    path: ../../google_maps_flutter_web

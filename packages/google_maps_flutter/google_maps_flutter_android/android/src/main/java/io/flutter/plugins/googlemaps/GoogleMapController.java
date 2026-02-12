@@ -371,7 +371,6 @@ class GoogleMapController
     Messages.PlatformPointOfInterest platformPoi =
         new Messages.PlatformPointOfInterest.Builder()
             .setPosition(Convert.latLngToPigeon(poi.latLng))
-            .setName(poi.name)
             .setPlaceId(poi.placeId)
             .build();
 

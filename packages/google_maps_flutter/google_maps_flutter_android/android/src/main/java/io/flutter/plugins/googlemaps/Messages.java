@@ -2529,16 +2529,6 @@ public class Messages {
       this.position = setterArg;
     }
 
-    private @Nullable String name;
-
-    public @Nullable String getName() {
-      return name;
-    }
-
-    public void setName(@Nullable String setterArg) {
-      this.name = setterArg;
-    }
-
     private @NonNull String placeId;
 
     public @NonNull String getPlaceId() {
@@ -2564,14 +2554,12 @@ public class Messages {
         return false;
       }
       PlatformPointOfInterest that = (PlatformPointOfInterest) o;
-      return position.equals(that.position)
-          && Objects.equals(name, that.name)
-          && placeId.equals(that.placeId);
+      return position.equals(that.position) && placeId.equals(that.placeId);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hash(position, name, placeId);
+      return Objects.hash(position, placeId);
     }
 
     public static final class Builder {
@@ -2581,14 +2569,6 @@ public class Messages {
       @CanIgnoreReturnValue
       public @NonNull Builder setPosition(@NonNull PlatformLatLng setterArg) {
         this.position = setterArg;
-        return this;
-      }
-
-      private @Nullable String name;
-
-      @CanIgnoreReturnValue
-      public @NonNull Builder setName(@Nullable String setterArg) {
-        this.name = setterArg;
         return this;
       }
 
@@ -2603,7 +2583,6 @@ public class Messages {
       public @NonNull PlatformPointOfInterest build() {
         PlatformPointOfInterest pigeonReturn = new PlatformPointOfInterest();
         pigeonReturn.setPosition(position);
-        pigeonReturn.setName(name);
         pigeonReturn.setPlaceId(placeId);
         return pigeonReturn;
       }
@@ -2611,9 +2590,8 @@ public class Messages {
 
     @NonNull
     ArrayList<Object> toList() {
-      ArrayList<Object> toListResult = new ArrayList<>(3);
+      ArrayList<Object> toListResult = new ArrayList<>(2);
       toListResult.add(position);
-      toListResult.add(name);
       toListResult.add(placeId);
       return toListResult;
     }
@@ -2622,9 +2600,7 @@ public class Messages {
       PlatformPointOfInterest pigeonResult = new PlatformPointOfInterest();
       Object position = pigeonVar_list.get(0);
       pigeonResult.setPosition((PlatformLatLng) position);
-      Object name = pigeonVar_list.get(1);
-      pigeonResult.setName((String) name);
-      Object placeId = pigeonVar_list.get(2);
+      Object placeId = pigeonVar_list.get(1);
       pigeonResult.setPlaceId((String) placeId);
       return pigeonResult;
     }

@@ -150,7 +150,6 @@ void main() {
 
       final poiData = <String, Object>{
         'placeId': 'place123',
-        'name': 'Googleplex',
         'position': <double>[37.422, -122.084],
       };
 
@@ -166,7 +165,6 @@ void main() {
           );
 
       expect(events.length, 1);
-      expect(events[0].value.name, 'Googleplex');
       expect(events[0].value.placeId, 'place123');
     });
   });

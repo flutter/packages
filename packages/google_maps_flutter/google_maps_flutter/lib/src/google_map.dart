@@ -236,9 +236,6 @@ class GoogleMap extends StatefulWidget {
   /// See https://pub.dev/packages/google_maps_flutter_web.
   final Set<ClusterManager> clusterManagers;
 
-  /// Callback for Point of Interests tap
-  final ArgumentCallback<PointOfInterest>? onPoiTap;
-
   /// Ground overlays to be initialized for the map.
   ///
   /// Support table for Ground Overlay features:
@@ -293,6 +290,9 @@ class GoogleMap extends StatefulWidget {
 
   /// Called every time a [GoogleMap] is long pressed.
   final ArgumentCallback<LatLng>? onLongPress;
+
+  /// Called when a [PointOfInterest] is tapped.
+  final ArgumentCallback<PointOfInterest>? onPoiTap;
 
   /// True if a "My Location" layer should be shown on the map.
   ///
@@ -617,9 +617,7 @@ class _GoogleMapState extends State<GoogleMap> {
   }
 
   void onPoiTap(PointOfInterest poi) {
-    if (widget.onPoiTap != null) {
-      widget.onPoiTap!(poi);
-    }
+    widget.onPoiTap?.call(poi);
   }
 
   void onPolygonTap(PolygonId polygonId) {

@@ -193,7 +193,6 @@ void main() {
 
     const poi = PointOfInterest(
       position: LatLng(10.0, 10.0),
-      name: 'Test POI',
       placeId: 'test_id_123',
     );
 
@@ -202,7 +201,6 @@ void main() {
     await tester.pump();
 
     expect(tappedPoi, poi);
-    expect(tappedPoi!.name, 'Test POI');
     expect(tappedPoi!.placeId, 'test_id_123');
   });
 }

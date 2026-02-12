@@ -958,20 +958,14 @@ class PlatformMarker {
 
 /// Pigeon equivalent of the Point of Interest class.
 class PlatformPointOfInterest {
-  PlatformPointOfInterest({
-    required this.position,
-    this.name,
-    required this.placeId,
-  });
+  PlatformPointOfInterest({required this.position, required this.placeId});
 
   PlatformLatLng position;
-
-  String? name;
 
   String placeId;
 
   List<Object?> _toList() {
-    return <Object?>[position, name, placeId];
+    return <Object?>[position, placeId];
   }
 
   Object encode() {
@@ -982,8 +976,7 @@ class PlatformPointOfInterest {
     result as List<Object?>;
     return PlatformPointOfInterest(
       position: result[0]! as PlatformLatLng,
-      name: result[1]! as String,
-      placeId: result[2]! as String,
+      placeId: result[1]! as String,
     );
   }
 

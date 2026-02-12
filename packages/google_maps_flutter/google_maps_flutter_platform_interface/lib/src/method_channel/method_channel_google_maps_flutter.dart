@@ -232,7 +232,6 @@ class MethodChannelGoogleMapsFlutter extends GoogleMapsFlutterPlatform {
             mapId,
             PointOfInterest(
               position: LatLng.fromJson(arguments['position'])!,
-              name: arguments['name']! as String,
               placeId: arguments['placeId']! as String,
             ),
           ),

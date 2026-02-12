@@ -239,14 +239,9 @@ class PlatformMarker {
 
 /// Pigeon equivalent of the Point of Interest class.
 class PlatformPointOfInterest {
-  PlatformPointOfInterest({
-    required this.position,
-    this.name,
-    required this.placeId,
-  });
+  PlatformPointOfInterest({required this.position, required this.placeId});
 
   final PlatformLatLng position;
-  final String? name;
   final String placeId;
 }
 

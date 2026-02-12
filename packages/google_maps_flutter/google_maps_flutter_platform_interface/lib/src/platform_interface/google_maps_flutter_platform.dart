@@ -371,7 +371,7 @@ abstract class GoogleMapsFlutterPlatform extends PlatformInterface {
 
   /// A [PointOfInterest] has been tapped.
   Stream<MapPoiTapEvent> onPoiTap({required int mapId}) {
-    throw UnimplementedError('onPoiTap() has not been implemented.');
+    return const Stream<MapPoiTapEvent>.empty();
   }
 
   /// A [Polyline] has been tapped.

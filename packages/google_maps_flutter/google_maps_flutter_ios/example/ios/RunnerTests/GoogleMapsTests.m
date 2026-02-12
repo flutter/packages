@@ -54,6 +54,24 @@
 @property(strong, nonatomic, readonly) id<NSObject> sharedMapServices;
 @end
 
+@interface FLTGoogleMapController (Testing)
+@property(nonatomic, strong) FGMMapsCallbackApi *dartCallbackHandler;
+@end
+
+@interface MockMapCallbackHandler : FGMMapsCallbackApi
+@property(nonatomic, strong) FGMPlatformPointOfInterest *lastPoiTap;
+@end
+
+@implementation MockMapCallbackHandler
+- (void)didTapPointOfInterest:(FGMPlatformPointOfInterest *)poi
+                   completion:(void (^)(FlutterError *_Nullable))completion {
+  self.lastPoiTap = poi;
+  if (completion) {
+    completion(nil);
+  }
+}
+@end
+
 @interface GoogleMapsTests : XCTestCase
 @end
 
@@ -220,6 +238,38 @@
   XCTAssertEqual(cameraPosition.target.latitude, initialCameraPosition.target.latitude);
   XCTAssertEqual(cameraPosition.target.longitude, initialCameraPosition.target.longitude);
   XCTAssertEqual(cameraPosition.zoom, initialCameraPosition.zoom);
+}
+
+- (void)testDidTapPOI {
+  CGRect frame = CGRectMake(0, 0, 100, 100);
+  GMSMapViewOptions *options = [[GMSMapViewOptions alloc] init];
+  options.frame = frame;
+  options.camera = [GMSCameraPosition cameraWithLatitude:0 longitude:0 zoom:0];
+
+  PartiallyMockedMapView *mapView = [[PartiallyMockedMapView alloc] initWithOptions:options];
+
+  FLTGoogleMapController *controller =
+      [[FLTGoogleMapController alloc] initWithMapView:mapView
+                                       viewIdentifier:0
+                                   creationParameters:[self emptyCreationParameters]
+                                        assetProvider:[[TestAssetProvider alloc] init]
+                                      binaryMessenger:[[StubBinaryMessenger alloc] init]];
+
+  MockMapCallbackHandler *mockHandler =
+      [[MockMapCallbackHandler alloc] initWithBinaryMessenger:[[StubBinaryMessenger alloc] init]];
+  controller.dartCallbackHandler = mockHandler;
+
+  NSString *placeId = @"test_place_id";
+  NSString *name = @"Test POI Name";
+  CLLocationCoordinate2D location = CLLocationCoordinate2DMake(10.0, 20.0);
+
+  [controller mapView:mapView didTapPOIWithPlaceID:placeId name:name location:location];
+
+  XCTAssertNotNil(mockHandler.lastPoiTap, @"The POI tap should have been recorded.");
+  XCTAssertEqualObjects(mockHandler.lastPoiTap.placeId, placeId);
+  XCTAssertEqualObjects(mockHandler.lastPoiTap.name, name);
+  XCTAssertEqual(mockHandler.lastPoiTap.position.latitude, 10.0);
+  XCTAssertEqual(mockHandler.lastPoiTap.position.longitude, 20.0);
 }
 
 /// Creates an empty creation paramaters object for tests where the values don't matter, just that

@@ -12,17 +12,10 @@ import 'types.dart';
 @immutable
 class PointOfInterest {
   /// Creates an immutable representation of a point of interest.
-  const PointOfInterest({
-    required this.position,
-    this.name,
-    required this.placeId,
-  });
+  const PointOfInterest({required this.position, required this.placeId});
 
   /// The geographical location of the POI.
   final LatLng position;
-
-  /// The name of the POI (e.g., "Googleplex").
-  final String? name;
 
   /// The unique Place ID defined by Google (e.g., "ChIJj61dQgK6j4AR4GeTYWZsKWw").
   final String placeId;
@@ -37,15 +30,14 @@ class PointOfInterest {
     }
     return other is PointOfInterest &&
         position == other.position &&
-        name == other.name &&
         placeId == other.placeId;
   }
 
   @override
-  int get hashCode => Object.hash(position, name, placeId);
+  int get hashCode => Object.hash(position, placeId);
 
   @override
   String toString() {
-    return 'PointOfInterest{position: $position, name: $name, placeId: $placeId}';
+    return 'PointOfInterest{position: $position, placeId: $placeId}';
   }
 }

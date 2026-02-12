@@ -1352,7 +1352,6 @@ void main() {
   test('onPoiTap sends events to correct stream', () async {
     const mapId = 1;
     final fakePosition = PlatformLatLng(latitude: 12.34, longitude: 56.78);
-    const fakeName = 'Googleplex';
     const fakePlaceId = 'iso_id_123';
 
     final maps = GoogleMapsFlutterIOS();
@@ -1365,11 +1364,7 @@ void main() {
 
     // Simulate a message from the native side via the Pigeon generated handler
     callbackHandler.onPoiTap(
-      PlatformPointOfInterest(
-        position: fakePosition,
-        name: fakeName,
-        placeId: fakePlaceId,
-      ),
+      PlatformPointOfInterest(position: fakePosition, placeId: fakePlaceId),
     );
 
     // Verify the event in the stream
@@ -1379,7 +1374,6 @@ void main() {
     final PointOfInterest poi = event.value;
     expect(poi.position.latitude, fakePosition.latitude);
     expect(poi.position.longitude, fakePosition.longitude);
-    expect(poi.name, fakeName);
     expect(poi.placeId, fakePlaceId);
   });
 }

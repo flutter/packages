@@ -343,11 +343,8 @@ typedef NS_ENUM(NSUInteger, FGMPlatformMapBitmapScaling) {
 @interface FGMPlatformPointOfInterest : NSObject
 /// `init` unavailable to enforce nonnull fields, see the `make` class method.
 - (instancetype)init NS_UNAVAILABLE;
-+ (instancetype)makeWithPosition:(FGMPlatformLatLng *)position
-                            name:(NSString *)name
-                         placeId:(NSString *)placeId;
++ (instancetype)makeWithPosition:(FGMPlatformLatLng *)position placeId:(NSString *)placeId;
 @property(nonatomic, strong) FGMPlatformLatLng *position;
-@property(nonatomic, copy) NSString *name;
 @property(nonatomic, copy) NSString *placeId;
 @end
 

@@ -37,6 +37,7 @@ topics:
   - google-maps
   - google-maps-flutter
   - map
+
 dependency_overrides:
   google_maps_flutter_platform_interface:
     path: ../google_maps_flutter_platform_interface
