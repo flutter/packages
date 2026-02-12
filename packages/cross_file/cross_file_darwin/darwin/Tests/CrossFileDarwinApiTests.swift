@@ -11,8 +11,6 @@
 #endif
 
 import Testing
-import cross_file_darwin
-import UIKit
 
 @testable import cross_file_darwin
 
@@ -34,7 +32,12 @@ struct CrossFileDarwinApiTests {
     let api = CrossFileDarwinApiImpl()
     let canAccess = try api.startAccessingSecurityScopedResource(url: testFileURL.path)
     
+    // Only returns true on iOS.
+#if os(iOS)
     #expect(canAccess)
+#endif
+    
+    #expect(try String(contentsOf: testFileURL, encoding: .utf8) == "Hello, World!")
   }
   
   @Test func tryCreateBookmarkedUrl() throws {

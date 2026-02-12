@@ -15,7 +15,6 @@
 		7884E8682EC3CC0700C636F2 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7884E8672EC3CC0400C636F2 /* SceneDelegate.swift */; };
 		87E2BFE282CB477A431CF7DF /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9602D2B4619B7A716C4C80D1 /* Pods_RunnerTests.framework */; };
 		8F2171F72F21A5270014CE68 /* CrossFileDarwinApiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2171F52F21A5270014CE68 /* CrossFileDarwinApiTests.swift */; };
-		8F2171FB2F2295120014CE68 /* TestBinaryMessenger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8F2171F92F2295120014CE68 /* TestBinaryMessenger.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
@@ -59,7 +58,6 @@
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7CF818CFA5FB20A8AC1467CD /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		8F2171F52F21A5270014CE68 /* CrossFileDarwinApiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = CrossFileDarwinApiTests.swift; path = ../../darwin/Tests/CrossFileDarwinApiTests.swift; sourceTree = SOURCE_ROOT; };
-		8F2171F92F2295120014CE68 /* TestBinaryMessenger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = TestBinaryMessenger.swift; path = ../../darwin/Tests/TestBinaryMessenger.swift; sourceTree = SOURCE_ROOT; };
 		9602D2B4619B7A716C4C80D1 /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
@@ -96,7 +94,6 @@
 		331C8082294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
-				8F2171F92F2295120014CE68 /* TestBinaryMessenger.swift */,
 				8F2171F52F21A5270014CE68 /* CrossFileDarwinApiTests.swift */,
 				331C807B294A618700263BE5 /* RunnerTests.swift */,
 			);
@@ -317,9 +314,13 @@
 			inputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
+			inputPaths = (
+			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -379,7 +380,6 @@
 			files = (
 				331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */,
 				8F2171F72F21A5270014CE68 /* CrossFileDarwinApiTests.swift in Sources */,
-				8F2171FB2F2295120014CE68 /* TestBinaryMessenger.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
