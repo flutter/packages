@@ -50,5 +50,43 @@ void main() {
               as WebViewCookie;
       expect(capturedCookie, cookie);
     });
+
+    test('getCookies', () async {
+      final mockPlatformWebViewCookieManager =
+          MockPlatformWebViewCookieManager();
+      final cookieManager = WebViewCookieManager.fromPlatform(
+        mockPlatformWebViewCookieManager,
+      );
+
+      when(
+        mockPlatformWebViewCookieManager.getCookies(Uri(host: 'flutter.dev')),
+      ).thenAnswer((_) async => []);
+
+      final List<WebViewCookie> cookies = await cookieManager.getCookies(
+        domain: Uri(host: 'flutter.dev'),
+      );
+
+      expect(cookies, isEmpty);
+
+      verify(
+        mockPlatformWebViewCookieManager.getCookies(Uri(host: 'flutter.dev')),
+      ).called(1);
+
+      const cookie = WebViewCookie(
+        name: 'name',
+        value: 'value',
+        domain: 'domain',
+      );
+
+      when(
+        mockPlatformWebViewCookieManager.getCookies(Uri(host: 'domain')),
+      ).thenAnswer((_) => Future.value([cookie]));
+
+      await cookieManager.getCookies(domain: Uri(host: 'domain'));
+
+      verify(
+        mockPlatformWebViewCookieManager.getCookies(Uri(host: 'domain')),
+      ).called(1);
+    });
   });
 }

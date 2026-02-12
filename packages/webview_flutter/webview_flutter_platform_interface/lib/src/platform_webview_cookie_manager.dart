@@ -64,4 +64,12 @@ abstract class PlatformWebViewCookieManager extends PlatformInterface {
       'setCookie is not implemented on the current platform',
     );
   }
+
+  /// Gets a list of existing cookie for specified domain from all
+  /// [WebView] instances of the application.
+  Future<List<WebViewCookie>> getCookies(Uri url) {
+    throw UnimplementedError(
+      'getCookies is not implemented on the current platform',
+    );
+  }
 }

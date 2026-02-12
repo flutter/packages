@@ -12,7 +12,7 @@ import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'webkit_webview_cookie_manager_test.mocks.dart';
 
-@GenerateMocks(<Type>[WKWebsiteDataStore, WKHTTPCookieStore])
+@GenerateMocks(<Type>[WKWebsiteDataStore, WKHTTPCookieStore, HTTPCookie])
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -104,6 +104,62 @@ void main() {
         ),
         throwsArgumentError,
       );
+    });
+
+    test('getCookies returns cookies correctly', () async {
+      final mockWKWebsiteDataStore = MockWKWebsiteDataStore();
+      final mockCookieStore = MockWKHTTPCookieStore();
+
+      when(mockWKWebsiteDataStore.httpCookieStore).thenReturn(mockCookieStore);
+
+      // Mock cookies returned by the cookie store
+      final mockCookie1 = MockHTTPCookie();
+      final mockCookie2 = MockHTTPCookie();
+
+      when(mockCookie1.getProperties()).thenAnswer(
+        (_) async => <HttpCookiePropertyKey, Object>{
+          HttpCookiePropertyKey.name: 'cookie1',
+          HttpCookiePropertyKey.value: 'value1',
+          HttpCookiePropertyKey.domain: 'flutter.dev',
+          HttpCookiePropertyKey.path: '/',
+        },
+      );
+
+      when(mockCookie2.getProperties()).thenAnswer(
+        (_) async => <HttpCookiePropertyKey, Object>{
+          HttpCookiePropertyKey.name: 'cookie2',
+          HttpCookiePropertyKey.value: 'value2',
+          HttpCookiePropertyKey.domain: 'flutter.dev',
+          HttpCookiePropertyKey.path: '/path',
+        },
+      );
+
+      when(
+        mockCookieStore.getCookies('flutter.dev'),
+      ).thenAnswer((_) async => [mockCookie1, mockCookie2]);
+
+      PigeonOverrides.wKWebsiteDataStore_defaultDataStore =
+          mockWKWebsiteDataStore;
+
+      final manager = WebKitWebViewCookieManager(
+        WebKitWebViewCookieManagerCreationParams(),
+      );
+
+      final List<WebViewCookie> cookies = await manager.getCookies(
+        Uri.parse('https://flutter.dev'),
+      );
+
+      expect(cookies.length, 2);
+
+      expect(cookies[0].name, 'cookie1');
+      expect(cookies[0].value, 'value1');
+      expect(cookies[0].domain, 'flutter.dev');
+      expect(cookies[0].path, '/');
+
+      expect(cookies[1].name, 'cookie2');
+      expect(cookies[1].value, 'value2');
+      expect(cookies[1].domain, 'flutter.dev');
+      expect(cookies[1].path, '/path');
     });
   });
 }

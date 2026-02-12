@@ -41,6 +41,11 @@ class _FakeWKWebsiteDataStore_2 extends _i1.SmartFake
     : super(parent, parentInvocation);
 }
 
+class _FakeHTTPCookie_3 extends _i1.SmartFake implements _i2.HTTPCookie {
+  _FakeHTTPCookie_3(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [WKWebsiteDataStore].
 ///
 /// See the documentation for Mockito's code generation for more information.
@@ -160,6 +165,16 @@ class MockWKHTTPCookieStore extends _i1.Mock implements _i2.WKHTTPCookieStore {
           as _i3.Future<void>);
 
   @override
+  _i3.Future<List<_i2.HTTPCookie>> getCookies(String? domain) =>
+      (super.noSuchMethod(
+            Invocation.method(#getCookies, [domain]),
+            returnValue: _i3.Future<List<_i2.HTTPCookie>>.value(
+              <_i2.HTTPCookie>[],
+            ),
+          )
+          as _i3.Future<List<_i2.HTTPCookie>>);
+
+  @override
   _i2.WKHTTPCookieStore pigeon_copy() =>
       (super.noSuchMethod(
             Invocation.method(#pigeon_copy, []),
@@ -169,6 +184,68 @@ class MockWKHTTPCookieStore extends _i1.Mock implements _i2.WKHTTPCookieStore {
             ),
           )
           as _i2.WKHTTPCookieStore);
+
+  @override
+  _i3.Future<void> addObserver(
+    _i2.NSObject? observer,
+    String? keyPath,
+    List<_i2.KeyValueObservingOptions>? options,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#addObserver, [observer, keyPath, options]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<void> removeObserver(_i2.NSObject? observer, String? keyPath) =>
+      (super.noSuchMethod(
+            Invocation.method(#removeObserver, [observer, keyPath]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+}
+
+/// A class which mocks [HTTPCookie].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockHTTPCookie extends _i1.Mock implements _i2.HTTPCookie {
+  MockHTTPCookie() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.PigeonInstanceManager get pigeon_instanceManager =>
+      (super.noSuchMethod(
+            Invocation.getter(#pigeon_instanceManager),
+            returnValue: _FakePigeonInstanceManager_1(
+              this,
+              Invocation.getter(#pigeon_instanceManager),
+            ),
+          )
+          as _i2.PigeonInstanceManager);
+
+  @override
+  _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?> getProperties() =>
+      (super.noSuchMethod(
+            Invocation.method(#getProperties, []),
+            returnValue:
+                _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?>.value(),
+          )
+          as _i3.Future<Map<_i2.HttpCookiePropertyKey, Object>?>);
+
+  @override
+  _i2.HTTPCookie pigeon_copy() =>
+      (super.noSuchMethod(
+            Invocation.method(#pigeon_copy, []),
+            returnValue: _FakeHTTPCookie_3(
+              this,
+              Invocation.method(#pigeon_copy, []),
+            ),
+          )
+          as _i2.HTTPCookie);
 
   @override
   _i3.Future<void> addObserver(
