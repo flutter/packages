@@ -324,7 +324,7 @@ public class GoogleMapControllerTest {
   @Test
   public void onPoiClick() {
     GoogleMapController controller = getGoogleMapControllerWithMockedDependencies();
-    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId", "name");
+    PointOfInterest poi = new PointOfInterest(new LatLng(1.0, 2.0), "placeId");
 
     controller.onPoiClick(poi);
 
@@ -334,7 +334,6 @@ public class GoogleMapControllerTest {
     verify(flutterApi).onPoiTap(poiCaptor.capture(), any(Messages.VoidResult.class));
 
     Messages.PlatformPointOfInterest capturedPoi = poiCaptor.getValue();
-    assertEquals("name", capturedPoi.getName());
     assertEquals("placeId", capturedPoi.getPlaceId());
     assertEquals(1.0, capturedPoi.getPosition().getLatitude(), 1e-6);
     assertEquals(2.0, capturedPoi.getPosition().getLongitude(), 1e-6);
