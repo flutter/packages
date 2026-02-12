@@ -1,7 +1,6 @@
-## 0.6.0
+## 0.7.0
 
 * Added support for Tap detection on Point of Interest.
-* Updates minimum supported SDK version to Flutter 3.35/Dart 3.9.
 
 ## 0.5.14+3
 
