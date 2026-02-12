@@ -42,7 +42,7 @@ packages/video_player/**                                 @tarrinneal
 packages/web_benchmarks/**                               @yjbanov
 packages/webview_flutter/**                              @bparrishMines
 packages/xdg_directories/**                              @stuartmorgan-g
-third_party/packages/cupertino_icons/**                  @MitchellGoodwin
+third_party/packages/cupertino_icons/**                  @victorsanni
 third_party/packages/cupertino_icons/test/goldens/**     @LongCatIsLooong
 third_party/packages/flutter_svg/**                      @domesticmouse
 third_party/packages/flutter_svg_test/**                 @domesticmouse
