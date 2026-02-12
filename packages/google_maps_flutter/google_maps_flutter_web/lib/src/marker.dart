@@ -96,6 +96,9 @@ abstract class MarkerController<T, O> {
   ///
   /// This cannot be called after [remove].
   void showInfoWindow();
+
+  /// Sets the map of the wrapped marker object.
+  void setMap(gmaps.Map map);
 }
 
 /// A `MarkerController` that wraps a [gmaps.Marker] object.
@@ -203,6 +206,9 @@ class LegacyMarkerController
       _infoWindow.content = newInfoWindowContent;
     }
   }
+
+  @override
+  void setMap(gmaps.Map map) => _marker?.map = map;
 }
 
 /// A `MarkerController` that wraps a [gmaps.AdvancedMarkerElement] object.
@@ -324,4 +330,7 @@ class AdvancedMarkerController
       _infoWindow.content = newInfoWindowContent;
     }
   }
+
+  @override
+  void setMap(gmaps.Map map) => _marker?.map = map;
 }

@@ -9,8 +9,18 @@ import 'package:google_maps/google_maps.dart' as gmaps;
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import '../google_maps_flutter_web.dart';
-import 'marker_clustering_js_interop.dart';
+import 'marker_clustering_js_interop.dart' hide getClustererEvents;
+import 'marker_clustering_js_interop.dart' as interop show getClustererEvents;
 import 'types.dart';
+
+/// Events emitted by the marker clustering lifecycle.
+enum ClusteringEvent {
+  /// Clustering has started.
+  begin,
+
+  /// Clustering finished and clusters are available.
+  end,
+}
 
 /// A controller class for managing marker clustering.
 ///
@@ -84,14 +94,38 @@ class ClusterManagersController<T extends Object> extends GeometryController {
     }
   }
 
-  /// Removes given marker from the [MarkerClusterer] with
-  /// given [ClusterManagerId].
+  /// Adds given list of [gmaps.Marker] to the [MarkerClusterer] with given
+  /// [ClusterManagerId].
+  void addItems(ClusterManagerId clusterManagerId, List<T> markers) {
+    final MarkerClusterer<T>? markerClusterer =
+        _clusterManagerIdToMarkerClusterer[clusterManagerId];
+    if (markerClusterer != null) {
+      markerClusterer.addMarkers(markers, true);
+      markerClusterer.render();
+    }
+  }
+
+  /// Removes given [gmaps.Marker] from the [MarkerClusterer] with given
+  /// [ClusterManagerId].
   void removeItem(ClusterManagerId clusterManagerId, T? marker) {
     if (marker != null) {
       final MarkerClusterer<T>? markerClusterer =
           _clusterManagerIdToMarkerClusterer[clusterManagerId];
       if (markerClusterer != null) {
         markerClusterer.removeMarker(marker, true);
+        markerClusterer.render();
+      }
+    }
+  }
+
+  /// Removes given markers from the [MarkerClusterer] with given
+  /// [ClusterManagerId].
+  void removeItems(ClusterManagerId clusterManagerId, List<T>? markers) {
+    if (markers != null) {
+      final MarkerClusterer<T>? markerClusterer =
+          _clusterManagerIdToMarkerClusterer[clusterManagerId];
+      if (markerClusterer != null) {
+        markerClusterer.removeMarkers(markers, true);
         markerClusterer.render();
       }
     }
@@ -112,6 +146,13 @@ class ClusterManagersController<T extends Object> extends GeometryController {
     }
     return <Cluster>[];
   }
+
+  /// Returns the stream of clustering lifecycle events for the given manager.
+  Stream<ClusteringEvent>? getClustererEvents(
+    ClusterManagerId clusterManagerId,
+  ) => interop.getClustererEvents(
+    _clusterManagerIdToMarkerClusterer[clusterManagerId]!,
+  );
 
   void _clusterClicked(
     ClusterManagerId clusterManagerId,

@@ -9,6 +9,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
+import 'package:google_maps_flutter_web/src/google_maps_inspector_web.dart';
+import 'package:google_maps_flutter_web/src/marker_clustering.dart';
 import 'package:integration_test/integration_test.dart';
 
 void main() {
@@ -23,9 +25,8 @@ void main() {
   const initialCameraPosition = CameraPosition(target: mapCenter);
 
   group('MarkersController', () {
-    const testMapId = 33930;
-
     testWidgets('Marker clustering', (WidgetTester tester) async {
+      const testMapId = 33930;
       const clusterManagerId = ClusterManagerId('cluster 1');
 
       final clusterManagers = <ClusterManager>{
@@ -67,8 +68,6 @@ void main() {
       final int mapId = await mapIdCompleter.future;
       expect(mapId, equals(testMapId));
 
-      addTearDown(() => plugin.dispose(mapId: mapId));
-
       final List<Cluster> clusters =
           await waitForValueMatchingPredicate<List<Cluster>>(
             tester,
@@ -104,6 +103,83 @@ void main() {
           <Cluster>[];
 
       expect(updatedClusters.length, 0);
+    });
+
+    testWidgets('clusters render once per batched add', (
+      WidgetTester tester,
+    ) async {
+      const clusterManagerId = ClusterManagerId('cluster 1');
+
+      final clusterManagers = <ClusterManager>{
+        const ClusterManager(clusterManagerId: clusterManagerId),
+      };
+
+      // Create the marker with clusterManagerId.
+      final initialMarkers = <Marker>{
+        for (var i = 0; i < 3; i++)
+          Marker(
+            markerId: MarkerId(i.toString()),
+            position: mapCenter,
+            clusterManagerId: clusterManagerId,
+          ),
+      };
+
+      final markersCluster1 = <Marker>{
+        for (var i = 3; i < 7; i++)
+          Marker(
+            markerId: MarkerId(i.toString()),
+            clusterManagerId: clusterManagerId,
+            position: mapCenter,
+          ),
+      };
+
+      const testMapId = 33931;
+      final events = StreamController<ClusteringEvent>();
+      await _pumpMap(
+        tester,
+        plugin.buildViewWithConfiguration(
+          testMapId,
+          (int id) async {
+            final StreamSubscription<ClusteringEvent>? subscription =
+                (inspector as GoogleMapsInspectorWeb)
+                    .getClusteringEvents(
+                      mapId: testMapId,
+                      clusterManagerId: clusterManagerId,
+                    )
+                    ?.listen(events.add);
+
+            await plugin.updateMarkers(
+              MarkerUpdates.from(initialMarkers, markersCluster1),
+              mapId: testMapId,
+            );
+
+            await Future<void>.delayed(const Duration(seconds: 1));
+            await subscription?.cancel();
+            await events.close();
+          },
+          widgetConfiguration: const MapWidgetConfiguration(
+            initialCameraPosition: initialCameraPosition,
+            textDirection: TextDirection.ltr,
+          ),
+          mapObjects: MapObjects(
+            clusterManagers: clusterManagers,
+            markers: initialMarkers,
+          ),
+        ),
+      );
+
+      await expectLater(
+        events.stream,
+        emitsInAnyOrder([
+          // Once per initial markers
+          ClusteringEvent.begin,
+          ClusteringEvent.end,
+          // Once per new cluster
+          ClusteringEvent.begin,
+          ClusteringEvent.end,
+          emitsDone,
+        ]),
+      );
     });
   });
 }
