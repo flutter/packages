@@ -1,3 +1,7 @@
+## 8.0.2
+
+- Fixes a bug where exceptions thrown during a return statement in an async function were not correctly caught, aligning behavior with expected Dart semantics (see [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395)).
+
 ## 8.0.1
 
 - Fixes WOFF2/WOFF font selection when loading fonts bundled with the app to prefer compressed formats regardless of asset manifest order.
@@ -266,8 +270,8 @@
 ## 6.3.1
 
 - Transfers the package source from
-  https://github.com/material-foundation/flutter-packages to
-  https://github.com/flutter/packages.
+  <https://github.com/material-foundation/flutter-packages> to
+  <https://github.com/flutter/packages>.
 - Updates minimum supported SDK version to Flutter 3.29/Dart 3.7.
 - Updates code to meet repository analyzer settings.
 
@@ -679,7 +683,9 @@
   - `Yuji Hentaigana Akebono`
 
 ## 3.0.1
+
 ### Changed
+
 - Improve asset manifest loading errors
 - Improve testing guidance
 
