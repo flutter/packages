@@ -70,6 +70,8 @@ For more details, see [Getting started with Google Maps Platform](https://develo
        GeneratedPluginRegistrant.register(with: self)
        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
      }
+   }
+   ```
 
 2. Select an SDK version. The Google Maps SDK for iOS usually releases a new
    major version once per year, dropping support for an older version of iOS
