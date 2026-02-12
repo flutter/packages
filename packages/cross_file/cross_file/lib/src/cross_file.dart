@@ -22,7 +22,7 @@ import 'cross_file_entity.dart';
 /// the dart:io implementation of `cross_file`:
 ///
 /// ```dart
-/// final XFile file = XFile.fromUri(Uri.file('my/file.txt'));
+/// final XFile file = XFile.fromUri(Uri.file('/my/file.txt'));
 ///
 /// final IOXFileExtension? ioExtension = file.maybeGetExtension<IOXFileExtension>();
 /// if (ioExtension != null) {
@@ -51,7 +51,7 @@ class XFile extends XFileEntity {
   /// the dart:io implementation of `cross_file`:
   ///
   /// ```dart
-  /// var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
+  /// var params = const PlatformXFileCreationParams(uri: 'file:///my/file.txt');
   ///
   /// if (CrossFilePlatform.instance is CrossFileIO) {
   ///   params = IOXFileCreationParams.fromCreationParams(

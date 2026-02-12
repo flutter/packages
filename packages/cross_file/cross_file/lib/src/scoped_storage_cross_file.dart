@@ -47,7 +47,7 @@ class ScopedStorageXFile extends XFile {
   /// the Android implementation of `cross_file`:
   ///
   /// ```dart
-  /// var params = const PlatformXFileCreationParams(uri: 'my/file.txt');
+  /// var params = const PlatformXFileCreationParams(uri: 'file:///my/file.txt');
   ///
   /// if (CrossFilePlatform.instance is CrossFileAndroid) {
   ///   params = AndroidScopedStorageXFileCreationParams.fromCreationParams(
