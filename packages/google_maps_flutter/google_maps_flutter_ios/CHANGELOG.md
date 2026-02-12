@@ -1,11 +1,11 @@
+## 2.17.4
+
+* Adds UIScene compatibility.
+
 ## 2.17.3
 
-<<<<<<< google-maps-ios-uiscene
-* Adds UIScene compatibility.
-=======
 * Adds a README section about Swift Package Manager and the new
   `google_maps_flutter_ios_sdk*` packages.
->>>>>>> main
 
 ## 2.17.2
 
