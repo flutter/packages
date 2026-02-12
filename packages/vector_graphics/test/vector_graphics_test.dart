@@ -12,6 +12,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:vector_graphics/src/listener.dart';
 import 'package:vector_graphics/src/vector_graphics.dart';
 import 'package:vector_graphics_codec/vector_graphics_codec.dart';
+import 'package:vector_graphics_compiler/vector_graphics_compiler.dart'
+    show encodeSvg;
 
 const VectorGraphicsCodec codec = VectorGraphicsCodec();
 
@@ -159,6 +161,229 @@ void main() {
     expect(fittedBox.clipBehavior, Clip.hardEdge);
   });
 
+  group('BoxFit', () {
+    Future<(RenderBox, RenderBox)> setupBoxFitVectorGraphic(
+      WidgetTester tester, {
+      required BoxFit fit,
+    }) async {
+      final buffer = VectorGraphicsBuffer();
+      codec.writeSize(buffer, 100, 50);
+
+      await tester.pumpWidget(
+        RepaintBoundary(
+          child: Center(
+            child: SizedBox(
+              width: 200,
+              height: 200,
+              child: VectorGraphic(
+                fit: fit,
+                loader: TestBytesLoader(buffer.done()),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final RenderProxyBox outsideBox = tester.renderObject(
+        find.byType(VectorGraphic),
+      );
+      expect(outsideBox.size, const Size(200, 200));
+
+      final RenderBox insideBox = tester.renderObject(
+        find.byType(SizedBox).last,
+      );
+      expect(insideBox.size, const Size(100, 50));
+
+      return (outsideBox, insideBox);
+    }
+
+    testWidgets(
+      'Scale on BoxFit.contain without constraints, but with viewbox',
+      (WidgetTester tester) async {
+        final (RenderBox outsideBox, RenderBox insideBox) =
+            await setupBoxFitVectorGraphic(tester, fit: BoxFit.contain);
+
+        // Top left point as offset in child space
+        final Offset insidePoint = insideBox.localToGlobal(Offset.zero);
+        // Top left point as offset in parent space
+        final Offset outsidePoint = outsideBox.localToGlobal(
+          const Offset(0, 50),
+        );
+
+        expect(insidePoint, equals(outsidePoint));
+      },
+    );
+
+    testWidgets('Scale on BoxFit.cover without constraints, but with viewbox', (
+      WidgetTester tester,
+    ) async {
+      final (RenderBox outsideBox, RenderBox insideBox) =
+          await setupBoxFitVectorGraphic(tester, fit: BoxFit.cover);
+
+      // Top left point as offset in child space
+      final Offset insidePoint = insideBox.localToGlobal(Offset.zero);
+      // Top left point as offset in parent space
+      final Offset outsidePoint = outsideBox.localToGlobal(
+        const Offset(-100, 0),
+      );
+
+      expect(insidePoint, equals(outsidePoint));
+    });
+
+    testWidgets('Scale on BoxFit.fill without constraints, but with viewbox', (
+      WidgetTester tester,
+    ) async {
+      final (RenderBox outsideBox, RenderBox insideBox) =
+          await setupBoxFitVectorGraphic(tester, fit: BoxFit.fill);
+
+      // Top left point as offset in child space
+      final Offset insidePoint = insideBox.localToGlobal(Offset.zero);
+      // Top left point as offset in parent space
+      final Offset outsidePoint = outsideBox.localToGlobal(Offset.zero);
+
+      expect(insidePoint, equals(outsidePoint));
+    });
+  });
+
+  // TODO(gustl22): can be removed if redundant
+  group('BoxFit Goldens', () {
+    late ByteData vectorGraphicBuffer;
+
+    setUpAll(() async {
+      final Uint8List bytes = encodeSvg(
+        xml: svgString,
+        debugName: 'test',
+        enableClippingOptimizer: false,
+        enableMaskingOptimizer: false,
+        enableOverdrawOptimizer: false,
+      );
+      vectorGraphicBuffer = bytes.buffer.asByteData();
+    });
+
+    testWidgets(
+      'Scale on BoxFit.contain without constraints, but with viewbox',
+      (WidgetTester tester) async {
+        final goldenKey = UniqueKey();
+        final vectorGraphic = UniqueKey();
+        await tester.pumpWidget(
+          RepaintBoundary(
+            key: goldenKey,
+            child: Center(
+              child: Container(
+                width: 400,
+                height: 200,
+                color: Colors.white,
+                child: VectorGraphic(
+                  key: vectorGraphic,
+                  loader: TestBytesLoader(vectorGraphicBuffer),
+                  // ignore: avoid_redundant_argument_values
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        await expectLater(
+          find.byKey(goldenKey),
+          matchesGoldenFile('goldens/boxfit_contain_with_viewbox.png'),
+        );
+      },
+    );
+
+    testWidgets('Scale on BoxFit.cover without constraints, but with viewbox', (
+      WidgetTester tester,
+    ) async {
+      final goldenKey = UniqueKey();
+      final vectorGraphic = UniqueKey();
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: goldenKey,
+          child: Center(
+            child: Container(
+              width: 400,
+              height: 200,
+              color: Colors.white,
+              child: VectorGraphic(
+                key: vectorGraphic,
+                loader: TestBytesLoader(vectorGraphicBuffer),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byKey(goldenKey),
+        matchesGoldenFile('goldens/boxfit_cover_with_viewbox.png'),
+      );
+    });
+
+    testWidgets('Scale on BoxFit.fill without constraints, but with viewbox', (
+      WidgetTester tester,
+    ) async {
+      final goldenKey = UniqueKey();
+      final vectorGraphic = UniqueKey();
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: goldenKey,
+          child: Center(
+            child: Container(
+              width: 400,
+              height: 200,
+              color: Colors.white,
+              child: VectorGraphic(
+                key: vectorGraphic,
+                loader: TestBytesLoader(vectorGraphicBuffer),
+                fit: BoxFit.fill,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byKey(goldenKey),
+        matchesGoldenFile('goldens/boxfit_fill_with_viewbox.png'),
+      );
+    });
+
+    testWidgets('Scale on BoxFit.none without constraints, but with viewbox', (
+      WidgetTester tester,
+    ) async {
+      final goldenKey = UniqueKey();
+      final vectorGraphic = UniqueKey();
+      await tester.pumpWidget(
+        RepaintBoundary(
+          key: goldenKey,
+          child: Center(
+            child: Container(
+              width: 400,
+              height: 400,
+              color: Colors.white,
+              child: VectorGraphic(
+                key: vectorGraphic,
+                loader: TestBytesLoader(vectorGraphicBuffer),
+                fit: BoxFit.none,
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await expectLater(
+        find.byKey(goldenKey),
+        matchesGoldenFile('goldens/boxfit_none_with_viewbox.png'),
+      );
+    });
+  });
+
   group('ClipBehavior', () {
     testWidgets('Sets clipBehavior to hardEdge if not provided', (
       WidgetTester tester,
@@ -209,9 +434,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.byType(SizedBox), findsNWidgets(2));
+    expect(find.byType(SizedBox), findsNWidgets(1));
 
-    final sizedBox = find.byType(SizedBox).evaluate().last.widget as SizedBox;
+    final sizedBox = find.byType(SizedBox).evaluate().single.widget as SizedBox;
 
     expect(sizedBox.width, 100);
     expect(sizedBox.height, 200);
@@ -601,7 +826,7 @@ void main() {
     // A blank image, because the image hasn't loaded yet.
     await expectLater(
       find.byKey(key),
-      matchesGoldenFile('vg_with_image_blank.png'),
+      matchesGoldenFile('goldens/vg_with_image_blank.png'),
     );
 
     expect(imageCache.currentSize, 1);
@@ -615,10 +840,10 @@ void main() {
     expect(imageCache.statusForKey(imageKey).live, false);
     expect(imageCache.statusForKey(imageKey).keepAlive, true);
 
-    // A blue square, becuase the image is available now.
+    // A blue square, because the image is available now.
     await expectLater(
       find.byKey(key),
-      matchesGoldenFile('vg_with_image_blue.png'),
+      matchesGoldenFile('goldens/vg_with_image_blue.png'),
     );
   }, skip: kIsWeb);
 
@@ -787,3 +1012,26 @@ class ThrowingBytesLoader extends BytesLoader {
     throw UnimplementedError('Test exception');
   }
 }
+
+const String svgString = '''
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 166 202">
+  <defs>
+      <linearGradient id="triangleGradient">
+          <stop offset="20%" stop-color="#000000" stop-opacity=".55" />
+          <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
+      </linearGradient>
+      <linearGradient id="rectangleGradient" x1="0%" x2="0%" y1="0%" y2="100%">
+          <stop offset="20%" stop-color="#000000" stop-opacity=".15" />
+          <stop offset="85%" stop-color="#616161" stop-opacity=".01" />
+      </linearGradient>
+  </defs>
+  <path fill="#42A5F5" fill-opacity=".8" d="M37.7 128.9 9.8 101 100.4 10.4 156.2 10.4"/>
+  <path fill="#42A5F5" fill-opacity=".8" d="M156.2 94 100.4 94 79.5 114.9 107.4 142.8"/>
+  <path fill="#0D47A1" d="M79.5 170.7 100.4 191.6 156.2 191.6 156.2 191.6 107.4 142.8"/>
+  <g transform="matrix(0.7071, -0.7071, 0.7071, 0.7071, -77.667, 98.057)">
+      <rect width="39.4" height="39.4" x="59.8" y="123.1" fill="#42A5F5" />
+      <rect width="39.4" height="5.5" x="59.8" y="162.5" fill="url(#rectangleGradient)" />
+  </g>
+  <path d="M79.5 170.7 120.9 156.4 107.4 142.8" fill="url(#triangleGradient)" />
+</svg>
+''';
