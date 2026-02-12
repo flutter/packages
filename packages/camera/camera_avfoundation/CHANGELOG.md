@@ -1,3 +1,7 @@
+## 0.9.23+3
+
+* Updates example to demonstrate correct exception handling for async return statements, ensuring exceptions thrown during return are properly caught as per [dart-lang/sdk#44395](https://github.com/dart-lang/sdk/issues/44395).
+
 ## 0.9.23+2
 
 * Code refactor related to Swift pigeon's generated struct MediaSettings being immutable.
