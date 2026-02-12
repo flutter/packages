@@ -30,7 +30,7 @@ struct CrossFileDarwinApiTests {
     let testFileURL = try createTempTestFile()
     
     let api = CrossFileDarwinApiImpl()
-    let canAccess = try api.startAccessingSecurityScopedResource(url: testFileURL.path)
+    let canAccess = try api.startAccessingSecurityScopedResource(url: testFileURL.absoluteString)
     
     // Only returns true on iOS.
 #if os(iOS)
@@ -44,7 +44,7 @@ struct CrossFileDarwinApiTests {
     let testFileURL = try createTempTestFile()
     
     let api = CrossFileDarwinApiImpl()
-    let bookmarkedURLString = try! api.tryCreateBookmarkedUrl(url: testFileURL.path)!
+    let bookmarkedURLString = try! api.tryCreateBookmarkedUrl(url: testFileURL.absoluteString)!
     
     #expect(URL(fileURLWithPath: bookmarkedURLString) == testFileURL)
   }
