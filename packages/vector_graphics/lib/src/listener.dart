@@ -20,7 +20,7 @@ import 'loader.dart';
 
 const VectorGraphicsCodec _codec = VectorGraphicsCodec();
 
-/// The deocded result of a vector graphics asset.
+/// The decoded result of a vector graphics asset.
 class PictureInfo {
   /// Construct a new [PictureInfo].
   PictureInfo._(this.picture, this.size);
