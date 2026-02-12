@@ -263,14 +263,14 @@
 }
 
 - (void)testAssetProviderIsRetained {
-  FLTMarkersController *markerController;
+  FGMMarkersController *markerController;
   __weak TestAssetProvider *weakAssetProvider;
   @autoreleasepool {
     TestAssetProvider *assetProvider = [[TestAssetProvider alloc] init];
     weakAssetProvider = assetProvider;
 
     markerController =
-        [[FLTMarkersController alloc] initWithMapView:[GoogleMapsMarkerControllerTests mapView]
+        [[FGMMarkersController alloc] initWithMapView:[MarkerControllerTests mapView]
                                         eventDelegate:[[TestMapEventHandler alloc] init]
                             clusterManagersController:nil
                                         assetProvider:assetProvider];

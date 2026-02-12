@@ -209,13 +209,13 @@
 }
 
 - (void)testAssetProviderIsRetained {
-  FLTGroundOverlaysController *groundOverlayController;
+  FGMGroundOverlaysController *groundOverlayController;
   __weak TestAssetProvider *weakAssetProvider;
   @autoreleasepool {
     TestAssetProvider *assetProvider = [[TestAssetProvider alloc] init];
     weakAssetProvider = assetProvider;
-    groundOverlayController = [[FLTGroundOverlaysController alloc]
-        initWithMapView:[GoogleMapsGroundOverlayControllerTests mapView]
+    groundOverlayController = [[FGMGroundOverlaysController alloc]
+        initWithMapView:[GroundOverlayControllerTests mapView]
           eventDelegate:[[TestMapEventHandler alloc] init]
           assetProvider:assetProvider];
   }
