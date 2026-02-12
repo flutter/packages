@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart' show debugPrint;
 /// Demonstrate instantiating an XFile for the README.
 Future<XFile> instantiateXFile() async {
   // #docregion Instantiate
-  final file = XFile('assets/hello.txt');
+  final file = XFile.fromUri(Uri.file('assets/hello.txt'));
 
   debugPrint('File information:');
   debugPrint('- URI: ${file.uri}');

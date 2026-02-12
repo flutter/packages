@@ -12,11 +12,11 @@ Example:
 
 <?code-excerpt "example/lib/readme_excerpts.dart (Instantiate)"?>
 ```dart
-final file = XFile('assets/hello.txt');
+final file = XFile.fromUri(Uri.file('assets/hello.txt'));
 
-print('File information:');
-print('- URI: ${file.uri}');
-print('- Name: ${await file.name()}');
+debugPrint('File information:');
+debugPrint('- URI: ${file.uri}');
+debugPrint('- Name: ${await file.name()}');
 
 if (await file.canRead()) {
   final String fileContent = await file.readAsString();
