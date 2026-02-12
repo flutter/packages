@@ -1,3 +1,8 @@
+## 3.24.0
+
+* Adds support for `WebKitWebViewControllerCreationParams.javaScriptCanOpenWindowsAutomatically` to allow JavaScript's
+  `window.open()` to work without user interaction on iOS and macOS.
+
 ## 3.23.6
 
 * Fixes a crash if WebViewFlutterWKWebViewExternalAPI is passed the wrong registry.
