@@ -16,21 +16,17 @@ import Foundation
 class CrossFileDarwinApiImpl: CrossFileDarwinApi {
   func tryCreateBookmarkedUrl(url: String) throws -> String? {
     let nativeUrl = URL(fileURLWithPath: url)
-    if nativeUrl.startAccessingSecurityScopedResource() {
-      defer { nativeUrl.stopAccessingSecurityScopedResource() }
+    let data = try nativeUrl.bookmarkData(
+      options: [],
+      includingResourceValuesForKeys: nil,
+      relativeTo: nil
+    )
 
-      let data = try nativeUrl.bookmarkData(
-        options: [],
-        includingResourceValuesForKeys: nil,
-        relativeTo: nil
-      )
+    var isStale: Bool = true
+    let bookmarkedUrl: URL = try URL(resolvingBookmarkData: data, bookmarkDataIsStale: &isStale)
 
-      var isStale: Bool = true
-      let bookmarkedUrl: URL = try URL(resolvingBookmarkData: data, bookmarkDataIsStale: &isStale)
-
-      if !isStale {
-        return bookmarkedUrl.path
-      }
+    if !isStale {
+      return bookmarkedUrl.path
     }
 
     return nil
