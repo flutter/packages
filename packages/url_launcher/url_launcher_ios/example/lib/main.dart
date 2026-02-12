@@ -45,6 +45,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // Check for phone call support.
     final UrlLauncherPlatform launcher = UrlLauncherPlatform.instance;
     launcher.canLaunch('tel://123').then((bool result) {
+      if (!mounted) {
+        return;
+      }
       setState(() {
         _hasCallSupport = result;
       });
