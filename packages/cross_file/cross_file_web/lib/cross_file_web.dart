@@ -3,9 +3,4 @@
 // found in the LICENSE file.
 
 export 'src/cross_file_web.dart';
-export 'src/web_cross_file.dart'
-    show
-        BlobWebXFileCreationParams,
-        UrlWebXFileCreationParams,
-        WebXFileCreationParams,
-        WebXFileExtension;
+export 'src/web_cross_file.dart' show WebXFileCreationParams, WebXFileExtension;

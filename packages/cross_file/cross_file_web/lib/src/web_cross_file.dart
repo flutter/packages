@@ -16,6 +16,32 @@ sealed class WebXFileCreationParams extends PlatformXFileCreationParams {
   /// Constructs a [WebXFileCreationParams].
   const WebXFileCreationParams({required super.uri, this.testOverrides});
 
+  /// Constructs a [WebXFileCreationParams] with an object url.
+  factory WebXFileCreationParams.fromObjectUrl({
+    required String objectUrl,
+    @visibleForTesting XFileTestOverrides? testOverrides,
+  }) => UrlWebXFileCreationParams(
+    objectUrl: objectUrl,
+    testOverrides: testOverrides,
+  );
+
+  /// Constructs a [WebXFileCreationParams] with a [Blob].
+  ///
+  /// Creates an Object URL using the provided blob. See [URL.createObjectURL]
+  ///
+  /// `autoRevokeObjectUrl`: Whether the unique object url obtained created with
+  /// [blob] should be revoked when this instance is garbage collected. See
+  /// [URL.revokeObjectURL].
+  factory WebXFileCreationParams.fromBlob(
+    Blob blob, {
+    bool autoRevokeObjectUrl = true,
+    @visibleForTesting XFileTestOverrides? testOverrides,
+  }) => BlobWebXFileCreationParams(
+    blob,
+    autoRevokeObjectUrl: autoRevokeObjectUrl,
+    testOverrides: testOverrides,
+  );
+
   /// Overrides some functions to allow testing.
   @visibleForTesting
   final XFileTestOverrides? testOverrides;
