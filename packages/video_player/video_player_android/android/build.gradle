@@ -20,9 +20,16 @@ rootProject.allprojects {
         mavenCentral()
     }
 }
-
-apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android'
+println "===================================================="
+println "At the library-level build.gradle file."
+println "AGP version from settings: $gradle.capturedAgpVersion"
+println "===================================================="
+if (gradle.capturedAgpVersion == "9.0.0") {
+    apply plugin: 'com.android.library'
+} else {
+    apply plugin: 'com.android.library'
+    apply plugin: 'kotlin-android'
+}
 
 android {
     namespace = "io.flutter.plugins.videoplayer"
@@ -42,8 +49,13 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+//    kotlinOptions {
+//        jvmTarget = JavaVersion.VERSION_17.toString()
+//    }
+    kotlin {
+        compilerOptions {
+            jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
+        }
     }
 
     sourceSets {
