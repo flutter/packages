@@ -15,6 +15,7 @@ PlatformBillingResult convertToPigeonResult(BillingResultWrapper targetResult) {
   return PlatformBillingResult(
     responseCode: billingResponseFromWrapper(targetResult.responseCode),
     debugMessage: targetResult.debugMessage!,
+    subResponseCode: targetResult.subResponseCode,
   );
 }
 

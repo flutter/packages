@@ -51,6 +51,13 @@ void main() {
           priceAmountMicros: 10,
           priceCurrencyCode: 'priceCurrencyCode',
         ),
+        oneTimePurchaseOfferDetailsList: <OneTimePurchaseOfferDetailsWrapper>[
+          OneTimePurchaseOfferDetailsWrapper(
+            formattedPrice: 'formattedPrice',
+            priceAmountMicros: 10,
+            priceCurrencyCode: 'priceCurrencyCode',
+          ),
+        ],
         subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
           SubscriptionOfferDetailsWrapper(
             basePlanId: 'basePlanId',
@@ -84,6 +91,13 @@ void main() {
           priceAmountMicros: 10,
           priceCurrencyCode: 'priceCurrencyCode',
         ),
+        oneTimePurchaseOfferDetailsList: <OneTimePurchaseOfferDetailsWrapper>[
+          OneTimePurchaseOfferDetailsWrapper(
+            formattedPrice: 'formattedPrice',
+            priceAmountMicros: 10,
+            priceCurrencyCode: 'priceCurrencyCode',
+          ),
+        ],
         subscriptionOfferDetails: <SubscriptionOfferDetailsWrapper>[
           SubscriptionOfferDetailsWrapper(
             basePlanId: 'basePlanId',
@@ -115,10 +129,12 @@ void main() {
     test('operator == of BillingResultWrapper works fine', () {
       const firstBillingResultInstance = BillingResultWrapper(
         responseCode: BillingResponse.ok,
+        subResponseCode: 123,
         debugMessage: 'debugMessage',
       );
       const secondBillingResultInstance = BillingResultWrapper(
         responseCode: BillingResponse.ok,
+        subResponseCode: 123,
         debugMessage: 'debugMessage',
       );
       expect(firstBillingResultInstance == secondBillingResultInstance, isTrue);

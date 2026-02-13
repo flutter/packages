@@ -17,6 +17,7 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchaseHistoryRecord;
 import com.android.billingclient.api.QueryProductDetailsParams;
+import com.android.billingclient.api.UnfetchedProduct;
 import com.android.billingclient.api.UserChoiceDetails;
 import io.flutter.plugins.inapppurchase.Messages.FlutterError;
 import io.flutter.plugins.inapppurchase.Messages.PlatformAccountIdentifiers;
@@ -37,6 +38,7 @@ import io.flutter.plugins.inapppurchase.Messages.PlatformQueryProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformRecurrenceMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformReplacementMode;
 import io.flutter.plugins.inapppurchase.Messages.PlatformSubscriptionOfferDetails;
+import io.flutter.plugins.inapppurchase.Messages.PlatformUnfetchedProduct;
 import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceDetails;
 import io.flutter.plugins.inapppurchase.Messages.PlatformUserChoiceProduct;
 import java.util.ArrayList;
@@ -59,6 +61,8 @@ import java.util.Locale;
         .setName(detail.getName())
         .setOneTimePurchaseOfferDetails(
             fromOneTimePurchaseOfferDetails(detail.getOneTimePurchaseOfferDetails()))
+        .setOneTimePurchaseOfferDetailsList(
+            fromOneTimePurchaseOfferDetailsList(detail.getOneTimePurchaseOfferDetailsList()))
         .setSubscriptionOfferDetails(
             fromSubscriptionOfferDetailsList(detail.getSubscriptionOfferDetails()))
         .build();
@@ -114,6 +118,21 @@ import java.util.Locale;
       output.add(fromProductDetail(detail));
     }
     return output;
+  }
+
+  static @Nullable List<PlatformOneTimePurchaseOfferDetails> fromOneTimePurchaseOfferDetailsList(
+      @Nullable List<ProductDetails.OneTimePurchaseOfferDetails> oneTimePurchaseOfferDetailsList) {
+    if (oneTimePurchaseOfferDetailsList == null) {
+      return null;
+    }
+
+    ArrayList<PlatformOneTimePurchaseOfferDetails> serialized = new ArrayList<>();
+    for (ProductDetails.OneTimePurchaseOfferDetails oneTimePurchaseOfferDetails :
+        oneTimePurchaseOfferDetailsList) {
+      serialized.add(fromOneTimePurchaseOfferDetails(oneTimePurchaseOfferDetails));
+    }
+
+    return serialized;
   }
 
   static @Nullable PlatformOneTimePurchaseOfferDetails fromOneTimePurchaseOfferDetails(
@@ -302,6 +321,26 @@ import java.util.Locale;
     return new PlatformBillingResult.Builder()
         .setResponseCode(fromBillingResponseCode(billingResult.getResponseCode()))
         .setDebugMessage(billingResult.getDebugMessage())
+        .setSubResponseCode((long) billingResult.getOnPurchasesUpdatedSubResponseCode())
+        .build();
+  }
+
+  static @NonNull List<PlatformUnfetchedProduct> fromUnfetchedProductList(
+      @Nullable List<UnfetchedProduct> unfetchedProductList) {
+    if (unfetchedProductList == null) {
+      return Collections.emptyList();
+    }
+    List<PlatformUnfetchedProduct> serialized = new ArrayList<>();
+    for (UnfetchedProduct unfetchedProduct : unfetchedProductList) {
+      serialized.add(fromUnfetchedProduct(unfetchedProduct));
+    }
+    return serialized;
+  }
+
+  static @NonNull PlatformUnfetchedProduct fromUnfetchedProduct(
+      @NonNull UnfetchedProduct unfetchedProduct) {
+    return new PlatformUnfetchedProduct.Builder()
+        .setProductId(unfetchedProduct.getProductId())
         .build();
   }
 

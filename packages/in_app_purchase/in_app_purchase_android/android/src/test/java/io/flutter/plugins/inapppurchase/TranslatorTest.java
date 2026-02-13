@@ -177,6 +177,9 @@ public class TranslatorTest {
 
     assertEquals(Messages.PlatformBillingResponse.OK, platformResult.getResponseCode());
     assertEquals(platformResult.getDebugMessage(), newBillingResult.getDebugMessage());
+    assertEquals(
+        (long) newBillingResult.getOnPurchasesUpdatedSubResponseCode(),
+        (long) platformResult.getSubResponseCode());
   }
 
   @Test
@@ -204,6 +207,21 @@ public class TranslatorTest {
     assertEquals(expectedOneTimePurchaseOfferDetails == null, oneTimePurchaseOfferDetails == null);
     if (expectedOneTimePurchaseOfferDetails != null && oneTimePurchaseOfferDetails != null) {
       assertSerialized(expectedOneTimePurchaseOfferDetails, oneTimePurchaseOfferDetails);
+    }
+
+    List<ProductDetails.OneTimePurchaseOfferDetails> expectedOfferList =
+        expected.getOneTimePurchaseOfferDetailsList();
+    List<Messages.PlatformOneTimePurchaseOfferDetails> serializedOfferList =
+        serialized.getOneTimePurchaseOfferDetailsList();
+
+    if (expectedOfferList == null) {
+      assertNull(serializedOfferList);
+    } else {
+      assertNotNull(serializedOfferList);
+      assertEquals(expectedOfferList.size(), serializedOfferList.size());
+      for (int i = 0; i < expectedOfferList.size(); i++) {
+        assertSerialized(expectedOfferList.get(i), serializedOfferList.get(i));
+      }
     }
 
     List<ProductDetails.SubscriptionOfferDetails> expectedSubscriptionOfferDetailsList =
