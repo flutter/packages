@@ -1,3 +1,17 @@
+## 0.10.0
+
+* Adds video stabilization.
+  - Adds getSupportedVideoStabilizationModes method.
+  - Adds setVideoStabilizationMode method.
+
+## 0.9.23+2
+
+* Code refactor related to Swift pigeon's generated struct MediaSettings being immutable.
+
+## 0.9.23+1
+
+* Fixes error handling in `startWriting`.
+
 ## 0.9.23
 
 * Changes the default storage path for camera pictures and videos on iOS from the application's Documents directory to the system's temporaryDirectory.

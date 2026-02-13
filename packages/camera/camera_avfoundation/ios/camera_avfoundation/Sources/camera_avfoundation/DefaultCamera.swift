@@ -43,6 +43,7 @@ final class DefaultCamera: NSObject, Camera {
   private let captureSessionQueue: DispatchQueue
 
   private let mediaSettings: FCPPlatformMediaSettings
+  private var framesPerSecond: Double?
   private let mediaSettingsAVWrapper: FLTCamMediaSettingsAVWrapper
 
   let videoCaptureSession: CaptureSession
@@ -97,7 +98,7 @@ final class DefaultCamera: NSObject, Camera {
   private var latestPixelBuffer: CVPixelBuffer?
 
   private var videoRecordingPath: String?
-  private var isRecording = false
+  private(set) var isRecording = false
   private var isRecordingPaused = false
   private var isFirstVideoSample = false
   private var isAudioSetup = false
@@ -217,14 +218,14 @@ final class DefaultCamera: NSObject, Camera {
 
       try setCaptureSessionPreset(mediaSettings.resolutionPreset)
 
-      FormatUtils.selectBestFormat(
+      (captureDevice.flutterActiveFormat, framesPerSecond) = FormatUtils.findBestFormat(
         for: captureDevice,
         mediaSettings: mediaSettings,
         videoDimensionsConverter: videoDimensionsConverter)
 
-      if let framesPerSecond = mediaSettings.framesPerSecond {
+      if let framesPerSecond = framesPerSecond {
         // Set frame rate with 1/10 precision allowing non-integral values.
-        let fpsNominator = floor(framesPerSecond.doubleValue * 10.0)
+        let fpsNominator = floor(framesPerSecond * 10.0)
         let duration = CMTimeMake(value: 10, timescale: Int32(fpsNominator))
 
         mediaSettingsAVWrapper.setMinFrameDuration(duration, on: captureDevice)
@@ -543,7 +544,14 @@ final class DefaultCamera: NSObject, Camera {
     // didOutputSampleBuffer had chance to call startWriting and lag at start of video
     // https://github.com/flutter/flutter/issues/132016
     // https://github.com/flutter/flutter/issues/151319
-    let _ = videoWriter?.startWriting()
+    guard let videoWriter = videoWriter, videoWriter.startWriting() else {
+      completion(
+        FlutterError(
+          code: "IOError",
+          message: "AVAssetWriter failed to start writing",
+          details: videoWriter?.error?.localizedDescription))
+      return
+    }
     isFirstVideoSample = true
     isRecording = true
     isRecordingPaused = false
@@ -573,14 +581,14 @@ final class DefaultCamera: NSObject, Camera {
       for: captureVideoOutput
     )
 
-    if mediaSettings.videoBitrate != nil || mediaSettings.framesPerSecond != nil {
+    if mediaSettings.videoBitrate != nil || framesPerSecond != nil {
       var compressionProperties: [String: Any] = [:]
 
       if let videoBitrate = mediaSettings.videoBitrate {
         compressionProperties[AVVideoAverageBitRateKey] = videoBitrate
       }
 
-      if let framesPerSecond = mediaSettings.framesPerSecond {
+      if let framesPerSecond = framesPerSecond {
         compressionProperties[AVVideoExpectedSourceFrameRateKey] = framesPerSecond
       }
 
@@ -978,6 +986,35 @@ final class DefaultCamera: NSObject, Camera {
     captureDevice.videoZoomFactor = zoom
     captureDevice.unlockForConfiguration()
     completion(nil)
+  }
+
+  func setVideoStabilizationMode(
+    _ mode: FCPPlatformVideoStabilizationMode,
+    withCompletion completion: @escaping (FlutterError?) -> Void
+  ) {
+    let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+
+    guard captureDevice.isVideoStabilizationModeSupported(stabilizationMode) else {
+      completion(
+        FlutterError(
+          code: "VIDEO_STABILIZATION_ERROR",
+          message: "Unavailable video stabilization mode.",
+          details: [
+            "requested_mode": stabilizationMode.rawValue
+          ]
+        )
+      )
+      return
+    }
+    if let connection = captureVideoOutput.connection(with: .video) {
+      connection.preferredVideoStabilizationMode = stabilizationMode
+    }
+    completion(nil)
+  }
+
+  func isVideoStabilizationModeSupported(_ mode: FCPPlatformVideoStabilizationMode) -> Bool {
+    let stabilizationMode = getAvCaptureVideoStabilizationMode(mode)
+    return captureDevice.isVideoStabilizationModeSupported(stabilizationMode)
   }
 
   func setFlashMode(

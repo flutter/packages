@@ -1,3 +1,7 @@
+## 2.14.2
+
+* Updates README with discussion of the new `google_maps_flutter_ios_sdk*` packages.
+
 ## 2.14.1
 
 * Replaces internal use of deprecated methods.
