@@ -9,6 +9,9 @@ import 'cross_file.dart';
 
 /// A reference to a local data resource within a devices scoped storage.
 ///
+/// Scoped storage limits app access to external storage and apps may lose
+/// access to a resource at some point depending on the platform.
+///
 /// ## Platform-Specific Features
 /// This class contains an underlying implementation provided by the current
 /// platform. Once a platform implementation is imported, the examples below
