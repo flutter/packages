@@ -40,6 +40,12 @@ class ScopedStorageXDirectory extends XDirectory {
         PlatformScopedStorageXDirectoryCreationParams(uri: uri),
       );
 
+  /// Constructs a [ScopedStorageXDirectory].
+  ///
+  /// See [ScopedStorageXDirectory.fromCreationParams] for setting parameters
+  /// for a specific platform.
+  ScopedStorageXDirectory.fromUri(Uri uri) : this(uri: uri.toString());
+
   /// Constructs a [ScopedStorageXDirectory] from creation params for a specific
   /// platform.
   ///

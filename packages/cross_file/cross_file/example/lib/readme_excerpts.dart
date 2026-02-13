@@ -40,10 +40,7 @@ Future<XFile> accessPlatformFeatures() async {
     );
     file = XFile.fromCreationParams(params);
   } else if (CrossFilePlatform.instance is CrossFileDarwin) {
-    final params = PlatformScopedStorageXFileCreationParams(
-      uri: Uri.file('/my/file.txt').toString(),
-    );
-    file = ScopedStorageXFile.fromCreationParams(params);
+    file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
 
     await file
         .getExtension<DarwinScopedStorageXFileExtension>()

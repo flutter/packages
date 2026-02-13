@@ -69,7 +69,7 @@ additional functionality provided by the platform and is followed by an example.
 2. Call methods on an implementation of a class by using `getExtension`/`maybeGetExtension` methods (e.g.
    `XFile.getExtension`, `XDirectory.maybeGetExtension`, etc.).
 
-Below is an example of setting additional iOS/macOS and Android parameters on a `XFile`.
+Below is an example of using additional iOS/macOS and Web features for a `XFile`.
 
 <?code-excerpt "readme_excerpts.dart (platform_features)"?>
 ```dart
@@ -81,10 +81,7 @@ if (CrossFilePlatform.instance is CrossFileWeb) {
   );
   file = XFile.fromCreationParams(params);
 } else if (CrossFilePlatform.instance is CrossFileDarwin) {
-  final params = PlatformScopedStorageXFileCreationParams(
-    uri: Uri.file('/my/file.txt').toString(),
-  );
-  file = ScopedStorageXFile.fromCreationParams(params);
+  file = ScopedStorageXFile.fromUri(Uri.file('/my/file.txt'));
 
   await file
       .getExtension<DarwinScopedStorageXFileExtension>()

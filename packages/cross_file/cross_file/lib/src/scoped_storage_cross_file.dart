@@ -39,6 +39,12 @@ class ScopedStorageXFile extends XFile {
         PlatformScopedStorageXFileCreationParams(uri: uri),
       );
 
+  /// Constructs a [ScopedStorageXFile].
+  ///
+  /// See [ScopedStorageXFile.fromCreationParams] for setting parameters for a
+  /// specific platform.
+  ScopedStorageXFile.fromUri(Uri uri) : this(uri: uri.toString());
+
   /// Constructs a [ScopedStorageXFile] from creation params for a specific
   /// platform.
   ///
