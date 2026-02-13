@@ -383,7 +383,7 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 
 * Modifies `buildPreview` to return `Texture` that maps to camera preview, building in the assumption
   that `createCamera` should have been called before building the preview. Fixes
-  <https://github.com/flutter/flutter/issues/140567>.
+  https://github.com/flutter/flutter/issues/140567.
 
 ## 0.5.0+28
 
@@ -509,9 +509,9 @@ this plugin should now be compatible with [google_ml_kit_flutter](https://github
 ## 0.5.0
 
 * Initial release of this `camera` implementation that supports:
-  * Image capture
-  * Video recording
-  * Displaying a live camera preview
-  * Image streaming
+    * Image capture
+    * Video recording
+    * Displaying a live camera preview
+    * Image streaming
 
   See [`README.md`](README.md) for more details on the limitations of this implementation.

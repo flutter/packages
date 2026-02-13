@@ -485,11 +485,10 @@ Updated README to inform users that iOS 10.0+ is needed for use
 As part of implementing federated architecture and making the interface compatible with the web this version contains the following **breaking changes**:
 
 Method changes in `CameraController`:
-
-* The `takePicture` method no longer accepts the `path` parameter, but instead returns the captured image as an instance of the `XFile` class;
-* The `startVideoRecording` method no longer accepts the `filePath`. Instead the recorded video is now returned as a `XFile` instance when the `stopVideoRecording` method completes;
-* The `stopVideoRecording` method now returns the captured video when it completes;
-* Added the `buildPreview` method which is now used to implement the CameraPreview widget.
+- The `takePicture` method no longer accepts the `path` parameter, but instead returns the captured image as an instance of the `XFile` class;
+- The `startVideoRecording` method no longer accepts the `filePath`. Instead the recorded video is now returned as a `XFile` instance when the `stopVideoRecording` method completes;
+- The `stopVideoRecording` method now returns the captured video when it completes;
+- Added the `buildPreview` method which is now used to implement the CameraPreview widget.
 
 ## 0.5.8+19
 
@@ -794,18 +793,16 @@ a `MissingPluginException.`
 A lot of **breaking changes** in this version:
 
 Getter changes:
-
-* Removed `isStarted`
-* Renamed `initialized` to `isInitialized`
-* Added `isRecordingVideo`
+ - Removed `isStarted`
+ - Renamed `initialized` to `isInitialized`
+ - Added `isRecordingVideo`
 
 Method changes:
-
-* Renamed `capture` to `takePicture`
-* Removed `start` (the preview starts automatically when `initialize` is called)
-* Added `startVideoRecording(String filePath)`
-* Removed `stop` (the preview stops automatically when `dispose` is called)
-* Added `stopVideoRecording`
+ - Renamed `capture` to `takePicture`
+ - Removed `start` (the preview starts automatically when `initialize` is called)
+ - Added `startVideoRecording(String filePath)`
+ - Removed `stop` (the preview stops automatically when `dispose` is called)
+ - Added `stopVideoRecording`
 
 ## 0.1.2
 
